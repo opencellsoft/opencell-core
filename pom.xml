@@ -195,7 +195,8 @@
                 <artifactId>resteasy-jackson-provider</artifactId>
                 <version>3.0.10.Final</version>
                 <scope>test</scope>
-            </dependency>                    
+            </dependency>    
+            
 		</dependencies>
 	</dependencyManagement>
 

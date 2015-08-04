@@ -41,6 +41,12 @@
 		<param-value>true</param-value>
 	</context-param>
 
+	<!-- Primefaces Theme -->
+	<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>modena</param-value>
+	</context-param>
+
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>

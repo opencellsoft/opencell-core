@@ -71,7 +71,26 @@
 	                    </goals>
 	                </execution>
 	            </executions>
-        </plugin>
+        	</plugin>
+        
+        	<!-- Primefaces Theme - Modena -->
+        	<plugin>
+	            <artifactId>maven-antrun-plugin</artifactId>
+	            <configuration>
+	                <tasks>
+	                    <copy file="../lib/modena-theme-1.0.1.jar" tofile="${project.build.directory}/meveo/WEB-INF/lib/modena-theme-1.0.1.jar"/>
+	                </tasks>
+	            </configuration>
+	            <executions>
+	                <execution>
+	                    <phase>install</phase>
+	                    <goals>
+	                        <goal>run</goal>
+	                    </goals>
+	                </execution>
+	            </executions>
+        	</plugin>
+        
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
@@ -337,6 +356,13 @@
 			<version>3.4</version>
 		</dependency>
 		
+		
+        <!-- Primefaces Theme -->
+		<dependency>
+		    <groupId>org.primefaces.themes</groupId>
+		    <artifactId>humanity</artifactId>
+		    <version>1.0.10</version>
+		</dependency>
 
 	</dependencies>
 

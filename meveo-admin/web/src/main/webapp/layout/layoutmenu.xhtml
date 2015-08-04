@@ -1,0 +1,100 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/modena">
+
+    <div class="Animated05" id="layout-menu-cover">
+        <h:form>
+        <pm:menu>
+            <p:menuitem id="rm_dashboard" value="Dashboard" icon="icon-dvr" outcome="/dashboard"/>
+            <p:submenu id="colors" label="Color Variations" icon="icon-color_lens">
+                <p:menuitem id="gray_geometric" value="Gray" icon="icon-colorize" url="#" onclick="$('body').attr('class','').addClass('GrayModena Geometry');"/>
+                <p:menuitem id="blue_geometric" value="Blue" icon="icon-colorize" url="#" onclick="$('body').attr('class','').addClass('BlueModena Geometry');"/>
+                <p:menuitem id="indigo_geometric" value="Indigo" icon="icon-colorize" url="#" onclick="$('body').attr('class','').addClass('IndigoModena Geometry');"/>
+                <p:menuitem id="cyan_geometric" value="Cyan" icon="icon-colorize" url="#" onclick="$('body').attr('class','').addClass('CyanModena Geometry');"/>
+                <p:menuitem id="red_geometric" value="Red" icon="icon-colorize" url="#" onclick="$('body').attr('class','').addClass('RedModena Geometry');"/>
+            </p:submenu>
+            <p:submenu id="rm_theme" label="Modena Theme" icon="icon-format_color_fill">
+                <p:menuitem id="rm_forms" value="Form Elements" icon="icon-paper" outcome="/forms" />
+                <p:menuitem id="rm_data" value="Data Components" icon="icon-subtitles" outcome="/data" />
+                <p:menuitem id="rm_datatable" value="DataTable" icon="icon-web" outcome="/datatable" />
+                <p:menuitem id="rm_panels" value="Panels" icon="icon-chrome_reader_mode Fs16" outcome="/panel" />
+                <p:menuitem id="rm_overlays" value="Overlays" icon="icon-photo_size_select_small" outcome="/overlay" />
+                <p:menuitem id="rm_menus" value="Menus" icon="icon-receipt Fs16" outcome="/menu" />
+                <p:menuitem id="rm_messages" value="Messages" icon="icon-sms_failed Fs16" outcome="/messages" />
+                <p:menuitem id="rm_fileupload" value="FileUpload" icon="icon-cast" outcome="/file" />
+                <p:menuitem id="rm_misc" value="Misc" icon="icon-developer_board" outcome="/misc" />
+            </p:submenu>
+            <p:submenu id="rm_default" label="Default Pages" icon="icon-library_books">
+                <p:menuitem id="rm_empty" value="Empty Page" icon="icon-settings_overscan" outcome="/empty-page" />
+                <p:menuitem id="rm_login" value="Login Page" icon="icon-assignment_ind" outcome="/login" />
+                <p:menuitem id="rm_error" value="Error Page" icon="icon-warning" outcome="/error" />
+                <p:menuitem id="rm_404" value="404 Page" icon="icon-warning" outcome="/404" />
+                <p:menuitem id="rm_access" value="Access Denied Page" icon="icon-visibility_off" outcome="/access-denied" />
+            </p:submenu>
+            <p:submenu id="rm_hierarchy" label="Menu Hierarchy" icon="icon-device_hub">
+                <p:submenu id="rm_sm1" label="Submenu 1" icon="icon-folder_open">
+                    <p:submenu id="rm_sm11" label="Submenu 1.1" icon="icon-folder_open">
+                        <p:submenu id="rm_sm111" label="Submenu 1.1.1" icon="icon-folder_open">
+                            <p:menuitem id="rm_lnk1111" value="Link 1" icon="icon-link" url="#" />
+                            <p:menuitem id="rm_lnk1112" value="Link 2" icon="icon-link" url="#" />
+                            <p:menuitem id="rm_lnk1113" value="Link 3" icon="icon-link" url="#" />
+                        </p:submenu>
+                    </p:submenu>
+                </p:submenu>
+                <p:submenu id="rm_sm2" label="Submenu 2" icon="icon-folder_open">
+                    <p:submenu id="rm_22" label="Submenu 2.2" icon="icon-folder_open">
+                        <p:submenu id="rm_221" label="Submenu 2.2.1" icon="icon-folder_open">
+                            <p:menuitem id="rm_lnk2211" value="Link 1" icon="icon-link" url="#" />
+                            <p:menuitem id="rm_lnk2212" value="Link 2" icon="icon-link" url="#" />
+                            <p:menuitem id="rm_lnk2213" value="Link 3" icon="icon-link" url="#" />
+                        </p:submenu>
+                    </p:submenu>
+                </p:submenu>
+            </p:submenu>
+            <p:menuitem id="rm_icons" value="Font Icons" icon="icon-stars" outcome="/font-icons" />
+            
+            <p:submenu id="rm_docs" label="Documentation" icon="icon-card_membership">
+                <p:submenu id="rm_docs_core" label="Core CSS Docs" icon="fa fa-code">
+                    <p:menuitem id="rm_docs_1" value="Installation" icon="fa fa-book" outcome="/docs/core/installation" />
+                    <p:menuitem id="rm_docs_2" value="Menus" icon="fa fa-book" outcome="/docs/core/menus" />
+                    <p:menuitem id="rm_docs_3" value="Responsive Mode" icon="fa fa-book" outcome="/docs/core/responsive-mode" />
+                    <p:menuitem id="rm_docs_4" value="ContainerX" icon="fa fa-book" outcome="/docs/core/containerx" />
+                    <p:menuitem id="rm_docs_5" value="WidX" icon="fa fa-book" outcome="/docs/core/widx" />
+                    <p:menuitem id="rm_docs_6" value="Selection" icon="fa fa-book" outcome="/docs/core/selection" />
+                    <p:menuitem id="rm_docs_7" value="Visibility" icon="fa fa-book" outcome="/docs/core/visibilities" />
+                    <p:menuitem id="rm_docs_8" value="Displaying" icon="fa fa-book" outcome="/docs/core/displaying" />
+                    <p:menuitem id="rm_docs_9" value="Positioning" icon="fa fa-book" outcome="/docs/core/positioning" />
+                    <p:menuitem id="rm_docs_10" value="Underline" icon="fa fa-book" outcome="/docs/core/underline" />
+                    <p:menuitem id="rm_docs_11" value="Floating" icon="fa fa-book" outcome="/docs/core/floating" />
+                    <p:menuitem id="rm_docs_12" value="Overflows" icon="fa fa-book" outcome="/docs/core/overflows" />
+                    <p:menuitem id="rm_docs_13" value="Empty Boxes" icon="fa fa-book" outcome="/docs/core/empty-boxes" />
+                    <p:menuitem id="rm_docs_14" value="Opacity" icon="fa fa-book" outcome="/docs/core/opacity" />
+                    <p:menuitem id="rm_docs_15" value="Text Aligning" icon="fa fa-book" outcome="/docs/core/text-aligning" />
+                    <p:menuitem id="rm_docs_16" value="Box Sizing" icon="fa fa-book" outcome="/docs/core/box-sizing" />
+                    <p:menuitem id="rm_docs_17" value="Font Size" icon="fa fa-book" outcome="/docs/core/font-size" />
+                    <p:menuitem id="rm_docs_18" value="Font Weights" icon="fa fa-book" outcome="/docs/core/font-weights" />
+                    <p:menuitem id="rm_docs_19" value="Transitions" icon="fa fa-book" outcome="/docs/core/transitions" />
+                </p:submenu>
+                <p:submenu id="rm_docs_layout" label="Layout CSS Docs" icon="fa fa-code">
+                    <p:menuitem id="rm_docs_20" value="LESS" icon="fa fa-book" outcome="/docs/layout/less" />
+                    <p:menuitem id="rm_docs_21" value="Layout Colors" icon="fa fa-book" outcome="/docs/layout/layout-colors" />
+                    <p:menuitem id="rm_docs_22" value="Cards" icon="fa fa-book" outcome="/docs/layout/cards" />
+                    <p:menuitem id="rm_docs_23" value="Text Colors" icon="fa fa-book" outcome="/docs/layout/text-colors" />
+                    <p:menuitem id="rm_docs_24" value="Background Colors" icon="fa fa-book" outcome="/docs/layout/background-colors" />
+                    <p:menuitem id="rm_docs_25" value="Borders" icon="fa fa-book" outcome="/docs/layout/borders" />
+                    <p:menuitem id="rm_docs_26" value="Separators" icon="fa fa-book" outcome="/docs/layout/separators" />
+                    <p:menuitem id="rm_docs_27" value="Effects" icon="fa fa-book" outcome="/docs/layout/effects" />
+                    <p:menuitem id="rm_docs_28" value="Roboto Font" icon="fa fa-book" outcome="/docs/layout/roboto-font" />
+                </p:submenu>
+            </p:submenu>
+            <p:separator />
+        </pm:menu>
+        </h:form>
+
+    </div>
+
+</ui:composition>
