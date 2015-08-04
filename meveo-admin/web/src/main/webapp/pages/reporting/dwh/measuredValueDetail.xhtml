@@ -50,7 +50,6 @@
 							<p:calendar id="selectedDate"
 								value="#{measurementBean.selectedDate}" required="true"
 								pattern="MMMM yyyy">
-								<p:ajax event="dateSelect" update=":measurementForm"></p:ajax>
 							</p:calendar>
 						</hftl:decorateFormField>
                         
@@ -118,7 +117,7 @@
                         <p:commandButton value="Display Table"
                             action="#{measurementBean.generateMVModel()}"
                             update=":mqTableForm "
-                            rendered="#{(measurementBean.measurableQuantity != null)  and (measurementBean.selectedDate != null)}" />
+                            rendered="#{(measurementBean.measurableQuantity != null)  and (measurementBean.measuredPeriod != null)}" />
                    </ui:define>
 			</hftl:decorateFormPanel>
 
