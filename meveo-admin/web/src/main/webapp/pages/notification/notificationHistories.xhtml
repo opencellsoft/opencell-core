@@ -25,7 +25,7 @@
 
         <!-- ===================================== SEARCH RESULTS ======================================= -->
 
-        <hftl:dataList backingBean="#{notificationHistoryBean}" exportButton="false" exportToCsv="true">
+        <hftl:dataList backingBean="#{notificationHistoryBean}" exportButton="false" fileName="NotificationHistories" exportToCsv="true">
             <hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" />
             <p:column headerText="#{messages['entity.notification.notificationType']}" width="10%">
                 <h:link value="#{entity.inboundRequest.code}" outcome="inboundRequestDetail" rendered="#{entity.inboundRequest != null}">
@@ -39,6 +39,8 @@
             <p:column headerText="#{messages['entity.notification.result']}" width="20%">
             	<h:outputText value="#{entity.result}"></h:outputText>
             </p:column>
+           <hftl:column  label="#{messages['entity.notification.entityCode']}"  style="display:none" field="entityCode" />
+			<hftl:column  label="#{messages['entity.notification.serializedEntity']}"  style="display:none" field="serializedEntity" />
         </hftl:dataList>
     </ui:define>
 </ui:composition>
