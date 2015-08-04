@@ -88,7 +88,7 @@
 				label="#{messages[serviceInstanceBean.entity.status=='SUSPENDED'?'serviceInstance.suspensionDate':'serviceInstance.terminationDate']}"
 				field="terminationDate" allowEdit="false"/>
 			<hf:formField label="#{messages['serviceInstance.quantity']}"
-				field="quantity" allowEdit="false" />
+				field="quantity" allowEdit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
 			<hf:formField
 				label="#{messages['serviceInstance.terminationReason']}" allowEdit="false"
 				field="subscriptionTerminationReason" valueLabelField="description"
