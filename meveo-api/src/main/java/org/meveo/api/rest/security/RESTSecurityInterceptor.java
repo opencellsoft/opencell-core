@@ -101,6 +101,8 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Exceptio
 
 			try {
 				currentUser = userService.loginChecks(username, password, false);
+				log.debug("REST login successfull with username={}", username);
+				
 			} catch (LoginException e) {
 				log.error("Login failed for the user {} for reason {} {}", new Object[] { username,
 						e.getClass().getName(), e.getMessage() });
@@ -137,5 +139,4 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Exceptio
 	public User getCurrentUser() {
 		return currentUser;
 	}
-
 }

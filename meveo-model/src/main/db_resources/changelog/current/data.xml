@@ -291,4 +291,12 @@
 		</insert>
     </changeSet>
     
+    <changeSet id="#640_20150731-2" author="AndriusKarpavicius">
+        <sql>update crm_custom_field_tmpl set code='PurgeJob_jobExecHistory_jobName', description='Purge job execution history: job name' where code='JobPurge_jobName'</sql>
+        <sql>update crm_custom_field_tmpl set code='PurgeJob_jobExecHistory_nbDays', description='Purge job execution history: older then (in days)' where code='JobPurge_nbDays'</sql>
+        <sql>update crm_custom_field_inst set code='PurgeJob_jobExecHistory_jobName', description='Purge job execution history: job name' where code='JobPurge_jobName'</sql>
+        <sql>update crm_custom_field_inst set code='PurgeJob_jobExecHistory_nbDays', description='Purge job execution history: older then (in days)' where code='JobPurge_nbDays'</sql>
+        <sql>update meveo_job_instance set job_template='PurgeJob' where job_template='JobPurge'</sql>
+    </changeSet>
+    
 </databaseChangeLog>

@@ -40,6 +40,11 @@ public class ImportExportResponseDto extends BaseResponse {
      */
     private Throwable exception;
 
+    /**
+     * Occurred error message key
+     */
+    private String errorMessageKey;
+
     public ImportExportResponseDto() {
         super();
     }
@@ -58,13 +63,15 @@ public class ImportExportResponseDto extends BaseResponse {
         super();
         this.executionId = executionId;
         this.exception = statistics.getException();
+        this.errorMessageKey = statistics.getErrorMessageKey();
+
         this.fieldsNotImported = statistics.getFieldsNotImported();
-        
+
         this.summary = new HashMap<String, Integer>();
         for (Entry<Class, Integer> summaryInfo : statistics.getSummary().entrySet()) {
             this.summary.put(summaryInfo.getKey().getName(), summaryInfo.getValue());
         }
-        
+
     }
 
     public String getExecutionId() {
@@ -121,5 +128,39 @@ public class ImportExportResponseDto extends BaseResponse {
         }
         builder.append("]");
         return builder.toString();
+    }
+
+    /**
+     * Determine if request has failed
+     * 
+     * @return
+     */
+    public boolean isFailed() {
+        return exception != null || errorMessageKey != null || getActionStatus().getStatus() == ActionStatusEnum.FAIL;
+    }
+
+    /**
+     * Get a failure message as a message file key
+     * 
+     * @return
+     */
+    public String getFailureMessageKey() {
+        return errorMessageKey;
+    }
+
+    /**
+     * Get a failure message as a complete message
+     * 
+     * @return
+     */
+    public String getFailureMessage() {
+        if (errorMessageKey != null) {
+            return null;
+        }
+        if (exception != null) {
+            return exception.getMessage();
+        } else {
+            return getActionStatus().getMessage();
+        }
     }
 }

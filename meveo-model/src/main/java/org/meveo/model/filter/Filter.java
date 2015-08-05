@@ -1,20 +1,18 @@
 package org.meveo.model.filter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.MapKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.validation.constraint.ClassName;
 
 /**
  * @author Edward P. Legaspi
@@ -26,30 +24,74 @@ public class Filter extends BusinessEntity {
 
 	private static final long serialVersionUID = -6150352877726034654L;
 
-	@ClassName
-	@Size(max = 255)
-	@NotNull
-	@Column(name = "TARGET_ENTITY", length = 255, nullable = false)
-	private String targetEntity;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "FILTER_CONDITION_ID")
+	private FilterCondition filterCondition;
 
-	@OneToMany(mappedBy = "filter", fetch = FetchType.LAZY)
-	@MapKey(name = "operand")
-	private Map<String, FilterCondition> filterConditions = new HashMap<String, FilterCondition>();
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "ORDER_CONDITION_ID")
+	private OrderCondition orderCondition;
 
-	public String getTargetEntity() {
-		return targetEntity;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "PRIMARY_SELECTOR_ID")
+	private FilterSelector primarySelector;
+
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "FILTER_ID")
+	private List<FilterSelector> secondarySelectors = new ArrayList<FilterSelector>();
+
+	@Column(name = "INPUT_XML", columnDefinition = "TEXT")
+	private String inputXml;
+
+	@Column(name = "SHARED")
+	private Boolean shared;
+
+	public FilterCondition getFilterCondition() {
+		return filterCondition;
 	}
 
-	public void setTargetEntity(String targetEntity) {
-		this.targetEntity = targetEntity;
+	public void setFilterCondition(FilterCondition filterCondition) {
+		this.filterCondition = filterCondition;
 	}
 
-	public Map<String, FilterCondition> getFilterConditions() {
-		return filterConditions;
+	public OrderCondition getOrderCondition() {
+		return orderCondition;
 	}
 
-	public void setFilterConditions(Map<String, FilterCondition> filterConditions) {
-		this.filterConditions = filterConditions;
+	public void setOrderCondition(OrderCondition orderCondition) {
+		this.orderCondition = orderCondition;
+	}
+
+	public FilterSelector getPrimarySelector() {
+		return primarySelector;
+	}
+
+	public void setPrimarySelector(FilterSelector primarySelector) {
+		this.primarySelector = primarySelector;
+	}
+
+	public List<FilterSelector> getSecondarySelectors() {
+		return secondarySelectors;
+	}
+
+	public void setSecondarySelectors(List<FilterSelector> secondarySelectors) {
+		this.secondarySelectors = secondarySelectors;
+	}
+
+	public String getInputXml() {
+		return inputXml;
+	}
+
+	public void setInputXml(String inputXml) {
+		this.inputXml = inputXml;
+	}
+
+	public Boolean getShared() {
+		return shared;
+	}
+
+	public void setShared(Boolean shared) {
+		this.shared = shared;
 	}
 
 }

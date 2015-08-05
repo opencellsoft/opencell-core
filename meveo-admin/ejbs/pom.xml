@@ -16,20 +16,11 @@
 	<properties>
 		<manaty.seam.version>3.1.0.Final</manaty.seam.version>
 		<version.template.file>src/main/java/org/meveo/util/Version.java.template</version.template.file>
-        <version.file>src/main/java/org/meveo/util/Version.java</version.file>
+		<version.file>src/main/java/org/meveo/util/Version.java</version.file>
 	</properties>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.18.1</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-
 			<!-- Copy files from other projects for testing -->
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -69,35 +60,35 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-      <plugin>
-        <groupId>com.google.code.maven-replacer-plugin</groupId>
-            <artifactId>maven-replacer-plugin</artifactId>
-            <version>1.4.1</version>
-            <executions>                
-                <execution>
-                    <phase>process-sources</phase>
-                    <goals>
-                        <goal>replace</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <file>${version.template.file}</file>
-                <outputFile>${version.file}</outputFile>
-                <replacements>
-                    <replacement>
-                        <token>@buildtime@</token>
-                        <value>${maven.build.timestamp}</value>
-                    </replacement>
-                    <replacement>
-                        <token>@appVersion@</token>
-                        <value>${project.version}</value>
-                    </replacement>
-                </replacements>                        
-            </configuration>
-      </plugin>
-      			
+
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>maven-replacer-plugin</artifactId>
+				<version>1.4.1</version>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<file>${version.template.file}</file>
+					<outputFile>${version.file}</outputFile>
+					<replacements>
+						<replacement>
+							<token>@buildtime@</token>
+							<value>${maven.build.timestamp}</value>
+						</replacement>
+						<replacement>
+							<token>@appVersion@</token>
+							<value>${project.version}</value>
+						</replacement>
+					</replacements>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
@@ -111,7 +102,7 @@
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
@@ -137,8 +128,8 @@
 		<dependency>
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-model</artifactId>
-		</dependency>   
-		
+		</dependency>
+
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-api</artifactId>
@@ -153,12 +144,12 @@
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
 		</dependency>
-		
+
 		<dependency>
-	<groupId>org.jboss</groupId>
-	<artifactId>jboss-vfs</artifactId>
-	<version>3.2.10.Final</version>
-</dependency>
+			<groupId>org.jboss</groupId>
+			<artifactId>jboss-vfs</artifactId>
+			<version>3.2.10.Final</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.jboss.seam.security</groupId>
@@ -219,13 +210,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.7</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
@@ -235,7 +226,7 @@
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.6</version> 
+			<version>2.6</version>
 		</dependency>
 
 		<dependency>
@@ -243,7 +234,7 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-vfs</groupId>
 			<artifactId>commons-vfs</artifactId>
@@ -284,7 +275,7 @@
 			<artifactId>xstream-hibernate</artifactId>
 			<version>1.4.8</version>
 		</dependency>
-	
+
 		<!-- For testing -->
 		<dependency>
 			<groupId>hsqldb</groupId>
@@ -306,10 +297,10 @@
 			</exclusions>
 		</dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>dom4j</groupId> -->
-<!-- 			<artifactId>dom4j</artifactId> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>dom4j</groupId> -->
+		<!-- <artifactId>dom4j</artifactId> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>commons-collections</groupId>
@@ -322,7 +313,7 @@
 			<artifactId>groovy-all</artifactId>
 			<version>2.3.7</version>
 			<scope>runtime</scope>
-		</dependency>	
+		</dependency>
 
 		<dependency>
 			<groupId>net.sourceforge.jexcelapi</groupId>
@@ -336,17 +327,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.github.taksan</groupId>
 			<artifactId>skype-java-api</artifactId>
 			<version>1.4</version>
 		</dependency>
 
-	    <dependency>
-	         <groupId>org.reflections</groupId>
-	         <artifactId>reflections</artifactId>
-	    </dependency>
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>jivesoftware</groupId>
 			<artifactId>smack</artifactId>
@@ -358,36 +349,113 @@
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
 		</dependency>
-	
+
 		<!-- JAXB support -->
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxb-provider</artifactId>
 			<scope>provided</scope>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>jaxrs-api</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-multipart-provider</artifactId>
-        </dependency>
-        		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-multipart-provider</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
 			<version>1.1</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.blackbear</groupId>
-		    <artifactId>flatworm</artifactId>
-		    <version>3.0.2</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/../lib/flatworm-3.0.2.jar</systemPath>
+			<groupId>com.blackbear</groupId>
+			<artifactId>flatworm</artifactId>
+			<version>3.0.2</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/../lib/flatworm-3.0.2.jar</systemPath>
 		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.arquillian.protocol</groupId>
+			<artifactId>arquillian-protocol-servlet</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.18.1</version>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<!-- An optional Arquillian testing profile that executes tests in your 
+				JBoss AS instance -->
+			<!-- This profile will start a new JBoss AS instance, and execute the 
+				test, shutting it down when done -->
+			<!-- Run with: mvn clean test -Parq-jbossas-managed -->
+			<id>arq-jbossas-managed</id>
+
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.as</groupId>
+					<artifactId>jboss-as-arquillian-container-managed</artifactId>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.17</version>
+						<configuration>
+							<skipTests>false</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+	</profiles>
 
 </project>
 

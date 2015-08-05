@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -26,7 +26,7 @@ import org.omnifaces.cdi.ViewScoped;
 @Named
 @ViewScoped
 @CustomFieldEnabledBean(accountLevel = AccountLevelEnum.TIMER)
-public class JobInstanceBean extends BaseBean<JobInstance> {
+public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     private static final long serialVersionUID = 1L;
 

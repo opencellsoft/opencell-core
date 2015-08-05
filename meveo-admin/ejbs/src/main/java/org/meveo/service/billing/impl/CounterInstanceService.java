@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -45,6 +47,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -303,5 +306,50 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		}
 		return result;
 	}
-	
+
+    /**
+     * Count counter periods which end date is older then a given date
+     * 
+     * @param date Date to check
+     * @param provider Provider
+     * @return A number of counter periods which end date is older then a given date
+     */
+    public long countCounterPeriodsToDelete(Date date, Provider provider) {
+        long result = 0;
+        String sql = "select cp from CounterPeriod cp";
+        QueryBuilder qb = new QueryBuilder(sql);
+        qb.addCriterion("cp.periodEndDate", "<", date, false);
+        qb.addCriterionEntity("cp.provider", provider);
+        result = qb.count(getEntityManager());
+
+        return result;
+    }
+
+    /**
+     * Remove counter periods which end date is older then a given date
+     * 
+     * @param date Date to check
+     * @param provider Provider
+     * @return A number of counter periods that were removed
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public long deleteCounterPeriods(Date date, Provider provider) {
+        log.debug("Removing counter periods which end date is older then a {} date for provider {}", date, provider);
+        long itemsDeleted = 0;
+        String sql = "select cp from CounterPeriod cp";
+        QueryBuilder qb = new QueryBuilder(sql);
+        qb.addCriterion("cp.periodEndDate", "<", date, false);
+        qb.addCriterionEntity("cp.provider", provider);
+        EntityManager em = getEntityManager();
+        List<CounterPeriod> periods = qb.find(em);
+        for (CounterPeriod counterPeriod : periods) {
+            em.remove(counterPeriod);
+            itemsDeleted++;
+        }
+
+        log.info("Removed {} counter periods which end date is older then a {} date for provider {}", itemsDeleted, date, provider);
+
+        return itemsDeleted;
+    }
 }

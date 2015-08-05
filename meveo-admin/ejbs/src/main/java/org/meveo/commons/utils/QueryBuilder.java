@@ -48,7 +48,7 @@ import org.meveo.model.crm.Provider;
  */
 public class QueryBuilder {
 
-	private StringBuffer q;
+	protected StringBuffer q;
 	private Map<String, Object> params;
 
 	private boolean hasOneOrMoreCriteria;
@@ -57,10 +57,14 @@ public class QueryBuilder {
 
 	private PaginationConfiguration paginationConfiguration;
 	private String paginationSortAlias;
-	
-    public enum QueryLikeStyleEnum {
-        MATCH_EQUAL, MATCH_BEGINNING, MATCH_ANYWHERE
-    }
+
+	public enum QueryLikeStyleEnum {
+		MATCH_EQUAL, MATCH_BEGINNING, MATCH_ANYWHERE
+	}
+
+	public QueryBuilder() {
+
+	}
 
 	/**
 	 * Constructor.
@@ -104,23 +108,24 @@ public class QueryBuilder {
 			addCriterionEntity(alias + ".provider", provider);
 		}
 	}
-	
-	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields, Provider provider) {
+
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields,
+			Provider provider) {
 		this(getInitJoinQuery(clazz, alias, fetchFields, joinFields));
 		if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
 			addCriterionEntity(alias + ".provider", provider);
 		}
 	}
-	
-	private static String getInitJoinQuery(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields) {
-		StringBuilder query = new StringBuilder("from " + clazz.getName() + " "
-				+ alias);
+
+	private static String getInitJoinQuery(Class<?> clazz, String alias, List<String> fetchFields,
+			List<String> joinFields) {
+		StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
 		if (fetchFields != null && !fetchFields.isEmpty()) {
 			for (String fetchField : fetchFields) {
 				query.append(" left join fetch " + alias + "." + fetchField);
 			}
 		}
-		
+
 		if (joinFields != null && !joinFields.isEmpty()) {
 			for (String joinField : joinFields) {
 				query.append(" inner join " + alias + "." + joinField + " " + joinField);
@@ -131,8 +136,7 @@ public class QueryBuilder {
 	}
 
 	private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
-		StringBuilder query = new StringBuilder("from " + clazz.getName() + " "
-				+ alias);
+		StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
 		if (fetchFields != null && !fetchFields.isEmpty()) {
 			for (String fetchField : fetchFields) {
 				query.append(" left join fetch " + alias + "." + fetchField);
@@ -150,8 +154,7 @@ public class QueryBuilder {
 	 * @param paginationConfiguration
 	 * @return
 	 */
-	public QueryBuilder addPaginationConfiguration(
-			PaginationConfiguration paginationConfiguration) {
+	public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration) {
 		return addPaginationConfiguration(paginationConfiguration, null);
 	}
 
@@ -160,8 +163,7 @@ public class QueryBuilder {
 	 * @param sortAlias
 	 * @return
 	 */
-	public QueryBuilder addPaginationConfiguration(
-			PaginationConfiguration paginationConfiguration, String sortAlias) {
+	public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration, String sortAlias) {
 		this.paginationSortAlias = sortAlias;
 		this.paginationConfiguration = paginationConfiguration;
 		return this;
@@ -228,8 +230,7 @@ public class QueryBuilder {
 	 * @param caseInsensitive
 	 * @return
 	 */
-	public QueryBuilder addCriterion(String field, String operator,
-			Object value, boolean caseInsensitive) {
+	public QueryBuilder addCriterion(String field, String operator, Object value, boolean caseInsensitive) {
 		if (StringUtils.isBlank(value))
 			return this;
 
@@ -249,29 +250,30 @@ public class QueryBuilder {
 
 		return addSqlCriterion(sql.toString(), param, nvalue);
 	}
-	
-	public QueryBuilder addCriterionEntityInList(String field,Object entity){
+
+	public QueryBuilder addCriterionEntityInList(String field, Object entity) {
 		if (entity == null)
 			return this;
 
 		String param = convertFieldToParam(field);
 
-		return addSqlCriterion(" :"+param+" member of "+field, field,entity);
+		return addSqlCriterion(" :" + param + " member of " + field, field, entity);
 	}
-	
-	   /**
-     * @param field
-     * @param entity
-     * @return
-     */
-    public QueryBuilder addCriterionEntity(String field, Object entity) {
-        return addCriterionEntity(field, entity, " = ");
-    }
 
 	/**
 	 * @param field
 	 * @param entity
-     * @param condition Comparison type
+	 * @return
+	 */
+	public QueryBuilder addCriterionEntity(String field, Object entity) {
+		return addCriterionEntity(field, entity, " = ");
+	}
+
+	/**
+	 * @param field
+	 * @param entity
+	 * @param condition
+	 *            Comparison type
 	 * @return
 	 */
 	public QueryBuilder addCriterionEntity(String field, Object entity, String condition) {
@@ -280,24 +282,24 @@ public class QueryBuilder {
 
 		String param = convertFieldToParam(field);
 
-		return addSqlCriterion(field + condition+":" + param, param, entity);
+		return addSqlCriterion(field + condition + ":" + param, param, entity);
 	}
 
-	
-	/**
-     * @param field 
-     * @param enumValue
-     * @return
-     */
-	@SuppressWarnings("rawtypes")
-	public QueryBuilder addCriterionEnum(String field, Enum enumValue){
-	    return addCriterionEnum(field, enumValue, "=");
-	}
-	
 	/**
 	 * @param field
 	 * @param enumValue
-	 * @param condition Comparison type
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public QueryBuilder addCriterionEnum(String field, Enum enumValue) {
+		return addCriterionEnum(field, enumValue, "=");
+	}
+
+	/**
+	 * @param field
+	 * @param enumValue
+	 * @param condition
+	 *            Comparison type
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
@@ -307,24 +309,9 @@ public class QueryBuilder {
 
 		String param = convertFieldToParam(field);
 
-        return addSqlCriterion(field + " " + condition + ":" + param, param, enumValue);
-    }
+		return addSqlCriterion(field + " " + condition + ":" + param, param, enumValue);
+	}
 
-	/**
-     * Ajouter un critere like
-     * 
-     * @param field
-     * @param value
-     * @param style
-     *            : 0=aucun travail sur la valeur rechercher, 1=Recherche sur
-     *            dbut du mot, 2=Recherche partout dans le mot
-     * @param caseInsensitive
-     * @return
-     */
-    public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive){
-        return like(field, value, style, caseInsensitive, false);
-    }
-            
 	/**
 	 * Ajouter un critere like
 	 * 
@@ -334,55 +321,73 @@ public class QueryBuilder {
 	 *            : 0=aucun travail sur la valeur rechercher, 1=Recherche sur
 	 *            dbut du mot, 2=Recherche partout dans le mot
 	 * @param caseInsensitive
-     * @param addNot Should NOT be added to comparison
 	 * @return
 	 */
-    public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive, boolean addNot) {
+	public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive) {
+		return like(field, value, style, caseInsensitive, false);
+	}
+
+	/**
+	 * Ajouter un critere like
+	 * 
+	 * @param field
+	 * @param value
+	 * @param style
+	 *            : 0=aucun travail sur la valeur rechercher, 1=Recherche sur
+	 *            dbut du mot, 2=Recherche partout dans le mot
+	 * @param caseInsensitive
+	 * @param addNot
+	 *            Should NOT be added to comparison
+	 * @return
+	 */
+	public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive,
+			boolean addNot) {
 		if (StringUtils.isBlank(value)) {
 			return this;
 		}
 
 		String v = value;
 
-        if (style == QueryLikeStyleEnum.MATCH_BEGINNING || style == QueryLikeStyleEnum.MATCH_ANYWHERE) {
-            v = v + "%";
-        }
-        if (style == QueryLikeStyleEnum.MATCH_ANYWHERE) {
-            v = "%" + v;
-        }
+		if (style == QueryLikeStyleEnum.MATCH_BEGINNING || style == QueryLikeStyleEnum.MATCH_ANYWHERE) {
+			v = v + "%";
+		}
+		if (style == QueryLikeStyleEnum.MATCH_ANYWHERE) {
+			v = "%" + v;
+		}
 
-		return addCriterion(field, addNot? "not like ": " like ", v, caseInsensitive);
+		return addCriterion(field, addNot ? "not like " : " like ", v, caseInsensitive);
 	}
-	
-	   /**
-     * @param field
-     * @param value
-     * @param caseInsensitive
-     * @return
-     */
-    public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive){
-        return addCriterionWildcard(field, value, caseInsensitive, false);
-    }
 
 	/**
 	 * @param field
 	 * @param value
 	 * @param caseInsensitive
-     * @param addNot Should NOT be added to comparison
 	 * @return
 	 */
-    public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive, boolean addNot) {
-	    
-		if (StringUtils.isBlank(value)){
+	public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive) {
+		return addCriterionWildcard(field, value, caseInsensitive, false);
+	}
+
+	/**
+	 * @param field
+	 * @param value
+	 * @param caseInsensitive
+	 * @param addNot
+	 *            Should NOT be added to comparison
+	 * @return
+	 */
+	public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive, boolean addNot) {
+
+		if (StringUtils.isBlank(value)) {
 			return this;
 		}
 		boolean wildcard = (value.indexOf("*") != -1);
 
-        if (wildcard) {
-            return like(field, value.replace("*", "%"), QueryLikeStyleEnum.MATCH_EQUAL, caseInsensitive, addNot);
-        } else {
-            return addCriterion(field, addNot? " != ":" = ", value, caseInsensitive);
-        }
+		if (wildcard) {
+			return like(field, value.replace("*", "%"), QueryLikeStyleEnum.MATCH_EQUAL, caseInsensitive, addNot);
+		} else {
+			return addCriterion(field, addNot ? " != " : " = ", value, caseInsensitive);
+		}
 	}
 
 	/**
@@ -419,10 +424,8 @@ public class QueryBuilder {
 
 		String startDateParameterName = "start" + field.replace(".", "");
 		String endDateParameterName = "end" + field.replace(".", "");
-		return addSqlCriterion(field + ">=:" + startDateParameterName,
-				startDateParameterName, start)
-				.addSqlCriterion(field + "<=:" + endDateParameterName,
-						endDateParameterName, end);
+		return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start).addSqlCriterion(
+				field + "<=:" + endDateParameterName, endDateParameterName, end);
 	}
 
 	/**
@@ -430,8 +433,7 @@ public class QueryBuilder {
 	 * @param valueFrom
 	 * @return
 	 */
-	public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field,
-			Date valueFrom) {
+	public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field, Date valueFrom) {
 		if (StringUtils.isBlank(valueFrom))
 			return this;
 		Calendar calFrom = Calendar.getInstance();
@@ -443,8 +445,7 @@ public class QueryBuilder {
 		Date start = calFrom.getTime();
 
 		String startDateParameterName = "start" + field.replace(".", "");
-		return addSqlCriterion(field + ">=:" + startDateParameterName,
-				startDateParameterName, start);
+		return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start);
 	}
 
 	/**
@@ -452,8 +453,7 @@ public class QueryBuilder {
 	 * @param valueTo
 	 * @return
 	 */
-	public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field,
-			Date valueTo) {
+	public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo) {
 		if (StringUtils.isBlank(valueTo))
 			return this;
 		Calendar calTo = Calendar.getInstance();
@@ -465,8 +465,7 @@ public class QueryBuilder {
 		Date end = calTo.getTime();
 
 		String endDateParameterName = "end" + field.replace(".", "");
-		return addSqlCriterion(field + "<=:" + endDateParameterName,
-				endDateParameterName, end);
+		return addSqlCriterion(field + "<=:" + endDateParameterName, endDateParameterName, end);
 	}
 
 	/**
@@ -495,8 +494,8 @@ public class QueryBuilder {
 	 * @param ascending2
 	 * @return
 	 */
-	public QueryBuilder addOrderDoubleCriterion(String orderColumn,
-			boolean ascending, String orderColumn2, boolean ascending2) {
+	public QueryBuilder addOrderDoubleCriterion(String orderColumn, boolean ascending, String orderColumn2,
+			boolean ascending2) {
 		q.append(" ORDER BY " + orderColumn);
 		if (ascending) {
 			q.append(" ASC ");
@@ -517,8 +516,7 @@ public class QueryBuilder {
 	 * @param ascending
 	 * @return
 	 */
-	public QueryBuilder addOrderUniqueCriterion(String orderColumn,
-			boolean ascending) {
+	public QueryBuilder addOrderUniqueCriterion(String orderColumn, boolean ascending) {
 		q.append(" ORDER BY " + orderColumn);
 		if (ascending) {
 			q.append(" ASC ");
@@ -605,8 +603,7 @@ public class QueryBuilder {
 		field = field.replace(".", "_").replace("(", "_").replace(")", "_");
 		StringBuilder newField = new StringBuilder(field);
 		while (params.containsKey(newField.toString()))
-			newField = new StringBuilder(field).append("_"
-					+ String.valueOf(new Random().nextInt(100)));
+			newField = new StringBuilder(field).append("_" + String.valueOf(new Random().nextInt(100)));
 		return newField.toString();
 	}
 
@@ -618,8 +615,7 @@ public class QueryBuilder {
 			return;
 
 		if (paginationConfiguration.isSorted())
-			addOrderCriterion(((alias != null) ? (alias + ".") : "")
-					+ paginationConfiguration.getSortField(),
+			addOrderCriterion(((alias != null) ? (alias + ".") : "") + paginationConfiguration.getSortField(),
 					paginationConfiguration.isAscendingSorting());
 
 	}
@@ -632,20 +628,19 @@ public class QueryBuilder {
 			return;
 		}
 
-        if (paginationConfiguration.getFirstRow() != null) {
-            query.setFirstResult(paginationConfiguration.getFirstRow());
-        }
-        if (paginationConfiguration.getNumberOfRows() != null) {
-            query.setMaxResults(paginationConfiguration.getNumberOfRows());
-        }
+		if (paginationConfiguration.getFirstRow() != null) {
+			query.setFirstResult(paginationConfiguration.getFirstRow());
+		}
+		if (paginationConfiguration.getNumberOfRows() != null) {
+			query.setMaxResults(paginationConfiguration.getNumberOfRows());
+		}
 	}
 
 	/* DEBUG */
 	public void debug() {
 		System.out.println("Requete : " + q.toString());
 		for (Map.Entry<String, Object> e : params.entrySet())
-			System.out.println("Param name:" + e.getKey() + " value:"
-					+ e.getValue().toString());
+			System.out.println("Param name:" + e.getKey() + " value:" + e.getValue().toString());
 	}
 
 	public String getSqlString() {
@@ -663,10 +658,9 @@ public class QueryBuilder {
 	public String toString() {
 		String result = q.toString();
 		for (Map.Entry<String, Object> e : params.entrySet()) {
-			result = result + " Param name:" + e.getKey() + " value:"
-					+ e.getValue().toString();
+			result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
 		}
 		return result;
 	}
-	
+
 }

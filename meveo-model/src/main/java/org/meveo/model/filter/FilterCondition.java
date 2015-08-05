@@ -1,9 +1,13 @@
 package org.meveo.model.filter;
 
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -15,56 +19,24 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "MEVEO_FILTER_CONDITION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_CONDITION_SEQ")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "TYPE")
 public class FilterCondition extends BaseEntity {
 
 	private static final long serialVersionUID = -4620739918936998431L;
 
-	@Column(name = "FIELD_NAME", length = 60, nullable = false)
-	private String fieldName;
+	@OneToOne(mappedBy = "filterCondition")
+	public Filter filter;
 
-	@Column(name = "OPERAND", length = 60, nullable = false)
-	private String operand;
+	@Column(name = "FILTER_CONDITION_TYPE", length = 50, nullable = false)
+	public String filterConditionType;
 
-	@Column(name = "EL", length = 2000)
-	private String el;
-
-	@Column(name = "SQL", length = 2000)
-	private String sql;
-
-	@ManyToOne
-	@JoinColumn(name = "FILTER_ID")
-	private Filter filter;
-
-	public String getFieldName() {
-		return fieldName;
+	public boolean match(BaseEntity e) {
+		return false;
 	}
 
-	public void setFieldName(String fieldName) {
-		this.fieldName = fieldName;
-	}
-
-	public String getOperand() {
-		return operand;
-	}
-
-	public void setOperand(String operand) {
-		this.operand = operand;
-	}
-
-	public String getEl() {
-		return el;
-	}
-
-	public void setEl(String el) {
-		this.el = el;
-	}
-
-	public String getSql() {
-		return sql;
-	}
-
-	public void setSql(String sql) {
-		this.sql = sql;
+	public List<BaseEntity> filter(List<BaseEntity> e) {
+		return null;
 	}
 
 	public Filter getFilter() {
@@ -73,6 +45,23 @@ public class FilterCondition extends BaseEntity {
 
 	public void setFilter(Filter filter) {
 		this.filter = filter;
+	}
+
+	public String getFilterConditionType() {
+		return filterConditionType;
+	}
+
+	public void setFilterConditionType(String filterConditionType) {
+		this.filterConditionType = filterConditionType;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other == null || !(other instanceof FilterCondition)) {
+			return false;
+		}
+		FilterCondition o = (FilterCondition) other;
+		return (o.getId() != null) && o.getId().equals(this.getId());
 	}
 
 }

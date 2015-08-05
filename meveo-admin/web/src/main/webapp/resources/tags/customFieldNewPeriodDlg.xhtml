@@ -49,14 +49,16 @@
                                     value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.periodEndDate}">
                                 </p:calendar>
                             </hf:formDecorateField>
-
+                             <hf:formDecorateField fieldId="period_label" label="#{messages['customFieldTemplate.label']}" rendered="#{cc.attrs.cft.storageType=='MAP'}">
+                                <p:inputText id="period_label" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.label}" required="true"/>
+                            </hf:formDecorateField>
                             <hftl:decorateFormField label="#{messages['customFieldTemplate.periodValue']}#{cc.attrs.cft.valueRequired?' *':''}">
                                 <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod}" />
                             </hftl:decorateFormField>
 
                         </p:outputPanel>
                         <h:panelGroup layout="block" styleClass="form-panel-actions">
-                            <p:commandButton value="#{messages['commons.add']}" ajax="true" partialSubmit="true" process="@form" update="@form @([id$='periodTable'])"
+                            <p:commandButton value="#{messages['commons.add']}" ajax="true" partialSubmit="true" process="@form" update="@form @([id$='periodTable#{cc.attrs.cft.storageType=='MAP'?'Map':'List'}'])"
                                 action="#{cc.backingBeanFromParentOrCurrent.addNewCustomFieldPeriod}"
                                 disabled="#{cc.backingBeanFromParentOrCurrent.customFieldPeriodMatched and cc.attrs.cfi.calendar!=null}"
                                 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{cc.attrs.periodDialogWidget}').hide()" />

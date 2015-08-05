@@ -13,9 +13,12 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.apache.commons.codec.binary.Base64;
 
 @Entity
 @Table(name = "ADM_NOTIF_WEBHOOKS")
@@ -58,6 +61,12 @@ public class WebHook extends Notification {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "ADM_NOTIF_WEBHOOK_PARAM")
     private Map<String, String> params = new HashMap<String, String>();
+    
+    @Transient
+    private StringBuffer encodedHeaders = new StringBuffer();
+   
+    @Transient
+    private StringBuffer encodedParams = new StringBuffer();
 
     public String getHost() {
         return host;
@@ -142,4 +151,30 @@ public class WebHook extends Notification {
         builder.append("]");
         return builder.toString();
     }
+    
+    public StringBuffer getEncodedHeaders() {
+		StringBuffer headers=new StringBuffer();
+		if(getHeaders()!=null){
+			String sep="";
+			for(String key:getHeaders().keySet()){
+				String valueHeaders=getHeaders().get(key);
+				headers.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueHeaders.getBytes()));
+				sep="|";
+				}
+			}
+		return headers;
+	}
+    
+    public StringBuffer getEncodedParams() {
+		StringBuffer params=new StringBuffer();
+		if(getHeaders()!=null){
+			String sep="";
+			for(String key:getParams().keySet()){
+				String valueParams=getParams().get(key);
+				params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
+				sep="|";
+				}	
+			}
+		return params;
+	}
 }

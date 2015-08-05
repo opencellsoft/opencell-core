@@ -101,8 +101,9 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setVersionable(boolean versionable) {
         this.versionable = versionable;
-        if(versionable)
-        	this.storageType=CustomFieldStorageTypeEnum.LIST;
+        if(versionable){
+        	this.valueRequired=true;
+        }
     }
 
     public boolean isVersionable() {
@@ -160,7 +161,7 @@ public class CustomFieldTemplate extends BusinessEntity {
 
 	public void setStorageType(CustomFieldStorageTypeEnum storageType) {
 		this.storageType = storageType;
-		if(storageType==CustomFieldStorageTypeEnum.LIST){
+		if(storageType==CustomFieldStorageTypeEnum.LIST||storageType==CustomFieldStorageTypeEnum.MAP){
 			valueRequired=true;
 		}
 	}

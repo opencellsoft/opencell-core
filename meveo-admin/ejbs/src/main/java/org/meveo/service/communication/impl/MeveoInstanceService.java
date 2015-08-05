@@ -19,9 +19,14 @@ package org.meveo.service.communication.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.meveo.api.dto.communication.CommunicationRequestDto;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.event.communication.InboundCommunicationEvent;
+import org.meveo.event.monitoring.BusinessExceptionEvent;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
 
@@ -31,6 +36,9 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class MeveoInstanceService extends PersistenceService<MeveoInstance> {
 
+	@Inject
+	private Event<InboundCommunicationEvent> event;
+	
 	public MeveoInstance findByCode(String meveoInstanceCode) {
 		try {
 			QueryBuilder qb = new QueryBuilder(MeveoInstance.class, "c");
@@ -48,5 +56,11 @@ public class MeveoInstanceService extends PersistenceService<MeveoInstance> {
 			return null;
 		}
 		return meveoInstances.get(0);
+	}
+
+	public void fireInboundCommunicationEvent(CommunicationRequestDto communicationRequestDto) {
+		InboundCommunicationEvent inboundCommunicationEvent = new InboundCommunicationEvent();
+		inboundCommunicationEvent.setCommunicationRequestDto(communicationRequestDto);
+		event.fire(inboundCommunicationEvent);
 	}
 }

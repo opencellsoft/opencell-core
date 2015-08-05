@@ -1,19 +1,22 @@
 package org.meveo.admin.action.filter;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.DiscriminatorValue;
 
-import org.apache.commons.collections.FastHashMap;
-import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.Auditable;
+import org.meveo.model.filter.AndCompositeFilterCondition;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.filter.FilterCondition;
+import org.meveo.model.filter.FilterSelector;
+import org.meveo.model.filter.OrCompositeFilterCondition;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.filter.FilterConditionService;
+import org.meveo.service.filter.FilterSelectorService;
 import org.meveo.service.filter.FilterService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -26,15 +29,11 @@ public class FilterBean extends BaseBean<Filter> {
 
 	private static final long serialVersionUID = 6689238784280187702L;
 
-	private FilterCondition filterCondition = new FilterCondition();
-
 	@Inject
 	private FilterService filterService;
 
 	@Inject
-	private FilterConditionService filterConditionService;
-
-	private List<FilterCondition> filterConditions;
+	private FilterSelectorService filterSelectorService;
 
 	public FilterBean() {
 		super(Filter.class);
@@ -45,62 +44,66 @@ public class FilterBean extends BaseBean<Filter> {
 		return filterService;
 	}
 
-	public FilterCondition getFilterCondition() {
-		return filterCondition;
-	}
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		Filter filter = filterService.parse(entity.getInputXml());
 
-	public void setFilterCondition(FilterCondition filterCondition) {
-		this.filterCondition = filterCondition;
-	}
+		Auditable auditable = new Auditable();
+		auditable.setCreated(new Date());
+		auditable.setCreator(getCurrentUser());
 
-	public void newFilterCondition() {
-		filterCondition = new FilterCondition();
-	}
+		if (filter.getOrderCondition() != null) {
+			filter.getOrderCondition().setProvider(getCurrentProvider());
+			entity.setOrderCondition(filter.getOrderCondition());
+		}
 
-	public void saveFilterCondition() {
-		if (filterCondition != null) {
-			try {
-				if (filterCondition.isTransient()) {
-					// save
-					filterCondition.setFilter(entity);
-					filterConditionService.create(filterCondition);
-					entity.getFilterConditions().put(filterCondition.getOperand(), filterCondition);
-					messages.info(new BundleKey("messages", "save.successful"));
-				} else {
-					// update
-					filterConditionService.update(filterCondition);
-					messages.info(new BundleKey("messages", "update.successful"));
-				}
-			} catch (BusinessException e) {
-				log.error("exception when saving filter condition!", e);
+		if (filter.getPrimarySelector() != null) {
+			filter.getPrimarySelector().setProvider(getCurrentProvider());
+			entity.setPrimarySelector(filter.getPrimarySelector());
+		}
+
+		if (filter.getSecondarySelectors() != null) {
+			if (entity.getSecondarySelectors() == null) {
+				entity.setSecondarySelectors(new ArrayList<FilterSelector>());
+			}
+			for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
+				filterSelector.setProvider(getCurrentProvider());
+				filterSelectorService.create(filterSelector);
+				entity.getSecondarySelectors().add(filterSelector);
 			}
 		}
 
-		filterCondition = new FilterCondition();
-		updateFilterConditions();
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void updateFilterConditions() {
-		if (entity.getFilterConditions() != null) {
-			FastHashMap filterConditionMap = new FastHashMap(entity.getFilterConditions());
-			filterConditions = new ArrayList(filterConditionMap.values());
+		// process filterCondition
+		if (filter.getFilterCondition() != null) {
+			getEntity().setFilterCondition(setProviderToFilterCondition(filter.getFilterCondition()));
 		}
+
+		return super.saveOrUpdate(killConversation);
 	}
 
-	public List<FilterCondition> getFilterConditions() {
-		return filterConditions;
-	}
+	private FilterCondition setProviderToFilterCondition(FilterCondition filterCondition) {
+		filterCondition.setProvider(getCurrentProvider());
 
-	public void deleteFilterCondition(FilterCondition e) {
-		filterConditionService.remove(e);
-		entity.getFilterConditions().remove(e);
-		updateFilterConditions();
+		if (filterCondition.getFilterConditionType().equals(
+				AndCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
+			AndCompositeFilterCondition andCompositeFilterCondition = (AndCompositeFilterCondition) filterCondition;
+			if (andCompositeFilterCondition.getFilterConditions() != null) {
+				for (FilterCondition filterConditionLoop : andCompositeFilterCondition.getFilterConditions()) {
+					setProviderToFilterCondition(filterConditionLoop);
+				}
+			}
+		}
 
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
+		if (filterCondition.getFilterConditionType().equals(
+				OrCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
+			OrCompositeFilterCondition orCompositeFilterCondition = (OrCompositeFilterCondition) filterCondition;
+			if (orCompositeFilterCondition.getFilterConditions() != null) {
+				for (FilterCondition filterConditionLoop : orCompositeFilterCondition.getFilterConditions()) {
+					setProviderToFilterCondition(filterConditionLoop);
+				}
+			}
+		}
 
-	public void editFilterCondition(FilterCondition e) {
-		this.filterCondition = e;
+		return filterCondition;
 	}
 }

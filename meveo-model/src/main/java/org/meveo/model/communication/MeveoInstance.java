@@ -38,6 +38,8 @@ import org.meveo.model.crm.Customer;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MEVEO_INSTANCE_SEQ")
 public class MeveoInstance extends BusinessEntity {
 
+    private static final long serialVersionUID = 1733186433208397850L;
+
     @OneToOne
     @JoinColumn(name = "USER_ID")
     private User user;
@@ -118,7 +120,13 @@ public class MeveoInstance extends BusinessEntity {
 
     @Column(name = "URL", nullable = false)
     private String url;
-
+    
+    @Column(name = "AUTH_USERNAME")
+    private String authUsername;
+    
+    @Column(name = "AUTH_PASSWORD")
+    private String authPassword;
+    
     public MeveoInstance() {
 
     }
@@ -479,5 +487,21 @@ public class MeveoInstance extends BusinessEntity {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getAuthUsername() {
+        return authUsername;
+    }
+
+    public void setAuthUsername(String authUsername) {
+        this.authUsername = authUsername;
+    }
+
+    public String getAuthPassword() {
+        return authPassword;
+    }
+
+    public void setAuthPassword(String authPassword) {
+        this.authPassword = authPassword;
     }
 }

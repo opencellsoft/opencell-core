@@ -73,7 +73,7 @@ public class ProviderService extends PersistenceService<Provider> {
 		QueryBuilder qb = new QueryBuilder(Provider.class, "p", fetchFields,
 				null);
 
-		qb.addCriterion("code", "=", code, true);
+		qb.addCriterion("p.code", "=", code, true);
 
 		try {
 			return (Provider) qb.getQuery(getEntityManager()).getSingleResult();

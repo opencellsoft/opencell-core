@@ -42,7 +42,7 @@
                     </hftl:decorateFormField>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP or cft.storageType eq CustomFieldStorageTypeEnum.LIST}">
-                	<hftl:customFieldListTable cft="#{cft}" />
+                	<hftl:customFieldListTable cft="#{cft}" backingBean="#{cc.backingBeanFromParentOrCurrent}"/>
                 </h:panelGroup>
 
                     <c:set var="InheritedStringValue" value="#{cc.backingBeanFromParentOrCurrent.entity.getICsv(cft.code)}" />
@@ -80,23 +80,72 @@
 
                 <h:panelGroup rendered="#{cft.versionable and (not cft.disabled or (cft.disabled and not cft.instance.isValueEmpty()))}">
                 	<hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="true">
-                        <p:dataTable id="periodTable" lazy="false" value="#{cft.instance.valuePeriods}" var="period" sortField="#{cft.instance.calendar!=null?period.periodStartDate:period.priority}" editable="true" editMode="cell"
-                            resizableColumns="true" reflow="true">
+                        <p:dataTable id="periodTableList" lazy="false" value="#{cft.instance.valuePeriods}" var="period" sortField="#{cft.instance.calendar!=null?period.periodStartDate:period.priority}" editable="true" editMode="cell"
+                            resizableColumns="true" reflow="true" rendered="#{cft.storageType=='LIST'}">
                             <p:ajax event="cellEdit" update="#{cc.attrs.messagesId}" />
                             <p:column headerText="#{messages['customFieldTemplate.priority']}" width="10%" sortBy="#{period.priority}" rendered="#{cft.instance.calendar==null}">
                                 <h:outputText value="#{period.priority}"></h:outputText>
                             </p:column>
-                            <p:column headerText="#{messages['customFieldTemplate.periodStartDate']}" width="13%" sortBy="#{period.periodStartDate}">
+                            <p:column headerText="#{messages['customFieldTemplate.periodStartDate']}" width="15%" sortBy="#{period.periodStartDate}">
                                 <h:outputText value="#{period.periodStartDate}">
                                     <f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="#{messages['customFieldTemplate.periodEndDate']}" width="13%" sortBy="#{period.periodEndDate}">
+                            <p:column headerText="#{messages['customFieldTemplate.periodEndDate']}" width="15%" sortBy="#{period.periodEndDate}">
                                 <h:outputText value="#{period.periodEndDate}">
                                     <f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="#{messages['customFieldTemplate.periodValue']}" rendered="#{cft.fieldType!='ENTITY'}">
+                            <p:column headerText="#{messages['customFieldTemplate.periodValue']}">
+<!--                                 <h:outputText value="#{period.businessEntity.code}" /> -->
+								<p:cellEditor>
+                                    <f:facet name="output">
+                                        <hftl:customFieldValueField field="#{period}" cft="#{cft}" edit="false"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                    	<hftl:customFieldValueField field="#{period}" cft="#{cft}" edit="true"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            
+                            <p:column headerText="#{messages['commons.actions']}" width="10%">
+                                <p:commandButton id="deletelink" action="#{cft.instance.removeValuePeriod(period)}" partialSubmit="true" icon="ui-icon-trash" update="periodTableList"
+                                    process="@this periodTableList" />
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton value="#{messages['commons.addNew']}" immediate="true" rendered="#{cc.attrs.edit}"
+                                    update="#{cc.attrs.periodDialogIdPrefix}:customFieldNewPeriodDlg:form:newPeriodFields" onsuccess="PF('#{cc.attrs.periodDialogWidget}').show()">
+                                    <f:setPropertyActionListener target="#{cc.backingBeanFromParentOrCurrent.customFieldSelectedTemplate}" value="#{cft}" />
+                                </p:commandButton>
+                            </f:facet>
+                        </p:dataTable>
+                        <p:dataTable id="periodTableMap" lazy="false" value="#{cft.instance.valuePeriods}" var="period" sortField="#{cft.instance.calendar!=null?period.periodStartDate:period.priority}" editable="true" editMode="cell"
+                            resizableColumns="true" reflow="true" rendered="#{cft.storageType=='MAP'}">
+                            <p:ajax event="cellEdit" update="#{cc.attrs.messagesId}" />
+                            <p:column headerText="#{messages['customFieldTemplate.priority']}" width="10%" sortBy="#{period.priority}" rendered="#{cft.instance.calendar==null}">
+                                <h:outputText value="#{period.priority}"></h:outputText>
+                            </p:column>
+                            <p:column headerText="#{messages['customFieldTemplate.periodStartDate']}" width="15%" sortBy="#{period.periodStartDate}">
+                                <h:outputText value="#{period.periodStartDate}">
+                                    <f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{messages['customFieldTemplate.periodEndDate']}" width="15%" sortBy="#{period.periodEndDate}">
+                                <h:outputText value="#{period.periodEndDate}">
+                                    <f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{messages['customFieldTemplate.label']}" width="20%" sortBy="#{period.label}">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{period.label}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{period.label}" required="true"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="#{messages['customFieldTemplate.periodValue']}">
                                 <p:cellEditor>
                                     <f:facet name="output">
                                         <hftl:customFieldValueField edit="false" cft="#{cft}" field="#{period}"/>
@@ -106,13 +155,9 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column headerText="#{messages['customFieldTemplate.periodValue']}"  rendered="#{cft.fieldType=='ENTITY'}">
-                                <h:outputText value="#{period.businessEntity.code}" />
-                            </p:column>
-                            
                             <p:column headerText="#{messages['commons.actions']}" width="10%">
-                                <p:commandButton id="deletelink" action="#{cft.instance.removeValuePeriod(period)}" partialSubmit="true" icon="ui-icon-trash" update="periodTable"
-                                    process="@this periodTable" />
+                                <p:commandButton id="deletelink" action="#{cft.instance.removeValuePeriod(period)}" partialSubmit="true" icon="ui-icon-trash" update="periodTableMap"
+                                    process="@this periodTableMap" />
                             </p:column>
                             <f:facet name="footer">
                                 <p:commandButton value="#{messages['commons.addNew']}" immediate="true" rendered="#{cc.attrs.edit}"

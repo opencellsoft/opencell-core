@@ -1,9 +1,7 @@
 package org.meveo.admin.action.notification;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -74,7 +72,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
     private static final int SUBJECT= 9;
     private static final int TEXT_BODY= 10;
     private static final int HTML_BODY= 11;
-    private static final int COUNTER_TEMPLATE= 13;
+    private static final int COUNTER_TEMPLATE= 12;
 
 	public EmailNotificationBean() {
 		super(EmailNotification.class);
@@ -106,52 +104,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
             messages.error(new BundleKey("messages", "import.csv.failed"), e.getClass().getSimpleName() + " " + e.getMessage());
         }
     }
-	
-	public void exportToFile() throws Exception {
-		CsvBuilder csv = new CsvBuilder();
-		csv.appendValue("Code");
-		csv.appendValue("Classename filter");
-		csv.appendValue("Event type filter");
-		csv.appendValue("El filter");
-		csv.appendValue("Active");
-		csv.appendValue("El action");
-		csv.appendValue("Sent from");
-		csv.appendValue("Send to EL");
-		csv.appendValue("Send to mailing list");
-		csv.appendValue("Subject");
-		csv.appendValue("Text body");
-		csv.appendValue("HTML body");
-		csv.appendValue("Attachments EL");
-		csv.appendValue("Counter template");
-		csv.startNewLine();
-		for (EmailNotification emailNotification :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():emailNotificationService.list()) {
-			csv.appendValue(emailNotification.getCode());
-			csv.appendValue(emailNotification.getClassNameFilter());
-			csv.appendValue(emailNotification.getEventTypeFilter() + "");
-			csv.appendValue(emailNotification.getElFilter());
-			csv.appendValue(emailNotification.isDisabled() + "");
-			csv.appendValue(emailNotification.getElAction());
-			csv.appendValue(emailNotification.getEmailFrom());
-			csv.appendValue(emailNotification.getEmailToEl());
-			String sepEmail = "";
-			StringBuffer emails = new StringBuffer();
-			for (String email : emailNotification.getEmails()) {
-				emails.append(sepEmail).append(email);
-				sepEmail = ",";
-			}
-			csv.appendValue(emails.toString());
-			csv.appendValue(emailNotification.getSubject());
-			csv.appendValue(emailNotification.getBody());
-			csv.appendValue(emailNotification.getHtmlBody());
-			csv.appendValue(emailNotification.getAttachmentExpressions() + "");
-			csv.appendValue(emailNotification.getCounterTemplate() != null ? emailNotification
-					.getCounterTemplate().getCode() : null);
-			csv.startNewLine();
-        }
-        InputStream inputStream=new ByteArrayInputStream(csv.toString().getBytes());
-        csv.download(inputStream, "EmailNotifications.csv");
-    }
-
+ 
     private void upload() throws IOException, BusinessException  {
         if (file == null) {
             return;
@@ -180,11 +133,12 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
                 emailNotif.setElAction(values[EL_ACTION]);
                 emailNotif.setEmailFrom(values[SENT_FROM]);
                 emailNotif.setEmailToEl(values[SEND_TO_EL]);
-                String emails = values[SEND_TO_MAILING_LIST];
+                String emails = values[SEND_TO_MAILING_LIST].replace("[","").replace("]","");
                 if (!StringUtils.isBlank(emails)) {
                     String[] emailList = emails.split(",");
                     List<String> listMail = Arrays.asList(emailList);
                     for (String email : listMail) {
+                    	    email=email.trim();
                         if (emailNotif.getEmails() == null) {
                             emailNotif.setEmails(new HashSet<String>());
                         }
@@ -193,7 +147,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
                 }
                 emailNotif.setSubject(values[SUBJECT]);
                 emailNotif.setBody(values[TEXT_BODY]);
-                emailNotif.setElAction(values[HTML_BODY]);
+                emailNotif.setHtmlBody(values[HTML_BODY]);
                 if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
                     CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
                     emailNotif.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
@@ -218,11 +172,12 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 			existingEntity.setElAction(values[EL_ACTION]);
 			existingEntity.setEmailFrom(values[SENT_FROM]);
 			existingEntity.setEmailToEl(values[SEND_TO_EL]);
-			String emails = values[SEND_TO_MAILING_LIST];
+			String emails = values[SEND_TO_MAILING_LIST].replace("[","").replace("]","");;
 			if (!StringUtils.isBlank(emails)) {
 				String[] emailList = emails.split(",");
 				List<String> listMail = Arrays.asList(emailList);
 				for (String email : listMail) {
+					    email=email.trim();
 					if (existingEntity.getEmails() == null) {
 						existingEntity
 								.setEmails(new HashSet<String>());
@@ -256,7 +211,6 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 				csv.appendValue("Subject");
 				csv.appendValue("Text body");
 				csv.appendValue("HTML body");
-				csv.appendValue("Attachments EL");
 				csv.appendValue("Counter template");
 			}
 			csv.startNewLine();

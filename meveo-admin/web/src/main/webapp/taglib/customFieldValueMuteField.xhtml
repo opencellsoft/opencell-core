@@ -28,6 +28,7 @@
         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     </c:if>
     <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
         <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
         <p:inputText value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
@@ -50,6 +51,14 @@
             <f:convertNumber integerOnly="true" />
         </p:inputText>
     </h:panelGroup>
+    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType!= CustomFieldStorageTypeEnum.SINGLE and !cft.versionable)}">
+		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field}" edit="#{edit}" />
+		<h:outputText value="#{field.code}" rendered="#{!edit}"/>
+	 </h:panelGroup>
+	 <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType!= CustomFieldStorageTypeEnum.SINGLE and cft.versionable)}">
+		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field}" edit="#{edit}" />
+		<h:outputText value="#{field.businessEntity.code}" rendered="#{!edit}"/>
+	 </h:panelGroup>
 
 </ui:composition>
 

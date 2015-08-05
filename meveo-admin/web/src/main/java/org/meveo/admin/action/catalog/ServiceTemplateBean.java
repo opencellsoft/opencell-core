@@ -27,6 +27,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
@@ -52,7 +53,7 @@ import org.primefaces.model.DualListModel;
 @Named
 @ViewScoped
 @CustomFieldEnabledBean(accountLevel = AccountLevelEnum.SERVICE)
-public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
+public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
 	private static final long serialVersionUID = 1L;
 	

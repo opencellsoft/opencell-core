@@ -47,6 +47,8 @@ import org.slf4j.Logger;
 @Singleton
 public class RatingCacheContainerProvider {
 
+    public static String COUNTER_CACHE = "counterCache";
+
     @Inject
     protected Logger log;
 
@@ -236,7 +238,7 @@ public class RatingCacheContainerProvider {
             }
             index++;
         }
-        
+
         pricePlanCache.replace(cacheKey, chargePriceList);
     }
 
@@ -502,7 +504,7 @@ public class RatingCacheContainerProvider {
             populatePricePlanCache();
         }
         if (cacheName == null || cacheName.equals(usageChargeTemplateCacheCache.getName()) || cacheName.equals(usageChargeInstanceCache.getName())
-                || cacheName.equals(counterCache.getName())) {
+                || cacheName.equals(counterCache.getName()) || cacheName.equals(COUNTER_CACHE)) {
             populateUsageChargeCache();
         }
     }

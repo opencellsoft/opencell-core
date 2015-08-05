@@ -12,6 +12,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -125,4 +126,10 @@ public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
 			"org.meveo.model.catalog.DiscountPlan",
 			"org.meveo.model.communication.email.EmailTemplate");
 
+    /**
+     * get storage types for storage list and map
+     */
+    public List<CustomFieldStorageTypeEnum> getListEnum(){
+    	return Arrays.asList(CustomFieldStorageTypeEnum.LIST,CustomFieldStorageTypeEnum.MAP);
+    }
 }
