@@ -60,7 +60,7 @@
 		</hftl:entityPopup>
 
 		<hf:formPanel label="#{messages['serviceInstance.panel']}" id="formPanel" killConversationOnBack="false" killConversationOnSave="false"
-			backingBean="#{serviceInstanceBean}" columns="2" objectIdParamName="serviceInstanceId">
+			backingBean="#{serviceInstanceBean}" columns="2" objectIdParamName="serviceInstanceId" showDeleteButton="#{serviceInstanceBean.entity.status eq 'INACTIVE'}">
 
 			<hf:formField id="serviceSelectedId"
 				label="#{messages['serviceInstance.code']}" field="serviceTemplate"
