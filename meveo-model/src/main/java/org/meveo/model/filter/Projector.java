@@ -6,33 +6,22 @@ import java.util.List;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.validation.constraint.ClassName;
 
 /**
  * @author Edward P. Legaspi
  **/
-@Entity
-@Table(name = "MEVEO_PROJECTOR")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_PROJECTOR_SEQ")
+// @Entity
+// @Table(name = "MEVEO_PROJECTOR")
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "MEVEO_PROJECTOR_SEQ")
 public class Projector extends BusinessEntity {
 
 	private static final long serialVersionUID = -6179228494065206254L;
-
-	@ClassName
-	@Size(max = 100)
-	@NotNull
-	@Column(name = "TARGET_ENTITY", length = 100, nullable = false)
-	private String targetEntity;
 
 	/**
 	 * List of field names to display or export.
@@ -57,14 +46,6 @@ public class Projector extends BusinessEntity {
 
 	@OneToOne(mappedBy = "projector")
 	public FilterSelector filterSelector;
-
-	public String getTargetEntity() {
-		return targetEntity;
-	}
-
-	public void setTargetEntity(String targetEntity) {
-		this.targetEntity = targetEntity;
-	}
 
 	public List<String> getDisplayFields() {
 		return displayFields;

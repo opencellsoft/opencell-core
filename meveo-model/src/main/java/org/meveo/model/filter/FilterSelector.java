@@ -1,10 +1,14 @@
 package org.meveo.model.filter;
 
-import javax.persistence.CascadeType;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -32,9 +36,26 @@ public class FilterSelector extends BaseEntity {
 	@Column(name = "ALIAS", length = 50, nullable = false)
 	private String alias;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "PROJECTOR_ID")
-	private Projector projector;
+	/**
+	 * List of field names to display or export.
+	 */
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name = "MEVEO_FILTER_SELECTOR_DISPLAY_FIELDS", joinColumns = @JoinColumn(name = "FILTER_SELECTOR_ID"))
+	@Column(name = "DISPLAY_FIELD")
+	private List<String> displayFields = new ArrayList<String>();
+
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name = "MEVEO_FILTER_SELECTOR_EXPORT_FIELDS", joinColumns = @JoinColumn(name = "FILTER_SELECTOR_ID"))
+	@Column(name = "EXPORT_FIELD")
+	private List<String> exportFields = new ArrayList<String>();
+
+	/**
+	 * List of fields to ignore if foreign key not found.
+	 */
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name = "MEVEO_FILTER_SELECTOR_IGNORE_FIELDS", joinColumns = @JoinColumn(name = "FILTER_SELECTOR_ID"))
+	@Column(name = "IGNORED_FIELD")
+	private List<String> ignoreIfNotFoundForeignKeys = new ArrayList<String>();
 
 	public String getTargetEntity() {
 		return targetEntity;
@@ -52,14 +73,6 @@ public class FilterSelector extends BaseEntity {
 		this.alias = alias;
 	}
 
-	public Projector getProjector() {
-		return projector;
-	}
-
-	public void setProjector(Projector projector) {
-		this.projector = projector;
-	}
-	
 	@Override
 	public boolean equals(Object other) {
 		if (other == null || !(other instanceof FilterSelector)) {
@@ -67,6 +80,30 @@ public class FilterSelector extends BaseEntity {
 		}
 		FilterSelector o = (FilterSelector) other;
 		return (o.getId() != null) && o.getId().equals(this.getId());
+	}
+
+	public List<String> getDisplayFields() {
+		return displayFields;
+	}
+
+	public void setDisplayFields(List<String> displayFields) {
+		this.displayFields = displayFields;
+	}
+
+	public List<String> getExportFields() {
+		return exportFields;
+	}
+
+	public void setExportFields(List<String> exportFields) {
+		this.exportFields = exportFields;
+	}
+
+	public List<String> getIgnoreIfNotFoundForeignKeys() {
+		return ignoreIfNotFoundForeignKeys;
+	}
+
+	public void setIgnoreIfNotFoundForeignKeys(List<String> ignoreIfNotFoundForeignKeys) {
+		this.ignoreIfNotFoundForeignKeys = ignoreIfNotFoundForeignKeys;
 	}
 
 }

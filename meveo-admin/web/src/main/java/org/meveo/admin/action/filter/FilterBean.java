@@ -59,10 +59,6 @@ public class FilterBean extends BaseBean<Filter> {
 
 		if (filter.getPrimarySelector() != null) {
 			filter.getPrimarySelector().setProvider(getCurrentProvider());
-			if (filter.getPrimarySelector().getProjector() != null) {
-				filter.getPrimarySelector().getProjector().setProvider(getCurrentProvider());
-				filter.getPrimarySelector().getProjector().setAuditable(auditable);
-			}
 			entity.setPrimarySelector(filter.getPrimarySelector());
 		}
 
@@ -72,13 +68,7 @@ public class FilterBean extends BaseBean<Filter> {
 			}
 			for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
 				filterSelector.setProvider(getCurrentProvider());
-				if (filterSelector.getProjector() != null) {
-					filterSelector.getProjector().setProvider(getCurrentProvider());
-					filterSelector.getProjector().setAuditable(auditable);
-				}
-
 				filterSelectorService.create(filterSelector);
-
 				entity.getSecondarySelectors().add(filterSelector);
 			}
 		}

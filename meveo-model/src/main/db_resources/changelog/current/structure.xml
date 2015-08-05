@@ -1301,4 +1301,48 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="#971_20150805" author="EdwardLegaspi">
+		<dropForeignKeyConstraint baseTableName="meveo_filter_selector" constraintName="fk_meveo_filter_selector_meveo_projector"/>
+		<dropColumn tableName="meveo_filter_selector" columnName="projector_id"/>
+		<dropTable tableName="meveo_projector_display_fields"/>
+		<dropTable tableName="meveo_projector_export_fields"/>
+		<dropTable tableName="meveo_projector_ignore_fields"/>
+		<dropSequence sequenceName="meveo_projector_seq"/>
+		<dropTable tableName="meveo_projector"/>
+		
+		<createTable tableName="meveo_filter_selector_display_fields">
+			<column name="filter_selector_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="display_field" type="VARCHAR(100)"></column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="filter_selector_id"
+			baseTableName="meveo_filter_selector_display_fields" constraintName="fk_meveo_filter_selector_display_fields"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter_selector" />
+			
+		<createTable tableName="meveo_filter_selector_export_fields">
+			<column name="filter_selector_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="export_field" type="VARCHAR(100)"></column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="filter_selector_id"
+			baseTableName="meveo_filter_selector_export_fields" constraintName="fk_meveo_filter_selector_export_fields"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter_selector" />
+			
+		<createTable tableName="meveo_filter_selector_ignore_fields">
+			<column name="filter_selector_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="ignored_field" type="VARCHAR(100)"></column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="filter_selector_id"
+			baseTableName="meveo_filter_selector_ignore_fields" constraintName="fk_filter_selector_ignore_fields"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter_selector" />
+			
+	</changeSet>
+	
 </databaseChangeLog>

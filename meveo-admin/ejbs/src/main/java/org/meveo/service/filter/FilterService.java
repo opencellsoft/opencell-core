@@ -6,7 +6,7 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.filter.FilterSelector;
 import org.meveo.model.filter.OrderCondition;
 import org.meveo.model.filter.Projector;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
@@ -17,7 +17,7 @@ import com.thoughtworks.xstream.mapper.ClassAliasingMapper;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class FilterService extends PersistenceService<Filter> {
+public class FilterService extends BusinessService<Filter> {
 
 	public Filter parse(String xmlInput) throws XStreamException {
 		Filter result = new Filter();

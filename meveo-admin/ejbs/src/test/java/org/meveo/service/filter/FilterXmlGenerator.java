@@ -43,14 +43,6 @@ public class FilterXmlGenerator {
 	}
 
 	public String generate() {
-		Projector projector = new Projector();
-		projector.setCode("PROJ_1");
-		projector.setDescription("proj_1");
-		projector.setTargetEntity("org.meveo.model.billing.BillingAccount");
-		projector.setDisplayFields(new ArrayList<>(Arrays.asList("id", "code", "status")));
-		projector.setExportFields(new ArrayList<>(Arrays.asList("id", "code", "status")));
-		projector.setIgnoreIfNotFoundForeignKeys(new ArrayList<>(Arrays.asList("version")));
-
 		AndCompositeFilterCondition andCompositeFilterCondition = new AndCompositeFilterCondition();
 		andCompositeFilterCondition.setFilterConditionType(AndCompositeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
@@ -96,14 +88,12 @@ public class FilterXmlGenerator {
 		FilterSelector filterSelector1 = new FilterSelector();
 		filterSelector1.setTargetEntity("org.meveo.model.payments.CustomerAccount");
 		filterSelector1.setAlias("ca");
-		filterSelector1.setProjector(projector);
 
 		filterSelectors.add(filterSelector1);
 
 		FilterSelector filterSelector2 = new FilterSelector();
 		filterSelector2.setTargetEntity("org.meveo.model.payments.CustomerAccount");
 		filterSelector2.setAlias("ca");
-		filterSelector2.setProjector(projector);
 
 		filterSelectors.add(filterSelector2);
 
