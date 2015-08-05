@@ -1,12 +1,17 @@
 package org.meveo.service.filter;
 
+import java.util.Map;
+
 import javax.ejb.Stateless;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.filter.FilterSelector;
+import org.meveo.model.filter.NativeFilterCondition;
 import org.meveo.model.filter.OrderCondition;
 import org.meveo.model.filter.Projector;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
@@ -61,4 +66,12 @@ public class FilterService extends BusinessService<Filter> {
 		return xStream;
 	}
 
+	public boolean isMatch(NativeFilterCondition filter, Map<Object, Object> params) {
+		try {
+			return ((Boolean) ValueExpressionWrapper.evaluateExpression(filter.getEl(), params, Boolean.class))
+					.booleanValue();
+		} catch (BusinessException e) {
+			return false;
+		}
+	}
 }

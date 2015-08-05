@@ -73,6 +73,7 @@ public class BaseFilterTest {
 
 		// filter
 		result = result.addPackages(true, "org/meveo/service/filter");
+		result = result.addPackages(true, "org/meveo/service/base");
 
 		// add exceptions
 		result = result.addPackage("org/meveo/admin/exception");
