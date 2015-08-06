@@ -209,9 +209,25 @@
 										<hftl:column
 											label="#{messages['serviceInstance.endAgrementDate']}"
 											field="endAgrementDate" showSortLinks="false" isDate="true" />
-										<hftl:actionsColumn editView="serviceInstanceDetail" renderEditLink="true"
-											renderDeleteLink="false" backView="subscriptionDetailWithNavigation"
-											objectIdParamName="serviceInstanceId" />
+										<p:column width="55"> 
+										<f:facet name="header">
+										<h:outputText value="Actions" />
+									   </f:facet>
+										<p:button id="usagesButton" outcome="serviceInstanceDetail" icon="ui-icon-document">
+										<f:param name="serviceInstanceId" value="#{entity.id}" />
+										<f:param name="edit" value="true" /> 
+										<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+										<f:param name="backView" value="subscriptionDetailWithNavigation" /> 
+										</p:button>
+										<p:commandButton rendered="#{entity.status eq 'INACTIVE'}"
+										action="#{subscriptionBean.deleteServiceInstance(entity)}"
+										icon="ui-icon-trash"
+										update=":#{p:component('serviceTab')}">
+										<p:confirm header="#{messages['message.confirmation']}"
+										message="#{messages['commons.confirmDelete']}"
+										icon="ui-icon-alert" />
+										</p:commandButton>
+										</p:column>
 									</p:dataTable>
 								</h:form>
 								<p:outputPanel id="serviceInstOperations">

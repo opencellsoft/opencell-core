@@ -722,6 +722,20 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 		return result;
 	}
+	
+	
+	public void deleteServiceInstance(ServiceInstance serviceInstance){
+	   try{
+		serviceTemplates.add(serviceInstance.getServiceTemplate());
+		serviceInstanceService.remove(serviceInstance.getId());
+		serviceInstances.remove(serviceInstance);
+		messages.info(new BundleKey("messages", "delete.successful"));
+		}
+		  catch (Exception e) {
+			log.error("exception when delete service instance!",e);
+			messages.error(e.getMessage());
+		 }	
+	}
 
 	public WalletTemplate getSelectedWalletTemplate() {
 		return selectedWalletTemplate;
