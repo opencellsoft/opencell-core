@@ -36,7 +36,7 @@ public class FilterXmlGenerator {
 		try {
 			XStream xStream = getXStream();
 			Filter filter = (Filter) xStream.fromXML(input);
-			System.out.println(filter);
+			//System.out.println(filter);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
