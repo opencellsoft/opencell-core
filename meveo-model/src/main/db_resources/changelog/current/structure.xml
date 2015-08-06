@@ -1345,4 +1345,10 @@
 			
 	</changeSet>
 	
+		<changeSet id="#981_20150805" author="Mbarek">
+			<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+				<column name="display_edrs" type="BOOL" defaultValueBoolean="false"></column>
+			</addColumn>
+		</changeSet>
+	
 </databaseChangeLog>
