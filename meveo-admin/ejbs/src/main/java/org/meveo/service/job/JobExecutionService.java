@@ -40,76 +40,75 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
-	@Inject
-	private JobInstanceService jobInstanceService;
+    @Inject
+    private JobInstanceService jobInstanceService;
 
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void executeJob(String jobName, JobInstance jobInstance, User currentUser, JobCategoryEnum jobCategory) {
-		try {
-			HashMap<String, String> jobs = JobInstanceService.jobEntries.get(jobCategory);
-			InitialContext ic = new InitialContext();
-			Job job = (Job) ic.lookup(jobs.get(jobName));
-			job.execute(jobInstance, currentUser);
-		} catch (Exception e) {
-			log.error("failed to execute timer job",e);
-		}
-	}
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void executeJob(String jobName, JobInstance jobInstance, User currentUser, JobCategoryEnum jobCategory) {
+        try {
+            HashMap<String, String> jobs = JobInstanceService.jobEntries.get(jobCategory);
+            InitialContext ic = new InitialContext();
+            Job job = (Job) ic.lookup(jobs.get(jobName));
+            job.execute(jobInstance, currentUser);
+        } catch (Exception e) {
+            log.error("failed to execute timer job", e);
+        }
+    }
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void persistResult(Job job, JobExecutionResult result, JobInstance jobInstance, User currentUser, JobCategoryEnum jobCategory) {
-		try {
-			log.info("JobExecutionService persistResult...");
-			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(), result);
-			if (!entity.isDone() || (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity.getNbItemsProcessedWithWarning()) > 0) {
-				if (entity.isTransient()) {
-					create(entity, currentUser, currentUser.getProvider());
-				} else {
-					//search for job execution result
-					JobExecutionResultImpl updateEntity = findById(result.getId());
-					JobExecutionResultImpl.updateFromInterface(job.getClass().getSimpleName(), result, updateEntity);					
-				}
-				result.setId(entity.getId());
-				log.info("PersistResult entity.isDone()=" + entity.isDone());
-				if (!entity.isDone()) {
-					executeJob(job.getClass().getSimpleName(), jobInstance, currentUser, jobCategory);
-				} else if (jobInstance.getFollowingJob() != null) {
-					try {
-						executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(),
-								currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
-					} catch (Exception e) {
-						log.warn("PersistResult cannot excute the following jobs.");
-					}
-				}
-			} else {
-				log.info(job.getClass().getName() + ": nothing to do");
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void persistResult(Job job, JobExecutionResult result, JobInstance jobInstance, User currentUser, JobCategoryEnum jobCategory) {
+        try {
+            log.info("JobExecutionService persistResult...");
+            JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(jobInstance, result);
+            if (!entity.isDone() || (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity.getNbItemsProcessedWithWarning()) > 0) {
+                if (entity.isTransient()) {
+                    create(entity, currentUser, currentUser.getProvider());
+                } else {
+                    // search for job execution result
+                    JobExecutionResultImpl updateEntity = findById(result.getId());
+                    JobExecutionResultImpl.updateFromInterface(result, updateEntity);
+                }
+                result.setId(entity.getId());
+                log.info("PersistResult entity.isDone()=" + entity.isDone());
+                if (!entity.isDone()) {
+                    executeJob(job.getClass().getSimpleName(), jobInstance, currentUser, jobCategory);
+                } else if (jobInstance.getFollowingJob() != null) {
+                    try {
+                        executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(), currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
+                    } catch (Exception e) {
+                        log.warn("PersistResult cannot excute the following jobs.");
+                    }
+                }
+            } else {
+                log.info(job.getClass().getName() + ": nothing to do");
 
-				if (jobInstance.getFollowingJob() != null ) {
-					try {
-						executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(), currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
-					
-				} catch (Exception e) {
-					log.warn("PersistResult cannot excute the following jobs.");
-				}
-				}
-			}
-		} catch (Exception e) {// FIXME:BusinessException e) {
-			log.error("error on persistResult",e);
-		}
-		log.info("JobExecutionService persistResult End");
-	}
+                if (jobInstance.getFollowingJob() != null) {
+                    try {
+                        executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(), currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
 
-	private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {
-		String sql = "select distinct t from JobExecutionResultImpl t";
-		QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
+                    } catch (Exception e) {
+                        log.warn("PersistResult cannot excute the following jobs.");
+                    }
+                }
+            }
+        } catch (Exception e) {// FIXME:BusinessException e) {
+            log.error("error on persistResult", e);
+        }
+        log.info("JobExecutionService persistResult End");
+    }
 
-		if (!StringUtils.isEmpty(jobName)) {
-			qb.addCriterion("t.jobName", "=", jobName, false);
-		}
-		qb.addPaginationConfiguration(configuration);
+    private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {
+        String sql = "select distinct t from JobExecutionResultImpl t";
+        QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
 
-		return qb;
-	}
-	
+        if (!StringUtils.isEmpty(jobName)) {
+            qb.addCriterion("t.jobName", "=", jobName, false);
+        }
+        qb.addPaginationConfiguration(configuration);
+
+        return qb;
+    }
+
     /**
      * Count job execution history records which end date is older then a given date
      * 
@@ -123,7 +122,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             String sql = "select t from JobExecutionResultImpl t";
             QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
             if (!StringUtils.isEmpty(jobName)) {
-                qb.addCriterion("t.jobName", "=", jobName, false);
+                qb.addCriterion("t.jobInstance.code", "=", jobName, false);
             }
             qb.addCriterion("t.startDate", "<", date, false);
             qb.addCriterionEntity("t.provider", currentProvider);
@@ -141,17 +140,33 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @param provider Provider
      * @return A number of records that were removed
      */
+    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int deleteJobExecutionHistory(String jobName, Date date, Provider provider) {
-        log.info("Removing job execution history older then a {} date for provider {}", date, provider);
+        log.trace("Removing {} job execution history older then a {} date for provider {}", jobName, date, provider);
+
+        List<JobInstance> jobInstances = null;
+        if (jobName != null) {
+            QueryBuilder qb = new QueryBuilder("select ji from JobInstance ji");
+            qb.addCriterion("ji.code", "=", jobName, false);
+            jobInstances = qb.getQuery(getEntityManager()).getResultList();
+            if (jobInstances.isEmpty()){
+                log.info("Removed 0 job execution history which start date is older then a {} date for provider {}", date, provider);
+                return 0;
+            }
+        }
 
         String sql = "delete from JobExecutionResultImpl t";
-        QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
-        qb.addCriterion("t.jobName", "=", jobName, false);
+        QueryBuilder qb = new QueryBuilder(sql);
+        if (jobName != null) {
+            qb.addSqlCriterion("t.jobInstance in :jis", "jis", jobInstances);
+        }
         qb.addCriterionDateRangeToTruncatedToDay("t.startDate", date);
         qb.addCriterionEntity("t.provider", provider);
+        int itemsDeleted = qb.getQuery(getEntityManager()).executeUpdate();
 
-        return qb.getQuery(getEntityManager()).executeUpdate();
+        log.info("Removed {} job execution history which start date is older then a {} date for provider {}", itemsDeleted, date, provider);
+        return itemsDeleted;
     }
 
     @SuppressWarnings("unchecked")

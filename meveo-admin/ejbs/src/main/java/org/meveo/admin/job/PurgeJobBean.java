@@ -47,34 +47,36 @@ public class PurgeJobBean implements Serializable {
         try {
             // Purge job execution history
             String jobname = jobInstance.getStringCustomValue("PurgeJob_jobExecHistory_jobName");
-            if (jobname != null && jobInstance.getLongCustomValue("PurgeJob_jobExecHistory_nbDays") != null) {
-                int nbDays = jobInstance.getLongCustomValue("PurgeJob_jobExecHistory_nbDays").intValue();
-                Date date = DateUtils.addDaysToDate(new Date(), nbDays * (-1));
+            Long nbDays = jobInstance.getLongCustomValue("PurgeJob_jobExecHistory_nbDays");
+            if (jobname != null || nbDays != null) {
+                Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date, currentProvider);
-                result.setNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
-                int nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobname, date, currentUser.getProvider());
-                result.setNbItemsCorrectlyProcessed(nbSuccess);
-                result.setNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
-                if (nbSuccess > 0) {
-                    result.setReport("Purged " + nbSuccess + " from " + jobname);
+                if (nbItemsToProcess > 0) {
+                    result.setNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
+                    int nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobname, date, currentUser.getProvider());
+                    result.setNbItemsCorrectlyProcessed(nbSuccess);
+                    result.setNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
+                    if (nbSuccess > 0) {
+                        result.setReport("Purged " + nbSuccess + " from " + jobname);
+                    }
                 }
             }
 
             // Purge counter periods
-
-            if (jobInstance.getLongCustomValue("PurgeJob_counterPeriod_nbDays") != null) {
-                int nbDays = jobInstance.getLongCustomValue("PurgeJob_counterPeriod_nbDays").intValue();
-                Date date = DateUtils.addDaysToDate(new Date(), nbDays * (-1));
+            nbDays = jobInstance.getLongCustomValue("PurgeJob_counterPeriod_nbDays");
+            if (nbDays != null) {
+                Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = counterInstanceService.countCounterPeriodsToDelete(date, currentProvider);
-                result.addNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
-                long nbSuccess = counterInstanceService.deleteCounterPeriods(date, currentUser.getProvider());
-                result.addNbItemsCorrectlyProcessed(nbSuccess);
-                result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
-                if (nbSuccess > 0) {
-                    result.addReport("Purged " + nbSuccess + " counter periods");
-                    ratingCacheContainerProvider.refreshCache(RatingCacheContainerProvider.COUNTER_CACHE);
+                if (nbItemsToProcess > 0) {
+                    result.addNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
+                    long nbSuccess = counterInstanceService.deleteCounterPeriods(date, currentUser.getProvider());
+                    result.addNbItemsCorrectlyProcessed(nbSuccess);
+                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
+                    if (nbSuccess > 0) {
+                        result.addReport("Purged " + nbSuccess + " counter periods");
+                        ratingCacheContainerProvider.refreshCache(RatingCacheContainerProvider.COUNTER_CACHE);
+                    }
                 }
-
             }
 
         } catch (Exception e) {

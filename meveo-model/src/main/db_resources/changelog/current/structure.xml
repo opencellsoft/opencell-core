@@ -1350,5 +1350,18 @@
 				<column name="display_edrs" type="BOOL" defaultValueBoolean="false"></column>
 			</addColumn>
 		</changeSet>
+
+    <changeSet id="#640_20150807" author="AndriusKarpavicius">
+        <addColumn tableName="JOB_EXECUTION">
+            <column name="JOB_INSTANCE_ID" type="BIGINT" />
+        </addColumn>
+        <sql>update job_execution set job_instance_id = (select min(MEVEO_JOB_INSTANCE.id) from MEVEO_JOB_INSTANCE where MEVEO_JOB_INSTANCE.code=job_execution.job_name or
+            MEVEO_JOB_INSTANCE.job_template=job_execution.job_name)</sql>
+        <sql>delete from job_execution where job_instance_id is null</sql>
+        <dropColumn tableName="JOB_EXECUTION" columnName="JOB_NAME" />
+        <addNotNullConstraint tableName="JOB_EXECUTION" columnName="JOB_INSTANCE_ID"/>
+        <addForeignKeyConstraint baseColumnNames="JOB_INSTANCE_ID" baseTableName="JOB_EXECUTION" constraintName="FK_JOB_EXECUTION_JOB_INSTANCE_ID"
+            deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="MEVEO_JOB_INSTANCE" />
+    </changeSet>
 	
 </databaseChangeLog>

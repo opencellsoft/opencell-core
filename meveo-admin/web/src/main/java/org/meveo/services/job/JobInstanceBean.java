@@ -14,12 +14,10 @@ import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -34,22 +32,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     JobInstanceService jobInstanceService;
 
     @Inject
-    private JobExecutionService jobExecutionService;
-
-    @Inject
     private CustomFieldTemplateService customFieldTemplateService;
-
-    private List<JobExecutionResultImpl> jobExecutionList;
 
     public JobInstanceBean() {
         super(JobInstance.class);
-    }
-
-    public List<JobExecutionResultImpl> getJobExecutionList() {
-        if (jobExecutionList == null && entity != null && entity.getJobTemplate() != null) {
-            jobExecutionList = jobExecutionService.find(entity.getJobTemplate(), null);
-        }
-        return jobExecutionList;
     }
 
     @Override

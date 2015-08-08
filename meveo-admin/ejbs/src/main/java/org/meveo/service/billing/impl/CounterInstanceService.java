@@ -335,7 +335,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long deleteCounterPeriods(Date date, Provider provider) {
-        log.debug("Removing counter periods which end date is older then a {} date for provider {}", date, provider);
+        log.trace("Removing counter periods which end date is older then a {} date for provider {}", date, provider);
         long itemsDeleted = 0;
         String sql = "select cp from CounterPeriod cp";
         QueryBuilder qb = new QueryBuilder(sql);

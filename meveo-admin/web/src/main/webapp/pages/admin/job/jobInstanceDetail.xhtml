@@ -12,10 +12,10 @@
         <ui:include src="/layout/navigation.xhtml" />
     </ui:define>
 
-    <f:metadata>
-		<f:event type="preRenderView"
-			listener="#{jobInstanceBean.preRenderView}" />
-    </f:metadata>
+<!--     <f:metadata> -->
+<!-- 		<f:event type="preRenderView" -->
+<!-- 			listener="#{jobInstanceBean.preRenderView}" /> -->
+<!--     </f:metadata> -->
 
     <ui:param name="pageTitle" value="#{messages['job.page.title']}" />
     <ui:define name="body">
@@ -111,9 +111,9 @@
 
             <!-- ===================================== JOB EXECUTION RESULTS ===================================== -->
 
-            <p:outputPanel id="jobExecutions">
+            <p:outputPanel id="jobExecutions" rendered="#{!jobInstanceBean.entity.transient}">
 				<p:dataTable id="jobExecutionsDatatable" var="entity"
-					paginator="true" value="#{jobInstanceBean.getJobExecutionList()}"
+					paginator="true" value="#{jobInstanceBean.entity.executionResults}"
 					rows="10" rowKey="#{entity.id}" widget="jobExecutionsTable"
 					resizableColumns="true">
                     <p:column sortBy="#{entity.startDate}">

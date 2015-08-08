@@ -9,6 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -23,8 +26,9 @@ import org.meveo.model.BaseEntity;
 public class JobExecutionResultImpl extends BaseEntity implements JobExecutionResult {
     private static final long serialVersionUID = 430457580612075457L;
 
-    @Column(name = "JOB_NAME")
-    private String jobName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "JOB_INSTANCE_ID")
+    private JobInstance jobInstance;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "START_DATE")
@@ -96,9 +100,9 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     }
 
     // helper
-    public static JobExecutionResultImpl createFromInterface(String jobName, JobExecutionResult res) {
+    public static JobExecutionResultImpl createFromInterface(JobInstance jobInstance, JobExecutionResult res) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
-        result.setJobName(jobName);
+        result.setJobInstance(jobInstance);
         result.setEndDate(res.getEndDate());
         result.setStartDate(res.getStartDate());
         result.setErrors(res.getErrors());
@@ -113,8 +117,7 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
         return result;
     }
 
-    public static void updateFromInterface(String jobName, JobExecutionResult source, JobExecutionResultImpl result) {
-        result.setJobName(jobName);
+    public static void updateFromInterface(JobExecutionResult source, JobExecutionResultImpl result) {
         result.setEndDate(source.getEndDate());
         result.setStartDate(source.getStartDate());
         result.setErrors(source.getErrors());
@@ -129,14 +132,6 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     }
 
     // Getter & setters
-
-    public String getJobName() {
-        return jobName;
-    }
-
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
-    }
 
     public Date getStartDate() {
         return startDate;
@@ -225,7 +220,7 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     public void setReport(String report) {
         this.report = report;
     }
-    
+
     public void addReport(String report) {
         this.report = (this.report == null ? "" : (this.report + ", ")) + report;
     }
@@ -236,6 +231,14 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
 
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public void setJobInstance(JobInstance jobInstance) {
+        this.jobInstance = jobInstance;
+    }
+
+    public JobInstance getJobInstance() {
+        return jobInstance;
     }
 
     /**
