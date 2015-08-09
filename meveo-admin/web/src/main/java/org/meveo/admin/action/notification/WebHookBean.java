@@ -17,6 +17,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
@@ -42,7 +43,7 @@ import org.primefaces.model.UploadedFile;
  */
 @Named
 @ViewScoped
-public class WebHookBean extends BaseBean<WebHook> {
+public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 
     private static final long serialVersionUID = -5605274745661054861L;
 

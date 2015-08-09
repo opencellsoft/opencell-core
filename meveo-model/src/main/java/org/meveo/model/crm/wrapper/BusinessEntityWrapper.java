@@ -2,9 +2,10 @@ package org.meveo.model.crm.wrapper;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.meveo.model.BusinessEntity;
 
-public class BusinessEntityWrapper implements Serializable{
+public class BusinessEntityWrapper extends BaseWrapper implements Serializable{
 	/**
 	 * 
 	 */
@@ -31,4 +32,48 @@ public class BusinessEntityWrapper implements Serializable{
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	@Override
+	public boolean isEmpty(){
+		return StringUtils.isEmpty(label)&&(businessEntity==null||businessEntity.isTransient());
+	}
+	@Override
+	public boolean isNotEmpty(){
+		return !isEmpty();
+	}	
+	@Override
+	public String toString() {
+		if(StringUtils.isEmpty(label)){
+			return String.valueOf(businessEntity.getId());
+		}else{
+			return String.format(FORMAT, label,businessEntity!=null&&businessEntity.getId()!=null?String.valueOf(businessEntity.getId()):NULL);
+		}
+		
+	}
+	public static BusinessEntity parse(String value){
+		BusinessEntity entity=new BusinessEntity();
+		if(value.indexOf(EQUAL)>0){
+			String[] str=value.split(EQUAL);
+			try{
+				entity.setId(Long.parseLong(str[1]));
+			}catch(Exception e){
+				return null;
+			}
+		}else{
+			try{
+				entity.setId(Long.parseLong(value));
+			}catch(Exception e){return null;}
+		}
+		return entity;
+	}
+	@Override
+	public Object getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void setValue(Object value) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

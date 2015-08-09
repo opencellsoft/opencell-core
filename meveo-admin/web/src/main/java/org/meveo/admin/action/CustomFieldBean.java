@@ -10,7 +10,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.AccountEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.Subscription;
@@ -19,15 +18,9 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
-import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.crm.wrapper.BusinessEntityWrapper;
-import org.meveo.model.crm.wrapper.DateWrapper;
-import org.meveo.model.crm.wrapper.DoubleWrapper;
-import org.meveo.model.crm.wrapper.LongWrapper;
-import org.meveo.model.crm.wrapper.StringWrapper;
+import org.meveo.model.crm.wrapper.BaseWrapper;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
@@ -64,6 +57,8 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     @Inject
     private CustomEntitySearchService cfSearchService;
     
+    private BaseWrapper baseWrapper;
+    
 
 	public CustomFieldBean() {
 	}
@@ -89,7 +84,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 	/**
      * Load available custom fields (templates) and their values
      */
-	@SuppressWarnings("unchecked")
 	protected void initCustomFields() {
 
         if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class)) {
@@ -103,33 +97,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                 CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cf.getCode());
                 if (cfi == null) {
                     cf.setInstance(CustomFieldInstance.fromTemplate(cf));
-                } else {
-                    if(CustomFieldStorageTypeEnum.SINGLE.equals(cf.getStorageType())){
-               	 		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-               	 			cfi.setBusinessEntity(SerializableUtil.decodeSingle(cfSearchService,cf.getEntityClazz(),cfi.getEntityValue()));
-               	 		}
-               	 	}else{
-               	 		if(cf.isVersionable()){
-               	 			for(CustomFieldPeriod cfp: cfi.getValuePeriods()){
-               	 				if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-               	 					cfp.setBusinessEntity(SerializableUtil.decodeSingle(cfSearchService,cf.getEntityClazz(),cfp.getEntityValue()));
-               	 				}
-               	 			}
-               	 		}else{
-               	 			if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-               	 				cfi.setEntityList(SerializableUtil.decodeList(cfSearchService,cf.getEntityClazz(),cfi.getEntityValue()));
-               	 			}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
-               	 				cfi.setStringList((List<StringWrapper>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 			}else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
-               	 				cfi.setLongList((List<LongWrapper>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 			}else if(CustomFieldTypeEnum.DOUBLE.equals(cf.getFieldType())){
-               	 				cfi.setDoubleList((List<DoubleWrapper>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 			}else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
-               	 				cfi.setDateList((List<DateWrapper>)SerializableUtil.decode(cfi.getEntityValue()));
-               	 			}
-               	 		}
-               	 	}
-       	 			cf.setInstance(cfi);
+                } else{
+                	cfi=SerializableUtil.initCustomField(cf, cfi, cfSearchService);
+                	cf.setInstance(cfi);
                 }
             }
         }
@@ -142,51 +112,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         }
 
         for (CustomFieldTemplate cf : customFieldTemplates) {
-            CustomFieldInstance cfi = cf.getInstance();
-       	 	if(CustomFieldStorageTypeEnum.SINGLE.equals(cf.getStorageType())){
-       	 		if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())&&cfi.getBusinessEntity()!=null&&!cfi.getBusinessEntity().isTransient()){
-       	 			BusinessEntity temp=cfi.getBusinessEntity();
-       	 			BusinessEntity result=new BusinessEntity();
-       	 			result.setId(temp.getId());
-       	 			cfi.setEntityValue(SerializableUtil.encode(result));
-       	 		}
-       	 	}else {
-       	 		if(cf.isVersionable()){
-       	 			for(CustomFieldPeriod cfp: cfi.getValuePeriods()){
-       	 				if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-       	 					BusinessEntity temp=cfp.getBusinessEntity();
-       	 					if(temp!=null){
-       	 						BusinessEntity result=new BusinessEntity();
-       	 						result.setId(temp.getId());
-       	 						cfp.setEntityValue(SerializableUtil.encode(result));
-       	 					}
-       	 				}
-       	 			}
-       	 		}else {
-	 				if(CustomFieldTypeEnum.ENTITY.equals(cf.getFieldType())){
-	 					List<BusinessEntityWrapper> result=new ArrayList<BusinessEntityWrapper>();
-	 					BusinessEntity temp=null;
-	 					for(BusinessEntityWrapper wrapper:cfi.getEntityList()){
-	 						temp=new BusinessEntity();
-	 						temp.setId(wrapper.getBusinessEntity().getId());
-	 						result.add(new BusinessEntityWrapper(wrapper.getLabel(),temp));
-	 					}
-	 					cfi.setEntityValue(cfi.getEntityList().size()==0?null:SerializableUtil.encode(result));
-	 				}else if(CustomFieldTypeEnum.STRING.equals(cf.getFieldType())){
-	 					cfi.setEntityValue(cfi.getStringList().size()==0?null:SerializableUtil.encode(cfi.getStringList()));
-	 					cfi.setStringValue(null);
-	 				}else if(CustomFieldTypeEnum.LONG.equals(cf.getFieldType())){
-	 					cfi.setEntityValue(cfi.getLongList().size()==0?null:SerializableUtil.encode(cfi.getLongList()));
-	 					cfi.setLongValue(null);
-	 				}else if(CustomFieldTypeEnum.DOUBLE.equals(cf.getFieldType())){
-	 					cfi.setEntityValue(cfi.getDoubleList().size()==0?null:SerializableUtil.encode(cfi.getDoubleList()));
-	 					cfi.setDoubleValue(null);
-	 				}else if(CustomFieldTypeEnum.DATE.equals(cf.getFieldType())){
-	 					cfi.setEntityValue(cfi.getDateList().size()==0?null:SerializableUtil.encode(cfi.getDateList()));
-	 					cfi.setDateValue(null);
-	 				}
-	 			}
-       	 	}
+            CustomFieldInstance cfi = SerializableUtil.updateCustomField(cf);
        	     // Not saving empty values
             if (cfi.isValueEmpty()) {
                 if (!cfi.isTransient()) {
@@ -221,8 +147,8 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             	}
             	((ICustomFieldEntity) entity).getCustomFields().put(cfi.getCode(), cfi);
             }
-        }
-     }
+       }
+    }
     public List<CustomFieldTemplate> getCustomFieldTemplates() {
     	if(customFieldTemplates==null||customFieldTemplates.size()==0){
     		if(entity!=null){
@@ -251,7 +177,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         this.customFieldPeriodMatched = false;
         // Set a default value for new period data entry
         this.customFieldNewPeriod = new CustomFieldPeriod();
-        this.customFieldNewPeriod.setValue(customFieldSelectedTemplate.getDefaultValueConverted(), customFieldSelectedTemplate.getFieldType());
+        this.customFieldNewPeriod.setDefaultValue(customFieldSelectedTemplate.getDefaultValueConverted(), customFieldSelectedTemplate.getFieldType(),customFieldSelectedTemplate.getStorageType());
     }
 
     public CustomFieldTemplate getCustomFieldSelectedTemplate() {
@@ -303,11 +229,12 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         // Create period if passed period check or if user decided to create it anyway
         if (customFieldSelectedTemplate.getInstance().getCalendar() != null) {
-            period = customFieldSelectedTemplate.getInstance().addValuePeriod(customFieldNewPeriod.getPeriodStartDate(), customFieldNewPeriod.getValue(),
-                customFieldSelectedTemplate.getFieldType(),customFieldNewPeriod.getLabel(),customFieldSelectedTemplate.getStorageType());
+            period = customFieldSelectedTemplate.getInstance().addValuePeriod(customFieldNewPeriod.getPeriodStartDate(), customFieldNewPeriod.getValue(),customFieldNewPeriod.getLabel(),
+                customFieldSelectedTemplate.getFieldType(),customFieldSelectedTemplate.getStorageType());
+            
         } else {
             period = customFieldSelectedTemplate.getInstance().addValuePeriod(customFieldNewPeriod.getPeriodStartDate(), customFieldNewPeriod.getPeriodEndDate(),
-                customFieldNewPeriod.getValue(), customFieldSelectedTemplate.getFieldType(),customFieldNewPeriod.getLabel(),customFieldSelectedTemplate.getStorageType());
+                customFieldNewPeriod.getValue(),customFieldNewPeriod.getLabel(), customFieldSelectedTemplate.getFieldType(),customFieldSelectedTemplate.getStorageType());
         }
         
         if (customFieldSelectedTemplate.isVersionable()
@@ -321,5 +248,13 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         customFieldNewPeriod = null;
         customFieldPeriodMatched = false;
     }
+
+	public BaseWrapper getBaseWrapper() {
+		return baseWrapper;
+	}
+
+	public void setBaseWrapper(BaseWrapper baseWrapper) {
+		this.baseWrapper = baseWrapper;
+	}
 
 }

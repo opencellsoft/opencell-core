@@ -9,10 +9,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -20,7 +19,7 @@ import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped
-public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
+public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldTemplate> {
 
     private static final long serialVersionUID = 9099292371182275568L;
 
@@ -129,7 +128,7 @@ public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
     /**
      * get storage types for storage list and map
      */
-    public List<CustomFieldStorageTypeEnum> getListEnum(){
-    	return Arrays.asList(CustomFieldStorageTypeEnum.LIST,CustomFieldStorageTypeEnum.MAP);
-    }
+//    public List<CustomFieldStorageTypeEnum> getListEnum(){
+//    	return Arrays.asList(CustomFieldStorageTypeEnum.LIST,CustomFieldStorageTypeEnum.MAP);
+//    }
 }

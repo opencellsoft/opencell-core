@@ -101,9 +101,6 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setVersionable(boolean versionable) {
         this.versionable = versionable;
-        if(versionable){
-        	this.valueRequired=true;
-        }
     }
 
     public boolean isVersionable() {
@@ -136,15 +133,21 @@ public class CustomFieldTemplate extends BusinessEntity {
 
 	public Object getDefaultValueConverted() {
         if (defaultValue != null) {
-            if (fieldType == CustomFieldTypeEnum.DOUBLE) {
-                return Double.parseDouble(defaultValue);
-            } else if (fieldType == CustomFieldTypeEnum.LONG) {
-                return Long.parseLong(defaultValue);
-            } else if (fieldType == CustomFieldTypeEnum.DATE) {
-                return null; // TODO implement deserialization from a date
-            }
+        	try{
+        		if (fieldType == CustomFieldTypeEnum.DOUBLE) {
+        			return Double.parseDouble(defaultValue);
+        		} else if (fieldType == CustomFieldTypeEnum.LONG) {
+        			return Long.parseLong(defaultValue);
+        		} else if(fieldType==CustomFieldTypeEnum.STRING||fieldType==CustomFieldTypeEnum.LIST||fieldType==CustomFieldTypeEnum.TEXT_AREA){
+        			return defaultValue;
+        		}else if (fieldType == CustomFieldTypeEnum.DATE) {
+        			return null; // TODO implement deserialization from a date
+        		}
+        	}catch(Exception e){
+        		return null;
+        	}
         }
-        return defaultValue;
+        return null;
     }
 
     public void setInstance(CustomFieldInstance instance) {

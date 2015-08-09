@@ -49,16 +49,115 @@
                                     value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.periodEndDate}">
                                 </p:calendar>
                             </hf:formDecorateField>
-                             <hf:formDecorateField fieldId="period_label" label="#{messages['customFieldTemplate.label']}" rendered="#{cc.attrs.cft.storageType=='MAP'}">
-                                <p:inputText id="period_label" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.label}" required="true"/>
+                            <hf:formDecorateField fieldId="period_label" label="#{messages['commons.label']}" rendered="#{cc.attrs.cft.storageType=='MAP'}" newLine="true">
+                            	<p:inputText id="period_label" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.label}" required="true"/>
                             </hf:formDecorateField>
-                            <hftl:decorateFormField label="#{messages['customFieldTemplate.periodValue']}#{cc.attrs.cft.valueRequired?' *':''}">
+                            <hf:formDecorateField label="#{messages['customFieldTemplate.periodValue']}#{cc.attrs.cft.valueRequired?' *':''}" rendered="#{cc.attrs.cft.storageType=='SINGLE'}">
                                 <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod}" />
-                            </hftl:decorateFormField>
-
+                            </hf:formDecorateField>
+                            <hf:formDecorateField label="#{messages['customFieldTemplate.periodValue']}#{cc.attrs.cft.valueRequired?' *':''}" rendered="#{cc.attrs.cft.storageType=='LIST' or cc.attrs.cft.storageType=='MAP'}" newLine="true" componentWidth="80">
+                            	<!-- string -->
+                            	<p:dataTable id="newPeriodFields_stringlist" resizableColumns="true" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.stringList}" var="list" rendered="#{cc.attrs.cft.fieldType=='STRING'}">
+                            		<p:column sortBy="#{list.stringValue}" headerText="#{messages['commons.value']}">
+                            			<hftl:customFieldValueField cft="#{cc.attrs.cft}" field="#{list}" edit="true"/>
+                            		</p:column>
+                            		<p:column headerText="#{messages['commons.actions']}" width="10%">
+                        				<p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this newPeriodFields_stringlist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.removeStringFromlist(list)}"
+                        					update="newPeriodFields_stringlist"/>
+                    				</p:column>
+                    				<f:facet name="footer">
+                    					<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this newPeriodFields_stringlist"
+                    						update="newPeriodFields_stringlist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.addStringTolist(cft)}"/>
+                    				</f:facet>
+                            	</p:dataTable>
+                            	<!-- date -->
+                            	<p:dataTable id="newPeriodFields_datelist" resizableColumns="true" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.dateList}" var="list" rendered="#{cc.attrs.cft.fieldType=='DATE'}">
+                            		<p:column sortBy="#{list.dateValue}" headerText="#{messages['commons.value']}">
+                            			<hftl:customFieldValueField cft="#{cc.attrs.cft}" field="#{list}" edit="true"/>
+                            		</p:column>
+                            		<p:column headerText="#{messages['commons.actions']}" width="10%">
+                        				<p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this newPeriodFields_datelist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.removeDateFromlist(list)}"
+                        					update="newPeriodFields_datelist"/>
+                    				</p:column>
+                    				<f:facet name="footer">
+                    					<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this newPeriodFields_datelist"
+                    						update="newPeriodFields_datelist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.addDateTolist}"/>
+                    				</f:facet>
+                            	</p:dataTable>
+                            	<!-- long -->
+                            	<p:dataTable id="newPeriodFields_longlist" resizableColumns="true" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.longList}" var="list" rendered="#{cc.attrs.cft.fieldType=='LONG'}">
+                            		<p:column sortBy="#{list.longValue}" headerText="#{messages['commons.value']}">
+                            			<hftl:customFieldValueField cft="#{cc.attrs.cft}" field="#{list}" edit="true"/>
+                            		</p:column>
+                            		<p:column headerText="#{messages['commons.actions']}" width="10%">
+                        				<p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this newPeriodFields_longlist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.removeLongFromlist(list)}"
+                        					update="newPeriodFields_longlist"/>
+                    				</p:column>
+                    				<f:facet name="footer">
+                    					<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this newPeriodFields_longlist"
+                    						update="newPeriodFields_longlist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.addLongTolist(cc.attrs.cft)}"/>
+                    				</f:facet>
+                            	</p:dataTable>
+                            	<!-- double -->
+                            	<p:dataTable id="newPeriodFields_doublelist" resizableColumns="true" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.doubleList}" var="list" rendered="#{cc.attrs.cft.fieldType=='DOUBLE'}">
+                            		<p:column sortBy="#{list.doubleValue}" headerText="#{messages['commons.value']}">
+                            			<hftl:customFieldValueField cft="#{cft}" field="#{list}" edit="true"/>
+                            		</p:column>
+                            		<p:column headerText="#{messages['commons.actions']}" width="10%">
+                        				<p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this newPeriodFields_doublelist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.removeDoubleFromlist(list)}"
+                        					update="newPeriodFields_doublelist"/>
+                    				</p:column>
+                    				<f:facet name="footer">
+                    					<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this newPeriodFields_doublelist"
+                    						update="newPeriodFields_doublelist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.addDoubleTolist(cc.attrs.cft)}"/>
+                    				</f:facet>
+                            	</p:dataTable>
+                            	<!-- entity -->
+                            	<p:dataTable id="newPeriodFields_entitylist" resizableColumns="true" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.entityList}" var="list" rendered="#{cc.attrs.cft.fieldType=='ENTITY'}">
+                            		<p:column sortBy="#{list.dateValue}" headerText="#{messages['commons.value']}">
+                            			<hftl:customFieldValueField cft="#{cc.attrs.cft}" field="#{list}" edit="true"/>
+                            		</p:column>
+                            		<p:column headerText="#{messages['commons.actions']}" width="10%">
+                        				<p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this newPeriodFields_entitylist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.removeEntityFromlist(list)}"
+                        					update="newPeriodFields_entitylist"/>
+                    				</p:column>
+                    				<f:facet name="footer">
+                    					<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this newPeriodFields_entitylist"
+                    						update="newPeriodFields_entitylist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.addEntityTolist()}"/>
+                    				</f:facet>
+                            	</p:dataTable>
+                            	<!-- select -->
+                            	<p:dataTable id="newPeriodFields_selectlist" resizableColumns="true" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.stringList}" var="list" rendered="#{cc.attrs.cft.fieldType=='LIST'}">
+                            		<p:column sortBy="#{list.stringValue}" headerText="#{messages['commons.value']}">
+                            			<hftl:customFieldValueField cft="#{cc.attrs.cft}" field="#{list}" edit="true"/>
+                            		</p:column>
+                            		<p:column headerText="#{messages['commons.actions']}" width="10%">
+                        				<p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this newPeriodFields_selectlist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.removeStringFromlist(list)}"
+                        					update="newPeriodFields_selectlist"/>
+                    				</p:column>
+                    				<f:facet name="footer">
+                    					<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this newPeriodFields_selectlist"
+                    						update="newPeriodFields_selectlist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.addStringTolist(cc.attrs.cft)}"/>
+                    				</f:facet>
+                            	</p:dataTable>
+                            	<!-- textarea -->
+                            	<p:dataTable id="newPeriodFields_textarealist" resizableColumns="true" value="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.stringList}" var="list" rendered="#{cc.attrs.cft.fieldType=='TEXT_AREA'}">
+                            		<p:column sortBy="#{list.stringValue}" headerText="#{messages['commons.value']}">
+                            			<hftl:customFieldValueField cft="#{cc.attrs.cft}" field="#{list}" edit="true"/>
+                            		</p:column>
+                            		<p:column headerText="#{messages['commons.actions']}" width="10%">
+                        				<p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this newPeriodFields_textarealist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.removeStringFromlist(list)}"
+                        					update="newPeriodFields_textarealist"/>
+                    				</p:column>
+                    				<f:facet name="footer">
+                    					<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this newPeriodFields_textarealist"
+                    						update="newPeriodFields_textarealist" actionListener="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod.addStringTolist(cc.attrs.cft)}"/>
+                    				</f:facet>
+                            	</p:dataTable>
+                            </hf:formDecorateField>
                         </p:outputPanel>
                         <h:panelGroup layout="block" styleClass="form-panel-actions">
-                            <p:commandButton value="#{messages['commons.add']}" ajax="true" partialSubmit="true" process="@form" update="@form @([id$='periodTable#{cc.attrs.cft.storageType=='MAP'?'Map':'List'}'])"
+                            <p:commandButton value="#{messages['commons.add']}" ajax="true" partialSubmit="true" process="@form" update="@form @([id$='periodTableList'])"
                                 action="#{cc.backingBeanFromParentOrCurrent.addNewCustomFieldPeriod}"
                                 disabled="#{cc.backingBeanFromParentOrCurrent.customFieldPeriodMatched and cc.attrs.cfi.calendar!=null}"
                                 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{cc.attrs.periodDialogWidget}').hide()" />

@@ -33,10 +33,16 @@
         <h:outputText value="#{field.stringValue}" rendered="#{! edit}"></h:outputText>
         <p:inputText value="#{field.stringValue}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
     </h:panelGroup>
-    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA}">
-        <h:outputText value="#{field.stringValue}" rendered="#{! edit}"></h:outputText>
-        <h:inputTextarea value="#{field.stringValue}" cols="#{paramBean.getProperty('meveo.textArea.cols','80')}" rows="#{paramBean.getProperty('meveo.textArea.rows','20')}"  required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
+    <h:panelGroup rendered="#{(cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA) and (cft.storageType eq CustomFieldStorageTypeEnum.SINGLE)}">
+        <h:outputText value="#{field.entityValue}" rendered="#{! edit}"></h:outputText>
+        <p:inputTextarea value="#{field.entityValue}" cols="#{paramBean.getProperty('meveo.textArea.cols','80')}" rows="#{paramBean.getProperty('meveo.textArea.rows','20')}"
+          required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
     </h:panelGroup>    
+    <h:panelGroup rendered="#{(cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA) and (cft.storageType ne CustomFieldStorageTypeEnum.SINGLE)}">
+        <h:outputText value="#{field.stringValue}" rendered="#{! edit}"></h:outputText>
+        <p:inputTextarea value="#{field.stringValue}" cols="#{paramBean.getProperty('meveo.textArea.cols','80')}" rows="#{paramBean.getProperty('meveo.textArea.rows','20')}"  required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
+    </h:panelGroup>    
+    
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
         <h:outputText value="#{field.dateValue}" rendered="#{! edit}">
             <f:convertDateTime type="date" pattern="#{datePattern}" />
@@ -63,20 +69,20 @@
         </p:selectOneMenu>
     </h:panelGroup>
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType==CustomFieldStorageTypeEnum.SINGLE and !cft.versionable)}">
-		<p:inputText rendered="#{edit}" value="#{field.businessEntity.code}"
+		<p:inputText rendered="#{edit}" value="#{field.businessEntity.code}" id="business_entity_#{cft.id}"
 			required="#{cft.valueRequired}" disabled="true"></p:inputText>
 		<p:commandButton immediate="true" rendered="#{edit}"
 			onclick="PF('dlg_cft_entity_#{cft.id}').show()" icon="ui-icon-search" />
 		<h:outputText rendered="#{!edit}" value="#{field.businessEntity.code}"
 			styleClass="field-value" />
 	</h:panelGroup>
-	<h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType!= CustomFieldStorageTypeEnum.SINGLE and !cft.versionable)}">
-		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field}" edit="#{edit}" />
-		<h:outputText value="#{field.code}" rendered="#{!edit}"/>
-	 </h:panelGroup>
-	 <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType!= CustomFieldStorageTypeEnum.SINGLE and cft.versionable)}">
-		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field.businessEntity}" edit="#{edit}" />
+	<h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.versionable or (cft.storageType ne CustomFieldStorageTypeEnum.SINGLE and !cft.versionable))}">
+		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field.businessEntity}" rendered="#{edit}"/>
 		<h:outputText value="#{field.businessEntity.code}" rendered="#{!edit}"/>
 	 </h:panelGroup>
+<!-- 	 <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and cft.versionable}"> -->
+<!-- 		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field.businessEntity}" edit="#{edit}" /> -->
+<!-- 		<h:outputText value="#{field.businessEntity.code}" rendered="#{!edit}"/> -->
+<!-- 	 </h:panelGroup> -->
 </ui:composition>
 </html>

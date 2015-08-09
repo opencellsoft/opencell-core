@@ -1,6 +1,8 @@
 package org.meveo.model.crm;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +19,12 @@ import javax.persistence.UniqueConstraint;
 import org.meveo.model.BaseProviderlessEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.crm.wrapper.BaseWrapper;
+import org.meveo.model.crm.wrapper.BusinessEntityWrapper;
+import org.meveo.model.crm.wrapper.DateWrapper;
+import org.meveo.model.crm.wrapper.DoubleWrapper;
+import org.meveo.model.crm.wrapper.LongWrapper;
+import org.meveo.model.crm.wrapper.StringWrapper;
 
 @Entity
 @ExportIdentifier({ "customFieldInstance.code", "customFieldInstance.provider", "customFieldInstance.subscription.code", "customFieldInstance.account.code",
@@ -65,9 +73,26 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
      */
     @Column(name="LABEL")
     private String label;
+    @Transient
+    private List<BusinessEntityWrapper> entityList=new ArrayList<BusinessEntityWrapper>();
+    
+    @Transient
+    private List<StringWrapper> stringList=new ArrayList<StringWrapper>();
+
+    @Transient
+    private List<DateWrapper> dateList=new ArrayList<DateWrapper>();
+    
+    @Transient
+    private List<LongWrapper> longList=new ArrayList<LongWrapper>();
+    
+    @Transient
+    private List<DoubleWrapper> doubleList=new ArrayList<DoubleWrapper>();
     
     @Transient
     private BusinessEntity businessEntity;
+    
+    public CustomFieldPeriod(){
+    }
 
     public CustomFieldInstance getCustomFieldInstance() {
         return customFieldInstance;
@@ -238,6 +263,18 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
             return longValue;
         }else if(businessEntity!=null){
         	return businessEntity;
+        }else if(stringList!=null&&stringList.size()>0){
+        	return stringList;
+        }else if(dateList!=null&&dateList.size()>0){
+        	return dateList;
+        }else if(longList!=null&&longList.size()>0){
+        	return longList;
+        }else if(doubleList!=null&&doubleList.size()>0){
+        	return doubleList;
+        }else if(entityList!=null&&entityList.size()>0){
+        	return entityList;
+        }else if(entityValue!=null){
+        	return entityValue;
         }
         return null;
     }
@@ -248,32 +285,118 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
      * @param value
      * @param fieldType
      */
-    public void setValue(Object value, CustomFieldTypeEnum fieldType) {
+	@SuppressWarnings("unchecked")
+	public void setValue(Object value, String label,CustomFieldTypeEnum fieldType,CustomFieldStorageTypeEnum storageType) {
+    	switch(storageType){
+    	case SINGLE:
+        	switch (fieldType) {
+        	case DATE:
+        		dateValue=(Date)value;
+        		break;
+        	case DOUBLE:
+        		doubleValue = (Double) value;
+        		break;
+        	case LONG:
+        		longValue = (Long) value;
+        		break;
+        	case STRING:
+        	case LIST:
+        		stringValue = (String) value;
+        		break;
+        	case TEXT_AREA:
+        		entityValue=(String)value;
+        		break;
+        	case ENTITY:
+        		businessEntity=(BusinessEntity)value;
+        		break;
+        	default:
+        		break;
+        	}
+        	break;
+    	case MAP:
+    		this.label=label;
+    	case LIST:
+    		switch (fieldType) {
+			case DATE:
+				dateList=(List<DateWrapper>)value;
+    			break;
+    		case DOUBLE:
+    			doubleList=(List<DoubleWrapper>)value;
+    			break;
+    		case LONG:
+    			longList=(List<LongWrapper>)value;
+    			break;
+    		case STRING:
+    		case LIST:
+    		case TEXT_AREA:
+    			stringList=(List<StringWrapper>)value;
+    			break;
+    		case ENTITY:
+    			entityList=(List<BusinessEntityWrapper>)value;
+    			break;
+    		default:
+    			break;
+    		}
+    	}
+    }
 
-        switch (fieldType) {
-        case DATE:
-            dateValue = (Date) value;
-            break;
-
-        case DOUBLE:
-            doubleValue = (Double) value;
-            break;
-
-        case LONG:
-            longValue = (Long) value;
-            break;
-
-        case STRING:
-        case LIST:
-            stringValue = (String) value;
-            break;
-        case ENTITY:
-        	businessEntity=(BusinessEntity)value;
-		case TEXT_AREA:
-			break;
-		default:
-			break;
-        }
+	public void setDefaultValue(Object value, CustomFieldTypeEnum fieldType,CustomFieldStorageTypeEnum storageType) {
+		if(value==null){
+			return;
+		}
+    	switch(storageType){
+    	case SINGLE:
+        	switch (fieldType) {
+        	case DATE:
+        		break;
+        	case DOUBLE:
+        		if(value!=null)
+        		doubleValue = (Double) value;
+        		break;
+        	case LONG:
+        		if(value!=null)
+        		longValue = (Long) value;
+        		break;
+        	case STRING:
+        	case LIST:
+        		if(value!=null)
+        		stringValue = (String) value;
+        		break;
+        	case TEXT_AREA:
+        		if(value!=null)
+        		entityValue=(String)value;
+        		break;
+        	case ENTITY:
+        		break;
+        	default:
+        		break;
+        	}
+        	break;
+    	case LIST:
+    	case MAP:
+    		switch (fieldType) {
+			case DATE:
+    			break;
+    		case DOUBLE:
+    			if(value!=null)
+    			doubleList.add(new DoubleWrapper((Double)value));
+    			break;
+    		case LONG:
+    			if(value!=null)
+    			longList.add(new LongWrapper((Long)value));
+    			break;
+    		case STRING:
+    		case LIST:
+    		case TEXT_AREA:
+    			if(value!=null)
+    			stringList.add(new StringWrapper((String)value));
+    			break;
+    		case ENTITY:
+    			break;
+    		default:
+    			break;
+    		}
+    	}
     }
 
     @Override
@@ -284,4 +407,136 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
         }
         return isCorrespondsToPeriod(((CustomFieldPeriod) obj).getPeriodStartDate(), ((CustomFieldPeriod) obj).getPeriodEndDate(), true);
     }
+    public List<BusinessEntityWrapper> getEntityList() {
+		return entityList;
+	}
+
+	public void setEntityList(List<BusinessEntityWrapper> entityList) {
+		this.entityList = entityList;
+	}
+	//entity for list or map
+	public void addEntityTolist(){
+		this.entityList.add(new BusinessEntityWrapper());
+	}
+	public void addEntityTolists(BusinessEntity entity){
+		this.entityList.add(new BusinessEntityWrapper(entity));
+	}
+	public void removeEntityFromlist(BusinessEntityWrapper value){
+		this.entityList.remove(value);
+	}
+	public void addEntityTomap(){
+		this.entityList.add(new BusinessEntityWrapper());
+	}
+
+	public void addEntityTomap(String label,BusinessEntity businessEntity){
+		this.entityList.add(new BusinessEntityWrapper(label, businessEntity));
+	}
+
+	public List<StringWrapper> getStringList() {
+		return stringList;
+	}
+
+	public void setStringList(List<StringWrapper> stringList) {
+		this.stringList = stringList;
+	}
+	//string for list or map
+	public void addStringTolist(CustomFieldTemplate cft){
+		this.stringList.add(new StringWrapper((String)cft.getDefaultValueConverted()));
+	}
+
+	public void removeStringFromlist(StringWrapper value){
+		this.stringList.remove(value);
+	}
+
+	public void addStringTomap(CustomFieldTemplate cft){
+		this.stringList.add(new StringWrapper((String)cft.getDefaultValueConverted()));
+	}
+
+	public List<DateWrapper> getDateList() {
+		return dateList;
+	}
+
+	public void setDateList(List<DateWrapper> dateList) {
+		this.dateList = dateList;
+	}
+
+	public void addDateTolist(){
+		this.dateList.add(new DateWrapper());
+	}
+
+	public void removeDateFromlist(DateWrapper value){
+		this.dateList.remove(value);
+	}
+
+	public void addDateTomap(){
+		this.dateList.add(new DateWrapper());
+	}
+
+	public List<LongWrapper> getLongList() {
+		return longList;
+	}
+
+	public void setLongList(List<LongWrapper> longList) {
+		this.longList = longList;
+	}
+
+	public void addLongTolist(CustomFieldTemplate cft){
+		this.longList.add(new LongWrapper((Long)cft.getDefaultValueConverted()));
+		longValue=null;
+	}
+
+	public void removeLongFromlist(LongWrapper value){
+		this.longList.remove(value);
+	}
+
+	public void addLongTomap(CustomFieldTemplate cft){
+		this.longList.add(new LongWrapper((Long)cft.getDefaultValueConverted()));
+	}
+
+	public List<DoubleWrapper> getDoubleList() {
+		return doubleList;
+	}
+
+	public void setDoubleList(List<DoubleWrapper> doubleList) {
+		this.doubleList = doubleList;
+	}
+
+	public void addDoubleTolist(CustomFieldTemplate cft){
+		this.doubleList.add(new DoubleWrapper((Double)cft.getDefaultValueConverted()));
+	}
+
+	public void removeDoubleFromlist(DoubleWrapper value){
+		this.doubleList.remove(value);
+	}
+
+	public void addDoubleTomap(CustomFieldTemplate cft){
+		this.doubleList.add(new DoubleWrapper((Double)cft.getDefaultValueConverted()));
+	}
+	public List<? extends BaseWrapper> getWrapperList(CustomFieldTemplate cft){
+		if(cft==null){
+			return null;
+		}
+		List<? extends BaseWrapper> result=null;
+		switch(cft.getFieldType()){
+		case STRING:
+		case LIST:
+		case TEXT_AREA:
+			result=stringList;
+			break;
+		case DATE:
+			result=dateList;
+			break;
+		case LONG:
+			result=longList;
+			break;
+		case DOUBLE:
+			result=doubleList;
+			break;
+		case ENTITY:
+			result=entityList;
+			break;
+		default:
+		}
+		return result!=null&&result.size()>5?result.subList(0, 5):result;
+	}
 }

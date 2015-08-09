@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:cc="http://java.sun.com/jsf/composite" xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags">
+
+<!-- 
+    A tag to show a new custom field period creation popup dialog
+    Makes part of custom field management tag group 
+
+    Attributes
+        edit - should values be displayed, or edit controls be shown
+        datePattern - date pattern for date entry/display
+        cft - internal attribute, custom field template 
+        cfi - internal attribute, custom field instance to which a new period should be added 
+        cfiDialogWidget - internal attribute, "a new custom field period" dialog widget name
+ -->
+
+
+<cc:interface componentType="formField">
+    <cc:attribute name="edit" default="#{cc.backingBeanFromParentOrCurrent.edit}" />
+    <cc:attribute name="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+    <cc:attribute name="cft" default="#{cc.backingBeanFromParentOrCurrent.customFieldSelectedTemplate}" />
+    <cc:attribute name="cfi" default="#{cc.attrs.cft.instance}" />
+    <cc:attribute name="baseWrapper" default="#{cc.backingBeanFromParentOrCurrent.baseWrapper}"/>
+    <cc:attribute name="cfiDialogWidget" default="dlg_newCfi_#{cc.entityClass.simpleName}" />
+</cc:interface>
+
+<cc:implementation>
+	<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+	<o:importConstants
+		type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
+    <span id="#{cc.clientId}" style="white-space: nowrap"> <p:dialog id="cft_cfi_newcfi" widgetVar="dlg_cft_cfi_newcfi"
+            header="#{messages['customFieldTemplate.newCfi']}" closeOnEscape="true" modal="true" appendTo="@(body)" rendered="#{cc.attrs.edit}" width="500">
+            <h:form id="form">
+                <p:panel>
+                    <h:panelGroup id="dlg_cft_cfi_fields" layout="block" styleClass="form-panel">
+                        <p:messages id="cft_cfi_messages" />
+                        <p:outputPanel styleClass="form-panel-fields">
+                            <hf:formDecorateField fieldId="cft_cfi_label" label="#{messages['commons.label']} *" rendered="#{cc.attrs.cft.storageType==CustomFieldStorageTypeEnum.MAP}">
+                                <p:inputText id="cft_label" value="#{cc.attrs.cft.instance.label}"
+									required="true" rendered="#{cc.attrs.cfi.transient}"/>
+								<p:inputText id="wrapper_label" value="#{cc.attrs.baseWrapper.label}"
+									required="true" rendered="#{!cc.attrs.cfi.transient}"/>
+                            </hf:formDecorateField>
+                            <hf:formDecorateField label="#{cc.attrs.cft.description} #{cc.attrs.cft.valueRequired?'*':''}" rendered="#{cc.attrs.baseWrapper==null}">
+                                <hftl:customFieldValueField edit="true" cft="#{cc.attrs.cft}" field="#{cc.attrs.cft.instance}" />
+                            </hf:formDecorateField>
+                            <hf:formDecorateField label="#{cc.attrs.cft.description} #{cc.attrs.cft.valueRequired?'*':''}" rendered="#{cc.attrs.baseWrapper!=null}">
+								<hftl:customFieldValueField edit="true" cft="#{cc.attrs.cft}" field="#{cc.attrs.baseWrapper}" />
+                            </hf:formDecorateField>
+                        </p:outputPanel>
+                        <h:panelGroup layout="block" styleClass="form-panel-actions">
+                        	<p:commandButton id="save" rendered="#{cc.attrs.baseWrapper==null}"
+									action="#{cc.attrs.cft.instance.addToList(cc.attrs.cft)}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.add']}"
+									update="@form @([id$='customFields_#{cc.attrs.cft.storageType=='LIST'?'list':'map'}'])"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_cfi_newcfi').hide()" />
+							<p:commandButton id="edit" rendered="#{cc.attrs.baseWrapper!=null}" ajax="true"
+									partialSubmit="true" process="@form"
+									value="#{messages['commons.save']}"
+									update="@form @([id$='customFields_#{cc.attrs.cft.storageType=='LIST'?'list':'map'}'])"
+									oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_cft_cfi_newcfi').hide()" />
+							<p:commandButton id="cancel" value="#{messages['commons.cancel']}" onclick="PF('dlg_cft_cfi_newcfi').hide()" />
+						</h:panelGroup>
+                    </h:panelGroup>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </span>
+</cc:implementation>
+</html>

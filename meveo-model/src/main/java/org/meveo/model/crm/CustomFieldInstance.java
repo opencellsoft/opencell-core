@@ -19,6 +19,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -28,6 +29,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.wrapper.BaseWrapper;
 import org.meveo.model.crm.wrapper.BusinessEntityWrapper;
 import org.meveo.model.crm.wrapper.DateWrapper;
 import org.meveo.model.crm.wrapper.DoubleWrapper;
@@ -116,6 +118,8 @@ public class CustomFieldInstance extends ProviderlessEntity {
     
     @Transient
     private String label;
+    @Transient
+    private String textareaValue;
     @Transient
     private BusinessEntity businessEntity;
     
@@ -564,21 +568,15 @@ public class CustomFieldInstance extends ProviderlessEntity {
 		return true;
 	}
 
-    public CustomFieldPeriod addValuePeriod(Date date, Object value, CustomFieldTypeEnum fieldType,String label,CustomFieldStorageTypeEnum storageType) {
+    public CustomFieldPeriod addValuePeriod(Date date, Object value,String label, CustomFieldTypeEnum fieldType,CustomFieldStorageTypeEnum storageType) {
         CustomFieldPeriod period = getValuePeriod(date, true);
-        period.setValue(value, fieldType);
-        if(CustomFieldStorageTypeEnum.MAP.equals(storageType)){
-        	period.setLabel(label);
-        }
+        period.setValue(value, label,fieldType,storageType);
         return period;
     }
 
-    public CustomFieldPeriod addValuePeriod(Date startDate, Date endDate, Object value, CustomFieldTypeEnum fieldType,String label,CustomFieldStorageTypeEnum storageType) {
+    public CustomFieldPeriod addValuePeriod(Date startDate, Date endDate, Object value,String label, CustomFieldTypeEnum fieldType,CustomFieldStorageTypeEnum storageType) {
         CustomFieldPeriod period = getValuePeriod(startDate, endDate, true, true);
-        period.setValue(value, fieldType);
-        if(CustomFieldStorageTypeEnum.MAP.equals(storageType)){
-        	period.setLabel(label);
-        }
+        period.setValue(value, label,fieldType,storageType);
         return period;
     }
 
@@ -680,9 +678,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         cfi.setVersionable(template.isVersionable());
         cfi.setCalendar(template.getCalendar());
         // Set a default value
-        if (!template.isVersionable()) {
-            cfi.setValue(template.getDefaultValueConverted(), template.getFieldType());
-        }
+        cfi.setValue(template.getDefaultValueConverted(), template.getFieldType(),template.getStorageType());
         cfi.setTriggerEndPeriodEvent(template.isTriggerEndPeriodEvent());
 
         return cfi;
@@ -720,33 +716,57 @@ public class CustomFieldInstance extends ProviderlessEntity {
      * @param value
      * @param fieldType
      */
-    public void setValue(Object value, CustomFieldTypeEnum fieldType) {
-
-        switch (fieldType) {
-        case DATE:
-            dateValue = (Date) value;
-            break;
-
-        case DOUBLE:
-            doubleValue = (Double) value;
-            break;
-
-        case LONG:
-            longValue = (Long) value;
-            break;
-
-        case STRING:
-        case LIST:
-            stringValue = (String) value;
-            break;
-        case ENTITY:
-        	this.entityValue=(String)value;
+    public void setValue(Object value, CustomFieldTypeEnum fieldType,CustomFieldStorageTypeEnum storageType) {
+    	switch(storageType){
+    	case SINGLE:
+        	switch (fieldType) {
+        	case DATE:
+        		dateValue=(Date)value;
+        		break;
+        	case DOUBLE:
+        		doubleValue = (Double) value;
+        		break;
+        	case LONG:
+        		longValue = (Long) value;
+        		break;
+        	case STRING:
+        	case LIST:
+        		stringValue = (String) value;
+        		break;
+        	case TEXT_AREA:
+        		entityValue=(String)value;
+        		break;
+        	case ENTITY:
+        		businessEntity=(BusinessEntity)value;
+        		break;
+        	default:
+        		break;
+        	}
         	break;
-		case TEXT_AREA:
-			break;
-		default:
-			break;
-        }
+    	case MAP:
+    	case LIST:
+    		switch (fieldType) {
+			case DATE:
+				dateList.add(new DateWrapper((Date)value));
+    			break;
+    		case DOUBLE:
+    			doubleList.add(new DoubleWrapper((Double)value));
+    			break;
+    		case LONG:
+    			longList.add(new LongWrapper((Long)value));
+    			break;
+    		case STRING:
+    		case LIST:
+    		case TEXT_AREA:
+    			stringList.add(new StringWrapper((String)value));
+    			break;
+    		case ENTITY:
+    			entityList.add(new BusinessEntityWrapper((BusinessEntity)value));
+    			break;
+    		default:
+    			break;
+    		}
+    	}
     }
 
     public boolean isValueEmpty() {
@@ -777,26 +797,27 @@ public class CustomFieldInstance extends ProviderlessEntity {
 	public void setEntityList(List<BusinessEntityWrapper> entityList) {
 		this.entityList = entityList;
 	}
-	//entity for list or map
-	public void addEntityTolist(){
-		this.entityList.add(new BusinessEntityWrapper(businessEntity));
-		this.businessEntity=null;
-	}
-	public void addEntityTolists(BusinessEntity entity){
-		this.entityList.add(new BusinessEntityWrapper(entity));
-	}
+//	public void addEntityTolists(BusinessEntity entity){
+//		if(entity!=null&&!entity.isTransient()){
+//			this.entityList.add(new BusinessEntityWrapper(entity));
+//		}
+//	}
 	public void removeEntityFromlist(BusinessEntityWrapper value){
 		this.entityList.remove(value);
 	}
-	public void addEntityTomap(){
-		this.entityList.add(new BusinessEntityWrapper(label, this.businessEntity));
-		this.label=null;
-		this.businessEntity=null;
-	}
+//	public void addEntityTomap(){
+//		if(label!=null||businessEntity!=null&&!businessEntity.isTransient()){
+//			this.entityList.add(new BusinessEntityWrapper(label, this.businessEntity));
+//		}
+//		this.label=null;
+//		this.businessEntity=null;
+//	}
 
-	public void addEntityTomap(String label,BusinessEntity businessEntity){
-		this.entityList.add(new BusinessEntityWrapper(label, businessEntity));
-	}
+//	public void addEntityTomap(String label,BusinessEntity businessEntity){
+//		if(label!=null||businessEntity!=null&&!businessEntity.isTransient()){
+//			this.entityList.add(new BusinessEntityWrapper(label, businessEntity));
+//		}
+//	}
 
 	public List<StringWrapper> getStringList() {
 		return stringList;
@@ -806,20 +827,22 @@ public class CustomFieldInstance extends ProviderlessEntity {
 		this.stringList = stringList;
 	}
 	//string for list or map
-	public void addStringTolist(){
-		this.stringList.add(new StringWrapper(stringValue));
-		this.stringValue=null;
-	}
+//	public void addStringTolist(){
+//		if(stringValue!=null)
+//			this.stringList.add(new StringWrapper(stringValue));
+//		this.stringValue=null;
+//	}
 
 	public void removeStringFromlist(StringWrapper value){
 		this.stringList.remove(value);
 	}
 
-	public void addStringTomap(){
-		this.stringList.add(new StringWrapper(label, this.stringValue));
-		this.label=null;
-		this.stringValue=null;
-	}
+//	public void addStringTomap(){
+//		if(label!=null||stringValue!=null)
+//			this.stringList.add(new StringWrapper(label, this.stringValue));
+//		this.label=null;
+//		this.stringValue=null;
+//	}
 
 	public List<DateWrapper> getDateList() {
 		return dateList;
@@ -829,21 +852,24 @@ public class CustomFieldInstance extends ProviderlessEntity {
 		this.dateList = dateList;
 	}
 
-	public void addDateTolist(){
-		this.dateList.add(new DateWrapper(dateValue));
-		dateValue=null;
-	}
+//	public void addDateTolist(){
+//		if(dateValue!=null){
+//			this.dateList.add(new DateWrapper(dateValue));
+//		}
+//		dateValue=null;
+//	}
 
 	public void removeDateFromlist(DateWrapper value){
 		this.dateList.remove(value);
 	}
 
-	public void addDateTomap(){
-		DateWrapper wrapper=new DateWrapper(label,dateValue);
-		this.dateList.add(wrapper);
-		label=null;
-		dateValue=null;
-	}
+//	public void addDateTomap(){
+//		if(label!=null||dateValue!=null){
+//			this.dateList.add(new DateWrapper(label,dateValue));
+//		}
+//		label=null;
+//		dateValue=null;
+//	}
 
 	public List<LongWrapper> getLongList() {
 		return longList;
@@ -853,20 +879,22 @@ public class CustomFieldInstance extends ProviderlessEntity {
 		this.longList = longList;
 	}
 
-	public void addLongTolist(){
-		this.longList.add(new LongWrapper(longValue));
-		longValue=null;
-	}
+//	public void addLongTolist(){
+//		if(longValue!=null)
+//			this.longList.add(new LongWrapper(longValue));
+//		longValue=null;
+//	}
 
 	public void removeLongFromlist(LongWrapper value){
 		this.longList.remove(value);
 	}
 
-	public void addLongTomap(){
-		this.longList.add(new LongWrapper(label, longValue));
-		this.label=null;
-		this.longValue=null;
-	}
+//	public void addLongTomap(){
+//		if(label!=null||longValue!=null)
+//			this.longList.add(new LongWrapper(label, longValue));
+//		this.label=null;
+//		this.longValue=null;
+//	}
 
 	public List<DoubleWrapper> getDoubleList() {
 		return doubleList;
@@ -876,22 +904,25 @@ public class CustomFieldInstance extends ProviderlessEntity {
 		this.doubleList = doubleList;
 	}
 
-	public void addDoubleTolist(){
-		this.doubleList.add(new DoubleWrapper(doubleValue));
-		this.doubleValue=null;
-	}
+//	public void addDoubleTolist(){
+//		if(doubleValue!=null)
+//			this.doubleList.add(new DoubleWrapper(doubleValue));
+//		this.doubleValue=null;
+//	}
 
 	public void removeDoubleFromlist(DoubleWrapper value){
 		this.doubleList.remove(value);
 	}
 
-	public void addDoubleTomap(){
-		this.doubleList.add(new DoubleWrapper(label, doubleValue));
-		this.label=null;
-		this.doubleValue=null;
-	}
+//	public void addDoubleTomap(){
+//		if(label!=null||doubleValue!=null)
+//			this.doubleList.add(new DoubleWrapper(label, doubleValue));
+//		this.label=null;
+//		this.doubleValue=null;
+//	}
 
 	public void setBusinessEntity(BusinessEntity businessEntity) {
+		System.out.println("##add a new businessEntity####"+businessEntity);
 		this.businessEntity = businessEntity;
 	}
 
@@ -906,6 +937,25 @@ public class CustomFieldInstance extends ProviderlessEntity {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+//	public void addTextareaTolist(){
+//		if(textareaValue!=null){
+//			this.stringList.add(new StringWrapper(textareaValue));
+//		}
+//		this.textareaValue=null;
+//	}
+	public void removeTextareaFromlist(StringWrapper value){
+		this.stringList.remove(value);
+	}
+//	public void addTextareaTomap(){
+//		if(label!=null||textareaValue!=null){
+//			this.stringList.add(new StringWrapper(label,textareaValue));
+//		}
+//		this.label=null;
+//		this.textareaValue=null;
+//	}
+//	public void removeTextareaFrommap(StringWrapper value){
+//		this.stringList.remove(value);
+//	}
 
 	public String getCode() {
 		return code;
@@ -938,8 +988,105 @@ public class CustomFieldInstance extends ProviderlessEntity {
 	public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
 		this.triggerEndPeriodEvent = triggerEndPeriodEvent;
 	}
-	
-	
-	
-	
+
+	public String getTextareaValue() {
+		return textareaValue;
+	}
+
+	public void setTextareaValue(String textareaValue) {
+		this.textareaValue = textareaValue;
+	}
+	public void addToList(CustomFieldTemplate cft){
+		if(cft==null){
+			return;
+		}
+		switch(cft.getStorageType()){
+		case LIST:
+		case MAP:
+			switch(cft.getFieldType()){
+			case STRING:
+			case LIST:
+				if(StringUtils.isNotEmpty(label)||StringUtils.isNotEmpty(stringValue)){
+					stringList.add(new StringWrapper(label,stringValue));
+				}
+				stringValue=null;
+				label=null;
+				break;
+			case TEXT_AREA:
+				if(StringUtils.isNotEmpty(label)||StringUtils.isNotEmpty(textareaValue)){
+					stringList.add(new StringWrapper(label,textareaValue));
+				}
+				textareaValue=null;
+				label=null;
+				break;
+			case LONG:
+				if(StringUtils.isNotEmpty(label)||longValue!=null){
+					longList.add(new LongWrapper(label,longValue));
+				}
+				label=null;
+				longValue=null;
+				break;
+			case DOUBLE:
+				if(StringUtils.isNotEmpty(label)||doubleValue!=null){
+					doubleList.add(new DoubleWrapper(label,doubleValue));
+				}
+				label=null;
+				doubleValue=null;
+				break;
+			case DATE:
+				if(StringUtils.isNotEmpty(label)||dateValue!=null){
+					dateList.add(new DateWrapper(label,dateValue));
+				}
+				label=null;
+				dateValue=null;
+			case ENTITY:
+				if(businessEntity!=null&&!businessEntity.isTransient()){
+					entityList.add(new BusinessEntityWrapper(label,businessEntity));
+				}
+				businessEntity=null;
+				label=null;
+				break;
+			default:
+				break;
+			}
+			break;
+		case SINGLE:
+			
+			break;
+		default:
+		}
+	}
+	public void addToList(BaseWrapper baseWrapper,CustomFieldTemplate cft){
+		if(cft==null||baseWrapper==null){
+			return;
+		}
+		switch(cft.getStorageType()){
+		case LIST:
+		case MAP:
+			switch(cft.getFieldType()){
+			case STRING:
+			case LIST:
+			case TEXT_AREA:
+				stringList.add((StringWrapper)baseWrapper);
+				break;
+			case LONG:
+				longList.add(new LongWrapper(label,longValue));
+				break;
+			case DOUBLE:
+				doubleList.add(new DoubleWrapper(label,doubleValue));
+				break;
+			case DATE:
+				dateList.add(new DateWrapper(label,dateValue));
+			case ENTITY:
+				entityList.add(new BusinessEntityWrapper(label,businessEntity));
+				break;
+			default:
+				break;
+			}
+			break;
+		case SINGLE:
+			break;
+		default:
+		}
+	}
 }

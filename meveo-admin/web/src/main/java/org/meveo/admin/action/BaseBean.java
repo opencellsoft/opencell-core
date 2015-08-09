@@ -17,13 +17,11 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.enterprise.context.Conversation;
@@ -155,8 +153,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /** Helper field to enter language related field values. */
     protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
 
-    /** Helper field to enter values for HashMap<String,String> type fields */
-    protected Map<String, List<HashMap<String, String>>> mapTypeFieldValues = new HashMap<String, List<HashMap<String, String>>>();
+//    /** Helper field to enter values for HashMap<String,String> type fields */
+//    protected Map<String, List<HashMap<String, String>>> mapTypeFieldValues = new HashMap<String, List<HashMap<String, String>>>();
 
     /**
      * Datamodel for lazy dataloading in datatable.
@@ -755,13 +753,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return dataModel;
     }
 
-    public Map<String, List<HashMap<String, String>>> getMapTypeFieldValues() {
-        return mapTypeFieldValues;
-    }
-
-    public void setMapTypeFieldValues(Map<String, List<HashMap<String, String>>> mapTypeFieldValues) {
-        this.mapTypeFieldValues = mapTypeFieldValues;
-    }
+//    public Map<String, List<HashMap<String, String>>> getMapTypeFieldValues() {
+//        return mapTypeFieldValues;
+//    }
+//
+//    public void setMapTypeFieldValues(Map<String, List<HashMap<String, String>>> mapTypeFieldValues) {
+//        this.mapTypeFieldValues = mapTypeFieldValues;
+//    }
 
     /**
      * Allows to overwrite, or add additional search criteria for filtering a list. Search criteria is a map with filter criteria name as a key and value as a value. <br/>
@@ -873,67 +871,67 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         this.backViewSave = backViewSave;
     }
 
-    /**
-     * Remove a value from a map type field attribute used to gather field values in GUI
-     * 
-     * @param fieldName Field name
-     * @param valueInfo Value to remove
-     */
-    public void removeMapTypeFieldValue(String fieldName, Map<String, String> valueInfo) {
-        mapTypeFieldValues.get(fieldName).remove(valueInfo);
-    }
-
-    /**
-     * Add a value to a map type field attribute used to gather field values in GUI
-     * 
-     * @param fieldName Field name
-     */
-    public void addMapTypeFieldValue(String fieldName) {
-        if (!mapTypeFieldValues.containsKey(fieldName)) {
-            mapTypeFieldValues.put(fieldName, new ArrayList<HashMap<String, String>>());
-        }
-        mapTypeFieldValues.get(fieldName).add(new HashMap<String, String>());
-    }
-
-    /**
-     * Extract values from a Map type field in an entity to mapTypeFieldValues attribute used to gather field values in GUI
-     * 
-     * @param entityField Entity field
-     * @param fieldName Field name
-     */
-    public void extractMapTypeFieldFromEntity(Map<String, String> entityField, String fieldName) {
-
-        mapTypeFieldValues.remove(fieldName);
-
-        if (entityField != null) {
-            List<HashMap<String, String>> fieldValues = new ArrayList<HashMap<String, String>>();
-            mapTypeFieldValues.put(fieldName, fieldValues);
-            for (Entry<String, String> setInfo : entityField.entrySet()) {
-                HashMap<String, String> value = new HashMap<String, String>();
-                value.put("key", setInfo.getKey());
-                value.put("value", setInfo.getValue());
-                fieldValues.add(value);
-            }
-        }
-    }
-
-    /**
-     * Update Map type field in an entity from mapTypeFieldValues attribute used to gather field values in GUI
-     * 
-     * @param entityField Entity field
-     * @param fieldName Field name
-     */
-    public void updateMapTypeFieldInEntity(Map<String, String> entityField, String fieldName) {
-        entityField.clear();
-
-        if (mapTypeFieldValues.get(fieldName) != null) {
-            for (HashMap<String, String> valueInfo : mapTypeFieldValues.get(fieldName)) {
-                if (valueInfo.get("key") != null && !valueInfo.get("key").isEmpty()) {
-                    entityField.put(valueInfo.get("key"), valueInfo.get("value") == null ? "" : valueInfo.get("value"));
-                }
-            }
-        }
-    }
+//    /**
+//     * Remove a value from a map type field attribute used to gather field values in GUI
+//     * 
+//     * @param fieldName Field name
+//     * @param valueInfo Value to remove
+//     */
+//    public void removeMapTypeFieldValue(String fieldName, Map<String, String> valueInfo) {
+//        mapTypeFieldValues.get(fieldName).remove(valueInfo);
+//    }
+//
+//    /**
+//     * Add a value to a map type field attribute used to gather field values in GUI
+//     * 
+//     * @param fieldName Field name
+//     */
+//    public void addMapTypeFieldValue(String fieldName) {
+//        if (!mapTypeFieldValues.containsKey(fieldName)) {
+//            mapTypeFieldValues.put(fieldName, new ArrayList<HashMap<String, String>>());
+//        }
+//        mapTypeFieldValues.get(fieldName).add(new HashMap<String, String>());
+//    }
+//
+//    /**
+//     * Extract values from a Map type field in an entity to mapTypeFieldValues attribute used to gather field values in GUI
+//     * 
+//     * @param entityField Entity field
+//     * @param fieldName Field name
+//     */
+//    public void extractMapTypeFieldFromEntity(Map<String, String> entityField, String fieldName) {
+//
+//        mapTypeFieldValues.remove(fieldName);
+//
+//        if (entityField != null) {
+//            List<HashMap<String, String>> fieldValues = new ArrayList<HashMap<String, String>>();
+//            mapTypeFieldValues.put(fieldName, fieldValues);
+//            for (Entry<String, String> setInfo : entityField.entrySet()) {
+//                HashMap<String, String> value = new HashMap<String, String>();
+//                value.put("key", setInfo.getKey());
+//                value.put("value", setInfo.getValue());
+//                fieldValues.add(value);
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Update Map type field in an entity from mapTypeFieldValues attribute used to gather field values in GUI
+//     * 
+//     * @param entityField Entity field
+//     * @param fieldName Field name
+//     */
+//    public void updateMapTypeFieldInEntity(Map<String, String> entityField, String fieldName) {
+//        entityField.clear();
+//
+//        if (mapTypeFieldValues.get(fieldName) != null) {
+//            for (HashMap<String, String> valueInfo : mapTypeFieldValues.get(fieldName)) {
+//                if (valueInfo.get("key") != null && !valueInfo.get("key").isEmpty()) {
+//                    entityField.put(valueInfo.get("key"), valueInfo.get("value") == null ? "" : valueInfo.get("value"));
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Load available custom fields (templates) and their values

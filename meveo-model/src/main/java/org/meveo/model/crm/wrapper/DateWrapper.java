@@ -3,7 +3,9 @@ package org.meveo.model.crm.wrapper;
 import java.io.Serializable;
 import java.util.Date;
 
-public class DateWrapper implements Serializable {
+import org.apache.commons.lang.StringUtils;
+
+public class DateWrapper extends BaseWrapper implements Serializable {
 
 	/**
 	 * 
@@ -39,10 +41,25 @@ public class DateWrapper implements Serializable {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	@Override
+	public boolean isEmpty(){
+		return StringUtils.isEmpty(label)&&dateValue==null;
+	}
+	@Override
+	public boolean isNotEmpty(){
+		return !isEmpty();
+	}
 
 	@Override
-	public String toString() {
-		return this.dateValue.toString();
+	public Object getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setValue(Object value) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
