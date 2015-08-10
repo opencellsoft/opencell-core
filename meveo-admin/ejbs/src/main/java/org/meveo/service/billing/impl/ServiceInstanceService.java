@@ -86,6 +86,28 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		return chargeInstance;
 	}
+	
+	
+	public ServiceInstance findActivatedByCodeAndSubscription(String code, Subscription subscription) {
+		ServiceInstance serviceInstance = null;
+		try {
+			log.debug("start of find {} by code (code={}) ..", "ServiceInstance", code);
+			QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+			qb.addCriterion("c.code", "=", code, true);
+			qb.addCriterion("c.subscription", "=", subscription, true);
+			qb.addCriterion("c.status", "=", InstanceStatusEnum.ACTIVE, true);
+			serviceInstance = (ServiceInstance) qb.getQuery(getEntityManager()).getSingleResult();
+			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ServiceInstance", code,
+					serviceInstance != null });
+		} catch (NoResultException nre) {
+			log.debug("findByCodeAndSubscription : no service has been found");
+		} catch (Exception e) {
+			log.error("findByCodeAndSubscription error={} ", e.getMessage());
+		}
+
+		return serviceInstance;
+	}
+
 
 	@SuppressWarnings("unchecked")
 	public List<ServiceInstance> findByCodeSubscriptionAndStatus(String code, Subscription subscription,

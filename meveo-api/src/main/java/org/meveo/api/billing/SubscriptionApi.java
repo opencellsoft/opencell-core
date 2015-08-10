@@ -614,16 +614,8 @@ public class SubscriptionApi extends BaseApi {
 			}
 
 			for (String serviceInstanceCode : postData.getServices()) {
-				ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndSubscription(serviceInstanceCode, subscription);
-				if (serviceInstance == null) {
-					throw new EntityDoesNotExistsException(ServiceInstance.class, serviceInstanceCode);
-				}
-
-				if (serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-					log.info("serviceInstance with code={} is already TERMINATED", serviceInstance.getCode());
-					continue;
-				}
-
+				ServiceInstance serviceInstance = serviceInstanceService.findActivatedByCodeAndSubscription(serviceInstanceCode, subscription);
+				if (serviceInstance != null) {
 				try {
 					serviceInstanceService.terminateService(serviceInstance, postData.getTerminationDate(), serviceTerminationReason, currentUser);
 				} catch (BusinessException e) {
@@ -631,7 +623,11 @@ public class SubscriptionApi extends BaseApi {
 					throw new MeveoApiException(e.getMessage());
 				}
 			}
-		} else {
+			else{
+				throw new MeveoApiException("ServiceInstance with code=" + serviceInstanceCode + " must be ACTIVE.");
+			}
+		   }
+			} else {
 			if (StringUtils.isBlank(postData.getSubscriptionCode())) {
 				missingParameters.add("subscriptionCode");
 			}
