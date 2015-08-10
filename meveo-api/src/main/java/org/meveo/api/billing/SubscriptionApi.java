@@ -632,7 +632,7 @@ public class SubscriptionApi extends BaseApi {
 				missingParameters.add("subscriptionCode");
 			}
 			if (postData.getServices() == null || postData.getServices().size() == 0) {
-				missingParameters.add("subscriptionCode");
+				missingParameters.add("services");
 			}
 			if (StringUtils.isBlank(postData.getTerminationReason())) {
 				missingParameters.add("terminationReason");
