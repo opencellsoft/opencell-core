@@ -309,7 +309,33 @@ public class SubscriptionApi extends BaseApi {
 				ServiceTemplate serviceTemplate = serviceToActivateDto.getServiceTemplate();
 				log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 
-				ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndSubscription(serviceTemplate.getCode(), subscription);
+				List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription);
+				boolean alreadyActiveOrSuspended = false;
+				ServiceInstance serviceInstance=null;
+				for (ServiceInstance subscriptionServiceInstance : subscriptionServiceInstances) {
+					if (subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CANCELED
+							&& subscriptionServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED
+							&& subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CLOSED){
+						if(subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.INACTIVE)){
+							if (serviceToActivateDto.getSubscriptionDate() != null) {
+								log.warn("need date for serviceInstance with code={}", subscriptionServiceInstance.getCode());
+								subscriptionServiceInstance.setDescription(serviceTemplate.getDescription());
+								subscriptionServiceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
+								subscriptionServiceInstance.setQuantity(serviceToActivateDto.getQuantity());
+								serviceInstance=subscriptionServiceInstance;
+								serviceInstances.add(serviceInstance);
+							}
+						}else{
+							alreadyActiveOrSuspended = true;
+						}
+						break;
+					}
+							
+				}
+
+				if (alreadyActiveOrSuspended) {
+					throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must not be ACTIVE or SUSPENDED.");
+				}
 				if (serviceInstance == null) {
 					serviceInstance = new ServiceInstance();
 					serviceInstance.setProvider(serviceTemplate.getProvider());
@@ -339,22 +365,7 @@ public class SubscriptionApi extends BaseApi {
 					} catch (BusinessException e) {
 						throw new MeveoApiException(e.getMessage());
 					}
-				} else {
-					// service instance must be inactive at this stage
-					if (serviceInstance.getStatus() != InstanceStatusEnum.INACTIVE) {
-						log.error("serviceInstance with code={} must be INACTIVE", serviceInstance.getCode());
-						throw new MeveoApiException("ServiceInstance with code=" + serviceInstance.getCode() + " must be INACTIVE.");
-					}
-
-					// subscription date must be set
-					if (serviceToActivateDto.getSubscriptionDate() != null) {
-						log.warn("need date for serviceInstance with code={}", serviceInstance.getCode());
-						serviceInstance.setDescription(serviceTemplate.getDescription());
-						serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
-						serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
-						serviceInstances.add(serviceInstance);
-					}
-				}
+				} 
 			}
 
 			// override price
@@ -379,8 +390,8 @@ public class SubscriptionApi extends BaseApi {
 
 			// activate services
 			for (ServiceInstance serviceInstance : serviceInstances) {
-				if (serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-					throw new MeveoApiException(new BundleKey("messages", "error.activation.terminatedService").getBundle());
+				if (serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
+					throw new MeveoApiException(new BundleKey("messages", "error.activation.suspendedService").getBundle());
 				}
 
 				if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
@@ -432,12 +443,26 @@ public class SubscriptionApi extends BaseApi {
 			}
 
 			// instantiate
-			List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
 			for (ServiceToInstantiateDto serviceToActivateDto : serviceToInstantiateDtos) {
 				ServiceTemplate serviceTemplate = serviceToActivateDto.getServiceTemplate();
 				log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 
-				ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndSubscription(serviceTemplate.getCode(), subscription);
+				ServiceInstance serviceInstance = null;
+				List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription);
+				boolean alreadyinstanciated = false;
+				for (ServiceInstance subscriptionServiceInstance : subscriptionServiceInstances) {
+					if (subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CANCELED
+							&& subscriptionServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED
+							&& subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CLOSED){
+							alreadyinstanciated = true;
+							break;
+					}
+							
+				}
+
+				if (alreadyinstanciated) {
+					throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must instanciated.");
+				}
 				if (serviceInstance == null) {
 					serviceInstance = new ServiceInstance();
 					serviceInstance.setProvider(serviceTemplate.getProvider());
@@ -461,28 +486,11 @@ public class SubscriptionApi extends BaseApi {
 					try {
 						serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
 
-						if (serviceToActivateDto.getSubscriptionDate() != null) {
-							serviceInstances.add(serviceInstance);
-						}
 					} catch (BusinessException e) {
 						throw new MeveoApiException(e.getMessage());
 					}
-				} else {
-					// service instance must be inactive at this stage
-					if (serviceInstance.getStatus() != InstanceStatusEnum.INACTIVE) {
-						log.error("serviceInstance with code={} must be INACTIVE", serviceInstance.getCode());
-						throw new MeveoApiException("ServiceInstance with code=" + serviceInstance.getCode() + " must be INACTIVE.");
-					}
-
-					// subscription date must be set
-					if (serviceToActivateDto.getSubscriptionDate() != null) {
-						log.warn("need date for serviceInstance with code={}", serviceInstance.getCode());
-						serviceInstance.setDescription(serviceTemplate.getDescription());
-						serviceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
-						serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
-						serviceInstances.add(serviceInstance);
-					}
-				}
+				} 
+			
 			}
 		} else {
 			if (StringUtils.isBlank(postData.getSubscription())) {
