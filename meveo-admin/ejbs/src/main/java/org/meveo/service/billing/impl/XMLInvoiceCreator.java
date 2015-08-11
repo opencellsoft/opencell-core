@@ -798,12 +798,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						Text usageDateTxt = doc.createTextNode(ratedTransaction.getUsageDate() != null ? DateUtils.formatDateWithPattern(ratedTransaction.getUsageDate(),
 								"dd/MM/yyyy") + "" : "");
 						usageDate.appendChild(usageDateTxt);
-						line.appendChild(usageDate);
-						
-						if(ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs()){
-						if(walletOperation!=null){
-						 EDR edr=walletOperation.getEdr();
-						 if(edr!=null){
+						 line.appendChild(usageDate);
+						 EDR edr=ratedTransaction.getEdr();
+						 if(ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs() && edr!=null){ 
 						 Element edrInfo = doc.createElement("edr"); 
 						 edrInfo.setAttribute("originRecord", edr.getOriginRecord() != null ? edr.getOriginRecord() : "");
 						 edrInfo.setAttribute("originBatch", edr.getOriginBatch() != null ? edr.getOriginBatch() : "");
@@ -820,9 +817,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						 edrInfo.setAttribute("DecimalParam2" , edr.getDecimalParam2() != null ? edr.getDecimalParam2().toPlainString() : "");
 						 line.appendChild(edrInfo); 
 						  }
-						 }
-						}
-
+						 
 						subCategory.appendChild(line);
 
 					}
