@@ -303,6 +303,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		}
 		
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
+		result.setJobInstance(entity);
 		InitialContext ic;
 		try {
 			ic = new InitialContext();
