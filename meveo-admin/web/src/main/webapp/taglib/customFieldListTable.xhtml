@@ -23,361 +23,334 @@
 		label="#{cft.description}#{cft.valueRequired?' *':''}"
 		componentWidth="100" displayOneLine="true">
 		<!-- entity list -->
-		<p:dataTable id="customFields_list_entity" lazy="false"
+		<p:dataTable id="customFields_entitylist" lazy="false"
 			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.LIST and cft.fieldType==CustomFieldTypeEnum.ENTITY}"
-			value="#{cft.instance.entityList}" var="w" editable="true" editMode="cell"
-			reflow="true">
-<!-- 			<p:ajax event="cellEdit"/> -->
+			value="#{cft.instance.entityList}" var="w" reflow="true" resizableColumns="true">
 			<p:column headerText="#{messages['businessEntity.code']}" sortBy="#{w.businessEntity.code}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{w.businessEntity.code}"/>
-<!-- 					</f:facet> -->
-<!-- 					<f:facet name="input"><hftl:customFieldValueField cft="#{cft}" field="#{w}" edit="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+				<h:outputText value="#{w.businessEntity.code}"/>
             </p:column>
 			<p:column headerText="#{messages['commons.actions']}" width="15%">
-				<p:commandButton id="deleteEntitylink"
-					action="#{cft.instance.removeEntityFromlist(w)}"
+				<p:commandButton id="editlink" onsuccess="PF('#{cfiDialogWidget}').show()"
+					partialSubmit="true" icon="ui-icon-pencil" update="@this @([id$='dlg_cft_cfi_newform'])" process="@this">
+					<f:setPropertyActionListener value="#{w}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
+				</p:commandButton>
+				<p:commandButton id="deletelink"
+					actionListener="#{cft.instance.removeEntityFromlist(w)}"
 					partialSubmit="true" icon="ui-icon-trash" ajax="true"
-					update="customFields_list_entity"
-					process="@this customFields_list_entity">
+					update="customFields_entitylist"
+					process="@this">
 				</p:commandButton>
 			</p:column>
 			<f:facet name="footer">
-				<p:commandButton value="#{messages['commons.addNew']}" process="@this #{p:component('dlg_cft_cfi_fields')}"
-					immediate="true" update="@this #{p:component('dlg_cft_cfi_fields')}" partialSubmit="true"
-					action="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
-					onsuccess="PF('dlg_cft_cfi_newcfi').show()">
+				<p:commandButton value="#{messages['commons.addNew']}" process="@this"
+					immediate="true" update="@this @([id$='dlg_cft_cfi_newform'])" partialSubmit="true"
+					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
+					onsuccess="PF('#{cfiDialogWidget}').show()">
 					<f:setPropertyActionListener target="#{backingBean.customFieldSelectedTemplate}" value="#{cft}" />
 				</p:commandButton>
 			</f:facet>
 		</p:dataTable>
-		
-		<!-- string list or select -->
-		<p:dataTable id="customFields_list_string" lazy="false"
-			rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST and (cft.fieldType eq CustomFieldTypeEnum.STRING or cft.fieldType eq CustomFieldTypeEnum.LIST)}"
-			value="#{cft.instance.stringList}" var="w" editable="true" editMode="cell"
-			reflow="true">
-<!-- 			<p:ajax event="cellEdit"/> -->
+		<!-- string list or select or textarea-->
+		<p:dataTable id="customFields_stringlist" lazy="false"
+			rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST and (cft.fieldType eq CustomFieldTypeEnum.STRING or
+			cft.fieldType eq CustomFieldTypeEnum.LIST or cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA)}"
+			value="#{cft.instance.stringList}" var="w" reflow="true" resizableColumns="true">
 			<p:column headerText="#{messages['commons.value']}" sortBy="#{w.stringValue}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{w.stringValue}"/>
-<!-- 					</f:facet> -->
-<!-- 					<f:facet name="input"><hftl:customFieldValueField cft="#{cft}" field="#{w}" edit="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+				<h:outputText value="#{w.truncateValue}"/>
 			</p:column>
-			<p:column headerText="#{messages['commons.actions']}" width="10%">
-				<p:commandButton id="deleteStringlink"
-					action="#{cft.instance.removeStringFromlist(w)}"
-					partialSubmit="true" icon="ui-icon-trash"
-					update="customFields_list_string" process="@this">
-				</p:commandButton>
-				<p:commandButton id="editStringlink" onsuccess="PF('dlg_cft_cfi_newcfi').show()"
-					partialSubmit="true" icon="ui-icon-edit"
-					update="@this #{p:component('dlg_cft_cfi_fields')}" process="@this #{p:component('dlg_cft_cfi_fields')}">
+			<p:column headerText="#{messages['commons.actions']}" width="15%">
+				<p:commandButton id="editlink" onsuccess="PF('#{cfiDialogWidget}').show()"
+					partialSubmit="true" icon="ui-icon-pencil" update="@this @([id$='dlg_cft_cfi_newform'])"
+					process="@this customFields_stringlist">
 					<f:setPropertyActionListener value="#{w}" target="#{backingBean.baseWrapper}"/>
 					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
+				</p:commandButton>
+				<p:commandButton id="deletelink"
+					actionListener="#{cft.instance.removeStringFromlist(w)}"
+					partialSubmit="true" icon="ui-icon-trash"
+					update="customFields_stringlist" process="@this">
 				</p:commandButton>
 			</p:column>
 			<f:facet name="footer">
 				<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" 
-					immediate="true" update="@this #{p:component('dlg_cft_cfi_fields')}" process="@this #{p:component('dlg_cft_cfi_fields')}"
-					action="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
-					onsuccess="PF('dlg_cft_cfi_newcfi').show()">
+					immediate="true" update="@this @([id$='dlg_cft_cfi_newform'])" process="@this"
+					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
+					onsuccess="PF('#{cfiDialogWidget}').show()">
 					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
 					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
 				</p:commandButton>
 			</f:facet>
 		</p:dataTable>
 		<!-- date list -->
-		<p:dataTable id="customFields_list_date" lazy="false"
+		<p:dataTable id="customFields_datelist" lazy="false"
 			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.LIST and cft.fieldType==CustomFieldTypeEnum.DATE}"
-			value="#{cft.instance.dateList}" var="w" editable="true" editMode="cell"
-			resizableColumns="true" reflow="true">
-			<p:ajax event="cellEdit"/>
+			value="#{cft.instance.dateList}" var="w" resizableColumns="true" reflow="true">
 			<p:column headerText="#{messages['commons.value']}" sortBy="#{w.dateValue}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-						<h:outputText value="#{w.dateValue}" >
-							<f:convertDateTime type="date" pattern="#{datePattern}" />
-						</h:outputText>
-<!-- 					</f:facet> -->
-<!--                		<f:facet name="input"> -->
-<!--                			<p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{w.dateValue}" required="true" label="#{cft.description}" /> -->
-<!--                		</f:facet> -->
-<!-- 				</p:cellEditor> -->
+				<h:outputText value="#{w.dateValue}" >
+					<f:convertDateTime type="date" pattern="#{datePattern}" />
+				</h:outputText>
 			</p:column>
-			<p:column headerText="#{messages['commons.actions']}" width="10%">
-				<p:commandButton id="deleteDatelink"
-					action="#{cft.instance.removeDateFromlist(w)}" partialSubmit="true"
-					icon="ui-icon-trash" update="customFields_list_date"
-					process="@this customFields_list_date">
+			<p:column headerText="#{messages['commons.actions']}" width="15%">
+				<p:commandButton id="editlink" onsuccess="PF('#{cfiDialogWidget}').show()"
+					partialSubmit="true" icon="ui-icon-pencil" update="@this @([id$='dlg_cft_cfi_newform'])">
+					<f:setPropertyActionListener value="#{w}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
+				</p:commandButton>
+				<p:commandButton id="deletelink"
+					actionListener="#{cft.instance.removeDateFromlist(w)}" partialSubmit="true"
+					icon="ui-icon-trash" update="customFields_datelist"
+					process="@this">
 				</p:commandButton>
 			</p:column>
 			<f:facet name="footer">
-				<p:commandButton value="#{messages['commons.addNew']}"
-					immediate="true" update="@this @([id$='cft_datelist_#{cft.id}popupForm'])"
+				<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true"
+					immediate="true" update="@this @([id$='dlg_cft_cfi_newform'])"
 					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
-					onsuccess="PF('dlg_cft_datelist_#{cft.id}').show()">
+					onsuccess="PF('#{cfiDialogWidget}').show()">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
 				</p:commandButton>
 			</f:facet>
 		</p:dataTable>
 		<!-- long list -->
-		<p:dataTable id="customFields_list_long" lazy="false"
+		<p:dataTable id="customFields_longlist" lazy="false"
 			rendered="#{cft.storageType==CustomFieldStorageTypeEnum.LIST and cft.fieldType==CustomFieldTypeEnum.LONG}"
-			value="#{cft.instance.longList}" var="w" resizableColumns="true" editable="true" editMode="cell"
-			reflow="true">
-<!-- 			<p:ajax event="cellEdit"/> -->
+			value="#{cft.instance.longList}" var="w" resizableColumns="true" reflow="true">
 			<p:column headerText="#{messages['commons.value']}" sortBy="#{w.longValue}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{w.longValue}"/>
-<!-- 					</f:facet> -->
-<!--                		<f:facet name="input"> -->
-<!--                			<p:inputText value="#{w.longValue}" required="true" label="#{cft.description}"> -->
-<!--                				<f:convertNumber integerOnly="true"/> -->
-<!--                			</p:inputText> -->
-<!--                		</f:facet> -->
-<!-- 				</p:cellEditor> -->
+				<h:outputText value="#{w.longValue}"/>
 			</p:column>
-			<p:column headerText="#{messages['commons.actions']}" width="10%">
-				<p:commandButton id="deleteLonglink"
+			<p:column headerText="#{messages['commons.actions']}" width="15%">
+				<p:commandButton id="editlink" onsuccess="PF('#{cfiDialogWidget}').show()"
+					partialSubmit="true" icon="ui-icon-pencil" update="@this @([id$='dlg_cft_cfi_newform'])" process="@this">
+					<f:setPropertyActionListener value="#{w}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
+				</p:commandButton>
+				<p:commandButton id="deletelink"
 					action="#{cft.instance.removeLongFromlist(w)}" partialSubmit="true"
-					icon="ui-icon-trash" update="customFields_list_long"
-					process="@this customFields_list_long">
+					icon="ui-icon-trash" update="customFields_longlist"
+					process="@this">
 				</p:commandButton>
 			</p:column>
 			<f:facet name="footer">
-				<p:commandButton value="#{messages['commons.addNew']}"
-					immediate="true" update="@this @([id$='cft_longlist_#{cft.id}popupForm'])" process="@this @([id$='cft_longlist_#{cft.id}popupForm'])"
-					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
-					onsuccess="PF('dlg_cft_longlist_#{cft.id}').show()">
+				<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true"
+					immediate="true" update="@this @([id$='dlg_cft_cfi_newform'])" process="@this"
+					action="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
+					onsuccess="PF('#{cfiDialogWidget}').show()">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
 				</p:commandButton>
 			</f:facet>
 		</p:dataTable>
 		<!-- double list -->
-		<p:dataTable id="customFields_list_double" lazy="false"
+		<p:dataTable id="customFields_doublelist" lazy="false"
 			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.LIST and cft.fieldType==CustomFieldTypeEnum.DOUBLE}"
-			value="#{cft.instance.doubleList}" var="w" resizableColumns="true" editable="true" editMode="cell"
-			reflow="true">
-			<p:ajax event="cellEdit"/>
+			value="#{cft.instance.doubleList}" var="w" resizableColumns="true" reflow="true">
 			<p:column headerText="#{messages['commons.value']}" sortBy="#{w.doubleValue}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{w.doubleValue}" />
-<!-- 					</f:facet> -->
-<!--                		<f:facet name="input"><hftl:customFieldValueField cft="#{cft}" field="#{w}" edit="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+				<h:outputText value="#{w.doubleValue}" />
 			</p:column>
-			<p:column headerText="#{messages['commons.actions']}" width="10%">
-				<p:commandButton id="deleteDoublelink"
+			<p:column headerText="#{messages['commons.actions']}" width="15%">
+				<p:commandButton id="editlink" onsuccess="PF('#{cfiDialogWidget}').show()"
+					partialSubmit="true" icon="ui-icon-pencil" update="@this @([id$='dlg_cft_cfi_newform'])" process="@this">
+					<f:setPropertyActionListener value="#{w}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
+				</p:commandButton>
+				<p:commandButton id="deletelink"
 					action="#{cft.instance.removeDoubleFromlist(w)}"
 					partialSubmit="true" icon="ui-icon-trash"
-					update="customFields_list_double"
-					process="@this customFields_list_double">
+					update="customFields_doublelist"
+					process="@this">
 				</p:commandButton>
 			</p:column>
 			<f:facet name="footer">
-				<p:commandButton value="#{messages['commons.addNew']}" process="@this @([id$='cft_doublelist_#{cft.id}popupForm'])"
-					immediate="true" update="@this @([id$='cft_doublelist_#{cft.id}popupForm'])"
+				<p:commandButton value="#{messages['commons.addNew']}" process="@this" partialSubmit="true"
+					immediate="true" update="@this @([id$='dlg_cft_cfi_newform'])"
 					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
-					onsuccess="PF('dlg_cft_doublelist_#{cft.id}').show()">
+					onsuccess="PF('#{cfiDialogWidget}').show()">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
 				</p:commandButton>
 			</f:facet>
 		</p:dataTable>
 		<!--map  -->
 		<!-- entity map -->
-		<p:dataTable id="customFields_map_entity" lazy="false"
+		<p:dataTable id="customFields_entitymap" lazy="false"
 			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.MAP and cft.fieldType==CustomFieldTypeEnum.ENTITY}"
-			value="#{cft.instance.entityList}" var="m" editable="true" editMode="cell"
-			resizableColumns="true" reflow="true">
-<!-- 			<p:ajax event="cellEdit"/> -->
-			<p:column headerText="#{messages['commons.label']}" sortBy="#{m.label}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{m.label}" />
-<!-- 					</f:facet> -->
-<!-- 					<f:facet name="input"><h:inputText value="#{m.label}" required="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+			value="#{cft.instance.entityMap.entrySet}" var="m" resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.label']}" sortBy="#{m.key}">
+				<h:outputText value="#{m.key}" />
 			</p:column>
-			<p:column headerText="#{messages['commons.value']}" sortBy="#{m.businessEntity.code}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{m.businessEntity.clode}"/>
-<!-- 					</f:facet> -->
-<!--                		<f:facet name="input"><hftl:customFieldValueField cft="#{cft}" field="#{m}" edit="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+			<p:column headerText="#{messages['commons.value']}">
+				<ui:repeat var="v" value="#{m.value}">
+					<h:outputText value="#{v.businessEntity.code}" /><br/>
+				</ui:repeat>
 			</p:column>
-			<p:column headerText="#{messages['commons.actions']}" width="10%">
-				<p:commandButton id="deleteEntitylink"
-					action="#{cft.instance.removeEntityFromlist(m)}"
+			<p:column headerText="#{messages['commons.actions']}" width="15%">
+				<p:commandButton id="editlink" onsuccess="PF('#{cfiDialogWidget}').show()"
+					actionListener="#{cft.instance.editInmap(m.key,cft)}"
+					partialSubmit="true" icon="ui-icon-pencil" update="@this @([id$='dlg_cft_cfi_newform'])" process="@this">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
+				</p:commandButton>
+				<p:commandButton id="deletelink"
+					actionListener="#{cft.instance.removeFrommap(m.key,cft.fieldType)}"
 					partialSubmit="true" icon="ui-icon-trash"
-					update="@this customFields_map_entity"
-					process="customFields_map_entity">
+					update="@this customFields_entitymap"
+					process="@this">
 				</p:commandButton>
 			</p:column>
 			<f:facet name="footer">
-				<p:commandButton value="#{messages['commons.addNew']}"
-					immediate="true" update="@this @([id$='cft_entitylist_#{cft.id}popupForm'])"
-					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}" 
-					onclick="PF('dlg_cft_entitylist_#{cft.id}').show()">
+				<p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this"
+					immediate="true" update="@this @([id$='dlg_cft_cfi_newform'])"
+					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
+					onsuccess="PF('#{cfiDialogWidget}').show()">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
 				</p:commandButton>
 			</f:facet>
 		</p:dataTable>
-		<!-- string map -->
-		<p:dataTable id="customFields_map_string" lazy="false"
-			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.MAP and cft.fieldType==CustomFieldTypeEnum.STRING}"
-			value="#{cft.instance.stringList}" var="m"
-			editable="true" editMode="cell"
-			resizableColumns="true" reflow="true">
-<!-- 			<p:ajax event="cellEdit"/> -->
-			<p:column headerText="#{messages['commons.label']}" sortBy="#{m.label}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{m.label}" />
-<!-- 					</f:facet> -->
-<!-- 					<f:facet name="input"><h:inputText value="#{m.label}" required="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+		<!-- string or selectlist or textarea map -->
+		<p:dataTable id="customFields_stringmap" lazy="false"
+			rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP and 
+			(cft.fieldType eq CustomFieldTypeEnum.STRING or cft.fieldType eq CustomFieldTypeEnum.LIST or cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA)}"
+			value="#{cft.instance.stringMap.entrySet}" var="m" resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.label']}" sortBy="#{m.key}">
+				<h:outputText value="#{m.key}" />
 			</p:column>
-			<p:column headerText="#{messages['commons.value']}" sortBy="#{m.stringValue}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{m.stringValue}" />
-<!-- 					<hftl:customFieldValueField cft="#{cft}" field="#{m}" edit="false"/> -->
-<!-- 					</f:facet> -->
-<!--                		<f:facet name="input"><hftl:customFieldValueField cft="#{cft}" field="#{m}" edit="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+			<p:column headerText="#{messages['commons.value']}">
+				<ui:repeat var="v" value="#{m.value}">
+					<h:outputText value="#{v.stringValue}" /><br/>
+				</ui:repeat>
 			</p:column>
-			<p:column headerText="#{messages['commons.actions']}" width="10%">
-				<p:commandButton id="deleteStringlink"
-					action="#{cft.instance.removeStringFromlist(m)}"
+			<p:column headerText="#{messages['commons.actions']}" width="15%">
+				<p:commandButton id="editlink" onsuccess="PF('#{cfiDialogWidget}').show()"
+					actionListener="#{cft.instance.editInmap(m.key,cft)}"
+					partialSubmit="true" icon="ui-icon-pencil" update="@this @([id$='dlg_cft_cfi_newform'])">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
+				</p:commandButton>
+				<p:commandButton id="deletelink"
+					action="#{cft.instance.removeFrommap(m.key,cft.fieldType)}"
 					partialSubmit="true" icon="ui-icon-trash"
-					update="customFields_map_string"
-					process="@this customFields_map_string">
+					update="customFields_stringmap"
+					process="@this">
 				</p:commandButton>
 			</p:column>
 			<f:facet name="footer">
-				<p:commandButton value="#{messages['commons.addNew']}"
-					immediate="true"
-					update="@form @([id$='cft_stringlist_#{cft.id}popupForm'])"
-					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
-					onsuccess="PF('dlg_cft_stringlist_#{cft.id}').show()">
+				<p:commandButton value="#{messages['commons.addNew']}" process="@this" partialSubmit="true"
+					immediate="true" update="@this @([id$='dlg_cft_cfi_newform']}"
+					onsuccess="PF('#{cfiDialogWidget}').show()"
+					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
 				</p:commandButton>
 			</f:facet>
 		</p:dataTable>
 		<!-- date map -->
-		<p:dataTable id="customFields_map_date" lazy="false"
+		<p:dataTable id="customFields_datemap" lazy="false"
 			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.MAP and cft.fieldType==CustomFieldTypeEnum.DATE}"
-			value="#{cft.instance.dateList}" var="m" editable="true" editMode="cell"
-			resizableColumns="true" reflow="true">
-<!-- 			<p:ajax event="cellEdit"/> -->
-			<p:column headerText="#{messages['commons.label']}" sortBy="#{m.label}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{m.label}" />
-<!-- 					</f:facet> -->
-<!-- 					<f:facet name="input"><h:inputText value="#{m.label}" required="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+			value="#{cft.instance.dateMap.entrySet}" var="m" resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.label']}" sortBy="#{m.key}">
+				<h:outputText value="#{m.key}" />
 			</p:column>
-			<p:column headerText="#{messages['commons.value']}" sortBy="#{m.dateValue}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-						<h:outputText value="#{m.dateValue}" >
-							<f:convertDateTime type="date" pattern="#{datePattern}" />
-						</h:outputText>
-<!-- 					<hftl:customFieldValueField cft="#{cft}" field="#{m}" edit="false"/> -->
-<!-- 					</f:facet> -->
-<!--                		<f:facet name="input"><hftl:customFieldValueField cft="#{cft}" field="#{m}" edit="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+			<p:column headerText="#{messages['commons.value']}">
+				<ui:repeat var="v" value="#{m.value}">
+					<h:outputText value="#{v.dateValue}" >
+						<f:convertDateTime type="date" pattern="#{datePattern}" />
+					</h:outputText><br/>
+				</ui:repeat>
 			</p:column>
-			<p:column headerText="#{messages['commons.actions']}" width="10%">
-				<p:commandButton id="deleteDatelink"
-					action="#{cft.instance.removeDateFromlist(m)}" partialSubmit="true"
-					icon="ui-icon-trash" update="customFields_map_date"
-					process="@this customFields_map_date">
+			<p:column headerText="#{messages['commons.actions']}" width="15%">
+				<p:commandButton id="editlink" onsuccess="PF('#{cfiDialogWidget}').show()"
+					actionListener="#{cft.instance.editInmap(m.key,cft)}" process="@this"
+					partialSubmit="true" icon="ui-icon-pencil" update="@this @([id$='dlg_cft_cfi_newform'])">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
+				</p:commandButton>
+				<p:commandButton id="deletelink"
+					action="#{cft.instance.removeFrommap(m.key,cft.fieldType)}" partialSubmit="true"
+					icon="ui-icon-trash" update="customFields_datemap"
+					process="@this">
 				</p:commandButton>
 			</p:column>
 			<f:facet name="footer">
-				<p:commandButton value="#{messages['commons.addNew']}"
-					immediate="true" update="@this @([id$='cft_datelist_#{cft.id}popupForm'])"
+				<p:commandButton value="#{messages['commons.addNew']}" process="@this" partialSubmit="true"
+					immediate="true" update="@this @([id$='dlg_cft_cfi_newform'])"
 					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
-					onsuccess="PF('dlg_cft_datelist_#{cft.id}').show()">
+					onsuccess="PF('#{cfiDialogWidget}').show()">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
 				</p:commandButton>
 			</f:facet>
 		</p:dataTable>
 		<!-- long map -->
-		<p:dataTable id="customFields_map_long" lazy="false"
+		<p:dataTable id="customFields_longmap" lazy="false"
 			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.MAP and cft.fieldType==CustomFieldTypeEnum.LONG}"
-			value="#{cft.instance.longList}" var="m" editable="true" editMode="cell"
-			resizableColumns="true" reflow="true">
-<!-- 			<p:ajax event="cellEdit"/> -->
-			<p:column headerText="#{messages['commons.label']}" sortBy="#{m.label}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{m.label}" />
-<!-- 					</f:facet> -->
-<!-- 					<f:facet name="input"><h:inputText value="#{m.label}" required="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+			value="#{cft.instance.longMap.entrySet}" var="m" resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.label']}" sortBy="#{m.key}">
+				<h:outputText value="#{m.key}" />
 			</p:column>
-			<p:column headerText="#{messages['commons.value']}" sortBy="#{m.longValue}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-						<h:outputText value="#{m.longValue}"/>
-<!-- 					</f:facet> -->
-<!--                		<f:facet name="input"><hftl:customFieldValueField cft="#{cft}" field="#{m}" edit="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+			<p:column headerText="#{messages['commons.value']}">
+				<ui:repeat var="v" value="#{m.value}">
+					<h:outputText value="#{v.longValue}"/><br/>
+				</ui:repeat>
 			</p:column>
-			<p:column headerText="#{messages['commons.actions']}" width="10%">
-				<p:commandButton id="deleteLonglink"
-					action="#{cft.instance.removeLongFromlist(m)}" partialSubmit="true"
-					icon="ui-icon-trash" update="customFields_map_long"
-					process="@this customFields_map_long">
+			<p:column headerText="#{messages['commons.actions']}" width="15%">
+				<p:commandButton id="editlink" onsuccess="PF('#{cfiDialogWidget}').show()"
+					actionListener="#{cft.instance.editInmap(m.key,cft)}"
+					partialSubmit="true" icon="ui-icon-pencil" update="@this @([id$='dlg_cft_cfi_newform'])">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
+				</p:commandButton>
+				<p:commandButton id="deletelink"
+					actionListener="#{cft.instance.removeFrommap(m.key,cft.fieldType)}" partialSubmit="true"
+					icon="ui-icon-trash" update="customFields_longmap"
+					process="@this customFields_longmap">
 				</p:commandButton>
 			</p:column>
 			<f:facet name="footer">
-				<p:commandButton value="#{messages['commons.addNew']}"
-					immediate="true" update="@this @([id$='cft_longlist_#{cft.id}popupForm'])"
+				<p:commandButton value="#{messages['commons.addNew']}" process="@this" partialSubmit="true"
+					immediate="true" update="@this @([id$='dlg_cft_cfi_newform'])"
 					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
-					onsuccess="PF('dlg_cft_longlist_#{cft.id}').show()">
+					onsuccess="PF('#{cfiDialogWidget}').show()">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
 				</p:commandButton>
 			</f:facet>
 		</p:dataTable>
 		<!-- double map -->
-		<p:dataTable id="customFields_map_double" lazy="false"
-			rendered="#{cft.storageType== CustomFieldStorageTypeEnum.MAP and cft.fieldType==CustomFieldTypeEnum.DOUBLE}"
-			value="#{cft.instance.doubleList}" var="m" editable="true" editMode="cell"
-			resizableColumns="true" reflow="true">
-<!-- 			<p:ajax event="cellEdit"/> -->
-			<p:column headerText="#{messages['commons.label']}" sortBy="#{m.label}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"> -->
-					<h:outputText value="#{m.label}" />
-<!-- 					</f:facet> -->
-<!-- 					<f:facet name="input"><h:inputText value="#{m.label}" required="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
+		<p:dataTable id="customFields_doublemap" lazy="false"
+			rendered="#{cft.storageType eq 'MAP' and cft.fieldType eq CustomFieldTypeEnum.DOUBLE}"
+			value="#{cft.instance.doubleMap.entrySet}" var="m" resizableColumns="true" reflow="true">
+			<p:column headerText="#{messages['commons.label']}" sortBy="#{m.key}">
+				<h:outputText value="#{m.key}" />
 			</p:column>
-			<p:column headerText="#{messages['commons.value']}" sortBy="#{m.doubleValue}">
-<!-- 				<p:cellEditor> -->
-<!-- 					<f:facet name="output"></f:facet> -->
-<!--                		<f:facet name="input"><hftl:customFieldValueField cft="#{cft}" field="#{m}" edit="true"/></f:facet> -->
-<!-- 				</p:cellEditor> -->
-					<h:outputText value="#{m.doubleValue}"/>
+			<p:column headerText="#{messages['commons.value']}" sortBy="#{m.value}">
+				<ui:repeat var="v" value="#{m.value}">
+					<h:outputText value="#{v.doubleValue}"/><br/>
+				</ui:repeat>
 			</p:column>
-			<p:column headerText="#{messages['commons.actions']}" width="10%">
-				<p:commandButton id="deleteDoublelink"
-					action="#{cft.instance.removeDoubleFromlist(m)}"
+			<p:column headerText="#{messages['commons.actions']}" width="15%">
+				<p:commandButton id="editlink" onsuccess="PF('#{cfiDialogWidget}').show()"
+					actionListener="#{cft.instance.editInmap(m.key,cft)}"
+					partialSubmit="true" icon="ui-icon-pencil" update="@this @([id$='dlg_cft_cfi_newform'])">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
+				</p:commandButton>
+				<p:commandButton id="deletelink"
+					actionListener="#{cft.instance.removeFrommap(m.key,cft.fieldType)}"
 					partialSubmit="true" icon="ui-icon-trash"
-					update="customFields_map_double"
-					process="@this customFields_map_double">
+					update="customFields_doublemap"
+					process="@this customFields_doublemap">
 				</p:commandButton>
 			</p:column>
 			<f:facet name="footer">
-				<p:commandButton value="#{messages['commons.addNew']}"
-					immediate="true" update="@this @([id$='cft_doublelist_#{cft.id}popupForm'])"
+				<p:commandButton value="#{messages['commons.addNew']}" process="@this" partialSubmit="true"
+					immediate="true" update="@this @([id$='dlg_cft_cfi_newform'])"
 					actionListener="#{cft.instance.setValue(cft.getDefaultValueConverted(), cft.fieldType,cft.storageType)}"
-					onsuccess="PF('dlg_cft_doublelist_#{cft.id}').show()">
+					onsuccess="PF('#{cfiDialogWidget}').show()">
+					<f:setPropertyActionListener value="#{null}" target="#{backingBean.baseWrapper}"/>
+					<f:setPropertyActionListener value="#{cft}" target="#{backingBean.customFieldSelectedTemplate}"/>
 				</p:commandButton>
 			</f:facet>
 		</p:dataTable>

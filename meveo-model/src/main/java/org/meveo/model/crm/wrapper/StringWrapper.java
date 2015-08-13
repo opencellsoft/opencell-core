@@ -58,13 +58,10 @@ public class StringWrapper extends BaseWrapper implements Serializable{
 		}
 		
 	}
-	@Override
-	public Object getValue() {
-		return stringValue;
+	public String getTruncateValue(){
+		if(StringUtils.isEmpty(stringValue)){
+			return null;
+		}
+		return this.stringValue.length()>MAX_LENGTH?(stringValue.substring(0, MAX_LENGTH)+ " ..."):stringValue;
 	}
-	@Override
-	public void setValue(Object value) {
-		this.stringValue=(String)value;
-	}
-	
 }

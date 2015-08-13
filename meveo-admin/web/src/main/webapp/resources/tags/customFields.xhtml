@@ -24,7 +24,8 @@
     <cc:attribute name="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     <cc:attribute name="messagesId" value=":formPanel:formId:messages" />
     <cc:attribute name="periodDialogIdPrefix" default=":formPanel" />
-    <cc:attribute name="periodDialogWidget" default="dlg_newPeriod_#{cc.entityClass.simpleName}" />
+    <cc:attribute name="periodDialogWidget"  default="dlg_newPeriod_#{cc.entityClass.simpleName}" />
+    <cc:attribute name="cfiDialogWidget" default="dlg_newcfi_#{cc.entityClass.simpleName}" />
 </cc:interface>
 
 <cc:implementation>
@@ -45,7 +46,8 @@
                 </h:panelGroup>
                 <!-- list/map for 7 fieldTypes -->
                 <h:panelGroup rendered="#{(cft.storageType eq CustomFieldStorageTypeEnum.MAP or cft.storageType eq CustomFieldStorageTypeEnum.LIST) and !cft.versionable}">
-                	<hftl:customFieldListTable cft="#{cft}" backingBean="#{cc.backingBeanFromParentOrCurrent}"/>
+                	<hftl:customFieldListTable cft="#{cft}" backingBean="#{cc.backingBeanFromParentOrCurrent}" cfiDialogWidget="#{cc.attrs.cfiDialogWidget}"/>
+                	<!--   -->
                 </h:panelGroup>
 
                     <c:set var="InheritedStringValue" value="#{cc.backingBeanFromParentOrCurrent.entity.getICsv(cft.code)}" />
@@ -100,10 +102,16 @@
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="#{messages['commons.label']}" width="15%" sortBy="#{period.label}" rendered="#{cft.storageType=='MAP'}">
-                                <h:outputText value="#{period.label}"/>
+                            	<p:cellEditor>
+                            		<f:facet name="output"><h:outputText value="#{period.label}"/></f:facet>
+                            		<f:facet name="input"><hftl:customFieldValueField edit="true" cft="#{cft}" field="#{period}" /></f:facet>
+                            	</p:cellEditor>
                             </p:column>
                             <p:column headerText="#{messages['customFieldTemplate.periodValue']}" rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.SINGLE}">
-                                <hftl:customFieldValueField edit="false" cft="#{cft}" field="#{period}" />
+                                <p:cellEditor>
+                                	<f:facet name="output"><hftl:customFieldValueField edit="false" cft="#{cft}" field="#{period}" /></f:facet>
+                                	<f:facet name="input"><hftl:customFieldValueField edit="true" cft="#{cft}" field="#{period}" /></f:facet>
+                                </p:cellEditor>
                             </p:column>
                             <p:column headerText="#{messages['customFieldTemplate.periodValue']}" rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.LIST or cft.storageType eq CustomFieldStorageTypeEnum.MAP}">
                             	<ui:repeat var="w" value="#{period.getWrapperList(cft)}">
@@ -118,7 +126,8 @@
                             
                             <p:column headerText="#{messages['commons.actions']}" width="15%">
                             	<p:commandButton id="editlink" immediate="true" icon="ui-icon-edit" ajax="true" partialSubmit="true" process="@this #{cc.attrs.periodDialogIdPrefix}:customFieldNewPeriodDlg:form:newPeriodFields"
-                                    	update="@this #{cc.attrs.periodDialogIdPrefix}:customFieldNewPeriodDlg:form:newPeriodFields" onsuccess="PF('#{cc.attrs.periodDialogWidget}').show()">
+                                    	update="@this #{cc.attrs.periodDialogIdPrefix}:customFieldNewPeriodDlg:form:newPeriodFields" onsuccess="PF('#{cc.attrs.periodDialogWidget}').show()"
+                                    	rendered="#{cft.storageType ne CustomFieldStorageTypeEnum.SINGLE}">
                                     	<f:setPropertyActionListener target="#{cc.backingBeanFromParentOrCurrent.customFieldSelectedTemplate}" value="#{cft}" />
                                     	<f:setPropertyActionListener target="#{cc.backingBeanFromParentOrCurrent.customFieldNewPeriod}" value="#{period}" />
                                 	</p:commandButton>

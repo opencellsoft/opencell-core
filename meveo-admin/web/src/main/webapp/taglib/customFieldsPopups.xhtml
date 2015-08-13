@@ -253,7 +253,7 @@
 					column1Label="#{messages['BusinessEntity.code']}" column1="code"
 					selection="#{cft.instance.businessEntity}"
 					column2Label="#{messages['BusinessEntity.description']}"
-					column2="description" updateField="@([id$='business_entity_#{cft.id}'])">
+					column2="description" updateField="@([id$='customFields'])">
 				</hftl:entityPopup>
 			</c:if>
 			<c:if test="#{cft.entityClazz eq 'org.meveo.model.admin.Seller'}">
