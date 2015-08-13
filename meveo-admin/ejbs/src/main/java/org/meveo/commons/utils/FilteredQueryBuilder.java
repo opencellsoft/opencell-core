@@ -1,6 +1,8 @@
 package org.meveo.commons.utils;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -19,6 +21,10 @@ import org.meveo.model.filter.PrimitiveFilterCondition;
  * @author Edward P. Legaspi
  **/
 public class FilteredQueryBuilder extends QueryBuilder {
+
+	public FilteredQueryBuilder() {
+
+	}
 
 	public FilteredQueryBuilder(Filter filter) {
 		this(filter, false);
@@ -82,6 +88,53 @@ public class FilteredQueryBuilder extends QueryBuilder {
 		} else if (filterCondition instanceof NativeFilterCondition) {
 			NativeFilterCondition tempFilter = (NativeFilterCondition) filterCondition;
 			addSql(tempFilter.getJpql());
+		}
+	}
+
+	public Map<String, Object> getFilterConditions(FilterCondition filterCondition) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		getFilterConditions(filterCondition, result);
+
+		return result;
+	}
+
+	/**
+	 * Process the FilterCondition and return a map of key, value pair to be use
+	 * in BaseBean. We only use primitive filter.
+	 * 
+	 * @param filterCondition
+	 * @param result
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void getFilterConditions(FilterCondition filterCondition, Map<String, Object> result) throws Exception {
+		if (filterCondition instanceof OrCompositeFilterCondition) {
+			OrCompositeFilterCondition tempFilter = (OrCompositeFilterCondition) filterCondition;
+			if (tempFilter.getFilterConditions() != null) {
+				for (FilterCondition fc : tempFilter.getFilterConditions()) {
+					getFilterConditions(fc, result);
+				}
+			}
+		} else if (filterCondition instanceof AndCompositeFilterCondition) {
+			AndCompositeFilterCondition tempFilter = (AndCompositeFilterCondition) filterCondition;
+			if (tempFilter.getFilterConditions() != null) {
+				for (FilterCondition fc : tempFilter.getFilterConditions()) {
+					getFilterConditions(fc, result);
+				}
+			}
+		} else if (filterCondition instanceof PrimitiveFilterCondition) {
+			PrimitiveFilterCondition tempFilter = (PrimitiveFilterCondition) filterCondition;
+			if (tempFilter.getOperand().indexOf(".") != 0) {
+				String enumClassName = (tempFilter.getOperand().substring(0, tempFilter.getOperand().lastIndexOf(".")));
+				String enumValue = tempFilter.getOperand().substring(tempFilter.getOperand().lastIndexOf(".") + 1,
+						tempFilter.getOperand().length());
+				Class<? extends Enum> enumClass = (Class<? extends Enum>) Class.forName(enumClassName);
+				result.put(tempFilter.getFieldName(), ReflectionUtils.getEnumFromString(enumClass, enumValue));
+			} else {
+				result.put(tempFilter.getFieldName(), tempFilter.getOperand());
+			}
+		} else if (filterCondition instanceof NativeFilterCondition) {
+			// don't process native filter 
 		}
 	}
 

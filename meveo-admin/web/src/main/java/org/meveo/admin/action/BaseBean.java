@@ -38,6 +38,7 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -49,17 +50,20 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.filter.Filter;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.filter.FilterService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lapis.jsfexporter.csv.CSVExportOptions;
@@ -95,6 +99,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     private CatMessagesService catMessagesService;
+    
+    @Inject
+    private FilterService filterService;
     
 //    @Inject
 //    private CustomFieldJob customFieldJob;
@@ -170,6 +177,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Selected Entities in multiselect datatable.
      */
     private List<T> selectedEntities;
+    
+    private Filter listFilter;
+    
+    private boolean listFiltered = false;
     
     
 //    @Inject
@@ -572,6 +583,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void clean() {
         dataModel = null;
         filters = new HashMap<String, Object>();
+        listFilter = null;
     }
 
     /**
@@ -696,7 +708,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return LazyDataModel implementation.
      */
     public LazyDataModel<T> getLazyDataModel() {
-        return getLazyDataModel(filters, false);
+        return getLazyDataModel(filters, listFiltered);
     }
 
     public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
@@ -750,6 +762,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 }
             };
         }
+        
+        listFiltered = false;
+        
         return dataModel;
     }
 
@@ -851,13 +866,27 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return currentProvider;
     }
 
-    protected String getDefaultSort() {
-        return "id";
-    }
+	protected String getDefaultSort() {
+		if (listFilter != null) {
+			if (listFilter.getOrderCondition() != null) {
+				return StringUtils.join(listFilter.getOrderCondition().getFieldNames(), ",");
+			}
+		}
 
-    protected SortOrder getDefaultSortOrder() {
-        return SortOrder.DESCENDING;
-    }
+		return "id";
+	}
+
+	protected SortOrder getDefaultSortOrder() {
+		if (listFilter != null) {
+			if (listFilter.getOrderCondition() != null) {
+				if (listFilter.getOrderCondition().isAscending()) {
+					return SortOrder.ASCENDING;
+				}
+			}
+		}
+
+		return SortOrder.DESCENDING;
+	}
 
     public String getBackView() {
         return backView.get();
@@ -1362,4 +1391,30 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public List<CustomFieldTemplate> getCustomFieldTemplates() {
     	return null;
     }
+
+	public Filter getListFilter() {
+		return listFilter;
+	}
+
+	public void setListFilter(Filter listFilter) {
+		this.listFilter = listFilter;
+	}
+	
+	public List<Filter> getListFilters() {
+		return filterService.findByPrimaryTargetClass(clazz.getName());
+	}
+	
+	public void runListFilter() {
+		if (listFilter != null) {
+			FilteredQueryBuilder fqb = new FilteredQueryBuilder();
+			try {
+				filters.putAll(fqb.getFilterConditions(listFilter.getFilterCondition()));
+			} catch (Exception e) {
+				log.error("listFilter={}", e.getMessage());
+			}
+
+			listFiltered = true;
+		}
+	}
+    
 }

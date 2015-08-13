@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.Provider;
@@ -189,6 +191,18 @@ public class FilterService extends BusinessService<Filter> {
 			return serializeEntities(xstream, filter, objects);
 		} catch (Exception e) {
 			throw new BusinessException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Filter> findByPrimaryTargetClass(String className) {
+		QueryBuilder qb = new QueryBuilder(Filter.class, "f", null, getCurrentProvider());
+		qb.addCriterion("primarySelector.targetEntity", "=", className, true);
+
+		try {
+			return (List<Filter>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
 		}
 	}
 

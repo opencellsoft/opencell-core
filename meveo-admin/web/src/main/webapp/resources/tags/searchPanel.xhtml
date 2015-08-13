@@ -3,7 +3,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:cc="http://java.sun.com/jsf/composite">
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:hftl="http://hftl.org">
 
 <!--
     Makes part of "happy faces" component group.
@@ -27,8 +28,8 @@
     <cc:attribute name="backingBean" required="true" />
     <cc:attribute name="renderNewButton" type="java.lang.Boolean" default="true" />
     <cc:attribute name="newButtonView" default="#{cc.attrs.backingBean.getNewViewName()}" />
-    <cc:attribute name="ajax" default="false" />
-    <cc:attribute name="ajaxUpdateIds" required="false" />
+    <cc:attribute name="ajax" default="true" />
+    <cc:attribute name="ajaxUpdateIds" required="false" default="results_panel" />
     <cc:attribute name="renderAdvancedLink" default="false" />
     <cc:facet name="buttons" />
 </cc:interface>
@@ -41,6 +42,17 @@
                 <p:outputPanel styleClass="search-panel-fields">
                     <cc:insertChildren />
                 </p:outputPanel>
+                
+                <h:panelGroup layout="block" styleClass="search-panel-actions" rendered="#{cc.attrs.backingBean.getListFilters() ne null and cc.attrs.backingBean.getListFilters().size() > 0}">
+                	<hftl:decorateFormField label="#{messages['menu.filters']}" fieldId="filter">
+						<p:selectOneMenu id="filter" value="#{cc.attrs.backingBean.listFilter}" converter="omnifaces.SelectItemsConverter">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{cc.attrs.backingBean.getListFilters()}" var="elem" itemLabel="#{elem.code}" itemValue="#{elem}" />
+							<p:ajax listener="#{cc.attrs.backingBean.runListFilter()}" update="#{cc.attrs.ajaxUpdateIds}"></p:ajax>
+						</p:selectOneMenu>
+					</hftl:decorateFormField>
+				</h:panelGroup>                
+                
                 <h:panelGroup layout="block" styleClass="search-panel-actions">
                     <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="#{cc.attrs.ajax}" action="#{cc.attrs.backingBean.search}"
                         update="#{cc.attrs.ajaxUpdateIds}" />
@@ -58,7 +70,12 @@
                 </h:panelGroup>
             </h:panelGroup>
         </p:panel>
-    </h:form>
+
+		<p:blockUI block="#{cc.attrs.ajaxUpdateIds}" trigger="buttonSearch">
+        	LOADING<br />
+			<p:graphicImage library="img" name="ajaxloadingbar.gif" />
+		</p:blockUI>
+	</h:form>
 </cc:implementation>
 
 </html>

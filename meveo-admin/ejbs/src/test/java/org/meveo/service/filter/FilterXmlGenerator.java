@@ -9,6 +9,7 @@ import javax.persistence.DiscriminatorValue;
 
 import org.junit.Test;
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.filter.AndCompositeFilterCondition;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.filter.FilterCondition;
@@ -31,10 +32,56 @@ public class FilterXmlGenerator {
 	public static void main(String[] args) {
 		FilterXmlGenerator fg = new FilterXmlGenerator();
 		// fg.filter1();
-		String result = fg.generate();
+//		String result = fg.generate();
+//		System.out.println(result);
+
+		String result = fg.generate1();
 		System.out.println(result);
+
 		// fg.degenerate(result);
 		// fg.getLinkedListFields();
+	}
+
+	private String generate1() {
+		AndCompositeFilterCondition andCompositeFilterCondition = new AndCompositeFilterCondition();
+		andCompositeFilterCondition.setFilterConditionType(AndCompositeFilterCondition.class.getAnnotation(
+				DiscriminatorValue.class).value());
+		List<FilterCondition> andFilterConditions = new ArrayList<>();
+
+		PrimitiveFilterCondition primitiveFilterCondition = new PrimitiveFilterCondition();
+		primitiveFilterCondition.setFilterConditionType(PrimitiveFilterCondition.class.getAnnotation(
+				DiscriminatorValue.class).value());
+		primitiveFilterCondition.setFieldName("status");
+		primitiveFilterCondition.setOperator("=");
+		primitiveFilterCondition.setOperand("SubscriptionStatusEnum.ACTIVE");
+
+		andFilterConditions.add(primitiveFilterCondition);
+
+		andCompositeFilterCondition.setFilterConditions(andFilterConditions);
+
+		OrderCondition orderCondition = new OrderCondition();
+		orderCondition.setAscending(false);
+		orderCondition.setFieldNames(new ArrayList<>(Arrays.asList("subscriptionDate")));
+
+		FilterSelector filterSelector1 = new FilterSelector();
+		filterSelector1.setTargetEntity(Subscription.class.getName());
+		filterSelector1.setAlias("c");
+		filterSelector1.setDisplayFields(new ArrayList<>(Arrays.asList("offer", "status")));
+
+		Filter filter = new Filter();
+		filter.setFilterCondition(andCompositeFilterCondition);
+		filter.setPrimarySelector(filterSelector1);
+		// filter.setSecondarySelectors(filterSelectors);
+		filter.setOrderCondition(orderCondition);
+
+		try {
+			XStream xStream = getXStream();
+			return xStream.toXML(filter);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "";
 	}
 
 	public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
