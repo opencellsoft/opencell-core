@@ -14,6 +14,13 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.export.ExportImportConfig;
+import org.meveo.export.ExportTemplate;
+import org.meveo.export.IEntityClassConverter;
+import org.meveo.export.IEntityExportIdentifierConverter;
+import org.meveo.export.IEntityHibernateProxyConverter;
+import org.meveo.export.ImportFKNotFoundException;
+import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
@@ -26,6 +33,15 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.Resources;
+
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentCollectionConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentMapConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedMapConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentSortedSetConverter;
+import com.thoughtworks.xstream.hibernate.converter.HibernateProxyConverter;
+import com.thoughtworks.xstream.hibernate.mapper.HibernateMapper;
+import com.thoughtworks.xstream.hibernate.util.Hibernate;
+import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * @author Edward P. Legaspi
@@ -42,16 +58,16 @@ public class BaseFilterTest {
 		File[] apacheCommonsDependencies = Maven.resolver().resolve("commons-lang:commons-lang:2.3").withTransitivity()
 				.asFile();
 		result.addAsLibraries(apacheCommonsDependencies);
-		
-		File[] apacheCommons3Dependencies = Maven.resolver().resolve("org.apache.commons:commons-lang3:3.4").withTransitivity()
-				.asFile();
+
+		File[] apacheCommons3Dependencies = Maven.resolver().resolve("org.apache.commons:commons-lang3:3.4")
+				.withTransitivity().asFile();
 		result.addAsLibraries(apacheCommons3Dependencies);
 
 		// xstream
 		File[] xstreamDependencies = Maven.resolver().resolve("com.thoughtworks.xstream:xstream:1.4.8")
 				.withTransitivity().asFile();
 		result.addAsLibraries(xstreamDependencies);
-		
+
 		File[] apacheCommonsValidator = Maven.resolver().resolve("commons-validator:commons-validator:1.4.1")
 				.withTransitivity().asFile();
 		result.addAsLibraries(apacheCommonsValidator);
@@ -68,12 +84,23 @@ public class BaseFilterTest {
 				BusinessService.class, ProviderService.class, UserService.class, RoleService.class, TitleService.class,
 				PaginationConfiguration.class, QueryBuilder.class, ParamBean.class, FilteredQueryBuilder.class);
 
+		result = result.addClasses(RemoteAuthenticationException.class, ExportImportConfig.class, ExportTemplate.class);
+
+		result = result.addClasses(IEntityHibernateProxyConverter.class, IEntityExportIdentifierConverter.class,
+				HibernatePersistentCollectionConverter.class, HibernatePersistentMapConverter.class,
+				HibernatePersistentSortedMapConverter.class, HibernatePersistentSortedSetConverter.class,
+				HibernateProxyConverter.class, IEntityClassConverter.class, HibernateMapper.class, Hibernate.class,
+				ImportFKNotFoundException.class, MapperWrapper.class);
+
 		// add models
 		result = result.addPackages(true, "org/meveo/model");
 
 		// filter
+		result = result.addPackages(true, "com/google/common");
+		result = result.addPackages(true, "org/reflections");
 		result = result.addPackages(true, "org/meveo/service/filter");
 		result = result.addPackages(true, "org/meveo/service/base");
+		// result = result.addPackages(true, "org/meveo/cache");
 
 		// add exceptions
 		result = result.addPackage("org/meveo/admin/exception");

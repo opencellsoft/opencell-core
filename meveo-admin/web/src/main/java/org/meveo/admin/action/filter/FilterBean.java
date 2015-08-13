@@ -75,7 +75,7 @@ public class FilterBean extends BaseBean<Filter> {
 
 		// process filterCondition
 		if (filter.getFilterCondition() != null) {
-			getEntity().setFilterCondition(setProviderToFilterCondition(filter.getFilterCondition()));
+			entity.setFilterCondition(setProviderToFilterCondition(filter.getFilterCondition()));
 		}
 
 		return super.saveOrUpdate(killConversation);

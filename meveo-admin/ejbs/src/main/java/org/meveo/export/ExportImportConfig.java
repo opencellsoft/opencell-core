@@ -39,6 +39,10 @@ public class ExportImportConfig {
     private Map<Class<? extends IEntity>, String[]> exportIdMapping;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
+    
+    public ExportImportConfig() {
+    	
+    }
 
     public ExportImportConfig(ExportTemplate exportTemplate, Map<Class<? extends IEntity>, String[]> exportIdMapping) {
         classesToExportAsFull.add(exportTemplate.getEntityToExport());
@@ -90,8 +94,8 @@ public class ExportImportConfig {
      *         class
      */
     public boolean isExportFull(Class<? extends IEntity> clazz) {
-
         for (Class<? extends IEntity> clazzAsFull : classesToExportAsFull) {
+        	log.debug("clazzAsFull={}", clazzAsFull);
             if (clazzAsFull.isAssignableFrom(clazz)) {
                 log.info("Exporting/importing entity " + clazz.getName() + " as full. Match classesToExportAsFull rule " + clazzAsFull.getName());
                 return true;

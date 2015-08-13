@@ -18,9 +18,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.Country;
 import org.meveo.model.filter.AndCompositeFilterCondition;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.filter.FilterCondition;
@@ -30,8 +28,6 @@ import org.meveo.model.filter.OrCompositeFilterCondition;
 import org.meveo.model.filter.OrderCondition;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 import org.meveo.util.MeveoJpaForJobs;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * @author Edward P. Legaspi
@@ -100,6 +96,7 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 		nativeFilterCondition.setJpql("c.countryCode like '%A%'");
 		andFilterConditions.add(nativeFilterCondition);
 
+		/* OR */
 		OrCompositeFilterCondition orCompositeFilterCondition = new OrCompositeFilterCondition();
 		orCompositeFilterCondition.setFilterConditionType(OrCompositeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
@@ -108,7 +105,7 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 		NativeFilterCondition nativeFilterCondition2 = new NativeFilterCondition();
 		nativeFilterCondition2.setFilterConditionType(NativeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
-		nativeFilterCondition2.setJpql("c.countryCode like '%B%'");
+		nativeFilterCondition2.setJpql("c.countryCode like 'B%'");
 		orFilterConditions.add(nativeFilterCondition2);
 
 		PrimitiveFilterCondition primitiveFilterCondition = new PrimitiveFilterCondition();
@@ -116,7 +113,7 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 				DiscriminatorValue.class).value());
 		primitiveFilterCondition.setFieldName("c.countryCode");
 		primitiveFilterCondition.setOperator("like");
-		primitiveFilterCondition.setOperand("C");
+		primitiveFilterCondition.setOperand("C%");
 		orFilterConditions.add(primitiveFilterCondition);
 
 		PrimitiveFilterCondition primitiveFilterCondition2 = new PrimitiveFilterCondition();
@@ -127,38 +124,34 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 		primitiveFilterCondition2.setOperand("100");
 		orFilterConditions.add(primitiveFilterCondition2);
 		orCompositeFilterCondition.setFilterConditions(orFilterConditions);
+		/* OR */
 
 		andFilterConditions.add(orCompositeFilterCondition);
 		andCompositeFilterCondition.setFilterConditions(andFilterConditions);
-
-		FilterSelector filterSelector1 = new FilterSelector();
-		filterSelector1.setTargetEntity("org.meveo.model.billing.Country");
-		filterSelector1.setAlias("c");
 
 		OrderCondition orderCondition = new OrderCondition();
 		orderCondition.setAscending(false);
 		orderCondition.setFieldNames(new ArrayList<>(Arrays.asList("countryCode")));
 
+		FilterSelector filterSelector1 = new FilterSelector();
+		filterSelector1.setTargetEntity("org.meveo.model.billing.Country");
+		filterSelector1.setAlias("c");
+		filterSelector1.setDisplayFields(new ArrayList<>(Arrays.asList("currency", "language")));
+
 		Filter filter = new Filter();
 		filter.setFilterCondition(andCompositeFilterCondition);
 		filter.setPrimarySelector(filterSelector1);
+		// filter.setSecondarySelectors(filterSelectors);
 		filter.setOrderCondition(orderCondition);
 
-		// custom query builder
-		FilteredQueryBuilder filteredQueryBuilder = new FilteredQueryBuilder(filter);
-		System.out.println("sql=" + filteredQueryBuilder);
-
 		try {
-			@SuppressWarnings("unchecked")
-			List<Country> countries = filteredQueryBuilder.getQuery(em).getResultList();
-			XStream xstream = new XStream();
-			String result = xstream.toXML(countries);
+			String result = filterService.filteredList(filter);
+
 			System.out.println(result);
 
-			Assert.assertNotNull(countries);
+			Assert.assertNotNull(result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 }

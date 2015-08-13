@@ -17,7 +17,9 @@
 package org.meveo.commons.utils;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -33,58 +35,70 @@ import org.slf4j.LoggerFactory;
  */
 public class ReflectionUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 
-    /**
-     * Creates instance from class name.
-     * 
-     * @param className Class name for which instance is created.
-     * @return Instance of className.
-     */
-    @SuppressWarnings("rawtypes")
-    public static Object createObject(String className) {
-        Object object = null;
-        try {
-            Class classDefinition = Class.forName(className);
-            object = classDefinition.newInstance();
-        } catch (InstantiationException e) {
-            logger.error("Object could not be created by name!", e);
-        } catch (IllegalAccessException e) {
-            logger.error("Object could not be created by name!", e);
-        } catch (ClassNotFoundException e) {
-            logger.error("Object could not be created by name!", e);
-        }
-        return object;
-    }
+	/**
+	 * Creates instance from class name.
+	 * 
+	 * @param className
+	 *            Class name for which instance is created.
+	 * @return Instance of className.
+	 */
+	@SuppressWarnings("rawtypes")
+	public static Object createObject(String className) {
+		Object object = null;
+		try {
+			Class classDefinition = Class.forName(className);
+			object = classDefinition.newInstance();
+		} catch (InstantiationException e) {
+			logger.error("Object could not be created by name!", e);
+		} catch (IllegalAccessException e) {
+			logger.error("Object could not be created by name!", e);
+		} catch (ClassNotFoundException e) {
+			logger.error("Object could not be created by name!", e);
+		}
+		return object;
+	}
 
-    @SuppressWarnings("rawtypes")
-    public static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
+	@SuppressWarnings("rawtypes")
+	public static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
 
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		try {
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-            Class CL_class = classLoader.getClass();
-            while (CL_class != java.lang.ClassLoader.class) {
-                CL_class = CL_class.getSuperclass();
-            }
-            java.lang.reflect.Field ClassLoader_classes_field = CL_class.getDeclaredField("classes");
-            ClassLoader_classes_field.setAccessible(true);
-            Vector classes = (Vector) ClassLoader_classes_field.get(classLoader);
+			Class CL_class = classLoader.getClass();
+			while (CL_class != java.lang.ClassLoader.class) {
+				CL_class = CL_class.getSuperclass();
+			}
+			java.lang.reflect.Field ClassLoader_classes_field = CL_class.getDeclaredField("classes");
+			ClassLoader_classes_field.setAccessible(true);
+			Vector classes = (Vector) ClassLoader_classes_field.get(classLoader);
 
-            ArrayList<Class> classList = new ArrayList<Class>();
+			ArrayList<Class> classList = new ArrayList<Class>();
 
-            for (Object clazz : classes) {
-                if (((Class) clazz).getName().startsWith(packageName)) {
-                    classList.add((Class) clazz);
-                }
-            }
+			for (Object clazz : classes) {
+				if (((Class) clazz).getName().startsWith(packageName)) {
+					classList.add((Class) clazz);
+				}
+			}
 
-            return classList;
+			return classList;
 
-        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-            Log.error("Failed to get a list of classes", e);
-        }
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+			Log.error("Failed to get a list of classes", e);
+		}
 
-        return new ArrayList<Class>();
-    }
+		return new ArrayList<Class>();
+	}
+
+	public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
+		fields.addAll(Arrays.asList(type.getDeclaredFields()));
+
+		if (type.getSuperclass() != null) {
+			fields = getAllFields(fields, type.getSuperclass());
+		}
+
+		return fields;
+	}
+
 }

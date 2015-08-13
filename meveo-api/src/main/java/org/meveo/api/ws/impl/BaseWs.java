@@ -28,7 +28,7 @@ public abstract class BaseWs {
 	protected Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Resource
-	private WebServiceContext webServiceContext;
+	protected WebServiceContext webServiceContext;
 
 	@Inject
 	protected UserService userService;

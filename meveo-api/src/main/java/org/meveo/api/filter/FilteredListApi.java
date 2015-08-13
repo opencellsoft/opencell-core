@@ -3,6 +3,7 @@ package org.meveo.api.filter;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -25,6 +26,12 @@ public class FilteredListApi extends BaseApi {
 		Filter filter = filterService.findByCode(filterCode, provider);
 		if (filter == null) {
 			throw new EntityDoesNotExistsException(Filter.class, filterCode);
+		}
+
+		try {
+			result = filterService.filteredList(filter);
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
 		}
 
 		return result;
