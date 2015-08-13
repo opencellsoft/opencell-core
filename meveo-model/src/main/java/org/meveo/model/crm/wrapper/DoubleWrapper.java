@@ -57,15 +57,4 @@ public class DoubleWrapper extends BaseWrapper implements Serializable{
 			return new DoubleWrapper(Double.parseDouble(value));
 		}
 	}
-	@Override
-	public Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public void setValue(Object value) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

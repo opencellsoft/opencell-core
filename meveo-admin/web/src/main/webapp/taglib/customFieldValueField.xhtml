@@ -27,20 +27,26 @@
     <c:if test="${empty(datePattern)}">
         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     </c:if>
+    <c:if test="#{empty(cols)}">
+    	<c:set var="cols" value="#{paramBean.getProperty('meveo.textArea.cols','80')}"/>
+    </c:if>
+    <c:if test="#{empty(rows)}">
+    	<c:set var="rows" value="#{paramBean.getProperty('meveo.textArea.rows','20')}"/>
+    </c:if>
     <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
-        <h:outputText value="#{field.stringValue}" rendered="#{! edit}"></h:outputText>
+        <h:outputText value="#{field.truncateValue}" rendered="#{! edit}"></h:outputText>
         <p:inputText value="#{field.stringValue}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
     </h:panelGroup>
     <h:panelGroup rendered="#{(cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA) and (cft.storageType eq CustomFieldStorageTypeEnum.SINGLE)}">
-        <h:outputText value="#{field.entityValue}" rendered="#{! edit}"></h:outputText>
-        <p:inputTextarea value="#{field.entityValue}" cols="#{paramBean.getProperty('meveo.textArea.cols','80')}" rows="#{paramBean.getProperty('meveo.textArea.rows','20')}"
+        <h:outputText value="#{field.truncateValue}" rendered="#{! edit}"></h:outputText>
+        <p:inputTextarea value="#{field.entityValue}" cols="#{cols}" rows="#{rows}"
           required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
     </h:panelGroup>    
     <h:panelGroup rendered="#{(cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA) and (cft.storageType ne CustomFieldStorageTypeEnum.SINGLE)}">
-        <h:outputText value="#{field.stringValue}" rendered="#{! edit}"></h:outputText>
-        <p:inputTextarea value="#{field.stringValue}" cols="#{paramBean.getProperty('meveo.textArea.cols','80')}" rows="#{paramBean.getProperty('meveo.textArea.rows','20')}"  required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
+        <h:outputText value="#{field.truncateValue}" rendered="#{! edit}"></h:outputText>
+        <p:inputTextarea value="#{field.stringValue}" cols="#{cols}" rows="#{rows}"  required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
     </h:panelGroup>    
     
     <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
@@ -68,8 +74,8 @@
             <f:selectItems value="#{cft.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
         </p:selectOneMenu>
     </h:panelGroup>
-    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType==CustomFieldStorageTypeEnum.SINGLE and !cft.versionable)}">
-		<p:inputText rendered="#{edit}" value="#{field.businessEntity.code}" id="business_entity_#{cft.id}"
+    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType eq CustomFieldStorageTypeEnum.SINGLE and !cft.versionable)}">
+		<p:inputText rendered="#{edit}" value="#{field.businessEntity.code}"
 			required="#{cft.valueRequired}" disabled="true"></p:inputText>
 		<p:commandButton immediate="true" rendered="#{edit}"
 			onclick="PF('dlg_cft_entity_#{cft.id}').show()" icon="ui-icon-search" />
