@@ -867,21 +867,27 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
 	protected String getDefaultSort() {
-		if (listFilter != null) {
-			if (listFilter.getOrderCondition() != null) {
-				return StringUtils.join(listFilter.getOrderCondition().getFieldNames(), ",");
+		if (listFilter != null && listFilter.getOrderCondition() != null) {
+			StringBuffer sb = new StringBuffer();
+			for (String field : listFilter.getOrderCondition().getFieldNames()) {
+				if (field.indexOf(".") == -1) {
+					sb.append(listFilter.getPrimarySelector().getAlias() + "." + field + ",");
+				} else {
+					sb.append(field + ",");
+				}
 			}
+			sb.deleteCharAt(sb.length() - 1);
+
+			return StringUtils.join(listFilter.getOrderCondition().getFieldNames(), ",");
 		}
 
 		return "id";
 	}
 
 	protected SortOrder getDefaultSortOrder() {
-		if (listFilter != null) {
-			if (listFilter.getOrderCondition() != null) {
-				if (listFilter.getOrderCondition().isAscending()) {
-					return SortOrder.ASCENDING;
-				}
+		if (listFilter != null && listFilter.getOrderCondition() != null) {
+			if (listFilter.getOrderCondition().isAscending()) {
+				return SortOrder.ASCENDING;
 			}
 		}
 
@@ -1406,12 +1412,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	
 	public void runListFilter() {
 		if (listFilter != null) {
-			FilteredQueryBuilder fqb = new FilteredQueryBuilder();
-			try {
-				filters.putAll(fqb.getFilterConditions(listFilter.getFilterCondition()));
-			} catch (Exception e) {
-				log.error("listFilter={}", e.getMessage());
-			}
+			dataModel = null;
+			filters = new HashMap<String, Object>();
+
+			filters.put("$FILTER", listFilter);
 
 			listFiltered = true;
 		}

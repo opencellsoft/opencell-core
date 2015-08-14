@@ -1,10 +1,7 @@
 package org.meveo.commons.utils;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.apache.commons.validator.routines.IntegerValidator;
@@ -27,30 +24,31 @@ public class FilteredQueryBuilder extends QueryBuilder {
 	}
 
 	public FilteredQueryBuilder(Filter filter) {
-		this(filter, false);
+		this(filter, false, true);
 	}
 
-	public FilteredQueryBuilder(Filter filter, boolean export) {
+	public FilteredQueryBuilder(Filter filter, boolean export, boolean applyOrder) {
 		super(ReflectionUtils.createObject(filter.getPrimarySelector().getTargetEntity()).getClass(), filter
 				.getPrimarySelector().getAlias());
 
 		if (filter.getFilterCondition() != null) {
-			processFilterCondition(filter.getFilterCondition());
+			processFilterCondition(filter.getFilterCondition(), filter.getPrimarySelector().getAlias());
 		}
 
 		// order condition
-		if (filter.getOrderCondition() != null) {
-			processOrderCondition(filter.getOrderCondition());
+		if (applyOrder && filter.getOrderCondition() != null) {
+			processOrderCondition(filter.getOrderCondition(), filter.getPrimarySelector().getAlias());
 		}
 	}
 
-	private void processFilterCondition(FilterCondition filterCondition) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void processFilterCondition(FilterCondition filterCondition, String alias) {
 		if (filterCondition instanceof OrCompositeFilterCondition) {
 			startOrClause();
 			OrCompositeFilterCondition tempFilter = (OrCompositeFilterCondition) filterCondition;
 			if (tempFilter.getFilterConditions() != null) {
 				for (FilterCondition fc : tempFilter.getFilterConditions()) {
-					processFilterCondition(fc);
+					processFilterCondition(fc, alias);
 				}
 			}
 			endOrClause();
@@ -58,68 +56,7 @@ public class FilteredQueryBuilder extends QueryBuilder {
 			AndCompositeFilterCondition tempFilter = (AndCompositeFilterCondition) filterCondition;
 			if (tempFilter.getFilterConditions() != null) {
 				for (FilterCondition fc : tempFilter.getFilterConditions()) {
-					processFilterCondition(fc);
-				}
-			}
-		} else if (filterCondition instanceof PrimitiveFilterCondition) {
-			PrimitiveFilterCondition tempFilter = (PrimitiveFilterCondition) filterCondition;
-			if (tempFilter.getOperator().equalsIgnoreCase("LIKE")) {
-				like(tempFilter.getFieldName(), tempFilter.getOperand(), QueryLikeStyleEnum.MATCH_BEGINNING, true);
-			} else {
-				if (NumberUtils.isNumber(tempFilter.getOperand())) {
-					Long lv = LongValidator.getInstance().validate(tempFilter.getOperand());
-					if (lv != null) {
-						addCriterion(tempFilter.getFieldName(), tempFilter.getOperator(), lv, true);
-					} else {
-						BigDecimal bdv = BigDecimalValidator.getInstance().validate(tempFilter.getOperand());
-						if (bdv != null) {
-							addCriterion(tempFilter.getFieldName(), tempFilter.getOperator(), bdv, true);
-						} else {
-							Integer iv = IntegerValidator.getInstance().validate(tempFilter.getOperand());
-							if (iv != null) {
-								addCriterion(tempFilter.getFieldName(), tempFilter.getOperator(), iv, true);
-							}
-						}
-					}
-				} else {
-					addCriterion(tempFilter.getFieldName(), tempFilter.getOperator(), tempFilter.getOperand(), true);
-				}
-			}
-		} else if (filterCondition instanceof NativeFilterCondition) {
-			NativeFilterCondition tempFilter = (NativeFilterCondition) filterCondition;
-			addSql(tempFilter.getJpql());
-		}
-	}
-
-	public Map<String, Object> getFilterConditions(FilterCondition filterCondition) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		getFilterConditions(filterCondition, result);
-
-		return result;
-	}
-
-	/**
-	 * Process the FilterCondition and return a map of key, value pair to be use
-	 * in BaseBean. We only use primitive filter.
-	 * 
-	 * @param filterCondition
-	 * @param result
-	 * @return
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void getFilterConditions(FilterCondition filterCondition, Map<String, Object> result) throws Exception {
-		if (filterCondition instanceof OrCompositeFilterCondition) {
-			OrCompositeFilterCondition tempFilter = (OrCompositeFilterCondition) filterCondition;
-			if (tempFilter.getFilterConditions() != null) {
-				for (FilterCondition fc : tempFilter.getFilterConditions()) {
-					getFilterConditions(fc, result);
-				}
-			}
-		} else if (filterCondition instanceof AndCompositeFilterCondition) {
-			AndCompositeFilterCondition tempFilter = (AndCompositeFilterCondition) filterCondition;
-			if (tempFilter.getFilterConditions() != null) {
-				for (FilterCondition fc : tempFilter.getFilterConditions()) {
-					getFilterConditions(fc, result);
+					processFilterCondition(fc, alias);
 				}
 			}
 		} else if (filterCondition instanceof PrimitiveFilterCondition) {
@@ -128,18 +65,78 @@ public class FilteredQueryBuilder extends QueryBuilder {
 				String enumClassName = (tempFilter.getOperand().substring(0, tempFilter.getOperand().lastIndexOf(".")));
 				String enumValue = tempFilter.getOperand().substring(tempFilter.getOperand().lastIndexOf(".") + 1,
 						tempFilter.getOperand().length());
-				Class<? extends Enum> enumClass = (Class<? extends Enum>) Class.forName(enumClassName);
-				result.put(tempFilter.getFieldName(), ReflectionUtils.getEnumFromString(enumClass, enumValue));
+				Class<? extends Enum> enumClass = null;
+				try {
+					enumClass = (Class<? extends Enum>) Class.forName(enumClassName);
+					if (tempFilter.getFieldName().indexOf(".") == -1) {
+						addCriterionEntity(alias + "." + tempFilter.getFieldName(),
+								ReflectionUtils.getEnumFromString(enumClass, enumValue));
+					} else {
+						addCriterionEntity(tempFilter.getFieldName(),
+								ReflectionUtils.getEnumFromString(enumClass, enumValue));
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			} else if (tempFilter.getOperator().equalsIgnoreCase("LIKE")) {
+				like(alias + "." + tempFilter.getFieldName(), tempFilter.getOperand(),
+						QueryLikeStyleEnum.MATCH_BEGINNING, true);
 			} else {
-				result.put(tempFilter.getFieldName(), tempFilter.getOperand());
+				if (NumberUtils.isNumber(tempFilter.getOperand())) {
+					Long lv = LongValidator.getInstance().validate(tempFilter.getOperand());
+					if (lv != null) {
+						if (tempFilter.getFieldName().indexOf(".") == -1) {
+							addCriterion(alias + "." + tempFilter.getFieldName(), tempFilter.getOperator(), lv, true);
+						} else {
+							addCriterion(tempFilter.getFieldName(), tempFilter.getOperator(), lv, true);
+						}
+					} else {
+						BigDecimal bdv = BigDecimalValidator.getInstance().validate(tempFilter.getOperand());
+						if (bdv != null) {
+							if (tempFilter.getFieldName().indexOf(".") == -1) {
+								addCriterion(alias + "." + tempFilter.getFieldName(), tempFilter.getOperator(), bdv,
+										true);
+							} else {
+								addCriterion(tempFilter.getFieldName(), tempFilter.getOperator(), bdv, true);
+							}
+						} else {
+							Integer iv = IntegerValidator.getInstance().validate(tempFilter.getOperand());
+							if (iv != null) {
+								if (tempFilter.getFieldName().indexOf(".") == -1) {
+									addCriterion(alias + "." + tempFilter.getFieldName(), tempFilter.getOperator(), iv,
+											true);
+								} else {
+									addCriterion(tempFilter.getFieldName(), tempFilter.getOperator(), iv, true);
+								}
+							}
+						}
+					}
+				} else {
+					if (tempFilter.getFieldName().indexOf(".") == -1) {
+						addCriterion(alias + "." + tempFilter.getFieldName(), tempFilter.getOperator(),
+								tempFilter.getOperand(), true);
+					} else {
+						addCriterion(tempFilter.getFieldName(), tempFilter.getOperator(), tempFilter.getOperand(), true);
+					}
+				}
 			}
 		} else if (filterCondition instanceof NativeFilterCondition) {
-			// don't process native filter 
+			NativeFilterCondition tempFilter = (NativeFilterCondition) filterCondition;
+			addSql(tempFilter.getJpql());
 		}
 	}
 
-	private void processOrderCondition(OrderCondition orderCondition) {
-		addOrderCriterion(StringUtils.join(orderCondition.getFieldNames(), ","), orderCondition.isAscending());
-	}
+	public void processOrderCondition(OrderCondition orderCondition, String alias) {
+		StringBuffer sb = new StringBuffer();
+		for (String field : orderCondition.getFieldNames()) {
+			if (field.indexOf(".") == -1) {
+				sb.append(alias + "." + field + ",");
+			} else {
+				sb.append(field + ",");
+			}
+		}
+		sb.deleteCharAt(sb.length() - 1);
 
+		addOrderCriterion(sb.toString(), orderCondition.isAscending());
+	}
 }
