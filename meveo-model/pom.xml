@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>meveo</artifactId>
 		<groupId>org.manaty</groupId>
-		<version>4.0.7</version>
+		<version>4.0.8</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-model</artifactId>
