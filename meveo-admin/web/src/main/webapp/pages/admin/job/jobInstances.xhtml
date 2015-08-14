@@ -12,7 +12,7 @@
 
 
     <ui:define name="body">
-        <hf:searchPanel label="#{messages['timers.page.title']}" backingBean="#{jobInstanceListBean}" newButtonView="jobInstanceDetail">
+        <hf:searchPanel label="#{messages['timers.page.title']}" backingBean="#{jobInstanceListBean}" newButtonView="jobInstanceDetail" ajaxUpdateIds="timersBean_results_panel">
             <h:panelGrid columns="2">
                 <p:outputLabel for="jobCategory" value="#{messages['timer.jobCategory']}" />
                 <p:selectOneMenu id="jobCategory" value="#{jobInstanceListBean.filters['jobCategoryEnum']}">
