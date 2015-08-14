@@ -145,11 +145,12 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 			}
 		    }}
 		if(notProcessedInvoice>0){
-			ddRequestLOT.setRejectedCause("missing information . mandatory fields are : Reference,Amount, Provider description, IBAN,BIC,ICS, Mandate identification,Customer account description ");
+			ddRequestLOT.setRejectedCause("missing information . mandatory fields are : Reference,Amount, Provider description, IBAN,BIC,ICS, Mandate identification, Mandate date,Customer account description ");
 			ddRequestLOT.setRejectedInvoices(notProcessedInvoice);
 			dDRequestLOTService.updateAudit(ddRequestLOT, user);
 			dDRequestLOTService.updateNoCheck(ddRequestLOT);
 		   }
+		if(customerAccountInvoices!=null && customerAccountInvoices.size()>0){
 		for (Map.Entry<CustomerAccount, List<RecordedInvoice>> e : customerAccountInvoices
 				.entrySet()) {
 			DDRequestItem ddrequestItem = new DDRequestItem();
@@ -227,6 +228,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 
 		} else {
 			throw new BusinessEntityException("No ddRequestItems!");
+		}
 		}
 	}
 
