@@ -55,7 +55,7 @@ public class QueryBuilder {
 	private boolean inOrClause;
 	private int nbCriteriaInOrClause;
 
-	private PaginationConfiguration paginationConfiguration;
+	protected PaginationConfiguration paginationConfiguration;
 	private String paginationSortAlias;
 
 	public enum QueryLikeStyleEnum {
@@ -614,10 +614,9 @@ public class QueryBuilder {
 		if (paginationConfiguration == null)
 			return;
 
-		if (paginationConfiguration.isSorted())
+		if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1)
 			addOrderCriterion(((alias != null) ? (alias + ".") : "") + paginationConfiguration.getSortField(),
 					paginationConfiguration.isAscendingSorting());
-
 	}
 
 	/**
