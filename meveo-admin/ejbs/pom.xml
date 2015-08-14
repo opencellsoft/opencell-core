@@ -14,12 +14,26 @@
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 	<properties>
-		<manaty.seam.version>3.1.0.Final</manaty.seam.version>
-		<version.template.file>src/main/java/org/meveo/util/Version.java.template</version.template.file>
-		<version.file>src/main/java/org/meveo/util/Version.java</version.file>
+		<manaty.seam.version>3.1.0.Final</manaty.seam.version>     
 	</properties>
 
 	<build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>classTemplates/**</exclude>
+                </excludes>
+            </resource>
+<!--             <resource> -->
+<!--                 <directory>src/main/resources/classTemplates</directory> -->
+<!--                 <filtering>true</filtering> -->
+<!--                 <targetPath>${project.build.directory}/generated-sources/java</targetPath> -->
+<!--             </resource> -->
+        </resources>      
+    
+    
 		<plugins>
 			<!-- Copy files from other projects for testing -->
 			<plugin>
@@ -74,8 +88,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<file>${version.template.file}</file>
-					<outputFile>${version.file}</outputFile>
+					<file>src/main/resources/classTemplates/org/meveo/util/Version.java</file>
+					<outputFile>${project.build.directory}/generated-sources/java/org/meveo/util/Version.java</outputFile>
 					<replacements>
 						<replacement>
 							<token>@buildtime@</token>
@@ -88,7 +102,26 @@
 					</replacements>
 				</configuration>
 			</plugin>
-
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                         <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/java/</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
