@@ -807,14 +807,28 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						 edrInfo.setAttribute("quantity" , edr.getQuantity() != null ? edr.getQuantity().toPlainString() : "");
 						 edrInfo.setAttribute("status", String.valueOf(edr.getStatus()) != null ? String.valueOf(edr.getStatus()) : "");
 						 edrInfo.setAttribute("rejectReason" , edr.getRejectReason() != null ? edr.getRejectReason() : "");
+						 edrInfo.setAttribute("subscription" , edr.getSubscription() != null ? edr.getSubscription().getDescription() : "");
 						 edrInfo.setAttribute("eventDate", edr.getEventDate() != null ? DateUtils.formatDateWithPattern(edr.getEventDate(),"dd/MM/yyyy") + "" : "");
 						 edrInfo.setAttribute("accessCode" , edr.getAccessCode() != null ? edr.getAccessCode() : "");
 						 edrInfo.setAttribute("parameter1" , edr.getParameter1() != null ? edr.getParameter1() : "");
 						 edrInfo.setAttribute("parameter2" , edr.getParameter2() != null ? edr.getParameter2() : "");
+						 edrInfo.setAttribute("parameter3" , edr.getParameter3() != null ? edr.getParameter3() : "");
+						 edrInfo.setAttribute("parameter4" , edr.getParameter4() != null ? edr.getParameter4() : "");
+						 edrInfo.setAttribute("parameter5" , edr.getParameter5() != null ? edr.getParameter5() : "");
+						 edrInfo.setAttribute("parameter6" , edr.getParameter6() != null ? edr.getParameter6() : "");
+						 edrInfo.setAttribute("parameter7" , edr.getParameter7() != null ? edr.getParameter7() : "");
+						 edrInfo.setAttribute("parameter8" , edr.getParameter8() != null ? edr.getParameter8() : "");
+						 edrInfo.setAttribute("parameter9" , edr.getParameter9() != null ? edr.getParameter9() : "");
 						 edrInfo.setAttribute("DateParam1" , edr.getDateParam1() != null ? DateUtils.formatDateWithPattern(edr.getDateParam1(),"dd/MM/yyyy") + "" : "");
 						 edrInfo.setAttribute("DateParam2" , edr.getDateParam2() != null ? DateUtils.formatDateWithPattern(edr.getDateParam2(),"dd/MM/yyyy") + "" : "");
+						 edrInfo.setAttribute("DateParam3" , edr.getDateParam3() != null ? DateUtils.formatDateWithPattern(edr.getDateParam3(),"dd/MM/yyyy") + "" : "");
+						 edrInfo.setAttribute("DateParam4" , edr.getDateParam4() != null ? DateUtils.formatDateWithPattern(edr.getDateParam4(),"dd/MM/yyyy") + "" : "");
+						 edrInfo.setAttribute("DateParam5" , edr.getDateParam5() != null ? DateUtils.formatDateWithPattern(edr.getDateParam5(),"dd/MM/yyyy") + "" : "");
 						 edrInfo.setAttribute("DecimalParam1" , edr.getDecimalParam1() != null ? edr.getDecimalParam1().toPlainString() : "");
 						 edrInfo.setAttribute("DecimalParam2" , edr.getDecimalParam2() != null ? edr.getDecimalParam2().toPlainString() : "");
+						 edrInfo.setAttribute("DecimalParam3" , edr.getDecimalParam3() != null ? edr.getDecimalParam3().toPlainString() : "");
+						 edrInfo.setAttribute("DecimalParam4" , edr.getDecimalParam4() != null ? edr.getDecimalParam4().toPlainString() : "");
+						 edrInfo.setAttribute("DecimalParam5" , edr.getDecimalParam5() != null ? edr.getDecimalParam5().toPlainString() : "");
 						 line.appendChild(edrInfo); 
 						  }
 						 
