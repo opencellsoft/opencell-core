@@ -69,6 +69,14 @@ public class DDRequestLOT extends AuditableEntity {
 	@Column(name = "RETURN_STATUS_CODE")
 	private String returnStatusCode;
 
+	@Column(name = "REJECTED_CAUSE")
+	private String RejectedCause;
+	
+	@Column(name = "REJECTED_INVOICES")
+	private Integer RejectedInvoices;
+	
+	
+	
 	public String getFileName() {
 		return fileName;
 	}
@@ -141,6 +149,22 @@ public class DDRequestLOT extends AuditableEntity {
 
 	public void setReturnFileName(String returnFileName) {
 		this.returnFileName = returnFileName;
+	}
+
+	public String getRejectedCause() {
+		return RejectedCause;
+	}
+
+	public void setRejectedCause(String rejectedCause) {
+		RejectedCause = rejectedCause;
+	}
+
+	public Integer getRejectedInvoices() {
+		return RejectedInvoices;
+	}
+
+	public void setRejectedInvoices(Integer rejectedInvoices) {
+		RejectedInvoices = rejectedInvoices;
 	}
 
 	
