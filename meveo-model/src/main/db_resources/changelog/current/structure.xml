@@ -1363,5 +1363,12 @@
         <addForeignKeyConstraint baseColumnNames="JOB_INSTANCE_ID" baseTableName="JOB_EXECUTION" constraintName="FK_JOB_EXECUTION_JOB_INSTANCE_ID"
             deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="MEVEO_JOB_INSTANCE" />
     </changeSet>
+    
+        <changeSet id="#981_20150813" author="Mbarek">
+		<addColumn tableName="AR_DDREQUEST_LOT">
+		<column name="REJECTED_CAUSE" type="VARCHAR(255)"></column>
+		<column name="REJECTED_INVOICES" type="INT4"></column>
+		</addColumn>
+		</changeSet>
 	
 </databaseChangeLog>
