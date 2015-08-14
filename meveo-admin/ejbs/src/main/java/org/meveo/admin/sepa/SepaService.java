@@ -26,6 +26,7 @@ import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
@@ -128,7 +129,11 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		dDRequestLOTService.create(ddRequestLOT, user, provider);
 		List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
 		Map<CustomerAccount, List<RecordedInvoice>> customerAccountInvoices = new HashMap<CustomerAccount, List<RecordedInvoice>>();
+		int notProcessedInvoice=0;
 		for (RecordedInvoice invoice : invoices) {
+			if(!isMandatoryFieldsFilled(invoice)){
+				notProcessedInvoice++;
+			}else{
 			if (customerAccountInvoices.containsKey(invoice
 					.getCustomerAccount())) {
 				customerAccountInvoices.get(invoice.getCustomerAccount()).add(
@@ -138,7 +143,13 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 				tmp.add(invoice);
 				customerAccountInvoices.put(invoice.getCustomerAccount(), tmp);
 			}
-		}
+		    }}
+		if(notProcessedInvoice>0){
+			ddRequestLOT.setRejectedCause("missing information . mandatory fields are : Reference,Amount, Provider description, IBAN,BIC,ICS, Mandate identification,Customer account description ");
+			ddRequestLOT.setRejectedInvoices(notProcessedInvoice);
+			dDRequestLOTService.updateAudit(ddRequestLOT, user);
+			dDRequestLOTService.updateNoCheck(ddRequestLOT);
+		   }
 		for (Map.Entry<CustomerAccount, List<RecordedInvoice>> e : customerAccountInvoices
 				.entrySet()) {
 			DDRequestItem ddrequestItem = new DDRequestItem();
@@ -505,5 +516,17 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		dDRequestLOT.setReturnFileName(file.getName());
 		dDRequestLOT.updateAudit(currentUser);
 		dDRequestLOTService.updateNoCheck(dDRequestLOT);
+	}
+	
+	public boolean isMandatoryFieldsFilled(RecordedInvoice invoice){
+		Provider provider=invoice.getProvider();
+		BankCoordinates providerBC = provider.getBankCoordinates();
+		CustomerAccount ca = invoice.getCustomerAccount();
+		if(invoice.getAmount()==null ||provider.getDescription()==null || providerBC.getIban()==null| providerBC.getBic()==null || providerBC.getIcs()==null
+				|| invoice.getReference()==null|| ca.getMandateIdentification()==null|| ca.getMandateDate()==null || ca.getDescription()==null ){
+			return false;	
+		}else{
+			return true;
+		}
 	}
 }
