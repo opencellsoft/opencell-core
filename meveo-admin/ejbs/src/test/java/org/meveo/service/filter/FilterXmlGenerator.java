@@ -31,12 +31,12 @@ public class FilterXmlGenerator {
 
 	public static void main(String[] args) {
 		FilterXmlGenerator fg = new FilterXmlGenerator();
-		// fg.filter1();
-//		String result = fg.generate();
-//		System.out.println(result);
-
-		String result = fg.generate1();
+//		 fg.filter1();
+		String result = fg.generate();
 		System.out.println(result);
+
+//		String result = fg.generate1();
+//		System.out.println(result);
 
 		// fg.degenerate(result);
 		// fg.getLinkedListFields();
@@ -53,7 +53,7 @@ public class FilterXmlGenerator {
 				DiscriminatorValue.class).value());
 		primitiveFilterCondition.setFieldName("status");
 		primitiveFilterCondition.setOperator("=");
-		primitiveFilterCondition.setOperand("SubscriptionStatusEnum.ACTIVE");
+		primitiveFilterCondition.setOperand("enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE");
 
 		andFilterConditions.add(primitiveFilterCondition);
 

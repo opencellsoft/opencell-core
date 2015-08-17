@@ -61,8 +61,8 @@ public class FilteredQueryBuilder extends QueryBuilder {
 			}
 		} else if (filterCondition instanceof PrimitiveFilterCondition) {
 			PrimitiveFilterCondition tempFilter = (PrimitiveFilterCondition) filterCondition;
-			if (tempFilter.getOperand().indexOf(".") != 0) {
-				String enumClassName = (tempFilter.getOperand().substring(0, tempFilter.getOperand().lastIndexOf(".")));
+			if (tempFilter.getOperand().indexOf("enum:") != -1) {
+				String enumClassName = (tempFilter.getOperand().substring(5, tempFilter.getOperand().lastIndexOf(".")));
 				String enumValue = tempFilter.getOperand().substring(tempFilter.getOperand().lastIndexOf(".") + 1,
 						tempFilter.getOperand().length());
 				Class<? extends Enum> enumClass = null;
@@ -79,8 +79,12 @@ public class FilteredQueryBuilder extends QueryBuilder {
 					e.printStackTrace();
 				}
 			} else if (tempFilter.getOperator().equalsIgnoreCase("LIKE")) {
-				like(alias + "." + tempFilter.getFieldName(), tempFilter.getOperand(),
-						QueryLikeStyleEnum.MATCH_BEGINNING, true);
+				if (tempFilter.getFieldName().indexOf(".") == -1) {
+					like(alias + "." + tempFilter.getFieldName(), tempFilter.getOperand(),
+							QueryLikeStyleEnum.MATCH_BEGINNING, true);
+				} else {
+					like(tempFilter.getFieldName(), tempFilter.getOperand(), QueryLikeStyleEnum.MATCH_BEGINNING, true);
+				}
 			} else {
 				if (NumberUtils.isNumber(tempFilter.getOperand())) {
 					Long lv = LongValidator.getInstance().validate(tempFilter.getOperand());

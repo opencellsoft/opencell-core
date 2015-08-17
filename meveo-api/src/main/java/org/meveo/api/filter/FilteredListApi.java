@@ -20,7 +20,8 @@ public class FilteredListApi extends BaseApi {
 	@Inject
 	private FilterService filterService;
 
-	public String list(String filterCode, Provider provider) throws MeveoApiException {
+	public String list(String filterCode, Integer firstRow, Integer numberOfRows, Provider provider)
+			throws MeveoApiException {
 		String result = "";
 
 		Filter filter = filterService.findByCode(filterCode, provider);
@@ -29,7 +30,7 @@ public class FilteredListApi extends BaseApi {
 		}
 
 		try {
-			result = filterService.filteredList(filter);
+			result = filterService.filteredList(filter, firstRow, numberOfRows);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}

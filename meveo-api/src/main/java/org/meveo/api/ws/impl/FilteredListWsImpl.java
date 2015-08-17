@@ -26,10 +26,10 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 	private FilteredListApi filteredListApi;
 
 	@Override
-	public FilteredListResponseDto list(String filter) {
+	public FilteredListResponseDto list(String filter, Integer firstRow, Integer numberOfRows) {
 		FilteredListResponseDto result = new FilteredListResponseDto();
 		try {
-			String response = filteredListApi.list(filter, getCurrentUser().getProvider());
+			String response = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser().getProvider());
 			result.getActionStatus().setMessage(response);
 		} catch (MeveoApiException e) {
 			log.debug("RESPONSE={}", e);

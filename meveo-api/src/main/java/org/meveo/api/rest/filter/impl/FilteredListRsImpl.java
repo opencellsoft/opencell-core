@@ -26,11 +26,11 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
 	private FilteredListApi filteredListApi;
 
 	@Override
-	public Response list(String filter) {
+	public Response list(String filter, Integer firstRow, Integer numberOfRows) {
 		Response.ResponseBuilder responseBuilder = null;
 
 		try {
-			String result = filteredListApi.list(filter, getCurrentUser().getProvider());
+			String result = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser().getProvider());
 			responseBuilder = Response.ok();
 			responseBuilder.entity(result);
 		} catch (MeveoApiException e) {

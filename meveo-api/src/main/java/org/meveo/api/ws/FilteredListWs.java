@@ -13,6 +13,7 @@ import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 public interface FilteredListWs {
 
 	@WebMethod
-	FilteredListResponseDto list(@WebParam(name = "filter") String filter);
+	FilteredListResponseDto list(@WebParam(name = "filter") String filter,
+			@WebParam(name = "firstRow") Integer firstRow, @WebParam(name = "numberOfRows") Integer numberOfRows);
 
 }
