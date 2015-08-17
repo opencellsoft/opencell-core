@@ -466,7 +466,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public List<E> list(PaginationConfiguration config) {
 		Map<String, Object> filters = config.getFilters();
 
-		if (filters.containsKey("$FILTER")) {
+		if (filters != null && filters.containsKey("$FILTER")) {
 			Filter filter = (Filter) filters.get("$FILTER");
 			FilteredQueryBuilder queryBuilder = (FilteredQueryBuilder) getQuery(config);
 			queryBuilder.processOrderCondition(filter.getOrderCondition(), filter.getPrimarySelector().getAlias());
