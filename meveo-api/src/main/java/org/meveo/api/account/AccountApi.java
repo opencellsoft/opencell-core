@@ -1,22 +1,28 @@
 package org.meveo.api.account;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
 /**
  * @author Edward P. Legaspi
@@ -29,6 +35,9 @@ public class AccountApi extends BaseApi {
 
     @Inject
     private TitleService titleService;
+    
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
 
     public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser, AccountLevelEnum accountLevel) throws MeveoApiException {
         Address address = new Address();
@@ -67,6 +76,50 @@ public class AccountApi extends BaseApi {
         accountEntity.setExternalRef2(postData.getExternalRef2());
         accountEntity.setAddress(address);
         accountEntity.setName(name);
+        
+		// check if there are required custom fields
+		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(accountLevel,
+				currentUser.getProvider());
+		if (customFieldTemplates != null) {
+			for (CustomFieldTemplate cft : customFieldTemplates) {
+				if (cft.isValueRequired()) {
+					if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField().size() > 0) {
+						for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+							if (cft.getCode().equals(cfDto.getCode())) {
+								switch (cft.getFieldType()) {
+								case DATE:
+									if (cfDto.getDateValue() == null) {
+										missingParameters.add(cft.getCode());
+									}
+									break;
+								case DOUBLE:
+									if (cfDto.getDoubleValue() == null) {
+										missingParameters.add(cft.getCode());
+									}
+									break;
+								case LONG:
+									if (cfDto.getLongValue() == null) {
+										missingParameters.add(cft.getCode());
+									}
+									break;
+								case LIST:
+								case STRING:
+									if (cfDto.getStringValue() == null) {
+										missingParameters.add(cft.getCode());
+									}
+								}
+							}
+						}
+					} else {
+						missingParameters.add(cft.getCode());
+					}
+				}
+			}
+
+			if (missingParameters.size() > 0) {
+				throw new MissingParameterException(getMissingParametersExceptionMessage());
+			}
+		}
 
         // populate customFields
         if (postData.getCustomFields() != null) {
@@ -79,7 +132,8 @@ public class AccountApi extends BaseApi {
         }
     }
 
-    public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser, AccountLevelEnum accountLevel) throws MeveoApiException {
+    @SuppressWarnings("incomplete-switch")
+	public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser, AccountLevelEnum accountLevel) throws MeveoApiException {
         Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
         if (postData.getAddress() != null) {
             // check country
@@ -140,6 +194,48 @@ public class AccountApi extends BaseApi {
 		}
 		if (!StringUtils.isBlank(postData.getExternalRef2())) {
 			accountEntity.setExternalRef2(postData.getExternalRef2());
+		}
+		
+		// check if there are required custom fields
+		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(accountLevel,
+				currentUser.getProvider());
+		if (customFieldTemplates != null) {
+			for (CustomFieldTemplate cft : customFieldTemplates) {
+				if (cft.isValueRequired()) {
+					if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField().size() > 0) {
+						for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+							if (cft.getCode().equals(cfDto.getCode())) {
+								switch (cft.getFieldType()) {
+								case DATE:
+									if (cfDto.getDateValue() == null) {
+										missingParameters.add(cft.getCode());
+									}
+									break;
+								case DOUBLE:
+									if (cfDto.getDoubleValue() == null) {
+										missingParameters.add(cft.getCode());
+									}
+									break;
+								case LONG:
+									if (cfDto.getLongValue() == null) {
+										missingParameters.add(cft.getCode());
+									}
+									break;
+								case LIST:
+								case STRING:
+									if (cfDto.getStringValue() == null) {
+										missingParameters.add(cft.getCode());
+									}
+								}
+							}
+						}
+					} else {
+						missingParameters.add(cft.getCode());
+					}
+				}
+			}
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 
         // populate customFields
