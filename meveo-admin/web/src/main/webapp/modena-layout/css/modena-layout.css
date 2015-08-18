@@ -534,7 +534,7 @@ body {
 #layout-portlets-cover {
   display: block;
   vertical-align: top;
-  padding: 70px 1% 10px;
+  padding: 125px 1% 10px;
 }
 .Card {
   padding: 20px;
@@ -1297,3 +1297,30 @@ li {
   border: solid 1px #E0E0E0;
 }
 
+
+#layout-topbar i.icon-archive {
+  display: none;
+}
+#layout-topbar #top-menu > li > a {
+  width: auto;
+  border-radius: 0;
+  float: left;
+	margin-right: 10px;	
+	padding:0;
+font-size: 14px;
+  height: auto;
+}
+
+
+#layout-topbar #top-menu span.headerLink {
+  color: #fff;
+  font-size: 14px;
+}
+#top-menu > li {
+  border-right: 1px solid #ccc;
+  color: #fff;
+  font-size: 14px;
+}
+#top-menu{padding:10px 0;}
+
+#top-menu li a{ color: #fff; }

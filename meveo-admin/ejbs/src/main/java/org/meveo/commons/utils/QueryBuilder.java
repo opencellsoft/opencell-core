@@ -55,7 +55,7 @@ public class QueryBuilder {
 	private boolean inOrClause;
 	private int nbCriteriaInOrClause;
 
-	private PaginationConfiguration paginationConfiguration;
+	protected PaginationConfiguration paginationConfiguration;
 	private String paginationSortAlias;
 
 	public enum QueryLikeStyleEnum {
@@ -614,25 +614,28 @@ public class QueryBuilder {
 		if (paginationConfiguration == null)
 			return;
 
-		if (paginationConfiguration.isSorted())
+		if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1)
 			addOrderCriterion(((alias != null) ? (alias + ".") : "") + paginationConfiguration.getSortField(),
 					paginationConfiguration.isAscendingSorting());
-
 	}
-
-	/**
-	 * @param query
-	 */
+	
 	private void applyPagination(Query query) {
 		if (paginationConfiguration == null) {
 			return;
 		}
 
-		if (paginationConfiguration.getFirstRow() != null) {
-			query.setFirstResult(paginationConfiguration.getFirstRow());
+		applyPagination(query, paginationConfiguration.getFirstRow(), paginationConfiguration.getNumberOfRows());
+	}
+
+	/**
+	 * @param query
+	 */
+	public void applyPagination(Query query, Integer firstRow, Integer numberOfRows) {
+		if (firstRow != null) {
+			query.setFirstResult(firstRow);
 		}
-		if (paginationConfiguration.getNumberOfRows() != null) {
-			query.setMaxResults(paginationConfiguration.getNumberOfRows());
+		if (numberOfRows != null) {
+			query.setMaxResults(numberOfRows);
 		}
 	}
 

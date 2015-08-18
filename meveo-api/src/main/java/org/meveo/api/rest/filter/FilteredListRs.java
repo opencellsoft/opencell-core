@@ -19,6 +19,7 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface FilteredListRs extends IBaseRs {
 
-	Response list(@QueryParam("filter") String filter);
+	Response list(@QueryParam("filter") String filter, @QueryParam("firstRow") Integer firstRow,
+			@QueryParam("numberOfRows") Integer numberOfRows);
 
 }

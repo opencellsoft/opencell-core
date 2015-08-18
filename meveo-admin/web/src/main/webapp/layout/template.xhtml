@@ -12,127 +12,87 @@
 
 	<html>
 
-<h:head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
-	<title>MEVEO | Open Source Billing Platform</title>
-	<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
-	<link rel="stylesheet" type="text/css"
-		href="#{request.contextPath}/stylesheet/theme.css" />
-	<link rel="stylesheet" type="text/css"
-		href="#{request.contextPath}/stylesheet/main.css" />
+		<h:head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+			<title>MEVEO | Open Source Billing Platform</title>
+			<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
+			<link rel="stylesheet" type="text/css"
+				href="#{request.contextPath}/stylesheet/theme.css" />
+			<link rel="stylesheet" type="text/css"
+				href="#{request.contextPath}/stylesheet/main.css" />
+		
+			<link rel="stylesheet" type="text/css"
+				href="#{request.contextPath}/modena-layout/css/animate.css" />
+			
+			<link rel="stylesheet" type="text/css"
+				href="#{request.contextPath}/modena-layout/css/core-layout.css" />
+				
+			<link rel="stylesheet" type="text/css"
+				href="#{request.contextPath}/modena-layout/css/font-awesome.css" />
+				
+			<link rel="stylesheet" type="text/css"
+				href="#{request.contextPath}/modena-layout/css/modena-font.css" />
+				
+			<link rel="stylesheet" type="text/css"
+				href="#{request.contextPath}/modena-layout/css/modena-layout.css" />
+				
+			<link rel="stylesheet" type="text/css"
+				href="#{request.contextPath}/modena-layout/css/perfect-scrollbar.css" />
+				
+			<link rel="stylesheet" type="text/css"
+				href="#{request.contextPath}/modena-layout/css/ripple-effect.css" />	
+			
+				
+			<h:outputScript name="js/ripple-effect.js" library="modena-layout" />
+			<h:outputScript name="js/perfect-scrollbar.js" library="modena-layout" />
+			<h:outputScript name="js/layout.js" library="modena-layout" />
+		        
+			<ui:insert name="head" />
+		
+			<!-- <a:loadScript src="resource://jquery.js" /> -->
+			<script type="text/javascript"
+				src="#{facesContext.externalContext.requestContextPath}/js/equalHeight.js"></script>
+		</h:head>
 
-	<ui:insert name="head" />
-
-	<!-- <a:loadScript src="resource://jquery.js" /> -->
-	<script type="text/javascript"
-		src="#{facesContext.externalContext.requestContextPath}/js/equalHeight.js"></script>
-</h:head>
-<h:body>
-	<h:form>
-		<script type="text/javascript">
-			jQuery(function() {
-				jQuery('.panels').equalHeights();
-			});
-		</script>
-		<div id="admin-bar">
-			<div id="logo">
+		<h:body class="GrayModena Geometry">
+		
+			<ui:include src="topbar.xhtml" />
+		
+			<div id="wrapper">
+				<div id="wrapperIndent">
+		
+					<div id="layout-portlets-cover">
+			            <div class="Container96 Fnone MarAuto">
+		                        
+							<ui:insert name="navigation">
+								<ui:include src="layoutmenu.xhtml" />
+							</ui:insert>
+							
+							<div class="body">
+								<ui:insert name="body" />
+							</div>
+		
+							<!-- footer -->
+							<div class="Container100">
+								<div class="footer">
+									<h:outputText value="#{checkUpdateBean.versionOutput}" escape="false" />
+								</div>
+							</div>
+						</div>
+					</div>
+		                
+					<p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+						<f:facet name="start">
+							<p:graphicImage name="images/preloader.gif" library="modena-layout"/>
+						</f:facet>
+		
+		                <f:facet name="complete">
+		                    <h:outputText value="" />
+		                </f:facet>
+					</p:ajaxStatus>
+				</div>
 			</div>
-
-			<ul >
-				<li><div class="top-bar-home"></div> <h:link
-						outcome="/home.xhtml" value="#{messages['menutop.home']}"
-						styleClass="headerLink" /></li>
-				<li>
-					<div class="top-bar-pass"></div> <h:link
-						outcome="/changePassword.xhtml"
-						value="#{messages['menutop.changePassword']}"
-						rendered="#{identity.loggedIn}" styleClass="headerLink" />
-				</li>
-				<li>
-					<div class="top-bar-logout"></div> <h:commandLink
-						action="#{identity.logout}" value="#{messages['menutop.logout']}"
-						rendered="#{identity.loggedIn}" styleClass="headerLink"
-						immediate="true" />
-				</li>
-				<li class="right-part">
-					<div class="top-bar-user"></div> <h:outputText
-						value="#{messages['commons.connectedUsers']} : #{identity.user.user.userName} "
-						rendered="#{identity.loggedIn}" />
-				</li>
-				<li><h:outputText
-						value="#{messages['commons.connectedProvider']} : #{identity.user.currentProvider.code}"
-						rendered="#{identity.loggedIn}" />
-				</li>
-
-
-			</ul>
-		</div>
-		<!--end of admin bar -->
-		<div id="header">
-			<div id="logo">
-			</div>
-
-			<div id="headerleft"></div>
-			<div id="headerright"></div>
-		</div>
-	</h:form>
-
-	<ui:insert name="navigation">
-	</ui:insert>
-	<div class="body">
-
-		<ui:insert name="body" />
-
-	</div>
-
-	<div class="footer">MEVEO @VERSION_NUMBER@ @BUILD_NUMBER@</div>
-	<div class="footer"><h:outputText value="#{checkUpdateBean.versionOutput}" escape="false" /></div>
-
-	<p:ajaxStatus
-		style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
-		<f:facet name="start">
-			<h:graphicImage library="img" name="loading.gif" />
-		</f:facet>
-
-		<f:facet name="complete">
-			<h:outputText value="" />
-		</f:facet>
-	</p:ajaxStatus>
-
-
-
-<!-- 	<p:dialog id="providerSelectPopup" -->
-<!-- 		rendered="#{identity.loggedIn and ! identity.user.user.onlyOneProvider}" -->
-<!-- 		header="#{messages['provider.popup.header']}" -->
-<!-- 		widgetVar="dlg_providerSelectPopup"  modal="true" -->
-<!-- 		styleClass="form-dialog" width="500" closeOnEscape="true" visible="#{param['chooseProvider']!=null}"> -->
-<!-- 		<h:form id="providerSelectPopupForm"> -->
-
-
-<!-- 			<p:dataTable var="provider" value="#{identity.user.user.providers.toArray()}" reflow="true" resizableColumns="true"> -->
-
-<!-- 				<p:column headerText="#{messages['businessEntity.code']}"> -->
-<!-- 					<h:outputText value="#{provider.code}" /> -->
-<!-- 				</p:column> -->
-
-<!-- 				<p:column headerText="#{messages['businessEntity.description']}"> -->
-<!-- 					<h:outputText value="#{provider.description}" /> -->
-<!-- 				</p:column> -->
-<!-- 				<p:column> -->
-<!-- 					<p:commandLink value="#{messages['commons.select']}" -->
-<!-- 						action="#{currentProviderBean.setCurrentProvider(provider)}" -->
-<!-- 						oncomplete="PF('dlg_providerSelectPopup').hide()"> -->
-<!-- 					</p:commandLink> -->
-<!-- 				</p:column> -->
-<!-- 			</p:dataTable> -->
-<!-- 		</h:form> -->
-<!-- 	</p:dialog> -->
-
-</h:body>
+		</h:body>
 	</html>
-
-
-
-
 </f:view>

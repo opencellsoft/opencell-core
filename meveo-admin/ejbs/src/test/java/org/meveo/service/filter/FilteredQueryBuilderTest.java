@@ -136,7 +136,8 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 		FilterSelector filterSelector1 = new FilterSelector();
 		filterSelector1.setTargetEntity("org.meveo.model.billing.Country");
 		filterSelector1.setAlias("c");
-		filterSelector1.setDisplayFields(new ArrayList<>(Arrays.asList("currency", "language")));
+		filterSelector1.setDisplayFields(new ArrayList<>(Arrays.asList("id", "countryCode", "descriptionEn",
+				"currency", "language")));
 
 		Filter filter = new Filter();
 		filter.setFilterCondition(andCompositeFilterCondition);
@@ -145,7 +146,7 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 		filter.setOrderCondition(orderCondition);
 
 		try {
-			String result = filterService.filteredList(filter);
+			String result = filterService.filteredList(filter, 1, 2);
 
 			System.out.println(result);
 

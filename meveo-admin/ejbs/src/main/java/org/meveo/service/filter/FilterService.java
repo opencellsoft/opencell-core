@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
@@ -167,17 +168,21 @@ public class FilterService extends BusinessService<Filter> {
 		return xstream.toXML(entities);
 	}
 
-	public String filteredList(String filterName, Provider provider) throws BusinessException {
+	public String filteredList(String filterName, Integer firstRow, Integer numberOfRows, Provider provider)
+			throws BusinessException {
 		Filter filter = (Filter) findByCode(filterName, provider);
-		return filteredList(filter);
+		return filteredList(filter, firstRow, numberOfRows);
 	}
 
-	public String filteredList(Filter filter) throws BusinessException {
+	@SuppressWarnings("unchecked")
+	public String filteredList(Filter filter, Integer firstRow, Integer numberOfRows) throws BusinessException {
 		FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
 
 		try {
-			@SuppressWarnings("unchecked")
-			List<? extends IEntity> objects = fqb.getQuery(getEntityManager()).getResultList();
+			Query query = fqb.getQuery(getEntityManager());
+			log.debug("query={}", fqb.getSqlString());
+			fqb.applyPagination(query, firstRow, numberOfRows);
+			List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
 			XStream xstream = new XStream() {
 				@Override
 				protected MapperWrapper wrapMapper(MapperWrapper next) {

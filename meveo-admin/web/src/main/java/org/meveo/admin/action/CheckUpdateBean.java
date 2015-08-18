@@ -48,7 +48,7 @@ public class CheckUpdateBean implements Serializable {
 			String input = buildJsonRequest();
 			log.debug("Request Check Update ={}",input);
 
-			String urlMoni = paramBean.getProperty("checkUpdate.url","http://version.meveo.info/meveo-moni/api/rest/getVersion");
+			String urlMoni = paramBean.getProperty("monitoring.url","http://version.meveo.info/meveo-moni")+"/api/rest/getVersion";
 			log.debug("Request Check Update url={}",urlMoni);
 			JSONParser jsonParser = new JSONParser();
 			//FIXME : deprecated
@@ -99,9 +99,7 @@ public class CheckUpdateBean implements Serializable {
 			MeveoInstance meveoInstance = meveoInstanceService.getThis();
 			String  meveoInstanceCode = (meveoInstance==null )?null:meveoInstance.getCode();
 			 		
-			String productVersion = Version.appVersion;			
-			String productName = paramBean.getProperty("checkUpdate.productName", "Meveo");
-			String owner = paramBean.getProperty("checkUpdate.owner", "OpenCell");
+			String productVersion = Version.appVersion;		
 			String macAddress = "";
 			String ipAddress = "";
 			String md5="";
@@ -158,9 +156,9 @@ public class CheckUpdateBean implements Serializable {
 			 */
 			String input = "{"+
 					"	  #meveoInstanceCode#: #"+meveoInstanceCode+"#,"+
-					"	  #productName#: #"+productName+"#,"+
+					"	  #productName#: #"+"Meveo"+"#,"+
 					"	  #productVersion#: #"+productVersion+"#,"+
-					"	  #owner#: #"+owner+"#,"+
+					"	  #owner#: #"+"OpenCell"+"#,"+
 					"	  #productInfo#: {"+
 					"					    #md5#: #"+md5+"#,"+
 					"					    #creationDate#: #"+creationDate+"#,"+
