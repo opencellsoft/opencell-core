@@ -864,7 +864,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 
 			WalletOperation walletOperation = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance().getSubscription(),
-					chargeInstance, reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : applicationTypeEnum, applicationDate, chargeInstance.getAmountWithoutTax(),
+					chargeInstance, reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : applicationTypeEnum, nextapplicationDate, chargeInstance.getAmountWithoutTax(),
 					chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency, countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory,
 					chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(nextapplicationDate, -1),
 					reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION);
@@ -891,7 +891,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		chargeInstance.setChargeDate(applicationDate);
 	}
 
-	public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, User creator)
+	public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate,Date endAgreementDate, User creator)
 			throws BusinessException {
 
 		// we apply the charge at its nextChargeDate
@@ -899,8 +899,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (applicationDate == null) {
 			throw new IncorrectChargeInstanceException("nextChargeDate is null.");
 		}
-
-		Date endAgreementDate = chargeInstance.getServiceInstance().getEndAgrementDate();
 
 		if (endAgreementDate == null) {
 			return;

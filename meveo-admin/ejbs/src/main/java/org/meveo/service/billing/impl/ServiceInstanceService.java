@@ -332,17 +332,18 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					&& recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()) {
 				nextChargeDate = recurringChargeInstance.getChargeDate();
 			}
+			
 
-			if (applyAgreement) {
-				Date endAgrementDate = serviceInstance.getEndAgrementDate();
-				if (endAgrementDate != null && terminationDate.before(endAgrementDate)) {
-					if (endAgrementDate.after(nextChargeDate)) {
-						walletOperationService.applyChargeAgreement(recurringChargeInstance,
-								recurringChargeInstance.getRecurringChargeTemplate(), user);
-					}
-
-				}
+			Date endDate = terminationDate;
+			if (applyAgreement && serviceInstance.getEndAgrementDate() != null 
+					&& terminationDate.before(serviceInstance.getEndAgrementDate())) {
+					endDate = serviceInstance.getEndAgrementDate();
 			}
+			if (endDate.after(nextChargeDate)) {
+				walletOperationService.applyChargeAgreement(recurringChargeInstance,
+						recurringChargeInstance.getRecurringChargeTemplate(),endDate, user);
+			}
+
 
 			if (applyReimbursment) {
 				Date endAgrementDate = recurringChargeInstance.getServiceInstance().getEndAgrementDate();

@@ -264,11 +264,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			}
 
 			Date applicationDate = null;
-			if (recurringChargeTemplate.getApplyInAdvance()) {
+			//if (recurringChargeTemplate.getApplyInAdvance()) {
 				applicationDate = activeRecurringChargeInstance.getNextChargeDate();
-			} else {
-				applicationDate = activeRecurringChargeInstance.getChargeDate();
-			}
+			//} else {
+			//	applicationDate = activeRecurringChargeInstance.getChargeDate();
+			//}
 
 			while (nbRating<MaxRecurringRatingHistory && (applicationDate.getTime() <= maxDate.getTime())) {
 				nbRating++;
@@ -281,11 +281,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, user);
 				}
 				log.debug("nextChargeDate {}, chargeDate {}.",activeRecurringChargeInstance.getChargeDate(),activeRecurringChargeInstance.getNextChargeDate());
-				if (recurringChargeTemplate.getApplyInAdvance()) {
+				//if (recurringChargeTemplate.getApplyInAdvance()) {
 					applicationDate = activeRecurringChargeInstance.getNextChargeDate();
-				} else {
-					applicationDate = activeRecurringChargeInstance.getChargeDate();
-				}
+				//} else {
+				//	applicationDate = activeRecurringChargeInstance.getChargeDate();
+				//}
 			} 
 			if(nbRating>0){
 				activeRecurringChargeInstance.updateAudit(user);
