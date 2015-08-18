@@ -13,56 +13,72 @@
             <span class="ButtonLine" id="ButtonLine2"></span>
             <span class="ButtonLine" id="ButtonLine3"></span>
         </a>
-        <a href="/modena/dashboard.xhtml" id="logo">
-            <h:graphicImage name="images/logo.svg" styleClass="Fleft" library="modena-layout" />
-        </a>
+        
+	<div id="logo">
+            
+        </div>
+        
         
         <a id="show-top-menu" class="ShowOnMobile ripplelink"><i class="icon-more_vert" id="active"></i><i class="icon-close DispNone" id="passive"></i> </a>
         
         <ul id="top-menu">
-            <li>
-                <a class="ripplelink"><i class="icon-search"></i> <span class="ShowOnMobile">Search Here</span></a>
-                <ul>
-                    <li>
-                        <a href="#"><i class="icon-search"></i><input type="text"/> </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a class="ripplelink"><i class="icon-archive"></i> <span class="ShowOnMobile">Task Manager</span></a>
-                <ul>
-                    <li><a href="#"><i class="icon-alarm_on"></i> Completed Tasks</a></li>
-                    <li><a href="#"><i class="icon-alarm_add"></i> New Tasks</a></li>
-                    <li><a href="#"><i class="icon-event_available"></i> Clear All Tasks</a></li>
-                </ul>
-            </li>
-            <li>
-                <a class="ripplelink"><i class="icon-notifications_none"></i> <span class="ShowOnMobile">Notifications</span></a>
-                <ul>
-                    <li><a href="#"><span class="Orange">Meeting With John</span><br/><span class="Gray Fs14 FontRobotoLight">Today - 13:40 <br/>At Creme Cafe - NYC</span></a></li>
-                    <li><a href="#"><span class="Blue">Send Reports</span><br/><span class="Gray Fs14 FontRobotoLight">Today - 17:10 <br/>To Brian Carpenter</span></a></li>
-                    <li><a href="#"><span class="Blue">Test Week</span><br/><span class="Gray Fs14 FontRobotoLight">Today - 18:30 <br/>Testing New Modules</span></a></li>
-                    <li class="TexAlCenter"><i class="icon-keyboard_control Gray Fs30"></i></li>
-                    <li><a href="#"><span class="Red"><i class="icon-alarm_add Fs20 Fleft"></i> Set New Reminder</span></a></li>
-                </ul>
-            </li>
-            <li>
-                <a class="ripplelink"><i class="icon-cog"></i> <span class="ShowOnMobile">Settings</span></a>
-                <ul>
-                    <li><a href="#"><i class="icon-flag2"></i> Language Settings</a></li>
-                    <li><a href="#"><i class="icon-settings"></i> System Settings</a></li>
-                    <li><a href="#"><i class="icon-verified_user"></i> Security Settings</a></li>
-                    <li><a href="#"><i class="icon-assignment_ind"></i> Users Settings</a></li>
-                </ul>
-            </li>
-            <li>
-                <a class="ripplelink"><i class="icon-power"></i> <span class="ShowOnMobile">System</span></a>
-                <ul>
-                    <li><a href="#"><span class="Blue"><i class="icon-airline_seat_individual_suite Fs30 DispBlock"></i> Sleep Mode</span></a></li>
-                    <li><a href="#"><span class="Orange"><i class="icon-track_changes Fs30 DispBlock"></i> Restart System</span></a></li>
-                    <li><a href="#"><span class="Red"><i class="icon-vpn_key Fs30 DispBlock"></i> Logout</span></a></li>
-                </ul>
-            </li>
+        	
+        	<li>
+        		<h:link outcome="/home.xhtml" value="#{messages['menutop.home']}"
+                           styleClass="ripplelink">
+				<span class="ink animate" style="height: 42px; width: 42px; top: -1px; 
+                                      left:2.109375px;">
+				</span>
+				<i class="icon-archive"></i> 
+        			<span class="ShowOnMobile"><div class="top-bar-home"></div>
+				</span>
+			</h:link>
+        	</li>
+        
+        	<li>
+        		<a class="ripplelink">
+			<span class="ink animate" style="height: 42px; width: 42px; top: -1px; left:  
+                              2.109375px;"></span>
+
+				<i class="icon-archive"></i> 
+        			<span class="ShowOnMobile"><div class="top-bar-pass"></div> </span>
+        		</a>
+				
+				<h:link outcome="/changePassword.xhtml" value="#{messages['menutop.changePassword']}"
+					rendered="#{identity.loggedIn}" styleClass="headerLink" />
+			</li>
+
+			<li>
+				<a class="ripplelink">
+					<span class="ink animate" style="height: 42px; width: 42px; top: -1px; left: 2.109375px;">
+					</span>
+
+        			<span class="ShowOnMobile"> <div class="top-bar-logout"></div> </span>
+        			<h:form>
+	        			<h:commandLink action="#{identity.logout}" value="#{messages['menutop.logout']}"
+							rendered="#{identity.loggedIn}" styleClass="headerLink" immediate="true" />
+					</h:form>
+        		</a>
+			</li>
+			
+			<li class="right-part">
+				<a class="ripplelink">
+				<span class="ink animate" style="height: 42px; width: 42px; top: -1px; left:  
+	                              2.109375px;"></span>
+				
+				<i class="icon-archive"></i> 
+        			<span class="ShowOnMobile"> <div class="top-bar-user"></div> </span>
+        		</a>
+				 
+				<h:outputText value="#{messages['commons.connectedUsers']} : #{identity.user.user.userName}"
+					rendered="#{identity.loggedIn}" />
+			</li>			
+
+			<li>
+				<h:outputText value="#{messages['commons.connectedProvider']} : #{identity.user.currentProvider.code}"
+					rendered="#{identity.loggedIn}" />
+			</li>
+            
         </ul>
     </div>
     <!-- TOPBAR END -->
