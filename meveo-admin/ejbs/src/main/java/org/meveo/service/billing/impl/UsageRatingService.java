@@ -406,11 +406,6 @@ public class UsageRatingService {
 	public void ratePostpaidUsage(EDR edr, User currentUser) throws BusinessException {
 		rateUsageWithinTransaction(edr, currentUser);
 	}
-	
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public WalletOperation rateUsageWithinNewTransaction(EDR edr, User currentUser) throws BusinessException {
-		return rateUsageWithinTransaction(edr, currentUser);
-	}
 
 	@TransactionAttribute(TransactionAttributeType.MANDATORY)
 	public WalletOperation rateUsageWithinTransaction(EDR edr, User currentUser) throws BusinessException {
@@ -456,6 +451,8 @@ public class UsageRatingService {
 											if (edrIsRated) {
 												edr.setStatus(EDRStatusEnum.RATED);
 												break;
+											} else {
+												walletOperation = new WalletOperation();
 											}
 										}
 									}
