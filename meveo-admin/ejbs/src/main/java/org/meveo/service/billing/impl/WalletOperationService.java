@@ -1063,6 +1063,19 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<Long> listToInvoiceIds(Date invoicingDate, Provider provider) {
+		List<Long> ids = null;
+		try {
+			ids = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceIds").setParameter("invoicingDate", invoicingDate).setParameter("provider", provider)
+					.getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("listToInvoice error={} ", e.getMessage());
+		}
+		return ids;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<WalletOperation> listToInvoiceByUserAccount(Date invoicingDate, Provider provider,UserAccount userAccount) {
 		List<WalletOperation> walletOperations = null;
 		try {
