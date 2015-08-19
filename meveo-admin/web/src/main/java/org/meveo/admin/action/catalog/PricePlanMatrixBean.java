@@ -20,10 +20,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -32,6 +34,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link PricePlanMatrix} (extends {@link BaseBean}
@@ -51,6 +54,19 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 	 */
 	@Inject
 	private PricePlanMatrixService pricePlanMatrixService;
+	
+	@Inject
+	@RequestParam
+	private Instance<String> pricePlanCode;
+	
+	@Inject
+	@RequestParam
+	private Instance<String> chargeCode;
+	
+	@Inject
+	@RequestParam
+	private Instance<String> chargeDescription;
+	
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -73,6 +89,11 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 		if(obj.isTransient()){
 			obj.setMinSubscriptionAgeInMonth(0L);
 			obj.setMaxSubscriptionAgeInMonth(9999L);
+		}
+		if (pricePlanCode.get() != null && chargeCode!=null) {
+			obj.setCode(pricePlanCode.get());
+			obj.setEventCode(chargeCode.get());
+			obj.setDescription(chargeDescription.get());
 		}
 		return obj;
 	}
@@ -134,5 +155,22 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 			}
 		}
 	}
+	
+	public LazyDataModel<PricePlanMatrix> getPricePlanMatrixList(
+			ChargeTemplate chargeTemplate) { 
+			filters.put("eventCode", chargeTemplate.getCode());
+			return getLazyDataModel();
+		}
+	
+	public String resetEntity() {
+		if (pricePlanCode.get() != null && chargeCode!=null) { 
+			entity.setCode(pricePlanCode.get());
+			entity.setEventCode(chargeCode.get());
+			entity.setDescription(chargeDescription.get());
+		  }
+		 return "/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml?pricePlanCode="+pricePlanCode.get()+"&chargeCode="+chargeCode.get()+"&chargeDescription="+chargeDescription.get()+""
+		+ "&edit=true&faces-redirect=true&includeViewParams=true";
+	}
+	
+	}
 
-}

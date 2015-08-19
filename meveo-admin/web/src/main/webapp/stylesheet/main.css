@@ -577,3 +577,10 @@ vertical-align:top !important;
   position: relative;
   z-index: 10001;
 }
+
+.ui-tabs-panels .ui-menubar{
+display : none;
+}
+.ui-tabs-panels #layout-topbar{
+display : none;
+}

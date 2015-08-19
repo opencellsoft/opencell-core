@@ -553,5 +553,16 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 			return null;
 		}
 	}
+	
+	public Long getLastPricePlan(String eventCode,Provider provider){
+		 Query query =getEntityManager().createQuery("select max(m.id) from PricePlanMatrix m where m.eventCode=:eventCode and m.provider=:provider ");
+		 query.setParameter("eventCode", eventCode);
+		 query.setParameter("provider", provider);
+		try {
+            return (Long)query.getSingleResult(); 
+        } catch (NoResultException e) {
+            return null;
+        }
+	}
     
 }
