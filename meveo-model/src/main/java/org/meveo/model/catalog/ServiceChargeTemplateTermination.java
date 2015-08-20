@@ -27,14 +27,14 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.ExportIdentifier;
+
 @Entity
+@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code", "provider" })
 @Table(name = "CAT_SERV_TRM_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_TRMCHRG_TEMPLT_SEQ")
 public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneShotChargeTemplate> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7811269692204342428L;
 
 	@ManyToMany(fetch = FetchType.LAZY)
