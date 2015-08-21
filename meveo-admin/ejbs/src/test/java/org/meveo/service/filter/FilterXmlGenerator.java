@@ -31,9 +31,9 @@ public class FilterXmlGenerator {
 
 	public static void main(String[] args) {
 		FilterXmlGenerator fg = new FilterXmlGenerator();
-//		 fg.filter1();
-		String result = fg.generate();
-		System.out.println(result);
+		// fg.filter1();
+		 String result = fg.generate();
+		 System.out.println(result);
 
 //		String result = fg.generate1();
 //		System.out.println(result);
@@ -51,9 +51,10 @@ public class FilterXmlGenerator {
 		PrimitiveFilterCondition primitiveFilterCondition = new PrimitiveFilterCondition();
 		primitiveFilterCondition.setFilterConditionType(PrimitiveFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
-		primitiveFilterCondition.setFieldName("status");
+		primitiveFilterCondition.setFieldName("disable");
 		primitiveFilterCondition.setOperator("=");
-		primitiveFilterCondition.setOperand("enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE");
+		//primitiveFilterCondition.setOperand("enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE");
+		primitiveFilterCondition.setOperand("false");
 
 		andFilterConditions.add(primitiveFilterCondition);
 

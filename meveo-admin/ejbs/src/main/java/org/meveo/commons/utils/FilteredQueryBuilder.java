@@ -2,6 +2,7 @@ package org.meveo.commons.utils;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.apache.commons.validator.routines.IntegerValidator;
@@ -78,6 +79,9 @@ public class FilteredQueryBuilder extends QueryBuilder {
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}
+			} else if (tempFilter.getOperand().indexOf("bool:") != -1) {
+				addBooleanCriterion(tempFilter.getFieldName(),
+						BooleanUtils.toBooleanObject(tempFilter.getOperand().substring(5)));
 			} else if (tempFilter.getOperator().equalsIgnoreCase("LIKE")) {
 				if (tempFilter.getFieldName().indexOf(".") == -1) {
 					like(alias + "." + tempFilter.getFieldName(), tempFilter.getOperand(),

@@ -23,11 +23,12 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link ChargeInstance} (extends {@link BaseBean}
@@ -46,7 +47,14 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 	 */
 	@Inject
 	private ChargeTemplateServiceAll chargeTemplateService;
+	
+	@Inject
+	private PricePlanMatrixService pricePlanMatrixService;
+	
+	
 
+	private String pricePlanCode;
+	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -75,5 +83,18 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 	protected IPersistenceService<ChargeTemplate> getPersistenceService() {
 		return chargeTemplateService;
 	}
+	
+	public String getPricePlanCode() {
+		Long  seq=pricePlanMatrixService.getLastPricePlan(entity.getCode(),entity.getProvider())+1;
+		pricePlanCode="PP_"+entity.getCode()+"_"+seq;
+		return pricePlanCode;
+	}
+ 
+
+	public void setPricePlanCode(String pricePlanCode) {
+		this.pricePlanCode = pricePlanCode;
+	}
+	
+	
 
 }
