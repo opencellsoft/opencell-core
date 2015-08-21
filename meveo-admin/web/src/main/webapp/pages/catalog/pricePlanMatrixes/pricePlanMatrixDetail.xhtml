@@ -91,7 +91,7 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel id="formPricePlanPanel"
+		<hf:formPanel id="formPricePlanPanel" showBackButton="#{!pricePlanMatrixBean.isPricePlanCharge}"
 			label="#{messages['pricePlanMatrix.panel']}"
 			backingBean="#{pricePlanMatrixBean}" formId="formPricePlan">
                 <hf:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" />
@@ -162,9 +162,17 @@
 					field="minSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
                <hf:formField
 					label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
-					field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
+					field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />	
+			</hf:formPanel>
+			<p:outputPanel layout="block" >
+               <p:commandButton id="backButton" value="#{messages['action.back']}" style="padding-top: 0.2em;clear: both;left: 214px;top: -69px;"
+				rendered="#{pricePlanMatrixBean.isPricePlanCharge}"
+				action="#{pricePlanMatrixBean.getBackCharge()}" />
+			</p:outputPanel>
+			
+				 
 
-		</hf:formPanel>
+			
 
 	</ui:define>
 

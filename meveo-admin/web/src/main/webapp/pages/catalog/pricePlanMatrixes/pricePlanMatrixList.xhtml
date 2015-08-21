@@ -6,16 +6,16 @@
 	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
- 
 
 	<ui:define name="body" >
-		
-
-		<hftl:dataList label="#{messages['pricePlanMatrix.title']}" id="aaaa"
+	
+		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
 			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
 			exportButton="false" exportXlsxButton="true" checkMany="false"
 			backingBean="#{pricePlanMatrixListBean}" dataModel="#{pricePlanMatrixBean.getPricePlanMatrixList(chargeTemplateBean.entity)}">
- 
+
+			<p:ajax event="cellEdit"
+				listener="#{pricePlanMatrixListBean.onCellEdit(entity)}" />
 
 			<f:facet name="header">
 				<p:commandButton id="toggler1" type="button" style="float:right" disabled="#{backingBean.lazyDataModel.size==0?'true':'false'}"
@@ -391,9 +391,9 @@
 		 <p:commandButton id="buttonNew" value="#{messages['commons.new']}" action="#{pricePlanMatrixBean.resetEntity()}">
 	        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 	        <f:param name="edit" value="true" />
-			<f:param name="pricePlanCode" value="#{chargeTemplateBean.pricePlanCode}" />
-			<f:param name="chargeCode" value="#{chargeTemplateBean.entity.code}" />
-			<f:param name="chargeDescription" value="#{chargeTemplateBean.entity.description}" />
+			<f:param name="chargeId" value="#{chargeTemplateBean.entity.id}" />
+			<f:param name="pricePlanCode" value="#{chargeTemplateBean.pricePlanCode}" /> 
+			<f:param name="backView"  value="#{chargeTemplateBean.getBackView()}" />
          </p:commandButton>
 	</ui:define>
 </ui:composition>

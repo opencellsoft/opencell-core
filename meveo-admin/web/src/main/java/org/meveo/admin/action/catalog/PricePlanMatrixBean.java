@@ -27,11 +27,18 @@ import javax.inject.Named;
 
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -56,17 +63,32 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 	private PricePlanMatrixService pricePlanMatrixService;
 	
 	@Inject
+	private RecurringChargeTemplateService recurringChargeTemplateService;
+
+	@Inject
+	private UsageChargeTemplateService usageChargeTemplateService;
+
+	@Inject
+	private OneShotChargeTemplateService oneShotChargeTemplateService;
+	
+	@Inject
 	@RequestParam
 	private Instance<String> pricePlanCode;
 	
-	@Inject
-	@RequestParam
-	private Instance<String> chargeCode;
 	
 	@Inject
 	@RequestParam
-	private Instance<String> chargeDescription;
+	private Instance<String> backView;
 	
+	@Inject
+	@RequestParam
+	private Instance<Long> chargeId;
+	
+	private boolean pricePlanCharge;
+	
+	private String chargeDetail;
+	
+	private long objectId;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -90,10 +112,26 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 			obj.setMinSubscriptionAgeInMonth(0L);
 			obj.setMaxSubscriptionAgeInMonth(9999L);
 		}
-		if (pricePlanCode.get() != null && chargeCode!=null) {
+		if (pricePlanCode.get()!=null&& chargeId.get()!=null) { 
+			RecurringChargeTemplate recurring= recurringChargeTemplateService.findById(chargeId.get());
+			if(recurring!=null){
+				obj.setEventCode(recurring.getCode());
+				obj.setDescription(recurring.getDescription());
+			}
+			OneShotChargeTemplate oneShot= oneShotChargeTemplateService.findById(chargeId.get());
+			if(oneShot!=null){
+				obj.setEventCode(oneShot.getCode());
+				obj.setDescription(oneShot.getDescription());
+			}
+			UsageChargeTemplate usageCharge= usageChargeTemplateService.findById(chargeId.get());
+			if(usageCharge!=null){
+				obj.setEventCode(usageCharge.getCode());
+				obj.setDescription(usageCharge.getDescription());
+			}
 			obj.setCode(pricePlanCode.get());
-			obj.setEventCode(chargeCode.get());
-			obj.setDescription(chargeDescription.get());
+			pricePlanCharge=true;
+			chargeDetail=backView.get();
+			objectId=chargeId.get();
 		}
 		return obj;
 	}
@@ -156,6 +194,7 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 		}
 	}
 	
+	
 	public LazyDataModel<PricePlanMatrix> getPricePlanMatrixList(
 			ChargeTemplate chargeTemplate) { 
 			filters.put("eventCode", chargeTemplate.getCode());
@@ -163,14 +202,37 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 		}
 	
 	public String resetEntity() {
-		if (pricePlanCode.get() != null && chargeCode!=null) { 
-			entity.setCode(pricePlanCode.get());
-			entity.setEventCode(chargeCode.get());
-			entity.setDescription(chargeDescription.get());
-		  }
-		 return "/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml?pricePlanCode="+pricePlanCode.get()+"&chargeCode="+chargeCode.get()+"&chargeDescription="+chargeDescription.get()+""
-		+ "&edit=true&faces-redirect=true&includeViewParams=true";
+	 return "/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml?pricePlanCode="+pricePlanCode.get()+"&chargeId="+chargeId.get()+"&backView="+backView.get()+""
+	         + "&edit=true&faces-redirect=true&includeViewParams=true";
 	}
 	
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException { 
+		   if(pricePlanCharge){
+		    super.saveOrUpdate(killConversation); 
+		    return getBackCharge();
+		   }else{
+			   return  super.saveOrUpdate(killConversation);
+		   }  
+           } 
+  
+	 public String getBackCharge() {
+		 String chargeName=null;
+		  if(chargeDetail.equals("recurringChargeTemplateDetail")){
+			  chargeName="recurringChargeTemplates";
+		   }else if(chargeDetail.equals("oneShotChargeTemplateDetail")){
+			   chargeName="oneShotChargeTemplates";
+		   }else{
+			   chargeName="usageChargeTemplates";
+		   }
+   	      return "/pages/catalog/"+chargeName+"/"+chargeDetail+".xhtml?objectId="+objectId+"&edit=true&faces-redirect=true&includeViewParams=true"; 
+	    }
+
+	public boolean isPricePlanCharge() {
+		return pricePlanCharge;
 	}
+ 
+  
+	
+}
 
