@@ -204,6 +204,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 							result.getOperationDate()));
 		}
 		result.setCode(code);
+		result.setDescription(chargeInstance.getDescription());
 		result.setTaxPercent(taxPercent);
 		result.setCurrency(tCurrency.getCurrency());
 		result.setStartDate(startdate);

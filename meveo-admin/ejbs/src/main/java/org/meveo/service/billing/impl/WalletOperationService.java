@@ -667,7 +667,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 		} else {
 			Date nextChargeDate = chargeInstance.getChargeDate();
-			log.debug("reimbursment-applyInAdvance applicationDate={}, nextapplicationDate={},nextChargeDate={}", applicationDate, nextapplicationDate, nextChargeDate);
+			log.debug("reimbursment-NotApplyInAdvance applicationDate={}, nextapplicationDate={},nextChargeDate={}", applicationDate, nextapplicationDate, nextChargeDate);
 
 			if (nextChargeDate != null && nextChargeDate.getTime() > nextapplicationDate.getTime()) {
 				applyNotAppliedinAdvanceReccuringCharge(chargeInstance, true, recurringChargeTemplate, creator);
@@ -894,8 +894,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate,Date endAgreementDate, User creator)
 			throws BusinessException {
 
-		// we apply the charge at its nextChargeDate
+		// we apply the charge at its nextChargeDate if applied in advance, else at chargeDate
 		Date applicationDate = chargeInstance.getNextChargeDate();
+		if (chargeInstance.getRecurringChargeTemplate().getApplyInAdvance() != null
+				&& !chargeInstance.getRecurringChargeTemplate().getApplyInAdvance()) {
+			applicationDate = chargeInstance.getChargeDate();
+		}
 		if (applicationDate == null) {
 			throw new IncorrectChargeInstanceException("nextChargeDate is null.");
 		}
@@ -935,6 +939,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		
 		Calendar cal = recurringChargeTemplate.getCalendar();
 		cal.setInitDate(chargeInstance.getServiceInstance().getSubscriptionDate());
+		log.debug("applicationDate={}, endAgreementDate={}",applicationDate,endAgreementDate);
 		while (applicationDate.getTime() < endAgreementDate.getTime()) {
 			Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 			log.debug("agreement next step for {}, applicationDate={}, nextApplicationDate={}", recurringChargeTemplate.getCode(), applicationDate, nextapplicationDate);
@@ -961,7 +966,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					quantity = quantity.multiply(new BigDecimal(prorataRatio + "").setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 				}
 			}
-			String param2 = sdf.format(applicationDate) + " au " + sdf.format(endDate);
+			String param2 = sdf.format(applicationDate) + " - " + sdf.format(endDate);
 			log.debug("applyReccuringCharge : nextapplicationDate={}, param2={}", nextapplicationDate, param2);
 
 			WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance.getCode(), chargeInstance.getServiceInstance()
