@@ -25573,49 +25573,7 @@
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/index"/></con:call></con:operation></con:interface><con:testSuite name="#708_find_charge_template" id="29c04ee1-6349-4a1b-ac3f-f402600ea481"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create onshot charge template" searchProperties="true" id="9b8ad355-fdd2-46f4-a9e6-86ac2761f20e"><con:settings/><con:testStep type="request" name="Create recurring" id="787f61dc-e6d3-4dcf-80a8-4cfce0eb5947"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="Create recurring" id="5880e608-761b-48dc-a179-d0c84b45f30a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createRecurringChargeTemplate>
-         <!--Optional:-->
-         <recurringChargeTemplate code="708_REC" description="Recurring charge 708">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <!--Optional:-->
-            <amountEditable>false</amountEditable>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Forfait test 708</description>
-            </languageDescriptions>
-            <calendar>MONTHLY</calendar>
-            <subscriptionProrata>true</subscriptionProrata>
-            <terminationProrata>true</terminationProrata>
-            <applyInAdvance>true</applyInAdvance>
-         </recurringChargeTemplate>
-      </ws:createRecurringChargeTemplate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="3a93d8bd-f104-4fbb-bc82-42304e9d8549"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find charge template" id="4f1a2853-a124-473e-be98-f7b98c54c34a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findChargeTemplate</con:operation><con:request name="Find charge template" id="fe09c38c-7417-43f7-91fd-3966664722ba"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:findChargeTemplate>
-         <!--Optional:-->
-         <chargeTemplateCode>708_REC</chargeTemplateCode>
-      </ws:findChargeTemplate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8b4b4d95-34db-4e72-aea6-79954f0b9855"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
-import com.eviware.soapui.support.types.*;
-
-StringToStringMap headers = new StringToStringMap();
-headers.put("Authorization","Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=");
-
-for( testCase in testSuite.getTestCaseList() ) {
-    log.info("Setting basic auth for all WSDL test requests in test case ["+testCase.getLabel()+"]")
-    for( testStep in testCase.getTestStepList() ) {
-        testStep.getTestRequest().setPreemptive(true);
-        testStep.getTestRequest().setRequestHeaders(headers);
-    }
-}</con:setupScript></con:testSuite><con:testSuite name="#685_rating_units" id="afb23299-83f7-4d8b-8c01-72b1f60f7622"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true" id="6aeb324f-128c-4abb-88c7-27ac5bdba71c"><con:settings/><con:testStep type="request" name="Create recurring" id="22e30443-cb0b-4aea-8c34-a3fe18065f75"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="Create recurring" id="8a5d3c5e-2761-4f9e-947f-997718eb55f3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/InvoiceWs/index"/></con:call></con:operation></con:interface><con:testSuite name="#685_rating_units" id="afb23299-83f7-4d8b-8c01-72b1f60f7622"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true" id="6aeb324f-128c-4abb-88c7-27ac5bdba71c"><con:settings/><con:testStep type="request" name="Create recurring" id="22e30443-cb0b-4aea-8c34-a3fe18065f75"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="Create recurring" id="8a5d3c5e-2761-4f9e-947f-997718eb55f3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createRecurringChargeTemplate>
