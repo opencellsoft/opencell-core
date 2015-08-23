@@ -642,7 +642,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		userMap.put("op", bareOperation);
 		userMap.put("pp",priceplan);
 		if(amount!=null){
-			userMap.put("amount",amount);
+			userMap.put("amount",amount.doubleValue());
 		}
 		if(expression.indexOf("charge") >= 0){
 			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
@@ -676,9 +676,19 @@ public class RatingService extends BusinessService<WalletOperation>{
 			log.error("Amount Expression " + expression + " error in price plan "+priceplan+ " e="+e1.getMessage());
 		}
 		try {
-			result = (BigDecimal) res;
+			if(res!=null){
+				if(res instanceof BigDecimal){
+					result = (BigDecimal) res; 
+				} else if (res instanceof Number){
+					result = new BigDecimal(((Number) res).doubleValue());
+				} else if (res instanceof String){
+					result = new BigDecimal(((String) res));
+				} else {
+					log.error("Amount Expression " + expression + " do not evaluate to number but " + res);
+				}
+			}
 		} catch (Exception e) {
-			log.error("Amount Expression " + expression + " do not evaluate to bigDecimal but " + res);
+			log.error("Error Amount Expression " + expression ,e);
 		}
 		return result;
 	}
