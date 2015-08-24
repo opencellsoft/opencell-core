@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://i.meveo.info/" />
+<title>ModifiedTestCase</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">ModifiedTestCase</td></tr>
+</thead><tbody>
+<tr>
+	<td>assertTitle</td>
+	<td>MEVEO | Open Source Billing Platform</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${codeIdMsgLink}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>MEVEO | Open Source Billing Platform</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${CodeText}</td>
+	<td>Code_01</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${descriptionText}</td>
+	<td>Some description for this offer1</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='formPanel:formId:tabView:j_idt198:j_idt183:serviceTemplates_list']/div/ul/li[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@type='button']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${saveButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>MEVEO | Open Source Billing Platform</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>javascript{alert(&quot;Success : Selected offer updated with success.&quot;)}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${UpdateAlert}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>5000</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

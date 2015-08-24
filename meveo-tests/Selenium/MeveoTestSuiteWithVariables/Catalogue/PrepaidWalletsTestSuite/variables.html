@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://i.meveo.info/" />
+<title>variables</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">variables</td></tr>
+</thead><tbody>
+<tr>
+	<td>store</td>
+	<td>http://i.meveo.info/meveo/loginInternal.jsf</td>
+	<td>url</td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>This is the Target URL: ${url}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=loginForm:username</td>
+	<td>UsernameID</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>meveo.admin</td>
+	<td>userName</td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>This is the correct Username : ${userName}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=loginForm:password</td>
+	<td>PasswordID</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>meveo.admin</td>
+	<td>passWord</td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>This is the correct Password : ${passWord}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=loginForm:submit</td>
+	<td>Connect</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>link=Logout</td>
+	<td>Logout</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=menu:walletTemplates</td>
+	<td>CataloguePrepaidWallet</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=j_idt87:searchForm:buttonNew</td>
+	<td>NewPrepaidWallet</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formPanel:walletTemplatId:j_idt90:txtFieldSingle:code_text</td>
+	<td>codeID</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>${codeID}</td>
+	<td>CodeText</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formPanel:walletTemplatId:description:txtFieldSingle:description_text</td>
+	<td>descriptionID</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>${descriptionID}</td>
+	<td>descriptionText</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formPanel:walletTemplatId:j_idt196:j_idt147:lowBalanceLevel_number</td>
+	<td>BalanceLevelNumberID</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>${BalanceLevelNumberID}</td>
+	<td>BalanceLevelNumber</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formPanel:walletTemplatId:j_idt201:saveButtonWithObjectId</td>
+	<td>saveWithObjectId</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formPanel:walletTemplatId:j_idt201:saveButton</td>
+	<td>saveButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formPanel:walletTemplatId:j_idt201:backButton</td>
+	<td>backButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formPanel:walletTemplatId:j_idt201:resetButton:j_idt212</td>
+	<td>resetButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=j_idt87:searchForm:j_idt88:txt:code_text</td>
+	<td>searchCodeText</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=j_idt87:searchForm:j_idt155:txt:description_text</td>
+	<td>searchDescriptionText</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=j_idt87:searchForm:buttonSearch</td>
+	<td>buttonSearch</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=results_formbuttonExport</td>
+	<td>buttonExport</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formPanel:walletTemplatId:j_idt201:deletelink</td>
+	<td>deleteLink</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formPanel:walletTemplatId:j_idt201:deleteOk</td>
+	<td>deleteOk</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:code_id_message_link</td>
+	<td>codeIdMessageLink</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Failed Test Case : All Fields are missings.</td>
+	<td>EmptyFieldsAlert</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Failed Test Case : There are a missings Fields.</td>
+	<td>MissingFieldsAlert</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Success Test Case : All fields are well done.</td>
+	<td>SuccessAlert</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Success Test Case : Selected Prepaid Wallet updated with success.</td>
+	<td>UpdateAlert</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Success Test Case : Selected Prepaid Wallet deleted with success.</td>
+	<td>DeleteAlert</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Success Test Case : You exported your data with success.</td>
+	<td>ExportDataAlert</td>
+</tr>
+</tbody></table>
+</body>
+</html>
