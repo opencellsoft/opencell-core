@@ -403,6 +403,7 @@
       <xs:element name="CRMAccountHierarchy" type="tns:crmAccountHierarchyDto"/>
       <xs:element name="CreditCategory" type="tns:creditCategoryDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
+      <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
       <xs:element name="CustomFields" type="tns:customFieldsDto"/>
       <xs:element name="CustomerAccountsResponse" type="tns:customerAccountsResponseDto"/>
       <xs:element name="CustomerBrand" type="tns:customerBrandDto"/>
@@ -410,6 +411,7 @@
       <xs:element name="CustomerHierarchy" type="tns:customerHierarchyDto"/>
       <xs:element name="CustomerListResponse" type="tns:customerListResponse"/>
       <xs:element name="CustomersResponse" type="tns:customersResponseDto"/>
+      <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
       <xs:element name="FindAccountHierarchyResponse" type="tns:findAccountHierarchyResponseDto"/>
       <xs:element name="GetAccessResponse" type="tns:getAccessResponseDto"/>
       <xs:element name="GetBillingAccountResponse" type="tns:getBillingAccountResponseDto"/>
@@ -702,6 +704,22 @@
           <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
           <xs:element minOccurs="0" name="longValue" type="xs:long"/>
           <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="listValue" nillable="true" type="tns:customFieldValueDto"/>
+          <xs:element name="mapValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string"/>
+                      <xs:element minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" name="entityReferenceValue" type="tns:entityReferenceDto"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string"/>
@@ -709,6 +727,22 @@
         <xs:attribute name="valuePeriodStartDate" type="xs:dateTime"/>
         <xs:attribute name="valuePeriodEndDate" type="xs:dateTime"/>
         <xs:attribute name="valuePeriodPriority" type="xs:int"/>
+      </xs:complexType>
+      <xs:complexType name="customFieldValueDto">
+        <xs:sequence>
+          <xs:choice minOccurs="0">
+            <xs:element name="dateValue" type="xs:dateTime"/>
+            <xs:element name="doubleValue" type="xs:double"/>
+            <xs:element name="longValue" type="xs:long"/>
+            <xs:element name="stringValue" type="xs:string"/>
+            <xs:element name="entityReferenceValue" type="tns:entityReferenceDto"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entityReferenceDto">
+        <xs:sequence/>
+        <xs:attribute name="classname" type="xs:string" use="required"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="Accesses">
         <xs:sequence>
@@ -1977,6 +2011,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
          </access>
@@ -2036,6 +2097,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
          </accountHierarchy>
@@ -3314,6 +3402,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
             <loaded>?</loaded>
@@ -3410,6 +3525,33 @@
                         <longValue>?</longValue>
                         <!--Optional:-->
                         <doubleValue>?</doubleValue>
+                        <!--Zero or more repetitions:-->
+                        <listValue>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </listValue>
+                        <mapValue>
+                           <!--Zero or more repetitions:-->
+                           <entry>
+                              <!--Optional:-->
+                              <key>?</key>
+                              <!--Optional:-->
+                              <value>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </value>
+                           </entry>
+                        </mapValue>
+                        <!--Optional:-->
+                        <entityReferenceValue classname="?" code="?"/>
                      </customField>
                   </customFields>
                   <loaded>?</loaded>
@@ -3445,6 +3587,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                         <!--Optional:-->
@@ -3468,6 +3637,33 @@
                                     <longValue>?</longValue>
                                     <!--Optional:-->
                                     <doubleValue>?</doubleValue>
+                                    <!--Zero or more repetitions:-->
+                                    <listValue>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </listValue>
+                                    <mapValue>
+                                       <!--Zero or more repetitions:-->
+                                       <entry>
+                                          <!--Optional:-->
+                                          <key>?</key>
+                                          <!--Optional:-->
+                                          <value>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </value>
+                                       </entry>
+                                    </mapValue>
+                                    <!--Optional:-->
+                                    <entityReferenceValue classname="?" code="?"/>
                                  </customField>
                               </customFields>
                            </access>
@@ -3544,6 +3740,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
             <loaded>?</loaded>
@@ -3610,6 +3833,33 @@
                         <longValue>?</longValue>
                         <!--Optional:-->
                         <doubleValue>?</doubleValue>
+                        <!--Zero or more repetitions:-->
+                        <listValue>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </listValue>
+                        <mapValue>
+                           <!--Zero or more repetitions:-->
+                           <entry>
+                              <!--Optional:-->
+                              <key>?</key>
+                              <!--Optional:-->
+                              <value>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </value>
+                           </entry>
+                        </mapValue>
+                        <!--Optional:-->
+                        <entityReferenceValue classname="?" code="?"/>
                      </customField>
                   </customFields>
                   <loaded>?</loaded>
@@ -3692,6 +3942,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                         <loaded>?</loaded>
@@ -3788,6 +4065,33 @@
                                     <longValue>?</longValue>
                                     <!--Optional:-->
                                     <doubleValue>?</doubleValue>
+                                    <!--Zero or more repetitions:-->
+                                    <listValue>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </listValue>
+                                    <mapValue>
+                                       <!--Zero or more repetitions:-->
+                                       <entry>
+                                          <!--Optional:-->
+                                          <key>?</key>
+                                          <!--Optional:-->
+                                          <value>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </value>
+                                       </entry>
+                                    </mapValue>
+                                    <!--Optional:-->
+                                    <entityReferenceValue classname="?" code="?"/>
                                  </customField>
                               </customFields>
                               <loaded>?</loaded>
@@ -3823,6 +4127,33 @@
                                           <longValue>?</longValue>
                                           <!--Optional:-->
                                           <doubleValue>?</doubleValue>
+                                          <!--Zero or more repetitions:-->
+                                          <listValue>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </listValue>
+                                          <mapValue>
+                                             <!--Zero or more repetitions:-->
+                                             <entry>
+                                                <!--Optional:-->
+                                                <key>?</key>
+                                                <!--Optional:-->
+                                                <value>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </value>
+                                             </entry>
+                                          </mapValue>
+                                          <!--Optional:-->
+                                          <entityReferenceValue classname="?" code="?"/>
                                        </customField>
                                     </customFields>
                                     <!--Optional:-->
@@ -3846,6 +4177,33 @@
                                                 <longValue>?</longValue>
                                                 <!--Optional:-->
                                                 <doubleValue>?</doubleValue>
+                                                <!--Zero or more repetitions:-->
+                                                <listValue>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </listValue>
+                                                <mapValue>
+                                                   <!--Zero or more repetitions:-->
+                                                   <entry>
+                                                      <!--Optional:-->
+                                                      <key>?</key>
+                                                      <!--Optional:-->
+                                                      <value>
+                                                         <!--You have a CHOICE of the next 5 items at this level-->
+                                                         <dateValue>?</dateValue>
+                                                         <doubleValue>?</doubleValue>
+                                                         <longValue>?</longValue>
+                                                         <stringValue>?</stringValue>
+                                                         <entityReferenceValue classname="?" code="?"/>
+                                                      </value>
+                                                   </entry>
+                                                </mapValue>
+                                                <!--Optional:-->
+                                                <entityReferenceValue classname="?" code="?"/>
                                              </customField>
                                           </customFields>
                                        </access>
@@ -3926,6 +4284,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
             <loaded>?</loaded>
@@ -3992,6 +4377,33 @@
                         <longValue>?</longValue>
                         <!--Optional:-->
                         <doubleValue>?</doubleValue>
+                        <!--Zero or more repetitions:-->
+                        <listValue>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </listValue>
+                        <mapValue>
+                           <!--Zero or more repetitions:-->
+                           <entry>
+                              <!--Optional:-->
+                              <key>?</key>
+                              <!--Optional:-->
+                              <value>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </value>
+                           </entry>
+                        </mapValue>
+                        <!--Optional:-->
+                        <entityReferenceValue classname="?" code="?"/>
                      </customField>
                   </customFields>
                   <loaded>?</loaded>
@@ -4074,6 +4486,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                         <loaded>?</loaded>
@@ -4170,6 +4609,33 @@
                                     <longValue>?</longValue>
                                     <!--Optional:-->
                                     <doubleValue>?</doubleValue>
+                                    <!--Zero or more repetitions:-->
+                                    <listValue>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </listValue>
+                                    <mapValue>
+                                       <!--Zero or more repetitions:-->
+                                       <entry>
+                                          <!--Optional:-->
+                                          <key>?</key>
+                                          <!--Optional:-->
+                                          <value>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </value>
+                                       </entry>
+                                    </mapValue>
+                                    <!--Optional:-->
+                                    <entityReferenceValue classname="?" code="?"/>
                                  </customField>
                               </customFields>
                               <loaded>?</loaded>
@@ -4205,6 +4671,33 @@
                                           <longValue>?</longValue>
                                           <!--Optional:-->
                                           <doubleValue>?</doubleValue>
+                                          <!--Zero or more repetitions:-->
+                                          <listValue>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </listValue>
+                                          <mapValue>
+                                             <!--Zero or more repetitions:-->
+                                             <entry>
+                                                <!--Optional:-->
+                                                <key>?</key>
+                                                <!--Optional:-->
+                                                <value>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </value>
+                                             </entry>
+                                          </mapValue>
+                                          <!--Optional:-->
+                                          <entityReferenceValue classname="?" code="?"/>
                                        </customField>
                                     </customFields>
                                     <!--Optional:-->
@@ -4228,6 +4721,33 @@
                                                 <longValue>?</longValue>
                                                 <!--Optional:-->
                                                 <doubleValue>?</doubleValue>
+                                                <!--Zero or more repetitions:-->
+                                                <listValue>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </listValue>
+                                                <mapValue>
+                                                   <!--Zero or more repetitions:-->
+                                                   <entry>
+                                                      <!--Optional:-->
+                                                      <key>?</key>
+                                                      <!--Optional:-->
+                                                      <value>
+                                                         <!--You have a CHOICE of the next 5 items at this level-->
+                                                         <dateValue>?</dateValue>
+                                                         <doubleValue>?</doubleValue>
+                                                         <longValue>?</longValue>
+                                                         <stringValue>?</stringValue>
+                                                         <entityReferenceValue classname="?" code="?"/>
+                                                      </value>
+                                                   </entry>
+                                                </mapValue>
+                                                <!--Optional:-->
+                                                <entityReferenceValue classname="?" code="?"/>
                                              </customField>
                                           </customFields>
                                        </access>
@@ -4308,6 +4828,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
             <loaded>?</loaded>
@@ -4390,6 +4937,33 @@
                         <longValue>?</longValue>
                         <!--Optional:-->
                         <doubleValue>?</doubleValue>
+                        <!--Zero or more repetitions:-->
+                        <listValue>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </listValue>
+                        <mapValue>
+                           <!--Zero or more repetitions:-->
+                           <entry>
+                              <!--Optional:-->
+                              <key>?</key>
+                              <!--Optional:-->
+                              <value>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </value>
+                           </entry>
+                        </mapValue>
+                        <!--Optional:-->
+                        <entityReferenceValue classname="?" code="?"/>
                      </customField>
                   </customFields>
                   <loaded>?</loaded>
@@ -4486,6 +5060,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                         <loaded>?</loaded>
@@ -4521,6 +5122,33 @@
                                     <longValue>?</longValue>
                                     <!--Optional:-->
                                     <doubleValue>?</doubleValue>
+                                    <!--Zero or more repetitions:-->
+                                    <listValue>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </listValue>
+                                    <mapValue>
+                                       <!--Zero or more repetitions:-->
+                                       <entry>
+                                          <!--Optional:-->
+                                          <key>?</key>
+                                          <!--Optional:-->
+                                          <value>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </value>
+                                       </entry>
+                                    </mapValue>
+                                    <!--Optional:-->
+                                    <entityReferenceValue classname="?" code="?"/>
                                  </customField>
                               </customFields>
                               <!--Optional:-->
@@ -4544,6 +5172,33 @@
                                           <longValue>?</longValue>
                                           <!--Optional:-->
                                           <doubleValue>?</doubleValue>
+                                          <!--Zero or more repetitions:-->
+                                          <listValue>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </listValue>
+                                          <mapValue>
+                                             <!--Zero or more repetitions:-->
+                                             <entry>
+                                                <!--Optional:-->
+                                                <key>?</key>
+                                                <!--Optional:-->
+                                                <value>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </value>
+                                             </entry>
+                                          </mapValue>
+                                          <!--Optional:-->
+                                          <entityReferenceValue classname="?" code="?"/>
                                        </customField>
                                     </customFields>
                                  </access>
@@ -4622,6 +5277,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
             <loaded>?</loaded>
@@ -4657,6 +5339,33 @@
                         <longValue>?</longValue>
                         <!--Optional:-->
                         <doubleValue>?</doubleValue>
+                        <!--Zero or more repetitions:-->
+                        <listValue>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </listValue>
+                        <mapValue>
+                           <!--Zero or more repetitions:-->
+                           <entry>
+                              <!--Optional:-->
+                              <key>?</key>
+                              <!--Optional:-->
+                              <value>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </value>
+                           </entry>
+                        </mapValue>
+                        <!--Optional:-->
+                        <entityReferenceValue classname="?" code="?"/>
                      </customField>
                   </customFields>
                   <!--Optional:-->
@@ -4680,6 +5389,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                      </access>
@@ -4773,6 +5509,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                         <loaded>?</loaded>
@@ -4839,6 +5602,33 @@
                                     <longValue>?</longValue>
                                     <!--Optional:-->
                                     <doubleValue>?</doubleValue>
+                                    <!--Zero or more repetitions:-->
+                                    <listValue>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </listValue>
+                                    <mapValue>
+                                       <!--Zero or more repetitions:-->
+                                       <entry>
+                                          <!--Optional:-->
+                                          <key>?</key>
+                                          <!--Optional:-->
+                                          <value>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </value>
+                                       </entry>
+                                    </mapValue>
+                                    <!--Optional:-->
+                                    <entityReferenceValue classname="?" code="?"/>
                                  </customField>
                               </customFields>
                               <loaded>?</loaded>
@@ -4921,6 +5711,33 @@
                                           <longValue>?</longValue>
                                           <!--Optional:-->
                                           <doubleValue>?</doubleValue>
+                                          <!--Zero or more repetitions:-->
+                                          <listValue>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </listValue>
+                                          <mapValue>
+                                             <!--Zero or more repetitions:-->
+                                             <entry>
+                                                <!--Optional:-->
+                                                <key>?</key>
+                                                <!--Optional:-->
+                                                <value>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </value>
+                                             </entry>
+                                          </mapValue>
+                                          <!--Optional:-->
+                                          <entityReferenceValue classname="?" code="?"/>
                                        </customField>
                                     </customFields>
                                     <loaded>?</loaded>
@@ -5017,6 +5834,33 @@
                                                 <longValue>?</longValue>
                                                 <!--Optional:-->
                                                 <doubleValue>?</doubleValue>
+                                                <!--Zero or more repetitions:-->
+                                                <listValue>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </listValue>
+                                                <mapValue>
+                                                   <!--Zero or more repetitions:-->
+                                                   <entry>
+                                                      <!--Optional:-->
+                                                      <key>?</key>
+                                                      <!--Optional:-->
+                                                      <value>
+                                                         <!--You have a CHOICE of the next 5 items at this level-->
+                                                         <dateValue>?</dateValue>
+                                                         <doubleValue>?</doubleValue>
+                                                         <longValue>?</longValue>
+                                                         <stringValue>?</stringValue>
+                                                         <entityReferenceValue classname="?" code="?"/>
+                                                      </value>
+                                                   </entry>
+                                                </mapValue>
+                                                <!--Optional:-->
+                                                <entityReferenceValue classname="?" code="?"/>
                                              </customField>
                                           </customFields>
                                           <loaded>?</loaded>
@@ -5052,6 +5896,33 @@
                                                       <longValue>?</longValue>
                                                       <!--Optional:-->
                                                       <doubleValue>?</doubleValue>
+                                                      <!--Zero or more repetitions:-->
+                                                      <listValue>
+                                                         <!--You have a CHOICE of the next 5 items at this level-->
+                                                         <dateValue>?</dateValue>
+                                                         <doubleValue>?</doubleValue>
+                                                         <longValue>?</longValue>
+                                                         <stringValue>?</stringValue>
+                                                         <entityReferenceValue classname="?" code="?"/>
+                                                      </listValue>
+                                                      <mapValue>
+                                                         <!--Zero or more repetitions:-->
+                                                         <entry>
+                                                            <!--Optional:-->
+                                                            <key>?</key>
+                                                            <!--Optional:-->
+                                                            <value>
+                                                               <!--You have a CHOICE of the next 5 items at this level-->
+                                                               <dateValue>?</dateValue>
+                                                               <doubleValue>?</doubleValue>
+                                                               <longValue>?</longValue>
+                                                               <stringValue>?</stringValue>
+                                                               <entityReferenceValue classname="?" code="?"/>
+                                                            </value>
+                                                         </entry>
+                                                      </mapValue>
+                                                      <!--Optional:-->
+                                                      <entityReferenceValue classname="?" code="?"/>
                                                    </customField>
                                                 </customFields>
                                                 <!--Optional:-->
@@ -5075,6 +5946,33 @@
                                                             <longValue>?</longValue>
                                                             <!--Optional:-->
                                                             <doubleValue>?</doubleValue>
+                                                            <!--Zero or more repetitions:-->
+                                                            <listValue>
+                                                               <!--You have a CHOICE of the next 5 items at this level-->
+                                                               <dateValue>?</dateValue>
+                                                               <doubleValue>?</doubleValue>
+                                                               <longValue>?</longValue>
+                                                               <stringValue>?</stringValue>
+                                                               <entityReferenceValue classname="?" code="?"/>
+                                                            </listValue>
+                                                            <mapValue>
+                                                               <!--Zero or more repetitions:-->
+                                                               <entry>
+                                                                  <!--Optional:-->
+                                                                  <key>?</key>
+                                                                  <!--Optional:-->
+                                                                  <value>
+                                                                     <!--You have a CHOICE of the next 5 items at this level-->
+                                                                     <dateValue>?</dateValue>
+                                                                     <doubleValue>?</doubleValue>
+                                                                     <longValue>?</longValue>
+                                                                     <stringValue>?</stringValue>
+                                                                     <entityReferenceValue classname="?" code="?"/>
+                                                                  </value>
+                                                               </entry>
+                                                            </mapValue>
+                                                            <!--Optional:-->
+                                                            <entityReferenceValue classname="?" code="?"/>
                                                          </customField>
                                                       </customFields>
                                                    </access>
@@ -5178,6 +6076,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                         <loaded>?</loaded>
@@ -5244,6 +6169,33 @@
                                     <longValue>?</longValue>
                                     <!--Optional:-->
                                     <doubleValue>?</doubleValue>
+                                    <!--Zero or more repetitions:-->
+                                    <listValue>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </listValue>
+                                    <mapValue>
+                                       <!--Zero or more repetitions:-->
+                                       <entry>
+                                          <!--Optional:-->
+                                          <key>?</key>
+                                          <!--Optional:-->
+                                          <value>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </value>
+                                       </entry>
+                                    </mapValue>
+                                    <!--Optional:-->
+                                    <entityReferenceValue classname="?" code="?"/>
                                  </customField>
                               </customFields>
                               <loaded>?</loaded>
@@ -5326,6 +6278,33 @@
                                           <longValue>?</longValue>
                                           <!--Optional:-->
                                           <doubleValue>?</doubleValue>
+                                          <!--Zero or more repetitions:-->
+                                          <listValue>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </listValue>
+                                          <mapValue>
+                                             <!--Zero or more repetitions:-->
+                                             <entry>
+                                                <!--Optional:-->
+                                                <key>?</key>
+                                                <!--Optional:-->
+                                                <value>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </value>
+                                             </entry>
+                                          </mapValue>
+                                          <!--Optional:-->
+                                          <entityReferenceValue classname="?" code="?"/>
                                        </customField>
                                     </customFields>
                                     <loaded>?</loaded>
@@ -5422,6 +6401,33 @@
                                                 <longValue>?</longValue>
                                                 <!--Optional:-->
                                                 <doubleValue>?</doubleValue>
+                                                <!--Zero or more repetitions:-->
+                                                <listValue>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </listValue>
+                                                <mapValue>
+                                                   <!--Zero or more repetitions:-->
+                                                   <entry>
+                                                      <!--Optional:-->
+                                                      <key>?</key>
+                                                      <!--Optional:-->
+                                                      <value>
+                                                         <!--You have a CHOICE of the next 5 items at this level-->
+                                                         <dateValue>?</dateValue>
+                                                         <doubleValue>?</doubleValue>
+                                                         <longValue>?</longValue>
+                                                         <stringValue>?</stringValue>
+                                                         <entityReferenceValue classname="?" code="?"/>
+                                                      </value>
+                                                   </entry>
+                                                </mapValue>
+                                                <!--Optional:-->
+                                                <entityReferenceValue classname="?" code="?"/>
                                              </customField>
                                           </customFields>
                                           <loaded>?</loaded>
@@ -5457,6 +6463,33 @@
                                                       <longValue>?</longValue>
                                                       <!--Optional:-->
                                                       <doubleValue>?</doubleValue>
+                                                      <!--Zero or more repetitions:-->
+                                                      <listValue>
+                                                         <!--You have a CHOICE of the next 5 items at this level-->
+                                                         <dateValue>?</dateValue>
+                                                         <doubleValue>?</doubleValue>
+                                                         <longValue>?</longValue>
+                                                         <stringValue>?</stringValue>
+                                                         <entityReferenceValue classname="?" code="?"/>
+                                                      </listValue>
+                                                      <mapValue>
+                                                         <!--Zero or more repetitions:-->
+                                                         <entry>
+                                                            <!--Optional:-->
+                                                            <key>?</key>
+                                                            <!--Optional:-->
+                                                            <value>
+                                                               <!--You have a CHOICE of the next 5 items at this level-->
+                                                               <dateValue>?</dateValue>
+                                                               <doubleValue>?</doubleValue>
+                                                               <longValue>?</longValue>
+                                                               <stringValue>?</stringValue>
+                                                               <entityReferenceValue classname="?" code="?"/>
+                                                            </value>
+                                                         </entry>
+                                                      </mapValue>
+                                                      <!--Optional:-->
+                                                      <entityReferenceValue classname="?" code="?"/>
                                                    </customField>
                                                 </customFields>
                                                 <!--Optional:-->
@@ -5480,6 +6513,33 @@
                                                             <longValue>?</longValue>
                                                             <!--Optional:-->
                                                             <doubleValue>?</doubleValue>
+                                                            <!--Zero or more repetitions:-->
+                                                            <listValue>
+                                                               <!--You have a CHOICE of the next 5 items at this level-->
+                                                               <dateValue>?</dateValue>
+                                                               <doubleValue>?</doubleValue>
+                                                               <longValue>?</longValue>
+                                                               <stringValue>?</stringValue>
+                                                               <entityReferenceValue classname="?" code="?"/>
+                                                            </listValue>
+                                                            <mapValue>
+                                                               <!--Zero or more repetitions:-->
+                                                               <entry>
+                                                                  <!--Optional:-->
+                                                                  <key>?</key>
+                                                                  <!--Optional:-->
+                                                                  <value>
+                                                                     <!--You have a CHOICE of the next 5 items at this level-->
+                                                                     <dateValue>?</dateValue>
+                                                                     <doubleValue>?</doubleValue>
+                                                                     <longValue>?</longValue>
+                                                                     <stringValue>?</stringValue>
+                                                                     <entityReferenceValue classname="?" code="?"/>
+                                                                  </value>
+                                                               </entry>
+                                                            </mapValue>
+                                                            <!--Optional:-->
+                                                            <entityReferenceValue classname="?" code="?"/>
                                                          </customField>
                                                       </customFields>
                                                    </access>
@@ -5586,6 +6646,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
          </accountHierarchy>
@@ -5707,6 +6794,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
             <loaded>?</loaded>
@@ -5773,6 +6887,33 @@
                         <longValue>?</longValue>
                         <!--Optional:-->
                         <doubleValue>?</doubleValue>
+                        <!--Zero or more repetitions:-->
+                        <listValue>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </listValue>
+                        <mapValue>
+                           <!--Zero or more repetitions:-->
+                           <entry>
+                              <!--Optional:-->
+                              <key>?</key>
+                              <!--Optional:-->
+                              <value>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </value>
+                           </entry>
+                        </mapValue>
+                        <!--Optional:-->
+                        <entityReferenceValue classname="?" code="?"/>
                      </customField>
                   </customFields>
                   <loaded>?</loaded>
@@ -5855,6 +6996,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                         <loaded>?</loaded>
@@ -5951,6 +7119,33 @@
                                     <longValue>?</longValue>
                                     <!--Optional:-->
                                     <doubleValue>?</doubleValue>
+                                    <!--Zero or more repetitions:-->
+                                    <listValue>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </listValue>
+                                    <mapValue>
+                                       <!--Zero or more repetitions:-->
+                                       <entry>
+                                          <!--Optional:-->
+                                          <key>?</key>
+                                          <!--Optional:-->
+                                          <value>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </value>
+                                       </entry>
+                                    </mapValue>
+                                    <!--Optional:-->
+                                    <entityReferenceValue classname="?" code="?"/>
                                  </customField>
                               </customFields>
                               <loaded>?</loaded>
@@ -5986,6 +7181,33 @@
                                           <longValue>?</longValue>
                                           <!--Optional:-->
                                           <doubleValue>?</doubleValue>
+                                          <!--Zero or more repetitions:-->
+                                          <listValue>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </listValue>
+                                          <mapValue>
+                                             <!--Zero or more repetitions:-->
+                                             <entry>
+                                                <!--Optional:-->
+                                                <key>?</key>
+                                                <!--Optional:-->
+                                                <value>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </value>
+                                             </entry>
+                                          </mapValue>
+                                          <!--Optional:-->
+                                          <entityReferenceValue classname="?" code="?"/>
                                        </customField>
                                     </customFields>
                                     <!--Optional:-->
@@ -6009,6 +7231,33 @@
                                                 <longValue>?</longValue>
                                                 <!--Optional:-->
                                                 <doubleValue>?</doubleValue>
+                                                <!--Zero or more repetitions:-->
+                                                <listValue>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </listValue>
+                                                <mapValue>
+                                                   <!--Zero or more repetitions:-->
+                                                   <entry>
+                                                      <!--Optional:-->
+                                                      <key>?</key>
+                                                      <!--Optional:-->
+                                                      <value>
+                                                         <!--You have a CHOICE of the next 5 items at this level-->
+                                                         <dateValue>?</dateValue>
+                                                         <doubleValue>?</doubleValue>
+                                                         <longValue>?</longValue>
+                                                         <stringValue>?</stringValue>
+                                                         <entityReferenceValue classname="?" code="?"/>
+                                                      </value>
+                                                   </entry>
+                                                </mapValue>
+                                                <!--Optional:-->
+                                                <entityReferenceValue classname="?" code="?"/>
                                              </customField>
                                           </customFields>
                                        </access>
@@ -6107,6 +7356,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
          </access>
@@ -6166,6 +7442,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
          </accountHierarchy>
@@ -6218,6 +7521,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
             <loaded>?</loaded>
@@ -6314,6 +7644,33 @@
                         <longValue>?</longValue>
                         <!--Optional:-->
                         <doubleValue>?</doubleValue>
+                        <!--Zero or more repetitions:-->
+                        <listValue>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </listValue>
+                        <mapValue>
+                           <!--Zero or more repetitions:-->
+                           <entry>
+                              <!--Optional:-->
+                              <key>?</key>
+                              <!--Optional:-->
+                              <value>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </value>
+                           </entry>
+                        </mapValue>
+                        <!--Optional:-->
+                        <entityReferenceValue classname="?" code="?"/>
                      </customField>
                   </customFields>
                   <loaded>?</loaded>
@@ -6349,6 +7706,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                         <!--Optional:-->
@@ -6372,6 +7756,33 @@
                                     <longValue>?</longValue>
                                     <!--Optional:-->
                                     <doubleValue>?</doubleValue>
+                                    <!--Zero or more repetitions:-->
+                                    <listValue>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </listValue>
+                                    <mapValue>
+                                       <!--Zero or more repetitions:-->
+                                       <entry>
+                                          <!--Optional:-->
+                                          <key>?</key>
+                                          <!--Optional:-->
+                                          <value>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </value>
+                                       </entry>
+                                    </mapValue>
+                                    <!--Optional:-->
+                                    <entityReferenceValue classname="?" code="?"/>
                                  </customField>
                               </customFields>
                            </access>
@@ -6448,6 +7859,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
             <loaded>?</loaded>
@@ -6514,6 +7952,33 @@
                         <longValue>?</longValue>
                         <!--Optional:-->
                         <doubleValue>?</doubleValue>
+                        <!--Zero or more repetitions:-->
+                        <listValue>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </listValue>
+                        <mapValue>
+                           <!--Zero or more repetitions:-->
+                           <entry>
+                              <!--Optional:-->
+                              <key>?</key>
+                              <!--Optional:-->
+                              <value>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </value>
+                           </entry>
+                        </mapValue>
+                        <!--Optional:-->
+                        <entityReferenceValue classname="?" code="?"/>
                      </customField>
                   </customFields>
                   <loaded>?</loaded>
@@ -6596,6 +8061,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                         <loaded>?</loaded>
@@ -6692,6 +8184,33 @@
                                     <longValue>?</longValue>
                                     <!--Optional:-->
                                     <doubleValue>?</doubleValue>
+                                    <!--Zero or more repetitions:-->
+                                    <listValue>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </listValue>
+                                    <mapValue>
+                                       <!--Zero or more repetitions:-->
+                                       <entry>
+                                          <!--Optional:-->
+                                          <key>?</key>
+                                          <!--Optional:-->
+                                          <value>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </value>
+                                       </entry>
+                                    </mapValue>
+                                    <!--Optional:-->
+                                    <entityReferenceValue classname="?" code="?"/>
                                  </customField>
                               </customFields>
                               <loaded>?</loaded>
@@ -6727,6 +8246,33 @@
                                           <longValue>?</longValue>
                                           <!--Optional:-->
                                           <doubleValue>?</doubleValue>
+                                          <!--Zero or more repetitions:-->
+                                          <listValue>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </listValue>
+                                          <mapValue>
+                                             <!--Zero or more repetitions:-->
+                                             <entry>
+                                                <!--Optional:-->
+                                                <key>?</key>
+                                                <!--Optional:-->
+                                                <value>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </value>
+                                             </entry>
+                                          </mapValue>
+                                          <!--Optional:-->
+                                          <entityReferenceValue classname="?" code="?"/>
                                        </customField>
                                     </customFields>
                                     <!--Optional:-->
@@ -6750,6 +8296,33 @@
                                                 <longValue>?</longValue>
                                                 <!--Optional:-->
                                                 <doubleValue>?</doubleValue>
+                                                <!--Zero or more repetitions:-->
+                                                <listValue>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </listValue>
+                                                <mapValue>
+                                                   <!--Zero or more repetitions:-->
+                                                   <entry>
+                                                      <!--Optional:-->
+                                                      <key>?</key>
+                                                      <!--Optional:-->
+                                                      <value>
+                                                         <!--You have a CHOICE of the next 5 items at this level-->
+                                                         <dateValue>?</dateValue>
+                                                         <doubleValue>?</doubleValue>
+                                                         <longValue>?</longValue>
+                                                         <stringValue>?</stringValue>
+                                                         <entityReferenceValue classname="?" code="?"/>
+                                                      </value>
+                                                   </entry>
+                                                </mapValue>
+                                                <!--Optional:-->
+                                                <entityReferenceValue classname="?" code="?"/>
                                              </customField>
                                           </customFields>
                                        </access>
@@ -6830,6 +8403,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
             <loaded>?</loaded>
@@ -6912,6 +8512,33 @@
                         <longValue>?</longValue>
                         <!--Optional:-->
                         <doubleValue>?</doubleValue>
+                        <!--Zero or more repetitions:-->
+                        <listValue>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </listValue>
+                        <mapValue>
+                           <!--Zero or more repetitions:-->
+                           <entry>
+                              <!--Optional:-->
+                              <key>?</key>
+                              <!--Optional:-->
+                              <value>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </value>
+                           </entry>
+                        </mapValue>
+                        <!--Optional:-->
+                        <entityReferenceValue classname="?" code="?"/>
                      </customField>
                   </customFields>
                   <loaded>?</loaded>
@@ -7008,6 +8635,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                         <loaded>?</loaded>
@@ -7043,6 +8697,33 @@
                                     <longValue>?</longValue>
                                     <!--Optional:-->
                                     <doubleValue>?</doubleValue>
+                                    <!--Zero or more repetitions:-->
+                                    <listValue>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </listValue>
+                                    <mapValue>
+                                       <!--Zero or more repetitions:-->
+                                       <entry>
+                                          <!--Optional:-->
+                                          <key>?</key>
+                                          <!--Optional:-->
+                                          <value>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </value>
+                                       </entry>
+                                    </mapValue>
+                                    <!--Optional:-->
+                                    <entityReferenceValue classname="?" code="?"/>
                                  </customField>
                               </customFields>
                               <!--Optional:-->
@@ -7066,6 +8747,33 @@
                                           <longValue>?</longValue>
                                           <!--Optional:-->
                                           <doubleValue>?</doubleValue>
+                                          <!--Zero or more repetitions:-->
+                                          <listValue>
+                                             <!--You have a CHOICE of the next 5 items at this level-->
+                                             <dateValue>?</dateValue>
+                                             <doubleValue>?</doubleValue>
+                                             <longValue>?</longValue>
+                                             <stringValue>?</stringValue>
+                                             <entityReferenceValue classname="?" code="?"/>
+                                          </listValue>
+                                          <mapValue>
+                                             <!--Zero or more repetitions:-->
+                                             <entry>
+                                                <!--Optional:-->
+                                                <key>?</key>
+                                                <!--Optional:-->
+                                                <value>
+                                                   <!--You have a CHOICE of the next 5 items at this level-->
+                                                   <dateValue>?</dateValue>
+                                                   <doubleValue>?</doubleValue>
+                                                   <longValue>?</longValue>
+                                                   <stringValue>?</stringValue>
+                                                   <entityReferenceValue classname="?" code="?"/>
+                                                </value>
+                                             </entry>
+                                          </mapValue>
+                                          <!--Optional:-->
+                                          <entityReferenceValue classname="?" code="?"/>
                                        </customField>
                                     </customFields>
                                  </access>
@@ -7144,6 +8852,33 @@
                   <longValue>?</longValue>
                   <!--Optional:-->
                   <doubleValue>?</doubleValue>
+                  <!--Zero or more repetitions:-->
+                  <listValue>
+                     <!--You have a CHOICE of the next 5 items at this level-->
+                     <dateValue>?</dateValue>
+                     <doubleValue>?</doubleValue>
+                     <longValue>?</longValue>
+                     <stringValue>?</stringValue>
+                     <entityReferenceValue classname="?" code="?"/>
+                  </listValue>
+                  <mapValue>
+                     <!--Zero or more repetitions:-->
+                     <entry>
+                        <!--Optional:-->
+                        <key>?</key>
+                        <!--Optional:-->
+                        <value>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </value>
+                     </entry>
+                  </mapValue>
+                  <!--Optional:-->
+                  <entityReferenceValue classname="?" code="?"/>
                </customField>
             </customFields>
             <loaded>?</loaded>
@@ -7179,6 +8914,33 @@
                         <longValue>?</longValue>
                         <!--Optional:-->
                         <doubleValue>?</doubleValue>
+                        <!--Zero or more repetitions:-->
+                        <listValue>
+                           <!--You have a CHOICE of the next 5 items at this level-->
+                           <dateValue>?</dateValue>
+                           <doubleValue>?</doubleValue>
+                           <longValue>?</longValue>
+                           <stringValue>?</stringValue>
+                           <entityReferenceValue classname="?" code="?"/>
+                        </listValue>
+                        <mapValue>
+                           <!--Zero or more repetitions:-->
+                           <entry>
+                              <!--Optional:-->
+                              <key>?</key>
+                              <!--Optional:-->
+                              <value>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </value>
+                           </entry>
+                        </mapValue>
+                        <!--Optional:-->
+                        <entityReferenceValue classname="?" code="?"/>
                      </customField>
                   </customFields>
                   <!--Optional:-->
@@ -7202,6 +8964,33 @@
                               <longValue>?</longValue>
                               <!--Optional:-->
                               <doubleValue>?</doubleValue>
+                              <!--Zero or more repetitions:-->
+                              <listValue>
+                                 <!--You have a CHOICE of the next 5 items at this level-->
+                                 <dateValue>?</dateValue>
+                                 <doubleValue>?</doubleValue>
+                                 <longValue>?</longValue>
+                                 <stringValue>?</stringValue>
+                                 <entityReferenceValue classname="?" code="?"/>
+                              </listValue>
+                              <mapValue>
+                                 <!--Zero or more repetitions:-->
+                                 <entry>
+                                    <!--Optional:-->
+                                    <key>?</key>
+                                    <!--Optional:-->
+                                    <value>
+                                       <!--You have a CHOICE of the next 5 items at this level-->
+                                       <dateValue>?</dateValue>
+                                       <doubleValue>?</doubleValue>
+                                       <longValue>?</longValue>
+                                       <stringValue>?</stringValue>
+                                       <entityReferenceValue classname="?" code="?"/>
+                                    </value>
+                                 </entry>
+                              </mapValue>
+                              <!--Optional:-->
+                              <entityReferenceValue classname="?" code="?"/>
                            </customField>
                         </customFields>
                      </access>
@@ -11034,6 +12823,15 @@
                                                       <quantity>1</quantity>
                                                    </serviceInstance>
                                                 </services>
+                                                <customFields>
+                                                <customField code="TOPTEN" description="" valueDate="2015-06-15"><!-- valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">-->
+							                <listValue>
+							                   <stringValue>0102030405</stringValue>
+							                   <stringValue>0203040506</stringValue>
+							                   <stringValue>0304050607</stringValue>
+							                </listValue>
+							             </customField>
+							             </customFields>
                                              </subscription>
                                           </subscriptions>
                                        </userAccount>
@@ -11049,4 +12847,4 @@
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/><con:assertion type="Simple Contains" id="cbef1cc2-48da-484e-9399-ce39b1404e7e" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>TOPTEN</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/><con:assertion type="Simple Contains" id="cbef1cc2-48da-484e-9399-ce39b1404e7e" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>TOPTEN</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
