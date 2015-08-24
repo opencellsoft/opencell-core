@@ -97,7 +97,7 @@ public abstract class BaseApi {
 
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
-            log.warn("No custom field templates defined.");
+            log.warn("No custom field templates defined. Custom field values will be ignored");
             return;
         }
         for (CustomFieldDto cfDto : customFieldDtos) {
@@ -149,28 +149,28 @@ public abstract class BaseApi {
                             if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
                                 switch (cft.getFieldType()) {
                                 case DATE:
-                                    cfi.setDateValue(cfDto.getDateValue(), cfDto.getDateValue());
+                                    cfi.setDateValue(cfDto.getDateValue(), cfDto.getValueDate());
                                     break;
                                 case DOUBLE:
-                                    cfi.setDoubleValue(cfDto.getDoubleValue(), cfDto.getDateValue());
+                                    cfi.setDoubleValue(cfDto.getDoubleValue(), cfDto.getValueDate());
                                     break;
                                 case LONG:
-                                    cfi.setLongValue(cfDto.getLongValue(), cfDto.getDateValue());
+                                    cfi.setLongValue(cfDto.getLongValue(), cfDto.getValueDate());
                                     break;
                                 case LIST:
                                 case STRING:
                                 case TEXT_AREA:
-                                    cfi.setStringValue(cfDto.getStringValue(), cfDto.getDateValue());
+                                    cfi.setStringValue(cfDto.getStringValue(), cfDto.getValueDate());
                                     break;
                                 case ENTITY:
-                                    cfi.setEntityReferenceValue(cfDto.getEntityReferenceValue().fromDTO(), cfDto.getDateValue());
+                                    cfi.setEntityReferenceValue(cfDto.getEntityReferenceValue().fromDTO(), cfDto.getValueDate());
                                 }
 
                             } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
-                                cfi.setListValue(CustomFieldValueDto.fromDTO(cfDto.getListValue()), cfDto.getDateValue());
+                                cfi.setListValue(CustomFieldValueDto.fromDTO(cfDto.getListValue()), cfDto.getValueDate());
 
                             } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
-                                cfi.setMapValue(CustomFieldValueDto.fromDTO(cfDto.getMapValue()), cfDto.getDateValue());
+                                cfi.setMapValue(CustomFieldValueDto.fromDTO(cfDto.getMapValue()), cfDto.getValueDate());
                             }
 
                         } else {
@@ -235,7 +235,7 @@ public abstract class BaseApi {
                 }
             }
             if (!found) {
-                log.warn("No custom field template with code={} for entity {}", cfDto.getCode(), entity.getClass());
+                log.warn("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
             }
         }
 
