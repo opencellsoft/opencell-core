@@ -178,7 +178,7 @@
             appendTo="@(body)" rendered="#{cc.attrs.edit}" width="700">
 
             <p:panel>
-                <h:panelGroup id="periodFields" layout="block" styleClass="form-panel"> #{cc.attrs.backingBean.class.simpleName}
+                <h:panelGroup id="periodFields" layout="block" styleClass="form-panel">
                     <hf:formDecorateField fieldId="period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
                         <h:outputText id="period_start_date" value="#{cc.attrs.backingBean.customFieldSelectedPeriod.periodStartDate}">
                             <f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
