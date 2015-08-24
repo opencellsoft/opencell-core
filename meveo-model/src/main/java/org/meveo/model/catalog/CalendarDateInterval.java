@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.model.BaseProviderlessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.catalog.CalendarInterval.CalendarIntervalTypeEnum;
 
 /**
@@ -20,6 +21,7 @@ import org.meveo.model.catalog.CalendarInterval.CalendarIntervalTypeEnum;
  * 
  */
 @Entity
+@ExportIdentifier({  "calendar.code", "calendar.provider", "intervalBegin", "intervalEnd" })
 @Table(name = "CAT_CALENDAR_INTERVAL")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CALENDAR_INTERVAL_SEQ")
 public class CalendarDateInterval extends BaseProviderlessEntity implements Comparable<CalendarDateInterval> {

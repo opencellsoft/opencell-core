@@ -38,10 +38,14 @@ public class PdfInvoiceAsync {
 
     @Asynchronous
     public Future<String> launchAndForget(List<Invoice> invoices, User currentUser, JobExecutionResultImpl result) {
-        for (Invoice invoice : invoices) {
+        log.debug("launchAndForget PDF");
+    	for (Invoice invoice : invoices) {
             try {
+            	log.debug("construct params for invoice "+invoice.getId());
                 Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId());
+            	log.debug("producePdf for invoice "+invoice.getId());
                 invoiceService.producePdf(parameters, currentUser);
+                log.debug("ok for invoice "+invoice.getId());
                 result.registerSucces();
                 
             } catch (Exception e) {
