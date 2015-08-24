@@ -17,42 +17,58 @@
 package org.meveo.service.job;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.jobs.ScriptTypeEnum;
+import org.meveo.script.JavaCompilerManager;
+import org.meveo.script.ScriptInterface;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 
+	@EJB
+	private JavaCompilerManager javaCompilerManager;
 
 	@SuppressWarnings("unchecked")
 	public List<ScriptInstance> findByType(ScriptTypeEnum type) {
 		List<ScriptInstance> result = new ArrayList<ScriptInstance>();
 		QueryBuilder qb = new QueryBuilder(ScriptInstance.class, "t");
-		qb.addCriterionEnum("t.scriptTypeEnum", type); 
+		qb.addCriterionEnum("t.scriptTypeEnum", type);
 		try {
-			result =  ( List<ScriptInstance>) qb.getQuery(getEntityManager()).getResultList();
+			result = (List<ScriptInstance>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 
 		}
 		return result;
 	}
-	
-	
-	public ScriptInstance findByCode(String code) {
-		QueryBuilder qb = new QueryBuilder(ScriptInstance.class, "t");
-		qb.addCriterionWildcard("t.code", code, true); 
+
+	public ScriptInstance findByCode(String code, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(ScriptInstance.class, "t", null, provider);
+		qb.addCriterionWildcard("t.code", code, true);
 		try {
 			return (ScriptInstance) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+
+	public void executeScriptOnObject(ScriptInstance scriptInstance, Object o) throws BusinessException {
+		log.debug("execute script={} on object={}", scriptInstance.getScript(), o);
+		ScriptInterface scriptInterface = javaCompilerManager.getAllScriptInterfaces().get(scriptInstance.getCode());
+		Map<String, Object> userMap = new HashMap<String, Object>();
+		userMap.put("obj", o);
+		scriptInterface.execute(userMap);
 	}
 
 }

@@ -23,6 +23,7 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.jobs.ScriptTypeEnum;
 import org.meveo.service.job.ScriptInstanceService;
@@ -70,12 +71,12 @@ public class JavaCompilerManager  {
 			log.error("",e);
 		}
 	}
-	
-	public void compileScript(String scriptInstanceCode){
-		ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceCode);
-		if(scriptInstance == null){
-			log.error("compileScript cannot find scriptInstance by code:"+scriptInstanceCode);
-		}else{
+
+	public void compileScript(String scriptInstanceCode, Provider provider) {
+		ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceCode, provider);
+		if (scriptInstance == null) {
+			log.error("compileScript cannot find scriptInstance by code:" + scriptInstanceCode);
+		} else {
 			compileScript(scriptInstance);
 		}
 	}

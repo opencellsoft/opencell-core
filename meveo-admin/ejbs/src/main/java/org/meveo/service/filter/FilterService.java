@@ -168,6 +168,53 @@ public class FilterService extends BusinessService<Filter> {
 		return xstream.toXML(entities);
 	}
 
+	@SuppressWarnings("unchecked")
+	public String filteredList(Filter filter, Provider provider) throws BusinessException {
+		FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
+
+		try {
+			Query query = fqb.getQuery(getEntityManager());
+			log.debug("query={}", fqb.getSqlString());
+			List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
+			XStream xstream = new XStream() {
+				@Override
+				protected MapperWrapper wrapMapper(MapperWrapper next) {
+					return new HibernateMapper(next);
+				}
+			};
+
+			applyOmittedFields(xstream, filter);
+
+			// String result = xstream.toXML(countries);
+			return serializeEntities(xstream, filter, objects);
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<? extends IEntity> filteredListAsObjects(Filter filter, Provider provider) throws BusinessException {
+		FilteredQueryBuilder fqb = new FilteredQueryBuilder(filter);
+
+		try {
+			Query query = fqb.getQuery(getEntityManager());
+			log.debug("query={}", fqb.getSqlString());
+			List<? extends IEntity> objects = (List<? extends IEntity>) query.getResultList();
+			XStream xstream = new XStream() {
+				@Override
+				protected MapperWrapper wrapMapper(MapperWrapper next) {
+					return new HibernateMapper(next);
+				}
+			};
+
+			applyOmittedFields(xstream, filter);
+
+			return objects;
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
+	}
+
 	public String filteredList(String filterName, Integer firstRow, Integer numberOfRows, Provider provider)
 			throws BusinessException {
 		Filter filter = (Filter) findByCode(filterName, provider);
