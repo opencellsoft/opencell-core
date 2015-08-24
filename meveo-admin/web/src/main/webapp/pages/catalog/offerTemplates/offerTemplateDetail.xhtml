@@ -22,10 +22,9 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel id="formPanel"
+		<hf:formPanel id="formPanel" ajaxSubmit="true" submitPartialProcess=":formPanel:formId:tabView"
 			label="#{messages['offerTemplate.offerTemplatePanel']}"
 			backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
-			addCustomFieldDialog="true"
 			updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
 			<p:tabView id="tabView">
@@ -45,9 +44,8 @@
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}">
-					<hf:customFields id="customFields"
-						messagesId=":formPanel:formId:messages" />
-				</p:tab>
+                    <hf:customFields id="customFields" backingBean="#{offerTemplateBean}" messagesId=":formPanel:formId:messages" />
+                </p:tab>
 
 			</p:tabView>
 		</hf:formPanel>

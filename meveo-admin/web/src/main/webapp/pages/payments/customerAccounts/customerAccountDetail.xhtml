@@ -85,9 +85,8 @@
 								formId="formCustomerAccount"
 								label="#{messages['customerAccount.form']}"
 								backingBean="#{customerAccountBean}" showFormButtons="false"
-								useCustomIdParam="true" addCustomFieldDialog="true">
-									<p:tabView id="childTab" activeIndex="#{customerAccountBean.activeTab}">
-										<p:ajax event="tabChange" listener="#{customerAccountBean.onTabChange}"/>
+								useCustomIdParam="true" >
+									<p:tabView id="childTab">
 										<p:tab id="tab0"
 											title="#{messages['customerAccount.tab.account']}">
 												<hf:formField id="customerSelectId"
@@ -237,15 +236,15 @@
 										</p:tab>
 
 										<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
-											<hf:customFields id="customFields" messagesId=":parentTab:formCustomerAccountPanel:formCustomerAccount:messages" periodDialogIdPrefix=":parentTab:formCustomerAccountPanel"/>
+											<hf:customFields id="customFields" backingBean="#{customerAccountBean}" messagesId=":parentTab:formCustomerAccountPanel:formCustomerAccount:messages"/>
 										</p:tab>
 
 									</p:tabView>
 
 									<hf:formButtons columns="5"
 										backingBean="#{customerAccountBean}"
-										edit="#{customerAccountBean.edit}" ajaxSubmit="false"
-										useCustomIdParam="true">
+										edit="#{customerAccountBean.edit}"
+										useCustomIdParam="true" ajaxSubmit="true" submitPartialProcess=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab">
 										<p:commandButton
 											rendered="#{customerAccountBean.isActiveAccount() and not empty customerAccountBean.entity.id}"
 											action="#{customerAccountBean.closeCustomerAccount}"

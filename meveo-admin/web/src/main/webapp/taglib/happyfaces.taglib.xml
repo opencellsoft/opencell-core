@@ -53,14 +53,4 @@
 		<tag-name>customFieldListTable</tag-name>
 		<source>customFieldListTable.xhtml</source>
 	</tag>
-	<tag>
-		<tag-name>autocompleteCustomFieldEntity</tag-name>
-		<source>autocompleteCustomFieldEntity.xhtml</source>
-	</tag>
-	<tag>
-		<tag-name>customFieldsPopups</tag-name>
-		<source>customFieldsPopups.xhtml</source>
-	</tag>
-
-
 </facelet-taglib>

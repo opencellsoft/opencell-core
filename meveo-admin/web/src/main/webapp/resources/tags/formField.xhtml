@@ -192,10 +192,14 @@
             
             <!--  Enter text --> 
             <ui:fragment rendered="#{cc.isText(cc.attrs.field, cc.attrs.childField, false) and !cc.attrs.fkToEntity}">
-                <hf:formTextField id="txtFieldSingle" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}"
-                    rendered="#{cc.attrs.childField==null}" autocompleteMethod="#{cc.attrs.autocompleteMethod}" />
-                <hf:formTextField id="txtFieldWChild" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}"
-                    rendered="#{cc.attrs.childField!=null}" autocompleteMethod="#{cc.attrs.autocompleteMethod}" />
+                <c:if test="#{cc.attrs.childField == null}">
+                	<hf:formTextField id="txtFieldSingle" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}"
+                    	 autocompleteMethod="#{cc.attrs.autocompleteMethod}" />
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">
+                	<hf:formTextField id="txtFieldWChild" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}"
+                    	 autocompleteMethod="#{cc.attrs.autocompleteMethod}" />
+                </c:if>
             </ui:fragment> 
             
             <!--  Enter map values --> 

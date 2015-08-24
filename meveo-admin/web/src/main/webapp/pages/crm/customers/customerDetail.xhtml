@@ -50,12 +50,11 @@
             		<hf:formPanel id="formCustomerPanel" formId="formCustomer"
 						label="#{messages['customer.customerPanel']}"
 						showFormButtons="false" backingBean="#{customerBean}"
-						useCustomIdParam="true" addCustomFieldDialog="true">
-						<p:tabView id="tabView" activeIndex="#{customerBean.activeTab}">
-							<p:ajax event="tabChange" listener="#{customerBean.onTabChange}"/>
+						useCustomIdParam="true">
+						<p:tabView id="tabView">
 							<p:tab title="#{messages['customer.tab.account']}" id="tab0">
 								
-									<hf:formField label="#{messages['businessEntity.code']}"
+									<hf:formField id="code" label="#{messages['businessEntity.code']}"
 										field="code" validateUnique="true" required="true" displayOneLine="true" componentWidth="50"/>
 									
 									<hf:formField label="#{messages['businessEntity.description']}"
@@ -136,21 +135,17 @@
 							</p:tab>
 
 							<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
-								<hf:customFields id="customFields" messagesId=":formCustomerPanel:formCustomer:messages" periodDialogIdPrefix=":formCustomerPanel"/>
+								<hf:customFields backingBean="#{customerBean}" id="customFields" messagesId=":formCustomerPanel:formCustomer:messages" />
 							</p:tab>
 						</p:tabView>
 
-						<hf:formButtons columns="5" backingBean="#{customerBean}"
-							edit="#{customerBean.edit}" ajaxSubmit="false"
-							useCustomIdParam="true">
-							<p:button outcome="addCustomerAccount"
-								rendered="#{not empty customerBean.entity.id}"
-								value="#{messages['customer.buttonAddCustomerAccount']}">
-								<f:param name="cid"
-									value="#{javax.enterprise.context.conversation.id}" />
-							</p:button>
-						</hf:formButtons>
-					</hf:formPanel>
+                    <hf:formButtons columns="5" backingBean="#{customerBean}" edit="#{customerBean.edit}" ajaxSubmit="true"
+                        submitPartialProcess=":formCustomerPanel:formCustomer:tabView" useCustomIdParam="true">
+                        <p:button outcome="addCustomerAccount" rendered="#{not empty customerBean.entity.id}" value="#{messages['customer.buttonAddCustomerAccount']}">
+                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                        </p:button>
+                    </hf:formButtons>
+                </hf:formPanel>
             </h:panelGroup>
         </h:panelGroup>
 	</ui:define>

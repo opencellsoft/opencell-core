@@ -3,6 +3,7 @@ package org.meveo.api.dto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -44,8 +45,16 @@ public class CustomFieldDto {
     @XmlElement
     protected Long longValue;
 
-    @XmlElement
+    @XmlElement()
     protected Double doubleValue;
+
+    protected List<CustomFieldValueDto> listValue;
+
+    @XmlElement()
+    protected Map<String, CustomFieldValueDto> mapValue;
+
+    @XmlElement()
+    protected EntityReferenceDto entityReferenceValue;
 
     public CustomFieldDto() {
     }
@@ -56,10 +65,15 @@ public class CustomFieldDto {
             CustomFieldDto dto = new CustomFieldDto();
             dto.setCode(cfi.getCode());
             dto.setDescription(cfi.getDescription());
-            dto.setStringValue(cfi.getStringValue());
-            dto.setDateValue(cfi.getDateValue());
-            dto.setLongValue(cfi.getLongValue());
-            dto.setDoubleValue(cfi.getDoubleValue());
+            dto.setStringValue(cfi.getValue().getStringValue());
+            dto.setDateValue(cfi.getValue().getDateValue());
+            dto.setLongValue(cfi.getValue().getLongValue());
+            dto.setDoubleValue(cfi.getValue().getDoubleValue());
+            dto.setListValue(CustomFieldValueDto.toDTO(cfi.getValue().getListValue()));
+            dto.setMapValue(CustomFieldValueDto.toDTO(cfi.getValue().getMapValue()));
+            if (cfi.getValue().getEntityReferenceValue() != null) {
+                dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getValue().getEntityReferenceValue()));
+            }
             dtos.add(dto);
 
         } else {
@@ -73,10 +87,16 @@ public class CustomFieldDto {
                 if (period.getPriority() > 0) {
                     dto.setValuePeriodPriority(period.getPriority());
                 }
-                dto.setStringValue(period.getStringValue());
-                dto.setDateValue(period.getDateValue());
-                dto.setLongValue(period.getLongValue());
-                dto.setDoubleValue(period.getDoubleValue());
+                dto.setStringValue(period.getValue().getStringValue());
+                dto.setDateValue(period.getValue().getDateValue());
+                dto.setLongValue(period.getValue().getLongValue());
+                dto.setDoubleValue(period.getValue().getDoubleValue());
+                dto.setListValue(CustomFieldValueDto.toDTO(period.getValue().getListValue()));
+                dto.setMapValue(CustomFieldValueDto.toDTO(period.getValue().getMapValue()));
+                if (period.getValue().getEntityReferenceValue() != null) {
+                    dto.setEntityReferenceValue(new EntityReferenceDto(period.getValue().getEntityReferenceValue()));
+                }
+
                 dtos.add(dto);
             }
         }
@@ -158,6 +178,30 @@ public class CustomFieldDto {
 
     public void setValuePeriodPriority(Integer valuePeriodPriority) {
         this.valuePeriodPriority = valuePeriodPriority;
+    }
+
+    public List<CustomFieldValueDto> getListValue() {
+        return listValue;
+    }
+
+    public void setListValue(List<CustomFieldValueDto> listValue) {
+        this.listValue = listValue;
+    }
+
+    public Map<String, CustomFieldValueDto> getMapValue() {
+        return mapValue;
+    }
+
+    public void setMapValue(Map<String, CustomFieldValueDto> mapValue) {
+        this.mapValue = mapValue;
+    }
+
+    public EntityReferenceDto getEntityReferenceValue() {
+        return entityReferenceValue;
+    }
+
+    public void setEntityReferenceValue(EntityReferenceDto entityReferenceValue) {
+        this.entityReferenceValue = entityReferenceValue;
     }
 
     @Override

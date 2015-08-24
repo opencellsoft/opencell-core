@@ -19,7 +19,10 @@
  
     Attributes
         edit - edit or view mode
-        ajaxSubmit - should form submit be done in ajax way
+        ajaxSubmit - should create/update form submit be done in ajax way
+        submitPartialProcess - items to process during ajax submit
+        submitPartialSubmitFilter - items to filter during ajax submit
+        submitUpdate - items to update after ajax submit
         killConversationOnSave - should conversation be killed uppon saving
         killConversationOnBack - should conversation be killed uppon navigating back
         showBackButton - show a default "navigate back" button
@@ -34,7 +37,6 @@
 <cc:interface>
 	<cc:attribute name="backingBean" required="true"
 		type="org.meveo.admin.action.BaseBean" />
-	<cc:attribute name="ajaxSubmit" required="true" />
 	<cc:attribute name="edit" required="true" />
 	<cc:attribute name="killConversationOnSave" default="true" />
 	<cc:attribute name="killConversationOnBack" default="true" />
@@ -46,6 +48,10 @@
 	<cc:attribute name="objectIdParamName"
 		default="#{cc.attrs.useCustomIdParam?cc.attrs.backingBean.idParameterName:'objectId'}" />
 	<cc:attribute name="updateConfirmationMessage" default="" />
+    <cc:attribute name="ajaxSubmit" required="true" />
+    <cc:attribute name="submitPartialProcess" />
+    <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/>
+    <cc:attribute name="submitUpdate" default="@form"/>
 </cc:interface>
 
 <cc:implementation>
@@ -71,43 +77,59 @@
             rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled}"
             action="#{cc.attrs.backingBean.enable}" update="@form"/>
 
-        <p:commandButton id="saveButtonWithObjectId"
-			rendered="#{cc.attrs.edit and empty(cc.attrs.backingBean.objectId)}"
-			value="#{messages['action.save']}"
-			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave,cc.attrs.objectIdParamName,cc.attrs.backingBean.objectId)}"
-			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
-			<f:param name="edit" value="#{cc.attrs.edit}" />
-		</p:commandButton>
-
 		<p:commandButton id="saveButton"
-			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and empty(cc.attrs.updateConfirmationMessage)}"
+			rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and !cc.attrs.ajaxSubmit}"
 			value="#{messages['action.save']}"
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
-			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
+			icon="ui-icon-check" ajax="false">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 		</p:commandButton>
 
+        <p:commandButton id="saveButtonAjax"
+            rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit}"
+            value="#{messages['action.save']} " oncomplete="$('html,body').scrollTop(0);"
+            action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
+            icon="ui-icon-check" process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
+            <f:param name="edit" value="#{cc.attrs.edit}" />
+        </p:commandButton>
+
 		<!-- Update with message -->
-		<p:remoteCommand id="remoteUpdateWithMessageButton"
+		<p:remoteCommand id="remoteUpdateWithMessageButton" rendered="#{cc.attrs.submitPartialProcess==null}"
 			action="#{cc.attrs.backingBean.saveOrUpdateWithMessage(cc.attrs.killConversationOnSave)}"
 			name="updateWithMessage" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />
+            
+        <!-- Update with message with partial submit -->
+        <p:remoteCommand id="remoteUpdateWithMessageButtonPartialSubmit" rendered="#{cc.attrs.submitPartialProcess!=null}"
+            action="#{cc.attrs.backingBean.saveOrUpdateWithMessage(cc.attrs.killConversationOnSave)}"
+            process="@this #{cc.attrs.submitPartialProcess}" partialSubmit="true" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" 
+            update="#{cc.attrs.submitUpdate}" name="updateWithMessagePartialSubmit" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />            
+            
 		<p:commandButton id="#{resultsId}saveButtonWithMessage"
 			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage)}"
 			value="#{messages['action.save']}" icon="ui-icon-check"
 			oncomplete="PF('saveButtonWithMessageDialog').show()">
 		</p:commandButton>
+        
 		<!-- Update the message handling when  -->
 		<p:confirmDialog id="confirmUpdateWithMessage" appendTo="@(body)"
 			widgetVar="saveButtonWithMessageDialog" showEffect="fade"
 			hideEffect="fade" severity="alert"
 			message="#{(cc.attrs.updateConfirmationMessage eq '') ? messages['confirmationMessage.confirmUpdate'] : cc.attrs.updateConfirmationMessage}">
-			<p:commandButton id="updateOk" value="#{messages['commons.yes']}"
+			<p:commandButton id="updateOk" value="#{messages['commons.yes']}" rendered="#{cc.attrs.submitPartialProcess==null}"
 				styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
 				oncomplete="updateWithMessage()"
 				onclick="PF('saveButtonWithMessageDialog').hide()">
 				<f:param name="edit" value="#{cc.attrs.edit}" />
 			</p:commandButton>
-			<p:commandButton id="updateKO" value="#{messages['commons.no']}"
+            
+            <p:commandButton id="updateOkPartialSubmit" value="#{messages['commons.yes']}" rendered="#{cc.attrs.submitPartialProcess!=null}"
+                styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                oncomplete="updateWithMessagePartialSubmit()"
+                onclick="PF('saveButtonWithMessageDialog').hide()">
+                <f:param name="edit" value="#{cc.attrs.edit}" />
+            </p:commandButton>            
+
+            <p:commandButton id="updateKO" value="#{messages['commons.no']}"
 				type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"
 				onclick="PF('saveButtonWithMessageDialog').hide()" />
 		</p:confirmDialog>

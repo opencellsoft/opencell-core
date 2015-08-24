@@ -3,7 +3,6 @@ package org.meveo.api.account;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -276,18 +275,11 @@ public class CustomerAccountApi extends AccountApi {
 
 			if (customerAccount.getCustomer() != null) {
 				customerAccountDto.setCustomer(customerAccount.getCustomer().getCode());
-			}
-
+			}			
+			
 			if (customerAccount.getCustomFields() != null && customerAccount.getCustomFields().size() > 0) {
-				for (Map.Entry<String, CustomFieldInstance> entry : customerAccount.getCustomFields().entrySet()) {
-					CustomFieldDto cfDto = new CustomFieldDto();
-					cfDto.setCode(entry.getValue().getCode());
-					cfDto.setDateValue(entry.getValue().getDateValue());
-					cfDto.setDescription(entry.getValue().getDescription());
-					cfDto.setDoubleValue(entry.getValue().getDoubleValue());
-					cfDto.setLongValue(entry.getValue().getLongValue());
-					cfDto.setStringValue(entry.getValue().getStringValue());
-					customerAccountDto.getCustomFields().getCustomField().add(cfDto);
+				for (CustomFieldInstance cfi : customerAccount.getCustomFields().values()) {
+					customerAccountDto.getCustomFields().getCustomField().addAll(CustomFieldDto.toDTO(cfi));					
 				}
 			}
 

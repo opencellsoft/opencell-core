@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -163,8 +164,13 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			
 			super.saveOrUpdate(killConversation);
 
-			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=true&userAccountId=" + entity.getId()
-					+ "&faces-redirect=true&includeViewParams=true";
+			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
+	            return null;
+	        } else {
+    			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=true&userAccountId=" + entity.getId()
+    					+ "&faces-redirect=true&includeViewParams=true";
+	        }
+			
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {

@@ -1371,4 +1371,17 @@
 		</addColumn>
 		</changeSet>
 	
+    <changeSet id="789-20150819-2" author="AndriusKarpavicius">
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="ENTITY_VALUE"/>
+        <addColumn tableName="CRM_CUSTOM_FIELD_INST">
+            <column name="SERIALIZED_VALUE" type="varchar(500)"/>
+        </addColumn>
+
+        <dropColumn tableName="CRM_CUSTOM_FIELD_PERIOD" columnName="ENTITY_VALUE"/>
+        <addColumn tableName="CRM_CUSTOM_FIELD_PERIOD">
+            <column name="SERIALIZED_VALUE" type="varchar(500)"/>
+        </addColumn>
+
+        <dropColumn tableName="CRM_CUSTOM_FIELD_PERIOD" columnName="label"/>
+    </changeSet>
 </databaseChangeLog>

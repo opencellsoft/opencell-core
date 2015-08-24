@@ -33,71 +33,73 @@ import org.meveo.model.admin.User;
 @MappedSuperclass
 public abstract class ProviderlessEntity implements Serializable, IEntity, IAuditable, IVersionedEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(generator = "ID_GENERATOR")
-	@Column(name = "ID")
-	private Long id;
+    @Id
+    @GeneratedValue(generator = "ID_GENERATOR")
+    @Column(name = "ID")
+    private Long id;
 
-	@Version
-	@Column(name = "VERSION")
-	private Integer version;
+    @Version
+    @Column(name = "VERSION")
+    private Integer version;
 
-	@Embedded
-	private Auditable auditable;
+    @Embedded
+    private Auditable auditable;
 
-	public Auditable getAuditable() {
-		return auditable;
-	}
+    public Auditable getAuditable() {
+        return auditable;
+    }
 
-	public void setAuditable(Auditable auditable) {
-		this.auditable = auditable;
-	}
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
+    }
 
-	public void updateAudit(User u) {
-		if (auditable == null) {
-			auditable = new Auditable(u);
-		} else {
-			auditable.updateWith(u);
-		}
-	}
+    public void updateAudit(User u) {
+        if (auditable == null) {
+            auditable = new Auditable(u);
+        } else {
+            auditable.updateWith(u);
+        }
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Integer getVersion() {
-		return version;
-	}
+    public Integer getVersion() {
+        return version;
+    }
 
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
 
-	public boolean isTransient() {
-		return id == null;
-	}
+    public boolean isTransient() {
+        return id == null;
+    }
 
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
-	/**
-	 * Equals method must be overridden in concrete Entity class. Entities
-	 * shouldn't be compared only by ID, because if entity is not persisted its
-	 * ID is null.
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		throw new IllegalStateException("Equals method was not overriden!");
-	}
+    /**
+     * Equals method must be overridden in concrete Entity class. Entities shouldn't be compared only by ID, because if entity is not persisted its ID is null.
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        throw new IllegalStateException("Equals method was not overriden!");
+    }
 
+    @Override
+    public String toString() {
+        return String.format("id=%s", id);
+    }
 }

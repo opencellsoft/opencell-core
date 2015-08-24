@@ -1,65 +1,80 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:hftl="http://hftl.org"
+    xmlns:hf="http://java.sun.com/jsf/composite/tags">
 
 
 <!-- 
-    A tag diplaying or editing a single custom field [period] value
+    A tag displaying or editing a single custom field value bound to any variable
     Makes part of custom field management tag group 
 
     Attributes
         cft - custom field template containing field definition
         edit - should value be displayed, or edit control be shown
-        field - a field value
+        field - a field storing a value - any variable will do (type Object)
+        label - field label, for value validation purpose
         datePattern - date pattern for date entry/display
+        required - if a value is required
+        placeholder - placeholder text
+        backingBean - backing bean
  -->
 
 <ui:composition>
-	<h:outputText value="#{''}" />
+    <h:outputText value="#{''}" />
     <c:if test="${empty(datePattern)}">
         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     </c:if>
     <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
-    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
+        <h:outputText value="#{field}" rendered="#{! edit}"/>
+        <p:inputText value="#{field}" required="#{required}" rendered="#{edit}" label="#{label}" placeholder="#{placeholder}" />
+    </c:if>
+    <c:if test="#{(cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA)}">
         <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
-        <p:inputText value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
-    </h:panelGroup>
-    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
+        <p:inputTextarea value="#{field}" cols="#{cols}" rows="#{rows}" required="#{required}" rendered="#{edit}" label="#{label}" placeholder="#{placeholder}" />
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
         <h:outputText value="#{field}" rendered="#{! edit}">
             <f:convertDateTime type="date" pattern="#{datePattern}" />
         </h:outputText>
-        <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
-    </h:panelGroup>
-    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
+        <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field}" required="#{required}" rendered="#{edit}" label="#{label}" placeholder="#{placeholder}" />
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
         <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
-        <p:inputText value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}">
+        <p:inputText value="#{field}" required="#{required}" rendered="#{edit}" label="#{label}" placeholder="#{placeholder}">
             <f:convertNumber minFractionDigits="2" />
         </p:inputText>
-    </h:panelGroup>
-    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.LONG}">
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.LONG}">
         <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
-        <p:inputText value="#{field}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}">
+        <p:inputText value="#{field}" required="#{required}" rendered="#{edit}" label="#{label}" placeholder="#{placeholder}">
             <f:convertNumber integerOnly="true" />
         </p:inputText>
-    </h:panelGroup>
-    <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType!= CustomFieldStorageTypeEnum.SINGLE and !cft.versionable)}">
-		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field}" edit="#{edit}" />
-		<h:outputText value="#{field.code}" rendered="#{!edit}"/>
-	 </h:panelGroup>
-	 <h:panelGroup rendered="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY and (cft.storageType!= CustomFieldStorageTypeEnum.SINGLE and cft.versionable)}">
-		<hftl:autocompleteCustomFieldEntity cft="#{cft}" field="#{field}" edit="#{edit}" />
-		<h:outputText value="#{field.businessEntity.code}" rendered="#{!edit}"/>
-	 </h:panelGroup>
-
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
+        <h:outputText value="#{field.code}" rendered="#{!edit}" />
+        <p:autoComplete value="#{field}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" placeholder="#{placeholder}" label="#{label}"
+            converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{backingBean.autocompleteCustomEntityForCFV}" queryDelay="1000" var="e" itemLabel="#{e.code}"
+            itemValue="#{e}" rendered="#{edit}">
+            <f:attribute name="classname" value="#{cft.entityClazz}" />
+            <p:column width="50">
+                <h:outputText value="#{e.code}" />
+            </p:column>
+            <p:column width="50">
+                <h:outputText value="#{e.description}" />
+            </p:column>
+        </p:autoComplete>        
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.LIST}">
+        <h:outputText rendered="#{!edit and field!=null}" value="#{cft.listValues[field]} (#{field})" styleClass="field-value" />
+        <p:selectOneMenu value="#{field}" required="#{false and required}" rendered="#{edit}" label="#{label}">
+            <f:selectItem itemValue="#{null}" itemLabel="#{placeholder}" />
+            <f:selectItems value="#{cft.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
+        </p:selectOneMenu>
+    </c:if>
 </ui:composition>
 
 </html>

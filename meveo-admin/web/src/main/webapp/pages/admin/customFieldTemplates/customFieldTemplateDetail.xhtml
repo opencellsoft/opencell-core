@@ -37,7 +37,7 @@
             	<hf:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="15" newLine="true"/>
             </h:panelGroup>
             <hf:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15" 
-            	listenerUpdate=":formPanel:formId:calendar :formPanel:formId:valueRequiredField" />
+            	listenerUpdate=":formPanel:formId:calendar" />
             <h:panelGroup id="calendar">
                 <hf:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}"
                     rendered="#{customFieldTemplateBean.entity.versionable}" />

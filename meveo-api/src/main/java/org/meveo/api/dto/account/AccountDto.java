@@ -52,16 +52,9 @@ public abstract class AccountDto implements Serializable {
 		setAddress(new AddressDto(e.getAddress()));
 
 		if (e.getCustomFields() != null) {
-			for (Map.Entry<String, CustomFieldInstance> entry : e.getCustomFields().entrySet()) {
-				CustomFieldDto cfDto = new CustomFieldDto();
-				cfDto.setCode(entry.getValue().getCode());
-				cfDto.setDateValue(entry.getValue().getDateValue());
-				cfDto.setDescription(entry.getValue().getDescription());
-				cfDto.setDoubleValue(entry.getValue().getDoubleValue());
-				cfDto.setLongValue(entry.getValue().getLongValue());
-				cfDto.setStringValue(entry.getValue().getStringValue());
-				customFields.getCustomField().add(cfDto);
-			}
+		    for (CustomFieldInstance cfi : e.getCustomFields().values()) {
+                customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+            }
 		}
 
 		loaded = true;

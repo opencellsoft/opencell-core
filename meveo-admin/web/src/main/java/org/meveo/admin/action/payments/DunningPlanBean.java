@@ -103,13 +103,6 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 	}
 
 	@Override
-	public String saveOrUpdate(boolean killConversation, String objectName, Long objectId) throws BusinessException {
-		super.saveOrUpdate(killConversation, objectName, objectId);
-		return "/pages/payments/dunning/dunningPlanDetail?dunningPlanId=" + entity.getId()
-				+ "&faces-redirect=true&includeViewParams=true";
-	}
-
-	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		super.saveOrUpdate(killConversation);
 		return "/pages/payments/dunning/dunningPlanDetail?dunningPlanId=" + entity.getId()

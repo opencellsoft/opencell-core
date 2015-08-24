@@ -104,13 +104,12 @@
 			<h:panelGroup styleClass="col2">
 					<p:tabView id="parentTab" styleClass="tab-parent">
 						<p:tab title="#{messages['billingAccount.tab.account']}">
-							<hf:formPanel id="formBillingAccountPanel"
-								label="#{messages['billingAccount.billingAccountPanel']}"
-								backingBean="#{billingAccountBean}" useCustomIdParam="true" addCustomFieldDialog="true">
-								
-									<p:tabView id="childTab" styleClass="tab-child" activeIndex="#{billingAccountBean.activeTab}">
-										<p:ajax event="tabChange" listener="#{billingAccountBean.onTabChange}"/>
-										<p:tab title="#{messages['billingAccount.tab.account']}" id="tab0">
+                        <hf:formPanel id="formBillingAccountPanel" ajaxSubmit="true" submitPartialProcess=":parentTab:formBillingAccountPanel:formId:childTab"
+                            label="#{messages['billingAccount.billingAccountPanel']}" backingBean="#{billingAccountBean}" useCustomIdParam="true">
+
+                            <p:tabView id="childTab" styleClass="tab-child">
+
+                                <p:tab title="#{messages['billingAccount.tab.account']}" id="tab0">
 													<hf:formField id="customerSelectId"
 														label="#{messages['billingAccount.customerAccount']}"
 														field="customerAccount" valueLabelField="code" required="true"
@@ -239,12 +238,12 @@
 													<hf:formField
 														label="#{messages['accountEntity.defaultLevel']}"
 														field="defaultLevel" isMessage="true" />
-											</p:fieldset>
-										</p:tab>
+                                    </p:fieldset>
+                                </p:tab>
 
 										<p:tab id="tab1"
 											title="#{messages['billingAccount.tab.information']}">
-											<p:fieldset legend="#{messages['commons.contacts']}">
+                                    <p:fieldset legend="#{messages['commons.contacts']}">
 													<hf:formField label="#{messages['address.address1']}"
 														field="address" childField="address1" 
 														size="80" maxlength="80" />
@@ -359,7 +358,7 @@
 										</p:tab>
 
 										<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
-											<hf:customFields id="customFields" messagesId=":parentTab:formBillingAccountPanel:formId:messages" periodDialogIdPrefix=":parentTab:formBillingAccountPanel"/>
+                                    <hf:customFields id="customFields" backingBean="#{billingAccountBean}" messagesId=":parentTab:formBillingAccountPanel:formId:messages" />
 										</p:tab>
 
 										<p:tab title="#{messages['counterPeriod.title']}" id="tab3"
@@ -519,7 +518,7 @@
 					<!-- update=":#{p:component('formBillingAccountPanel')}" -->
 					<p:panel styleClass="action-buttons">
 						<p:commandButton action="#{billingAccountBean.terminateAccount()}"
-							value="#{messages['button.terminateButton']}" ajax="true"
+							value="#{messages['button.terminateButton']}"
 							onsuccess="PF('dlg_billingAccountTerminationPopup').hide()"
 							update=":#{p:component('operationsForm')} :#{p:component('childTab')} :parentTab:formBillingAccountPanel:formId:messages">
 						</p:commandButton>

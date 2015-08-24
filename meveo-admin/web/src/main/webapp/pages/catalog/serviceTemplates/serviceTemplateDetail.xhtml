@@ -144,7 +144,7 @@
 									icon="ui-icon-document" />
 								<p:commandButton
 									action="#{serviceTemplateBean.deleteServiceRecurringChargeTemplate(entity)}"
-									icon="ui-icon-trash" ajax="true"
+									icon="ui-icon-trash"
 									update=":tabView:serviceRecurringChargeTempalte_panel,:tabView:formPanelRecurringCharge:formRecurringCharge" />
 
 							</p:column>
@@ -237,7 +237,7 @@
 									icon="ui-icon-document" />
 								<p:commandButton
 									action="#{serviceTemplateBean.deleteServiceSubscriptionChargeTemplate(entity)}"
-									icon="ui-icon-trash" ajax="true"
+									icon="ui-icon-trash"
 									update=":tabView:serviceSubscriptionChargeTempalte_panel,:tabView:formPanelSubscriptionCharge:formSubscriptionCharge" />
 
 							</p:column>
@@ -327,7 +327,7 @@
 									icon="ui-icon-document" />
 								<p:commandButton
 									action="#{serviceTemplateBean.deleteServiceTerminationChargeTemplate(entity)}"
-									icon="ui-icon-trash" ajax="true"
+									icon="ui-icon-trash"
 									update=":tabView:serviceTerminationChargeTempalte_panel,:tabView:formPanelTerminationCharge:formTerminationCharge" />
 
 							</p:column>
@@ -418,7 +418,7 @@
 									icon="ui-icon-document" />
 								<p:commandButton
 									action="#{serviceTemplateBean.deleteServiceUsageChargeTemplate(entity)}"
-									icon="ui-icon-trash" ajax="true"
+									icon="ui-icon-trash"
 									update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formPanelUsageCharge:formUsageCharge" />
 							</p:column>
 						</hftl:dataList>
@@ -469,9 +469,11 @@
 				</p:tab>
 
 				<p:tab title="#{messages['customFieldTemplate.panel']}" rendered="#{serviceTemplateBean.entity.id!=null}">
-					<hf:formPanel id="cfFormPanel" backingBean="#{serviceTemplateBean}" columns="1" addCustomFieldDialog="true">
-						<hf:customFields id="customFields" messagesId=":tabView:cfFormPanel:formId:messages" periodDialogIdPrefix=":tabView:cfFormPanel"/>
-					</hf:formPanel>
+    				<hf:formPanel id="cfFormPanel" backingBean="#{serviceTemplateBean}" ajaxSubmit="true" submitPartialProcess=":tabView:cfFormPanel:formId:fieldGroup">
+                        <h:panelGroup id="fieldGroup">
+    						<hf:customFields id="customFields" backingBean="#{serviceTemplateBean}" messagesId=":tabView:cfFormPanel:formId:messages" />
+    					</h:panelGroup>
+                    </hf:formPanel>
 				</p:tab>
 
 			</p:tabView>

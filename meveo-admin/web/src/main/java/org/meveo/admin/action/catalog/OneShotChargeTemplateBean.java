@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -140,7 +141,12 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 			return null;
 		}
 
-		return super.saveOrUpdate(killConversation);
+		String outcome = super.saveOrUpdate(killConversation);
+        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
+            return null;
+        } else {
+            return outcome;
+        }
 	}
 
 	/**

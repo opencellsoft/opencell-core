@@ -22,92 +22,81 @@ import org.meveo.model.mediation.Access;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccessDto extends BaseDto {
 
-	private static final long serialVersionUID = 6495211234062070223L;
+    private static final long serialVersionUID = 6495211234062070223L;
 
-	@XmlAttribute(required = false)
-	private String code;
+    @XmlAttribute(required = false)
+    private String code;
 
-	@XmlElement(required = true)
-	private String subscription;
+    @XmlElement(required = true)
+    private String subscription;
 
-	private Date startDate;
-	private Date endDate;
-	
-	@XmlElement(required = false)
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+    private Date startDate;
+    private Date endDate;
 
-	public AccessDto() {
+    @XmlElement(required = false)
+    private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	}
+    public AccessDto() {
 
-	public AccessDto(Access e) {
-		code = e.getAccessUserId();
-		startDate = e.getStartDate();
-		endDate = e.getEndDate();
+    }
 
-		if (e.getSubscription() != null) {
-			subscription = e.getSubscription().getCode();
-		}
-		if (e.getCustomFields() != null) {
-			for (Map.Entry<String, CustomFieldInstance> entry : e.getCustomFields().entrySet()) {
-				CustomFieldDto cfDto = new CustomFieldDto();
-				cfDto.setCode(entry.getValue().getCode());
-				cfDto.setDateValue(entry.getValue().getDateValue());
-				cfDto.setDescription(entry.getValue().getDescription());
-				cfDto.setDoubleValue(entry.getValue().getDoubleValue());
-				cfDto.setLongValue(entry.getValue().getLongValue());
-				cfDto.setStringValue(entry.getValue().getStringValue());
-				customFields.getCustomField().add(cfDto);
-			}
-		}
-	}
+    public AccessDto(Access e) {
+        code = e.getAccessUserId();
+        startDate = e.getStartDate();
+        endDate = e.getEndDate();
 
-	public Date getStartDate() {
-		return startDate;
-	}
+        if (e.getSubscription() != null) {
+            subscription = e.getSubscription().getCode();
+        }
+        if (e.getCustomFields() != null) {
+            for (CustomFieldInstance cfi : e.getCustomFields().values()) {
+                customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+            }
+        }
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public String getSubscription() {
-		return subscription;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public void setSubscription(String subscription) {
-		this.subscription = subscription;
-	}
+    public String getSubscription() {
+        return subscription;
+    }
 
-	@Override
-	public String toString() {
-		return "AccessDto [code=" + code + ", subscription=" + subscription + ", startDate=" + startDate + ", endDate="
-				+ endDate +", customFields=" + customFields + "]";
-	}
+    public void setSubscription(String subscription) {
+        this.subscription = subscription;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    @Override
+    public String toString() {
+        return "AccessDto [code=" + code + ", subscription=" + subscription + ", startDate=" + startDate + ", endDate=" + endDate + ", customFields=" + customFields + "]";
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
-	
-	
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 }

@@ -53,16 +53,16 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Column(name = "DEFAULT_VALUE", length = 50)
     private String defaultValue;
-    
-    @Column(name="ENTITY_CLAZZ")
+
+    @Column(name = "ENTITY_CLAZZ")
     private String entityClazz;
-    
-    @Column(name="STORAGE_TYPE")
+
+    @Column(name = "STORAGE_TYPE")
     @Enumerated(EnumType.STRING)
-    private CustomFieldStorageTypeEnum storageType=CustomFieldStorageTypeEnum.SINGLE;
-    
+    private CustomFieldStorageTypeEnum storageType = CustomFieldStorageTypeEnum.SINGLE;
+
     @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
-	private boolean triggerEndPeriodEvent;
+    private boolean triggerEndPeriodEvent;
 
     @Transient
     private CustomFieldInstance instance;
@@ -123,29 +123,29 @@ public class CustomFieldTemplate extends BusinessEntity {
         this.defaultValue = defaultValue;
     }
 
-	public String getEntityClazz() {
-		return entityClazz;
-	}
+    public String getEntityClazz() {
+        return entityClazz;
+    }
 
-	public void setEntityClazz(String entityClazz) {
-		this.entityClazz = entityClazz;
-	}
+    public void setEntityClazz(String entityClazz) {
+        this.entityClazz = entityClazz;
+    }
 
-	public Object getDefaultValueConverted() {
+    public Object getDefaultValueConverted() {
         if (defaultValue != null) {
-        	try{
-        		if (fieldType == CustomFieldTypeEnum.DOUBLE) {
-        			return Double.parseDouble(defaultValue);
-        		} else if (fieldType == CustomFieldTypeEnum.LONG) {
-        			return Long.parseLong(defaultValue);
-        		} else if(fieldType==CustomFieldTypeEnum.STRING||fieldType==CustomFieldTypeEnum.LIST||fieldType==CustomFieldTypeEnum.TEXT_AREA){
-        			return defaultValue;
-        		}else if (fieldType == CustomFieldTypeEnum.DATE) {
-        			return null; // TODO implement deserialization from a date
-        		}
-        	}catch(Exception e){
-        		return null;
-        	}
+            try {
+                if (fieldType == CustomFieldTypeEnum.DOUBLE) {
+                    return Double.parseDouble(defaultValue);
+                } else if (fieldType == CustomFieldTypeEnum.LONG) {
+                    return Long.parseLong(defaultValue);
+                } else if (fieldType == CustomFieldTypeEnum.STRING || fieldType == CustomFieldTypeEnum.LIST || fieldType == CustomFieldTypeEnum.TEXT_AREA) {
+                    return defaultValue;
+                } else if (fieldType == CustomFieldTypeEnum.DATE) {
+                    return null; // TODO implement deserialization from a date
+                }
+            } catch (Exception e) {
+                return null;
+            }
         }
         return null;
     }
@@ -158,23 +158,19 @@ public class CustomFieldTemplate extends BusinessEntity {
         return instance;
     }
 
-	public CustomFieldStorageTypeEnum getStorageType() {
-		return storageType;
-	}
+    public CustomFieldStorageTypeEnum getStorageType() {
+        return storageType;
+    }
 
-	public void setStorageType(CustomFieldStorageTypeEnum storageType) {
-		this.storageType = storageType;
-		if(storageType==CustomFieldStorageTypeEnum.LIST||storageType==CustomFieldStorageTypeEnum.MAP){
-			valueRequired=true;
-		}
-	}
+    public void setStorageType(CustomFieldStorageTypeEnum storageType) {
+        this.storageType = storageType;
+    }
 
-	public boolean isTriggerEndPeriodEvent() {
-		return triggerEndPeriodEvent;
-	}
+    public boolean isTriggerEndPeriodEvent() {
+        return triggerEndPeriodEvent;
+    }
 
-	public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
-		this.triggerEndPeriodEvent = triggerEndPeriodEvent;
-	}
-    
+    public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
+        this.triggerEndPeriodEvent = triggerEndPeriodEvent;
+    }
 }

@@ -232,17 +232,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("id", id);
 
-		E e = (E) query.getResultList().get(0);
-
-		if (e != null) {
-			checkProvider(e);
-			if (refresh) {
-				log.debug("refreshing loaded entity");
-				getEntityManager().refresh(e);
-			}
-		}
-		log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
-		return e;
+        List<E> results = query.getResultList();
+        E e = null;
+        if (!results.isEmpty()) {
+            e = (E)results.get(0);
+            checkProvider(e);
+            if (refresh) {
+                log.debug("refreshing loaded entity");
+                getEntityManager().refresh(e);
+            }
+        }
+        log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
+        return e;
 	}
 
 	@Override
@@ -369,7 +370,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@Override
 	public E update(E e, User updater) {
 		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
-
+		
 		if (e instanceof IAuditable) {
 			if (updater != null) {
 				((IAuditable) e).updateAudit(updater);

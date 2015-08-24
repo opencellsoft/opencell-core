@@ -8,11 +8,13 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
@@ -68,7 +70,7 @@ public abstract class BaseApi {
      * @param currentUser User that authenticated for API
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
-     * @throws MissingParameterException 
+     * @throws MissingParameterException
      */
     protected void populateCustomFields(AccountLevelEnum cfType, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, String cfiFieldName, User currentUser)
             throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
@@ -130,59 +132,95 @@ public abstract class BaseApi {
                         entity.getCustomFields().put(cfi.getCode(), cfi);
                     }
 
-                    // Update
+                    // Update TODO
                     cfi.setActive(true);
                     cfi.updateAudit(currentUser);
 
                     if (cfi.isVersionable()) {
 
                         if (cfi.getCalendar() != null) {
+                            if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
+                                switch (cft.getFieldType()) {
+                                case DATE:
+                                    cfi.setDateValue(cf.getDateValue(), cf.getDateValue());
+                                    break;
+                                case DOUBLE:
+                                    cfi.setDoubleValue(cf.getDoubleValue(), cf.getDateValue());
+                                    break;
+                                case LONG:
+                                    cfi.setLongValue(cf.getLongValue(), cf.getDateValue());
+                                    break;
+                                case LIST:
+                                case STRING:
+                                case TEXT_AREA:
+                                    cfi.setStringValue(cf.getStringValue(), cf.getDateValue());
+                                    break;
+                                case ENTITY:
+                                    cfi.setEntityReferenceValue(cf.getEntityReferenceValue().fromDTO(), cf.getDateValue());
+                                }
 
-                            switch (cft.getFieldType()) {
-                            case DATE:
-                                cfi.setDateValue(cf.getDateValue(), cf.getDateValue());
-                                break;
-                            case DOUBLE:
-                                cfi.setDoubleValue(cf.getDoubleValue(), cf.getDateValue());
-                                break;
-                            case LONG:
-                                cfi.setLongValue(cf.getLongValue(), cf.getDateValue());
-                                break;
-                            case LIST:
-                            case STRING:
-                                cfi.setStringValue(cf.getStringValue(), cf.getDateValue());
+                            } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
+                                cfi.setListValue(CustomFieldValueDto.fromDTO(cf.getListValue()), cf.getDateValue());
+
+                            } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+                                cfi.setMapValue(CustomFieldValueDto.fromDTO(cf.getMapValue()), cf.getDateValue());
                             }
 
                         } else {
+                            if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
+                                switch (cft.getFieldType()) {
+                                case DATE:
+                                    cfi.setDateValue(cf.getDateValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                    break;
+                                case DOUBLE:
+                                    cfi.setDoubleValue(cf.getDoubleValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                    break;
+                                case LONG:
+                                    cfi.setLongValue(cf.getLongValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                    break;
+                                case LIST:
+                                case STRING:
+                                case TEXT_AREA:
+                                    cfi.setStringValue(cf.getStringValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                    break;
+                                case ENTITY:
+                                    cfi.setEntityReferenceValue(cf.getEntityReferenceValue().fromDTO(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                }
+
+                            } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
+                                cfi.setListValue(CustomFieldValueDto.fromDTO(cf.getListValue()), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+
+                            } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+                                cfi.setMapValue(CustomFieldValueDto.fromDTO(cf.getMapValue()), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                            }
+                        }
+
+                    } else {
+                        if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
                             switch (cft.getFieldType()) {
                             case DATE:
-                                cfi.setDateValue(cf.getDateValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                cfi.setDateValue(cf.getDateValue());
                                 break;
                             case DOUBLE:
-                                cfi.setDoubleValue(cf.getDoubleValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                cfi.setDoubleValue(cf.getDoubleValue());
                                 break;
                             case LONG:
-                                cfi.setLongValue(cf.getLongValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                cfi.setLongValue(cf.getLongValue());
                                 break;
                             case LIST:
                             case STRING:
-                                cfi.setStringValue(cf.getStringValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                            case TEXT_AREA:
+                                cfi.setStringValue(cf.getStringValue());
+                                break;
+                            case ENTITY:
+                                cfi.setEntityReferenceValue(cf.getEntityReferenceValue().fromDTO());
                             }
-                        }
-                    } else {
-                        switch (cft.getFieldType()) {
-                        case DATE:
-                            cfi.setDateValue(cf.getDateValue());
-                            break;
-                        case DOUBLE:
-                            cfi.setDoubleValue(cf.getDoubleValue());
-                            break;
-                        case LONG:
-                            cfi.setLongValue(cf.getLongValue());
-                            break;
-                        case LIST:
-                        case STRING:
-                            cfi.setStringValue(cf.getStringValue());
+
+                        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
+                            cfi.setListValue(CustomFieldValueDto.fromDTO(cf.getListValue()));
+
+                        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+                            cfi.setMapValue(CustomFieldValueDto.fromDTO(cf.getMapValue()));
                         }
                     }
 

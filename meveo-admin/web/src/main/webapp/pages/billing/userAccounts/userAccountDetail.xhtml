@@ -131,11 +131,10 @@
 						entity="#{userAccountBean.entity}" />
             </h:panelGroup>
 			<h:panelGroup styleClass="col2">
-					<hf:formPanel id="userAccountFormPanel"
+					<hf:formPanel id="userAccountFormPanel" ajaxSubmit="true" submitPartialProcess=":userAccountFormPanel:formId:userAccountTab"
 						label="#{messages['userAccount.userAccountPanel']}"
-						backingBean="#{userAccountBean}" useCustomIdParam="true" addCustomFieldDialog="true">
-						<p:tabView id="userAccountTab" activeTab="#{userAccountbean.activeTab}">
-							<p:ajax event="tabChange" listener="#{userAccountBean.onTabChange}"/>
+						backingBean="#{userAccountBean}" useCustomIdParam="true">
+						<p:tabView id="userAccountTab">
 							<p:tab title="#{messages['billingAccount.tab.account']}" id="tab0">
 									<hf:formField id="billingAccountSelectId"
 										label="#{messages['userAccount.billingAccount']}"
@@ -204,7 +203,7 @@
 							</p:tab>
 
 							<p:tab title="#{messages['customFieldTemplate.panel']}" id="tab2">
-								<hf:customFields id="customFields" messagesId=":userAccountFormPanel:formId:messages" periodDialogIdPrefix=":userAccountFormPanel"/>
+								<hf:customFields id="customFields" backingBean="#{userAccountBean}" messagesId=":userAccountFormPanel:formId:messages"/>
 							</p:tab>
 
 							<c:forEach items="#{userAccountBean.entity.prepaidWallets}"
@@ -446,7 +445,7 @@
 						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
 					<f:facet name="buttons">
 						<p:commandButton action="#{userAccountBean.terminateAccount()}"
-							value="#{messages['button.terminateButton']}" ajax="true"
+							value="#{messages['button.terminateButton']}"
 							onsuccess="PF('dlg_userAccountTerminationPopup').hide()"
 							update=":#{p:component('operationsForm')} :userAccountFormPanel:formId:messages">
 						</p:commandButton>

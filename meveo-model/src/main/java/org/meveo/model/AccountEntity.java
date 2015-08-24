@@ -16,8 +16,10 @@
  */
 package org.meveo.model;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -367,4 +369,24 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 		return getInheritedCustomDoubleValue(code);
 	}
 
+    @Override
+    public String toString() {
+        final int maxLen = 10;
+        return String.format("AccountEntity [customFields=%s, code=%s, id=%s]", customFields != null ? toString(customFields.entrySet(), maxLen) : null, code, id);
+    }
+
+    private String toString(Collection<?> collection, int maxLen) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        int i = 0;
+        for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
+            if (i > 0)
+                builder.append(", ");
+            builder.append(iterator.next());
+        }
+        builder.append("]");
+        return builder.toString();
+    }
+
+	
 }

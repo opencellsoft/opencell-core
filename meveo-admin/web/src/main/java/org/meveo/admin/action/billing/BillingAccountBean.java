@@ -38,7 +38,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
-import org.meveo.admin.jsf.validator.RibValidator;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
@@ -48,7 +47,6 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -205,7 +203,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
 
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
+	            return null;
+	        } else {
+	            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+	        }
+			
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {

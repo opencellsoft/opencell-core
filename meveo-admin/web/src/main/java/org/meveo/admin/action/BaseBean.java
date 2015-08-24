@@ -38,7 +38,6 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -63,7 +62,6 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lapis.jsfexporter.csv.CSVExportOptions;
@@ -1381,7 +1379,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
         AccountLevelEnum accountLevel = this.getClass().getAnnotation(CustomFieldEnabledBean.class).accountLevel();
         List<CustomFieldTemplate> result= customFieldTemplateService.findByAccountLevel(accountLevel);
-        log.debug("find {} by fieldType={} for {}",result.size(),accountLevel,this.getClass());
+        log.debug("Found {} custom field templates by fieldType={} for {}",result.size(),accountLevel,this.getClass());
         return result;
     }
     

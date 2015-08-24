@@ -1,41 +1,35 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
-	
-		<c:if test="#{providerBean.edit}">
-			<hftl:entityPopup id="languagePopup" header="#{messages['tradingLanguage.popup.header']}"
+    <ui:define name="body">
+
+        <c:if test="#{providerBean.edit}">
+            <hftl:entityPopup id="languagePopup" header="#{messages['tradingLanguage.popup.header']}"
 				updateField=":providerFormPanel:providerFormId:languageSelectedId:languageSelectedId" selection="#{providerBean.entity.language}"
 				backingBean="#{languageBean}" searchField1Label="#{messages['language.languageCode']}" searchField1="languageCode"
 				column1Label="#{messages['language.languageCode']}" column1="languageCode" column2Label="#{messages['tradingLanguage.prDescription']}"
 				column2="descriptionEn" eventBackingBean="#{providerBean}">
-			</hftl:entityPopup>
-		</c:if>
-		<p:panel>
-			<h:form id="crumbmenuForm">
-				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+            </hftl:entityPopup>
+        </c:if>
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
 					<p:menuitem outcome="providers"
 						value="#{messages['menu.providers']}" />
-				</p:breadCrumb>
-			</h:form>
-		</p:panel>
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
 
-		<hf:formPanel id="providerFormPanel" formId="providerFormId"
-				label="#{messages['provider.title']}" backingBean="#{providerBean}">
-				<p:tabView id="tabView">
-			<p:tab title="#{messages['customer.tab.information']}">
+        <hf:formPanel id="providerFormPanel" formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormPanel:providerFormId:tabView"
+            label="#{messages['provider.title']}" backingBean="#{providerBean}">
+            <p:tabView id="tabView">
+                <p:tab title="#{messages['customer.tab.information']}">
 							<hf:formField label="#{messages['businessEntity.code']}"
 								field="code" maxlength="35" required="true" />
 
@@ -83,12 +77,12 @@
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayEdrs']}"
 								field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs"/>	
-				</p:tab>
-				
-				<p:tab title="#{messages['customFieldTemplate.panel']}">
-					<hf:customFields id="customFields" messagesId=":formPanel:formId:messages"/>
-				</p:tab>
-				</p:tabView>
-			</hf:formPanel>
-	</ui:define>
+                </p:tab>
+
+                <p:tab title="#{messages['customFieldTemplate.panel']}">
+                    <hf:customFields id="customFields" backingBean="#{providerBean}" messagesId=":providerFormPanel:providerFormId:messages" />
+                </p:tab>
+            </p:tabView>
+        </hf:formPanel>
+    </ui:define>
 </ui:composition>

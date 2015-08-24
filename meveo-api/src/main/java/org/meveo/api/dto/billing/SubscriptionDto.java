@@ -26,175 +26,168 @@ import org.meveo.model.mediation.Access;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubscriptionDto extends BaseDto {
 
-	private static final long serialVersionUID = -6021918810749866648L;
+    private static final long serialVersionUID = -6021918810749866648L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlAttribute(required = true)
-	private String description;
+    @XmlAttribute(required = true)
+    private String description;
 
-	@XmlElement(required = true)
-	private String userAccount;
+    @XmlElement(required = true)
+    private String userAccount;
 
-	@XmlElement(required = true)
-	private String offerTemplate;
+    @XmlElement(required = true)
+    private String offerTemplate;
 
-	@XmlElement(required = true)
-	private Date subscriptionDate;
+    @XmlElement(required = true)
+    private Date subscriptionDate;
 
-	private Date terminationDate;
-	private String status;
+    private Date terminationDate;
+    private String status;
 
-	@XmlElement(required = false)
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+    @XmlElement(required = false)
+    private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	@XmlElement(required = false)
-	private AccessesDto accesses = new AccessesDto();
+    @XmlElement(required = false)
+    private AccessesDto accesses = new AccessesDto();
 
-	@XmlElement(required = false)
-	private ServiceInstancesDto services = new ServiceInstancesDto();
+    @XmlElement(required = false)
+    private ServiceInstancesDto services = new ServiceInstancesDto();
 
-	private String terminationReason;
+    private String terminationReason;
 
-	public SubscriptionDto() {
+    public SubscriptionDto() {
 
-	}
+    }
 
-	public SubscriptionDto(Subscription e) {
-		code = e.getCode();
-		description = e.getDescription();
+    public SubscriptionDto(Subscription e) {
+        code = e.getCode();
+        description = e.getDescription();
 
-		if (e.getUserAccount() != null) {
-			userAccount = e.getUserAccount().getCode();
-		}
+        if (e.getUserAccount() != null) {
+            userAccount = e.getUserAccount().getCode();
+        }
 
-		if (e.getOffer() != null) {
-			offerTemplate = e.getOffer().getCode();
-		}
+        if (e.getOffer() != null) {
+            offerTemplate = e.getOffer().getCode();
+        }
 
-		subscriptionDate = e.getSubscriptionDate();
-		terminationDate = e.getTerminationDate();
+        subscriptionDate = e.getSubscriptionDate();
+        terminationDate = e.getTerminationDate();
 
-		if (e.getAccessPoints() != null) {
-			for (Access ac : e.getAccessPoints()) {
-				accesses.getAccess().add(new AccessDto(ac));
-			}
-		}
+        if (e.getAccessPoints() != null) {
+            for (Access ac : e.getAccessPoints()) {
+                accesses.getAccess().add(new AccessDto(ac));
+            }
+        }
 
-		if (e.getCustomFields() != null) {
-			for (Map.Entry<String, CustomFieldInstance> entry : e.getCustomFields().entrySet()) {
-				CustomFieldDto cfDto = new CustomFieldDto();
-				cfDto.setCode(entry.getValue().getCode());
-				cfDto.setDateValue(entry.getValue().getDateValue());
-				cfDto.setDescription(entry.getValue().getDescription());
-				cfDto.setDoubleValue(entry.getValue().getDoubleValue());
-				cfDto.setLongValue(entry.getValue().getLongValue());
-				cfDto.setStringValue(entry.getValue().getStringValue());
-				customFields.getCustomField().add(cfDto);
-			}
-		}
+        if (e.getCustomFields() != null) {
+            for (CustomFieldInstance cfi : e.getCustomFields().values()) {
+                customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+            }
+        }
 
-		if (e.getServiceInstances() != null) {
-			for (ServiceInstance serviceInstance : e.getServiceInstances()) {
-				services.getServiceInstance().add(new ServiceInstanceDto(serviceInstance));
-			}
-		}
-	}
+        if (e.getServiceInstances() != null) {
+            for (ServiceInstance serviceInstance : e.getServiceInstances()) {
+                services.getServiceInstance().add(new ServiceInstanceDto(serviceInstance));
+            }
+        }
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getUserAccount() {
-		return userAccount;
-	}
+    public String getUserAccount() {
+        return userAccount;
+    }
 
-	public void setUserAccount(String userAccount) {
-		this.userAccount = userAccount;
-	}
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
+    }
 
-	public String getOfferTemplate() {
-		return offerTemplate;
-	}
+    public String getOfferTemplate() {
+        return offerTemplate;
+    }
 
-	public void setOfferTemplate(String offerTemplate) {
-		this.offerTemplate = offerTemplate;
-	}
+    public void setOfferTemplate(String offerTemplate) {
+        this.offerTemplate = offerTemplate;
+    }
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	public void setSubscriptionDate(Date subscriptionDate) {
-		this.subscriptionDate = subscriptionDate;
-	}
+    public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
 
-	public Date getTerminationDate() {
-		return terminationDate;
-	}
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
 
-	public void setTerminationDate(Date terminationDate) {
-		this.terminationDate = terminationDate;
-	}
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
+    }
 
-	@Override
-	public String toString() {
-		return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate + ", subscriptionDate="
-				+ subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status + ", customFields=" + customFields + ", accesses=" + accesses + ", services="
-				+ services + ", terminationReason=" + terminationReason + "]";
-	}
+    @Override
+    public String toString() {
+        return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate + ", subscriptionDate="
+                + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status + ", customFields=" + customFields + ", accesses=" + accesses + ", services="
+                + services + ", terminationReason=" + terminationReason + "]";
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public AccessesDto getAccesses() {
-		return accesses;
-	}
+    public AccessesDto getAccesses() {
+        return accesses;
+    }
 
-	public void setAccesses(AccessesDto accesses) {
-		this.accesses = accesses;
-	}
+    public void setAccesses(AccessesDto accesses) {
+        this.accesses = accesses;
+    }
 
-	public ServiceInstancesDto getServices() {
-		return services;
-	}
+    public ServiceInstancesDto getServices() {
+        return services;
+    }
 
-	public void setServices(ServiceInstancesDto services) {
-		this.services = services;
-	}
+    public void setServices(ServiceInstancesDto services) {
+        this.services = services;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
-	public String getTerminationReason() {
-		return terminationReason;
-	}
+    public String getTerminationReason() {
+        return terminationReason;
+    }
 
-	public void setTerminationReason(String terminationReason) {
-		this.terminationReason = terminationReason;
-	}
+    public void setTerminationReason(String terminationReason) {
+        this.terminationReason = terminationReason;
+    }
 
 }

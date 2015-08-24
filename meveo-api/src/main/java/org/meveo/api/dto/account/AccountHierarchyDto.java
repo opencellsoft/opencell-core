@@ -2,8 +2,6 @@ package org.meveo.api.dto.account;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,280 +18,274 @@ import org.meveo.model.crm.Customer;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccountHierarchyDto implements Serializable {
 
-	private static final long serialVersionUID = -8469973066490541924L;
+    private static final long serialVersionUID = -8469973066490541924L;
 
-	@XmlElement(required = true)
-	private String email;
+    @XmlElement(required = true)
+    private String email;
 
-	@XmlElement(required = true)
-	private int paymentMethod = 1;
+    @XmlElement(required = true)
+    private int paymentMethod = 1;
 
-	private String customerId;
-	private String sellerCode;
-	private String customerBrandCode;
-	private String customerCategoryCode;
-	private String currencyCode;
-	private String countryCode;
-	private String languageCode;
+    private String customerId;
+    private String sellerCode;
+    private String customerBrandCode;
+    private String customerCategoryCode;
+    private String currencyCode;
+    private String countryCode;
+    private String languageCode;
 
-	private String titleCode;
-	private String firstName;
-	private String lastName;
-	private Date birthDate;
-	private String phoneNumber;
+    private String titleCode;
+    private String firstName;
+    private String lastName;
+    private Date birthDate;
+    private String phoneNumber;
 
-	private String billingCycleCode;
+    private String billingCycleCode;
 
-	private String address1;
-	private String address2;
-	private String zipCode;
-	private String city;
-	
-	private CustomFieldsDto customFields;
+    private String address1;
+    private String address2;
+    private String zipCode;
+    private String city;
 
-	@XmlTransient
-	private int limit;
+    private CustomFieldsDto customFields;
 
-	@XmlTransient
-	private String sortField;
+    @XmlTransient
+    private int limit;
 
-	@XmlTransient
-	private int index;
+    @XmlTransient
+    private String sortField;
 
-	public AccountHierarchyDto() {
+    @XmlTransient
+    private int index;
 
-	}
+    public AccountHierarchyDto() {
 
-	public AccountHierarchyDto(Customer customer) {
-		this.setCustomerId(customer.getCode());
-		this.setEmail(customer.getContactInformation().getEmail());
-		this.setPhoneNumber(customer.getContactInformation().getPhone());
-		if (customer.getSeller() != null) {
-			this.sellerCode = customer.getSeller().getCode();
-		}
+    }
 
-		if (customer.getAddress() != null) {
-			this.setAddress1(customer.getAddress().getAddress1());
-			this.setAddress2(customer.getAddress().getAddress2());
-			this.setZipCode(customer.getAddress().getZipCode());
-			this.setCountryCode(customer.getAddress().getCountry());
-			this.setCity(customer.getAddress().getCity());
-		}
+    public AccountHierarchyDto(Customer customer) {
+        this.setCustomerId(customer.getCode());
+        this.setEmail(customer.getContactInformation().getEmail());
+        this.setPhoneNumber(customer.getContactInformation().getPhone());
+        if (customer.getSeller() != null) {
+            this.sellerCode = customer.getSeller().getCode();
+        }
 
-		if (customer.getName() != null) {
-			if (customer.getName().getTitle() != null) {
-				this.setTitleCode(customer.getName().getTitle().getCode());
-			}
-			this.setLastName(customer.getName().getLastName());
-			this.setFirstName(customer.getName().getFirstName());
-		}
-		
-		if (customer.getCustomFields() != null) {
-			customFields = new CustomFieldsDto();
+        if (customer.getAddress() != null) {
+            this.setAddress1(customer.getAddress().getAddress1());
+            this.setAddress2(customer.getAddress().getAddress2());
+            this.setZipCode(customer.getAddress().getZipCode());
+            this.setCountryCode(customer.getAddress().getCountry());
+            this.setCity(customer.getAddress().getCity());
+        }
 
-			Set<String> keys = customer.getCustomFields().keySet();
-			Iterator<String> key = keys.iterator();
-			while (key.hasNext()) {
-				CustomFieldInstance cfi = customer.getCustomFields().get(key.next());
-				customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
-			}
-		}
-	}
+        if (customer.getName() != null) {
+            if (customer.getName().getTitle() != null) {
+                this.setTitleCode(customer.getName().getTitle().getCode());
+            }
+            this.setLastName(customer.getName().getLastName());
+            this.setFirstName(customer.getName().getFirstName());
+        }
 
-	public String getCustomerId() {
-		return customerId;
-	}
+        if (customer.getCustomFields() != null) {
+            customFields = new CustomFieldsDto();
 
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
-	}
+            for (CustomFieldInstance cfi : customer.getCustomFields().values()) {
+                customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+            }
+        }
+    }
 
-	public String getSellerCode() {
-		return sellerCode;
-	}
+    public String getCustomerId() {
+        return customerId;
+    }
 
-	public void setSellerCode(String sellerCode) {
-		this.sellerCode = sellerCode;
-	}
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
 
-	public String getCustomerBrandCode() {
-		return customerBrandCode;
-	}
+    public String getSellerCode() {
+        return sellerCode;
+    }
 
-	public void setCustomerBrandCode(String customerBrandCode) {
-		this.customerBrandCode = customerBrandCode;
-	}
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
+    }
 
-	public String getCustomerCategoryCode() {
-		return customerCategoryCode;
-	}
+    public String getCustomerBrandCode() {
+        return customerBrandCode;
+    }
 
-	public void setCustomerCategoryCode(String customerCategoryCode) {
-		this.customerCategoryCode = customerCategoryCode;
-	}
+    public void setCustomerBrandCode(String customerBrandCode) {
+        this.customerBrandCode = customerBrandCode;
+    }
 
-	public String getCountryCode() {
-		return countryCode;
-	}
+    public String getCustomerCategoryCode() {
+        return customerCategoryCode;
+    }
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
-	}
+    public void setCustomerCategoryCode(String customerCategoryCode) {
+        this.customerCategoryCode = customerCategoryCode;
+    }
 
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
+    public String getCountryCode() {
+        return countryCode;
+    }
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getLanguageCode() {
-		return languageCode;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public String getBillingCycleCode() {
-		return billingCycleCode;
-	}
+    public String getLanguageCode() {
+        return languageCode;
+    }
 
-	public void setBillingCycleCode(String billingCycleCode) {
-		this.billingCycleCode = billingCycleCode;
-	}
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getBillingCycleCode() {
+        return billingCycleCode;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setBillingCycleCode(String billingCycleCode) {
+        this.billingCycleCode = billingCycleCode;
+    }
 
-	public String getZipCode() {
-		return zipCode;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getAddress1() {
-		return address1;
-	}
+    public String getZipCode() {
+        return zipCode;
+    }
 
-	public void setAddress1(String address1) {
-		this.address1 = address1;
-	}
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
 
-	public String getAddress2() {
-		return address2;
-	}
+    public String getAddress1() {
+        return address1;
+    }
 
-	public void setAddress2(String address2) {
-		this.address2 = address2;
-	}
+    public void setAddress1(String address1) {
+        this.address1 = address1;
+    }
 
-	public Date getBirthDate() {
-		return birthDate;
-	}
+    public String getAddress2() {
+        return address2;
+    }
 
-	public void setBirthDate(Date birthDate) {
-		this.birthDate = birthDate;
-	}
+    public void setAddress2(String address2) {
+        this.address2 = address2;
+    }
 
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
+    public Date getBirthDate() {
+        return birthDate;
+    }
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
 
-	public String getCity() {
-		return city;
-	}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-	public String getTitleCode() {
-		return titleCode;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public void setTitleCode(String titleCode) {
-		this.titleCode = titleCode;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	@Override
-	public String toString() {
-		return "AccountHierarchyDto [email=" + email + ", paymentMethod=" + paymentMethod + ", customerId="
-				+ customerId + ", sellerCode=" + sellerCode + ", customerBrandCode=" + customerBrandCode
-				+ ", customerCategoryCode=" + customerCategoryCode + ", currencyCode=" + currencyCode
-				+ ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", titleCode=" + titleCode
-				+ ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", phoneNumber="
-				+ phoneNumber + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2="
-				+ address2 + ", zipCode=" + zipCode + ", city=" + city + ", limit=" + limit + ", sortField="
-				+ sortField + ", index=" + index + "]";
-	}
+    public String getTitleCode() {
+        return titleCode;
+    }
 
-	public int getLimit() {
-		return limit;
-	}
+    public void setTitleCode(String titleCode) {
+        this.titleCode = titleCode;
+    }
 
-	public void setLimit(int limit) {
-		this.limit = limit;
-	}
+    @Override
+    public String toString() {
+        return "AccountHierarchyDto [email=" + email + ", paymentMethod=" + paymentMethod + ", customerId=" + customerId + ", sellerCode=" + sellerCode + ", customerBrandCode="
+                + customerBrandCode + ", customerCategoryCode=" + customerCategoryCode + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="
+                + languageCode + ", titleCode=" + titleCode + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", phoneNumber=" + phoneNumber
+                + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2=" + address2 + ", zipCode=" + zipCode + ", city=" + city + ", limit=" + limit
+                + ", sortField=" + sortField + ", index=" + index + "]";
+    }
 
-	public String getSortField() {
-		return sortField;
-	}
+    public int getLimit() {
+        return limit;
+    }
 
-	public void setSortField(String sortField) {
-		this.sortField = sortField;
-	}
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
 
-	public int getIndex() {
-		return index;
-	}
+    public String getSortField() {
+        return sortField;
+    }
 
-	public void setIndex(int index) {
-		this.index = index;
-	}
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
+    }
 
-	public int getPaymentMethod() {
-		return paymentMethod;
-	}
+    public int getIndex() {
+        return index;
+    }
 
-	public void setPaymentMethod(int paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public int getPaymentMethod() {
+        return paymentMethod;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    public void setPaymentMethod(int paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
 }

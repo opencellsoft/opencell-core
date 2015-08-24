@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.inject.Instance;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -145,8 +146,13 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
 			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
 
-			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&customerAccountId="
-					+ entity.getId() + "&faces-redirect=true&includeViewParams=true";
+			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
+	            return null;
+	        } else {
+	            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&customerAccountId="
+	                    + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+	        }
+			
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
