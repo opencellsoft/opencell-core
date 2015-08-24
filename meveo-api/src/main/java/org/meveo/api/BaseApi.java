@@ -100,29 +100,36 @@ public abstract class BaseApi {
             log.warn("No custom field templates defined.");
             return;
         }
-        for (CustomFieldDto cf : customFieldDtos) {
+        for (CustomFieldDto cfDto : customFieldDtos) {
             boolean found = false;
             for (CustomFieldTemplate cft : customFieldTemplates) {
-                if (cf.getCode().equals(cft.getCode())) {
+                if (cfDto.getCode().equals(cft.getCode())) {
+                    found = true;
+
+                    // Validate if value is not empty when field is mandatory
+                    if (cft.isValueRequired()) {
+                        if (cfDto.isEmpty(cft.getFieldType(), cft.getStorageType())) {
+                            missingParameters.add(cft.getCode() + "___112");
+                            break;
+                        }
+                    }
 
                     // Validate parameters
                     if (cft.isVersionable()) {
-
-                        if ((cf.getValueDate() == null && cft.getCalendar() != null)) {
+                        if ((cfDto.getValueDate() == null && cft.getCalendar() != null)) {
                             throw new MissingParameterException("Custom field is versionable by calendar. Missing valueDate parameter.");
 
-                        } else if (cft.getCalendar() == null && (cf.getValuePeriodStartDate() == null || cf.getValuePeriodEndDate() == null)) {
+                        } else if (cft.getCalendar() == null && (cfDto.getValuePeriodStartDate() == null || cfDto.getValuePeriodEndDate() == null)) {
                             throw new MissingParameterException("Custom field is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
                         }
                     }
 
-                    found = true;
-                    CustomFieldInstance cfi = entity.getCustomFields().get(cf.getCode());
+                    CustomFieldInstance cfi = entity.getCustomFields().get(cfDto.getCode());
                     // Create an instance if does not exist yet
                     if (cfi == null) {
                         cfi = new CustomFieldInstance();
                         FieldUtils.getField(CustomFieldInstance.class, cfiFieldName, true).set(cfi, entity);
-                        cfi.setCode(cf.getCode());
+                        cfi.setCode(cfDto.getCode());
                         cfi.setDescription(StringUtils.isBlank(cfi.getDescription()) ? cft.getDescription() : cfi.getDescription());
                         cfi.setProvider(currentUser.getProvider());
                         cfi.setVersionable(cft.isVersionable());
@@ -142,56 +149,56 @@ public abstract class BaseApi {
                             if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
                                 switch (cft.getFieldType()) {
                                 case DATE:
-                                    cfi.setDateValue(cf.getDateValue(), cf.getDateValue());
+                                    cfi.setDateValue(cfDto.getDateValue(), cfDto.getDateValue());
                                     break;
                                 case DOUBLE:
-                                    cfi.setDoubleValue(cf.getDoubleValue(), cf.getDateValue());
+                                    cfi.setDoubleValue(cfDto.getDoubleValue(), cfDto.getDateValue());
                                     break;
                                 case LONG:
-                                    cfi.setLongValue(cf.getLongValue(), cf.getDateValue());
+                                    cfi.setLongValue(cfDto.getLongValue(), cfDto.getDateValue());
                                     break;
                                 case LIST:
                                 case STRING:
                                 case TEXT_AREA:
-                                    cfi.setStringValue(cf.getStringValue(), cf.getDateValue());
+                                    cfi.setStringValue(cfDto.getStringValue(), cfDto.getDateValue());
                                     break;
                                 case ENTITY:
-                                    cfi.setEntityReferenceValue(cf.getEntityReferenceValue().fromDTO(), cf.getDateValue());
+                                    cfi.setEntityReferenceValue(cfDto.getEntityReferenceValue().fromDTO(), cfDto.getDateValue());
                                 }
 
                             } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
-                                cfi.setListValue(CustomFieldValueDto.fromDTO(cf.getListValue()), cf.getDateValue());
+                                cfi.setListValue(CustomFieldValueDto.fromDTO(cfDto.getListValue()), cfDto.getDateValue());
 
                             } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
-                                cfi.setMapValue(CustomFieldValueDto.fromDTO(cf.getMapValue()), cf.getDateValue());
+                                cfi.setMapValue(CustomFieldValueDto.fromDTO(cfDto.getMapValue()), cfDto.getDateValue());
                             }
 
                         } else {
                             if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
                                 switch (cft.getFieldType()) {
                                 case DATE:
-                                    cfi.setDateValue(cf.getDateValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                    cfi.setDateValue(cfDto.getDateValue(), cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate());
                                     break;
                                 case DOUBLE:
-                                    cfi.setDoubleValue(cf.getDoubleValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                    cfi.setDoubleValue(cfDto.getDoubleValue(), cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate());
                                     break;
                                 case LONG:
-                                    cfi.setLongValue(cf.getLongValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                    cfi.setLongValue(cfDto.getLongValue(), cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate());
                                     break;
                                 case LIST:
                                 case STRING:
                                 case TEXT_AREA:
-                                    cfi.setStringValue(cf.getStringValue(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                    cfi.setStringValue(cfDto.getStringValue(), cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate());
                                     break;
                                 case ENTITY:
-                                    cfi.setEntityReferenceValue(cf.getEntityReferenceValue().fromDTO(), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                    cfi.setEntityReferenceValue(cfDto.getEntityReferenceValue().fromDTO(), cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate());
                                 }
 
                             } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
-                                cfi.setListValue(CustomFieldValueDto.fromDTO(cf.getListValue()), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                cfi.setListValue(CustomFieldValueDto.fromDTO(cfDto.getListValue()), cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate());
 
                             } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
-                                cfi.setMapValue(CustomFieldValueDto.fromDTO(cf.getMapValue()), cf.getValuePeriodStartDate(), cf.getValuePeriodEndDate());
+                                cfi.setMapValue(CustomFieldValueDto.fromDTO(cfDto.getMapValue()), cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate());
                             }
                         }
 
@@ -199,28 +206,28 @@ public abstract class BaseApi {
                         if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
                             switch (cft.getFieldType()) {
                             case DATE:
-                                cfi.setDateValue(cf.getDateValue());
+                                cfi.setDateValue(cfDto.getDateValue());
                                 break;
                             case DOUBLE:
-                                cfi.setDoubleValue(cf.getDoubleValue());
+                                cfi.setDoubleValue(cfDto.getDoubleValue());
                                 break;
                             case LONG:
-                                cfi.setLongValue(cf.getLongValue());
+                                cfi.setLongValue(cfDto.getLongValue());
                                 break;
                             case LIST:
                             case STRING:
                             case TEXT_AREA:
-                                cfi.setStringValue(cf.getStringValue());
+                                cfi.setStringValue(cfDto.getStringValue());
                                 break;
                             case ENTITY:
-                                cfi.setEntityReferenceValue(cf.getEntityReferenceValue().fromDTO());
+                                cfi.setEntityReferenceValue(cfDto.getEntityReferenceValue().fromDTO());
                             }
 
                         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
-                            cfi.setListValue(CustomFieldValueDto.fromDTO(cf.getListValue()));
+                            cfi.setListValue(CustomFieldValueDto.fromDTO(cfDto.getListValue()));
 
                         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
-                            cfi.setMapValue(CustomFieldValueDto.fromDTO(cf.getMapValue()));
+                            cfi.setMapValue(CustomFieldValueDto.fromDTO(cfDto.getMapValue()));
                         }
                     }
 
@@ -228,8 +235,23 @@ public abstract class BaseApi {
                 }
             }
             if (!found) {
-                log.warn("No custom field template with code={} for entity {}", cf.getCode(), entity.getClass());
+                log.warn("No custom field template with code={} for entity {}", cfDto.getCode(), entity.getClass());
             }
+        }
+
+        // Validate that CustomField value is not empty when field is mandatory
+        for (CustomFieldTemplate cft : customFieldTemplates) {
+            if (cft.isDisabled() || !cft.isValueRequired()) {
+                continue;
+            }
+            CustomFieldInstance cfi = entity.getCustomFields().get(cft.getCode());
+            if (cfi == null || cfi.isValueEmpty()) {
+                missingParameters.add(cft.getCode());
+            }
+        }
+
+        if (missingParameters.size() > 0) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
     }
 }

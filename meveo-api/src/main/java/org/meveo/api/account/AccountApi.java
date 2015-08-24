@@ -76,50 +76,6 @@ public class AccountApi extends BaseApi {
         accountEntity.setExternalRef2(postData.getExternalRef2());
         accountEntity.setAddress(address);
         accountEntity.setName(name);
-        
-		// check if there are required custom fields
-		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(accountLevel,
-				currentUser.getProvider());
-//		if (customFieldTemplates != null) {
-//			for (CustomFieldTemplate cft : customFieldTemplates) {
-//				if (cft.isValueRequired()) {
-//					if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField().size() > 0) {
-//						for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-//							if (cft.getCode().equals(cfDto.getCode())) {
-//								switch (cft.getFieldType()) {
-//								case DATE:
-//									if (cfDto.getDateValue() == null) {
-//										missingParameters.add(cft.getCode());
-//									}
-//									break;
-//								case DOUBLE:
-//									if (cfDto.getDoubleValue() == null) {
-//										missingParameters.add(cft.getCode());
-//									}
-//									break;
-//								case LONG:
-//									if (cfDto.getLongValue() == null) {
-//										missingParameters.add(cft.getCode());
-//									}
-//									break;
-//								case LIST:
-//								case STRING:
-//									if (cfDto.getStringValue() == null) {
-//										missingParameters.add(cft.getCode());
-//									}
-//								}
-//							}
-//						}
-//					} else {
-//						missingParameters.add(cft.getCode());
-//					}
-//				}
-//			}
-//
-//			if (missingParameters.size() > 0) {
-//				throw new MissingParameterException(getMissingParametersExceptionMessage());
-//			}
-//		}
 
         // populate customFields
         if (postData.getCustomFields() != null) {
@@ -129,7 +85,7 @@ public class AccountApi extends BaseApi {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
-        }
+        }        
     }
 
     @SuppressWarnings("incomplete-switch")

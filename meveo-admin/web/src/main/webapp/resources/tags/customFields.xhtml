@@ -36,7 +36,7 @@
         <span id="#{cc.clientId}" style="white-space: nowrap"> <c:forEach items="${cc.attrs.backingBean.customFieldTemplates}" var="cft">
 
                 <hf:namingContainer>
-                    <h:panelGroup rendered="#{!cft.versionable and (not cft.disabled or (cft.disabled and not cft.instance.isValueEmpty()))}">
+                    <h:panelGroup rendered="#{!cft.versionable and (not cft.disabled or (cft.disabled and not cft.instance.isValueEmptyForGui()))}">
                         <h:panelGroup rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.SINGLE }">
                             <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" labelWidth="40" displayOneLine="false">
                                 <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cft}" field="#{cft.instance.value}" backingBean="#{cc.attrs.backingBean}" />
@@ -83,7 +83,7 @@
                     </h:panelGroup>
 
 
-                    <h:panelGroup rendered="#{cft.instance.versionable and (not cft.disabled or (cft.disabled and not cft.instance.isValueEmpty()))}">
+                    <h:panelGroup rendered="#{cft.instance.versionable and (not cft.disabled or (cft.disabled and not cft.instance.isValueEmptyForGui()))}">
                         <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="false">
                             <p:dataTable id="periodTable_omitFromSubmit" lazy="false" value="#{cft.instance.valuePeriods}" var="period"
                                 sortField="#{cft.instance.calendar!=null?period.periodStartDate:period.priority}"

@@ -107,4 +107,21 @@ public class CustomFieldValueDto implements Serializable {
     public String toString() {
         return String.format("CustomFieldValueDto [value=%s]", value);
     }
+
+    /**
+     * Check if value is empty
+     * 
+     * @return True if value is empty
+     */
+    public boolean isEmpty() {
+        if (value == null) {
+            return true;
+        }
+        if (value instanceof EntityReferenceDto) {
+            return ((EntityReferenceDto) value).isEmpty();
+        } else if (value instanceof String) {
+            return ((String) value).length() == 0;
+        }
+        return false;
+    }
 }
