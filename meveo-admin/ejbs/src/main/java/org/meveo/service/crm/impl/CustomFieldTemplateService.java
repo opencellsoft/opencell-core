@@ -30,6 +30,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 	public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel) {
 		QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, getCurrentProvider());
 		qb.addCriterion("accountLevel", "=", accountLevel, true);
+		qb.addOrderCriterion("description",true);
 		try {
 			return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
