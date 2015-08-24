@@ -2,14 +2,12 @@ package org.meveo.api.account;
 
 import java.math.BigDecimal;
 import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -34,7 +32,6 @@ import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.NameDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
-import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.response.account.FindAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -1032,7 +1029,7 @@ public class AccountHierarchyApi extends BaseApi {
 								customerService.update(customer, currentUser);
 							}
 
-							populateNameAndAddress(customer, customerDto, AccountLevelEnum.CUST, currentUser);
+							populateNameAddressAndCustomFields(customer, customerDto, AccountLevelEnum.CUST, currentUser);
 
 							// customerAccounts
 							if (customerDto.getCustomerAccounts() != null) {
@@ -1211,7 +1208,7 @@ public class AccountHierarchyApi extends BaseApi {
 										customerAccountService.update(customerAccount, currentUser);
 									}
 
-									populateNameAndAddress(customerAccount, customerAccountDto, AccountLevelEnum.CA,
+									populateNameAddressAndCustomFields(customerAccount, customerAccountDto, AccountLevelEnum.CA,
 											currentUser);
 
 									// billing accounts
@@ -1376,7 +1373,7 @@ public class AccountHierarchyApi extends BaseApi {
 												billingAccountService.update(billingAccount, currentUser);
 											}
 
-											populateNameAndAddress(billingAccount, billingAccountDto,
+											populateNameAddressAndCustomFields(billingAccount, billingAccountDto,
 													AccountLevelEnum.BA, currentUser);
 
 											// user accounts
@@ -1463,7 +1460,7 @@ public class AccountHierarchyApi extends BaseApi {
 														userAccountService.update(userAccount, currentUser);
 													}
 
-													populateNameAndAddress(userAccount, userAccountDto,
+													populateNameAddressAndCustomFields(userAccount, userAccountDto,
 															AccountLevelEnum.UA, currentUser);
 
 													// subscriptions
@@ -1577,6 +1574,18 @@ public class AccountHierarchyApi extends BaseApi {
 																		.getTerminationDate());
 															}
 
+                                                            // populate customFields
+                                                            if (subscriptionDto.getCustomFields() != null) {
+                                                                try {
+                                                                    populateCustomFields(AccountLevelEnum.SUB, subscriptionDto.getCustomFields().getCustomField(), subscription,
+                                                                        "subscription", currentUser);
+                                                                } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                                    log.error("Failed to associate custom field instance to a subscription {}", subscriptionDto.getCode(), e);
+                                                                    throw new MeveoApiException("Failed to associate custom field instance to a subscription "
+                                                                            + subscriptionDto.getCode());
+                                                                }
+                                                            }
+															
 															if (subscription.isTransient()) {
 																subscriptionService.create(subscription, currentUser,
 																		provider);
@@ -1612,6 +1621,18 @@ public class AccountHierarchyApi extends BaseApi {
 																		access.setEndDate(accessDto.getEndDate());
 																	}
 
+                                                                    // populate customFields
+                                                                    if (accessDto.getCustomFields() != null) {
+                                                                        try {
+                                                                            populateCustomFields(AccountLevelEnum.ACC, accessDto.getCustomFields().getCustomField(), access,
+                                                                                "access", currentUser);
+                                                                        } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                                            log.error("Failed to associate custom field instance to an access {}", subscriptionDto.getCode(), e);
+                                                                            throw new MeveoApiException("Failed to associate custom field instance to an access "
+                                                                                    + subscriptionDto.getCode());
+                                                                        }
+                                                                    }
+		                                                            
 																	if (access.isTransient()) {
 																		accessService.create(access, currentUser,
 																				provider);
@@ -1777,7 +1798,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	private void populateNameAndAddress(AccountEntity accountEntity, AccountDto accountDto,
+	private void populateNameAddressAndCustomFields(AccountEntity accountEntity, AccountDto accountDto,
 			AccountLevelEnum accountLevel, User currentUser) throws MeveoApiException {
 
 		if (!StringUtils.isBlank(accountDto.getDescription())) {
@@ -1834,10 +1855,10 @@ public class AccountHierarchyApi extends BaseApi {
 			try {
 				populateCustomFields(accountLevel, accountDto.getCustomFields().getCustomField(), accountEntity,
 						"account", currentUser);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				log.error("Failed to associate custom field instance to an entity", e);
-				throw new MeveoApiException("Failed to associate custom field instance to an entity");
-			}
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity {}", accountDto.getCode(), e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity " + accountDto.getCode());
+            }
 		}
 	}
 
