@@ -17,8 +17,6 @@ import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BaseProviderlessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @ExportIdentifier({ "customFieldInstance.code", "customFieldInstance.provider", "customFieldInstance.subscription.code", "customFieldInstance.account.code",
@@ -187,7 +185,6 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
      */
     @PostLoad
     private void deserializeValue() {
-        Logger log = LoggerFactory.getLogger(this.getClass());
         if (value != null) {
             value.deserializeValue();
         }

@@ -123,7 +123,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         for (CustomFieldTemplate cft : customFieldTemplates) {
             CustomFieldInstance cfi = cft.getInstance();
             // Not saving empty values
-            if (cfi.isValueEmpty()) {
+            if (cfi.isValueEmptyForGui()) {
                 if (!cfi.isTransient()) {
                     ((ICustomFieldEntity) entity).getCustomFields().remove(cfi.getCode());
                     log.debug("Remove empty cfi value {}", cfi.getCode());

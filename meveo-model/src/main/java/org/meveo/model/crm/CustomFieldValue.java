@@ -328,8 +328,23 @@ public class CustomFieldValue implements Serializable {
         return null;
     }
 
-    public boolean isValueEmpty() {
-        return (stringValue == null && dateValue == null && longValue == null && doubleValue == null && entityReferenceValueForGUI == null && (mapValuesForGUI == null || mapValuesForGUI
+    /**
+     * Check if values is empty when used in data entry/display for GUI (use XXXForGUI fields instead of serializedValue field )
+     * 
+     * @return True is value is empty
+     */
+    protected boolean isValueEmptyForGui() {
+        return ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && entityReferenceValueForGUI == null && (mapValuesForGUI == null || mapValuesForGUI
+            .isEmpty()));
+    }
+
+    /**
+     * Check if values is empty when used in non-GUI data manipulation (use serializedValue instead of XXXForGUI fields)
+     * 
+     * @return True is value is empty
+     */
+    protected boolean isValueEmpty() {
+        return ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && (serializedValue == null || serializedValue
             .isEmpty()));
     }
 

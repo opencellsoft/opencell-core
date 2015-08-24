@@ -61,4 +61,13 @@ public class EntityReferenceDto implements Serializable {
     public String toString() {
         return String.format("EntityReferenceDto [classname=%s, code=%s]", classname, code);
     }
+
+    /**
+     * Is value empty
+     * 
+     * @return True if classname or code are empty
+     */
+    public boolean isEmpty() {
+        return classname == null || classname.length() == 0 || code == null || code.length() == 0;
+    }
 }

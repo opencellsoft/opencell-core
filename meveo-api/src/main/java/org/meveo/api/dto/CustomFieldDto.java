@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,6 +14,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
+import org.meveo.model.crm.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.CustomFieldTypeEnum;
 
 @XmlRootElement(name = "CustomField")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -202,6 +205,54 @@ public class CustomFieldDto {
 
     public void setEntityReferenceValue(EntityReferenceDto entityReferenceValue) {
         this.entityReferenceValue = entityReferenceValue;
+    }
+
+    /**
+     * Check if value is empty
+     * 
+     * @param fieldType Field type to check
+     * @return
+     * 
+     */
+    public boolean isEmpty(CustomFieldTypeEnum fieldType, CustomFieldStorageTypeEnum storageType) {
+        if (storageType == CustomFieldStorageTypeEnum.MAP) {
+            if (mapValue == null || mapValue.isEmpty()) {
+                return true;
+            }
+
+            for (Entry<String, CustomFieldValueDto> mapItem : mapValue.entrySet()) {
+                if (mapItem.getKey() == null || mapItem.getKey().isEmpty() || mapItem.getValue() == null || mapItem.getValue().isEmpty()) {
+                    return true;
+                }
+            }
+        } else if (storageType == CustomFieldStorageTypeEnum.LIST) {
+            if (listValue == null || listValue.isEmpty()) {
+                return true;
+            }
+
+            for (CustomFieldValueDto listItem : listValue) {
+                if (listItem == null || listItem.isEmpty()) {
+                    return true;
+                }
+            }
+
+        } else if (storageType == CustomFieldStorageTypeEnum.SINGLE) {
+            switch (fieldType) {
+            case DATE:
+                return dateValue == null;
+            case DOUBLE:
+                return doubleValue == null;
+            case LONG:
+                return longValue == null;
+            case LIST:
+            case STRING:
+            case TEXT_AREA:
+                return stringValue == null;
+            case ENTITY:
+                return entityReferenceValue == null || entityReferenceValue.isEmpty();
+            }
+        }
+        return false;
     }
 
     @Override

@@ -31,8 +31,6 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @ExportIdentifier({ "code", "subscription.code", "subscription.provider", "account.code", "account.provider", "chargeTemplate.code", "chargeTemplate.provider",
@@ -846,9 +844,22 @@ public class CustomFieldInstance extends ProviderlessEntity {
         return cfi;
     }
 
+    /**
+     * Check if values is empty when used in data entry/display for GUI (use XXXForGUI fields instead of serializedValue field )
+     * 
+     * @return True is value is empty
+     */
+    public boolean isValueEmptyForGui() {
+        return (!isVersionable() && value.isValueEmptyForGui()) || (isVersionable() && valuePeriods.isEmpty());
+    }
+
+    /**
+     * Check if values is empty when used in non-GUI data manipulation (use serializedValue instead of XXXForGUI fields)
+     * 
+     * @return True is value is empty
+     */
     public boolean isValueEmpty() {
         return (!isVersionable() && value.isValueEmpty()) || (isVersionable() && valuePeriods.isEmpty());
-        // TODO check that period values are empty
     }
 
     @Override
@@ -921,7 +932,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
      */
     @PostLoad
     private void deserializeValue() {
-        Logger log = LoggerFactory.getLogger(this.getClass());
         if (value != null) {
             value.deserializeValue();
         }
