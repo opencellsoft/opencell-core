@@ -25,11 +25,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ExportIdentifier;
 
 /**
  * DiscountLanguage entity.
  */
 @Entity
+@ExportIdentifier({ "discount.discountCode", "tradingLanguage.language.languageCode", "provider" })
 @Table(name = "BILLING_DISCOUNT_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISCOUNT_LANGUAGE_SEQ")
 public class DiscountLanguage extends AuditableEntity {

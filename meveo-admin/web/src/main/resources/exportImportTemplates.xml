@@ -54,6 +54,7 @@
 					<java-class>org.meveo.model.catalog.ServiceChargeTemplateTermination</java-class>
 					<java-class>org.meveo.model.catalog.ServiceChargeTemplateUsage</java-class>
 					<java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+					<java-class>org.meveo.model.billing.WalletInstance</java-class>
 				</classesToExportAsFull>
 			</template>
 			<template name="OfferTemplate" entityToExport="org.meveo.model.catalog.OfferTemplate">

@@ -1497,7 +1497,6 @@ public class AccountHierarchyApi extends BaseApi {
 																}
 															}
 
-															// service instances
 															if (subscriptionDto.getServices() != null) {
 																for (ServiceInstanceDto serviceInstanceDto : subscriptionDto
 																		.getServices().getServiceInstance()) {
@@ -1509,23 +1508,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 																	if (serviceInstanceDto.getTerminationDate() != null) {
 																		// terminate
-																		ServiceInstance serviceInstance = serviceInstanceService
-																				.findByCodeAndSubscription(
-																						serviceInstanceDto.getCode(),
-																						subscription);
-																		if (serviceInstance == null) {
-																			throw new EntityDoesNotExistsException(
-																					ServiceInstance.class,
-																					serviceInstanceDto.getCode());
-																		}
-
-																		if (serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-																			log.info(
-																					"serviceInstance with code={} is already TERMINATED",
-																					serviceInstance.getCode());
-																			continue;
-																		}
-
+																		ServiceInstance serviceInstance = serviceInstanceService.findActivatedByCodeAndSubscription(serviceInstanceDto.getCode(), subscription);
+                                                                         if(serviceInstance!=null){
 																		if (!StringUtils.isBlank(serviceInstanceDto
 																				.getTerminationReason())) {
 																			SubscriptionTerminationReason serviceTerminationReason = terminationReasonService
@@ -1538,7 +1522,6 @@ public class AccountHierarchyApi extends BaseApi {
 																						serviceInstanceDto
 																								.getTerminationReason());
 																			}
-
 																			try {
 																				serviceInstanceService
 																						.terminateService(
@@ -1552,151 +1535,110 @@ public class AccountHierarchyApi extends BaseApi {
 																				throw new MeveoApiException(
 																						e.getMessage());
 																			}
+																			
+																		
 																		} else {
 																			missingParameters
 																					.add("serviceInstance.terminationReason");
 																			throw new MissingParameterException(
 																					getMissingParametersExceptionMessage());
 																		}
-																	} else {
-																		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
-																			throw new MeveoApiException(
-																					"Failed activating a service. Subscription is already RESILIATED.");
-																		}
+                                                                         }else{
+ 																	    	throw new MeveoApiException("ServiceInstance with code=" + subscriptionDto.getCode() + " must be ACTIVE.");
+ 																	    }
+                                                                         }else {
+ 																		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
+ 																			throw new MeveoApiException(
+ 																					"Failed activating a service. Subscription is already RESILIATED.");
+ 																		}
+ 																		ServiceTemplate serviceTemplate = serviceTemplateService
+ 																				.findByCode(serviceInstanceDto
+ 																						.getCode(), provider);
+ 																		if (serviceTemplate == null) {
+ 																			throw new EntityDoesNotExistsException(
+ 																					ServiceTemplate.class,
+ 																					serviceInstanceDto.getCode());
+ 																		}
+ 																		boolean alreadyActiveOrSuspended = false;
+ 																		ServiceInstance serviceInstance=null;
+ 																List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription);
+ 																
+ 																for (ServiceInstance subscriptionServiceInstance : subscriptionServiceInstances) {
+ 																	if (subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CANCELED
+ 																			&& subscriptionServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED
+ 																			&& subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CLOSED){
+ 																		if(subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.INACTIVE)){ 
+ 																			alreadyActiveOrSuspended=false;
+ 																		}else{
+ 																		   throw new MeveoApiException("ServiceInstance with code=" + serviceInstanceDto.getCode() + " must not be ACTIVE or SUSPENDED.");
+ 																		}
+ 																		break;
+ 																	}			
+ 																}
 
-																		// check
-																		// if
-																		// already
-																		// exists
-																		ServiceInstance serviceInstance = serviceInstanceService
-																				.findByCodeAndSubscription(
-																						serviceInstanceDto.getCode(),
-																						subscription);
-																		if (serviceInstance != null) {
-																			// update
-																			log.debug(
-																					"update service instance with code={}",
-																					serviceInstanceDto.getCode());
-
-																			// check
-																			// if
-																			// status=INACTIVE
-																			if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE
-																					&& serviceInstanceDto
-																							.getSubscriptionDate() == null) {
-																				if (serviceInstanceDto
-																						.getSubscriptionDate() != null) {
-																					serviceInstance
-																							.setSubscriptionDate(serviceInstanceDto
-																									.getSubscriptionDate());
-																				}
-																				serviceInstance
-																						.setQuantity(serviceInstanceDto
-																								.getQuantity() == null ? BigDecimal.ONE
-																								: serviceInstanceDto
-																										.getQuantity());
-																				if (!StringUtils
-																						.isBlank(serviceInstanceDto
-																								.getDescription())) {
-																					serviceInstance
-																							.setDescription(serviceInstanceDto
-																									.getDescription());
-																				}
-
-																				// activate
-																				try {
-																					serviceInstanceService
-																							.serviceActivation(
-																									serviceInstance,
-																									null, null,
-																									currentUser);
-																				} catch (BusinessException e) {
-																					throw new MeveoApiException(
-																							e.getMessage());
-																				}
-																			} else {
-																				log.info(
-																						"serviceInstance with code={} must be INACTIVE",
-																						serviceInstance.getCode());
-																			}
-																		} else {
-																			ServiceTemplate serviceTemplate = serviceTemplateService
-																					.findByCode(serviceInstanceDto
-																							.getCode(), provider);
-																			if (serviceTemplate == null) {
-																				throw new EntityDoesNotExistsException(
-																						ServiceTemplate.class,
-																						serviceInstanceDto.getCode());
-																			}
-
-																			// instantiate
-																			log.debug(
-																					"instanciateService id={} checked, quantity={}",
-																					serviceTemplate.getId(), 1);
-
-																			serviceInstance = new ServiceInstance();
-																			serviceInstance.setProvider(serviceTemplate
-																					.getProvider());
-																			serviceInstance.setCode(serviceTemplate
-																					.getCode());
-																			serviceInstance
-																					.setDescription(serviceTemplate
-																							.getDescription());
-																			serviceInstance
-																					.setServiceTemplate(serviceTemplate);
-																			serviceInstance
-																					.setSubscription(subscription);
-																			serviceInstance
-																					.setSubscriptionDate(serviceInstanceDto
-																							.getSubscriptionDate());
-																			serviceInstance
-																					.setQuantity(serviceInstanceDto
-																							.getQuantity() == null ? BigDecimal.ONE
-																							: serviceInstanceDto
-																									.getQuantity());
-																			try {
-																				serviceInstanceService
-																						.serviceInstanciation(
-																								serviceInstance,
-																								currentUser);
-																			} catch (BusinessException e) {
-																				throw new MeveoApiException(
-																						e.getMessage());
-																			}
-
-																			// instantiate
-																			log.debug(
-																					"activateService id={} checked, quantity={}",
-																					serviceTemplate.getId(), 1);
-
-																			if (serviceInstanceDto
-																					.getSubscriptionDate() != null) {
-																				// activate
-																				try {
-																					serviceInstanceService
-																							.serviceActivation(
-																									serviceInstance,
-																									null, null,
-																									currentUser);
-																				} catch (BusinessException e) {
-																					throw new MeveoApiException(
-																							e.getMessage());
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
+ 																if(!alreadyActiveOrSuspended){
+ 																	log.debug("instanciateService id={} checked, quantity={}",serviceTemplate.getId(), 1);
+ 																	serviceInstance = new ServiceInstance();
+ 																	serviceInstance.setProvider(serviceTemplate
+ 																			.getProvider());
+ 																	serviceInstance.setCode(serviceTemplate
+ 																			.getCode());
+ 																	serviceInstance
+ 																			.setDescription(serviceTemplate
+ 																					.getDescription());
+ 																	serviceInstance
+ 																			.setServiceTemplate(serviceTemplate);
+ 																	serviceInstance
+ 																			.setSubscription(subscription);
+ 																	serviceInstance
+ 																			.setSubscriptionDate(serviceInstanceDto
+ 																					.getSubscriptionDate());
+ 																	serviceInstance
+ 																			.setQuantity(serviceInstanceDto
+ 																					.getQuantity() == null ? BigDecimal.ONE
+ 																					: serviceInstanceDto
+ 																							.getQuantity());
+ 															           }
+ 																
+ 																		try {
+ 																			// instantiate
+ 																			serviceInstanceService
+ 																					.serviceInstanciation(
+ 																							serviceInstance,
+ 																							currentUser);
+ 																		} catch (BusinessException e) {
+ 																			throw new MeveoApiException(
+ 																					e.getMessage());
+ 																		}
+ 		
+ 																			if (serviceInstanceDto
+ 																					.getSubscriptionDate() != null) {
+ 																				// activate	
+ 																				try {
+ 																					serviceInstanceService
+ 																							.serviceActivation(
+ 																									serviceInstance,
+ 																									null, null,
+ 																									currentUser);
+ 																				} catch (BusinessException e) {
+ 																					throw new MeveoApiException(
+ 																							e.getMessage());
+ 																				}
+ 																			}
+ 																		 
+ 																	}
+ 																}
+ 															}
+ 														}
+ 													}
+ 												}
+ 											}
+ 										}
+ 									}
+ 								}
+ 							}
+ 						}
+ 					}
 				} else {
 					missingParameters.add("seller.code");
 
