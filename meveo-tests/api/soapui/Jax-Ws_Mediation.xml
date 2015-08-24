@@ -12826,13 +12826,15 @@
                                                 <customFields>
                                                     <customField code="TOPTEN" description="" valueDate="2015-06-15"><!-- valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">-->
             							                <listValue>
-            							                   <stringValue>0102030405</stringValue>
-            							                </listValue>
-            							                <listValue>
-            							                   <stringValue>0203040506</stringValue>
-            							                </listValue>
-            							                <listValue>
-            							                   <stringValue>0304050607</stringValue>
+                                                            <value>
+            							                         <stringValue>0102030405</stringValue>
+                                                            </value>
+                                                            <value>
+            							                         <stringValue>0203040506</stringValue>
+                                                            </value>
+                                                            <value>
+            							                         <stringValue>0304050607</stringValue>
+                                                            </value>
             							                </listValue>
             							             </customField>
     							                 </customFields>
