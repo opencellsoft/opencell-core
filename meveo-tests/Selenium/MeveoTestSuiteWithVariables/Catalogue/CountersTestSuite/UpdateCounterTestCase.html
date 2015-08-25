@@ -17,6 +17,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>pause</td>
+	<td>10000</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
 	<td>${codeIdMessageLink}</td>
 	<td></td>
@@ -67,21 +72,6 @@
 	<td>0</td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${calendarEntity}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[@id='formPanel:counterTemplatId:j_idt214:entityFieldSingle:calendar_entity_panel']/div/ul/li[2]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${ExpressionElTextArea}</td>
-	<td>0</td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${saveButton}</td>
 	<td></td>
@@ -89,16 +79,6 @@
 <tr>
 	<td>assertTitle</td>
 	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
-	<td>runScript</td>
-	<td>javascript{alert(&quot;Success :&nbsp;&nbsp;Selected Counter updated with success.&quot;)}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>${UpdateAlert}</td>
 	<td></td>
 </tr>
 <tr>

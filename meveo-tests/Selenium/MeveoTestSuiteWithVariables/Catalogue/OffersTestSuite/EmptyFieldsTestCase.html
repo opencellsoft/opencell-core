@@ -7,14 +7,7 @@
 <title>EmptyFieldsTestCase</title>
 </head>
 
-<!--
 
-Actions : 
-	- Click on the button "New" in order to add a new offer.
-	- Click on the button "New" in order to add a new offer.
-
-Expected result : A list of empty items are chowed.
--->
 
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
@@ -58,11 +51,11 @@ Expected result : A list of empty items are chowed.
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='formPanel:formId:tabView:j_idt198:j_idt183:serviceTemplates_list']/div/ul/li</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[3]/div/div/div/div[1]/select</td>
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>click</td>
 	<td>${saveWithObjectId}</td>
 	<td></td>
 </tr>
@@ -72,13 +65,8 @@ Expected result : A list of empty items are chowed.
 	<td></td>
 </tr>
 <tr>
-	<td>runScript</td>
-	<td>javascript{alert(&quot;Failed : All Fields are missings.&quot;)}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>${EmptyFieldsAlert}</td>
+	<td>click</td>
+	<td>${resetButton}</td>
 	<td></td>
 </tr>
 <tr>
@@ -86,12 +74,6 @@ Expected result : A list of empty items are chowed.
 	<td>5000</td>
 	<td></td>
 </tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${backButton}</td>
-	<td></td>
-</tr>
-
 </tbody></table>
 </body>
 </html>
