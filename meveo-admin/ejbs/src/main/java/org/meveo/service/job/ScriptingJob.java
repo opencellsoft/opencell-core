@@ -33,9 +33,16 @@ public class ScriptingJob extends Job {
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 
         String scriptCode = jobInstance.getStringCustomValue("ScriptingJob_scriptCode");
-    	ScriptInterface scriptInterface = javaCompilerManager.getAllScriptInterfaces().get(scriptCode);
-    	scriptInterface.execute(null);
-    	
+    	ScriptInterface scriptInterface = javaCompilerManager.getScriptInterface(currentUser.getProvider(),scriptCode);
+    	if(scriptInterface==null){
+    		result.registerError("cannot find script with code "+scriptCode);
+    	} else {
+    		try{
+    			scriptInterface.execute(null);	
+    		} catch(Exception e){
+    			result.registerError("Error in "+scriptCode+" execution :"+e.getMessage());
+    		}
+    	}
     }
 
     @Override

@@ -65,7 +65,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 
 	public void executeScriptOnObject(ScriptInstance scriptInstance, Object o) throws BusinessException {
 		log.debug("execute script={} on object={}", scriptInstance.getScript(), o);
-		ScriptInterface scriptInterface = javaCompilerManager.getAllScriptInterfaces().get(scriptInstance.getCode());
+		ScriptInterface scriptInterface = javaCompilerManager.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
 		Map<String, Object> userMap = new HashMap<String, Object>();
 		userMap.put("obj", o);
 		scriptInterface.execute(userMap);

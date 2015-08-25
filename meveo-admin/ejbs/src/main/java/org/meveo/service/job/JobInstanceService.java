@@ -121,12 +121,12 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		if (jobInstances != null) {
 			int started=0;
 			for (JobInstance jobInstance : jobInstances) {
-				if(jobInstance.isActive()){
+				if(jobInstance.isActive() && jobInstance.getTimerEntity()!=null){
 					jobTimers.put(jobInstance.getId(),job.createTimer(jobInstance.getTimerEntity().getScheduleExpression(), jobInstance));
 					started++;
 				}
 			}
-			log.debug("Found {} timers for {}, started {}",jobInstances.size(),job.getClass().getSimpleName(),started);
+			log.debug("Found {} job instances for {}, started {}",jobInstances.size(),job.getClass().getSimpleName(),started);
 		}
 	}
 

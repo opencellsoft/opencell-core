@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 @Singleton
 public class JavaCompilerManager  {
 
-	private Map<String, ScriptInterface> allScriptInterfaces = new HashMap<String, ScriptInterface>();
+	private Map<String,Map<String, ScriptInterface>> allScriptInterfaces = new HashMap<String, Map<String, ScriptInterface>>();
 
 	@Inject
 	protected Logger log;
@@ -143,8 +143,17 @@ public class JavaCompilerManager  {
 			log.debug("codeSource to compile:"+codeSource);
 			final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
 			Class<ScriptInterface> compiledFunction = compiler.compile(qName, codeSource, errs,new Class<?>[] { ScriptInterface.class });
-			allScriptInterfaces.put(scriptInstance.getCode(),compiledFunction.newInstance());
+			log.debug("set script provider:{} scriptCode:{}",scriptInstance.getProvider().getCode(),scriptInstance.getCode());
+			if(!allScriptInterfaces.containsKey(scriptInstance.getProvider().getCode())){
+				allScriptInterfaces.put(scriptInstance.getProvider().getCode(),new HashMap<String,ScriptInterface>());
+				log.debug("create Map for {}",scriptInstance.getProvider().getCode());
+			}
+			Map<String,ScriptInterface> providerScriptInterfaces = allScriptInterfaces.get(scriptInstance.getProvider().getCode());
+			providerScriptInterfaces.put(scriptInstance.getCode(),compiledFunction.newInstance());
+			log.debug("add script to Map -> new size {}",providerScriptInterfaces.size());
+
 		} catch (CharSequenceCompilerException e) {
+			e.printStackTrace();
 			List<Diagnostic<? extends JavaFileObject>> list = e.getDiagnostics().getDiagnostics();
 			for(Diagnostic<? extends JavaFileObject> a :list){
 				log.warn(a.getKind().name());
@@ -155,22 +164,28 @@ public class JavaCompilerManager  {
 				log.warn("code:"+a.getCode());
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("",e);
 		} 
 	}
 
-	/**
-	 * @return the allScriptInterfaces
-	 */
-	public Map<String, ScriptInterface> getAllScriptInterfaces() {
-		return allScriptInterfaces;
+	public ScriptInterface getScriptInterface(Provider provider, String scriptCode) {
+		ScriptInterface result = null;
+		if(allScriptInterfaces.containsKey(provider.getCode())){
+			result=allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+		}
+		if(result==null){
+			ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptCode, provider);
+			if(scriptInstance!=null){
+				compileScript(scriptInstance);
+				if(allScriptInterfaces.containsKey(provider.getCode())){
+					result=allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+				}
+			}
+		}
+		log.debug("getScriptInterface provider:{} scriptCode:{} -> {}",provider.getCode(),scriptCode,result);
+		return result;
 	}
 
-	/**
-	 * @param allScriptInterfaces the allScriptInterfaces to set
-	 */
-	public void setAllScriptInterfaces(Map<String, ScriptInterface> allScriptInterfaces) {
-		this.allScriptInterfaces = allScriptInterfaces;
-	}
 	
 }
