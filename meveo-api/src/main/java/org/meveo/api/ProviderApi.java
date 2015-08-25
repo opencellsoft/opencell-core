@@ -209,6 +209,10 @@ public class ProviderApi extends BaseApi {
 		if (!StringUtils.isBlank(postData.getCode())) {
 			// search for provider
 			Provider provider = providerService.findByCode(postData.getCode());
+			
+			if(provider == null) {
+				throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
+			}
 
 			provider.setDescription(postData.getDescription());
 
