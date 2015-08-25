@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the three fields (Code, Description,Disabled='Yes') then click on the button "search".
+Expected Results : The result of research gives the items matching with the code and description filled where disabled ='Yes'.
+
+Description Test Case 2: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "clean filters".
+Expected Results : The fileds (Code/Description/Disabled) become empty.
+
+Description Test Case 3: 
+Actions : Click on the button "New" in order to add a new recurring charge.
+Expected Results : A list of empty items are chowed.
+
+Description Test Case 4: 
+Actions : Don't fill any field then click on "save".
+Expected Results : A new recurring charge template can not be created, an alert appears to mention that code, Calendar and subcategory are required to create the recurring charge 
+
+Description Test Case 5: 
+Actions : Click on "reset".
+Expected Results : All the fields become empty.
+
+Description Test Case 6: 
+Actions : Fill only the field code then click on "save".
+Expected Results : A new recurring charge template can not be created, an alert appears to mention that subcategory and calendar are required to create the recurring charge.
+
+Description Test Case 7: 
+Actions : Fill only the field "subcategory" then click on "save".
+Expected Results : A new recurring charge template can not be created, an alert appears to mention that code and calendar are required to create the recurring charge template.
+
+Description Test Case 8: 
+Actions : Fill only the field "Calendar"  then click on "save".
+Expected Results : A new recurring charge template can not be created, an alert appears to mention that subcategory,code are required to create the recurring charge template.
+
+Description Test Case 9: 
+Actions : Let the required fields not filled and fill all other fields (Agreement extension(in month),prorated at subscription, cycle forward,prorated at termination,level of charge sharing,input unit description, rating, unit description,unit multiplicator,unit nb decimal, description,is amount overridable, triggered EDR) then click on "save".
+Expected Results : A new recurring charge template can not be created, an alert appears to mention that code calendar and subcategory are required to create the recurring charge template.
+
+-->
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="variables.html">variables</a></td></tr>
+<tr><td><a href="SearchWithCodeDescriptionDisableYesTestCase.html">SearchWithCodeDescriptionDisableYesTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="NewRecurringChargeTestCase.html">NewRecurringChargeTestCase</a></td></tr>
+<tr><td><a href="EmptyRecurringChargeTestCase.html">EmptyRecurringChargeTestCase</a></td></tr>
+<tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlySubcategoryTestCase.html">FillOnlySubcategoryTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCanlendarTestCase.html">FillOnlyCanlendarTestCase</a></td></tr>
+<tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
+</tbody></table>
+</body>
+</html>
