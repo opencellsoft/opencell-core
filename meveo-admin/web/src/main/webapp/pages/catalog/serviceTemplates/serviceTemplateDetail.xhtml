@@ -468,7 +468,7 @@
 						</p:panel>
 				</p:tab>
 
-				<p:tab title="#{messages['customFieldTemplate.panel']}" rendered="#{serviceTemplateBean.entity.id!=null}">
+				<p:tab title="#{messages['customFieldTemplate.cfValues']}" rendered="#{serviceTemplateBean.entity.id!=null}">
     				<hf:formPanel id="cfFormPanel" backingBean="#{serviceTemplateBean}" ajaxSubmit="true" submitPartialProcess=":tabView:cfFormPanel:formId:fieldGroup">
                         <h:panelGroup id="fieldGroup">
     						<hf:customFields id="customFields" backingBean="#{serviceTemplateBean}" messagesId=":tabView:cfFormPanel:formId:messages" />

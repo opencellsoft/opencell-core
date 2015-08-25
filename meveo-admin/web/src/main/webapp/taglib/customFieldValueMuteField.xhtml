@@ -29,51 +29,79 @@
     <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
-        <h:outputText value="#{field}" rendered="#{! edit}"/>
-        <p:inputText value="#{field}" required="#{required}" rendered="#{edit}" label="#{label}" placeholder="#{placeholder}" />
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field}" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}" />
+        </c:if>
     </c:if>
     <c:if test="#{(cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA)}">
-        <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
-        <p:inputTextarea value="#{field}" cols="#{cols}" rows="#{rows}" required="#{required}" rendered="#{edit}" label="#{label}" placeholder="#{placeholder}" />
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field}" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:inputTextarea value="#{field}" cols="#{cols}" rows="#{rows}" required="#{required}" label="#{label}" placeholder="#{placeholder}" />
+        </c:if>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
-        <h:outputText value="#{field}" rendered="#{! edit}">
-            <f:convertDateTime type="date" pattern="#{datePattern}" />
-        </h:outputText>
-        <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field}" required="#{required}" rendered="#{edit}" label="#{label}" placeholder="#{placeholder}" />
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field}">
+                <f:convertDateTime type="date" pattern="#{datePattern}" />
+            </h:outputText>
+        </c:if>
+        <c:if test="#{edit}">
+            <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}" />
+        </c:if>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
-        <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
-        <p:inputText value="#{field}" required="#{required}" rendered="#{edit}" label="#{label}" placeholder="#{placeholder}">
-            <f:convertNumber minFractionDigits="2" />
-        </p:inputText>
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field}" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}">
+                <f:convertNumber minFractionDigits="2" />
+            </p:inputText>
+        </c:if>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.LONG}">
-        <h:outputText value="#{field}" rendered="#{! edit}"></h:outputText>
-        <p:inputText value="#{field}" required="#{required}" rendered="#{edit}" label="#{label}" placeholder="#{placeholder}">
-            <f:convertNumber integerOnly="true" />
-        </p:inputText>
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field}" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}">
+                <f:convertNumber integerOnly="true" />
+            </p:inputText>
+        </c:if>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
-        <h:outputText value="#{field.code}" rendered="#{!edit}" />
-        <p:autoComplete value="#{field}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" placeholder="#{placeholder}" label="#{label}"
-            converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{backingBean.autocompleteCustomEntityForCFV}" queryDelay="1000" var="e" itemLabel="#{e.code}"
-            itemValue="#{e}" rendered="#{edit}">
-            <f:attribute name="classname" value="#{cft.entityClazz}" />
-            <p:column width="50">
-                <h:outputText value="#{e.code}" />
-            </p:column>
-            <p:column width="50">
-                <h:outputText value="#{e.description}" />
-            </p:column>
-        </p:autoComplete>        
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field.code}" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:autoComplete value="#{field}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" placeholder="#{placeholder}" label="#{label}"
+                converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{backingBean.autocompleteCustomEntityForCFV}" queryDelay="1000" var="e"
+                itemLabel="#{e.code}" itemValue="#{e}">
+                <f:attribute name="classname" value="#{cft.entityClazz}" />
+                <p:column width="50">
+                    <h:outputText value="#{e.code}" />
+                </p:column>
+                <p:column width="50">
+                    <h:outputText value="#{e.description}" />
+                </p:column>
+            </p:autoComplete>
+        </c:if>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.LIST}">
-        <h:outputText rendered="#{!edit and field!=null}" value="#{cft.listValues[field]} (#{field})" styleClass="field-value" />
-        <p:selectOneMenu value="#{field}" required="#{false and required}" rendered="#{edit}" label="#{label}">
-            <f:selectItem itemValue="#{null}" itemLabel="#{placeholder}" />
-            <f:selectItems value="#{cft.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
-        </p:selectOneMenu>
+        <c:if test="#{! edit}">
+            <h:outputText rendered="#{field!=null}" value="#{cft.listValues[field]} (#{field})" styleClass="field-value" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:selectOneMenu value="#{field}" required="#{false and required}" label="#{label}">
+                <f:selectItem itemValue="#{null}" itemLabel="#{placeholder}" />
+                <f:selectItems value="#{cft.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
+            </p:selectOneMenu>
+        </c:if>
     </c:if>
 </ui:composition>
 
