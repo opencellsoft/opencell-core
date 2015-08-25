@@ -105,7 +105,7 @@
 					<h:panelGroup id="invoiceSubCategoryCountries_panel">
 						<hftl:dataList backingBean="#{invoiceSubCategoryCountryBean}"
 							dataModel="#{invoiceSubCategoryCountryBean.getInvoiceSubcategoryCountries(invoiceSubCategoryBean.entity)}"
-							resultsId="invoiceSubCategoryCountries_results" checkMany="false">
+							resultsId="invoiceSubCategoryCountries_results">
 							<hftl:column sort="false"
 								label="#{messages['invoiceSubCategoryCountry.countryCode']}"
 								field="tradingCountry.countryCode" />

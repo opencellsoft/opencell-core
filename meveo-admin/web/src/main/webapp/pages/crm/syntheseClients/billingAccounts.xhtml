@@ -23,7 +23,7 @@
 			<hf:searchField label="#{messages['billingAccount.electronicBilling']}" field="electronicBilling" />
 		</hf:searchPanel>
 
-		<hftl:dataList backingBean="#{billingAccountBean}" checkMany="false" label="#{messages['billingAccount.title']}">
+		<hftl:dataList backingBean="#{billingAccountBean}" label="#{messages['billingAccount.title']}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
 			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />

@@ -19,7 +19,7 @@
             <hf:searchField label="#{messages['customFieldTemplate.accountType']}" id="accountLevel" field="accountLevel" listValues="#{customFieldTemplateListBean.accountLevelsNoTimer}"/>
         </hf:searchPanel>
 
-        <hftl:dataList checkMany="false" noClose="false" backingBean="#{customFieldTemplateListBean}" sortBy="code">
+        <hftl:dataList noClose="false" backingBean="#{customFieldTemplateListBean}" sortBy="code">
             <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
             <hftl:column label="#{messages['customFieldTemplate.fieldLabel']}" field="description" />
             <hftl:column label="#{messages['customFieldTemplate.fieldType']}" field="fieldType.label" isMessage="true" />
