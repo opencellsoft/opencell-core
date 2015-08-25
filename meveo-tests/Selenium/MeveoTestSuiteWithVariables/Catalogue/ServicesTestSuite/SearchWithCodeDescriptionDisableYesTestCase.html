@@ -4,13 +4,38 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SecondDeleteServiceTestCase</title>
+<title>SearchWithCodeDescriptionDisableYesTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SecondDeleteServiceTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">SearchWithCodeDescriptionDisableYesTestCase</td></tr>
 </thead><tbody>
+<tr>
+	<td>open</td>
+	<td>${url}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>MEVEO | Open Source Billing Platform</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${UsernameID}</td>
+	<td>${userName}</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${PasswordID}</td>
+	<td>${passWord}</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${Connect}</td>
+	<td></td>
+</tr>
 <tr>
 	<td>assertTitle</td>
 	<td>MEVEO | Open Source Billing Platform</td>
@@ -18,7 +43,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>id=datatable_results:0:code_id_message_link</td>
+	<td>${CatalogueServices}</td>
 	<td></td>
 </tr>
 <tr>
@@ -27,23 +52,28 @@
 	<td></td>
 </tr>
 <tr>
+	<td>type</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>01</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
+	<td>Some description for this service</td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>link=Service info</td>
+	<td>${SearchDisabled}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/tbody/tr[1]/td[8]/button[3]/span[2]</td>
+	<td>${DisabledYes}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[147]/div[3]/div/div/button[1]/span</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>${buttonSearch}</td>
 	<td></td>
 </tr>
 </tbody></table>
