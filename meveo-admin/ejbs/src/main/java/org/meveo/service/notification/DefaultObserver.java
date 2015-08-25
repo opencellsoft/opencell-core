@@ -48,12 +48,12 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
-import org.meveo.script.JavaCompilerManager;
-import org.meveo.script.ScriptInterface;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
 import org.meveo.service.communication.impl.MeveoInstanceService;
+import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
 @Singleton
@@ -128,10 +128,15 @@ public class DefaultObserver {
     
     private void executeScript(ScriptInstance scriptInstance, Object o) throws BusinessException {
         log.debug("execute notification script: {}", scriptInstance.getScript());
-        ScriptInterface scriptInterface = javaCompilerManager.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
-        Map<String, Object> userMap = new HashMap<String, Object>();
-        userMap.put("event", o);
-    	scriptInterface.execute(userMap);
+        Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
+        try{
+        	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
+	        Map<String, Object> userMap = new HashMap<String, Object>();
+	        userMap.put("event", o);
+	    	scriptInterface.execute(userMap);
+        } catch(Exception e){
+        	e.printStackTrace();
+        }
     }    
 
     private void fireNotification(Notification notif, IEntity e) {

@@ -2,7 +2,7 @@
 // Author: David J. Biesack David.Biesack@sas.com
 // Created on Nov 4, 2007
 
-package org.meveo.script;
+package org.meveo.service.script;
 
 import java.io.File;
 import java.util.Arrays;
@@ -26,7 +26,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.jobs.ScriptTypeEnum;
-import org.meveo.service.job.ScriptInstanceService;
 import org.slf4j.Logger;
 
 
@@ -40,7 +39,7 @@ import org.slf4j.Logger;
 @Singleton
 public class JavaCompilerManager  {
 
-	private Map<String,Map<String, ScriptInterface>> allScriptInterfaces = new HashMap<String, Map<String, ScriptInterface>>();
+	private Map<String,Map<String, Class<ScriptInterface>>> allScriptInterfaces = new HashMap<String, Map<String, Class<ScriptInterface>>>();
 
 	@Inject
 	protected Logger log;
@@ -145,11 +144,11 @@ public class JavaCompilerManager  {
 			Class<ScriptInterface> compiledFunction = compiler.compile(qName, codeSource, errs,new Class<?>[] { ScriptInterface.class });
 			log.debug("set script provider:{} scriptCode:{}",scriptInstance.getProvider().getCode(),scriptInstance.getCode());
 			if(!allScriptInterfaces.containsKey(scriptInstance.getProvider().getCode())){
-				allScriptInterfaces.put(scriptInstance.getProvider().getCode(),new HashMap<String,ScriptInterface>());
+				allScriptInterfaces.put(scriptInstance.getProvider().getCode(),new HashMap<String,Class<ScriptInterface>>());
 				log.debug("create Map for {}",scriptInstance.getProvider().getCode());
 			}
-			Map<String,ScriptInterface> providerScriptInterfaces = allScriptInterfaces.get(scriptInstance.getProvider().getCode());
-			providerScriptInterfaces.put(scriptInstance.getCode(),compiledFunction.newInstance());
+			Map<String,Class<ScriptInterface>> providerScriptInterfaces = allScriptInterfaces.get(scriptInstance.getProvider().getCode());
+			providerScriptInterfaces.put(scriptInstance.getCode(),compiledFunction);
 			log.debug("add script to Map -> new size {}",providerScriptInterfaces.size());
 
 		} catch (CharSequenceCompilerException e) {
@@ -169,8 +168,8 @@ public class JavaCompilerManager  {
 		} 
 	}
 
-	public ScriptInterface getScriptInterface(Provider provider, String scriptCode) {
-		ScriptInterface result = null;
+	public Class<ScriptInterface> getScriptInterface(Provider provider, String scriptCode) {
+		Class<ScriptInterface> result = null;
 		if(allScriptInterfaces.containsKey(provider.getCode())){
 			result=allScriptInterfaces.get(provider.getCode()).get(scriptCode);
 		}
