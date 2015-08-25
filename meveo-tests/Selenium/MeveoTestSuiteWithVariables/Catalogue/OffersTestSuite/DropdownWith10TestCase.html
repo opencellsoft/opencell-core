@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>DisableCounterTestCase</title>
+<title>DropdownWith10TestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">DisableCounterTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">DropdownWith10TestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>assertTitle</td>
@@ -17,18 +17,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>10000</td>
-	<td></td>
+	<td>select</td>
+	<td>id=datatable_results_rppDD</td>
+	<td>label=10</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${disableLink}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${disableOk}</td>
+	<td>css=option[value=&quot;10&quot;]</td>
 	<td></td>
 </tr>
 <tr>
@@ -36,21 +31,7 @@
 	<td>2000</td>
 	<td></td>
 </tr>
-<tr>
-	<td>runScript</td>
-	<td>javascript{alert(&quot;Success : The selected data&nbsp;&nbsp;disabled with success.&quot;)}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>${DisableAlert}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>5000</td>
-	<td></td>
-</tr>
+
 </tbody></table>
 </body>
 </html>
