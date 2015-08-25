@@ -312,7 +312,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 		}
 	}
 
-	public OneShotChargeTemplateWithPriceListDto listWithPrice(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date, User currentUser) {
+	public OneShotChargeTemplateWithPriceListDto listWithPrice(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date, User currentUser) throws MeveoApiException {
 		Provider provider = currentUser.getProvider();
 		Seller seller = sellerService.findByCode(sellerCode, provider);
 		TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode, provider);
@@ -346,6 +346,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 					}
 				} catch (BusinessException e) {
 					log.warn("error occurred while getting application price",e);
+					throw new MeveoApiException(e.getMessage());
 				}
 			}
 

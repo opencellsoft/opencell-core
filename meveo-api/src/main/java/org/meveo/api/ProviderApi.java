@@ -34,6 +34,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -54,6 +55,7 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.InvoiceConfigurationService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -75,8 +77,11 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 public class ProviderApi extends BaseApi {
 
 	@Inject
+	private InvoiceConfigurationService invoiceConfigurationService;
+
+	@Inject
 	private ProviderService providerService;
-	
+
 	@Inject
 	private CreditCategoryService creditCategoryService;
 
@@ -178,6 +183,18 @@ public class ProviderApi extends BaseApi {
 				throw new EntityAlreadyExistsException(Provider.class, postData.getCode());
 			}
 
+			InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
+			invoiceConfiguration.setCode(provider.getCode());
+			invoiceConfiguration.setDescription(provider.getDescription());
+			invoiceConfiguration.setDisplayEdrs(false);
+			invoiceConfiguration.setDisplayOffers(true);
+			invoiceConfiguration.setDisplayServices(true);
+			invoiceConfiguration.setDisplaySubscriptions(true);
+
+			invoiceConfigurationService.create(invoiceConfiguration, currentUser);
+
+			provider.setInvoiceConfiguration(invoiceConfiguration);
+
 			providerService.create(provider, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
@@ -190,7 +207,8 @@ public class ProviderApi extends BaseApi {
 
 	public ProviderDto find(String providerCode) throws MeveoApiException {
 		if (!StringUtils.isBlank(providerCode)) {
-			Provider provider = providerService.findByCodeWithFetch(providerCode, Arrays.asList("currency", "country", "language"));
+			Provider provider = providerService.findByCodeWithFetch(providerCode,
+					Arrays.asList("currency", "country", "language"));
 			if (provider != null) {
 				return new ProviderDto(provider);
 			}
@@ -209,6 +227,10 @@ public class ProviderApi extends BaseApi {
 		if (!StringUtils.isBlank(postData.getCode())) {
 			// search for provider
 			Provider provider = providerService.findByCode(postData.getCode());
+
+			if (provider == null) {
+				throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
+			}
 
 			provider.setDescription(postData.getDescription());
 
@@ -334,7 +356,8 @@ public class ProviderApi extends BaseApi {
 		List<InvoiceSubCategory> invoiceSubCategories = invoiceSubCategoryService.list(currentUser.getProvider());
 		if (invoiceSubCategories != null) {
 			for (InvoiceSubCategory invoiceSubCategory : invoiceSubCategories) {
-				result.getInvoiceSubCategories().getInvoiceSubCategory().add(new InvoiceSubCategoryDto(invoiceSubCategory));
+				result.getInvoiceSubCategories().getInvoiceSubCategory()
+						.add(new InvoiceSubCategoryDto(invoiceSubCategory));
 			}
 		}
 
@@ -347,7 +370,8 @@ public class ProviderApi extends BaseApi {
 		}
 
 		// terminationReasons
-		List<SubscriptionTerminationReason> terminationReasons = terminationReasonService.list(currentUser.getProvider());
+		List<SubscriptionTerminationReason> terminationReasons = terminationReasonService.list(currentUser
+				.getProvider());
 		if (terminationReasons != null) {
 			for (SubscriptionTerminationReason terminationReason : terminationReasons) {
 				result.getTerminationReasons().getTerminationReason().add(new TerminationReasonDto(terminationReason));
@@ -357,7 +381,8 @@ public class ProviderApi extends BaseApi {
 		return result;
 	}
 
-	public GetCustomerConfigurationResponseDto getCustomerConfigurationResponse(User currentUser) throws MeveoApiException {
+	public GetCustomerConfigurationResponseDto getCustomerConfigurationResponse(User currentUser)
+			throws MeveoApiException {
 		GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
 		// customerBrands
@@ -387,15 +412,16 @@ public class ProviderApi extends BaseApi {
 		return result;
 	}
 
-	public GetCustomerAccountConfigurationResponseDto getCustomerAccountConfigurationResponseDto(Provider provider) throws MeveoApiException {
+	public GetCustomerAccountConfigurationResponseDto getCustomerAccountConfigurationResponseDto(Provider provider)
+			throws MeveoApiException {
 		GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
 		for (PaymentMethodEnum e : PaymentMethodEnum.values()) {
 			result.getPaymentMethods().add(e.name());
 		}
-		
+
 		List<CreditCategory> creditCategories = creditCategoryService.list();
-		for(CreditCategory cc : creditCategories) {
+		for (CreditCategory cc : creditCategories) {
 			result.getCreditCategories().getCreditCategory().add(new CreditCategoryDto(cc));
 		}
 

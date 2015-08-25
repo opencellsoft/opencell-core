@@ -162,6 +162,8 @@ public class CalendarApi extends BaseApi {
             if (StringUtils.isBlank(postData.getCalendarType())) {
                 missingParameters.add("calendarType");
             }
+            
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
     }
 
