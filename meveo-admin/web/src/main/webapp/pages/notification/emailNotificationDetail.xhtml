@@ -80,7 +80,6 @@
 
 		<p:panel rendered="#{not empty emailNotificationBean.entity.id}">
 			<hftl:dataList backingBean="#{notificationHistoryBean}"
-				checkMany="false"
 				dataModel="#{notificationHistoryBean.getLazyDataModel(emailNotificationBean.entity.id)}">
 				<hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" />
 				<hftl:column

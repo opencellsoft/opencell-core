@@ -24,7 +24,7 @@
         </hf:searchPanel>
 
         <h:panelGroup id="resultsDatatable">
-            <hftl:dataList backingBean="#{jobInstanceListBean}" resultsId="timersBean_results" checkMany="false">
+            <hftl:dataList backingBean="#{jobInstanceListBean}" resultsId="timersBean_results">
                 <p:column headerText="#{messages['timer.name']}">
                     <h:link outcome="jobInstanceDetail" value="#{entity.code}">
                         <f:param name="objectId" value="#{entity.id}" />

@@ -23,7 +23,7 @@
     			<hf:searchField label="#{messages['businessEntity.description']}" field="description"/>
     		</hf:searchPanel>	
     		
-    		<hftl:dataList label="#{messages['menu.wallets']}" checkMany="false" backingBean="#{walletTemplateListBean}" sortBy="code">
+    		<hftl:dataList label="#{messages['menu.wallets']}" backingBean="#{walletTemplateListBean}" sortBy="code">
     			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
     			<hftl:column label="#{messages['businessEntity.description']}" field="description" /> 
     			<hftl:column label="#{messages['wallet.walletType']}" field="walletType.label" isMessage="true" /> 

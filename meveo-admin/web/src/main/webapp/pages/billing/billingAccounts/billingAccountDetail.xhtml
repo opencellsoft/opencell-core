@@ -386,7 +386,7 @@
 												<hftl:dataList resultsId="datatable_counters"
 													backingBean="#{counterPeriodBean}"
 													dataModel="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
-													checkMany="false" sortBy="periodStartDate"
+													sortBy="periodStartDate"
 													sortOrder="DESCENDING">
 													<hftl:column label="#{messages['businessEntity.code']}"
 														field="code" />
@@ -462,7 +462,7 @@
 
 							<hftl:dataList
 								dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}"
-								resultsId="i_results" checkMany="false"
+								resultsId="i_results"
 								backingBean="#{invoiceBean}">
 								<hftl:column label="#{messages['invoice.invoiceNumber']}"
 									field="invoiceNumber" />

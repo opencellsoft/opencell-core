@@ -80,7 +80,7 @@
 		</hf:formPanel>
 
 		<p:panel rendered="#{not empty webHookBean.entity.id}">
-			<hftl:dataList backingBean="#{notificationHistoryBean}" checkMany="false"
+			<hftl:dataList backingBean="#{notificationHistoryBean}"
 				dataModel="#{notificationHistoryBean.getLazyDataModel(webHookBean.entity.id)}">
 				<hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" />
 				<hftl:column
