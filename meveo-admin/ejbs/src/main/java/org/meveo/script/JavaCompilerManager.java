@@ -34,8 +34,6 @@ import org.slf4j.Logger;
  *  JavaCompilerManager executed on startup, find all java scriptsInstance from DB,
  *   and then compile and store classes in a map 
  * 
- * @author anasseh
- * @created 16.06.2015
  */
 
 @Startup
@@ -54,15 +52,70 @@ public class JavaCompilerManager  {
 
 	@PostConstruct
 	void compileAll() {
-		try {						
-			VirtualFile virtualLibDir = VFS.getChild("/content/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+".war/WEB-INF/lib");  			
+		try {	
+				
 			String classpath="";
-			File physicalLibDir = virtualLibDir.getPhysicalFile();
-			for(File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")){
-				classpath+=f.getCanonicalPath()+":";
+			VirtualFile virtualLibDir = VFS.getChild("/content/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+".war/WEB-INF/lib");  			
+			if(!virtualLibDir.exists()){
+				log.info("cannot find /content in VFS ");
+				VirtualFile virtualDeploymentDirs = VFS.getChild("deployment");
+				if(!virtualDeploymentDirs.exists() || virtualDeploymentDirs.getChildren().size()==0 ){
+					log.info("cannot find /deployment in VFS");
+				} else {
+					//get the last deployment dir
+					VirtualFile virtualDeploymentDir=null;
+					for(VirtualFile virtualDeployment:virtualDeploymentDirs.getChildren()){
+						if(virtualDeploymentDir==null){
+							virtualDeploymentDir = virtualDeployment;
+						} else {
+							if(virtualDeployment.getLastModified()>virtualDeploymentDir.getLastModified()){
+								virtualDeploymentDir = virtualDeployment;
+							}
+						}
+					}
+					File physicalLibDirs = virtualDeploymentDir.getPhysicalFile();
+					for(File physicalLibDir : physicalLibDirs.listFiles()){
+						if(physicalLibDir.isDirectory()){
+							for(File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")){
+								classpath+=f.getCanonicalPath()+File.pathSeparator;
+							}
+						}
+					}
+				}
+			} else {
+				File physicalLibDir = virtualLibDir.getPhysicalFile();
+				for(File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")){
+					classpath+=f.getCanonicalPath()+File.pathSeparator;
+				}
 			}
-			log.info("compileAll classpath:{}",classpath);
-			compiler = new CharSequenceCompiler<ScriptInterface>(JavaCompilerManager.class.getClassLoader(), Arrays.asList(new String[] { "-cp",classpath}));	
+			if(classpath.length()==0){
+				String jbossHome = System.getProperty("jboss.home.dir");
+				File deploymentLibDirs = new File(jbossHome+"/standalone/tmp/vfs/deployment");
+				if(!deploymentLibDirs.exists()){
+					log.error("cannot find "+jbossHome+"/standalone/tmp/vfs/deployment .. are you deploying on jboss 7 ?");
+					return;
+				} else {
+					File deploymentDir=null;
+					for(File deployment:deploymentLibDirs.listFiles()){
+						if(deploymentDir==null){
+							deploymentDir = deployment;
+						} else {
+							if(deployment.lastModified()>deploymentDir.lastModified()){
+								deploymentDir = deployment;
+							}
+						}
+					}
+					for(File physicalLibDir : deploymentDir.listFiles()){
+						if(physicalLibDir.isDirectory()){
+							for(File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")){
+								classpath+=f.getCanonicalPath()+File.pathSeparator;
+							}
+						}
+					}
+				} 
+			}
+			log.info("compileAll classpath={}",classpath);
+			compiler = new CharSequenceCompiler<ScriptInterface>(ScriptInterface.class.getClassLoader(), Arrays.asList(new String[] { "-cp",classpath}));	
 			List<ScriptInstance> scriptInstances = scriptInstanceService.findByType(ScriptTypeEnum.JAVA);
 			for(ScriptInstance scriptInstance : scriptInstances){
 				compileScript(scriptInstance);
