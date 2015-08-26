@@ -242,6 +242,14 @@ public class JobInstance extends BusinessEntity implements ICustomFieldEntity {
         return result;
     }
 
+    public Object getEntityCustomValue(String code) {
+        Object result = null;
+        if (customFields.containsKey(code)) {
+            result = customFields.get(code);
+        }
+        return result;
+    }
+    
     public void setDoubleCustomValue(String code, Double value) {
         getOrCreateCustomFieldInstance(code).setDoubleValue(value);
     }
