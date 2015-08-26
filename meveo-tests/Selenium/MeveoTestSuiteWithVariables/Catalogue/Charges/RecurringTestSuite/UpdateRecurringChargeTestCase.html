@@ -4,13 +4,28 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>FillOnlyCanlendarTestCase</title>
+<title>UpdateRecurringChargeTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">FillOnlyCanlendarTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateRecurringChargeTestCase</td></tr>
 </thead><tbody>
+<tr>
+	<td>assertTitle</td>
+	<td>MEVEO | Open Source Billing Platform</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=datatable_results:0:code_id_message_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPopUp</td>
+	<td>_self</td>
+	<td>30000</td>
+</tr>
 <tr>
 	<td>assertTitle</td>
 	<td>MEVEO | Open Source Billing Platform</td>
@@ -19,61 +34,101 @@
 <tr>
 	<td>type</td>
 	<td>${CodeText}</td>
-	<td></td>
+	<td>Code_01</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AgreementExtensionMonth}</td>
-	<td></td>
+	<td>0</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
 	<td>${ProratedAtSubscription}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
 	<td>${ProratedAtTermination}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
 	<td>${CycleForward}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>click</td>
 	<td>${ChooseLevelOfChargeSharing}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${LevelOfChargeSharing}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${InputUnitDescription}</td>
-	<td></td>
+	<td>0</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${RatingUnitDescription}</td>
-	<td></td>
+	<td>0</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${UnitMultiplicator}</td>
-	<td></td>
+	<td>0</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${UnitNbDecimal}</td>
-	<td></td>
+	<td>0</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
+	<td>Some description for Code_01</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=formPanel:reccuringChargeId:tabView:invoiceSubCategorySelectedId:entityFieldSingle:selectLink</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>5000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[2]/span[1]/div/div/input</td>
+	<td>932</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>5000</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SearchSubcategory}</td>
+	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[3]/button[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>5000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>5000</td>
 	<td></td>
 </tr>
 <tr>
@@ -93,12 +148,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${IsAmountOverridable}</td>
+	<td>${TriggeredEDR}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${saveWithObjectId}</td>
+	<td>${IsAmountOverridable}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${saveButton}</td>
 	<td></td>
 </tr>
 <tr>
@@ -107,8 +167,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${resetButton}</td>
+	<td>clickAndWait</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
 	<td></td>
 </tr>
 
