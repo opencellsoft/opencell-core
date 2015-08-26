@@ -9,6 +9,7 @@ import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
@@ -244,5 +245,8 @@ public interface SettingsWs extends IBaseWs {
 	@WebMethod
 	ActionStatus removeOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
 
-
+	// custom field
+	@WebMethod
+	ActionStatus createCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
+	
 }
