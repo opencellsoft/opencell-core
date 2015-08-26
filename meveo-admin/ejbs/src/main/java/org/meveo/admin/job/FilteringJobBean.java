@@ -67,7 +67,7 @@ public class FilteringJobBean {
 				result.setReport("error:"+e.getMessage());
 			} finally{
 				try{
-					scriptInterface.finilaze(variables,provider);
+					scriptInterface.finalize(variables,provider);
 				}catch (Exception e) {
 					e.printStackTrace();
 					result.setReport("finalize error:"+e.getMessage());
