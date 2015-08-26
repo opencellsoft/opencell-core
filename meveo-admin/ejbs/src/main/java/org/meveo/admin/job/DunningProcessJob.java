@@ -76,7 +76,7 @@ public class DunningProcessJob extends Job {
                 try {
                     log.info("Processing  customerAccounts code " + customerAccount.getCode());
                     loadedCustomerAccounts++;
-                    BigDecimal balanceExigible = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount.getId(), null, new Date());
+                    BigDecimal balanceExigible = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount.getId(), null, new Date(),customerAccount.getProvider());
                     log.info("balanceExigible " + balanceExigible);
 
                     if (DowngradeDunningLevel(customerAccount, balanceExigible)) {

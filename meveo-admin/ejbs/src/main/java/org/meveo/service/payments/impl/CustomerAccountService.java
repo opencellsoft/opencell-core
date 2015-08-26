@@ -36,6 +36,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -165,11 +166,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	public BigDecimal customerAccountBalanceExigibleWithoutLitigation(Long customerAccountId,
-			String customerAccountCode, Date to) throws BusinessException {
+			String customerAccountCode, Date to,Provider provider) throws BusinessException {
 		log.info("customerAccountBalanceExigibleWithoutLitigation with id:{},code:{},toDate:{}", customerAccountId,
 				customerAccountCode, to);
 		return customerAccountBalanceExigibleWithoutLitigation(
-				findCustomerAccount(customerAccountId, customerAccountCode), to);
+				findCustomerAccount(customerAccountId, customerAccountCode,provider), to);
 	}
 
 	public BigDecimal customerAccountBalanceExigibleWithoutLitigation(CustomerAccount customerAccount, Date to)
@@ -187,10 +188,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	public BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId, String customerAccountCode,
-			Date to) throws BusinessException {
+			Date to,Provider provider) throws BusinessException {
 		log.info("customerAccountBalanceDueWithoutLitigation with id" + customerAccountId + ",code:"
 				+ customerAccountCode + ",toDate:" + to);
-		return customerAccountBalanceDueWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode),
+		return customerAccountBalanceDueWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode,provider),
 				to);
 	}
 
@@ -205,30 +206,30 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	 * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#customerAccountBalanceExigible(java.lang.Long,
 	 *      java.lang.String, java.util.Date)
 	 */
-	public BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to)
+	public BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to,Provider provider)
 			throws BusinessException {
 		log.info("customerAccountBalanceExligible with id:" + customerAccountId + ",code:" + customerAccountCode
 				+ ",toDate:" + to);
-		return customerAccountBalanceExigible(findCustomerAccount(customerAccountId, customerAccountCode), to);
+		return customerAccountBalanceExigible(findCustomerAccount(customerAccountId, customerAccountCode,provider), to);
 	}
 
 	/**
 	 * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#customerAccountBalanceDue(java.lang.Long,
 	 *      java.lang.String, java.util.Date)
 	 */
-	public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date to)
+	public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date to,Provider provider)
 			throws BusinessException {
 
-		return customerAccountBalanceDue(getEntityManager(), customerAccountId, customerAccountCode, to);
+		return customerAccountBalanceDue(getEntityManager(), customerAccountId, customerAccountCode, to,provider);
 
 	}
 
 	public BigDecimal customerAccountBalanceDue(EntityManager em, Long customerAccountId, String customerAccountCode,
-			Date to) throws BusinessException {
+			Date to,Provider provider) throws BusinessException {
 		log.info("start customerAccountBalanceDue with id:" + customerAccountId + ",code:" + customerAccountCode
 				+ ",toDate:" + to);
 
-		return customerAccountBalanceDue(findCustomerAccount(em, customerAccountId, customerAccountCode), to);
+		return customerAccountBalanceDue(findCustomerAccount(em, customerAccountId, customerAccountCode,provider), to);
 	}
 
 	public void createCustomerAccount(String code, String title, String firstName, String lastName, String address1,
@@ -243,7 +244,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		log.info("create customer account with code:" + code + " by creator:" + user.getUserName());
 		CustomerAccount customerAccount = null;
 		try {
-			customerAccount = findCustomerAccount(null, code);
+			customerAccount = findCustomerAccount(null, code,user.getProvider());
 		} catch (Exception e) {
 		}
 
@@ -307,7 +308,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			log.warn("Error when require value(s) is null!");
 			throw new BusinessException("Error when required values(s) is null!");
 		}
-		CustomerAccount customerAccount = findCustomerAccount(id, code);
+		CustomerAccount customerAccount = findCustomerAccount(id, code,user.getProvider());
 
 		if (customerAccount.getName() == null)
 			customerAccount.setName(new org.meveo.model.shared.Name());
@@ -387,7 +388,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			throws BusinessException, Exception {
 		log.info("closeCustomerAccount customerAccountCode:" + customerAccountCode + ", customerAccountID:"
 				+ customerAccountId + "user:" + (user != null ? user.getUserName() : "NULL"));
-		closeCustomerAccount(findCustomerAccount(customerAccountId, customerAccountCode), user);
+		closeCustomerAccount(findCustomerAccount(customerAccountId, customerAccountCode,user.getProvider()), user);
 	}
 
 	public void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount,
@@ -446,12 +447,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 				+ fromCustomerAccountId + " toCustomerAccountCode:" + toCustomerAccountCode + " toCustomerAccountId:"
 				+ toCustomerAccountId + "toCustomerAccountId :" + toCustomerAccountId + "amount :" + amount + " user:"
 				+ (user != null ? user.getUserName() : "NULL"));
-		transferAccount(findCustomerAccount(fromCustomerAccountId, fromCustomerAccountCode),
-				findCustomerAccount(toCustomerAccountId, toCustomerAccountCode), amount, user);
+		transferAccount(findCustomerAccount(fromCustomerAccountId, fromCustomerAccountCode,user.getProvider()),
+				findCustomerAccount(toCustomerAccountId, toCustomerAccountCode,user.getProvider()), amount, user);
 	}
 
-	public CustomerAccount consultCustomerAccount(Long id, String code) throws BusinessException {
-		return findCustomerAccount(id, code);
+	public CustomerAccount consultCustomerAccount(Long id, String code,Provider provider) throws BusinessException {
+		return findCustomerAccount(id, code,provider);
 	}
 
 	/**
@@ -469,7 +470,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		if (updator == null || updator.getId() == null) {
 			throw new BusinessException("Error when user is null!");
 		}
-		CustomerAccount customerAccount = findCustomerAccount(id, code);
+		CustomerAccount customerAccount = findCustomerAccount(id, code,updator.getProvider());
 		customerAccount.setCreditCategory(creditCategory);
 		update(customerAccount, updator);
 		log.info("successfully end updateCreditCategory!");
@@ -488,7 +489,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		if (updator == null || updator.getId() == null) {
 			throw new BusinessException("Error when user is null!");
 		}
-		CustomerAccount customerAccount = findCustomerAccount(id, code);
+		CustomerAccount customerAccount = findCustomerAccount(id, code,updator.getProvider());
 		customerAccount.setDunningLevel(dunningLevel);
 		customerAccount.setDateDunningLevel(new Date());
 		update(customerAccount, updator);
@@ -508,7 +509,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		if (updator == null || updator.getId() == null) {
 			throw new BusinessException("Error when user is null!");
 		}
-		CustomerAccount customerAccount = findCustomerAccount(id, code);
+		CustomerAccount customerAccount = findCustomerAccount(id, code,updator.getProvider());
 		customerAccount.setPaymentMethod(paymentMethod);
 		update(customerAccount, updator);
 		log.info("successfully end updatePaymentMethod!");
@@ -518,9 +519,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	/**
 	 * get operations from one existed customerAccount by id or code
 	 */
-	public List<AccountOperation> consultOperations(Long id, String code, Date from, Date to) throws BusinessException {
+	public List<AccountOperation> consultOperations(Long id, String code, Date from, Date to,Provider provider) throws BusinessException {
 		log.info("start consultOperations with id:" + id + ",code:" + code + "from:" + from + ",to:" + to);
-		CustomerAccount customerAccount = findCustomerAccount(id, code);
+		CustomerAccount customerAccount = findCustomerAccount(id, code,provider);
 		List<AccountOperation> operations = customerAccount.getAccountOperations();
 		log.info("found accountOperation size:" + (operations != null ? operations.size() : 0)
 				+ " from customerAccount code:" + code + ",id:" + id);
@@ -559,11 +560,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		return result;
 	}
 
-	public CustomerAccount findCustomerAccount(Long id, String code) throws BusinessException {
-		return findCustomerAccount(getEntityManager(), id, code);
+	public CustomerAccount findCustomerAccount(Long id, String code, Provider provider) throws BusinessException {
+		return findCustomerAccount(getEntityManager(), id, code,provider);
 	}
 
-	public CustomerAccount findCustomerAccount(EntityManager em, Long id, String code) throws BusinessException {
+	public CustomerAccount findCustomerAccount(EntityManager em, Long id, String code, Provider provider) throws BusinessException {
 		log.info("findCustomerAccount with code:" + code + ",id:" + id);
 
 		if ((code == null || code.equals("")) && (id == null || id == 0)) {
@@ -573,8 +574,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 		CustomerAccount customerAccount = null;
 		try {
-			customerAccount = (CustomerAccount) em.createQuery("from CustomerAccount where id=:id or code=:code ")
-					.setParameter("id", id).setParameter("code", code).getSingleResult();
+			customerAccount = (CustomerAccount) em.createQuery("from CustomerAccount where (id=:id or code=:code) and provider=:provider ")
+					.setParameter("id", id).setParameter("code", code).setParameter("provider",provider).getSingleResult();
 		} catch (Exception e) {
 			log.warn(e.getMessage());
 		}
