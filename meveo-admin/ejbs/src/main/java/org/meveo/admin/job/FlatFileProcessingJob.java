@@ -26,7 +26,6 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -54,8 +53,7 @@ public class FlatFileProcessingJob extends Job {
 			Long nbRuns = new Long(1);
 			Long waitingMillis = new Long(0);
 			String mappingConf = null;
-			ScriptInstance scriptInstanceFlow = null;
-			String inputDir = null;
+			String inputDir = null,scriptInstanceFlowCode=null;
 			String fileNameExtension = null;
 			try {
 				nbRuns = jobInstance.getLongCustomValue("FlatFileProcessingJob_nbRuns").longValue();
@@ -67,8 +65,7 @@ public class FlatFileProcessingJob extends Job {
 				mappingConf = jobInstance.getStringCustomValue("FlatFileProcessingJob_mappingConf");
 				inputDir = jobInstance.getStringCustomValue("FlatFileProcessingJob_inputDir");
 				fileNameExtension = jobInstance.getStringCustomValue("FlatFileProcessingJob_fileNameExtension");
-
-				scriptInstanceFlow = (ScriptInstance) jobInstance.getEntityCustomValue("FlatFileProcessingJob_scriptsFlow");
+				scriptInstanceFlowCode= jobInstance.getStringCustomValue("FlatFileProcessingJob_scriptsFlow");
 
 			} catch (Exception e) {
 				log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
@@ -89,7 +86,7 @@ public class FlatFileProcessingJob extends Job {
 
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 			while (subListCreator.isHasNext()) {
-				futures.add(flatFileProcessingAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), currentUser, mappingConf, scriptInstanceFlow));
+				futures.add(flatFileProcessingAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), currentUser, mappingConf, scriptInstanceFlowCode));
 				if (subListCreator.isHasNext()) {
 					try {
 						Thread.sleep(waitingMillis.longValue());
@@ -177,16 +174,26 @@ public class FlatFileProcessingJob extends Job {
 		mappingConf.setValueRequired(true);
 		result.add(mappingConf);
 
-		CustomFieldTemplate scriptInstanceFlowCF = new CustomFieldTemplate();
-		scriptInstanceFlowCF.setCode("FlatFileProcessingJob_scriptsFlow");
-		scriptInstanceFlowCF.setAccountLevel(AccountLevelEnum.TIMER);
-		scriptInstanceFlowCF.setActive(true);
-		scriptInstanceFlowCF.setDescription(resourceMessages.getString("mediation.scriptsFlow"));
-		scriptInstanceFlowCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-		scriptInstanceFlowCF.setEntityClazz("org.meveo.model.jobs.ScriptInstance");
-		scriptInstanceFlowCF.setDefaultValue(null);
-		scriptInstanceFlowCF.setValueRequired(true);
-		result.add(scriptInstanceFlowCF);
+//		CustomFieldTemplate scriptInstanceFlowCF = new CustomFieldTemplate();
+//		scriptInstanceFlowCF.setCode("FlatFileProcessingJob_scriptsFlow");
+//		scriptInstanceFlowCF.setAccountLevel(AccountLevelEnum.TIMER);
+//		scriptInstanceFlowCF.setActive(true);
+//		scriptInstanceFlowCF.setDescription(resourceMessages.getString("mediation.scriptsFlow"));
+//		scriptInstanceFlowCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+//		scriptInstanceFlowCF.setEntityClazz("org.meveo.model.jobs.ScriptInstance");
+//		scriptInstanceFlowCF.setDefaultValue(null);
+//		scriptInstanceFlowCF.setValueRequired(true);
+//		result.add(scriptInstanceFlowCF);
+		
+		CustomFieldTemplate ss = new CustomFieldTemplate();
+		ss.setCode("FlatFileProcessingJob_scriptsFlow");
+		ss.setAccountLevel(AccountLevelEnum.TIMER);
+		ss.setActive(true);
+		ss.setDescription(resourceMessages.getString("mediation.scriptsFlow"));
+		ss.setFieldType(CustomFieldTypeEnum.STRING);
+		ss.setDefaultValue(null);
+		ss.setValueRequired(true);
+		result.add(ss);
 
 		return result;
 	}
