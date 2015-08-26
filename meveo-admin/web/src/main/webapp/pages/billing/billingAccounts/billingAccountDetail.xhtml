@@ -463,7 +463,7 @@
 							<hftl:dataList
 								dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}"
 								resultsId="i_results"
-								backingBean="#{invoiceBean}">
+								backingBean="#{invoiceBean}" deleteManyButton="false">
 								<hftl:column label="#{messages['invoice.invoiceNumber']}"
 									field="invoiceNumber" />
 								<hftl:column label="#{messages['invoice.invoiceDate']}" isDate="true"
