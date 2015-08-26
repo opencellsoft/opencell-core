@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.crm.CustomFieldTemplate;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -32,7 +34,7 @@ public class CustomFieldTemplateDto {
 	protected String storageType;
 
 	@XmlElement
-	protected String valueRequired;
+	protected boolean valueRequired;
 
 	@XmlElement
 	protected boolean versionable;
@@ -42,6 +44,25 @@ public class CustomFieldTemplateDto {
 
 	@XmlElement
 	protected String calendar;
+	
+	public CustomFieldTemplateDto() {
+		
+	}
+
+	public CustomFieldTemplateDto(CustomFieldTemplate cf) {
+		code = cf.getCode();
+		description = cf.getDescription();
+		fieldType = cf.getFieldType().name();
+		accountLevel = cf.getAccountLevel().name();
+		defaultValue = cf.getDefaultValue();
+		storageType = cf.getStorageType().name();
+		valueRequired = cf.isValueRequired();
+		versionable = cf.isVersionable();
+		triggerEndPeriodEvent = cf.isTriggerEndPeriodEvent();
+		if (cf.getCalendar() != null) {
+			calendar = cf.getCalendar().getCode();
+		}
+	}
 
 	public String getCode() {
 		return code;
@@ -91,14 +112,6 @@ public class CustomFieldTemplateDto {
 		this.storageType = storageType;
 	}
 
-	public String getValueRequired() {
-		return valueRequired;
-	}
-
-	public void setValueRequired(String valueRequired) {
-		this.valueRequired = valueRequired;
-	}
-
 	public boolean isVersionable() {
 		return versionable;
 	}
@@ -121,6 +134,14 @@ public class CustomFieldTemplateDto {
 
 	public void setCalendar(String calendar) {
 		this.calendar = calendar;
+	}
+
+	public boolean isValueRequired() {
+		return valueRequired;
+	}
+
+	public void setValueRequired(boolean valueRequired) {
+		this.valueRequired = valueRequired;
 	}
 
 }
