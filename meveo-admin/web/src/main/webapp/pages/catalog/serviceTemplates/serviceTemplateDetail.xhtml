@@ -220,7 +220,7 @@
 						<hftl:dataList id="serviceSubscriptionChargeTempalte_table"
 							backingBean="#{serviceChargeTemplateSubscriptionBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceSubscriptionCharges}"
-							resultsId="serviceSubscriptionCharges_results" checkMany="false">
+							resultsId="serviceSubscriptionCharges_results">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="oneShotChargeTemplateDetail"/>
@@ -468,7 +468,7 @@
 						</p:panel>
 				</p:tab>
 
-				<p:tab title="#{messages['customFieldTemplate.panel']}" rendered="#{serviceTemplateBean.entity.id!=null}">
+				<p:tab title="#{messages['customFieldTemplate.cfValues']}" rendered="#{serviceTemplateBean.entity.id!=null}">
     				<hf:formPanel id="cfFormPanel" backingBean="#{serviceTemplateBean}" ajaxSubmit="true" submitPartialProcess=":tabView:cfFormPanel:formId:fieldGroup">
                         <h:panelGroup id="fieldGroup">
     						<hf:customFields id="customFields" backingBean="#{serviceTemplateBean}" messagesId=":tabView:cfFormPanel:formId:messages" />

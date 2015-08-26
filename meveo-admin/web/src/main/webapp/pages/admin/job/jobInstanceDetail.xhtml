@@ -33,8 +33,9 @@
                 <h:outputText value="#{messages['job.page.title']}" />
             </f:facet>
 
-            <hf:formPanel id="formPanel" backingBean="#{jobInstanceBean}" ajaxSubmit="true" submitPartialProcess=":formPanel:formId:fieldGroup">
-                <h:panelGroup id="fieldGroup">
+            <hf:formPanel id="formPanel" backingBean="#{jobInstanceBean}" showFormButtons="false">
+              <p:tabView id="tabView">
+				<p:tab title="#{messages['job.info']}">
                     <hf:formDecorateField fieldId="jobCategory" label="#{messages['timer.jobCategory']}">
                         <p:selectOneMenu id="jobCategory" value="#{jobInstanceBean.entity.jobCategoryEnum}" required="true" rendered="#{jobInstanceBean.edit}">
                             <f:selectItem itemLabel="#{messages['commons.select']}" />
@@ -72,37 +73,18 @@
                         </p:selectOneMenu>
                     </hf:formDecorateField>
 
-                    <p:fieldset legend="#{messages['customFieldTemplate.panel']}" styleClass="clearLeft" rendered="#{! empty(jobInstanceBean.customFieldTemplates)}">
+                   </p:tab>
+                   <p:tab title="#{messages['customFieldTemplate.cfValues']}" rendered="#{! empty(jobInstanceBean.customFieldTemplates)}">
                         <hf:customFields id="customFields" backingBean="#{jobInstanceBean}" messagesId=":formPanel:formId:messages" />
-                    </p:fieldset>
+                   </p:tab>
+                  </p:tabView>
 
-                    <h:panelGroup layout="block" styleClass="form-panel-actions">
-                        <!--  <div class="action-buttons">
-                            <p:commandButton ajax="false" id="button_create"
-                                value="#{messages['action.save']}"
-                                action="#{jobInstanceBean.create()}"
-                                rendered="#{jobInstanceBean.entity.id==null and jobInstanceBean.entity.jobName!=null}" />
-                            <p:commandButton ajax="false" id="button_update"
-                                value="#{messages['action.save']}"
-                                action="#{jobInstanceBean.updateTimer()}"
-                                rendered="#{jobInstanceBean.entity.id!=null}" />
-                            <p:commandButton ajax="false" id="button_delete"
-                                value="#{messages['commons.delete']}"
-                                action="#{timerBean.deleteTimer()}" immediate="true"
-                                onclick="if(!confirm('#{messages['entity.remove.confirmation']}')) return false;"
-                                rendered="#{timerBean.jobInstance.id!=null }" />
-                            <p:commandButton ajax="false" id="button_execute"
-                                value="#{messages['job.executeJobNow']}"
-                                action="#{timerBean.executeTimer()}"
-                                rendered="#{timerBean.jobInstance.id!=null}" />
-                            <p:button id="button_back" value="#{messages['action.back']}"
-                                outcome="jobTimers" />
-                        </div>
-                        -->
-                        <p:commandButton ajax="false" id="button_execute" value="#{messages['job.executeJobNow']}" action="#{jobInstanceBean.executeTimer()}"
-                            rendered="#{jobInstanceBean.entity.id!=null}" />
-                    </h:panelGroup>
-                </h:panelGroup>
+                <hf:formButtons backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
+                    submitPartialProcess=":formPanel:formId:tabView">
+                    <p:commandButton ajax="true" id="button_execute" value="#{messages['job.executeJobNow']}" action="#{jobInstanceBean.executeTimer()}"
+                        rendered="#{jobInstanceBean.entity.id!=null}" partialSubmit="true" process="@this :formPanel:formId:tabView" partialSubmitFilter=":not([name*='omitFromSubmit'])" />
+                </hf:formButtons>
+                    
             </hf:formPanel>
 
 
@@ -165,7 +147,6 @@
 
                 </p:dataTable>
             </p:outputPanel>
-        </p:panel>
-        
+        </p:panel>     
     </ui:define>
 </ui:composition>
