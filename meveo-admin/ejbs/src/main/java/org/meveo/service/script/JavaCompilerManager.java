@@ -135,7 +135,7 @@ public class JavaCompilerManager  {
 
 	public void compileScript(ScriptInstance scriptInstance){
 		try {
-			final String packageName = ParamBean.getInstance().getProperty("meveo.scripting.java.packageName", "org.meveo.script") ;
+			final String packageName = ParamBean.getInstance().getProperty("meveo.scripting.java.packageName", "org.meveo.service.script") ;
 			final String className = scriptInstance.getCode() ;
 			final String qName = packageName + '.' + className;
 			final String codeSource =scriptInstance.getScript();
