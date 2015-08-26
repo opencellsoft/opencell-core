@@ -499,7 +499,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			netToPay = invoice.getAmountWithTax();
 		} else {
 			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount()
-					.getCustomerAccount().getCode(), invoice.getDueDate());
+					.getCustomerAccount().getCode(), invoice.getDueDate(),invoice.getProvider());
 
 			if (balance == null) {
 				throw new BusinessException("account balance calculation failed");

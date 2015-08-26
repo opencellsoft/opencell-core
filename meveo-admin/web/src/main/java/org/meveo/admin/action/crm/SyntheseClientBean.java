@@ -16,33 +16,24 @@
  */
 package org.meveo.admin.action.crm;
 
-import java.io.IOException;
-//import java.math.BigDecimal;
-//import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 //import org.meveo.model.billing.Invoice;
 //import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.selfcare.local.SelfcareServiceLocal;
 import org.omnifaces.cdi.ViewScoped;
+//import java.math.BigDecimal;
+//import java.util.List;
 
 @Named
 @ViewScoped
 public class SyntheseClientBean extends BaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	private SelfcareServiceLocal selfcareService;
 
 	@Inject
 	private BillingAccountService billingAccountService;
@@ -92,7 +83,7 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 		return billingAccountService;
 	}
 
-	public void downloadPdf(String invoiceNumber) {
+	/*public void downloadPdf(String invoiceNumber) {
 
 		byte[] pdf = null;
 		try {
@@ -126,6 +117,6 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 					e.getMessage(), invoiceNumber);
 		}
 
-	}
+	}*/
 
 }

@@ -289,7 +289,7 @@ public class CustomerAccountApi extends AccountApi {
 			customerAccountDto.setMandateIdentification(customerAccount.getMandateIdentification());
 			customerAccountDto.setMandateDate(customerAccount.getMandateDate());
 
-			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(), new Date());
+			BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(), new Date(),customerAccount.getProvider());
 
 			if (balance == null) {
 				throw new BusinessException("account balance calculation failed");

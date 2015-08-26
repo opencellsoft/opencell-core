@@ -219,7 +219,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal balance = customerAccountService.customerAccountBalanceDue(
 				null,
 				entity.getBillingAccount().getCustomerAccount().getCode(),
-				entity.getDueDate());
+				entity.getDueDate(),entity.getProvider());
 
 		if (balance == null) {
 			throw new BusinessException("account balance calculation failed");

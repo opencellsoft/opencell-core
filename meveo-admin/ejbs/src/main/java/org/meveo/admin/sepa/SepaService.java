@@ -162,7 +162,7 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 						.customerAccountBalanceDueWithoutLitigation(
 								e.getValue().get(0).getCustomerAccount()
 										.getId(), null, e.getValue().get(0)
-										.getDueDate());
+										.getDueDate(),e.getValue().get(0).getProvider());
 			}
 			if (BigDecimal.ZERO.compareTo(amount) == 0) {
 				continue;
