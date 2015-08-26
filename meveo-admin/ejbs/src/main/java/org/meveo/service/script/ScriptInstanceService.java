@@ -14,31 +14,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.job;
+package org.meveo.service.script;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.jobs.ScriptTypeEnum;
-import org.meveo.script.JavaCompilerManager;
-import org.meveo.script.ScriptInterface;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 
-	@EJB
-	private JavaCompilerManager javaCompilerManager;
 
 	@SuppressWarnings("unchecked")
 	public List<ScriptInstance> findByType(ScriptTypeEnum type) {
@@ -61,14 +53,6 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 		} catch (NoResultException e) {
 			return null;
 		}
-	}
-
-	public void executeScriptOnObject(ScriptInstance scriptInstance, Object o) throws BusinessException {
-		log.debug("execute script={} on object={}", scriptInstance.getScript(), o);
-		ScriptInterface scriptInterface = javaCompilerManager.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
-		Map<String, Object> userMap = new HashMap<String, Object>();
-		userMap.put("obj", o);
-		scriptInterface.execute(userMap);
 	}
 
 }

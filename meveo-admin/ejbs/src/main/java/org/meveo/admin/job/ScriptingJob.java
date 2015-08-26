@@ -1,4 +1,4 @@
-package org.meveo.service.job;
+package org.meveo.admin.job;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +23,9 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.ScriptInstance;
-import org.meveo.script.JavaCompilerManager;
-import org.meveo.script.ScriptInterface;
+import org.meveo.service.job.Job;
+import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInterface;
 
 @Startup
 @Singleton
@@ -39,20 +40,16 @@ public class ScriptingJob extends Job {
 
         CustomFieldInstance scriptCFI = jobInstance.getCustomFields().get("ScriptingJob_script");
         String scriptCode = scriptCFI.getEntityReferenceValue().getCode();
-    	ScriptInterface scriptInterface = javaCompilerManager.getScriptInterface(currentUser.getProvider(),scriptCode);
-    	if(scriptInterface==null){
+        Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(currentUser.getProvider(),scriptCode);
+    	if(scriptInterfaceClass==null){
     		result.registerError("cannot find script with code "+scriptCode);
     	} else {
     		try{
+    			ScriptInterface scriptInterface=scriptInterfaceClass.newInstance();
     			Map<String,Object> context = new HashMap<String,Object>();
     			CustomFieldInstance variablesCFI = jobInstance.getCustomFields().get("ScriptingJob_variables");
     			if(variablesCFI!=null){
-    				Map<String,Object> vars = variablesCFI.getMapValue();
-    				if(vars!=null){
-    					for(String key:vars.keySet()){
-    						context.put(key, vars.get(key));
-    					}
-    				}
+    				context = variablesCFI.getMapValue();
     			}
     			scriptInterface.execute(context);	
     		} catch(Exception e){
@@ -89,7 +86,6 @@ public class ScriptingJob extends Job {
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
 		result.add(variablesCF); 
-		
 		
 		return result;
     }

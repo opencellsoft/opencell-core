@@ -25,10 +25,10 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.ScriptInstance;
-import org.meveo.script.JavaCompilerManager;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.job.ScriptInstanceService;
+import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
