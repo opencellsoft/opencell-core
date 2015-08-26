@@ -34,7 +34,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
-import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.script.JavaCompilerManager;
 import org.slf4j.Logger;
 
@@ -121,7 +120,7 @@ public class FlatFileProcessingJobBean {
 						executeParams.put("cdr", cdr);
 						executeParams.put("originBatch", getOriginBatch());
 						executeParams.put("originRecord", getOriginRecord(cdr));
-						mediationFlowScript.newInstance().execute(executeParams);		
+						mediationFlowScript.newInstance().execute(executeParams,provider);		
 				    					    		 				    	
 						outputCDR(cdr);
 						processed++;

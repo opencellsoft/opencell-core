@@ -55,11 +55,9 @@ public class MediationJob extends Job {
 		try {
 			Long nbRuns = new Long(1);
 			Long waitingMillis = new Long(0);
-			String mappingConf = null;
 			try {
 				nbRuns = jobInstance.getLongCustomValue("MediationJob_nbRuns").longValue();
 				waitingMillis = jobInstance.getLongCustomValue("MediationJob_waitingMillis").longValue();
-				//mappingConf = jobInstance.getStringCustomValue("MediationJob_mappingConf");
 				if (nbRuns == -1) {
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
@@ -148,16 +146,6 @@ public class MediationJob extends Job {
 		waitingMillis.setDefaultValue("0");
 		waitingMillis.setValueRequired(false);
 		result.add(waitingMillis);
-
-//		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
-//		mappingConf.setCode("MediationJob_mappingConf");
-//		mappingConf.setAccountLevel(AccountLevelEnum.TIMER);
-//		mappingConf.setActive(true);
-//		mappingConf.setDescription(resourceMessages.getString("mediation.mappingConfiguration"));
-//		mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
-//		mappingConf.setDefaultValue("");
-//		mappingConf.setValueRequired(true);
-//		result.add(mappingConf);
 
 		return result;
 	}

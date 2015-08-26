@@ -51,7 +51,7 @@ public class ScriptingJob extends Job {
     			if(variablesCFI!=null){
     				context = variablesCFI.getMapValue();
     			}
-    			scriptInterface.execute(context);	
+    			scriptInterface.execute(context,currentUser.getProvider());	
     		} catch(Exception e){
     			result.registerError("Error in "+scriptCode+" execution :"+e.getMessage());
     		}

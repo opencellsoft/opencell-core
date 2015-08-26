@@ -49,14 +49,14 @@ public class FilteringJobBean {
 			ScriptInterface scriptInterface = null;
 			try {
 				scriptInterface = scriptInterfaceClass.newInstance();
-				scriptInterface.init(variables);
+				scriptInterface.init(variables,provider);
 				List<? extends IEntity> xmlEntities = filterService.filteredListAsObjects(filter, provider);
 				result.setNbItemsToProcess(xmlEntities.size());
 				for (Object obj : xmlEntities) {
 					Map<String,Object> context=new HashMap<String,Object>();
 					context.put(recordVariableName,obj);
 					try{
-						scriptInterface.execute(context);
+						scriptInterface.execute(context,provider);
 						result.registerSucces();
 					} catch(BusinessException ex){
 						result.registerError(ex.getMessage());
@@ -67,7 +67,7 @@ public class FilteringJobBean {
 				result.setReport("error:"+e.getMessage());
 			} finally{
 				try{
-					scriptInterface.finilaze(variables);
+					scriptInterface.finilaze(variables,provider);
 				}catch (Exception e) {
 					e.printStackTrace();
 					result.setReport("finalize error:"+e.getMessage());

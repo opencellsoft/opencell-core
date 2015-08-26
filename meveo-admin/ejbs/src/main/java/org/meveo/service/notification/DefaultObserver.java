@@ -133,7 +133,7 @@ public class DefaultObserver {
         	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
 	        Map<String, Object> userMap = new HashMap<String, Object>();
 	        userMap.put("event", o);
-	    	scriptInterface.execute(userMap);
+	    	scriptInterface.execute(userMap,scriptInstance.getProvider());
         } catch(Exception e){
         	e.printStackTrace();
         }
