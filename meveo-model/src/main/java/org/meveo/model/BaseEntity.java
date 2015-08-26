@@ -115,10 +115,10 @@ public abstract class BaseEntity implements Serializable, IEntity, IVersionedEnt
 	 */
 	public boolean doesProviderMatch(Provider providerToMatch) {
 
-		if (providerToMatch == null && getProvider() == null) {
+		if (providerToMatch == null && provider == null) {
 			return true;
-		} else if (providerToMatch != null && getProvider() != null) {
-			return providerToMatch.getId().longValue() == getProvider().getId().longValue();
+		} else if (providerToMatch != null && provider != null) {
+			return providerToMatch.getId().longValue() == provider.getId().longValue();
 		}
 
 		return false;
@@ -133,10 +133,10 @@ public abstract class BaseEntity implements Serializable, IEntity, IVersionedEnt
      */
     public boolean doesProviderMatch(Long providerToMatch) {
 
-        if (providerToMatch == null && getProvider() == null) {
+        if (providerToMatch == null && provider == null) {
             return true;
-        } else if (providerToMatch != null && getProvider() != null) {
-            return getProvider().getId().equals(providerToMatch);
+        } else if (providerToMatch != null && provider != null) {
+            return provider.getId().equals(providerToMatch);
         }
 
         return false;
