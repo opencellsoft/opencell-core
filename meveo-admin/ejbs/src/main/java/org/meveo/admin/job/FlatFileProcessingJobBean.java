@@ -32,7 +32,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.service.script.JavaCompilerManager;
 import org.slf4j.Logger;
@@ -76,7 +75,7 @@ public class FlatFileProcessingJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,File file,String mappingConf, ScriptInstance scriptInstanceFlow) {
+	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,File file,String mappingConf, String scriptInstanceFlowCode) {
 		log.debug("Running for user={}, parameter={}", currentUser, parameter);
 
 		Provider provider = currentUser.getProvider();
@@ -114,8 +113,8 @@ public class FlatFileProcessingJobBean {
 				int processed = 0;
 				while ((results = ff.getNextRecord(bufIn)) != null) {	
 					CDR cdr = (CDR) results.getBean("cdr");											
-					try {
-						Class<org.meveo.service.script.ScriptInterface> mediationFlowScript = javaCompilerManager.getScriptInterface(provider,scriptInstanceFlow.getCode());
+					try {						
+						Class<org.meveo.service.script.ScriptInterface> mediationFlowScript = javaCompilerManager.getScriptInterface(provider,scriptInstanceFlowCode);
 						Map<String, Object> executeParams = new HashMap<String, Object>();
 						executeParams.put("cdr", cdr);
 						executeParams.put("originBatch", getOriginBatch());

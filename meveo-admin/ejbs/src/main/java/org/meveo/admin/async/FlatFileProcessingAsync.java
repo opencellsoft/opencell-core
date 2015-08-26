@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.meveo.admin.job.FlatFileProcessingJobBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.ScriptInstance;
 import org.slf4j.Logger;
 
 /**
@@ -36,9 +35,9 @@ public class FlatFileProcessingAsync {
 
     @Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<File> files, JobExecutionResultImpl result, String parameter, User currentUser,String mappingConf,ScriptInstance scriptInstanceFlow) {
+    public Future<String> launchAndForget(List<File> files, JobExecutionResultImpl result, String parameter, User currentUser,String mappingConf,String scriptInstanceFlowCode) {
         for (File file : files) {
-        	flatFileProcessingJobBean.execute(result, parameter, currentUser, file, mappingConf,scriptInstanceFlow);
+        	flatFileProcessingJobBean.execute(result, parameter, currentUser, file, mappingConf,scriptInstanceFlowCode);
         }
 
         return new AsyncResult<String>("OK");
