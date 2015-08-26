@@ -83,7 +83,14 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         updateCustomFieldsInEntity();
-        return super.saveOrUpdate(killConversation);
+
+        String outcome = super.saveOrUpdate(killConversation);
+        
+        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
+            return null;
+        } else {
+            return outcome;
+        }
     }
 
     /**
@@ -111,7 +118,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                     cft.setInstance(cfi);
                 }
             }
-        }        
+        }
     }
 
     private void updateCustomFieldsInEntity() {

@@ -191,7 +191,9 @@ public class AccountApi extends BaseApi {
 				}
 			}
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			if (missingParameters.size() > 0) {
+				throw new MissingParameterException(getMissingParametersExceptionMessage());
+			}
 		}
 
         // populate customFields

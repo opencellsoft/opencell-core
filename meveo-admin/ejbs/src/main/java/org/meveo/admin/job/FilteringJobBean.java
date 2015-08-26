@@ -1,6 +1,8 @@
 package org.meveo.admin.job;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -17,14 +19,11 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.service.filter.FilterService;
-import org.meveo.service.job.ScriptInstanceService;
+import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
-/**
- * @author Edward P. Legaspi
- **/
 @Stateless
 public class FilteringJobBean {
 
@@ -33,29 +32,46 @@ public class FilteringJobBean {
 
 	@Inject
 	private FilterService filterService;
-
+	
 	@EJB
-	private ScriptInstanceService scriptInstanceService;
+	private JavaCompilerManager javaCompilerManager;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter, String filterCode, String scriptInstanceCode,
-			User currentUser) {
+	public void execute(JobExecutionResultImpl result, String parameter, String filterCode, String scriptInstanceCode,Map<String,Object> variables,
+		String recordVariableName,	User currentUser) {
 		log.debug("Running for user={}, parameter={}", currentUser, parameter);
 
 		Provider provider = currentUser.getProvider();
 		Filter filter = filterService.findByCode(filterCode, provider);
 		if (filter != null) {
-			ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceCode, provider);
-
+			Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(currentUser.getProvider(), scriptInstanceCode);
+			ScriptInterface scriptInterface = null;
 			try {
+				scriptInterface = scriptInterfaceClass.newInstance();
+				scriptInterface.init(variables,provider);
 				List<? extends IEntity> xmlEntities = filterService.filteredListAsObjects(filter, provider);
+				result.setNbItemsToProcess(xmlEntities.size());
 				for (Object obj : xmlEntities) {
-					scriptInstanceService.executeScriptOnObject(scriptInstance, obj);
+					Map<String,Object> context=new HashMap<String,Object>();
+					context.put(recordVariableName,obj);
+					try{
+						scriptInterface.execute(context,provider);
+						result.registerSucces();
+					} catch(BusinessException ex){
+						result.registerError(ex.getMessage());
+					}
 				}
-			} catch (BusinessException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) {
 				e.printStackTrace();
+				result.setReport("error:"+e.getMessage());
+			} finally{
+				try{
+					scriptInterface.finalize(variables,provider);
+				}catch (Exception e) {
+					e.printStackTrace();
+					result.setReport("finalize error:"+e.getMessage());
+				}
 			}
 		}
 	}

@@ -12,13 +12,13 @@ public class CDR  implements Serializable,IProvider{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public Date timestamp;
-	public String access_id;
-	public BigDecimal quantity;
-	public String param1;
-	public String param2;
-	public String param3;
-	public String param4;
+	private Date timestamp;
+	private String access_id;
+	private BigDecimal quantity;
+	private String param1;
+	private String param2;
+	private String param3;
+	private String param4;
 	private String param5;
 	private String param6;
 	private String param7;

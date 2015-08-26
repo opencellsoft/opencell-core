@@ -1,16 +1,21 @@
-package org.meveo.script;
+package org.meveo.service.script;
 
 import java.util.Map;
+
 import javax.naming.InitialContext;
+
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.crm.Provider;
 
 
 
 public abstract class Script  implements ScriptInterface{
 
-	@Override
-	public abstract void execute(Map<String, Object> methodContext);
-
+    public void init(Map<String,Object> methodContext,Provider provider){
+    }
+    
+    public void finalize(Map<String,Object> methodContext,Provider provider){
+    }
 
 	public  Object getServiceInterface(String serviceInterfaceName){
 		try {

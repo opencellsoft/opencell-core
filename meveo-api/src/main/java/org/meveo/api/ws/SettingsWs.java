@@ -9,6 +9,7 @@ import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
@@ -22,6 +23,7 @@ import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.dto.response.GetCurrencyResponse;
+import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
@@ -112,7 +114,8 @@ public interface SettingsWs extends IBaseWs {
 	GetCountryResponse findCountry(@WebParam(name = "countryCode") String countryCode);
 
 	@WebMethod
-	ActionStatus removeCountry(@WebParam(name = "countryCode") String countryCode, @WebParam(name = "currencyCode") String currencyCode);
+	ActionStatus removeCountry(@WebParam(name = "countryCode") String countryCode,
+			@WebParam(name = "currencyCode") String currencyCode);
 
 	@WebMethod
 	ActionStatus updateCountry(@WebParam(name = "country") CountryDto countryDto);
@@ -154,7 +157,8 @@ public interface SettingsWs extends IBaseWs {
 	public ActionStatus updateInvoiceCategory(@WebParam(name = "invoiceCategory") InvoiceCategoryDto postData);
 
 	@WebMethod
-	public GetInvoiceCategoryResponse findInvoiceCategory(@WebParam(name = "invoiceCategoryCode") String invoiceCategoryCode);
+	public GetInvoiceCategoryResponse findInvoiceCategory(
+			@WebParam(name = "invoiceCategoryCode") String invoiceCategoryCode);
 
 	@WebMethod
 	public ActionStatus removeInvoiceCategory(@WebParam(name = "invoiceCategoryCode") String invoiceCategoryCode);
@@ -168,25 +172,32 @@ public interface SettingsWs extends IBaseWs {
 	public ActionStatus updateInvoiceSubCategory(@WebParam(name = "invoiceSubCategory") InvoiceSubCategoryDto postData);
 
 	@WebMethod
-	public GetInvoiceSubCategoryResponse findInvoiceSubCategory(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode);
+	public GetInvoiceSubCategoryResponse findInvoiceSubCategory(
+			@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
 	@WebMethod
-	public ActionStatus removeInvoiceSubCategory(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode);
+	public ActionStatus removeInvoiceSubCategory(
+			@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
 	// invoice sub category country
 
 	@WebMethod
-	public ActionStatus createInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
+	public ActionStatus createInvoiceSubCategoryCountry(
+			@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
 
 	@WebMethod
-	public ActionStatus updateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
+	public ActionStatus updateInvoiceSubCategoryCountry(
+			@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
 
 	@WebMethod
-	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
+	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(
+			@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
 			@WebParam(name = "country") String country);
 
 	@WebMethod
-	public ActionStatus removeInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode, @WebParam(name = "country") String country);
+	public ActionStatus removeInvoiceSubCategoryCountry(
+			@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
+			@WebParam(name = "country") String country);
 
 	// calendar
 
@@ -229,7 +240,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration();
-	
+
 	// OccTemplate
 
 	@WebMethod
@@ -244,5 +255,19 @@ public interface SettingsWs extends IBaseWs {
 	@WebMethod
 	ActionStatus removeOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
 
+	// custom field
+	@WebMethod
+	ActionStatus createCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
+
+	@WebMethod
+	ActionStatus updateCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
+
+	@WebMethod
+	ActionStatus removeCustomFieldTemplate(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode,
+			@WebParam(name = "accountLevel") String accountLevel);
+	
+	@WebMethod
+	GetCustomFieldTemplateReponseDto findCustomFieldTemplate(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode,
+			@WebParam(name = "accountLevel") String accountLevel);
 
 }

@@ -851,25 +851,29 @@ public class AccountHierarchyApi extends BaseApi {
 
 		if (customers != null) {
 			for (Customer cust : customers) {
-				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-					if (!StringUtils.isBlank(cfDto.getStringValue())) {
-						if (cust.getStringCustomValue(cfDto.getCode()).equals(cfDto.getStringValue())) {
-							result.getCustomer().add(new CustomerDto(cust));
+				if (postData.getCustomFields() == null || postData.getCustomFields().getCustomField() == null) {
+					result.getCustomer().add(new CustomerDto(cust));
+				} else {
+					for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+						if (!StringUtils.isBlank(cfDto.getStringValue())) {
+							if (cust.getStringCustomValue(cfDto.getCode()).equals(cfDto.getStringValue())) {
+								result.getCustomer().add(new CustomerDto(cust));
+							}
 						}
-					}
-					if (!StringUtils.isBlank(cfDto.getDateValue())) {
-						if (cust.getDateCustomValue(cfDto.getCode()).equals(cfDto.getDateValue())) {
-							result.getCustomer().add(new CustomerDto(cust));
+						if (!StringUtils.isBlank(cfDto.getDateValue())) {
+							if (cust.getDateCustomValue(cfDto.getCode()).equals(cfDto.getDateValue())) {
+								result.getCustomer().add(new CustomerDto(cust));
+							}
 						}
-					}
-					if (!StringUtils.isBlank(cfDto.getDoubleValue())) {
-						if (cust.getDoubleCustomValue(cfDto.getCode()).equals(cfDto.getDoubleValue())) {
-							result.getCustomer().add(new CustomerDto(cust));
+						if (!StringUtils.isBlank(cfDto.getDoubleValue())) {
+							if (cust.getDoubleCustomValue(cfDto.getCode()).equals(cfDto.getDoubleValue())) {
+								result.getCustomer().add(new CustomerDto(cust));
+							}
 						}
-					}
-					if (!StringUtils.isBlank(cfDto.getLongValue())) {
-						if (cust.getLongCustomValue(cfDto.getCode()).equals(cfDto.getLongValue())) {
-							result.getCustomer().add(new CustomerDto(cust));
+						if (!StringUtils.isBlank(cfDto.getLongValue())) {
+							if (cust.getLongCustomValue(cfDto.getCode()).equals(cfDto.getLongValue())) {
+								result.getCustomer().add(new CustomerDto(cust));
+							}
 						}
 					}
 				}

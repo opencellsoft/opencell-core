@@ -113,7 +113,7 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
 
         if (strictMatch) {
             boolean match = (startDate == null && periodStartDate == null) || (startDate != null && periodStartDate != null && startDate.equals(periodStartDate));
-            match = match && (endDate == null && periodEndDate == null) || (endDate != null && periodEndDate != null && endDate.equals(periodEndDate));
+            match = match && ((endDate == null && periodEndDate == null) || (endDate != null && periodEndDate != null && endDate.equals(periodEndDate)));
             return match;
         }
         // Check non-strict match case when dates overlap

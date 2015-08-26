@@ -8,6 +8,7 @@ import org.meveo.api.BillingCycleApi;
 import org.meveo.api.CalendarApi;
 import org.meveo.api.CountryApi;
 import org.meveo.api.CurrencyApi;
+import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.InvoiceCategoryApi;
 import org.meveo.api.InvoiceSubCategoryApi;
 import org.meveo.api.InvoiceSubCategoryCountryApi;
@@ -24,6 +25,7 @@ import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
@@ -37,6 +39,7 @@ import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.dto.response.GetCurrencyResponse;
+import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
@@ -62,6 +65,9 @@ import org.meveo.api.ws.SettingsWs;
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
 @Interceptors({ LoggingInterceptor.class })
 public class SettingsWsImpl extends BaseWs implements SettingsWs {
+
+	@Inject
+	private CustomFieldTemplateApi customFieldTemplateApi;
 
 	@Inject
 	private CountryApi countryApi;
@@ -98,7 +104,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
 	@Inject
 	private CalendarApi calendarApi;
-	
+
 	@Inject
 	private OccTemplateApi occTemplateApi;
 
@@ -384,11 +390,13 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String country) {
+	public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode,
+			String country) {
 		GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
 
 		try {
-			result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country, getCurrentUser().getProvider()));
+			result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country,
+					getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -468,7 +476,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		GetInvoiceSubCategoryResponse result = new GetInvoiceSubCategoryResponse();
 
 		try {
-			result.setInvoiceSubCategory(invoiceSubCategoryApi.find(invoiceSubCategoryCode, getCurrentUser().getProvider()));
+			result.setInvoiceSubCategory(invoiceSubCategoryApi.find(invoiceSubCategoryCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1160,8 +1169,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
-	
+
 	@Override
 	public ActionStatus createOccTemplate(OccTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -1227,7 +1235,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			occTemplateApi.remove(occTemplateCode,getCurrentUser().getProvider());
+			occTemplateApi.remove(occTemplateCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1236,6 +1244,87 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createCustomFieldTemplate(CustomFieldTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			customFieldTemplateApi.create(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateCustomFieldTemplate(CustomFieldTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			customFieldTemplateApi.update(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus removeCustomFieldTemplate(String customFieldTemplateCode, String accountLevel) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			customFieldTemplateApi.remove(customFieldTemplateCode, accountLevel, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public GetCustomFieldTemplateReponseDto findCustomFieldTemplate(String customFieldTemplateCode, String accountLevel) {
+		GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
+
+		try {
+			result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, accountLevel,
+					getCurrentUser()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
 		}
 
 		log.debug("RESPONSE={}", result);
