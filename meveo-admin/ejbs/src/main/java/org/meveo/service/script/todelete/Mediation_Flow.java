@@ -1,10 +1,12 @@
 package org.meveo.service.script.todelete;
 
+import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CDR;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.mediation.Access;
 import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -31,10 +33,16 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 			log.info("duplicateFound:"+duplicateFound);
 			
 			if(duplicateFound != null && duplicateFound.booleanValue()){
-				throw new BusinessException("duplicateFound");
+				throw new BusinessException("DuplicateFound");
 			}
 			initContext.put("accessUserId",cdr.getAccess_id());
 			mediation_RoutingSub.newInstance().execute(initContext, provider);
+			
+			List<Access> accesses = (List<Access>) initContext.get("accesses");
+			if(accesses == null || accesses.isEmpty()){
+				throw new BusinessException("InvalidAccess");
+			}
+			
 			mediation_CreateEdr.newInstance().execute(initContext, provider);
 			
 			
