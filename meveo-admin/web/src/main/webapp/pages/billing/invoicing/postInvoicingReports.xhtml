@@ -132,7 +132,7 @@
 		<h:outputText value="#{messages['postInvoicingReport.billableBA']}"
 			style="font-weight: bold;font-size=14;" />
 		<hftl:dataList id="chargedBA" dataModel="#{billingRunBean.entity.invoices}"
-			backingBean="#{invoiceBean}" checkMany="false">
+			backingBean="#{invoiceBean}">
 
 			<hftl:column label="#{messages['businessEntity.code']}"
 				field="billingAccount.code" entityView="billingAccountDetail" valueIdField="billingAccount.id"/>
@@ -170,7 +170,7 @@
 					binding="#{billingAccountBean.dataTable}"
 					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 					rowsPerPageTemplate="5,10,15" lazy="true" styleClass="custom-grid"
-					rowKey="#{entity.id}" checkMany="false">
+					rowKey="#{entity.id}">
 
 					<hftl:column label="#{messages['businessEntity.code']}"
 						field="billingAccount.code" />

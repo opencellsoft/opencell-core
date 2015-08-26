@@ -118,7 +118,7 @@
 						<hftl:dataList id="serviceRecurringChargeTempalte_table"
 							backingBean="#{serviceChargeTemplateRecurringBean}"
 							dataModel="#{serviceChargeTemplateRecurringBean.getRecurringCharges(serviceTemplateBean.entity)}"
-							resultsId="serviceRecurringCharges_results" checkMany="false">
+							resultsId="serviceRecurringCharges_results">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="recurringChargeTemplateDetail"/>
@@ -211,7 +211,7 @@
 						<hftl:dataList id="serviceSubscriptionChargeTempalte_table"
 							backingBean="#{serviceChargeTemplateSubscriptionBean}"
 							dataModel="#{serviceChargeTemplateSubscriptionBean.getSubscriptionCharges(serviceTemplateBean.entity)}"
-							resultsId="serviceSubscriptionCharges_results" checkMany="false">
+							resultsId="serviceSubscriptionCharges_results">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="oneShotChargeTemplateDetail"/>
@@ -301,7 +301,7 @@
 						<hftl:dataList id="serviceTerminationChargeTempalte_table"
 							backingBean="#{serviceChargeTemplateTerminationBean}"
 							dataModel="#{serviceChargeTemplateTerminationBean.getTerminationCharges(serviceTemplateBean.entity)}"
-							resultsId="serviceTerminationCharges_results" checkMany="false">
+							resultsId="serviceTerminationCharges_results">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="oneShotChargeTemplateDetail"/>
@@ -390,7 +390,7 @@
                     <h:panelGroup id="serviceUsageChargeTempalte_panel">
 						<hftl:dataList backingBean="#{serviceChargeTemplateUsageBean}"
 							dataModel="#{serviceChargeTemplateUsageBean.getUsageCharges(serviceTemplateBean.entity)}"
-							resultsId="serviceUsageCharges_results" checkMany="false">
+							resultsId="serviceUsageCharges_results">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="usageChargeTemplateDetail"/>

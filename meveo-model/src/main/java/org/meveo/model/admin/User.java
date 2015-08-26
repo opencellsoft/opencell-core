@@ -241,7 +241,7 @@ public class User extends AuditableEntity {
     @Override
     public boolean doesProviderMatch(Provider providerToMatch) {
 
-        for (Provider providerItem : providers) {
+        for (Provider providerItem : getProviders()) {
 
             if (providerItem.getId().longValue() == providerToMatch.getId().longValue()) {
                 return true;
@@ -255,7 +255,7 @@ public class User extends AuditableEntity {
      */
     @Override
     public boolean doesProviderMatch(Long providerToMatch) {
-        for (Provider providerItem : providers) {
+        for (Provider providerItem : getProviders()) {
             if (providerItem.getId().equals(providerToMatch)) {
                 return true;
             }

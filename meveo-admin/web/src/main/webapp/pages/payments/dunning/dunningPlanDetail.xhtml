@@ -57,7 +57,7 @@
 					<p:outputPanel id="dunningPlanTransition_panel">
 						<hftl:dataList backingBean="#{dunningPlanTransitionBean}"
 							dataModel="#{dunningPlanTransitionBean.getTransitions(dunningPlanBean.entity)}"
-							resultsId="dunningPlanTransitions_results" checkMany="false">
+							resultsId="dunningPlanTransitions_results">
 							<hftl:column
 								label="#{messages['dunningPlanTransition.dunningLevelFrom']}"
 								field="dunningLevelFrom" />
@@ -187,7 +187,7 @@
 							<h:form id="actionItems_form">
 								<hftl:dataList backingBean="#{actionPlanItemBean}"
 									dataModel="#{actionPlanItemBean.getActions(dunningPlanBean.entity)}"
-									resultsId="dunningPlanActions_results" checkMany="false">
+									resultsId="dunningPlanActions_results">
 									<hftl:column label="#{messages['actionPlanItem.dunningLevel']}"
 										field="dunningLevel" />
 									<hftl:column label="#{messages['actionPlanItem.actionType']}"
