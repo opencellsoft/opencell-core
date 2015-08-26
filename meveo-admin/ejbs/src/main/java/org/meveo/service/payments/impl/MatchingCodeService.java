@@ -145,7 +145,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 				new Object[] { customerAccountId, customerAccountCode, operationIds,
 						user == null ? "null" : user.getName() });
 		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId,
-				customerAccountCode);
+				customerAccountCode,user.getProvider());
 
 		BigDecimal amoutDebit = new BigDecimal(0);
 		BigDecimal amoutCredit = new BigDecimal(0);

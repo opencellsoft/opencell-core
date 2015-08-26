@@ -167,14 +167,14 @@ public class AccountingDetail extends FileProducer implements Reporting {
 		return result;
 	}
 
-	public BigDecimal getCustomerBalanceDue(String customerAccountCode, Date atDate) {
+	public BigDecimal getCustomerBalanceDue(String customerAccountCode, Date atDate,Provider provider) {
 		BigDecimal result = BigDecimal.ZERO;
 		if (balances.containsKey(customerAccountCode)) {
 			result = balances.get(customerAccountCode);
 		} else {
 			try {
 				result = customerAccountService.customerAccountBalanceDue(null,
-						customerAccountCode, atDate);
+						customerAccountCode, atDate,provider);
 				balances.put(customerAccountCode, result);
 			} catch (BusinessException e) {
 				log.error("Error while getting balance dues", e);
