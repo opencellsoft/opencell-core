@@ -16,33 +16,24 @@
  */
 package org.meveo.admin.action.crm;
 
-import java.io.IOException;
-//import java.math.BigDecimal;
-//import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 //import org.meveo.model.billing.Invoice;
 //import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.selfcare.local.SelfcareServiceLocal;
 import org.omnifaces.cdi.ViewScoped;
+//import java.math.BigDecimal;
+//import java.util.List;
 
 @Named
 @ViewScoped
 public class SyntheseClientBean extends BaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	private SelfcareServiceLocal selfcareService;
 
 	@Inject
 	private BillingAccountService billingAccountService;
@@ -92,40 +83,40 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 		return billingAccountService;
 	}
 
-	public void downloadPdf(String invoiceNumber) {
-
-		byte[] pdf = null;
-		try {
-			pdf = selfcareService.getPDFInvoice(invoiceNumber);
-		} catch (BusinessException e1) {
-			log.error("Error:#0, when retrieve pdf array with number #1",
-					e1.getMessage(), invoiceNumber);
-		}
-		if (pdf == null || pdf.length == 0) {
-			return;
-		}
-		try {
-			javax.faces.context.FacesContext context = javax.faces.context.FacesContext
-					.getCurrentInstance();
-			HttpServletResponse res = (HttpServletResponse) context
-					.getExternalContext().getResponse();
-			res.setContentType("application/pdf");
-			res.setContentLength(pdf.length);
-			res.addHeader("Content-disposition",
-					"attachment;filename=\"invoice_" + invoiceNumber + ".pdf\"");
-
-			ServletOutputStream out = res.getOutputStream();
-
-			out.write(pdf);
-			out.flush();
-			out.close();
-			context.responseComplete();
-
-		} catch (IOException e) {
-			log.error("Error:#0, when output invoice with number #1",
-					e.getMessage(), invoiceNumber);
-		}
-
-	}
+//	public void downloadPdf(String invoiceNumber) {
+//
+//		byte[] pdf = null;
+//		try {
+//			pdf = selfcareService.getPDFInvoice(invoiceNumber);
+//		} catch (BusinessException e1) {
+//			log.error("Error:#0, when retrieve pdf array with number #1",
+//					e1.getMessage(), invoiceNumber);
+//		}
+//		if (pdf == null || pdf.length == 0) {
+//			return;
+//		}
+//		try {
+//			javax.faces.context.FacesContext context = javax.faces.context.FacesContext
+//					.getCurrentInstance();
+//			HttpServletResponse res = (HttpServletResponse) context
+//					.getExternalContext().getResponse();
+//			res.setContentType("application/pdf");
+//			res.setContentLength(pdf.length);
+//			res.addHeader("Content-disposition",
+//					"attachment;filename=\"invoice_" + invoiceNumber + ".pdf\"");
+//
+//			ServletOutputStream out = res.getOutputStream();
+//
+//			out.write(pdf);
+//			out.flush();
+//			out.close();
+//			context.responseComplete();
+//
+//		} catch (IOException e) {
+//			log.error("Error:#0, when output invoice with number #1",
+//					e.getMessage(), invoiceNumber);
+//		}
+//
+//	}
 
 }
