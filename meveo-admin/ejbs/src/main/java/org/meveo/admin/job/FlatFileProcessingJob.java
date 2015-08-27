@@ -77,7 +77,7 @@ public class FlatFileProcessingJob extends Job {
 					context = variablesCFI.getMapValue();
 				}
 				mappingConf = jobInstance.getStringCustomValue("FlatFileProcessingJob_mappingConf");
-				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + jobInstance.getProvider().getCode() + jobInstance.getStringCustomValue("FlatFileProcessingJob_inputDir").replaceAll("..", "");
+				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + jobInstance.getProvider().getCode() + jobInstance.getStringCustomValue("FlatFileProcessingJob_inputDir").replaceAll("\\..", "");
 				fileNameExtension = jobInstance.getStringCustomValue("FlatFileProcessingJob_fileNameExtension");
 				scriptInstanceFlowCode = jobInstance.getStringCustomValue("FlatFileProcessingJob_scriptsFlow");
 
