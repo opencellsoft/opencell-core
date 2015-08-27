@@ -5,6 +5,7 @@ package org.meveo.admin.async;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
@@ -35,9 +36,9 @@ public class FlatFileProcessingAsync {
 
     @Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<File> files, JobExecutionResultImpl result, String parameter, User currentUser,String mappingConf,String scriptInstanceFlowCode) {
+    public Future<String> launchAndForget(List<File> files, JobExecutionResultImpl result, String inputDir, User currentUser,String mappingConf,String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename) {
         for (File file : files) {
-        	flatFileProcessingJobBean.execute(result, parameter, currentUser, file, mappingConf,scriptInstanceFlowCode);
+        	flatFileProcessingJobBean.execute(result, inputDir, currentUser, file, mappingConf,scriptInstanceFlowCode,recordVariableName,context,originFilename);
         }
 
         return new AsyncResult<String>("OK");

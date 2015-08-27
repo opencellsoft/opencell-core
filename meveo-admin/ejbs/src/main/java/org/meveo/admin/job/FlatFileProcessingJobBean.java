@@ -8,12 +8,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,16 +21,13 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.admin.parse.csv.CDR;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
 import com.blackbear.flatworm.ConfigurationReader;
@@ -43,8 +37,6 @@ import com.blackbear.flatworm.MatchedRecord;
 
 @Stateless
 public class FlatFileProcessingJobBean {
-
-
 
 	@Inject
 	private Logger log;
@@ -75,18 +67,13 @@ public class FlatFileProcessingJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser,File file,String mappingConf, String scriptInstanceFlowCode) {
-		log.debug("Running for user={}, parameter={}", currentUser, parameter);
+	public void execute(JobExecutionResultImpl result, String inputDir, User currentUser,File file,String mappingConf, String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename) {
+		log.debug("Running for user={}, inputDir={}", currentUser, inputDir);
 
 		Provider provider = currentUser.getProvider();
-		init(file);
 
-		ParamBean parambean = ParamBean.getInstance();
-		String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "imports" + File.separator
-				+ "metering" + File.separator;
-
-		outputDir = meteringDir + "output";
-		rejectDir = meteringDir + "reject";
+		outputDir =inputDir + File.separator + "output";
+		rejectDir =inputDir + File.separator + "reject";
 
 		File f = new File(outputDir);
 		if (!f.exists()) {
@@ -104,31 +91,32 @@ public class FlatFileProcessingJobBean {
 			log.info("InputFiles job {} in progress...", file.getName());
 			cdrFileName = file.getName();
 			File currentFile = FileUtils.addExtension(file, ".processing");			
-			try {								
+			Class<org.meveo.service.script.ScriptInterface> mediationFlowScript = javaCompilerManager.getScriptInterface(provider,scriptInstanceFlowCode);
+			ScriptInterface script = null;
+			try {					
 				ConfigurationReader parser = new ConfigurationReader();
 				FileFormat ff = parser.loadConfigurationFile( new ByteArrayInputStream(mappingConf.getBytes(StandardCharsets.UTF_8)));
 				InputStream in = new FileInputStream(currentFile);
 				BufferedReader bufIn = new BufferedReader(new InputStreamReader(in));
-				MatchedRecord results = null;
+				MatchedRecord record = null;
 				int processed = 0;
-				while ((results = ff.getNextRecord(bufIn)) != null) {	
-					CDR cdr = (CDR) results.getBean("cdr");											
+				script = mediationFlowScript.newInstance();
+				script.init(context, provider);
+				while ((record = ff.getNextRecord(bufIn)) != null) {	
+					Object recordBean = record.getBean(recordVariableName);											
 					try {						
-						Class<org.meveo.service.script.ScriptInterface> mediationFlowScript = javaCompilerManager.getScriptInterface(provider,scriptInstanceFlowCode);
 						Map<String, Object> executeParams = new HashMap<String, Object>();
-						executeParams.put("cdr", cdr);
-						executeParams.put("originBatch", getOriginBatch());
-						executeParams.put("originRecord", getOriginRecord(cdr));
-						mediationFlowScript.newInstance().execute(executeParams,provider);		
-				    					    		 				    	
-						outputCDR(cdr);
-						processed++;
+						executeParams.put(recordVariableName, recordBean);
+						executeParams.put(originFilename, file.getName());
+						script.execute(executeParams,provider);	 				    	
+						outputRecord(record);
 						result.registerSucces();
-
 					} catch (Exception e) {
-						log.warn("error on reject cdr ",e);
+						log.warn("error on reject record ",e);
 						result.registerError("file=" + file.getName() + ", line=" + processed + ": " + e.getMessage());
-						rejectCDR(cdr, CDRRejectionCauseEnum.TECH_ERR);
+						rejectRecord(record, e.getMessage());
+					} finally{
+						processed++;
 					}
 				}
 
@@ -142,9 +130,14 @@ public class FlatFileProcessingJobBean {
 				log.error("Failed to process CDR file {}", file.getName(), e);
 				result.registerError(e.getMessage());
 				FileUtils.moveFile(rejectDir, currentFile, file.getName());
-
 			} finally {
-				
+				try{
+					if(script!=null){
+						script.finalize(context,provider);
+					}
+				} catch(Exception e){
+					report+="\r\n error in script finailzation"+e.getMessage();
+				}
 				try {
 					if (currentFile != null) {
 						currentFile.delete();
@@ -171,8 +164,6 @@ public class FlatFileProcessingJobBean {
 					log.error("Failed to close output file writer for file {}", file.getName(), e);
 				}
 			}
-
-
 			result.setReport(report);
 		} else {
 			log.info("no file to process");
@@ -180,16 +171,15 @@ public class FlatFileProcessingJobBean {
 
 	}
 
-
-	private void outputCDR(CDR line) throws FileNotFoundException {
+	private void outputRecord(MatchedRecord record) throws FileNotFoundException {
 		if (outputFileWriter == null) {
 			File outputFile = new File(outputDir + File.separator + cdrFileName + ".processed");
 			outputFileWriter = new PrintWriter(outputFile);
 		}
-		outputFileWriter.println(line.toString());
+		outputFileWriter.println(record.toString());
 	}
 
-	private void rejectCDR(CDR cdr, CDRRejectionCauseEnum reason) {
+	private void rejectRecord(MatchedRecord cdr, String reason) {
 
 		if (rejectFileWriter == null) {
 			File rejectFile = new File(rejectDir + File.separator + cdrFileName + ".rejected");
@@ -201,48 +191,5 @@ public class FlatFileProcessingJobBean {
 		}
 			rejectFileWriter.println(cdr.toString()+";"+reason);
 	}
-	
-	public void init(File CDRFile) {
-		batchName = "CDR_" + CDRFile.getName();
-	}
 
-	
-	public void initByApi(String username, String ip) {
-		originBatch = "API_" + ip;
-		this.username = username;
-	}
-
-	
-	public String getOriginBatch() {
-		if (StringUtils.isBlank(originBatch)) {
-			return batchName == null ? "CDR_CONS_CSV" : batchName;
-		} else {
-			return originBatch;
-		}
-	}
-	
-	public String getOriginRecord(Serializable object) {
-		String result = null;
-		if (StringUtils.isBlank(username)) {
-			CDR cdr = (CDR) object;
-			result = cdr.toString();
-
-			if (messageDigest != null) {
-				synchronized (messageDigest) {
-					messageDigest.reset();
-					messageDigest.update(result.getBytes(Charset.forName("UTF8")));
-					final byte[] resultByte = messageDigest.digest();
-					StringBuffer sb = new StringBuffer();
-					for (int i = 0; i < resultByte.length; ++i) {
-						sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
-					}
-					result = sb.toString();
-				}
-			}
-		} else {
-			return username + "_" + new Date().getTime();
-		}
-
-		return result;
-	}
 }

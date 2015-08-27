@@ -3,7 +3,9 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -19,8 +21,11 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -55,15 +60,24 @@ public class FlatFileProcessingJob extends Job {
 			String mappingConf = null;
 			String inputDir = null,scriptInstanceFlowCode=null;
 			String fileNameExtension = null;
+			String recordVariableName = null;
+			String originFilename = null;
+			Map<String,Object> context = new HashMap<String,Object>();
 			try {
 				nbRuns = jobInstance.getLongCustomValue("FlatFileProcessingJob_nbRuns").longValue();
 				waitingMillis = jobInstance.getLongCustomValue("FlatFileProcessingJob_waitingMillis").longValue();
 				if (nbRuns == -1) {
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
-
-				mappingConf = jobInstance.getStringCustomValue("FlatFileProcessingJob_mappingConf");
-				inputDir = jobInstance.getStringCustomValue("FlatFileProcessingJob_inputDir");
+				recordVariableName = jobInstance.getStringCustomValue("FlatFileProcessingJob_recordVariableName");
+				originFilename = jobInstance.getStringCustomValue("FlatFileProcessingJob_originFilename");
+				 context = new HashMap<String,Object>();
+					CustomFieldInstance variablesCFI = jobInstance.getCustomFields().get("FlatFileProcessingJob_variables");
+					if(variablesCFI!=null){
+						context = variablesCFI.getMapValue();
+					}
+				 mappingConf = jobInstance.getStringCustomValue("FlatFileProcessingJob_mappingConf");
+				inputDir =  ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + jobInstance.getProvider().getCode() + jobInstance.getStringCustomValue("FlatFileProcessingJob_inputDir").replaceAll("..","");
 				fileNameExtension = jobInstance.getStringCustomValue("FlatFileProcessingJob_fileNameExtension");
 				scriptInstanceFlowCode= jobInstance.getStringCustomValue("FlatFileProcessingJob_scriptsFlow");
 
@@ -86,7 +100,7 @@ public class FlatFileProcessingJob extends Job {
 
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 			while (subListCreator.isHasNext()) {
-				futures.add(flatFileProcessingAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), currentUser, mappingConf, scriptInstanceFlowCode));
+				futures.add(flatFileProcessingAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, inputDir, currentUser, mappingConf, scriptInstanceFlowCode,recordVariableName,context,originFilename));
 				if (subListCreator.isHasNext()) {
 					try {
 						Thread.sleep(waitingMillis.longValue());
@@ -117,7 +131,7 @@ public class FlatFileProcessingJob extends Job {
 
 	@Override
 	public JobCategoryEnum getJobCategory() {
-		return JobCategoryEnum.FLAT_FILE_PROCESSING;
+		return JobCategoryEnum.MEDIATION;
 	}
 
 	@Override
@@ -194,6 +208,37 @@ public class FlatFileProcessingJob extends Job {
 		ss.setDefaultValue(null);
 		ss.setValueRequired(true);
 		result.add(ss);
+		
+		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
+		variablesCF.setCode("FlatFileProcessingJob_variables");
+		variablesCF.setAccountLevel(AccountLevelEnum.TIMER);
+		variablesCF.setActive(true);
+		variablesCF.setDescription("Init and finalize variables");
+		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
+		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
+		variablesCF.setValueRequired(false);
+		result.add(variablesCF); 
+
+		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
+		recordVariableName.setCode("FlatFileProcessingJob_recordVariableName");
+		recordVariableName.setAccountLevel(AccountLevelEnum.CUST);
+		recordVariableName.setActive(true);
+		recordVariableName.setDefaultValue("record");
+		recordVariableName.setDescription("Record variable name");
+		recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
+		recordVariableName.setValueRequired(false);
+		result.add(recordVariableName);
+		
+		CustomFieldTemplate originFilename = new CustomFieldTemplate();
+		originFilename.setCode("FlatFileProcessingJob_originFilename");
+		originFilename.setAccountLevel(AccountLevelEnum.CUST);
+		originFilename.setActive(true);
+		originFilename.setDefaultValue("origin_filename");
+		originFilename.setDescription("Filename variable name");
+		originFilename.setFieldType(CustomFieldTypeEnum.STRING);
+		originFilename.setValueRequired(false);
+		result.add(originFilename);
+
 
 		return result;
 	}

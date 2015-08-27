@@ -26,8 +26,7 @@ public enum JobCategoryEnum {
 	    ACCOUNT_RECEIVABLES(5,"jobCategoryEnum.accountReceivables"),
 	    WALLET(6, "jobCategoryEnum.wallet"),
 	    UTILS(7, "jobCategoryEnum.utils"),
-	    MEDIATION(8, "jobCategoryEnum.mediation"),
-	    FLAT_FILE_PROCESSING(9, "jobCategoryEnum.flatFileProcessing");
+	    MEDIATION(8, "jobCategoryEnum.mediation");
 	    
 
 	    private Integer id;
