@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the field "job category" by choosing as a category 'Rating' then click on the button "search".
+Expected Results : The result of research gives the items matching with the category filled bellow
+
+Description Test Case 2: 
+Actions : Make a first search by filling the three field "job category" by choosing as a category 'Invoicing' then click on the button "search".
+Expected Results : The result of research gives the items matching with the category filled bellow
+
+Description Test Case 3: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "clean filters".
+Expected Results : The fileds (Code/Description) become empty.
+
+Description Test Case 4: 
+Actions : Click on the button "New" in order to add a new Job Instances.
+Expected Results : A list of empty items are chowed.
+
+Description Test Case 5: 
+Actions : Don't fill any field then click on "save".
+Expected Results : A new job can not be created, an alert appears to mention that code, job type and job category are required to create the job
+
+Description Test Case 6:
+Actions : Click on "reset".
+Expected Results : All the fields become empty.
+
+Description Test Case 7: 
+Actions : Fill only the field Job Category then click on "save".
+Expected Results : A new Job Instances can not be created, an alert appears to mention that code and Job type is required to create the Job Instances.
+
+Description Test Case 8: 
+Actions : Fill only the field job type then click on "save".
+Expected Results : A new Job Instances can not be created, an alert appears to mention that Job Category and code is required to create the Job Instances.
+
+Description Test Case 9: 
+Actions : Fill only the field code then click on "save".
+Expected Results : A new Job Instances can not be created, an alert appears to mention that Job Category and job type is required to create the Job Instances.
+
+Description Test Case 10: 
+Actions : Let the required fields not filled and fill (description, timer,parameters,next job, active) and click on "save"
+Expected Results : A new job can not be created, an alert appears to mention that code, job category and job type are required to create the job
+
+Description Test Case 11: 
+Actions : Click on "back".
+Expected Results : Return to the previous page. 
+-->
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="variables.html">variables</a></td></tr>
+<tr><td><a href="SearchWithRatingJobCategoryTestCase.html">SearchWithRatingJobCategoryTestCase</a></td></tr>
+<tr><td><a href="SearchWithInvoicingJobCategoryTestCase.html">SearchWithInvoicingJobCategoryTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="NewJobInstancesTestCase.html">NewJobInstancesTestCase</a></td></tr>
+<tr><td><a href="EmptyJobInstancesTestCase.html">EmptyJobInstancesTestCase</a></td></tr>
+<tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
+<tr><td><a href="FillOnlyJobCategoryTestCase.html">FillOnlyJobCategoryTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyJobTypeTestCase.html">FillOnlyJobTypeTestCase</a></td></tr>
+<tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
+<tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
+<tr><td><a href="ExportWithoutPickAnyLineTestCase.html">ExportWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithoutPickAnyLineTestCase.html">DeleteMultipleWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DropdownWith15TestCase.html">DropdownWith15TestCase</a></td></tr>
+<tr><td><a href="DropdownWith20TestCase.html">DropdownWith20TestCase</a></td></tr>
+<tr><td><a href="DropdownWith50TestCase.html">DropdownWith50TestCase</a></td></tr>
+<tr><td><a href="DropdownWith10TestCase.html">DropdownWith10TestCase</a></td></tr>
+<tr><td><a href="NextPageTestCase.html">NextPageTestCase</a></td></tr>
+<tr><td><a href="LastPageTestCase.html">LastPageTestCase</a></td></tr>
+<tr><td><a href="PreviousPageTestCase.html">PreviousPageTestCase</a></td></tr>
+<tr><td><a href="FilterWithActiveTestCase.html">FilterWithActiveTestCase</a></td></tr>
+<tr><td><a href="LogoutTestCase.html">LogoutTestCase</a></td></tr>
+</tbody></table>
+</body>
+</html>
