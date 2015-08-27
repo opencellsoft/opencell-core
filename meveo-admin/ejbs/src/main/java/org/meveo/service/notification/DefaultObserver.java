@@ -114,16 +114,16 @@ public class DefaultObserver {
         return result;
     }
 
-    private String executeAction(String expression, Object o) throws BusinessException {
-        log.debug("execute notification action: {}", expression);
-        if (StringUtils.isBlank(expression)) {
-            return "";
-        }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("event", o);
-        userMap.put("manager", manager);
-        return (String) ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-    }
+//    private String executeAction(String expression, Object o) throws BusinessException {
+//        log.debug("execute notification action: {}", expression);
+//        if (StringUtils.isBlank(expression)) {
+//            return "";
+//        }
+//        Map<Object, Object> userMap = new HashMap<Object, Object>();
+//        userMap.put("event", o);
+//        userMap.put("manager", manager);
+//        return (String) ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+//    }
     
     
     private void executeScript(ScriptInstance scriptInstance, Object o) throws BusinessException {
@@ -135,7 +135,7 @@ public class DefaultObserver {
 	        userMap.put("event", o);
 	    	scriptInterface.execute(userMap,scriptInstance.getProvider());
         } catch(Exception e){
-        	e.printStackTrace();
+        	log.error("failed script execution",e);
         }
     }    
 
@@ -148,7 +148,7 @@ public class DefaultObserver {
 
             // we first perform the EL actions
             if (!(notif instanceof WebHook)) {
-                executeAction(notif.getElAction(), e);
+                executeScript(notif.getScriptInstance(), e);
             }
             
             if(notif.getScriptInstance() != null){
@@ -204,8 +204,8 @@ public class DefaultObserver {
     private void fireCdrNotification(Notification notif, IProvider cdr) {
         log.debug("Fire Cdr Notification for notif {} and  cdr {}", notif, cdr);
         try {
-            if (!StringUtils.isBlank(notif.getElAction()) && matchExpression(notif.getElFilter(), cdr)) {
-                executeAction(notif.getElAction(), cdr);
+            if (!StringUtils.isBlank(notif.getScriptInstance()) && matchExpression(notif.getElFilter(), cdr)) {
+                executeScript(notif.getScriptInstance(), cdr);
             }
         } catch (BusinessException e1) {
             log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
