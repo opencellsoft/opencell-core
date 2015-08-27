@@ -144,4 +144,12 @@ public class CustomFieldTemplateDto {
 		this.valueRequired = valueRequired;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomFieldTemplateDto [code=" + code + ", description=" + description + ", fieldType=" + fieldType
+				+ ", accountLevel=" + accountLevel + ", defaultValue=" + defaultValue + ", storageType=" + storageType
+				+ ", valueRequired=" + valueRequired + ", versionable=" + versionable + ", triggerEndPeriodEvent="
+				+ triggerEndPeriodEvent + ", calendar=" + calendar + "]";
+	}
+
 }
