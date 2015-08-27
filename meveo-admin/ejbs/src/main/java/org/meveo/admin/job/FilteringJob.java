@@ -95,7 +95,7 @@ public class FilteringJob extends Job {
 
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
 		recordVariableName.setCode("FilteringJob_recordVariableName");
-		recordVariableName.setAccountLevel(AccountLevelEnum.CUST);
+		recordVariableName.setAccountLevel(AccountLevelEnum.TIMER);
 		recordVariableName.setActive(true);
 		recordVariableName.setDefaultValue("record");
 		recordVariableName.setDescription("Record variable name");

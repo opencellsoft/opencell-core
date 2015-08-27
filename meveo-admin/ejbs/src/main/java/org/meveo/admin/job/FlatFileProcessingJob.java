@@ -221,7 +221,7 @@ public class FlatFileProcessingJob extends Job {
 
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
 		recordVariableName.setCode("FlatFileProcessingJob_recordVariableName");
-		recordVariableName.setAccountLevel(AccountLevelEnum.CUST);
+		recordVariableName.setAccountLevel(AccountLevelEnum.TIMER);
 		recordVariableName.setActive(true);
 		recordVariableName.setDefaultValue("record");
 		recordVariableName.setDescription("Record variable name");
@@ -231,7 +231,7 @@ public class FlatFileProcessingJob extends Job {
 		
 		CustomFieldTemplate originFilename = new CustomFieldTemplate();
 		originFilename.setCode("FlatFileProcessingJob_originFilename");
-		originFilename.setAccountLevel(AccountLevelEnum.CUST);
+		originFilename.setAccountLevel(AccountLevelEnum.TIMER);
 		originFilename.setActive(true);
 		originFilename.setDefaultValue("origin_filename");
 		originFilename.setDescription("Filename variable name");
