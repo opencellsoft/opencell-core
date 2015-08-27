@@ -18930,6 +18930,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findScriptInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findScriptInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findScriptInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateLanguage">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateLanguage">
@@ -18993,6 +19002,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createScriptInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createScriptInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createScriptInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findInvoiceSubCategory">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findInvoiceSubCategory">
@@ -19020,6 +19038,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateScriptInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateScriptInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateScriptInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findInvoicingConfiguration">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findInvoicingConfiguration">
@@ -19038,21 +19065,21 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="removeSeller">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeSeller">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeSellerResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeBillingCycle">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeBillingCycle">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeBillingCycleResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeSeller">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeSeller">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeSellerResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -19089,6 +19116,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findOccTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeScriptInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeScriptInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeScriptInstanceResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -19478,6 +19514,7 @@
       <xs:element name="Name" type="tns:nameDto"/>
       <xs:element name="OCCTemplate" type="tns:occTemplateDto"/>
       <xs:element name="Provider" type="tns:providerDto"/>
+      <xs:element name="ScriptInstance" type="tns:scriptInstanceDto"/>
       <xs:element name="SellerCodesResponse" type="tns:sellerCodesResponseDto"/>
       <xs:element name="SellerResponse" type="tns:sellerResponseDto"/>
       <xs:element name="Tax" type="tns:taxDto"/>
@@ -19508,6 +19545,8 @@
       <xs:element name="createOccTemplateResponse" type="tns:createOccTemplateResponse"/>
       <xs:element name="createProvider" type="tns:createProvider"/>
       <xs:element name="createProviderResponse" type="tns:createProviderResponse"/>
+      <xs:element name="createScriptInstance" type="tns:createScriptInstance"/>
+      <xs:element name="createScriptInstanceResponse" type="tns:createScriptInstanceResponse"/>
       <xs:element name="createSeller" type="tns:createSeller"/>
       <xs:element name="createSellerResponse" type="tns:createSellerResponse"/>
       <xs:element name="createTax" type="tns:createTax"/>
@@ -19542,6 +19581,8 @@
       <xs:element name="findOccTemplateResponse" type="tns:findOccTemplateResponse"/>
       <xs:element name="findProvider" type="tns:findProvider"/>
       <xs:element name="findProviderResponse" type="tns:findProviderResponse"/>
+      <xs:element name="findScriptInstance" type="tns:findScriptInstance"/>
+      <xs:element name="findScriptInstanceResponse" type="tns:findScriptInstanceResponse"/>
       <xs:element name="findSeller" type="tns:findSeller"/>
       <xs:element name="findSellerResponse" type="tns:findSellerResponse"/>
       <xs:element name="findTax" type="tns:findTax"/>
@@ -19576,6 +19617,8 @@
       <xs:element name="removeLanguageResponse" type="tns:removeLanguageResponse"/>
       <xs:element name="removeOccTemplate" type="tns:removeOccTemplate"/>
       <xs:element name="removeOccTemplateResponse" type="tns:removeOccTemplateResponse"/>
+      <xs:element name="removeScriptInstance" type="tns:removeScriptInstance"/>
+      <xs:element name="removeScriptInstanceResponse" type="tns:removeScriptInstanceResponse"/>
       <xs:element name="removeSeller" type="tns:removeSeller"/>
       <xs:element name="removeSellerResponse" type="tns:removeSellerResponse"/>
       <xs:element name="removeTax" type="tns:removeTax"/>
@@ -19604,6 +19647,8 @@
       <xs:element name="updateOccTemplateResponse" type="tns:updateOccTemplateResponse"/>
       <xs:element name="updateProvider" type="tns:updateProvider"/>
       <xs:element name="updateProviderResponse" type="tns:updateProviderResponse"/>
+      <xs:element name="updateScriptInstance" type="tns:updateScriptInstance"/>
+      <xs:element name="updateScriptInstanceResponse" type="tns:updateScriptInstanceResponse"/>
       <xs:element name="updateSeller" type="tns:updateSeller"/>
       <xs:element name="updateSellerResponse" type="tns:updateSellerResponse"/>
       <xs:element name="updateTax" type="tns:updateTax"/>
@@ -20110,6 +20155,33 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="findScriptInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="scriptInstanceCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findScriptInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getScriptInstanceResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getScriptInstanceResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="scriptInstance" type="tns:scriptInstanceDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="scriptInstanceDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="type" type="xs:string"/>
+          <xs:element minOccurs="0" name="script" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+      </xs:complexType>
       <xs:complexType name="updateBillingCycle">
         <xs:sequence>
           <xs:element minOccurs="0" name="billingCycle" type="tns:billingCycleDto"/>
@@ -20301,6 +20373,16 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="createScriptInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="scriptInstance" type="tns:scriptInstanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createScriptInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="updateCountry">
         <xs:sequence>
           <xs:element minOccurs="0" name="country" type="tns:countryDto"/>
@@ -20317,6 +20399,16 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCurrencyResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateScriptInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="scriptInstance" type="tns:scriptInstanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateScriptInstanceResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -20454,6 +20546,16 @@
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createUserResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeScriptInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="scriptInstanceCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeScriptInstanceResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -21034,11 +21136,17 @@
   <wsdl:message name="findInvoiceSubCategoryResponse">
     <wsdl:part element="ns1:findInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeScriptInstanceResponse">
+    <wsdl:part element="ns1:removeScriptInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateInvoiceCategoryResponse">
     <wsdl:part element="ns1:updateInvoiceCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createInvoiceSubCategory">
     <wsdl:part element="ns1:createInvoiceSubCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateScriptInstanceResponse">
+    <wsdl:part element="ns1:updateScriptInstanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findBillingCycleResponse">
     <wsdl:part element="ns1:findBillingCycleResponse" name="parameters"></wsdl:part>
@@ -21082,17 +21190,20 @@
   <wsdl:message name="createInvoiceSubCategoryCountry">
     <wsdl:part element="ns1:createInvoiceSubCategoryCountry" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findCurrencyResponse">
-    <wsdl:part element="ns1:findCurrencyResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateInvoiceCategory">
     <wsdl:part element="ns1:updateInvoiceCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCurrencyResponse">
+    <wsdl:part element="ns1:findCurrencyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeSellerResponse">
     <wsdl:part element="ns1:removeSellerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createProvider">
     <wsdl:part element="ns1:createProvider" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findScriptInstance">
+    <wsdl:part element="ns1:findScriptInstance" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeInvoiceSubCategoryCountryResponse">
     <wsdl:part element="ns1:removeInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
@@ -21103,11 +21214,17 @@
   <wsdl:message name="createCurrency">
     <wsdl:part element="ns1:createCurrency" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findScriptInstanceResponse">
+    <wsdl:part element="ns1:findScriptInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createInvoiceCategoryResponse">
     <wsdl:part element="ns1:createInvoiceCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeBillingCycleResponse">
     <wsdl:part element="ns1:removeBillingCycleResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createScriptInstance">
+    <wsdl:part element="ns1:createScriptInstance" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCurrency">
     <wsdl:part element="ns1:updateCurrency" name="parameters"></wsdl:part>
@@ -21148,11 +21265,11 @@
   <wsdl:message name="createUser">
     <wsdl:part element="ns1:createUser" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeOccTemplateResponse">
-    <wsdl:part element="ns1:removeOccTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeCountry">
     <wsdl:part element="ns1:removeCountry" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeOccTemplateResponse">
+    <wsdl:part element="ns1:removeOccTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCalendarResponse">
     <wsdl:part element="ns1:updateCalendarResponse" name="parameters"></wsdl:part>
@@ -21175,11 +21292,11 @@
   <wsdl:message name="updateInvoiceSubCategoryCountry">
     <wsdl:part element="ns1:updateInvoiceSubCategoryCountry" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="index">
-    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeCustomFieldTemplateResponse">
     <wsdl:part element="ns1:removeCustomFieldTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCountry">
     <wsdl:part element="ns1:updateCountry" name="parameters"></wsdl:part>
@@ -21205,20 +21322,23 @@
   <wsdl:message name="createBillingCycle">
     <wsdl:part element="ns1:createBillingCycle" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateScriptInstance">
+    <wsdl:part element="ns1:updateScriptInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeCalendarResponse">
     <wsdl:part element="ns1:removeCalendarResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCustomFieldTemplate">
     <wsdl:part element="ns1:createCustomFieldTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeBillingCycle">
-    <wsdl:part element="ns1:removeBillingCycle" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createProviderResponse">
     <wsdl:part element="ns1:createProviderResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findLanguage">
     <wsdl:part element="ns1:findLanguage" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeBillingCycle">
+    <wsdl:part element="ns1:removeBillingCycle" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createLanguageResponse">
     <wsdl:part element="ns1:createLanguageResponse" name="parameters"></wsdl:part>
@@ -21319,11 +21439,11 @@
   <wsdl:message name="createTaxResponse">
     <wsdl:part element="ns1:createTaxResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeOccTemplate">
-    <wsdl:part element="ns1:removeOccTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findInvoiceSubCategoryCountryResponse">
     <wsdl:part element="ns1:findInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeOccTemplate">
+    <wsdl:part element="ns1:removeOccTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findCustomerAccountConfigurationResponse">
     <wsdl:part element="ns1:findCustomerAccountConfigurationResponse" name="parameters"></wsdl:part>
@@ -21343,6 +21463,9 @@
   <wsdl:message name="updateInvoiceSubCategoryResponse">
     <wsdl:part element="ns1:updateInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeScriptInstance">
+    <wsdl:part element="ns1:removeScriptInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeInvoiceSubCategoryResponse">
     <wsdl:part element="ns1:removeInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -21360,6 +21483,9 @@
   </wsdl:message>
   <wsdl:message name="findSeller">
     <wsdl:part element="ns1:findSeller" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createScriptInstanceResponse">
+    <wsdl:part element="ns1:createScriptInstanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateBillingCycle">
     <wsdl:part element="ns1:updateBillingCycle" name="parameters"></wsdl:part>
@@ -21440,6 +21566,10 @@
       <wsdl:input message="ns1:updateLanguage" name="updateLanguage"></wsdl:input>
       <wsdl:output message="ns1:updateLanguageResponse" name="updateLanguageResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findScriptInstance">
+      <wsdl:input message="ns1:findScriptInstance" name="findScriptInstance"></wsdl:input>
+      <wsdl:output message="ns1:findScriptInstanceResponse" name="findScriptInstanceResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateBillingCycle">
       <wsdl:input message="ns1:updateBillingCycle" name="updateBillingCycle"></wsdl:input>
       <wsdl:output message="ns1:updateBillingCycleResponse" name="updateBillingCycleResponse"></wsdl:output>
@@ -21468,6 +21598,10 @@
       <wsdl:input message="ns1:findInvoiceSubCategory" name="findInvoiceSubCategory"></wsdl:input>
       <wsdl:output message="ns1:findInvoiceSubCategoryResponse" name="findInvoiceSubCategoryResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createScriptInstance">
+      <wsdl:input message="ns1:createScriptInstance" name="createScriptInstance"></wsdl:input>
+      <wsdl:output message="ns1:createScriptInstanceResponse" name="createScriptInstanceResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateCountry">
       <wsdl:input message="ns1:updateCountry" name="updateCountry"></wsdl:input>
       <wsdl:output message="ns1:updateCountryResponse" name="updateCountryResponse"></wsdl:output>
@@ -21475,6 +21609,10 @@
     <wsdl:operation name="removeCurrency">
       <wsdl:input message="ns1:removeCurrency" name="removeCurrency"></wsdl:input>
       <wsdl:output message="ns1:removeCurrencyResponse" name="removeCurrencyResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateScriptInstance">
+      <wsdl:input message="ns1:updateScriptInstance" name="updateScriptInstance"></wsdl:input>
+      <wsdl:output message="ns1:updateScriptInstanceResponse" name="updateScriptInstanceResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findInvoicingConfiguration">
       <wsdl:input message="ns1:findInvoicingConfiguration" name="findInvoicingConfiguration"></wsdl:input>
@@ -21503,6 +21641,10 @@
     <wsdl:operation name="createUser">
       <wsdl:input message="ns1:createUser" name="createUser"></wsdl:input>
       <wsdl:output message="ns1:createUserResponse" name="createUserResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeScriptInstance">
+      <wsdl:input message="ns1:removeScriptInstance" name="removeScriptInstance"></wsdl:input>
+      <wsdl:output message="ns1:removeScriptInstanceResponse" name="removeScriptInstanceResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findOccTemplate">
       <wsdl:input message="ns1:findOccTemplate" name="findOccTemplate"></wsdl:input>
@@ -25500,7 +25642,49 @@
          <accountLevel>?</accountLevel>\r
       </ws:findCustomFieldTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCustomFieldTemplate"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/NotificationWs?wsdl" id="847f85aa-ac2b-4704-9613-89e3bb00ed98" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCustomFieldTemplate"/></con:call></con:operation><con:operation id="d68a4451-e453-4be5-b65a-63d977cd928f" isOneWay="false" action="" name="findScriptInstance" bindingOperationName="findScriptInstance" type="Request-Response" outputName="findScriptInstanceResponse" inputName="findScriptInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4c5ab7ad-be20-4f46-802a-423cea80196f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findScriptInstance>\r
+         <!--Optional:-->\r
+         <scriptInstanceCode>?</scriptInstanceCode>\r
+      </ws:findScriptInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findScriptInstance"/></con:call></con:operation><con:operation id="c2b8b3b8-ba6b-4f3b-8c11-5ee93315e9ea" isOneWay="false" action="" name="createScriptInstance" bindingOperationName="createScriptInstance" type="Request-Response" outputName="createScriptInstanceResponse" inputName="createScriptInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="bf314a98-0969-47c3-81a7-bb8b7982b172" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createScriptInstance>\r
+         <!--Optional:-->\r
+         <scriptInstance code="?" description="?">\r
+            <!--Optional:-->\r
+            <type>?</type>\r
+            <!--Optional:-->\r
+            <script>?</script>\r
+         </scriptInstance>\r
+      </ws:createScriptInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createScriptInstance"/></con:call></con:operation><con:operation id="fd5ac945-29e6-4ed2-a4f4-1092eacafd91" isOneWay="false" action="" name="updateScriptInstance" bindingOperationName="updateScriptInstance" type="Request-Response" outputName="updateScriptInstanceResponse" inputName="updateScriptInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="16180b27-a61c-4c2e-a2ed-d163de092dc1" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateScriptInstance>\r
+         <!--Optional:-->\r
+         <scriptInstance code="?" description="?">\r
+            <!--Optional:-->\r
+            <type>?</type>\r
+            <!--Optional:-->\r
+            <script>?</script>\r
+         </scriptInstance>\r
+      </ws:updateScriptInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateScriptInstance"/></con:call></con:operation><con:operation id="ed2ac359-f07a-4511-90b7-392ece041d32" isOneWay="false" action="" name="removeScriptInstance" bindingOperationName="removeScriptInstance" type="Request-Response" outputName="removeScriptInstanceResponse" inputName="removeScriptInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7bc9636f-f5ee-450b-ad1b-b3e821cfdcb5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeScriptInstance>\r
+         <!--Optional:-->\r
+         <scriptInstanceCode>?</scriptInstanceCode>\r
+      </ws:removeScriptInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeScriptInstance"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/NotificationWs?wsdl" id="847f85aa-ac2b-4704-9613-89e3bb00ed98" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/NotificationWs?wsdl=NotificationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="NotificationWsSoapBinding" type="ns1:NotificationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -40043,4 +40227,54 @@ for( testCase in testSuite.getTestCaseList() ) {
          <accountLevel>ACC</accountLevel>\r
       </ws:findCustomFieldTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="fab8e7a6-d61b-45f9-bd2c-91c4aa986689"/><con:assertion type="Simple Contains" id="a9206cb2-9c15-4249-9959-5930fc7c9d84" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1024</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="fab8e7a6-d61b-45f9-bd2c-91c4aa986689"/><con:assertion type="Simple Contains" id="a9206cb2-9c15-4249-9959-5930fc7c9d84" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1024</con:value></con:property></con:properties></con:testSuite><con:testSuite id="21e7859f-6fcd-43a0-bf29-81b8c08c9dd7" name="#1027_script_instance_api"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="1bb6deae-a34d-4cf0-a67d-360196b0ff4c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="2c3dc232-66c9-4724-896a-a7a099c237a4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="create" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createScriptInstance>\r
+         <!--Optional:-->\r
+         <scriptInstance code="${#TestSuite#ticket}_SI1" description="${#TestSuite#ticket}_SI1">\r
+            <!--Optional:-->\r
+            <type>JAVA</type>\r
+            <!--Optional:-->\r
+            <script></script>\r
+         </scriptInstance>\r
+      </ws:createScriptInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="52e11c5f-41e1-4f3f-b1f2-b8919a7fc93a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateScriptInstance</con:operation><con:request name="update" id="d031b04e-ad1d-444b-ae37-94ecff4ab648"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateScriptInstance>
+         <!--Optional:-->
+         <scriptInstance code="${#TestSuite#ticket}_SI1" description="${#TestSuite#ticket}_SI1">
+            <!--Optional:-->
+            <type>JAVA</type>
+            <!--Optional:-->
+            <script></script>
+         </scriptInstance>
+      </ws:updateScriptInstance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6ff537a1-436f-46c4-b813-102b8ba5810b"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="8febc126-a1b4-4b8e-adaa-4c2c4036920e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findScriptInstance</con:operation><con:request name="find" id="f3de2d2e-cf14-42b3-b2c6-a47d3fbdfd3c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findScriptInstance>\r
+         <!--Optional:-->\r
+         <scriptInstanceCode>${#TestSuite#ticket}_SI1</scriptInstanceCode>\r
+      </ws:findScriptInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d9b629cb-36c4-4cbc-8f02-10b335154843"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove" id="662629cc-a7c7-4938-9cda-dd5c1ff0a3e6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeScriptInstance</con:operation><con:request name="remove" id="93bda21f-809a-4587-a94b-f121759b77d0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeScriptInstance>\r
+         <!--Optional:-->\r
+         <scriptInstanceCode>${#TestSuite#ticket}_SI1</scriptInstanceCode>\r
+      </ws:removeScriptInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0d4e8174-a231-4872-b2a6-d5e758afc26f"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find - not exists" id="6b501ac6-fddf-4801-8c91-4334ac707964"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findScriptInstance</con:operation><con:request name="find - not exists" id="f3de2d2e-cf14-42b3-b2c6-a47d3fbdfd3c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findScriptInstance>\r
+         <!--Optional:-->\r
+         <scriptInstanceCode>${#TestSuite#ticket}_SI1</scriptInstanceCode>\r
+      </ws:findScriptInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d9b629cb-36c4-4cbc-8f02-10b335154843"/><con:assertion type="Simple Contains" id="fd11b4f3-41de-4e7a-8635-af2935ae9376" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1027</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
