@@ -44,8 +44,7 @@ public class FlatFileProcessingJobBean {
 	@Inject
 	private JavaCompilerManager javaCompilerManager;
 
-	String cdrFileName;
-	File cdrFile;
+	String fileName;
 	String inputDir;
 	String outputDir;
 	PrintWriter outputFileWriter;
@@ -86,12 +85,12 @@ public class FlatFileProcessingJobBean {
 		report = "";
 
 		if (file != null) {
-			cdrFileName = file.getAbsolutePath();
+			fileName = file.getAbsolutePath();
 			result.setNbItemsToProcess(1);
 			log.info("InputFiles job {} in progress...", file.getName());
-			cdrFileName = file.getName();
+			fileName = file.getName();
 			File currentFile = FileUtils.addExtension(file, ".processing");			
-			Class<org.meveo.service.script.ScriptInterface> mediationFlowScript = javaCompilerManager.getScriptInterface(provider,scriptInstanceFlowCode);
+			Class<org.meveo.service.script.ScriptInterface> flowScriptClass = javaCompilerManager.getScriptInterface(provider,scriptInstanceFlowCode);
 			ScriptInterface script = null;
 			try {					
 				ConfigurationReader parser = new ConfigurationReader();
@@ -100,7 +99,7 @@ public class FlatFileProcessingJobBean {
 				BufferedReader bufIn = new BufferedReader(new InputStreamReader(in));
 				MatchedRecord record = null;
 				int processed = 0;
-				script = mediationFlowScript.newInstance();
+				script = flowScriptClass.newInstance();
 				script.init(context, provider);
 				while ((record = ff.getNextRecord(bufIn)) != null) {	
 					Object recordBean = record.getBean(recordVariableName);											
@@ -127,7 +126,7 @@ public class FlatFileProcessingJobBean {
 				log.info("InputFiles job {} done.", file.getName());
 				result.setDone(true);
 			} catch (Exception e) {
-				log.error("Failed to process CDR file {}", file.getName(), e);
+				log.error("Failed to process Record file {}", file.getName(), e);
 				result.registerError(e.getMessage());
 				FileUtils.moveFile(rejectDir, currentFile, file.getName());
 			} finally {
@@ -143,7 +142,7 @@ public class FlatFileProcessingJobBean {
 						currentFile.delete();
 					}
 				} catch (Exception e) {
-					report += "\r\n cannot delete " + cdrFileName;
+					report += "\r\n cannot delete " + fileName;
 				}
 
 				try {
@@ -152,7 +151,7 @@ public class FlatFileProcessingJobBean {
 						rejectFileWriter = null;
 					}
 				} catch (Exception e) {
-					log.error("Failed to close rejected CDR writer for file {}", file.getName(), e);
+					log.error("Failed to close rejected Record writer for file {}", file.getName(), e);
 				}
 
 				try {
@@ -173,23 +172,23 @@ public class FlatFileProcessingJobBean {
 
 	private void outputRecord(MatchedRecord record) throws FileNotFoundException {
 		if (outputFileWriter == null) {
-			File outputFile = new File(outputDir + File.separator + cdrFileName + ".processed");
+			File outputFile = new File(outputDir + File.separator + fileName + ".processed");
 			outputFileWriter = new PrintWriter(outputFile);
 		}
 		outputFileWriter.println(record.toString());
 	}
 
-	private void rejectRecord(MatchedRecord cdr, String reason) {
+	private void rejectRecord(MatchedRecord record, String reason) {
 
 		if (rejectFileWriter == null) {
-			File rejectFile = new File(rejectDir + File.separator + cdrFileName + ".rejected");
+			File rejectFile = new File(rejectDir + File.separator + fileName + ".rejected");
 			try {
 				rejectFileWriter = new PrintWriter(rejectFile);
 			} catch (FileNotFoundException e) {
 				log.error("Failed to create a rejection file {}", rejectFile.getAbsolutePath());
 			}
 		}
-			rejectFileWriter.println(cdr.toString()+";"+reason);
+			rejectFileWriter.println(record.toString()+";"+reason);
 	}
 
 }

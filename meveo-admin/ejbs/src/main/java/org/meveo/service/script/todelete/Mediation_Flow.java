@@ -42,16 +42,11 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 			if(accesses == null || accesses.isEmpty()){
 				throw new BusinessException("InvalidAccess");
 			}
-			
+
 			mediation_CreateEdr.newInstance().execute(initContext, provider);
 			
-			
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new BusinessException("ErrTech");
 		}
 		log.info("Execute update entity OK");
 	}

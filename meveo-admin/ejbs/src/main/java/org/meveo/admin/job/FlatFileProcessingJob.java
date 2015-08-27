@@ -58,11 +58,11 @@ public class FlatFileProcessingJob extends Job {
 			Long nbRuns = new Long(1);
 			Long waitingMillis = new Long(0);
 			String mappingConf = null;
-			String inputDir = null,scriptInstanceFlowCode=null;
+			String inputDir = null, scriptInstanceFlowCode = null;
 			String fileNameExtension = null;
 			String recordVariableName = null;
 			String originFilename = null;
-			Map<String,Object> context = new HashMap<String,Object>();
+			Map<String, Object> context = new HashMap<String, Object>();
 			try {
 				nbRuns = jobInstance.getLongCustomValue("FlatFileProcessingJob_nbRuns").longValue();
 				waitingMillis = jobInstance.getLongCustomValue("FlatFileProcessingJob_waitingMillis").longValue();
@@ -71,15 +71,15 @@ public class FlatFileProcessingJob extends Job {
 				}
 				recordVariableName = jobInstance.getStringCustomValue("FlatFileProcessingJob_recordVariableName");
 				originFilename = jobInstance.getStringCustomValue("FlatFileProcessingJob_originFilename");
-				 context = new HashMap<String,Object>();
-					CustomFieldInstance variablesCFI = jobInstance.getCustomFields().get("FlatFileProcessingJob_variables");
-					if(variablesCFI!=null){
-						context = variablesCFI.getMapValue();
-					}
-				 mappingConf = jobInstance.getStringCustomValue("FlatFileProcessingJob_mappingConf");
-				inputDir =  ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + jobInstance.getProvider().getCode() + jobInstance.getStringCustomValue("FlatFileProcessingJob_inputDir").replaceAll("..","");
+				context = new HashMap<String, Object>();
+				CustomFieldInstance variablesCFI = jobInstance.getCustomFields().get("FlatFileProcessingJob_variables");
+				if (variablesCFI != null) {
+					context = variablesCFI.getMapValue();
+				}
+				mappingConf = jobInstance.getStringCustomValue("FlatFileProcessingJob_mappingConf");
+				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + jobInstance.getProvider().getCode() + jobInstance.getStringCustomValue("FlatFileProcessingJob_inputDir").replaceAll("..", "");
 				fileNameExtension = jobInstance.getStringCustomValue("FlatFileProcessingJob_fileNameExtension");
-				scriptInstanceFlowCode= jobInstance.getStringCustomValue("FlatFileProcessingJob_scriptsFlow");
+				scriptInstanceFlowCode = jobInstance.getStringCustomValue("FlatFileProcessingJob_scriptsFlow");
 
 			} catch (Exception e) {
 				log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
@@ -100,7 +100,7 @@ public class FlatFileProcessingJob extends Job {
 
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 			while (subListCreator.isHasNext()) {
-				futures.add(flatFileProcessingAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, inputDir, currentUser, mappingConf, scriptInstanceFlowCode,recordVariableName,context,originFilename));
+				futures.add(flatFileProcessingAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, inputDir, currentUser, mappingConf, scriptInstanceFlowCode, recordVariableName, context, originFilename));
 				if (subListCreator.isHasNext()) {
 					try {
 						Thread.sleep(waitingMillis.longValue());
@@ -188,17 +188,17 @@ public class FlatFileProcessingJob extends Job {
 		mappingConf.setValueRequired(true);
 		result.add(mappingConf);
 
-//		CustomFieldTemplate scriptInstanceFlowCF = new CustomFieldTemplate();
-//		scriptInstanceFlowCF.setCode("FlatFileProcessingJob_scriptsFlow");
-//		scriptInstanceFlowCF.setAccountLevel(AccountLevelEnum.TIMER);
-//		scriptInstanceFlowCF.setActive(true);
-//		scriptInstanceFlowCF.setDescription(resourceMessages.getString("mediation.scriptsFlow"));
-//		scriptInstanceFlowCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-//		scriptInstanceFlowCF.setEntityClazz("org.meveo.model.jobs.ScriptInstance");
-//		scriptInstanceFlowCF.setDefaultValue(null);
-//		scriptInstanceFlowCF.setValueRequired(true);
-//		result.add(scriptInstanceFlowCF);
-		
+		// CustomFieldTemplate scriptInstanceFlowCF = new CustomFieldTemplate();
+		// scriptInstanceFlowCF.setCode("FlatFileProcessingJob_scriptsFlow");
+		// scriptInstanceFlowCF.setAccountLevel(AccountLevelEnum.TIMER);
+		// scriptInstanceFlowCF.setActive(true);
+		// scriptInstanceFlowCF.setDescription(resourceMessages.getString("mediation.scriptsFlow"));
+		// scriptInstanceFlowCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+		// scriptInstanceFlowCF.setEntityClazz("org.meveo.model.jobs.ScriptInstance");
+		// scriptInstanceFlowCF.setDefaultValue(null);
+		// scriptInstanceFlowCF.setValueRequired(true);
+		// result.add(scriptInstanceFlowCF);
+
 		CustomFieldTemplate ss = new CustomFieldTemplate();
 		ss.setCode("FlatFileProcessingJob_scriptsFlow");
 		ss.setAccountLevel(AccountLevelEnum.TIMER);
@@ -208,7 +208,7 @@ public class FlatFileProcessingJob extends Job {
 		ss.setDefaultValue(null);
 		ss.setValueRequired(true);
 		result.add(ss);
-		
+
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
 		variablesCF.setCode("FlatFileProcessingJob_variables");
 		variablesCF.setAccountLevel(AccountLevelEnum.TIMER);
@@ -217,7 +217,7 @@ public class FlatFileProcessingJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
-		result.add(variablesCF); 
+		result.add(variablesCF);
 
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
 		recordVariableName.setCode("FlatFileProcessingJob_recordVariableName");
@@ -228,7 +228,7 @@ public class FlatFileProcessingJob extends Job {
 		recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
 		recordVariableName.setValueRequired(false);
 		result.add(recordVariableName);
-		
+
 		CustomFieldTemplate originFilename = new CustomFieldTemplate();
 		originFilename.setCode("FlatFileProcessingJob_originFilename");
 		originFilename.setAccountLevel(AccountLevelEnum.CUST);
@@ -238,7 +238,6 @@ public class FlatFileProcessingJob extends Job {
 		originFilename.setFieldType(CustomFieldTypeEnum.STRING);
 		originFilename.setValueRequired(false);
 		result.add(originFilename);
-
 
 		return result;
 	}
