@@ -26,7 +26,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		Class<ScriptInterface> mediation_DuplicatedCheck = javaCompilerManager.getScriptInterface(provider, "Mediation_DuplicatedCheck");
 		Class<ScriptInterface> mediation_RoutingSub = javaCompilerManager.getScriptInterface(provider, "Mediation_RoutingSub");
 		Class<ScriptInterface> mediation_CreateEdr = javaCompilerManager.getScriptInterface(provider, "Mediation_CreateEdr");
-		CDR cdr = (CDR) initContext.get("cdr");
+		CDR cdr = (CDR) initContext.get("record");
 		try {
 			mediation_DuplicatedCheck.newInstance().execute(initContext, provider);
 			Boolean duplicateFound = (Boolean)initContext.get("duplicateFound");

@@ -24,7 +24,7 @@ public class Mediation_CreateEdr extends org.meveo.service.script.Script {
 	public void execute(Map<String, Object> initContext, Provider provider) throws BusinessException {
 		log.debug("Execute...");
 		User currentUser = (User) initContext.get("currentUser");
-		CDR cdr = (CDR) initContext.get("cdr");
+		CDR cdr = (CDR) initContext.get("record");
 		String originBatch = (String) initContext.get("originBatch");
 		String originRecord = (String) initContext.get("originRecord");
 

@@ -85,14 +85,14 @@ public class FlatFileProcessingJob extends Job {
 				log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
 			}
 
-			ArrayList<String> cdrExtensions = new ArrayList<String>();
-			cdrExtensions.add(fileNameExtension);
+			ArrayList<String> fileExtensions = new ArrayList<String>();
+			fileExtensions.add(fileNameExtension);
 
 			File f = new File(inputDir);
 			if (!f.exists()) {
 				f.mkdirs();
 			}
-			File[] files = FileUtils.getFilesForParsing(inputDir, cdrExtensions);
+			File[] files = FileUtils.getFilesForParsing(inputDir, fileExtensions);
 			if (files == null || files.length == 0) {
 				return;
 			}
@@ -131,7 +131,7 @@ public class FlatFileProcessingJob extends Job {
 
 	@Override
 	public JobCategoryEnum getJobCategory() {
-		return JobCategoryEnum.MEDIATION;
+		return JobCategoryEnum.FLAT_FILE_PROCESSING;
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public class FlatFileProcessingJob extends Job {
 		inputDirectoryCF.setCode("FlatFileProcessingJob_inputDir");
 		inputDirectoryCF.setAccountLevel(AccountLevelEnum.TIMER);
 		inputDirectoryCF.setActive(true);
-		inputDirectoryCF.setDescription(resourceMessages.getString("mediation.inputDir"));
+		inputDirectoryCF.setDescription(resourceMessages.getString("flatFile.inputDir"));
 		inputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
 		inputDirectoryCF.setDefaultValue(null);
 		inputDirectoryCF.setValueRequired(true);
@@ -172,7 +172,7 @@ public class FlatFileProcessingJob extends Job {
 		fileNamePrefixCF.setCode("FlatFileProcessingJob_fileNameExtension");
 		fileNamePrefixCF.setAccountLevel(AccountLevelEnum.TIMER);
 		fileNamePrefixCF.setActive(true);
-		fileNamePrefixCF.setDescription(resourceMessages.getString("mediation.fileNameExtension"));
+		fileNamePrefixCF.setDescription(resourceMessages.getString("flatFile.fileNameExtension"));
 		fileNamePrefixCF.setFieldType(CustomFieldTypeEnum.STRING);
 		fileNamePrefixCF.setDefaultValue("csv");
 		fileNamePrefixCF.setValueRequired(true);
@@ -182,7 +182,7 @@ public class FlatFileProcessingJob extends Job {
 		mappingConf.setCode("FlatFileProcessingJob_mappingConf");
 		mappingConf.setAccountLevel(AccountLevelEnum.TIMER);
 		mappingConf.setActive(true);
-		mappingConf.setDescription(resourceMessages.getString("mediation.mappingConfiguration"));
+		mappingConf.setDescription(resourceMessages.getString("flatFile.mappingConf"));
 		mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
 		mappingConf.setDefaultValue("");
 		mappingConf.setValueRequired(true);
@@ -203,7 +203,7 @@ public class FlatFileProcessingJob extends Job {
 		ss.setCode("FlatFileProcessingJob_scriptsFlow");
 		ss.setAccountLevel(AccountLevelEnum.TIMER);
 		ss.setActive(true);
-		ss.setDescription(resourceMessages.getString("mediation.scriptsFlow"));
+		ss.setDescription(resourceMessages.getString("flatFile.scriptsFlow"));
 		ss.setFieldType(CustomFieldTypeEnum.STRING);
 		ss.setDefaultValue(null);
 		ss.setValueRequired(true);
