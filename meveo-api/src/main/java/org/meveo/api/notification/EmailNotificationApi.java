@@ -14,10 +14,12 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.EmailNotificationService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -31,6 +33,9 @@ public class EmailNotificationApi extends BaseApi {
 	@SuppressWarnings("rawtypes")
 	@Inject
 	private CounterTemplateService counterTemplateService;
+	
+	@Inject
+	private ScriptInstanceService scriptInstanceService;
 
 	public void create(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getClassNameFilter()) && !StringUtils.isBlank(postData.getEventTypeFilter())
@@ -38,7 +43,13 @@ public class EmailNotificationApi extends BaseApi {
 			if (emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
 				throw new EntityAlreadyExistsException(EmailNotification.class, postData.getCode());
 			}
-
+			ScriptInstance scriptInstance = null;
+			if(!StringUtils.isBlank(postData.getScriptInstanceCode()) ){
+				scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+				if ( scriptInstance == null) {
+					throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+				}
+			}
 			// check class
 			try {
 				Class.forName(postData.getClassNameFilter());
@@ -64,7 +75,8 @@ public class EmailNotificationApi extends BaseApi {
 			notif.setCode(postData.getCode());
 			notif.setClassNameFilter(postData.getClassNameFilter());
 			notif.setEventTypeFilter(notificationEventType);
-			notif.setElAction(postData.getElAction());
+			notif.setScriptInstance(scriptInstance);
+			notif.setParams(postData.getScriptParams());
 			notif.setElFilter(postData.getElFilter());
 			notif.setCounterTemplate(counterTemplate);
 
@@ -123,7 +135,13 @@ public class EmailNotificationApi extends BaseApi {
 			if (notif == null) {
 				throw new EntityDoesNotExistsException(EmailNotification.class, postData.getCode());
 			}
-
+			ScriptInstance scriptInstance = null;
+			if(!StringUtils.isBlank(postData.getScriptInstanceCode()) ){
+				scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+				if ( scriptInstance == null) {
+					throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+				}
+			}
 			// check class
 			try {
 				Class.forName(postData.getClassNameFilter());
@@ -146,7 +164,8 @@ public class EmailNotificationApi extends BaseApi {
 
 			notif.setClassNameFilter(postData.getClassNameFilter());
 			notif.setEventTypeFilter(notificationEventType);
-			notif.setElAction(postData.getElAction());
+			notif.setScriptInstance(scriptInstance);
+			notif.setParams(postData.getScriptParams());
 			notif.setElFilter(postData.getElFilter());
 			notif.setCounterTemplate(counterTemplate);
 

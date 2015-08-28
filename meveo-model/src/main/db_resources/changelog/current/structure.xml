@@ -1384,4 +1384,27 @@
 
         <dropColumn tableName="CRM_CUSTOM_FIELD_PERIOD" columnName="label"/>
     </changeSet>
+
+	<changeSet id="1034-20150828" author="anasseh">
+		<dropTable tableName="MEVEO_SCRIPT_INSTANCE_PARAMS" />
+
+		<createTable tableName="ADM_NOTIFICATION_PARAMS">
+			<column name="notification_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="params" type="VARCHAR(255)" />
+			<column name="params_key" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="notification_id, params_key"
+			constraintName="PK_ADM_NOTIFICATION_PARAMS" tableName="ADM_NOTIFICATION_PARAMS" />
+
+		<addForeignKeyConstraint baseColumnNames="notification_id"
+			baseTableName="ADM_NOTIFICATION_PARAMS" constraintName="fk_params_notification"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
+
+	</changeSet>    
 </databaseChangeLog>
