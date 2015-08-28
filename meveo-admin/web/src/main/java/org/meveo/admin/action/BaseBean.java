@@ -1416,6 +1416,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			filters.put("$FILTER", listFilter);
 
 			listFiltered = true;
+		} else {
+			filters.remove("$FILTER");
 		}
 	}
     
