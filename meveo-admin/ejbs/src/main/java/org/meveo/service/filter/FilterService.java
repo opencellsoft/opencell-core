@@ -47,6 +47,7 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 public class FilterService extends BusinessService<Filter> {
 
 	public Filter parse(String xmlInput) throws XStreamException {
+		xmlInput = xmlInput.trim();
 		Filter result = new Filter();
 
 		XStream xstream = getXStream();
