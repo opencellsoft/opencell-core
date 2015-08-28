@@ -28074,6 +28074,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="listByXmlInput">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listByXmlInput">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listByXmlInputResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="FilteredListWs">
     <wsdl:port binding="tns:FilteredListWsSoapBinding" name="FilteredListWsImplPort">
@@ -28086,15 +28095,22 @@
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="FilteredListResponse" type="tns:filteredListResponseDto"/>
       <xs:element name="list" type="tns:list"/>
+      <xs:element name="listByXmlInput" type="tns:listByXmlInput"/>
+      <xs:element name="listByXmlInputResponse" type="tns:listByXmlInputResponse"/>
       <xs:element name="listResponse" type="tns:listResponse"/>
-      <xs:complexType name="list">
+      <xs:complexType name="listByXmlInput">
         <xs:sequence>
-          <xs:element minOccurs="0" name="filter" type="xs:string"/>
-          <xs:element minOccurs="0" name="firstRow" type="xs:int"/>
-          <xs:element minOccurs="0" name="numberOfRows" type="xs:int"/>
+          <xs:element minOccurs="0" name="filter" type="tns:filteredListDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listResponse">
+      <xs:complexType name="filteredListDto">
+        <xs:sequence>
+          <xs:element name="firstRow" type="xs:int"/>
+          <xs:element name="numberOfRows" type="xs:int"/>
+          <xs:element minOccurs="0" name="xmlInput" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listByXmlInputResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:filteredListResponseDto"/>
         </xs:sequence>
@@ -28118,6 +28134,18 @@
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="list">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="filter" type="xs:string"/>
+          <xs:element minOccurs="0" name="firstRow" type="xs:int"/>
+          <xs:element minOccurs="0" name="numberOfRows" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:filteredListResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:simpleType name="actionStatusEnum">
         <xs:restriction base="xs:string">
           <xs:enumeration value="SUCCESS"/>
@@ -28126,13 +28154,23 @@
       </xs:simpleType>
     </xs:schema>
   </wsdl:types>
+  <wsdl:message name="listByXmlInputResponse">
+    <wsdl:part element="ns1:listByXmlInputResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="list">
     <wsdl:part element="ns1:list" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listByXmlInput">
+    <wsdl:part element="ns1:listByXmlInput" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listResponse">
     <wsdl:part element="ns1:listResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="FilteredListWs">
+    <wsdl:operation name="listByXmlInput">
+      <wsdl:input message="ns1:listByXmlInput" name="listByXmlInput"></wsdl:input>
+      <wsdl:output message="ns1:listByXmlInputResponse" name="listByXmlInputResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="list">
       <wsdl:input message="ns1:list" name="list"></wsdl:input>
       <wsdl:output message="ns1:listResponse" name="listResponse"></wsdl:output>
@@ -28146,7 +28184,20 @@
          <filter>?</filter>\r
       </ws:list>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilteredListWs/list"/></con:call></con:operation></con:interface><con:testSuite name="#787_jobApi" id="da2f85c3-3dbe-45a1-be85-4e670c25b3ff"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="job" searchProperties="true" id="90cd59b9-38c6-42be-9fe8-0e4dc37251ec"><con:settings/><con:testStep type="request" name="create timerEntity" id="8fda5421-5479-4076-b1cb-6e14800b7dec"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="create timerEntity" id="f9d25749-416c-4bab-9c4a-19a8fc04a79b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilteredListWs/list"/></con:call></con:operation><con:operation id="2828442d-95ab-4d88-8524-9f5c25334313" isOneWay="false" action="" name="listByXmlInput" bindingOperationName="listByXmlInput" type="Request-Response" outputName="listByXmlInputResponse" inputName="listByXmlInput" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="64238202-2e05-4ffe-84ef-a47582c5dd1c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/FilteredListWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listByXmlInput>\r
+         <!--Optional:-->\r
+         <filter>\r
+            <firstRow>?</firstRow>\r
+            <numberOfRows>?</numberOfRows>\r
+            <!--Optional:-->\r
+            <xmlInput>?</xmlInput>\r
+         </filter>\r
+      </ws:listByXmlInput>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilteredListWs/listByXmlInput"/></con:call></con:operation></con:interface><con:testSuite name="#787_jobApi" id="da2f85c3-3dbe-45a1-be85-4e670c25b3ff"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="job" searchProperties="true" id="90cd59b9-38c6-42be-9fe8-0e4dc37251ec"><con:settings/><con:testStep type="request" name="create timerEntity" id="8fda5421-5479-4076-b1cb-6e14800b7dec"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="create timerEntity" id="f9d25749-416c-4bab-9c4a-19a8fc04a79b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createTimer>
@@ -40277,4 +40328,122 @@ for( testCase in testSuite.getTestCaseList() ) {
          <scriptInstanceCode>${#TestSuite#ticket}_SI1</scriptInstanceCode>\r
       </ws:findScriptInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d9b629cb-36c4-4cbc-8f02-10b335154843"/><con:assertion type="Simple Contains" id="fd11b4f3-41de-4e7a-8635-af2935ae9376" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1027</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d9b629cb-36c4-4cbc-8f02-10b335154843"/><con:assertion type="Simple Contains" id="fd11b4f3-41de-4e7a-8635-af2935ae9376" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1027</con:value></con:property></con:properties></con:testSuite><con:testSuite id="2a40252b-b2c5-44af-942f-2e98a9b02d29" name="#1024_filtered_list_xml"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="597a1a71-fb08-43bb-a9db-4c0dba60f035" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase 1" searchProperties="true"><con:settings/><con:testStep type="request" name="country" id="b897a63c-4133-4aff-ad0d-52b7b93b14e6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FilteredListWsSoapBinding</con:interface><con:operation>listByXmlInput</con:operation><con:request name="country" id="aa8a4155-8a7c-470d-8401-e17329642c99"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/FilteredListWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listByXmlInput>\r
+         <!--Optional:-->\r
+         <filter>\r
+            <firstRow>1</firstRow>\r
+            <numberOfRows>10</numberOfRows>\r
+            <!--Optional:-->\r
+            <xmlInput>
+            	<![CDATA[
+
+	<filter>
+  <primarySelector>
+    <targetEntity>org.meveo.model.billing.Country</targetEntity>
+    <alias>c</alias>
+    <displayFields>
+      <field>id</field>
+      <field>countryCode</field>
+      <field>descriptionEn</field>
+      <field>currency</field>
+      <field>language</field>
+    </displayFields>
+    <exportFields/>
+    <ignoreIfNotFoundForeignKeys/>
+  </primarySelector>
+  <secondarySelectors/>
+  <filterCondition class="andCompositeFilterCondition">
+    <filterConditionType>COMPOSITE_AND</filterConditionType>
+    <filterConditions>
+      <nativeFilterCondition>
+        <filterConditionType>NATIVE</filterConditionType>
+        <jpql>c.countryCode like '%A%'</jpql>
+      </nativeFilterCondition>
+      <orCompositeFilterCondition>
+        <filterConditionType>COMPOSITE_OR</filterConditionType>
+        <filterConditions>
+          <nativeFilterCondition>
+            <filterConditionType>NATIVE</filterConditionType>
+            <jpql>c.countryCode like 'B%'</jpql>
+          </nativeFilterCondition>
+          <primitiveFilterCondition>
+            <filterConditionType>PRIMITIVE</filterConditionType>
+            <fieldName>c.countryCode</fieldName>
+            <operator>like</operator>
+            <operand>C%</operand>
+          </primitiveFilterCondition>
+          <primitiveFilterCondition>
+            <filterConditionType>PRIMITIVE</filterConditionType>
+            <fieldName>c.id</fieldName>
+            <operator>></operator>
+            <operand>100</operand>
+          </primitiveFilterCondition>
+        </filterConditions>
+      </orCompositeFilterCondition>
+    </filterConditions>
+  </filterCondition>
+  <orderCondition>
+    <fieldNames>
+      <field>countryCode</field>
+    </fieldNames>
+    <ascending>false</ascending>
+  </orderCondition>
+</filter>
+
+            	]]]]>><![CDATA[
+            </xmlInput>\r
+         </filter>\r
+      </ws:listByXmlInput>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="11b6d7e5-ff02-4650-92bf-e2d133ed8ceb"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="subscription" id="c7b24157-99f8-4761-b0f1-08dbad0d91b3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FilteredListWsSoapBinding</con:interface><con:operation>listByXmlInput</con:operation><con:request name="subscription" id="aa8a4155-8a7c-470d-8401-e17329642c99"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/FilteredListWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listByXmlInput>\r
+         <!--Optional:-->\r
+         <filter>\r
+            <firstRow>1</firstRow>\r
+            <numberOfRows>10</numberOfRows>\r
+            <!--Optional:-->\r
+            <xmlInput>
+            	<![CDATA[
+
+	<filter>
+  <primarySelector>
+    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
+    <alias>c</alias>
+    <displayFields>
+      <field>code</field>
+      <field>status</field>
+    </displayFields>
+    <exportFields/>
+    <ignoreIfNotFoundForeignKeys/>
+  </primarySelector>
+  <secondarySelectors/>
+  <filterCondition class="andCompositeFilterCondition">
+    <filterConditionType>COMPOSITE_AND</filterConditionType>
+    <filterConditions>
+      <primitiveFilterCondition>
+        <filterConditionType>PRIMITIVE</filterConditionType>
+        <fieldName>status</fieldName>
+        <operator>=</operator>
+        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>
+      </primitiveFilterCondition>
+    </filterConditions>
+  </filterCondition>
+  <orderCondition>
+    <fieldNames>
+      <field>subscriptionDate</field>
+    </fieldNames>
+    <ascending>false</ascending>
+  </orderCondition>
+</filter>
+
+            	]]]]>><![CDATA[
+            </xmlInput>\r
+         </filter>\r
+      </ws:listByXmlInput>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="11b6d7e5-ff02-4650-92bf-e2d133ed8ceb"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

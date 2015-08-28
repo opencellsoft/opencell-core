@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.DiscriminatorValue;
 
 import org.junit.Test;
+import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.filter.AndCompositeFilterCondition;
@@ -32,11 +33,12 @@ public class FilterXmlGenerator {
 	public static void main(String[] args) {
 		FilterXmlGenerator fg = new FilterXmlGenerator();
 		// fg.filter1();
-		 String result = fg.generate();
-		 System.out.println(result);
+		// String result = fg.generate();
+		// System.out.println(result);
 
-//		String result = fg.generate1();
-//		System.out.println(result);
+		// country
+		String result = fg.generate1();
+		System.out.println(result);
 
 		// fg.degenerate(result);
 		// fg.getLinkedListFields();
@@ -51,10 +53,9 @@ public class FilterXmlGenerator {
 		PrimitiveFilterCondition primitiveFilterCondition = new PrimitiveFilterCondition();
 		primitiveFilterCondition.setFilterConditionType(PrimitiveFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
-		primitiveFilterCondition.setFieldName("disable");
+		primitiveFilterCondition.setFieldName("status");
 		primitiveFilterCondition.setOperator("=");
-		//primitiveFilterCondition.setOperand("enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE");
-		primitiveFilterCondition.setOperand("false");
+		primitiveFilterCondition.setOperand("enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE");
 
 		andFilterConditions.add(primitiveFilterCondition);
 
@@ -74,6 +75,9 @@ public class FilterXmlGenerator {
 		filter.setPrimarySelector(filterSelector1);
 		// filter.setSecondarySelectors(filterSelectors);
 		filter.setOrderCondition(orderCondition);
+
+		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter);
+		System.out.println(fq.getSqlString());
 
 		try {
 			XStream xStream = getXStream();
@@ -173,6 +177,9 @@ public class FilterXmlGenerator {
 		filter.setPrimarySelector(filterSelector1);
 		// filter.setSecondarySelectors(filterSelectors);
 		filter.setOrderCondition(orderCondition);
+
+		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter);
+		System.out.println(fq.getSqlString());
 
 		try {
 			XStream xStream = getXStream();
