@@ -408,7 +408,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 	
 
-	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void producePdf(Map<String, Object> parameters, User currentUser) throws Exception {
 		 
 			ParamBean paramBean = ParamBean.getInstance();
