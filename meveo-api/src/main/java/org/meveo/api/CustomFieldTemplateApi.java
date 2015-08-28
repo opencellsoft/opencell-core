@@ -16,6 +16,7 @@ import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
@@ -164,21 +165,20 @@ public class CustomFieldTemplateApi extends BaseApi {
 		}
 	}
 
-	public void remove(String code, String al, User currentUser) throws MeveoApiException {
+	public void remove(String code, String al, Provider provider) throws MeveoApiException {
 		AccountLevelEnum accountLevel = null;
 		try {
 			accountLevel = AccountLevelEnum.valueOf(al);
 		} catch (IllegalArgumentException e) {
 			throw new InvalidEnumValue(AccountLevelEnum.class.getName(), al);
 		}
-		CustomFieldTemplate cf = customFieldTemplateService.findByCodeAndAccountLevel(code, accountLevel,
-				currentUser.getProvider());
+		CustomFieldTemplate cf = customFieldTemplateService.findByCodeAndAccountLevel(code, accountLevel, provider);
 		if (cf != null) {
 			customFieldTemplateService.remove(cf);
 		}
 	}
 
-	public CustomFieldTemplateDto find(String code, String al, User currentUser) throws MeveoApiException {
+	public CustomFieldTemplateDto find(String code, String al, Provider provider) throws MeveoApiException {
 		AccountLevelEnum accountLevel = null;
 		try {
 			accountLevel = AccountLevelEnum.valueOf(al);
@@ -186,8 +186,7 @@ public class CustomFieldTemplateApi extends BaseApi {
 			throw new InvalidEnumValue(AccountLevelEnum.class.getName(), al);
 		}
 
-		CustomFieldTemplate cf = customFieldTemplateService.findByCodeAndAccountLevel(code, accountLevel,
-				currentUser.getProvider());
+		CustomFieldTemplate cf = customFieldTemplateService.findByCodeAndAccountLevel(code, accountLevel, provider);
 
 		if (cf == null) {
 			throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
