@@ -19317,21 +19317,21 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCountry">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCountry">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCountryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateProvider">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateProvider">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="updateProviderResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findTax">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findTax">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findTaxResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -19344,12 +19344,30 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findTax">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findTax">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findTaxResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findCustomerConfiguration">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findCustomerConfiguration">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findCustomerConfigurationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCustomFieldTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createCustomFieldTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createCustomFieldTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -19368,15 +19386,6 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createInvoiceSubCategoryCountryResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createCustomFieldTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createCustomFieldTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createCustomFieldTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -19543,6 +19552,8 @@
       <xs:element name="createLanguageResponse" type="tns:createLanguageResponse"/>
       <xs:element name="createOccTemplate" type="tns:createOccTemplate"/>
       <xs:element name="createOccTemplateResponse" type="tns:createOccTemplateResponse"/>
+      <xs:element name="createOrUpdateCountry" type="tns:createOrUpdateCountry"/>
+      <xs:element name="createOrUpdateCountryResponse" type="tns:createOrUpdateCountryResponse"/>
       <xs:element name="createProvider" type="tns:createProvider"/>
       <xs:element name="createProviderResponse" type="tns:createProviderResponse"/>
       <xs:element name="createScriptInstance" type="tns:createScriptInstance"/>
@@ -20903,12 +20914,32 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateCountry">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="country" type="tns:countryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCountryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="updateProvider">
         <xs:sequence>
           <xs:element minOccurs="0" name="provider" type="tns:providerDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateProviderResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeUser">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="username" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeUserResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -20931,16 +20962,6 @@
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="removeUser">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="username" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeUserResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findCustomerConfiguration">
         <xs:sequence/>
@@ -21364,6 +21385,9 @@
   <wsdl:message name="removeUserResponse">
     <wsdl:part element="ns1:removeUserResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCountryResponse">
+    <wsdl:part element="ns1:createOrUpdateCountryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createInvoiceSubCategoryCountryResponse">
     <wsdl:part element="ns1:createInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -21459,6 +21483,9 @@
   </wsdl:message>
   <wsdl:message name="findInvoiceCategoryResponse">
     <wsdl:part element="ns1:findInvoiceCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCountry">
+    <wsdl:part element="ns1:createOrUpdateCountry" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateInvoiceSubCategoryResponse">
     <wsdl:part element="ns1:updateInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
@@ -21734,17 +21761,21 @@
       <wsdl:input message="ns1:findSeller" name="findSeller"></wsdl:input>
       <wsdl:output message="ns1:findSellerResponse" name="findSellerResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCountry">
+      <wsdl:input message="ns1:createOrUpdateCountry" name="createOrUpdateCountry"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCountryResponse" name="createOrUpdateCountryResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateProvider">
       <wsdl:input message="ns1:updateProvider" name="updateProvider"></wsdl:input>
       <wsdl:output message="ns1:updateProviderResponse" name="updateProviderResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findTax">
-      <wsdl:input message="ns1:findTax" name="findTax"></wsdl:input>
-      <wsdl:output message="ns1:findTaxResponse" name="findTaxResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeUser">
       <wsdl:input message="ns1:removeUser" name="removeUser"></wsdl:input>
       <wsdl:output message="ns1:removeUserResponse" name="removeUserResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findTax">
+      <wsdl:input message="ns1:findTax" name="findTax"></wsdl:input>
+      <wsdl:output message="ns1:findTaxResponse" name="findTaxResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findCustomerConfiguration">
       <wsdl:input message="ns1:findCustomerConfiguration" name="findCustomerConfiguration"></wsdl:input>
@@ -21855,7 +21886,7 @@
          </country>
       </ws:createCountry>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCountry"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCurrency" bindingOperationName="createCurrency" type="Request-Response" outputName="createCurrencyResponse" inputName="createCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="836e12f2-e23f-4a08-ad13-48191726f57a"><con:settings/><con:call name="Request 1" id="fc320a63-42b3-48b7-90c1-6f023222a417"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createCurrency" bindingOperationName="createCurrency" type="Request-Response" outputName="createCurrencyResponse" inputName="createCurrency" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="836e12f2-e23f-4a08-ad13-48191726f57a"><con:settings/><con:call name="Request 1" id="fc320a63-42b3-48b7-90c1-6f023222a417"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCurrency>
@@ -25684,7 +25715,19 @@
          <scriptInstanceCode>?</scriptInstanceCode>\r
       </ws:removeScriptInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeScriptInstance"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/NotificationWs?wsdl" id="847f85aa-ac2b-4704-9613-89e3bb00ed98" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeScriptInstance"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="8acb4537-d7d9-4dbc-a596-3e13f390de7d" isOneWay="false" action="" name="createOrUpdateCountry" bindingOperationName="createOrUpdateCountry" type="Request-Response" outputName="createOrUpdateCountryResponse" inputName="createOrUpdateCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9bf4add6-5584-49cd-8483-c7b1c1fa3fce" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCountry>\r
+         <!--Optional:-->\r
+         <country countryCode="PH" name="Philippines">\r
+            <currencyCode>PHP</currencyCode>\r
+            <!--Optional:-->\r
+            <languageCode>ENG</languageCode>\r
+         </country>\r
+      </ws:createOrUpdateCountry>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCountry"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/NotificationWs?wsdl" id="847f85aa-ac2b-4704-9613-89e3bb00ed98" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/NotificationWs?wsdl=NotificationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="NotificationWsSoapBinding" type="ns1:NotificationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
