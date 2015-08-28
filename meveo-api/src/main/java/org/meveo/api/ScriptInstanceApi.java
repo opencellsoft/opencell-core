@@ -14,6 +14,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.jobs.ScriptTypeEnum;
+import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -24,6 +25,9 @@ public class ScriptInstanceApi extends BaseApi {
 
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
+
+	@Inject
+	private JavaCompilerManager javaCompilerManager;
 
 	public void create(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode())) {
@@ -45,8 +49,9 @@ public class ScriptInstanceApi extends BaseApi {
 			} else {
 				scriptInstance.setScriptTypeEnum(ScriptTypeEnum.JAVA);
 			}
-			
+
 			scriptInstanceService.create(scriptInstance, currentUser, currentUser.getProvider());
+			javaCompilerManager.compileScript(scriptInstance);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -77,8 +82,9 @@ public class ScriptInstanceApi extends BaseApi {
 			} else {
 				scriptInstance.setScriptTypeEnum(ScriptTypeEnum.JAVA);
 			}
-			
+
 			scriptInstanceService.update(scriptInstance, currentUser);
+			javaCompilerManager.compileScript(scriptInstance);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");

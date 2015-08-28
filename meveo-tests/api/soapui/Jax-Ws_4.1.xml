@@ -40283,11 +40283,26 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>\r
       <ws:createScriptInstance>\r
          <!--Optional:-->\r
-         <scriptInstance code="${#TestSuite#ticket}_SI1" description="${#TestSuite#ticket}_SI1">\r
+         <scriptInstance code="ScriptTest" description="${#TestSuite#ticket}_SI1">\r
             <!--Optional:-->\r
             <type>JAVA</type>\r
             <!--Optional:-->\r
-            <script></script>\r
+            <script>
+	<![CDATA[
+	
+package org.meveo.service.script;
+import java.util.Map;
+import org.meveo.model.crm.Provider;
+
+public class ScriptTest extends Script {
+ @Override
+ public void execute(Map<String, Object> methodContext, Provider provider) {
+  System.out.println("ScriptTest called, context="+methodContext);
+ }
+}
+            	]]]]>><![CDATA[
+            	
+            </script>\r
          </scriptInstance>\r
       </ws:createScriptInstance>\r
    </soapenv:Body>\r
@@ -40296,11 +40311,25 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:updateScriptInstance>
          <!--Optional:-->
-         <scriptInstance code="${#TestSuite#ticket}_SI1" description="${#TestSuite#ticket}_SI1">
+         <scriptInstance code="ScriptTest" description="${#TestSuite#ticket}_SI1">
             <!--Optional:-->
             <type>JAVA</type>
             <!--Optional:-->
-            <script></script>
+            <script>
+            <![CDATA[
+	
+package org.meveo.service.script;
+import java.util.Map;
+import org.meveo.model.crm.Provider;
+
+public class ScriptTest extends Script {
+ @Override
+ public void execute(Map<String, Object> methodContext, Provider provider) {
+  System.out.println("ScriptTest called, context="+methodContext);
+ }
+}
+            	]]]]>><![CDATA[
+            	</script>
          </scriptInstance>
       </ws:updateScriptInstance>
    </soapenv:Body>
@@ -40309,7 +40338,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>\r
       <ws:findScriptInstance>\r
          <!--Optional:-->\r
-         <scriptInstanceCode>${#TestSuite#ticket}_SI1</scriptInstanceCode>\r
+         <scriptInstanceCode>ScriptTest</scriptInstanceCode>\r
       </ws:findScriptInstance>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d9b629cb-36c4-4cbc-8f02-10b335154843"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove" id="662629cc-a7c7-4938-9cda-dd5c1ff0a3e6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeScriptInstance</con:operation><con:request name="remove" id="93bda21f-809a-4587-a94b-f121759b77d0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
@@ -40317,7 +40346,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>\r
       <ws:removeScriptInstance>\r
          <!--Optional:-->\r
-         <scriptInstanceCode>${#TestSuite#ticket}_SI1</scriptInstanceCode>\r
+         <scriptInstanceCode>ScriptTest</scriptInstanceCode>\r
       </ws:removeScriptInstance>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0d4e8174-a231-4872-b2a6-d5e758afc26f"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find - not exists" id="6b501ac6-fddf-4801-8c91-4334ac707964"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findScriptInstance</con:operation><con:request name="find - not exists" id="f3de2d2e-cf14-42b3-b2c6-a47d3fbdfd3c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
@@ -40325,7 +40354,7 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>\r
       <ws:findScriptInstance>\r
          <!--Optional:-->\r
-         <scriptInstanceCode>${#TestSuite#ticket}_SI1</scriptInstanceCode>\r
+         <scriptInstanceCode>ScriptTest</scriptInstanceCode>\r
       </ws:findScriptInstance>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d9b629cb-36c4-4cbc-8f02-10b335154843"/><con:assertion type="Simple Contains" id="fd11b4f3-41de-4e7a-8635-af2935ae9376" name="Contains"><con:configuration><token>ENTITY_DOES_NOT_EXISTS_EXCEPTION</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1027</con:value></con:property></con:properties></con:testSuite><con:testSuite id="2a40252b-b2c5-44af-942f-2e98a9b02d29" name="#1024_filtered_list_xml"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="597a1a71-fb08-43bb-a9db-4c0dba60f035" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase 1" searchProperties="true"><con:settings/><con:testStep type="request" name="country" id="b897a63c-4133-4aff-ad0d-52b7b93b14e6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FilteredListWsSoapBinding</con:interface><con:operation>listByXmlInput</con:operation><con:request name="country" id="aa8a4155-8a7c-470d-8401-e17329642c99"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/FilteredListWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
