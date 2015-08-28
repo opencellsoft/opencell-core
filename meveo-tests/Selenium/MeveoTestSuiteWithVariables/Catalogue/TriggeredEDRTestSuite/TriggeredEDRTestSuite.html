@@ -5,19 +5,176 @@
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
   <title>Test Suite</title>
 </head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the three fields (Code, Description) then click on the button "search".
+Expected Results : The result of research gives the items matching with the code and description filled bellow.
+
+Description Test Case 2: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "clean filters".
+Expected Results : The fileds (Code/Description) become empty.
+
+Description Test Case 3: 
+Actions : Click on the button "New" in order to add a new Triggered EDR.
+Expected Results : A list of empty items are chowed.
+
+Description Test Case 4: 
+Actions : Don't fill any field then click on "save".
+Expected Results : A new triggered can not be created, an alert appears to mention that code, quantity EL are required to create the triggered
+
+Description Test Case 5:
+Actions : Click on "reset".
+Expected Results : All the fields become empty.
+
+Description Test Case 6: 
+Actions : Fill only the field code then click on "save".
+Expected Results : A new Triggered EDR can not be created, an alert appears to mention that quantity EL is required to create the Triggered EDR.
+
+Description Test Case 7: 
+Actions : Fill only the field quantity EL then click on "save".
+Expected Results : A new Triggered EDR can not be created, an alert appears to mention that code is required to create the Triggered EDR.
+
+Description Test Case 8: 
+Actions : Let the required fields not filled and fill (Description, Condition EL, Param1 EL, Param2 EL, Param3 EL, Param4 EL, Subscrip,code EL) and click on "save"
+Expected Results : A new triggered can not be created, an alert appears to mention that code and quanity EL are required to create the triggered
+
+Description Test Case 9: 
+Actions : Click on "back".
+Expected Results : Return to the previous page. 
+
+Description Test Case 10: 
+Actions : Fill the required fields (code,Quantity EL) then fill (Description, Condition EL, Param1 EL, Param2 EL, Param3 EL, Param4 EL, Subscrip,code EL) and click on "save".
+Expected Results : A new Triggered EDR is created.
+
+Description Test Case 11: 
+Actions : Make a search by filling only the 'code' then click on the button "search".
+Expected Results :The result of research gives the items which are matching with the chosen code 
+
+Description Test Case 12: 
+Actions : Click on the link in the datatable to modify the Triggered EDR just created, fill all the fields and click "save".
+Expected Results : The Triggered EDR is updated with success.
+
+Description Test Case 13: 
+Actions : Make a search by filling only the 'description' then click on the button "search".
+Expected Results : The result of research gives the items which are matching with the chosen description.
+
+Description Test Case 14: 
+Actions : Pick a line from the table then click on the icon "delete ".
+Expected Results : An alert appears in order to make sure that you really you want to delete the Triggered EDR.
+
+Description Test Case 15: 
+Actions : Click on "yes" to confirm that you want to delete the Triggered EDR.
+Expected Results : The picked Triggered EDR is deleted.
+
+Description Test Case 16: 
+Actions : Click on "No" to confirm that you don't want to delete the Triggered EDR.
+Expected Results : The picked Triggered EDR is not deleted.
+
+Description Test Case 17: 
+Actions : Pick one or more lines from the table then click on the button "Export to Excel"
+Expected Results : The picked lines are exported on an Excel file
+
+Description Test Case 18: 
+Actions : Click on the button "export to excel", without picking any line from the table
+Expected Results : All the lines from the table are been exported on an excel file
+
+Description Test Case 19: 
+Actions : Click on the button"delete multiple" wihout picking any line from the table.
+Expected Results : Nothing happened.
+
+Description Test Case 20: 
+Actions : Pick more than one line from the table then click on the button "Delete multiple"
+Expected Results : The picked lines are erased
+
+Description Test Case 21: 
+Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
+Expected Results : The table shows 15 lines per page 
+
+Description Test Case 22: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
+Expected Results : The table shows 20 lines per page 
+
+Description Test Case 23: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
+Expected Results : The table shows 50 lines per page 
+
+Description Test Case 24: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
+Expected Results : The table shows 10 lines per page 
+
+Description Test Case 25: 
+Actions : Click on the button to move to the next page 
+Expected Results : The next page is displayed
+
+Description Test Case 26: 
+Actions : Click on the button to move to the last page 
+Expected Results :The last page is displayed
+
+Description Test Case 27: 
+Actions : Click on the button to move to the previous page
+Expected Results :The previous page is displayed
+
+Description Test Case 28: 
+Actions : In each column from the table (Description, Condition EL, Param1 EL, Param2 EL, Param3 EL, Param4 EL, Subscrip,code EL) there is a filter , click on the filter in column "code" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 29: 
+Actions : Click on the filter in column "Description" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 30: 
+Actions : Click on the filter in column "condition EL" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 31: 
+Actions : Click on the filter in column "quantity EL" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 32: 
+Actions : Click on the filter in column "Param1 EL" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 33: 
+Actions : Click on the filter in column "Param2 EL" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+-->
 <body>
 <table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
 <tr><td><b>Test Suite</b></td></tr>
 <tr><td><a href="variables.html">variables</a></td></tr>
-<tr><td><a href="EmptyTriggeredEDRTestCase.html">EmptyTriggeredEDRTestCase</a></td></tr>
-<tr><td><a href="MissingFieldsTestCase.html">MissingFieldsTestCase</a></td></tr>
-<tr><td><a href="SuccessRequiredTestCase.html">SuccessRequiredTestCase</a></td></tr>
 <tr><td><a href="SearchWithCodeAndDescriptionTestCase.html">SearchWithCodeAndDescriptionTestCase</a></td></tr>
-<tr><td><a href="UpdateTriggeredEDRTestCase.html">UpdateTriggeredEDRTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="NewTriggeredEDRTestCase.html">NewTriggeredEDRTestCase</a></td></tr>
+<tr><td><a href="EmptyTriggeredEDRTestCase.html">EmptyTriggeredEDRTestCase</a></td></tr>
+<tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyQuantityELTestCase.html">FillOnlyQuantityELTestCase</a></td></tr>
+<tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
+<tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
+<tr><td><a href="SuccessTriggeredEDRTestCase.html">SuccessTriggeredEDRTestCase</a></td></tr>
 <tr><td><a href="SearchWithCodeTestCase.html">SearchWithCodeTestCase</a></td></tr>
-<tr><td><a href="ExportTriggeredEDRTestCase.html">ExportTriggeredEDRTestCase</a></td></tr>
+<tr><td><a href="UpdateTriggeredEDRTestCase.html">UpdateTriggeredEDRTestCase</a></td></tr>
 <tr><td><a href="SearchWithDescriptionTestCase.html">SearchWithDescriptionTestCase</a></td></tr>
 <tr><td><a href="DeleteTriggeredEDRTestCase.html">DeleteTriggeredEDRTestCase</a></td></tr>
+<tr><td><a href="ExportWithPickLineTestCase.html">ExportWithPickLineTestCase</a></td></tr>
+<tr><td><a href="ExportWithoutPickAnyLineTestCase.html">ExportWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithoutPickAnyLineTestCase.html">DeleteMultipleWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithPickLineTestCase.html">DeleteMultipleWithPickLineTestCase</a></td></tr>
+<tr><td><a href="DropdownWith15TestCase.html">DropdownWith15TestCase</a></td></tr>
+<tr><td><a href="DropdownWith20TestCase.html">DropdownWith20TestCase</a></td></tr>
+<tr><td><a href="DropdownWith50TestCase.html">DropdownWith50TestCase</a></td></tr>
+<tr><td><a href="DropdownWith10TestCase.html">DropdownWith10TestCase</a></td></tr>
+<tr><td><a href="NextPageTestCase.html">NextPageTestCase</a></td></tr>
+<tr><td><a href="LastPageTestCase.html">LastPageTestCase</a></td></tr>
+<tr><td><a href="PreviousPageTestCase.html">PreviousPageTestCase</a></td></tr>
+<tr><td><a href="FilterWithCodeTestCase.html">FilterWithCodeTestCase</a></td></tr>
+<tr><td><a href="FilterWithDescriptionTestCase.html">FilterWithDescriptionTestCase</a></td></tr>
+<tr><td><a href="FilterWithConditionELTestCase.html">FilterWithConditionELTestCase</a></td></tr>
+<tr><td><a href="FilterWithQuantityELTestCase.html">FilterWithQuantityELTestCase</a></td></tr>
+<tr><td><a href="FilterWithParam1ELTestCase.html">FilterWithParam1ELTestCase</a></td></tr>
+<tr><td><a href="FilterWithParam2ELTestCase.html">FilterWithParam2ELTestCase</a></td></tr>
 <tr><td><a href="LogoutTestSuite.html">LogoutTestSuite</a></td></tr>
 </tbody></table>
 </body>
