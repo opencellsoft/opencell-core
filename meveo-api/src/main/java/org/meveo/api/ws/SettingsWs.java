@@ -121,6 +121,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus updateCountry(@WebParam(name = "country") CountryDto countryDto);
+	
+	@WebMethod
+	ActionStatus createOrUpdateCountry(@WebParam(name = "country") CountryDto countryDto);
 
 	// currency
 

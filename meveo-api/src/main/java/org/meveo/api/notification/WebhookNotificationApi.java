@@ -14,11 +14,13 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.WebHookService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -32,6 +34,9 @@ public class WebhookNotificationApi extends BaseApi {
 	@SuppressWarnings("rawtypes")
 	@Inject
 	private CounterTemplateService counterTemplateService;
+	
+	@Inject
+	private ScriptInstanceService scriptInstanceService;
 
 	public void create(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getClassNameFilter()) && !StringUtils.isBlank(postData.getEventTypeFilter())
@@ -39,7 +44,13 @@ public class WebhookNotificationApi extends BaseApi {
 			if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
 				throw new EntityAlreadyExistsException(WebHook.class, postData.getCode());
 			}
-
+			ScriptInstance scriptInstance = null;
+			if(!StringUtils.isBlank(postData.getScriptInstanceCode()) ){
+				scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+				if ( scriptInstance == null) {
+					throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+				}
+			}
 			// check class
 			try {
 				Class.forName(postData.getClassNameFilter());
@@ -65,7 +76,8 @@ public class WebhookNotificationApi extends BaseApi {
 			webHook.setCode(postData.getCode());
 			webHook.setClassNameFilter(postData.getClassNameFilter());
 			webHook.setEventTypeFilter(notificationEventType);
-			webHook.setElAction(postData.getElAction());
+			webHook.setScriptInstance(scriptInstance);
+			webHook.setParams(postData.getScriptParams());
 			webHook.setElFilter(postData.getElFilter());
 			webHook.setCounterTemplate(counterTemplate);
 
@@ -139,6 +151,14 @@ public class WebhookNotificationApi extends BaseApi {
 			if (webHook == null) {
 				throw new EntityDoesNotExistsException(WebHook.class, postData.getCode());
 			}
+			
+			ScriptInstance scriptInstance = null;
+			if(!StringUtils.isBlank(postData.getScriptInstanceCode()) ){
+				scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+				if ( scriptInstance == null) {
+					throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+				}
+			}
 
 			// check class
 			try {
@@ -162,7 +182,8 @@ public class WebhookNotificationApi extends BaseApi {
 
 			webHook.setClassNameFilter(postData.getClassNameFilter());
 			webHook.setEventTypeFilter(notificationEventType);
-			webHook.setElAction(postData.getElAction());
+			webHook.setScriptInstance(scriptInstance);
+			webHook.setParams(postData.getScriptParams());
 			webHook.setElFilter(postData.getElFilter());
 			webHook.setCounterTemplate(counterTemplate);
 

@@ -1,6 +1,11 @@
 package org.meveo.model.notification;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -64,6 +69,10 @@ public class Notification extends BusinessEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SCRIPT_INSTANCE_ID")
     private ScriptInstance scriptInstance;
+    
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "ADM_NOTIFICATION_PARAMS") 
+	private Map<String, String> params = new HashMap<String, String>();
 
     public String getClassNameFilter() {
         return classNameFilter;
@@ -127,11 +136,26 @@ public class Notification extends BusinessEntity {
 	public void setScriptInstance(ScriptInstance scriptInstance) {
 		this.scriptInstance = scriptInstance;
 	}
+	
+
+	/**
+	 * @return the params
+	 */
+	public Map<String, String> getParams() {
+		return params;
+	}
+
+	/**
+	 * @param params the params to set
+	 */
+	public void setParams(Map<String, String> params) {
+		this.params = params;
+	}
 
 	@Override
     public String toString() {
-        return String.format("Notification [%s, classNameFilter=%s, eventTypeFilter=%s, elFilter=%s, elAction=%s, counterTemplate=%s, counterInstance=%s]", super.toString(),
-            classNameFilter, eventTypeFilter, elFilter, elAction, counterTemplate != null ? counterTemplate.getId() : null, counterInstance != null ? counterInstance.getId()
+        return String.format("Notification [%s, classNameFilter=%s, eventTypeFilter=%s, elFilter=%s, scriptInstance=%s, counterTemplate=%s, counterInstance=%s]", super.toString(),
+            classNameFilter, eventTypeFilter, elFilter, scriptInstance==null?"null":scriptInstance.getCode(), counterTemplate != null ? counterTemplate.getId() : null, counterInstance != null ? counterInstance.getId()
                     : null);
     }
 }

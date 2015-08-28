@@ -5,6 +5,8 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.dto.filter.FilteredListDto;
+import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.filter.FilteredListApi;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -28,9 +30,32 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
 	@Override
 	public Response list(String filter, Integer firstRow, Integer numberOfRows) {
 		Response.ResponseBuilder responseBuilder = null;
+		FilteredListResponseDto result = new FilteredListResponseDto();
 
 		try {
-			String result = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser().getProvider());
+			String response = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser().getProvider());
+			result.getActionStatus().setMessage(response);
+			responseBuilder = Response.ok();
+			responseBuilder.entity(result);
+		} catch (MeveoApiException e) {
+			log.debug("RESPONSE={}", e);
+			responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+		} catch (Exception e) {
+			log.debug("RESPONSE={}", e);
+			responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage());
+		}
+
+		return responseBuilder.build();
+	}
+
+	@Override
+	public Response listByXmlInput(FilteredListDto postData) {
+		Response.ResponseBuilder responseBuilder = null;
+		FilteredListResponseDto result = new FilteredListResponseDto();
+
+		try {
+			String response = filteredListApi.listByXmlInput(postData, getCurrentUser().getProvider());
+			result.getActionStatus().setMessage(response);
 			responseBuilder = Response.ok();
 			responseBuilder.entity(result);
 		} catch (MeveoApiException e) {

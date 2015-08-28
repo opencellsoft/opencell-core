@@ -5,6 +5,7 @@ import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.filter.FilteredListApi;
@@ -30,6 +31,25 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 		FilteredListResponseDto result = new FilteredListResponseDto();
 		try {
 			String response = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser().getProvider());
+			result.getActionStatus().setMessage(response);
+		} catch (MeveoApiException e) {
+			log.debug("RESPONSE={}", e);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			log.debug("RESPONSE={}", e);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public FilteredListResponseDto listByXmlInput(FilteredListDto postData) {
+		FilteredListResponseDto result = new FilteredListResponseDto();
+		try {
+			String response = filteredListApi.listByXmlInput(postData, getCurrentUser().getProvider());
 			result.getActionStatus().setMessage(response);
 		} catch (MeveoApiException e) {
 			log.debug("RESPONSE={}", e);

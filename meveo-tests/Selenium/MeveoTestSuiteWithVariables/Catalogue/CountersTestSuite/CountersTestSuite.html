@@ -5,22 +5,214 @@
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
   <title>Test Suite</title>
 </head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the three fields (Code, Description) then click on the button "search".
+Expected Results : The result of research gives the items matching with the code and description filled bellow.
+
+Description Test Case 2: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "clean filters".
+Expected Results : The fileds (Code/Description) become empty.
+
+Description Test Case 3: 
+Actions : Click on the button "New" in order to add a new Counters.
+Expected Results : A list of empty items are chowed.
+
+Description Test Case 4: 
+Actions : Don't fill any field then click on "save".
+Expected Results : A new counter can not be created, an alert appears to mention that code, description, type, counter level, calendar are required to create the counter.
+
+Description Test Case 5: 
+Actions : Click on "reset".
+Expected Results : All the fields become empty.
+
+Description Test Case 6: 
+Actions : Fill only the field code then click on "save".
+Expected Results : A new counter can not be created, an alert appears to mention that description, type, counter level, calendar are required to create the counter.
+
+Description Test Case 7: 
+Actions : Fill only the field description then click on "save".
+Expected Results : A new counter can not be created, an alert appears to mention that code,type, counter level, calendar are required to create the counter.
+
+Description Test Case 8: 
+Actions : Fill only the field "Type" then click on "save".
+Expected Results : A new counter can not be created, an alert appears to mention that code,description, counter level, calendar are required to create the counter.
+
+Description Test Case 9: 
+Actions : Fill only the field "Counter Level" then click on "save"
+Expected Results : A new counter can not be created, an alert appears to mention that code,type, description, calendar are required to create the counter
+
+Description Test Case 10: 
+Actions : Fill only the field calendar then click on "save"
+Expected Results : A new counter can not be created, an alert appears to mention that code,type,description, counter level, calendar are required to create the counter
+
+Description Test Case 11: 
+Actions : Let the required fields not filled and fill (unit, initial value, initial value el expression) and click on "save"
+Expected Results : A new counter can not be created, an alert appears to mention that code and description are required to create the counter. 
+
+Description Test Case 12: 
+Actions : Click on "back".
+Expected Results : Return to the previous page. 
+
+Description Test Case 13: 
+Actions : Fill the required fields (code, desciption, Type , counter level, calendar) then fill (unit, initial value, initial value el expression) and click on "save"
+Expected Results : A new Counters is created.
+
+Description Test Case 14: 
+Actions : Make a search by filling only the 'code' then click on the button "search".
+Expected Results :The result of research gives the items which are matching with the chosen code 
+
+Description Test Case 15: 
+Actions : Click on the link in the datatable to modify the Counters just created, fill all the fields and click "save".
+Expected Results : The Counters is updated with success.
+
+Description Test Case 16: 
+Actions : Make a search by filling only the 'description' then click on the button "search".
+Expected Results : The result of research gives the items which are matching with the chosen description.
+
+Description Test Case 17: 
+Actions : Pick a line from the table then click on the icon "disable"
+Expected Results : An alert appears in order to make sure that you really you want to disable the Counters.
+
+Description Test Case 18:
+Actions : Click on "yes" to confirm that you want to disable the Counters. 
+Expected Results : The picked Counters is disabled.
+
+Description Test Case 19: 
+Actions : Click on "No" to deny the disability the Counters .
+Expected Results : The picked Counters is not disabled.
+
+Description Test Case 20: 
+Actions : Pick a line from the table then click on the icon "delete ".
+Expected Results : An alert appears in order to make sure that you really you want to delete the Counter.
+
+Description Test Case 21: 
+Actions : Click on "yes" to confirm that you want to delete the Counter.
+Expected Results : The picked Counter is deleted.
+
+Description Test Case 22: 
+Actions : Click on "No" to confirm that you don't want to delete the Counter.
+Expected Results : The picked Counter is not deleted.
+
+Description Test Case 23: 
+Actions : Pick one or more lines from the table then click on the button "Export to Excel"
+Expected Results : The picked lines are exported on an Excel file
+
+Description Test Case 24: 
+Actions : Click on the button "export to excel", without picking any line from the table
+Expected Results : All the lines from the table are been exported on an excel file
+
+Description Test Case 25: 
+Actions : Click on the button"delete multiple" wihout picking any line from the table.
+Expected Results : Nothing happened.
+
+Description Test Case 26: 
+Actions : Pick more than one line from the table then click on the button "Delete multiple"
+Expected Results : The picked lines are erased
+
+Description Test Case 27: 
+Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
+Expected Results : The table shows 15 lines per page 
+
+Description Test Case 28: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
+Expected Results : The table shows 20 lines per page 
+
+Description Test Case 29: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
+Expected Results : The table shows 50 lines per page 
+
+Description Test Case 30: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
+Expected Results : The table shows 10 lines per page 
+
+Description Test Case 31: 
+Actions : Click on the button to move to the next page 
+Expected Results : The next page is displayed
+
+Description Test Case 32: 
+Actions : Click on the button to move to the last page 
+Expected Results :The last page is displayed
+
+Description Test Case 33: 
+Actions : Click on the button to move to the previous page
+Expected Results :The previous page is displayed
+
+Description Test Case 34: 
+Actions : In each column from the table (Code, description, type,counter level,initial value,calendar, active ) there is a filter , click on the filter in column "code" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 35: 
+Actions : Click on the filter in column "Description" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 36: 
+Actions : Click on the filter in column "unit" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 37: 
+Actions : Click on the filter in column "type" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 38: 
+Actions : Click on the filter in column "counter level" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 39: 
+Actions : Click on the filter in column "initial value" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 40: 
+Actions : Click on the filter in column "calendar" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 41:
+Actions : Click on the filter in column "Active" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+-->
 <body>
 <table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
 <tr><td><b>Test Suite</b></td></tr>
 <tr><td><a href="variables.html">variables</a></td></tr>
-<tr><td><a href="EmptyCountersTestCase.html">EmptyCountersTestCase</a></td></tr>
-<tr><td><a href="MissingCountersTestCase.html">MissingCountersTestCase</a></td></tr>
-<tr><td><a href="RequiredCountersTestCase.html">RequiredCountersTestCase</a></td></tr>
-<tr><td><a href="SearchWithCodeTestCase.html">SearchWithCodeTestCase</a></td></tr>
-<tr><td><a href="DeleteRequiredCounterTestCase.html">DeleteRequiredCounterTestCase</a></td></tr>
-<tr><td><a href="SuccessCountersTestSuite.html">SuccessCountersTestSuite</a></td></tr>
-<tr><td><a href="SearchWithDescriptionTestCase.html">SearchWithDescriptionTestCase</a></td></tr>
-<tr><td><a href="UpdateCounterTestCase.html">UpdateCounterTestCase</a></td></tr>
 <tr><td><a href="SearchWithCodeAndDescriptionTestCase.html">SearchWithCodeAndDescriptionTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="NewCountersTestCase.html">NewCountersTestCase</a></td></tr>
+<tr><td><a href="EmptyCountersTestCase.html">EmptyCountersTestCase</a></td></tr>
+<tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyDescriptionTestCase.html">FillOnlyDescriptionTestCase</a></td></tr>
+<tr><td><a href="FillOnlyTypeTestCase.html">FillOnlyTypeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCounterLevelTestCase.html">FillOnlyCounterLevelTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCalendarTestCase.html">FillOnlyCalendarTestCase</a></td></tr>
+<tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
+<tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
+<tr><td><a href="SuccessCountersTestSuite.html">SuccessCountersTestSuite</a></td></tr>
+<tr><td><a href="SearchWithCodeTestCase.html">SearchWithCodeTestCase</a></td></tr>
+<tr><td><a href="UpdateCounterTestCase.html">UpdateCounterTestCase</a></td></tr>
+<tr><td><a href="SearchWithDescriptionTestCase.html">SearchWithDescriptionTestCase</a></td></tr>
 <tr><td><a href="DisableCounterTestCase.html">DisableCounterTestCase</a></td></tr>
-<tr><td><a href="ExportCounterDataTestCase.html">ExportCounterDataTestCase</a></td></tr>
-<tr><td><a href="DeleteTestCase.html">DeleteTestCase</a></td></tr>
+<tr><td><a href="DeleteCounterTestCase.html">DeleteCounterTestCase</a></td></tr>
+<tr><td><a href="ExportWithPickLineTestCase.html">ExportWithPickLineTestCase</a></td></tr>
+<tr><td><a href="ExportWithoutPickAnyLineTestCase.html">ExportWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithoutPickAnyLineTestCase.html">DeleteMultipleWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithPickLineTestCase.html">DeleteMultipleWithPickLineTestCase</a></td></tr>
+<tr><td><a href="DropdownWith15TestCase.html">DropdownWith15TestCase</a></td></tr>
+<tr><td><a href="DropdownWith20TestCase.html">DropdownWith20TestCase</a></td></tr>
+<tr><td><a href="DropdownWith50TestCase.html">DropdownWith50TestCase</a></td></tr>
+<tr><td><a href="DropdownWith10TestCase.html">DropdownWith10TestCase</a></td></tr>
+<tr><td><a href="NextPageTestCase.html">NextPageTestCase</a></td></tr>
+<tr><td><a href="LastPageTestCase.html">LastPageTestCase</a></td></tr>
+<tr><td><a href="PreviousPageTestCase.html">PreviousPageTestCase</a></td></tr>
+<tr><td><a href="FilterWithCodeTestCase.html">FilterWithCodeTestCase</a></td></tr>
+<tr><td><a href="FilterWithDescriptionTestCase.html">FilterWithDescriptionTestCase</a></td></tr>
+<tr><td><a href="FilterWithUnitTestCase.html">FilterWithUnitTestCase</a></td></tr>
+<tr><td><a href="FilterWithTypeTestCase.html">FilterWithTypeTestCase</a></td></tr>
+<tr><td><a href="FilterWithCounterLevelTestCase.html">FilterWithCounterLevelTestCase</a></td></tr>
+<tr><td><a href="FilterWithInitialValueTestCase.html">FilterWithInitialValueTestCase</a></td></tr>
+<tr><td><a href="FilterWithCalendarTestCase.html">FilterWithCalendarTestCase</a></td></tr>
+<tr><td><a href="FilterWithActiveTestCase.html">FilterWithActiveTestCase</a></td></tr>
 <tr><td><a href="LogoutTestCase.html">LogoutTestCase</a></td></tr>
 </tbody></table>
 </body>
