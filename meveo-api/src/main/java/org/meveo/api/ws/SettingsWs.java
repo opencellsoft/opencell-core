@@ -139,6 +139,8 @@ public interface SettingsWs extends IBaseWs {
 	@WebMethod
 	ActionStatus updateCurrency(@WebParam(name = "currency") CurrencyDto postData);
 
+	@WebMethod
+	ActionStatus createOrUpdateCurrency(@WebParam(name = "currency") CurrencyDto postData);
 	// tax
 
 	@WebMethod
@@ -231,6 +233,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeBillingCycle(@WebParam(name = "billingCycleCode") String billingCycleCode);
+	
+	@WebMethod
+	public ActionStatus createOrUpdateBillingCycle(@WebParam(name = "billingCycleCode") BillingCycleDto postData);
 
 	// configuration
 
