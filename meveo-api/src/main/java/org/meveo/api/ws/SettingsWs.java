@@ -139,6 +139,8 @@ public interface SettingsWs extends IBaseWs {
 	@WebMethod
 	ActionStatus updateCurrency(@WebParam(name = "currency") CurrencyDto postData);
 
+	@WebMethod
+	ActionStatus createOrUpdateCurrency(@WebParam(name = "currency") CurrencyDto postData);
 	// tax
 
 	@WebMethod

@@ -156,5 +156,17 @@ public class CurrencyApi extends BaseApi {
 					getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	public void createOrUpdate(CurrencyDto postData, User currentUser) throws MeveoApiException {
+		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCode(), 
+				currentUser.getProvider());
+		if (tradingCurrency == null) {
+			//create
+			create(postData, currentUser);
+		} else {
+			//update
+			update(postData, currentUser);
+		}
+	}
+	
 }
