@@ -10,6 +10,8 @@ import java.util.concurrent.Future;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.job.PDFParametersConstruction;
@@ -37,6 +39,7 @@ public class PdfInvoiceAsync {
     protected org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Invoice> invoices, User currentUser, JobExecutionResultImpl result) {
         log.debug("launchAndForget PDF");
     	for (Invoice invoice : invoices) {
@@ -56,4 +59,6 @@ public class PdfInvoiceAsync {
 
         return new AsyncResult<String>("OK");
     }
+    
+    
 }
