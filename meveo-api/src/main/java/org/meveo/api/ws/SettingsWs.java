@@ -93,6 +93,8 @@ public interface SettingsWs extends IBaseWs {
 	@WebMethod
 	SellerCodesResponseDto listSellerCodes();
 
+	@WebMethod
+	public ActionStatus createOrUpdateSeller(@WebParam(name = "seller") SellerDto postData);
 	// language
 
 	@WebMethod
