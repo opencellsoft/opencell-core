@@ -154,6 +154,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeTax(@WebParam(name = "taxCode") String taxCode);
+	
+	@WebMethod
+	public ActionStatus createOrUpdateTax(@WebParam(name = "tax") TaxDto postData);
 
 	// invoice category
 
@@ -221,7 +224,7 @@ public interface SettingsWs extends IBaseWs {
 	public ActionStatus removeCalendar(@WebParam(name = "calendarCode") String calendarCode);
 	
 	@WebMethod
-	public ActionStatus createUpdateCalendar(@WebParam(name = "calendar") CalendarDto postData);
+	public ActionStatus createOrUpdateCalendar(@WebParam(name = "calendar") CalendarDto postData);
 
 	// billing cycle
 
