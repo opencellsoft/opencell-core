@@ -1406,5 +1406,8 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
 
-	</changeSet>    
+	</changeSet> 
+	<changeSet id="1034-20150828-2" author="anasseh">
+	   <dropColumn columnName="ACTION_EXPRESSION" tableName="ADM_NOTIFICATION"/>
+	</changeSet>  
 </databaseChangeLog>

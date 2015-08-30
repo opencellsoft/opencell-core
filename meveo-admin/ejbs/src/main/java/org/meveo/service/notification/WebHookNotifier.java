@@ -16,23 +16,21 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.MeveoJpaForJobs;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
 import org.slf4j.Logger;
-import org.w3c.dom.Document;
 
 @Stateless
 public class WebHookNotifier {
@@ -46,6 +44,9 @@ public class WebHookNotifier {
 
 	@Inject
 	NotificationHistoryService notificationHistoryService;
+	
+	@Inject
+	JavaCompilerManager javaCompilerManager;
 
 	private String evaluate(String expression, IEntity e) throws BusinessException {
 		HashMap<Object, Object> userMap = new HashMap<Object, Object>();
@@ -148,34 +149,26 @@ public class WebHookNotifier {
 					log.error("Failed to create webhook ",e);
 				}
 			} else {
+				if(webHook.getScriptInstance() != null){
 				HashMap<Object, Object> userMap = new HashMap<Object, Object>();
 				userMap.put("event", e);
 				userMap.put("response",result);
-				if(webHook.getElAction()!=null && webHook.getElAction().indexOf("jsObj.")>=0){
-					JSONObject json;
-					try {
-						json = new JSONObject(result);
-						userMap.put("jsObj",json);
-					} catch (JSONException e1) {
-						log.error("Fail in json ",e);
-					}
-				} else if(webHook.getElAction()!=null && webHook.getElAction().indexOf("xmlDoc.")>=0){
-					try {
-						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-						DocumentBuilder builder = dbf.newDocumentBuilder();
-						Document doc = builder.parse(result);
-						userMap.put("xmlDoc",doc);
-					} catch (Exception e1) {
-						log.error("Fail in xmlDoc ",e);
-					}
+			
+			        Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(webHook.getScriptInstance().getProvider(),webHook.getScriptInstance().getCode());
+			        try{
+			        	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
+			        	Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
+			            
+			        	for (@SuppressWarnings("rawtypes") Map.Entry entry : params.entrySet()) {
+			        	    paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression( (String)entry.getValue(), userMap, String.class));
+			        	}
+			        	
+				    	scriptInterface.execute(paramsEvaluated,webHook.getScriptInstance().getProvider());
+			        } catch(Exception ee){
+			        	log.error("failed script execution",ee);
+			        }
+			    
 				}
-				
-				try {
-				    ValueExpressionWrapper.evaluateExpression(webHook.getElAction(), userMap, String.class);
-				} catch(Exception e1){
-					log.error("Failed to evaluate expression webhook ",e);
-				}
-				
 				notificationHistoryService.create(webHook, e, result, NotificationHistoryStatusEnum.SENT);
 				log.debug("webhook answer : " + result);
 			}

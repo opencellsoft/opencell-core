@@ -54,10 +54,6 @@ public class Notification extends BusinessEntity {
     @Size(max = 1000)
     private String elFilter;
 
-    @Column(name = "ACTION_EXPRESSION", length = 2000)
-    @Size(max = 2000)
-    private String elAction;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COUNTER_TEMPLATE_ID")
     private CounterTemplate counterTemplate;
@@ -96,14 +92,6 @@ public class Notification extends BusinessEntity {
 
     public void setElFilter(String elFilter) {
         this.elFilter = elFilter;
-    }
-
-    public String getElAction() {
-        return elAction;
-    }
-
-    public void setElAction(String elAction) {
-        this.elAction = elAction;
     }
 
     public CounterTemplate getCounterTemplate() {
