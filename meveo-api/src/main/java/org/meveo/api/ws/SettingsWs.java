@@ -288,7 +288,10 @@ public interface SettingsWs extends IBaseWs {
 	GetCustomFieldTemplateReponseDto findCustomFieldTemplate(
 			@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode,
 			@WebParam(name = "accountLevel") String accountLevel);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
+	
 	// scriptInstance
 	@WebMethod
 	ActionStatus createScriptInstance(@WebParam(name = "scriptInstance") ScriptInstanceDto postData);

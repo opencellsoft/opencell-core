@@ -42,5 +42,9 @@ public interface CustomFieldTemplateRs extends IBaseRs {
 	@Path("/")
 	GetCustomFieldTemplateReponseDto find(@QueryParam("customFieldTemplateCode") String customFieldTemplateCode,
 			@QueryParam("accountLevel") String accountLevel);
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(CustomFieldTemplateDto postData);
 
 }
