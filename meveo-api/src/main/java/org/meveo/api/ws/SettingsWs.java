@@ -320,5 +320,8 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	GetScriptInstanceResponseDto findScriptInstance(@WebParam(name = "scriptInstanceCode") String scriptInstanceCode);
+	
+	@WebMethod
+	ActionStatus createOrUpdateScriptInstance(@WebParam(name = "scriptInstance") ScriptInstanceDto postData);
 
 }
