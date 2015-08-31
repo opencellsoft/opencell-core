@@ -235,4 +235,22 @@ public class InvoiceCategoryApi extends BaseApi {
 					getMissingParametersExceptionMessage());
 		}
 	}
+	
+	/**
+	 * Creates or updates invoice category based on the code. 
+	 * If passed invoice category is not yet existing, it will be created else will be updated.
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(InvoiceCategoryDto postData, User currentUser)
+			throws MeveoApiException {
+		InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
+		
+		if (invoiceCategory == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }
