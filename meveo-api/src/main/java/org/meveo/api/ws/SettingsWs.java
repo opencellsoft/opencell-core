@@ -108,6 +108,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateLanguage(@WebParam(name = "language") LanguageDto postData);
+	
+	@WebMethod
+	public ActionStatus createOrUpdateLanguage(@WebParam(name = "language") LanguageDto postData);
 
 	// country
 

@@ -158,5 +158,21 @@ public class LanguageApi extends BaseApi {
 					getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	/**
+	 * Create or update Language based on the trading language code.
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(LanguageDto postData, User currentUser) throws MeveoApiException {
+		Provider provider = currentUser.getProvider();
+		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getCode(), provider);
+		
+		if (tradingLanguage == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }
