@@ -58,7 +58,10 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateProvider(@WebParam(name = "provider") ProviderDto postData);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateProvider(@WebParam(name = "provider") ProviderDto postData);
+	
 	// user
 
 	@WebMethod

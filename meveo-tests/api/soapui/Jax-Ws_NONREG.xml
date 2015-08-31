@@ -546,6 +546,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateProvider">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateProvider">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateProviderResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateCountry">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateCountry">
@@ -1141,6 +1150,8 @@
       <xs:element name="createOrUpdateLanguageResponse" type="tns:createOrUpdateLanguageResponse"/>
       <xs:element name="createOrUpdateOccTemplate" type="tns:createOrUpdateOccTemplate"/>
       <xs:element name="createOrUpdateOccTemplateResponse" type="tns:createOrUpdateOccTemplateResponse"/>
+      <xs:element name="createOrUpdateProvider" type="tns:createOrUpdateProvider"/>
+      <xs:element name="createOrUpdateProviderResponse" type="tns:createOrUpdateProviderResponse"/>
       <xs:element name="createOrUpdateSeller" type="tns:createOrUpdateSeller"/>
       <xs:element name="createOrUpdateSellerResponse" type="tns:createOrUpdateSellerResponse"/>
       <xs:element name="createOrUpdateTax" type="tns:createOrUpdateTax"/>
@@ -2045,6 +2056,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateProvider">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="provider" type="tns:providerDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateProviderResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="removeCurrency">
         <xs:sequence>
           <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
@@ -2938,6 +2959,9 @@
   <wsdl:message name="findScriptInstanceResponse">
     <wsdl:part element="ns1:findScriptInstanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateProviderResponse">
+    <wsdl:part element="ns1:createOrUpdateProviderResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createInvoiceCategoryResponse">
     <wsdl:part element="ns1:createInvoiceCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -3009,6 +3033,9 @@
   </wsdl:message>
   <wsdl:message name="updateCalendarResponse">
     <wsdl:part element="ns1:updateCalendarResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateProvider">
+    <wsdl:part element="ns1:createOrUpdateProvider" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateInvoiceSubCategory">
     <wsdl:part element="ns1:updateInvoiceSubCategory" name="parameters"></wsdl:part>
@@ -3220,11 +3247,11 @@
   <wsdl:message name="findTaxResponse">
     <wsdl:part element="ns1:findTaxResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateCalendarResponse">
-    <wsdl:part element="ns1:createOrUpdateCalendarResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findInvoiceCategoryResponse">
     <wsdl:part element="ns1:findInvoiceCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCalendarResponse">
+    <wsdl:part element="ns1:createOrUpdateCalendarResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateCountry">
     <wsdl:part element="ns1:createOrUpdateCountry" name="parameters"></wsdl:part>
@@ -3403,6 +3430,10 @@
     <wsdl:operation name="updateCountry">
       <wsdl:input message="ns1:updateCountry" name="updateCountry"></wsdl:input>
       <wsdl:output message="ns1:updateCountryResponse" name="updateCountryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateProvider">
+      <wsdl:input message="ns1:createOrUpdateProvider" name="createOrUpdateProvider"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateProviderResponse" name="createOrUpdateProviderResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeCurrency">
       <wsdl:input message="ns1:removeCurrency" name="removeCurrency"></wsdl:input>
@@ -4674,7 +4705,21 @@
          </occTemplate>\r
       </ws:createOrUpdateOccTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateOccTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" id="4ca1b71a-5a39-44e5-a167-afc247acc785" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateOccTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="f49374ab-9242-43db-a823-a28220f8edad" isOneWay="false" action="" name="createOrUpdateProvider" bindingOperationName="createOrUpdateProvider" type="Request-Response" outputName="createOrUpdateProviderResponse" inputName="createOrUpdateProvider" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b8002e10-0f29-4bc8-a2e6-c821acb92841" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateProvider>\r
+         <!--Optional:-->\r
+         <provider code="PROV_1">\r
+            <!--Optional:-->\r
+            <description>Provider test data</description>\r
+            <multiCurrency>No</multiCurrency>\r
+            <multiCountry>No</multiCountry>\r
+            <multiLanguage>No</multiLanguage>\r
+         </provider>\r
+      </ws:createOrUpdateProvider>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateProvider"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" id="4ca1b71a-5a39-44e5-a167-afc247acc785" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="CatalogWsSoapBinding" type="ns1:CatalogWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
