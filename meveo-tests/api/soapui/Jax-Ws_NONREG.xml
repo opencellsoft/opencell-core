@@ -987,6 +987,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateInvoiceCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateInvoiceCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateInvoiceCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateCurrency">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateCurrency">
@@ -1097,6 +1106,8 @@
       <xs:element name="createOrUpdateCurrencyResponse" type="tns:createOrUpdateCurrencyResponse"/>
       <xs:element name="createOrUpdateCustomFieldTemplate" type="tns:createOrUpdateCustomFieldTemplate"/>
       <xs:element name="createOrUpdateCustomFieldTemplateResponse" type="tns:createOrUpdateCustomFieldTemplateResponse"/>
+      <xs:element name="createOrUpdateInvoiceCategory" type="tns:createOrUpdateInvoiceCategory"/>
+      <xs:element name="createOrUpdateInvoiceCategoryResponse" type="tns:createOrUpdateInvoiceCategoryResponse"/>
       <xs:element name="createOrUpdateSeller" type="tns:createOrUpdateSeller"/>
       <xs:element name="createOrUpdateSellerResponse" type="tns:createOrUpdateSellerResponse"/>
       <xs:element name="createOrUpdateTax" type="tns:createOrUpdateTax"/>
@@ -2753,6 +2764,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateInvoiceCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="invoiceCategory" type="tns:invoiceCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateInvoiceCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:simpleType name="actionStatusEnum">
         <xs:restriction base="xs:string">
           <xs:enumeration value="SUCCESS"/>
@@ -2859,6 +2880,9 @@
   </wsdl:message>
   <wsdl:message name="findProviderResponse">
     <wsdl:part element="ns1:findProviderResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateInvoiceCategoryResponse">
+    <wsdl:part element="ns1:createOrUpdateInvoiceCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findCustomerConfiguration">
     <wsdl:part element="ns1:findCustomerConfiguration" name="parameters"></wsdl:part>
@@ -3159,6 +3183,9 @@
   </wsdl:message>
   <wsdl:message name="updateOccTemplate">
     <wsdl:part element="ns1:updateOccTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateInvoiceCategory">
+    <wsdl:part element="ns1:createOrUpdateInvoiceCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findProvider">
     <wsdl:part element="ns1:findProvider" name="parameters"></wsdl:part>
@@ -3491,6 +3518,10 @@
     <wsdl:operation name="updateCurrency">
       <wsdl:input message="ns1:updateCurrency" name="updateCurrency"></wsdl:input>
       <wsdl:output message="ns1:updateCurrencyResponse" name="updateCurrencyResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateInvoiceCategory">
+      <wsdl:input message="ns1:createOrUpdateInvoiceCategory" name="createOrUpdateInvoiceCategory"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateInvoiceCategoryResponse" name="createOrUpdateInvoiceCategoryResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://${#Project#meveoUrl}/SettingsWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="createCountry" bindingOperationName="createCountry" type="Request-Response" outputName="createCountryResponse" inputName="createCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="6941ce97-2818-4704-8f61-974d81ef82f8"><con:settings/><con:call name="Request 1" id="68224429-ba1f-440f-a651-3a3a98c98bcd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
@@ -4507,7 +4538,16 @@
          </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCustomFieldTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" id="4ca1b71a-5a39-44e5-a167-afc247acc785" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCustomFieldTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="70377570-5f8d-413c-bee7-d529ca6bbd7f" isOneWay="false" action="" name="createOrUpdateInvoiceCategory" bindingOperationName="createOrUpdateInvoiceCategory" type="Request-Response" outputName="createOrUpdateInvoiceCategoryResponse" inputName="createOrUpdateInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a3083afa-225c-4e06-9e85-d20e6578054d" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateInvoiceCategory>\r
+         <!--Optional:-->\r
+         <invoiceCategory code="TEST_INVOICE_CAT_1" description="Test invoice category 1">\r
+         </invoiceCategory>\r
+      </ws:createOrUpdateInvoiceCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateInvoiceCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" id="4ca1b71a-5a39-44e5-a167-afc247acc785" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="CatalogWsSoapBinding" type="ns1:CatalogWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

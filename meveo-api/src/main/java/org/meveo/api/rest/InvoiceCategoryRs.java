@@ -68,5 +68,15 @@ public interface InvoiceCategoryRs extends IBaseRs {
 	@DELETE
 	public ActionStatus remove(
 			@PathParam("invoiceCategoryCode") String invoiceCategoryCode);
-
+	
+	
+	/**
+	 * Create or update invoice with a given code.
+	 * @param postData
+	 * @return
+	 */
+	@Path("/createOrUpdate")
+	@POST
+	public ActionStatus createOrUpdate(InvoiceCategoryDto postData);
+	
 }
