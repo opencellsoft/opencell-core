@@ -1573,4 +1573,24 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+	
+	@Override
+	public ActionStatus createOrUpdateInvoiceSubCategoryCountry(InvoiceSubCategoryCountryDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			invoiceSubCategoryCountryApi.createOrUpdate(postData, getCurrentUser());
+		}catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+		
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 }

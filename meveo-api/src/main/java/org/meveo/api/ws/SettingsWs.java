@@ -213,7 +213,11 @@ public interface SettingsWs extends IBaseWs {
 	public ActionStatus removeInvoiceSubCategoryCountry(
 			@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
 			@WebParam(name = "country") String country);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateInvoiceSubCategoryCountry(
+			@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
+	
 	// calendar
 
 	@WebMethod
