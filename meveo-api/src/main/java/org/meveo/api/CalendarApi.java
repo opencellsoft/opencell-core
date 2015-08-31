@@ -294,5 +294,17 @@ public class CalendarApi extends BaseApi {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
     }
+    
+    public void createOrUpdate(CalendarDto postData, User currentUser) throws MeveoApiException {
+    	Calendar calendar = calendarService.findByCode(postData.getCode(), 
+    			currentUser.getProvider());
+    	if (calendar == null) {
+    		//create
+    		create(postData, currentUser);
+    	} else {
+    		//update
+    		update(postData, currentUser);
+    	}
+    }
 
 }

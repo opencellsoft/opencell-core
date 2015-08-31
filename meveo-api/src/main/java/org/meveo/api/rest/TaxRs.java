@@ -64,5 +64,9 @@ public interface TaxRs extends IBaseRs {
 	@Path("/{taxCode}")
 	@DELETE
 	public ActionStatus remove(@PathParam("taxCode") String taxCode);
-
+	
+	
+	@Path("/createOrUpdate")
+	@POST
+	public ActionStatus createOrUpdate(TaxDto postData);
 }

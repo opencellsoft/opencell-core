@@ -1384,4 +1384,72 @@
 
         <dropColumn tableName="CRM_CUSTOM_FIELD_PERIOD" columnName="label"/>
     </changeSet>
+
+	<changeSet id="1034-20150828" author="anasseh">
+		<dropTable tableName="MEVEO_SCRIPT_INSTANCE_PARAMS" />
+
+		<createTable tableName="ADM_NOTIFICATION_PARAMS">
+			<column name="notification_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="params" type="VARCHAR(255)" />
+			<column name="params_key" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="notification_id, params_key"
+			constraintName="PK_ADM_NOTIFICATION_PARAMS" tableName="ADM_NOTIFICATION_PARAMS" />
+
+		<addForeignKeyConstraint baseColumnNames="notification_id"
+			baseTableName="ADM_NOTIFICATION_PARAMS" constraintName="fk_params_notification"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
+
+	</changeSet> 
+	<changeSet id="1034-20150828-2" author="anasseh">
+	   <dropColumn columnName="ACTION_EXPRESSION" tableName="ADM_NOTIFICATION"/>
+	</changeSet>  
+	
+	<changeSet id="1034-20150828-3" author="anasseh">
+		<dropTable tableName="ADM_NOTIF_JOB_PARAMS" />
+		<createTable tableName="ADM_NOTIF_JOB_PARAMS">
+			<column name="jobtrigger_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="jobparams" type="VARCHAR(255)" />
+			<column name="jobparams_key" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="jobtrigger_id, jobparams_key"
+			constraintName="PK_ADM_NOTIF_JOB_PARAMS" tableName="ADM_NOTIF_JOB_PARAMS" />
+
+		<addForeignKeyConstraint baseColumnNames="jobtrigger_id"
+			baseTableName="ADM_NOTIF_JOB_PARAMS" constraintName="fk_params_job_trigger"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ADM_NOTIF_JOB" />
+
+    </changeSet>  
+    <changeSet id="1034-20150828-4" author="anasseh">
+    <renameTable 
+            newTableName="adm_notif_webhook_param_old"
+            oldTableName="adm_notif_webhook_param"
+            />
+   
+            <createTable tableName="adm_notif_webhook_param">
+            <column name="webhook_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="webhookparams" type="VARCHAR(255)"/>
+            <column name="webhookparams_key" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+          <addPrimaryKey columnNames="webhook_id, webhookparams_key" constraintName="adm_notif_webhookparam_pkey" tableName="adm_notif_webhook_param"/>
+           <addForeignKeyConstraint baseColumnNames="webhook_id" baseTableName="adm_notif_webhook_param" constraintName="fk_17fe7mcjmmcgcntqmjm9hlaots" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notif_webhooks"/>
+               </changeSet>
+    
 </databaseChangeLog>

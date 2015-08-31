@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.InboundRequestReceived;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.notification.InboundRequestService;
@@ -56,14 +57,24 @@ public class InboundServlet extends HttpServlet {
 	
 	private void doService(HttpServletRequest req, HttpServletResponse res){
 		log.debug("received request for method {} ",req.getMethod());
+		Provider provider = null;
+		String path = req.getPathInfo();
+		if(path.startsWith("/")){
+			path=path.substring(1);
+		}
+		String providerCode=path.substring(0, path.indexOf('/'));
+		provider = providerService.findByCode(providerCode);
+		if(provider==null){
+			log.debug("Request has invalid provider code {} ",providerCode);
+			res.setStatus(404);
+			return;
+		}
 		InboundRequest inReq= new InboundRequest();
+		inReq.setProvider(provider);
 		inReq.setCode(req.getRemoteAddr()+":"+req.getRemotePort()+"_"+req.getMethod()+"_"+System.nanoTime());
 
 		inReq.setContentLength(req.getContentLength());
 		inReq.setContentType(req.getContentType());
-		
-		//TODO : implement a mapping to assign to correct provider
-		inReq.setProvider(providerService.findById(1L));
 		
 		if(req.getParameterNames()!=null){
 			Enumeration<String> parameterNames = req.getParameterNames();
@@ -108,7 +119,7 @@ public class InboundServlet extends HttpServlet {
 				inReq.getHeaders().put(headerName, req.getHeader(headerName));
 			}
 		}
-		inReq.setPathInfo(req.getPathInfo());
+		inReq.setPathInfo(path);
 		inReq.setRequestURI(req.getRequestURI());
 		
 		//process the notifications

@@ -64,5 +64,9 @@ public interface BillingCycleRs extends IBaseRs {
 	@Path("/{billingCycleCode}")
 	@DELETE
 	public ActionStatus remove(@PathParam("billingCycleCode") String billingCycleCode);
+	
+	@POST
+	@Path("/createOrUpdate")
+	public ActionStatus createOrUpdate(BillingCycleDto postData);
 
 }

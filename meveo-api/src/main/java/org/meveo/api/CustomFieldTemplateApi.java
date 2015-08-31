@@ -193,5 +193,14 @@ public class CustomFieldTemplateApi extends BaseApi {
 		}
 		return new CustomFieldTemplateDto(cf);
 	}
+	
+	public void createOrUpdate(CustomFieldTemplateDto postData, User currentUser) throws MeveoApiException {
+		CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
+		if (customFieldTemplate == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 
 }

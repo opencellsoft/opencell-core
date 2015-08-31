@@ -24,6 +24,7 @@ import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.InstantMessagingNotification;
 import org.meveo.model.notification.InstantMessagingProviderEnum;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -32,6 +33,7 @@ import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.InstantMessagingNotificationService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -55,6 +57,9 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 	@Inject
 	UserService userService;
 	
+	@Inject
+	ScriptInstanceService scriptInstanceService;	
+	
 	private StrategyImportTypeEnum strategyImportType;
 
     @Inject
@@ -72,7 +77,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
     private static final int CLASS_NAME_FILTER= 1;
     private static final int EVENT_TYPE_FILTER= 2; 
     private static final int EL_FILTER= 3;
-    private static final int EL_ACTION= 5;
+    private static final int SCRIPT_INSTANCE_CODE= 5;
     private static final int ACTIVE= 4; 
     private static final int IM_PROVIDER= 6;
     private static final int IM_IDENTIFIER_EL= 7;
@@ -110,7 +115,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 		csv.appendValue("Classename filter");
 		csv.appendValue("Event type filter");
 		csv.appendValue("El filter");
-		csv.appendValue("El action");
+		csv.appendValue("Script instance code");
 		csv.appendValue("Active");
 		csv.appendValue("IM provider");
 		csv.appendValue("IM identifier EL");
@@ -124,7 +129,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 			csv.appendValue(imNotification.getClassNameFilter());
 			csv.appendValue(imNotification.getEventTypeFilter() + "");
 			csv.appendValue(imNotification.getElFilter());
-			csv.appendValue(imNotification.getElAction());
+			csv.appendValue((imNotification.getScriptInstance()==null?"":imNotification.getScriptInstance().getCode()));
 			csv.appendValue(imNotification.isDisabled() + "");
 			csv.appendValue(imNotification.getImProvider() + "");
 			csv.appendValue(imNotification.getIdEl());
@@ -192,7 +197,10 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
                 instMessNotif.setClassNameFilter(values[CLASS_NAME_FILTER]);
                 instMessNotif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
                 instMessNotif.setElFilter(values[EL_FILTER]);
-                instMessNotif.setElAction(values[EL_ACTION]);
+                if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                    instMessNotif.setScriptInstance(scriptInstance);
+                } 
                 instMessNotif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
                 instMessNotif.setImProvider(InstantMessagingProviderEnum.valueOf(values[IM_PROVIDER]));
                 instMessNotif.setIdEl(values[IM_IDENTIFIER_EL]);
@@ -244,7 +252,10 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 			existingEntity.setEventTypeFilter(NotificationEventTypeEnum
 					.valueOf(values[EVENT_TYPE_FILTER]));
 			existingEntity.setElFilter(values[EL_FILTER]);
-			existingEntity.setElAction(values[EL_ACTION]);
+            if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                existingEntity.setScriptInstance(scriptInstance);
+            } 
 			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
 			existingEntity.setImProvider(InstantMessagingProviderEnum
 					.valueOf(values[IM_PROVIDER]));
@@ -294,7 +305,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 				csv.appendValue("Classename filter");
 				csv.appendValue("Event type filter");
 				csv.appendValue("El filter");
-				csv.appendValue("El action");
+				csv.appendValue("Script instance code");
 				csv.appendValue("Active");
 				csv.appendValue("IM provider");
 				csv.appendValue("IM identifier EL");
@@ -308,7 +319,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 		    csv.appendValue(values[CLASS_NAME_FILTER]);
 		    csv.appendValue(values[EVENT_TYPE_FILTER]);
 		    csv.appendValue(values[EL_FILTER]);
-		    csv.appendValue(values[EL_ACTION]);
+		    csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
 		    csv.appendValue(values[ACTIVE]);
 		    csv.appendValue(values[IM_PROVIDER]);
 		    csv.appendValue(values[IM_IDENTIFIER_EL]);

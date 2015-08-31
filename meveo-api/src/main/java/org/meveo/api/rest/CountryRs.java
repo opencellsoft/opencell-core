@@ -71,5 +71,9 @@ public interface CountryRs extends IBaseRs {
 	@PUT
 	@Path("/")
 	public ActionStatus update(CountryDto countryDto);
+	
+	@POST
+	@Path("/createOrUpdate")
+	public ActionStatus createOrUpdate(CountryDto countryDto);
 
 }

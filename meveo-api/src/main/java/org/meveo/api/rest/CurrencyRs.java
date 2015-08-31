@@ -70,5 +70,10 @@ public interface CurrencyRs extends IBaseRs {
 	@PUT
 	@Path("/")
 	public ActionStatus update(CurrencyDto postData);
+	
+	
+	@POST
+	@Path("/createOrUpdate")
+	public ActionStatus createOrUpdate(CurrencyDto postData);
 
 }

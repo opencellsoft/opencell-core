@@ -16,16 +16,10 @@
  */
 package org.meveo.model.jobs;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -50,27 +44,8 @@ public class ScriptInstance extends BusinessEntity  {
 	@Column(name = "SRC_TYPE")
 	ScriptTypeEnum scriptTypeEnum;
 
-
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "MEVEO_SCRIPT_INSTANCE_PARAMS") 
-	private Map<String, String> params = new HashMap<String, String>();
-
 	public ScriptInstance(){
 
-	}
-
-	/**
-	 * @return the params
-	 */
-	public Map<String, String> getParams() {
-		return params;
-	}
-
-	/**
-	 * @param params the params to set
-	 */
-	public void setParams(Map<String, String> params) {
-		this.params = params;
 	}
 
 	/**

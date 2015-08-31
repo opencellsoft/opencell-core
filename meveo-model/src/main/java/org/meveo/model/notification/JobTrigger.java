@@ -21,7 +21,7 @@ public class JobTrigger extends Notification {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "ADM_NOTIF_JOB_PARAMS") 
-	private Map<String, String> params = new HashMap<String, String>();
+	private Map<String, String> jobParams = new HashMap<String, String>();
 	
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "JOB_INSTANCE_ID")
@@ -31,20 +31,26 @@ public class JobTrigger extends Notification {
 	   
    }
 
-	/**
-	 * @return the params
-	 */
-	public Map<String, String> getParams() {
-		return params;
-	}
+
 	
 	/**
-	 * @param params the params to set
-	 */
-	public void setParams(Map<String, String> params) {
-		this.params = params;
-	}
-	
+ * @return the jobParams
+ */
+public Map<String, String> getJobParams() {
+	return jobParams;
+}
+
+
+
+/**
+ * @param jobParams the jobParams to set
+ */
+public void setJobParams(Map<String, String> jobParams) {
+	this.jobParams = jobParams;
+}
+
+
+
 	/**
 	 * @return the jobInstance
 	 */

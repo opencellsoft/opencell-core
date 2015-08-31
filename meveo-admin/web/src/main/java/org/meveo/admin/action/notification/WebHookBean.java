@@ -24,6 +24,7 @@ import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.notification.WebHook;
@@ -31,6 +32,7 @@ import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.WebHookService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -53,6 +55,9 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
     @Inject
     CounterTemplateService counterTemplateService;
     
+    @Inject
+    ScriptInstanceService scriptInstanceService;
+    
     ParamBean paramBean = ParamBean.getInstance();
     
     private StrategyImportTypeEnum strategyImportType;
@@ -68,7 +73,7 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
     private static final int EVENT_TYPE_FILTER= 2;
     private static final int EL_FILTER=3;
     private static final int ACTIVE= 4; 
-    private static final int EL_ACTION= 5; 
+    private static final int SCRIPT_INSTANCE_CODE= 5; 
     private static final int HOST= 6; 
     private static final int PORT= 7; 
     private static final int PAGE= 8; 
@@ -132,7 +137,7 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 			csv.appendValue(webHook.getEventTypeFilter() + "");
 			csv.appendValue(webHook.getElFilter());
 			csv.appendValue(webHook.isDisabled() + "");
-			csv.appendValue(webHook.getElAction());
+			csv.appendValue((webHook.getScriptInstance()==null?"":webHook.getScriptInstance().getCode()));
 			csv.appendValue(webHook.getHost());
 			csv.appendValue(webHook.getPort() + "");
 			csv.appendValue(webHook.getPage());
@@ -206,7 +211,10 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
                 webHook.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
                 webHook.setElFilter(values[EL_FILTER]);
                 webHook.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
-                webHook.setElAction(values[EL_ACTION]);
+                if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                    webHook.setScriptInstance(scriptInstance);
+                } 
                 webHook.setHost(values[HOST]);
                 webHook.setPort(Integer.parseInt(values[PORT]));
                 webHook.setPage(values[PAGE]);
@@ -257,7 +265,10 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 					.valueOf(values[EVENT_TYPE_FILTER]));
 			existingEntity.setElFilter(values[EL_FILTER]);
 			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
-			existingEntity.setElAction(values[EL_ACTION]);
+            if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                existingEntity.setScriptInstance(scriptInstance);
+            } 
 			existingEntity.setHost(values[HOST]);
 			existingEntity.setPort(Integer.parseInt(values[PORT]));
 			existingEntity.setPage(values[PAGE]);
@@ -311,7 +322,7 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 				csv.appendValue("Event type filter");
 				csv.appendValue("El filter");
 				csv.appendValue("Active");
-				csv.appendValue("El action");
+				csv.appendValue("Script instance code");
 				csv.appendValue("Host");
 				csv.appendValue("Port");
 				csv.appendValue("Page");
@@ -328,7 +339,7 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 			csv.appendValue(values[EVENT_TYPE_FILTER]);
 			csv.appendValue(values[EL_FILTER]);
 			csv.appendValue(values[ACTIVE]);
-			csv.appendValue(values[EL_ACTION]);
+			csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
 			csv.appendValue(values[HOST]);
 			csv.appendValue(values[PORT]);
 			csv.appendValue(values[PAGE]);

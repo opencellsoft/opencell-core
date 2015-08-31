@@ -64,5 +64,10 @@ public interface CalendarRs extends IBaseRs {
 	@Path("/{calendarCode}")
 	@DELETE
 	public ActionStatus remove(@PathParam("calendarCode") String calendarCode);
+	
+	
+	@Path("/createOrUpdate")
+	@POST
+	public ActionStatus createOrUpdate(CalendarDto postData);
 
 }

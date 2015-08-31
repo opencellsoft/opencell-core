@@ -312,4 +312,9 @@
 		<sql>UPDATE CRM_CUSTOM_FIELD_TMPL SET version=0 WHERE code='CRM_ACCOUNT_PARENT' AND account_type='UA';</sql>
     </changeSet>
     
+    <changeSet id="1034-20150828-3" author="anasseh">  
+	    <delete tableName="MEVEO_SCRIPT_INSTANCE">
+        <where>script='here'</where>
+    </delete>
+    </changeSet>
 </databaseChangeLog>

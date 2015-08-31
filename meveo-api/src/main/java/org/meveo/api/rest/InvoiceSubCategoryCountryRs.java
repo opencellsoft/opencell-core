@@ -72,4 +72,13 @@ public interface InvoiceSubCategoryCountryRs extends IBaseRs {
 			@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode,
 			@PathParam("country") String country);
 
+	
+	/**
+	 * Create or update Invoice SubCategory Country based on invoice sub-category and country
+	 * @param postData
+	 * @return
+	 */
+	@Path("/createOrUpdate")
+	@POST
+	public ActionStatus createOrUpdate(InvoiceSubCategoryCountryDto postData);
 }

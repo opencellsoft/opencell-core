@@ -1,5 +1,8 @@
 package org.meveo.api.dto.notification;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,9 +35,10 @@ public class NotificationDto extends BaseDto {
 	private String eventTypeFilter;
 
 	private String elFilter;
-	private String elAction;
-
+	private String scriptInstanceCode;
+    private Map<String,String> scriptParams = new HashMap<String,String>();
 	private String counterTemplate;
+	
 
 	public NotificationDto() {
 
@@ -45,10 +49,11 @@ public class NotificationDto extends BaseDto {
 		classNameFilter = e.getClassNameFilter();
 		eventTypeFilter = e.getEventTypeFilter().name();
 		elFilter = e.getElFilter();
-		elAction = e.getElAction();
+		scriptInstanceCode = e.getScriptInstance()==null?null:e.getScriptInstance().getCode();
 		if (e.getCounterTemplate() != null) {
 			counterTemplate = e.getCounterTemplate().getCode();
 		}
+		scriptParams = e.getParams();
 	}
 
 	public String getCode() {
@@ -58,6 +63,7 @@ public class NotificationDto extends BaseDto {
 	public void setCode(String code) {
 		this.code = code;
 	}
+	
 
 	public String getClassNameFilter() {
 		return classNameFilter;
@@ -83,18 +89,40 @@ public class NotificationDto extends BaseDto {
 		this.elFilter = elFilter;
 	}
 
-	public String getElAction() {
-		return elAction;
+	
+
+	/**
+	 * @return the scriptParams
+	 */
+	public Map<String, String> getScriptParams() {
+		return scriptParams;
 	}
 
-	public void setElAction(String elAction) {
-		this.elAction = elAction;
+	/**
+	 * @param scriptParams the scriptParams to set
+	 */
+	public void setScriptParams(Map<String, String> scriptParams) {
+		this.scriptParams = scriptParams;
+	}
+
+	/**
+	 * @return the scriptInstanceCode
+	 */
+	public String getScriptInstanceCode() {
+		return scriptInstanceCode;
+	}
+
+	/**
+	 * @param scriptInstanceCode the scriptInstanceCode to set
+	 */
+	public void setScriptInstanceCode(String scriptInstanceCode) {
+		this.scriptInstanceCode = scriptInstanceCode;
 	}
 
 	@Override
 	public String toString() {
-		return "NotificationDto [code=" + code + ", classNameFilter=" + classNameFilter + ", eventTypeFilter=" + eventTypeFilter + ", elFilter=" + elFilter + ", elAction="
-				+ elAction + ", counterTemplate=" + counterTemplate + "]";
+		return "NotificationDto [code=" + code + ", classNameFilter=" + classNameFilter + ", eventTypeFilter=" + eventTypeFilter + ", elFilter=" + elFilter + ", scriptInstanceCode="
+				+ scriptInstanceCode + ", counterTemplate=" + counterTemplate + "]";
 	}
 
 	public String getCounterTemplate() {
