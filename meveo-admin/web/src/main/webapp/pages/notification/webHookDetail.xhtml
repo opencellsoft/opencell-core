@@ -17,7 +17,7 @@
 
 		<hftl:entityPopup id="searchCounterTemplatePopup"
 			header="#{messages['counterTemplate.title']}"
-			updateField=":webHookForm:formId:counterTemplateSelectedId"
+			updateField=":webHookForm:webHookFormId:counterTemplateSelectedId"
 			selection="#{webHookBean.entity.counterTemplate}"
 			backingBean="#{counterTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -27,6 +27,15 @@
 			column2="description"
 			dataModel="#{counterTemplateBean.getLazyDataModel('NOTIFICATION')}">
 		</hftl:entityPopup>
+		<hftl:entityPopup id="scriptInstancePopup"
+			header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code" selection="#{webHookBean.entity.scriptInstance}"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":webHookForm:webHookFormId:scriptInstanceSelectId">
+		</hftl:entityPopup>		
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -36,7 +45,7 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel id="webHookForm" label="#{messages['menu.webHook']}"
+		<hf:formPanel id="webHookForm" formId="webHookFormId" label="#{messages['menu.webHook']}"
 			backingBean="#{webHookBean}" columns="4" showEnableDisableButton="true">
 
 			<hf:formField label="#{messages['entity.code']}" field="code"
@@ -50,8 +59,10 @@
 				field="eventTypeFilter" required="true" />
 			<hf:formField label="#{messages['entity.notification.elFilter']}"
 				field="elFilter" textArea="true" maxlength="1000" componentWidth="50" newLine="true"/>
-			<hf:formField label="#{messages['entity.notification.elAction']}"
-				field="elAction" textArea="true" maxlength="2000" componentWidth="50"/>
+			<hf:formField id="scriptInstanceSelectId"
+										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
+										valueLabelField="description" required="true" popup="true"
+										popupId="scriptInstancePopup" />
 
 			<hf:formField label="#{messages['entity.webHook.host']}" field="host"
 				required="true" size="100" maxlength="255" />

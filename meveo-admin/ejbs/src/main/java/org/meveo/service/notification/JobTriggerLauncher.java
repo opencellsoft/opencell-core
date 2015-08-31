@@ -38,7 +38,7 @@ public class JobTriggerLauncher {
 			log.debug("launch jobTrigger:{}",jobTrigger);
 			HashMap<Object,Object> userMap = new HashMap<Object, Object>();
 			userMap.put("event", e);					
-			jobInstanceService.triggerExecution(jobTrigger.getJobInstance(),jobTrigger.getParams());
+			jobInstanceService.triggerExecution(jobTrigger.getJobInstance(),jobTrigger.getJobParams());
 			log.debug("launch jobTrigger:{} launched",jobTrigger);
 			notificationHistoryService.create(jobTrigger, e, "", NotificationHistoryStatusEnum.SENT);
 			log.debug("launch jobTrigger:{} notificationHistory created",jobTrigger);

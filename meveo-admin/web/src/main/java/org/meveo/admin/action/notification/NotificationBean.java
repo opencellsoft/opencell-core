@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -18,7 +21,7 @@ import javax.persistence.Entity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
@@ -39,7 +42,7 @@ import org.primefaces.model.UploadedFile;
 
 @Named
 @ViewScoped
-public class NotificationBean extends BaseBean<Notification> {
+public class NotificationBean extends UpdateMapTypeFieldBean<Notification> {
 
 	private static final long serialVersionUID = 6473465285480945644L;
 
@@ -76,6 +79,23 @@ public class NotificationBean extends BaseBean<Notification> {
 		return notificationService;
 	}
 
+    @Override
+    public Notification initEntity() {
+    	Notification notification = super.initEntity();
+        extractMapTypeFieldFromEntity(notification.getParams(), "params");
+
+        return notification;
+    }
+
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+    
+       updateMapTypeFieldInEntity(entity.getParams(), "params");
+
+        return super.saveOrUpdate(killConversation);
+    }
+    
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
@@ -227,5 +247,73 @@ public class NotificationBean extends BaseBean<Notification> {
         Collections.sort(classNames);
         return classNames;
     }
+    public Map<String, List<HashMap<String, String>>> getMapTypeFieldValues() {
+        return mapTypeFieldValues;
+    }
 
+    public void setMapTypeFieldValues(Map<String, List<HashMap<String, String>>> mapTypeFieldValues) {
+        this.mapTypeFieldValues = mapTypeFieldValues;
+    }
+
+	/**
+     * Remove a value from a map type field attribute used to gather field values in GUI
+     * 
+     * @param fieldName Field name
+     * @param valueInfo Value to remove
+     */
+    public void removeMapTypeFieldValue(String fieldName, Map<String, String> valueInfo) {
+        mapTypeFieldValues.get(fieldName).remove(valueInfo);
+    }
+
+    /**
+     * Add a value to a map type field attribute used to gather field values in GUI
+     * 
+     * @param fieldName Field name
+     */
+    public void addMapTypeFieldValue(String fieldName) {
+        if (!mapTypeFieldValues.containsKey(fieldName)) {
+            mapTypeFieldValues.put(fieldName, new ArrayList<HashMap<String, String>>());
+        }
+        mapTypeFieldValues.get(fieldName).add(new HashMap<String, String>());
+    }
+
+    /**
+     * Extract values from a Map type field in an entity to mapTypeFieldValues attribute used to gather field values in GUI
+     * 
+     * @param entityField Entity field
+     * @param fieldName Field name
+     */
+    public void extractMapTypeFieldFromEntity(Map<String, String> entityField, String fieldName) {
+
+        mapTypeFieldValues.remove(fieldName);
+
+        if (entityField != null) {
+            List<HashMap<String, String>> fieldValues = new ArrayList<HashMap<String, String>>();
+            mapTypeFieldValues.put(fieldName, fieldValues);
+            for (Entry<String, String> setInfo : entityField.entrySet()) {
+                HashMap<String, String> value = new HashMap<String, String>();
+                value.put("key", setInfo.getKey());
+                value.put("value", setInfo.getValue());
+                fieldValues.add(value);
+            }
+        }
+    }
+
+    /**
+     * Update Map type field in an entity from mapTypeFieldValues attribute used to gather field values in GUI
+     * 
+     * @param entityField Entity field
+     * @param fieldName Field name
+     */
+    public void updateMapTypeFieldInEntity(Map<String, String> entityField, String fieldName) {
+        entityField.clear();
+
+        if (mapTypeFieldValues.get(fieldName) != null) {
+            for (HashMap<String, String> valueInfo : mapTypeFieldValues.get(fieldName)) {
+                if (valueInfo.get("key") != null && !valueInfo.get("key").isEmpty()) {
+                    entityField.put(valueInfo.get("key"), valueInfo.get("value") == null ? "" : valueInfo.get("value"));
+                }
+            }
+        }
+    }
 }

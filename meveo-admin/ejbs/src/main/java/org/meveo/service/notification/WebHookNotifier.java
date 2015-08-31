@@ -81,7 +81,7 @@ public class WebHookNotifier {
 			if (!StringUtils.isBlank(webHook.getPage())) {
 				url += "/" + evaluate(webHook.getPage(), e);
 			}
-			Map<String,String> params = evaluateMap(webHook.getParams(), e);
+			Map<String,String> params = evaluateMap(webHook.getWebhookParams(), e);
             String paramQuery="";
             String sep="";
             for(String paramKey:params.keySet()){
