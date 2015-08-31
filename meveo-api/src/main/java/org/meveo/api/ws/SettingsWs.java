@@ -282,6 +282,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
+	
+	@WebMethod
+	ActionStatus createOrUpdateOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
 
 	// custom field
 	@WebMethod
