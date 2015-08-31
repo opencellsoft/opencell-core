@@ -247,5 +247,35 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 					getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	/**
+	 * Create or update InvoiceSubCategoryCountry based on the invoice sub-category 
+	 * and country attached.
+	 * 
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(InvoiceSubCategoryCountryDto postData, User currentUser) throws MeveoApiException {
+		
+		Provider provider = currentUser.getProvider();
+		
+		TradingCountry tradingCountry = tradingCountryService
+				.findByTradingCountryCode(postData.getCountry(), provider);
+		
+		InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
+				.findByCode(postData.getInvoiceSubCategory(), provider);
+		
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry 
+			= invoiceSubCategoryCountryService
+				.findByInvoiceSubCategoryAndCountry(invoiceSubCategory,
+							tradingCountry, provider);
+		
+		if (invoiceSubcategoryCountry == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+		
+	}
 }

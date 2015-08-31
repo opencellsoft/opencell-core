@@ -82,5 +82,9 @@ public interface SellerRs extends IBaseRs {
 	@Path("/listSellerCodes")
 	@GET
 	SellerCodesResponseDto listSellerCodes();
+	
+	@Path("/createOrUpdate")
+	@POST
+	ActionStatus createOrUpdate(SellerDto postData);
 
 }

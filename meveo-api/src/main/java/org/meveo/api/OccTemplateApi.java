@@ -150,5 +150,22 @@ public class OccTemplateApi extends BaseApi {
 					getMissingParametersExceptionMessage());
 		}
 	}
+	
+	/**
+	 * create or update occ template based on occ template code
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(OccTemplateDto postData, User currentUser) throws MeveoApiException {
+		
+		OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
+		
+		if (occTemplate == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 
 }

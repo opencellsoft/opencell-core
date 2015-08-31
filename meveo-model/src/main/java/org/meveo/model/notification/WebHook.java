@@ -60,7 +60,7 @@ public class WebHook extends Notification {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "ADM_NOTIF_WEBHOOK_PARAM")
-    private Map<String, String> params = new HashMap<String, String>();
+    private Map<String, String> webhookParams = new HashMap<String, String>();
     
     @Transient
     private StringBuffer encodedHeaders = new StringBuffer();
@@ -124,19 +124,26 @@ public class WebHook extends Notification {
         this.headers = headers;
     }
 
-    public Map<String, String> getParams() {
-        return params;
-    }
+  
+    /**
+	 * @return the webhookParams
+	 */
+	public Map<String, String> getWebhookParams() {
+		return webhookParams;
+	}
 
-    public void setParams(Map<String, String> params) {
-        this.params = params;
-    }
+	/**
+	 * @param webhookParams the webhookParams to set
+	 */
+	public void setWebhookParams(Map<String, String> webhookParams) {
+		this.webhookParams = webhookParams;
+	}
 
-    @Override
+	@Override
     public String toString() {
         final int maxLen = 10;
-        return String.format("WebHook [host=%s, port=%s, page=%s, httpMethod=%s, username=%s, password=%s, headers=%s, params=%s, notification=%s]", host, port, page, httpMethod,
-            username, password, headers != null ? toString(headers.entrySet(), maxLen) : null, params != null ? toString(params.entrySet(), maxLen) : null, super.toString());
+        return String.format("WebHook [host=%s, port=%s, page=%s, httpMethod=%s, username=%s, password=%s, headers=%s, webhookParams=%s, notification=%s]", host, port, page, httpMethod,
+            username, password, headers != null ? toString(headers.entrySet(), maxLen) : null, webhookParams != null ? toString(webhookParams.entrySet(), maxLen) : null, super.toString());
     }
 
     private String toString(Collection<?> collection, int maxLen) {
@@ -169,8 +176,8 @@ public class WebHook extends Notification {
 		StringBuffer params=new StringBuffer();
 		if(getHeaders()!=null){
 			String sep="";
-			for(String key:getParams().keySet()){
-				String valueParams=getParams().get(key);
+			for(String key:getWebhookParams().keySet()){
+				String valueParams=getWebhookParams().get(key);
 				params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
 				sep="|";
 				}	

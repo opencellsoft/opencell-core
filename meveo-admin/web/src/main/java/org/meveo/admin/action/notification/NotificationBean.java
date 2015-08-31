@@ -10,14 +10,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
@@ -25,23 +29,28 @@ import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.notification.NotificationService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
 @Named
 @ViewScoped
-public class NotificationBean extends BaseBean<Notification> {
+public class NotificationBean extends UpdateMapTypeFieldBean<Notification> {
 
 	private static final long serialVersionUID = 6473465285480945644L;
 
 	@Inject
 	private NotificationService notificationService;
+	
+	@Inject
+	private ScriptInstanceService scriptInstanceService;
 
 	ParamBean paramBean = ParamBean.getInstance();
 
@@ -52,7 +61,7 @@ public class NotificationBean extends BaseBean<Notification> {
 	private static final int CLASS_NAME_FILTER = 1;
 	private static final int EL_FILTER = 2;
 	private static final int ACTIVE = 3;
-	private static final int EL_ACTION = 4;
+	private static final int SCRIPT_INSTANCE_CODE = 4;
 	private static final int EVENT_TYPE_FILTER = 5;
 
 	private StrategyImportTypeEnum strategyImportType;
@@ -70,6 +79,23 @@ public class NotificationBean extends BaseBean<Notification> {
 		return notificationService;
 	}
 
+    @Override
+    public Notification initEntity() {
+    	Notification notification = super.initEntity();
+        extractMapTypeFieldFromEntity(notification.getParams(), "params");
+
+        return notification;
+    }
+
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+    
+       updateMapTypeFieldInEntity(entity.getParams(), "params");
+
+        return super.saveOrUpdate(killConversation);
+    }
+    
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
@@ -86,7 +112,7 @@ public class NotificationBean extends BaseBean<Notification> {
 		csv.appendValue("Classename filter");
 		csv.appendValue("El filter");
 		csv.appendValue("Active");
-		csv.appendValue("El action");
+		csv.appendValue("Script instance code");
 		csv.appendValue("Event type filter");
 		csv.startNewLine();
 		for (Notification notification :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():notificationService.list()) {
@@ -94,7 +120,7 @@ public class NotificationBean extends BaseBean<Notification> {
 			csv.appendValue(notification.getClassNameFilter());
 			csv.appendValue(notification.getElFilter());
 			csv.appendValue(notification.isDisabled() + "");
-			csv.appendValue(notification.getElAction());
+			csv.appendValue((notification.getScriptInstance()==null?"":notification.getScriptInstance().getCode()));
 			csv.appendValue(notification.getEventTypeFilter() + "");
 			csv.startNewLine();
 		}
@@ -138,8 +164,11 @@ public class NotificationBean extends BaseBean<Notification> {
                 notif.setCode(values[CODE]);
                 notif.setClassNameFilter(values[CLASS_NAME_FILTER]);
                 notif.setElFilter(values[EL_FILTER]);
-                notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
-                notif.setElAction(values[EL_ACTION]);
+                notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));                
+                if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                    notif.setScriptInstance(scriptInstance);
+                }  
                 notif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
                 notificationService.create(notif);
             }
@@ -154,7 +183,10 @@ public class NotificationBean extends BaseBean<Notification> {
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
 			existingEntity.setElFilter(values[EL_FILTER]);
 			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
-			existingEntity.setElAction(values[EL_ACTION]);
+            if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                existingEntity.setScriptInstance(scriptInstance);
+            } 
 			existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
 			notificationService.update(existingEntity);
 		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
@@ -165,7 +197,7 @@ public class NotificationBean extends BaseBean<Notification> {
 				csv.appendValue("Classename filter");
 				csv.appendValue("El filter");
 				csv.appendValue("Active");
-				csv.appendValue("El action");
+				csv.appendValue("Script instance code");
 				csv.appendValue("Event type filter");
 			}
 			csv.startNewLine();
@@ -173,7 +205,7 @@ public class NotificationBean extends BaseBean<Notification> {
 			csv.appendValue(values[CLASS_NAME_FILTER]);
 			csv.appendValue(values[EL_FILTER]);
 			csv.appendValue(values[ACTIVE]);
-			csv.appendValue(values[EL_ACTION]);
+			csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
 			csv.appendValue(values[EVENT_TYPE_FILTER]);
 		}
 
@@ -215,5 +247,73 @@ public class NotificationBean extends BaseBean<Notification> {
         Collections.sort(classNames);
         return classNames;
     }
+    public Map<String, List<HashMap<String, String>>> getMapTypeFieldValues() {
+        return mapTypeFieldValues;
+    }
 
+    public void setMapTypeFieldValues(Map<String, List<HashMap<String, String>>> mapTypeFieldValues) {
+        this.mapTypeFieldValues = mapTypeFieldValues;
+    }
+
+	/**
+     * Remove a value from a map type field attribute used to gather field values in GUI
+     * 
+     * @param fieldName Field name
+     * @param valueInfo Value to remove
+     */
+    public void removeMapTypeFieldValue(String fieldName, Map<String, String> valueInfo) {
+        mapTypeFieldValues.get(fieldName).remove(valueInfo);
+    }
+
+    /**
+     * Add a value to a map type field attribute used to gather field values in GUI
+     * 
+     * @param fieldName Field name
+     */
+    public void addMapTypeFieldValue(String fieldName) {
+        if (!mapTypeFieldValues.containsKey(fieldName)) {
+            mapTypeFieldValues.put(fieldName, new ArrayList<HashMap<String, String>>());
+        }
+        mapTypeFieldValues.get(fieldName).add(new HashMap<String, String>());
+    }
+
+    /**
+     * Extract values from a Map type field in an entity to mapTypeFieldValues attribute used to gather field values in GUI
+     * 
+     * @param entityField Entity field
+     * @param fieldName Field name
+     */
+    public void extractMapTypeFieldFromEntity(Map<String, String> entityField, String fieldName) {
+
+        mapTypeFieldValues.remove(fieldName);
+
+        if (entityField != null) {
+            List<HashMap<String, String>> fieldValues = new ArrayList<HashMap<String, String>>();
+            mapTypeFieldValues.put(fieldName, fieldValues);
+            for (Entry<String, String> setInfo : entityField.entrySet()) {
+                HashMap<String, String> value = new HashMap<String, String>();
+                value.put("key", setInfo.getKey());
+                value.put("value", setInfo.getValue());
+                fieldValues.add(value);
+            }
+        }
+    }
+
+    /**
+     * Update Map type field in an entity from mapTypeFieldValues attribute used to gather field values in GUI
+     * 
+     * @param entityField Entity field
+     * @param fieldName Field name
+     */
+    public void updateMapTypeFieldInEntity(Map<String, String> entityField, String fieldName) {
+        entityField.clear();
+
+        if (mapTypeFieldValues.get(fieldName) != null) {
+            for (HashMap<String, String> valueInfo : mapTypeFieldValues.get(fieldName)) {
+                if (valueInfo.get("key") != null && !valueInfo.get("key").isEmpty()) {
+                    entityField.put(valueInfo.get("key"), valueInfo.get("value") == null ? "" : valueInfo.get("value"));
+                }
+            }
+        }
+    }
 }

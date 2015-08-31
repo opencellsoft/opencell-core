@@ -93,6 +93,8 @@ public interface SettingsWs extends IBaseWs {
 	@WebMethod
 	SellerCodesResponseDto listSellerCodes();
 
+	@WebMethod
+	public ActionStatus createOrUpdateSeller(@WebParam(name = "seller") SellerDto postData);
 	// language
 
 	@WebMethod
@@ -106,6 +108,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateLanguage(@WebParam(name = "language") LanguageDto postData);
+	
+	@WebMethod
+	public ActionStatus createOrUpdateLanguage(@WebParam(name = "language") LanguageDto postData);
 
 	// country
 
@@ -139,6 +144,8 @@ public interface SettingsWs extends IBaseWs {
 	@WebMethod
 	ActionStatus updateCurrency(@WebParam(name = "currency") CurrencyDto postData);
 
+	@WebMethod
+	ActionStatus createOrUpdateCurrency(@WebParam(name = "currency") CurrencyDto postData);
 	// tax
 
 	@WebMethod
@@ -152,6 +159,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeTax(@WebParam(name = "taxCode") String taxCode);
+	
+	@WebMethod
+	public ActionStatus createOrUpdateTax(@WebParam(name = "tax") TaxDto postData);
 
 	// invoice category
 
@@ -167,7 +177,10 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeInvoiceCategory(@WebParam(name = "invoiceCategoryCode") String invoiceCategoryCode);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateInvoiceCategory(@WebParam(name = "invoiceCategory") InvoiceCategoryDto postData);
+	
 	// invoice sub category
 
 	@WebMethod
@@ -203,7 +216,11 @@ public interface SettingsWs extends IBaseWs {
 	public ActionStatus removeInvoiceSubCategoryCountry(
 			@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
 			@WebParam(name = "country") String country);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateInvoiceSubCategoryCountry(
+			@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
+	
 	// calendar
 
 	@WebMethod
@@ -217,6 +234,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeCalendar(@WebParam(name = "calendarCode") String calendarCode);
+	
+	@WebMethod
+	public ActionStatus createOrUpdateCalendar(@WebParam(name = "calendar") CalendarDto postData);
 
 	// billing cycle
 
@@ -231,6 +251,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeBillingCycle(@WebParam(name = "billingCycleCode") String billingCycleCode);
+	
+	@WebMethod
+	public ActionStatus createOrUpdateBillingCycle(@WebParam(name = "billingCycle") BillingCycleDto postData);
 
 	// configuration
 
@@ -259,6 +282,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
+	
+	@WebMethod
+	ActionStatus createOrUpdateOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
 
 	// custom field
 	@WebMethod
@@ -275,7 +301,10 @@ public interface SettingsWs extends IBaseWs {
 	GetCustomFieldTemplateReponseDto findCustomFieldTemplate(
 			@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode,
 			@WebParam(name = "accountLevel") String accountLevel);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
+	
 	// scriptInstance
 	@WebMethod
 	ActionStatus createScriptInstance(@WebParam(name = "scriptInstance") ScriptInstanceDto postData);

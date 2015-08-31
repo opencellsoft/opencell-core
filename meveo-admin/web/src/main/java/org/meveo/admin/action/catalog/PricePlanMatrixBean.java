@@ -232,7 +232,14 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 		return pricePlanCharge;
 	}
  
-  
+	public void duplicate() {
+		if (entity != null && entity.getId() != null) {
+			pricePlanMatrixService.detach(entity);
+			entity.setId(null);
+			entity.setCode(entity.getCode() + "_copy");
+			pricePlanMatrixService.create(entity);
+		}
+	}
 	
 }
 

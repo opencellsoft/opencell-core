@@ -21,12 +21,14 @@ import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.EmailNotificationService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -47,8 +49,12 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 	private EmailNotificationService emailNotificationService;
 	
 	ParamBean paramBean = ParamBean.getInstance();
+	
     @Inject
     CounterTemplateService counterTemplateService;
+    
+    @Inject
+    ScriptInstanceService scriptInstanceService;
     
     CsvBuilder csv = null;
    	private String providerDir=paramBean.getProperty("providers.rootDir","/tmp/meveo_integr");
@@ -65,7 +71,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
     private static final int EVENT_TYPE_FILTER= 2; 
     private static final int EL_FILTER= 3;
     private static final int ACTIVE= 4; 
-    private static final int EL_ACTION= 5;
+    private static final int SCRIPT_INSTANCE_CODE= 5;
     private static final int SENT_FROM= 6;
     private static final int SEND_TO_EL= 7;
     private static final int SEND_TO_MAILING_LIST= 8;
@@ -130,7 +136,10 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
                 emailNotif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
                 emailNotif.setElFilter(values[EL_FILTER]);
                 emailNotif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
-                emailNotif.setElAction(values[EL_ACTION]);
+                if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                    emailNotif.setScriptInstance(scriptInstance);
+                }  
                 emailNotif.setEmailFrom(values[SENT_FROM]);
                 emailNotif.setEmailToEl(values[SEND_TO_EL]);
                 String emails = values[SEND_TO_MAILING_LIST].replace("[","").replace("]","");
@@ -167,9 +176,11 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 			existingEntity.setEventTypeFilter(NotificationEventTypeEnum
 					.valueOf(values[EVENT_TYPE_FILTER]));
 			existingEntity.setElFilter(values[EL_FILTER]);
-			existingEntity.setDisabled(Boolean
-					.parseBoolean(values[ACTIVE]));
-			existingEntity.setElAction(values[EL_ACTION]);
+			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+            if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                existingEntity.setScriptInstance(scriptInstance);
+            }  
 			existingEntity.setEmailFrom(values[SENT_FROM]);
 			existingEntity.setEmailToEl(values[SEND_TO_EL]);
 			String emails = values[SEND_TO_MAILING_LIST].replace("[","").replace("]","");;
@@ -187,7 +198,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 			}
 			existingEntity.setSubject(values[SUBJECT]);
 			existingEntity.setBody(values[TEXT_BODY]);
-			existingEntity.setElAction(values[HTML_BODY]);
+			existingEntity.setHtmlBody(values[HTML_BODY]);
 			if(!StringUtils.isBlank(values[COUNTER_TEMPLATE])){
 				CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
 				existingEntity.setCounterTemplate(counterTemplate!=null ?counterTemplate: null);
@@ -204,7 +215,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 				csv.appendValue("Event type filter");
 				csv.appendValue("El filter");
 				csv.appendValue("Active");
-				csv.appendValue("El action");
+				csv.appendValue("Script instance code");
 				csv.appendValue("Sent from");
 				csv.appendValue("Send to EL");
 				csv.appendValue("Send to mailing list");
@@ -219,7 +230,7 @@ public class EmailNotificationBean extends BaseBean<EmailNotification> {
 			csv.appendValue(values[EVENT_TYPE_FILTER]);
 			csv.appendValue(values[EL_FILTER]);
 			csv.appendValue(values[ACTIVE]);
-			csv.appendValue(values[EL_ACTION]);
+			csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
 			csv.appendValue(values[SENT_FROM]);
 			csv.appendValue(values[SEND_TO_EL]);
 			csv.appendValue(values[SEND_TO_MAILING_LIST]);

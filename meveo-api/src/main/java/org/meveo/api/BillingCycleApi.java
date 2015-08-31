@@ -163,4 +163,16 @@ public class BillingCycleApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
+	
+	public void createOrUpdate(BillingCycleDto postData, User currentUser) throws MeveoApiException {
+		BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getCode(), 
+				currentUser.getProvider());
+		if (billingCycle == null) {
+			//create
+			create(postData, currentUser);
+		} else {
+			//update
+			update(postData, currentUser);
+		}
+	}
 }

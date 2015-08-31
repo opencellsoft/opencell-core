@@ -62,5 +62,15 @@ public interface OccTemplateRs extends IBaseRs {
 	@DELETE
 	ActionStatus remove(
 			@PathParam("occTemplateCode") String occTemplateCode);
+	
+	
+	/**
+	 * Create or update OccTemplate
+	 * @param postData
+	 * @return
+	 */
+	@Path("/createOrUpdate")
+	@POST
+	ActionStatus createOrUpdate(OccTemplateDto postData);
 
 }

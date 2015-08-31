@@ -40,8 +40,7 @@ public class NotificationHistory extends AuditableEntity {
 	@Column(name="ENTITY_CODE",length=35)
 	private String entityCode;
 
-	@Column(name="SERIALIZED_ENTITY")
-	@Lob @Basic(fetch=FetchType.LAZY) 
+	@Column(name="SERIALIZED_ENTITY") 
 	private String serializedEntity;
 
 	@Column(name="NB_RETRY")

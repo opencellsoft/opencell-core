@@ -261,4 +261,13 @@ public class TaxApi extends BaseApi {
 		return result;
 	}
 
+	public void createOrUpdate(TaxDto postData, User currentUser) throws MeveoApiException {
+		Tax tax = taxService.findByCode(postData.getCode(), currentUser.getProvider());
+		
+		if (tax == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

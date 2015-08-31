@@ -114,26 +114,19 @@ public class DefaultObserver {
         return result;
     }
 
-//    private String executeAction(String expression, Object o) throws BusinessException {
-//        log.debug("execute notification action: {}", expression);
-//        if (StringUtils.isBlank(expression)) {
-//            return "";
-//        }
-//        Map<Object, Object> userMap = new HashMap<Object, Object>();
-//        userMap.put("event", o);
-//        userMap.put("manager", manager);
-//        return (String) ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-//    }
-    
-    
-    private void executeScript(ScriptInstance scriptInstance, Object o) throws BusinessException {
+    private void executeScript(ScriptInstance scriptInstance, Object o, Map<String, String> params) throws BusinessException {
         log.debug("execute notification script: {}", scriptInstance.getScript());
         Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
         try{
         	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
-	        Map<String, Object> userMap = new HashMap<String, Object>();
-	        userMap.put("event", o);
-	    	scriptInterface.execute(userMap,scriptInstance.getProvider());
+        	Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
+            Map<Object, Object> userMap = new HashMap<Object, Object>();
+            userMap.put("event", o);
+            userMap.put("manager", manager);
+        	for (@SuppressWarnings("rawtypes") Map.Entry entry : params.entrySet()) {
+        	    paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression( (String)entry.getValue(), userMap, String.class));
+        	}        	
+	    	scriptInterface.execute(paramsEvaluated,scriptInstance.getProvider());
         } catch(Exception e){
         	log.error("failed script execution",e);
         }
@@ -142,19 +135,14 @@ public class DefaultObserver {
     private void fireNotification(Notification notif, IEntity e) {
         log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
         try {
-            if (!matchExpression(notif.getElFilter(), e)) {
+            if (notif.getScriptInstance() == null) {
+            	log.error("No scriptInstance on this Notification");
                 return;
             }
-
-            // we first perform the EL actions
             if (!(notif instanceof WebHook)) {
-                executeScript(notif.getScriptInstance(), e);
+                executeScript(notif.getScriptInstance(), e,notif.getParams());
             }
             
-            if(notif.getScriptInstance() != null){
-            	executeScript(notif.getScriptInstance(), e);
-            }
-
             boolean sendNotify = true;
             // Check if the counter associated to notification was not exhausted
             // yet
@@ -205,7 +193,7 @@ public class DefaultObserver {
         log.debug("Fire Cdr Notification for notif {} and  cdr {}", notif, cdr);
         try {
             if (!StringUtils.isBlank(notif.getScriptInstance()) && matchExpression(notif.getElFilter(), cdr)) {
-                executeScript(notif.getScriptInstance(), cdr);
+                executeScript(notif.getScriptInstance(), cdr,notif.getParams());
             }
         } catch (BusinessException e1) {
             log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
@@ -268,7 +256,7 @@ public class DefaultObserver {
     }
 
     public void loggedIn(@Observes @LoggedIn User e) {
-        log.debug("Defaut observer : logged in class={} ", e.getClass().getName());
+        log.info(" \n\n\n\n\n\n Defaut observer : logged in class={} ", e.getClass().getName());
         checkEvent(NotificationEventTypeEnum.LOGGED_IN, e);
     }
 
