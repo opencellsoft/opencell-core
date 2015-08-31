@@ -1580,7 +1580,87 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		
 		try {
 			invoiceSubCategoryCountryApi.createOrUpdate(postData, getCurrentUser());
-		}catch (MeveoApiException e) {
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+		
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateLanguage(LanguageDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			languageApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+		
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateOccTemplate(OccTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			occTemplateApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+		
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateProvider(ProviderDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			providerApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+		
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateScriptInstance(ScriptInstanceDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			scriptInstanceApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

@@ -58,7 +58,10 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateProvider(@WebParam(name = "provider") ProviderDto postData);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateProvider(@WebParam(name = "provider") ProviderDto postData);
+	
 	// user
 
 	@WebMethod
@@ -108,6 +111,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateLanguage(@WebParam(name = "language") LanguageDto postData);
+	
+	@WebMethod
+	public ActionStatus createOrUpdateLanguage(@WebParam(name = "language") LanguageDto postData);
 
 	// country
 
@@ -279,6 +285,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
+	
+	@WebMethod
+	ActionStatus createOrUpdateOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
 
 	// custom field
 	@WebMethod
@@ -311,5 +320,8 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	GetScriptInstanceResponseDto findScriptInstance(@WebParam(name = "scriptInstanceCode") String scriptInstanceCode);
+	
+	@WebMethod
+	ActionStatus createOrUpdateScriptInstance(@WebParam(name = "scriptInstance") ScriptInstanceDto postData);
 
 }

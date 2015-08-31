@@ -74,5 +74,8 @@ public interface ProviderRs extends IBaseRs {
 	@GET
 	@Path("/getCustomerAccountConfiguration")
 	GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration();
-
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(ProviderDto postData);
 }

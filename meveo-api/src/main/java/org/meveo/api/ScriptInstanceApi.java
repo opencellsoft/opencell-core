@@ -111,5 +111,15 @@ public class ScriptInstanceApi extends BaseApi {
 
 		scriptInstanceService.remove(scriptInstance);
 	}
+	
+	public void createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {
+		ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCode(), currentUser.getProvider());
+		
+		if (scriptInstance == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 
 }
