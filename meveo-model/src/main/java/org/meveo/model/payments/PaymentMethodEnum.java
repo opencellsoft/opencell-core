@@ -24,7 +24,8 @@ public enum PaymentMethodEnum {
     CHECK(1, "paymentMethod.check"),
     DIRECTDEBIT(2, "paymentMethod.directDebit"),
     TIP(3, "paymentMethod.tip"),
-    WIRETRANSFER(4, "paymentMethod.wiretransfer");
+    WIRETRANSFER(4, "paymentMethod.wiretransfer"),
+    CARD(5,"paymentMethod.card");
 
     private String label;
     private Integer id;

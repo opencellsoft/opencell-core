@@ -40,5 +40,8 @@ public interface ScriptInstanceRs extends IBaseRs {
 	@GET
 	@Path("/")
 	GetScriptInstanceResponseDto find(@QueryParam("scriptInstanceCode") String scriptInstanceCode);
-
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(ScriptInstanceDto postData);
 }

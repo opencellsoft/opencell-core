@@ -21,8 +21,10 @@ import javax.persistence.UniqueConstraint;
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ObservableEntity;
 
 @Entity
+@ObservableEntity
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "ADM_INBOUND_REQUEST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_INBOUND_REQUEST_SEQ")

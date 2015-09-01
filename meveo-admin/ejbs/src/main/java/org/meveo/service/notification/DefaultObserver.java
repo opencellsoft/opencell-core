@@ -124,9 +124,11 @@ public class DefaultObserver {
             userMap.put("event", o);
             userMap.put("manager", manager);
         	for (@SuppressWarnings("rawtypes") Map.Entry entry : params.entrySet()) {
-        	    paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression( (String)entry.getValue(), userMap, String.class));
+        	    paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression( (String)entry.getValue(), userMap, Object.class));
         	}        	
+        	scriptInterface.init(paramsEvaluated, scriptInstance.getProvider());
 	    	scriptInterface.execute(paramsEvaluated,scriptInstance.getProvider());
+	    	scriptInterface.finalize(paramsEvaluated, scriptInstance.getProvider());
         } catch(Exception e){
         	log.error("failed script execution",e);
         }

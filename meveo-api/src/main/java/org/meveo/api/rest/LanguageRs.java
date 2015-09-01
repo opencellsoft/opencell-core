@@ -68,7 +68,7 @@ public interface LanguageRs extends IBaseRs {
 	@PUT
 	@Path("/")
 	public ActionStatus update(LanguageDto postData);
-	
+
 	
 	@POST
 	@Path("/createOrUpdate")
