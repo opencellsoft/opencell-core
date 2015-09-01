@@ -118,13 +118,23 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Exceptio
 
 				currentUser = null;
 
-//				requestContext.abortWith(new ServerResponse("Access denied for this resource. " + e.getMessage(), 401,
-//						new Headers<Object>()));
+				// requestContext.abortWith(new
+				// ServerResponse("Access denied for this resource. " +
+				// e.getMessage(), 401,
+				// new Headers<Object>()));
 			}
 
 			if (currentUser == null) {
 				requestContext.abortWith(ACCESS_DENIED);
 			}
+
+			// check if user has permission
+			boolean isAllowed = currentUser.hasPermission("user", "apiAccess");
+
+			if (!isAllowed) {
+				requestContext.abortWith(ACCESS_DENIED);
+			}
+
 		}
 	}
 

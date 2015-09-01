@@ -65,19 +65,14 @@ public abstract class BaseRs implements IBaseRs {
 		return result;
 	}
 
-    public User getCurrentUser() throws MeveoApiException {
+	public User getCurrentUser() throws MeveoApiException {
 
-        if (currentUserInstance.isUnsatisfied() || currentUserInstance.get() == null) {
-            throw new LoginException("Authentication failed! User does not exists!");
-        }
+		if (currentUserInstance.isUnsatisfied() || currentUserInstance.get() == null) {
+			throw new LoginException("Authentication failed! User does not exists!");
+		}
 
-        User currentUser = currentUserInstance.get();
-        boolean isAllowed = currentUser.hasPermission("user", "apiAccess");
+		User currentUser = currentUserInstance.get();
 
-        if (!isAllowed) {
-            throw new LoginException(currentUser.getUserName(), "Authentication failed! Insufficient privilege!");
-        }
-
-        return currentUser;
-    }
+		return currentUser;
+	}
 }
