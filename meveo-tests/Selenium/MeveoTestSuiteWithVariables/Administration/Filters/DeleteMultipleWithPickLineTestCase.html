@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>ExportWithoutPickAnyLineTestCase</title>
+<title>DeleteMultipleWithPickLineTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">ExportWithoutPickAnyLineTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">DeleteMultipleWithPickLineTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>assertTitle</td>
@@ -17,8 +17,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>pause</td>
+	<td>10000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>MEVEO | Open Source Billing Platform</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>${buttonExport}</td>
+	<td>${DeleteMultiple}</td>
 	<td></td>
 </tr>
 <tr>

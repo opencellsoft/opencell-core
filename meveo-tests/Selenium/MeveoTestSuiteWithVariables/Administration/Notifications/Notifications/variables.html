@@ -63,18 +63,13 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=menu:scriptInstances</td>
-	<td>ScriptInstances</td>
+	<td>id=menu:internalNotifications</td>
+	<td>Notification</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
-	<td>NewScriptInstance</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/textarea</td>
-	<td>ScriptInstanceTextArea</td>
+	<td>NewNotification</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -83,18 +78,48 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
-	<td>descriptionText</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/input[1]</td>
+	<td>ClassnameFilter</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/button/span[2]</td>
+	<td>SelectClassnameFilter</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/div/div[3]/span</td>
-	<td>ChooseType</td>
+	<td>EventTypeFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[37]/div/ul/li[2]</td>
-	<td>JavaType</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/textarea</td>
+	<td>EventELFilter</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[5]/div/div/button/span[2]</td>
+	<td>ScriptInstance</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/div/div[2]/button/span</td>
+	<td>AddNewParametrers</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/div/div[1]/table/tbody/tr/td[1]/input</td>
+	<td>Name</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/div/div[1]/table/tbody/tr/td[2]/input</td>
+	<td>Value</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/div/div[1]/table/tbody/tr/td[3]/button/span[2]</td>
+	<td>Actions</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -103,7 +128,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span[2]</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span[2]</td>
 	<td>saveButton</td>
 </tr>
 <tr>
@@ -118,8 +143,33 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span/div/div/input</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>Disable</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>Enable</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
 	<td>searchWithCode</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/button/span[2]</td>
+	<td>searchWithClickClassnameFilter</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/input</td>
+	<td>searchWithClassnameFilter</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/div/div[3]/span</td>
+	<td>searchWithEventTypeFilter</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -133,12 +183,17 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=results_formbuttonExport</td>
-	<td>buttonExport</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/button[2]/span</td>
+	<td>ImportCSV</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=results_formdeleteEntitieslink</td>
+	<td>id=notifications_formbuttonCsvExport</td>
+	<td>ExportCSV</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=notifications_formdeleteEntitieslink</td>
 	<td>DeleteMultiple</td>
 </tr>
 </tbody></table>

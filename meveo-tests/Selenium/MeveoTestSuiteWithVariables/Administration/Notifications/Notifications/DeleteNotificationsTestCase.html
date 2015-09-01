@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>ExportWithoutPickAnyLineTestCase</title>
+<title>DeleteRecurringChargeTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">ExportWithoutPickAnyLineTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">DeleteRecurringChargeTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>assertTitle</td>
@@ -17,13 +17,23 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${buttonExport}</td>
+	<td>pause</td>
+	<td>5000</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>click</td>
+	<td>id=datatable_notifications:0:notificationsdeletelink</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=datatable_notifications:0:deleteKo</td>
 	<td></td>
 </tr>
 </tbody></table>
