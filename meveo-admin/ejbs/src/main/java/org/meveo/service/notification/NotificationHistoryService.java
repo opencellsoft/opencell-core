@@ -21,7 +21,9 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
         if (e instanceof IAuditable) {
             Auditable auditable = new Auditable();
             auditable.setCreated(new Date());
-            auditable.setCreator(((IAuditable) e).getAuditable().getCreator());
+            if(((IAuditable) e).getAuditable()!=null){
+            	auditable.setCreator(((IAuditable) e).getAuditable().getCreator());
+            }
             history.setAuditable(auditable);
         }
         history.setNotification(notification);

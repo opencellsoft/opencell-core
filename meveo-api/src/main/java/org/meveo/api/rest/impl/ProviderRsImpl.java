@@ -168,5 +168,24 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+	
+	@Override
+	public ActionStatus createOrUpdate(ProviderDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			providerApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
 
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 }

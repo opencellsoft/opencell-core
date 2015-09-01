@@ -102,7 +102,7 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Exceptio
 			try {
 				currentUser = userService.loginChecks(username, password, false);
 				log.debug("REST login successfull with username={}", username);
-				
+
 			} catch (LoginException e) {
 				log.error("Login failed for the user {} for reason {} {}", new Object[] { username,
 						e.getClass().getName(), e.getMessage() });
@@ -115,17 +115,26 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Exceptio
 				} else if (e instanceof PasswordExpiredException) {
 					log.error("The password of user " + username + " has expired.");
 				}
-				
+
 				currentUser = null;
 
-				// requestContext.abortWith(new ServerResponse(
-				// "Access denied for this resource. " + e.getMessage(),
-				// 401, new Headers<Object>()));
+				// requestContext.abortWith(new
+				// ServerResponse("Access denied for this resource. " +
+				// e.getMessage(), 401,
+				// new Headers<Object>()));
 			}
 
-			// if (currentUser == null) {
-			// requestContext.abortWith(ACCESS_DENIED);
-			// }
+			if (currentUser == null) {
+				requestContext.abortWith(ACCESS_DENIED);
+			}
+
+			// check if user has permission
+			boolean isAllowed = currentUser.hasPermission("user", "apiAccess");
+
+			if (!isAllowed) {
+				requestContext.abortWith(ACCESS_DENIED);
+			}
+
 		}
 	}
 
