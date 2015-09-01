@@ -58,7 +58,10 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateProvider(@WebParam(name = "provider") ProviderDto postData);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateProvider(@WebParam(name = "provider") ProviderDto postData);
+	
 	// user
 
 	@WebMethod
@@ -317,5 +320,8 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	GetScriptInstanceResponseDto findScriptInstance(@WebParam(name = "scriptInstanceCode") String scriptInstanceCode);
+	
+	@WebMethod
+	ActionStatus createOrUpdateScriptInstance(@WebParam(name = "scriptInstance") ScriptInstanceDto postData);
 
 }

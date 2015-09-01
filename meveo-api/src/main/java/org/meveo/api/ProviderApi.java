@@ -427,5 +427,23 @@ public class ProviderApi extends BaseApi {
 
 		return result;
 	}
-
+	
+	
+	/**
+	 * Create or update Provider based on provider code
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(ProviderDto postData, User currentUser) throws MeveoApiException {
+		Provider provider = providerService.findByCode(postData.getCode());
+		
+		if (provider == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+		
+	}
+	
 }
