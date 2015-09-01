@@ -75,7 +75,10 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public GetUserResponse findUser(@WebParam(name = "username") String username);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);
+	
 	// seller
 
 	@WebMethod
