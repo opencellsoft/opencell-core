@@ -62,8 +62,12 @@ public class InboundServlet extends HttpServlet {
 		if(path.startsWith("/")){
 			path=path.substring(1);
 		}
-		String providerCode=path.substring(0, path.indexOf('/'));
-		provider = providerService.findByCode(providerCode);
+		String providerCode=null;
+		try{
+			providerCode=path.substring(0, path.indexOf('/'));
+			provider = providerService.findByCode(providerCode);
+		} catch(Exception e){}
+		
 		if(provider==null){
 			log.debug("Request has invalid provider code {} ",providerCode);
 			res.setStatus(404);
