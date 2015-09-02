@@ -5,7 +5,6 @@
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
   <title>Test Suite</title>
 </head>
-
 <!--
 
 Description Test Case 1: 
@@ -22,109 +21,102 @@ Expected Results : A list of empty items are chowed.
 
 Description Test Case 4: 
 Actions : Don't fill any field then click on "save".
-Expected Results : A new Script Instances can not be created, an alert appears to mention that code and description is required to create the Script Instances
+Expected Results : A new Script Instances can not be created, an alert appears to mention that code is required to create the Script Instances
 
 Description Test Case 5:
 Actions : Click on "reset".
 Expected Results : The field code become empty.
 
 Description Test Case 6: 
-Actions : Fill only the field "Code" then click on "save".
-Expected Results : A new Script Instances can not be created, an alert appears to mention that description is required to create the Script Instances.
+Actions : Let the required field not filled and fill (Script Instances, Description and Type) and click on "save"
+Expected Results : A new Script Instances can not be created, an alert appears to mention that Code is required to create the Script Instances
 
 Description Test Case 7: 
-Actions : Fill only the field "Description" then click on "save".
-Expected Results : A new Script Instances can not be created, an alert appears to mention that code is required to create the Script Instances.
-
-Description Test Case 8: 
-Actions : Let the required fields not filled and fill (Script Instances and Type) and click on "save"
-Expected Results : A new Script Instances can not be created, an alert appears to mention that Code and Description are required to create the Script Instances
-
-Description Test Case 9: 
 Actions : Click on "back".
 Expected Results : Return to the previous page. 
 
-Description Test Case 10: 
-Actions : Fill the required fields (Code, Description) then fill (Script Instances and Type) and click on "save".
+Description Test Case 8: 
+Actions : Fill the required field (Code) then fill (Script Instances, Description and Type) and click on "save".
 Expected Results : A new Script Instances is created.
 
-Description Test Case 11: 
+Description Test Case 9: 
 Actions : Make a second search by filling the field "Code" then click on the button "search".
 Expected Results :The result of research gives the items which are matching with the chosen Script Instances.
 
-Description Test Case 12: 
+Description Test Case 10: 
 Actions : Click on the link in the datatable to modify the Script Instances just created, fill all the fields and click "save".
 Expected Results : The Script Instances is updated with success.
 
-Description Test Case 13: 
+Description Test Case 11: 
 Actions : Make a third search by filling the field "Code" then click on the button "search".
 Expected Results :The result of research gives the items which are matching with the chosen Script Instances.
 
-Description Test Case 14: 
+Description Test Case 12: 
 Actions : Pick a line from the table then click on the icon "delete ".
 Expected Results : An alert appears in order to make sure that you really you want to delete the Script Instances.
 
-Description Test Case 15: 
+Description Test Case 13: 
 Actions : Click on "yes" to confirm that you want to delete the Script Instances.
 Expected Results : The picked Script Instances is deleted.
 
-Description Test Case 16: 
+Description Test Case 14: 
 Actions : Click on "No" to confirm that you don't want to delete the Script Instances.
 Expected Results : The picked Script Instances is not deleted.
 
-Description Test Case 17: 
+Description Test Case 15: 
 Actions : Pick one or more lines from the table then click on the button "Export to Excel"
 Expected Results : The picked lines are exported on an Excel file
 
-Description Test Case 18: 
+Description Test Case 16: 
 Actions : Click on the button "export to excel", without picking any line from the table
 Expected Results : All the lines from the table are been exported on an excel file
 
-Description Test Case 19: 
+Description Test Case 17: 
 Actions : Click on the button"delete multiple" wihout picking any line from the table.
 Expected Results : Nothing happened.
 
-Description Test Case 20: 
+Description Test Case 18: 
 Actions : Pick more than one line from the table then click on the button "Delete multiple"
 Expected Results : The picked lines are erased
 
-Description Test Case 21: 
+Description Test Case 19: 
 Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
 Expected Results : The table shows 15 lines per page 
 
-Description Test Case 22: 
+Description Test Case 20: 
 Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
 Expected Results : The table shows 20 lines per page 
 
-Description Test Case 23: 
+Description Test Case 21: 
 Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
 Expected Results : The table shows 50 lines per page 
 
-Description Test Case 24: 
+Description Test Case 22: 
 Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
 Expected Results : The table shows 10 lines per page 
 
-Description Test Case 25: 
+Description Test Case 23: 
 Actions : Click on the button to move to the next page 
 Expected Results : The next page is displayed
 
-Description Test Case 26: 
+Description Test Case 24: 
 Actions : Click on the button to move to the last page 
 Expected Results :The last page is displayed
 
-Description Test Case 27:
+Description Test Case 25: 
 Actions : Click on the button to move to the previous page
 Expected Results :The previous page is displayed
 
-Description Test Case 28: 
+Description Test Case 26: 
 Actions : In each column from the table (code, description) there is a filter, click on the filter in column "Code" in order to refine your search in an ascending/descending order.
 Expected Results : The lines become ordered in an ascending/descending order
 
-Description Test Case 29: 
+Description Test Case 27: 
 Actions : Click on the filter in column "Description" in order to refine your search in an ascending/descending order
 Expected Results : The lines become ordered in an ascending/descending order
 
 -->
+
 <body>
 <table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
 <tr><td><b>Test Suite</b></td></tr>
@@ -134,8 +126,6 @@ Expected Results : The lines become ordered in an ascending/descending order
 <tr><td><a href="NewScriptInstancesTestCase.html">NewScriptInstancesTestCase</a></td></tr>
 <tr><td><a href="EmptyScriptInstancesTestCase.html">EmptyScriptInstancesTestCase</a></td></tr>
 <tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
-<tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
-<tr><td><a href="FillOnlyDescriptionTestCase.html">FillOnlyDescriptionTestCase</a></td></tr>
 <tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
 <tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
 <tr><td><a href="SuccessScriptInstancesTestCase.html">SuccessScriptInstancesTestCase</a></td></tr>

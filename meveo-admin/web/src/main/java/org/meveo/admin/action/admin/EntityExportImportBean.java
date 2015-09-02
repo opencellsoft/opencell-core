@@ -27,6 +27,8 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportImportStatistics;
 import org.meveo.export.ExportTemplate;
+import org.meveo.export.RemoteAuthenticationException;
+import org.meveo.export.RemoteImportException;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.communication.MeveoInstance;
@@ -372,7 +374,7 @@ public class EntityExportImportBean implements Serializable {
                     remoteImportResult = checkStatusResult;
                 }
             }
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException | ExecutionException | RemoteAuthenticationException | RemoteImportException e) {
             log.error("Failed to access export execution result", e);
         }
     }

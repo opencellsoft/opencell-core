@@ -40486,7 +40486,7 @@ for( testCase in testSuite.getTestCaseList() ) {
     <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
     <alias>c</alias>
     <displayFields>
-      <field>offer</field>
+    	 <field>code</field>
       <field>status</field>
     </displayFields>
     <exportFields/>
