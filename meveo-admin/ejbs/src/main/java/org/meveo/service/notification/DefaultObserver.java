@@ -258,7 +258,7 @@ public class DefaultObserver {
     }
 
     public void loggedIn(@Observes @LoggedIn User e) {
-        log.info(" \n\n\n\n\n\n Defaut observer : logged in class={} ", e.getClass().getName());
+        log.debug("Defaut observer : logged in class={} ", e.getClass().getName());
         checkEvent(NotificationEventTypeEnum.LOGGED_IN, e);
     }
 
