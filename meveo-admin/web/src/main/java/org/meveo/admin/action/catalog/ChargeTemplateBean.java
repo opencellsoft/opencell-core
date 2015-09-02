@@ -23,15 +23,9 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -51,19 +45,6 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 	 */
 	@Inject
 	private ChargeTemplateServiceAll chargeTemplateService;
-	
-	@Inject
-	private PricePlanMatrixService pricePlanMatrixService;
-	
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
-
-	@Inject
-	private OneShotChargeTemplateService oneShotChargeTemplateService;
-	
-	
-
-	private String pricePlanCode;
 	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -93,33 +74,6 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 	protected IPersistenceService<ChargeTemplate> getPersistenceService() {
 		return chargeTemplateService;
 	}
-	
-	public String getPricePlanCode() {
-		Long  seq=pricePlanMatrixService.getLastPricePlan(entity.getCode(),entity.getProvider())+1;
-		pricePlanCode="PP_"+entity.getCode()+"_"+seq;
-		return pricePlanCode;
-	}
- 
-     public String getBackView(){
-    	  RecurringChargeTemplate recurring= recurringChargeTemplateService.findById(entity.getId());
-    	  if(recurring!=null){
-    		return "recurringChargeTemplateDetail";
-    	}else{
-    	  OneShotChargeTemplate oneShot= oneShotChargeTemplateService.findById(entity.getId());
-    	  if(oneShot!=null){
-      		return "oneShotChargeTemplateDetail";
-      	 }
-    	  else{
-         	return "usageChargeTemplateDetail";
-         }
-    	}
-     }
-	
-	
-	public void setPricePlanCode(String pricePlanCode) {
-		this.pricePlanCode = pricePlanCode;
-	}
-	
-	
 
+	
 }

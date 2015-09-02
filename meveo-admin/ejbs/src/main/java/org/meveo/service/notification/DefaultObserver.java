@@ -116,7 +116,7 @@ public class DefaultObserver {
     }
 
     private void executeScript(ScriptInstance scriptInstance, Object o, Map<String, String> params) throws BusinessException {
-        log.debug("execute notification script: {}", scriptInstance.getScript());
+        log.debug("execute notification script: {}", scriptInstance.getCode());
         Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
         try{
         	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();

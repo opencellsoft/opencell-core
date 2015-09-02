@@ -18,9 +18,12 @@ package org.meveo.admin.action.catalog;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -112,6 +115,12 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 		String result = super.saveOrUpdate(entity);		
 		javaCompilerManager.compileScript(entity);		
 		return result;
-		
 	}
+	
+	public List<Diagnostic<? extends JavaFileObject>> getErrors(){
+		return javaCompilerManager.getScriptError
+				(getCurrentProvider(), 
+				entity.getCode());
+	}
+	
 }
