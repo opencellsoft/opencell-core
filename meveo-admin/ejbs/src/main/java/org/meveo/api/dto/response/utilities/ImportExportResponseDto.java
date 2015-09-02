@@ -38,7 +38,7 @@ public class ImportExportResponseDto extends BaseResponse {
     /**
      * Occurred exception
      */
-    private Throwable exception;
+    private String exceptionMessage;
 
     /**
      * Occurred error message key
@@ -62,7 +62,9 @@ public class ImportExportResponseDto extends BaseResponse {
     public ImportExportResponseDto(String executionId, ExportImportStatistics statistics) {
         super();
         this.executionId = executionId;
-        this.exception = statistics.getException();
+        if (statistics.getException() != null) {
+            this.exceptionMessage = statistics.getException().getClass().getSimpleName() + ": " + statistics.getException().getMessage();
+        }
         this.errorMessageKey = statistics.getErrorMessageKey();
 
         this.fieldsNotImported = statistics.getFieldsNotImported();
@@ -98,23 +100,23 @@ public class ImportExportResponseDto extends BaseResponse {
         this.fieldsNotImported = fieldsNotImported;
     }
 
-    public Throwable getException() {
-        return exception;
+    public String getExceptionMessage() {
+        return exceptionMessage;
     }
 
-    public void setException(Throwable exception) {
-        this.exception = exception;
+    public void setExceptionMessage(String exceptionMessage) {
+        this.exceptionMessage = exceptionMessage;
     }
 
     public boolean isDone() {
-        return exception != null || summary != null;
+        return exceptionMessage != null || summary != null;
     }
 
     @Override
     public String toString() {
         final int maxLen = 10;
         return String.format("ImportExportResponseDto [executionId=%s, summary=%s, fieldsNotImported=%s, exception=%s]", executionId,
-            summary != null ? toString(summary.entrySet(), maxLen) : null, fieldsNotImported != null ? toString(fieldsNotImported.entrySet(), maxLen) : null, exception);
+            summary != null ? toString(summary.entrySet(), maxLen) : null, fieldsNotImported != null ? toString(fieldsNotImported.entrySet(), maxLen) : null, exceptionMessage);
     }
 
     private String toString(Collection<?> collection, int maxLen) {
@@ -136,7 +138,7 @@ public class ImportExportResponseDto extends BaseResponse {
      * @return
      */
     public boolean isFailed() {
-        return exception != null || errorMessageKey != null || getActionStatus().getStatus() == ActionStatusEnum.FAIL;
+        return exceptionMessage != null || errorMessageKey != null || getActionStatus().getStatus() == ActionStatusEnum.FAIL;
     }
 
     /**
@@ -157,8 +159,8 @@ public class ImportExportResponseDto extends BaseResponse {
         if (errorMessageKey != null) {
             return null;
         }
-        if (exception != null) {
-            return exception.getMessage();
+        if (exceptionMessage != null) {
+            return exceptionMessage;
         } else {
             return getActionStatus().getMessage();
         }

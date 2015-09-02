@@ -317,4 +317,11 @@
         <where>script='here'</where>
     </delete>
     </changeSet>
+    
+    <changeSet id="805_20150701-2" author="AndriusKarpavicius">
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="13" />
+        </insert>    
+    </changeSet>
 </databaseChangeLog>

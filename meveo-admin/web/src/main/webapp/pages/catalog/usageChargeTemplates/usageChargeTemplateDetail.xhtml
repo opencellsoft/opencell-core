@@ -97,20 +97,20 @@
 				</p:tab>
 				
 				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{pricePlanMatrixBean.objectId!=null}" >  
-                    <p:panel styleClass="form-panel">
+                    <p:panel>
 						<hf:formDecorateField fieldId="usageChargeCode" label="#{messages['pricePlanMatrix.eventCode']} :">
 							<h:outputText id="usageChargeCode"
 								value="#{usageChargeTemplateBean.entity.code}"
 								disabled="true" style="font-weight:bold;" />
 						</hf:formDecorateField> 
 						
-						<hf:formDecorateField fieldId="usageChargeDescription" label="#{messages['businessEntity.description']}">
+						<hf:formDecorateField fieldId="usageChargeDescription" label="#{messages['businessEntity.description']} :">
 							<h:outputText id="usageChargeDescription"
 								value="#{usageChargeTemplateBean.entity.description}" 
 								disabled="true" style="font-weight:bold;" />
 						</hf:formDecorateField>
-						<ui:include src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />
-                    </p:panel> 						
+                    </p:panel>
+					<ui:include src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />					
 				   </p:tab>
 			</p:tabView>
 
