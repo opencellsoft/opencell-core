@@ -40666,4 +40666,16 @@ for( testCase in testSuite.getTestCaseList() ) {
          </communicationRequest>\r
       </ws:inboundCommunication>\r
    </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2fa5ee05-467f-45e6-b93c-62df329f2c7c"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="failed" id="ab9b616e-be82-47f0-9be2-a00e78bd29a7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CommunicationWsSoapBinding</con:interface><con:operation>inboundCommunication</con:operation><con:request name="failed" id="a5b44ca3-210b-4f85-8c8d-e423f04f580a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CommunicationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:inboundCommunication>\r
+         <!--Optional:-->\r
+         <communicationRequest>\r
+            <meveoInstanceCode>MEVEO_INTEG1</meveoInstanceCode>\r
+            <macAddress>1234</macAddress>\r
+            <subject>TEST</subject>\r
+         </communicationRequest>\r
+      </ws:inboundCommunication>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2fa5ee05-467f-45e6-b93c-62df329f2c7c"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
