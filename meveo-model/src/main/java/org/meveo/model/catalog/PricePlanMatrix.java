@@ -134,6 +134,9 @@ public class PricePlanMatrix extends BusinessEntity implements Comparable<PriceP
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "VALID_CAL_ID")
     private Calendar validityCalendar;
+    
+    @Column(name = "SEQUENCE")
+	private Long sequence;
 
 	public String getEventCode() {
 		return eventCode;
@@ -318,8 +321,16 @@ public class PricePlanMatrix extends BusinessEntity implements Comparable<PriceP
     public void setValidityCalendar(Calendar validityCalendar) {
         this.validityCalendar = validityCalendar;
     }
+    
+   public Long getSequence() {
+		return sequence;
+	}
 
-    @Override
+	public void setSequence(Long sequence) {
+		this.sequence = sequence;
+	}
+
+	@Override
     public String toString() {
         return String
             .format(

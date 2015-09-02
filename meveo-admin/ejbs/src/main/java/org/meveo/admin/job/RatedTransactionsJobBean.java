@@ -68,7 +68,6 @@ public class RatedTransactionsJobBean {
 			for(Future<String> futureItsNow : asyncReturns){
 				futureItsNow.get();	
 			}
-			result.setDone(true);
 		} catch (Exception e) {
 			log.error("Failed to rate transactions", e);
 		}

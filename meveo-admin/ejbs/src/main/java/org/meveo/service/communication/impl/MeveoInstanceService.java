@@ -26,33 +26,33 @@ import javax.persistence.NoResultException;
 import org.meveo.api.dto.communication.CommunicationRequestDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.communication.InboundCommunicationEvent;
-import org.meveo.event.monitoring.BusinessExceptionEvent;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * MeveoInstance service implementation.
  */
 @Stateless
-public class MeveoInstanceService extends PersistenceService<MeveoInstance> {
+public class MeveoInstanceService extends BusinessService<MeveoInstance> {
 
 	@Inject
 	private Event<InboundCommunicationEvent> event;
-	
+
 	public MeveoInstance findByCode(String meveoInstanceCode) {
+		QueryBuilder qb = new QueryBuilder(MeveoInstance.class, "c");
+		qb.addCriterion("code", "=", meveoInstanceCode, true);
+		
 		try {
-			QueryBuilder qb = new QueryBuilder(MeveoInstance.class, "c");
-			qb.addCriterion("code", "=", meveoInstanceCode, true);
 			return (MeveoInstance) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
-			log.warn("failed to find MeveoInstance",e);
+			log.warn("failed to find MeveoInstance", e.getMessage());
 			return null;
 		}
 	}
 
-	public MeveoInstance getThis() {		
+	public MeveoInstance getThis() {
 		List<MeveoInstance> meveoInstances = list();
-		if(meveoInstances==null || meveoInstances.isEmpty()){
+		if (meveoInstances == null || meveoInstances.isEmpty()) {
 			return null;
 		}
 		return meveoInstances.get(0);
@@ -63,4 +63,5 @@ public class MeveoInstanceService extends PersistenceService<MeveoInstance> {
 		inboundCommunicationEvent.setCommunicationRequestDto(communicationRequestDto);
 		event.fire(inboundCommunicationEvent);
 	}
+
 }

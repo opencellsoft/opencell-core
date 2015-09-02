@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the field "Code, Description, Version and Owner" then click on the button "search".
+Expected Results : The result of research gives the items matching with the code, Classname Filter and Event Type Filter filled bellow
+
+Description Test Case 2: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "clean Filter".
+Expected Results : The filed (Code, Description, Version and Owner) become empty.
+
+Description Test Case 3: 
+Actions : Click on the button "New" in order to add a new Meveo Instance.
+Expected Results : A list of empty items are chowed.
+
+Description Test Case 4: 
+Actions : Don't fill any field then click on "save".
+Expected Results : A new Meveo Instance can not be created, an alert appears to mention that Code and URL are required to create the Meveo Instance
+
+Description Test Case 5:
+Actions : Click on "reset".
+Expected Results : The field code become empty.
+
+Description Test Case 6: 
+Actions : Fill only the field "Code" then click on "save".
+Expected Results : A new Meveo Instance can not be created, an alert appears to mention that URL is required to create the Meveo Instance.
+
+Description Test Case 7: 
+Actions : Fill only the field "URL" then click on "save".
+Expected Results : A new Meveo Instance can not be created, an alert appears to mention that Code is required to create the Meveo Instance.
+
+Description Test Case 8: 
+Actions : Let the required field not filled and fill (Description, User, Customer, Username and Password) and click on "save"
+Expected Results : A new Meveo Instance can not be created, an alert appears to mention that Code and URL are required to create the Meveo Instance
+
+Description Test Case 9: 
+Actions : Click on "back".
+Expected Results : Return to the previous page. 
+
+Description Test Case 10: 
+Actions : Fill the required field (Code, URL) then fill (Description, User, Customer, Username and Password) and click on "save".
+Expected Results : A new Meveo Instance is created.
+
+-->
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="variables.html">variables</a></td></tr>
+<tr><td><a href="SearchWithCodeDescriptionVersionOwnerTestCase.html">SearchWithCodeDescriptionVersionOwnerTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="NewMeveoInstanceTestCase.html">NewMeveoInstanceTestCase</a></td></tr>
+<tr><td><a href="EmptyMeveoInstanceTestCase.html">EmptyMeveoInstanceTestCase</a></td></tr>
+<tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyURLTestCase.html">FillOnlyURLTestCase</a></td></tr>
+<tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
+<tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
+<tr><td><a href="SuccessMeveoInstanceTestCase.html">SuccessMeveoInstanceTestCase</a></td></tr>
+</tbody></table>
+</body>
+</html>

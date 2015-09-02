@@ -16,6 +16,9 @@ public class CommunicationRequestDto  extends BaseDto {
 
 	@XmlElement(required = true)
 	private String meveoInstanceCode;
+	
+	@XmlElement(required = true)
+	private String macAddress;
 	 
 	@XmlElement(required = true)
 	private String subject;
@@ -131,16 +134,24 @@ public class CommunicationRequestDto  extends BaseDto {
 		this.additionnalInfo3 = additionnalInfo3;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return "CommunicationRequestDto [meveoInstanceCode=" + meveoInstanceCode + ", subject=" + subject + ", body=" + body + ", additionnalInfo1=" + additionnalInfo1 + ", additionnalInfo2=" + additionnalInfo2 + ", additionnalInfo3=" + additionnalInfo3 + ", additionnalInfo4=" + additionnalInfo4 + "]";
+		return "CommunicationRequestDto [meveoInstanceCode=" + meveoInstanceCode + ", macAddress=" + macAddress
+				+ ", subject=" + subject + ", body=" + body + ", additionnalInfo1=" + additionnalInfo1
+				+ ", additionnalInfo2=" + additionnalInfo2 + ", additionnalInfo3=" + additionnalInfo3
+				+ ", additionnalInfo4=" + additionnalInfo4 + "]";
 	}
 	
 
 	public boolean isVaild() {
 		return !StringUtils.isBlank(meveoInstanceCode) && !StringUtils.isBlank(subject);
+	}
+
+	public String getMacAddress() {
+		return macAddress;
+	}
+
+	public void setMacAddress(String macAddress) {
+		this.macAddress = macAddress;
 	}
 }
