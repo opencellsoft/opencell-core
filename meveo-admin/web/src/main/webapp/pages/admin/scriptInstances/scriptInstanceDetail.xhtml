@@ -34,7 +34,7 @@
 			</p:tab>
 			<p:tab title="#{messages['scriptInstance.errorsTab']}" id="tab1" disabled="#{!scriptInstanceBean.entity.error}">
 				<hftl:dataList label="#{messages['scriptInstance.title']}"
-				backingBean="#{scriptInstanceErrorListBean}" sortBy="lineNumber" checkMany="false">
+				backingBean="#{scriptInstanceErrorListBean}" sortBy="lineNumber" checkMany="false" dataModel="#{scriptInstanceBean.entity.scriptInstanceErrors}">
 				<hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />
 				<hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" />
 				<hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" />
