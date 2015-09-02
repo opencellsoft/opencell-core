@@ -32,22 +32,14 @@
 			<!-- <pe:codeMirror id="codeMirror"  theme="eclipse"  value="#{scriptInstanceBean.entity.script}"  lineNumbers="true" /> --> 					
 			<h:inputTextarea value="#{scriptInstanceBean.entity.script}" cols="100" rows="50" />
 			</p:tab>
-			<!-- <p:tab title="#{messages['scriptInstance.errorsTab']}" id="tab1" disabled="#{ empty scriptInstanceBean.getErrors()}"> -->
-			<p:tab title="#{messages['scriptInstance.errorsTab']}" id="tab1" >
-				<p:dataTable var="diag" value="#{scriptInstanceBean.getErrors()}" tableStyle="table-layout: auto;" >				   		 
-				    <p:column headerText="#{messages['scriptInstance.compilation.message']}" >
-				        <h:outputText value="#{diag.getMessage(java.util.Locale.getDefault())}"  />
-				    </p:column>
-				    <p:column headerText="#{messages['scriptInstance.compilation.lineNumber']}" >
-				        <h:outputText value="#{diag.getLineNumber()}"  />
-				    </p:column>
-				    <p:column headerText="#{messages['scriptInstance.compilation.columnNumber']}" >
-				        <h:outputText value="#{diag.getColumnNumber()}"  />
-				    </p:column>
-				    <p:column headerText="#{messages['scriptInstance.compilation.sourceFile']}" >
-				        <h:outputText value="#{diag.getSource()}"  />
-				    </p:column>				    				    				    				    
-				</p:dataTable>
+			<p:tab title="#{messages['scriptInstance.errorsTab']}" id="tab1" disabled="#{!scriptInstanceBean.entity.error}">
+				<hftl:dataList label="#{messages['scriptInstance.title']}"
+				backingBean="#{scriptInstanceErrorListBean}" sortBy="lineNumber" checkMany="false">
+				<hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />
+				<hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" />
+				<hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" />
+				<hftl:column label="#{messages['scriptInstance.compilation.sourceFile']}" field="sourceFile" />								    
+				</hftl:dataList>
 			</p:tab>
 			</p:tabView>
 		</hf:formPanel>

@@ -5,7 +5,6 @@
 package org.meveo.service.script;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,8 +24,9 @@ import org.jboss.vfs.VirtualFile;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.ScriptInstance;
-import org.meveo.model.jobs.ScriptTypeEnum;
+import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstanceError;
+import org.meveo.model.scripts.ScriptTypeEnum;
 import org.slf4j.Logger;
 
 /**
@@ -40,13 +40,15 @@ import org.slf4j.Logger;
 public class JavaCompilerManager {
 
 	private Map<String, Map<String, Class<ScriptInterface>>> allScriptInterfaces = new HashMap<String, Map<String, Class<ScriptInterface>>>();
-	private Map<String, Map<String, List<Diagnostic<? extends JavaFileObject>>>> allScriptErrors = new HashMap<String, Map<String, List<Diagnostic<? extends JavaFileObject>>>>();
 
 	@Inject
 	protected Logger log;
 
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
+
+	@Inject
+	private ScriptInstanceErrorService scriptInstanceErrorService;
 
 	private CharSequenceCompiler<ScriptInterface> compiler;
 
@@ -135,10 +137,12 @@ public class JavaCompilerManager {
 
 	public void compileScript(ScriptInstance scriptInstance) {
 		try {
-			if (!allScriptErrors.containsKey(scriptInstance.getProvider().getCode())) {
-				allScriptErrors.put(scriptInstance.getProvider().getCode(), new HashMap<String, List<Diagnostic<? extends JavaFileObject>>>());
-				log.debug("create error empty Map for {}", scriptInstance.getProvider().getCode());
-			} 
+			
+			scriptInstance.setError(false);
+			scriptInstanceService.removeErrors(scriptInstance);
+			scriptInstanceService.update(scriptInstance);
+			//scriptInstance.getScriptInstanceErrors().clear();
+			
 			final String packageName = ParamBean.getInstance().getProperty("meveo.scripting.java.packageName", "org.meveo.service.script");
 			final String className = scriptInstance.getCode();
 			final String qName = packageName + '.' + className;
@@ -155,26 +159,32 @@ public class JavaCompilerManager {
 			providerScriptInterfaces.put(scriptInstance.getCode(), compiledScript);
 			log.debug("add script to Map -> new size {}", providerScriptInterfaces.size());
 			
-			if (allScriptErrors.get(scriptInstance.getProvider().getCode()).containsKey(scriptInstance.getCode())) {
-				allScriptErrors.get(scriptInstance.getProvider().getCode()).remove(scriptInstance.getCode());
-			}
 		} catch (CharSequenceCompilerException e) {
 			log.error("Compilation error...");
+
 			List<Diagnostic<? extends JavaFileObject>> diagnosticList = e.getDiagnostics().getDiagnostics();
-			List<Diagnostic<? extends JavaFileObject>> errorList = new ArrayList<Diagnostic<? extends JavaFileObject>>();
+
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticList) {
-				if("ERROR".equals(diagnostic.getKind().name())){
-					errorList.add(diagnostic);
+				if ("ERROR".equals(diagnostic.getKind().name())) {
+					ScriptInstanceError scriptInstanceError = new ScriptInstanceError();
+					scriptInstanceError.setMessage(diagnostic.getMessage(Locale.getDefault()));
+					scriptInstanceError.setLineNumber(diagnostic.getLineNumber());
+					scriptInstanceError.setColumnNumber(diagnostic.getColumnNumber());
+					scriptInstanceError.setSourceFile(diagnostic.getSource().toString());
+					scriptInstanceError.setScriptInstance(scriptInstance);
+					scriptInstance.getScriptInstanceErrors().add(scriptInstanceError);
+					scriptInstanceErrorService.create(scriptInstanceError, scriptInstance.getAuditable().getCreator(), scriptInstance.getProvider());
+					log.warn(diagnostic.getKind().name());
+					log.warn(diagnostic.getMessage(Locale.getDefault()));
+					log.warn("line:" + diagnostic.getLineNumber());
+					log.warn("column" + diagnostic.getColumnNumber());
 				}
-				log.warn(diagnostic.getKind().name());
-				log.warn(diagnostic.getMessage(Locale.getDefault()));
-				log.warn("line:" + diagnostic.getLineNumber());
-				log.warn("column" + diagnostic.getColumnNumber());
 			}
-			allScriptErrors.get(scriptInstance.getProvider().getCode()).put(scriptInstance.getCode(), errorList);
-			log.debug("add error to Map-> new size {}", allScriptErrors.get(scriptInstance.getProvider().getCode()).size());
+			scriptInstance.setError(true);
+			scriptInstanceService.update(scriptInstance);
+
 		} catch (Exception e) {
-			 log.error("Error in compilation exception handling",e);
+			log.error("", e);
 		}
 	}
 
@@ -193,15 +203,6 @@ public class JavaCompilerManager {
 			}
 		}
 		log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
-		return result;
-	}
-
-	public List<Diagnostic<? extends JavaFileObject>> getScriptError(Provider provider, String scriptCode) {
-		List<Diagnostic<? extends JavaFileObject>> result = new ArrayList<Diagnostic<? extends JavaFileObject>>();
-		if (allScriptErrors.containsKey(provider.getCode())) {
-			result = allScriptErrors.get(provider.getCode()).get(scriptCode);
-		}
-		log.debug("getScriptError provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
 		return result;
 	}
 

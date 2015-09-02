@@ -12,8 +12,8 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.ScriptInstance;
-import org.meveo.model.jobs.ScriptTypeEnum;
+import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.scripts.ScriptTypeEnum;
 import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInstanceService;
 

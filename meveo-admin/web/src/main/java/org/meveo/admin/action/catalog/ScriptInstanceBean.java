@@ -27,7 +27,7 @@ import javax.tools.JavaFileObject;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.jobs.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.script.JavaCompilerManager;
@@ -115,12 +115,6 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 		String result = super.saveOrUpdate(entity);		
 		javaCompilerManager.compileScript(entity);		
 		return result;
-	}
-	
-	public List<Diagnostic<? extends JavaFileObject>> getErrors(){
-		return javaCompilerManager.getScriptError
-				(getCurrentProvider(), 
-				entity.getCode());
 	}
 	
 }
