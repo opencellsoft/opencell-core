@@ -271,7 +271,7 @@ public class User extends AuditableEntity {
     	
     	if (getRoles() != null && getRoles().size() > 0) {
 			for (Role role : getRoles()) {
-				if (role.hasPermission("user", "apiAccess")) {
+				if (role.hasPermission(resource, permission)) {
 					isAllowed = true;
 					break;
 				}

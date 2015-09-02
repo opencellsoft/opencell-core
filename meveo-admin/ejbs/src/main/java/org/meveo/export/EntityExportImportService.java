@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -81,6 +82,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
+//import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -160,6 +162,9 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
+
+//    @Inject
+//    private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
 
     private Map<Class<? extends IEntity>, String[]> exportIdMapping;
 
@@ -330,6 +335,11 @@ public class EntityExportImportService implements Serializable {
         } catch (RemoteAuthenticationException e) {
             log.error("Failed to authenticate to a remote Meveo instance {}: {}", ((MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE)).getCode(), e.getMessage());
             exportStats.setErrorMessageKey("export.remoteImportFailedAuth");
+
+        } catch (RemoteImportException e) {
+            log.error("Failed to communicate or process data in a remote Meveo instance {}: {}", ((MeveoInstance) parameters.get(EXPORT_PARAM_REMOTE_INSTANCE)).getCode(),
+                e.getMessage());
+            exportStats.setErrorMessageKey("export.remoteImportFailedOther");
 
         } catch (Exception e) {
             log.error("Failed to export data to a file {}", filename, e);
@@ -1659,6 +1669,7 @@ public class EntityExportImportService implements Serializable {
         cdrEdrProcessingCacheContainerProvider.refreshCache(null);
         notificationCacheContainerProvider.refreshCache(null);
         ratingCacheContainerProvider.refreshCache(null);
+//        customFieldsCacheContainerProvider.refreshCache(null);
     }
 
     /**
@@ -1818,12 +1829,20 @@ public class EntityExportImportService implements Serializable {
             };
 
             Response response = target.request().post(Entity.entity(entity, MediaType.MULTIPART_FORM_DATA_TYPE));
+            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+                if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
+                    throw new RemoteAuthenticationException(response.getStatusInfo().getReasonPhrase());
+                } else {
+                    throw new RemoteImportException("Failed to communicate or process data in remote meveo instance. Http status " + response.getStatus() + " "
+                            + response.getStatusInfo().getReasonPhrase());
+                }
+            }
             ImportExportResponseDto resultDto = response.readEntity(ImportExportResponseDto.class);
             if (resultDto.isFailed()) {
                 if (MeveoApiErrorCode.AUTHENTICATION_AUTHORIZATION_EXCEPTION.equals(resultDto.getActionStatus().getErrorCode())) {
                     throw new RemoteAuthenticationException(resultDto.getFailureMessage());
                 }
-                throw new Exception(resultDto.getFailureMessage());
+                throw new RemoteImportException(resultDto.getFailureMessage());
             }
 
             String executionId = resultDto.getExecutionId();
@@ -1842,9 +1861,12 @@ public class EntityExportImportService implements Serializable {
      * 
      * @param executionId Import in remote meveo instance execution id
      * @param remoteInstance Remote meveo instance
+     * @throws RemoteAuthenticationException
+     * @throws RemoteImportException
      * @throws Exception
      */
-    public ImportExportResponseDto checkRemoteMeveoInstanceImportStatus(String executionId, MeveoInstance remoteInstance) {
+    public ImportExportResponseDto checkRemoteMeveoInstanceImportStatus(String executionId, MeveoInstance remoteInstance) throws RemoteAuthenticationException,
+            RemoteImportException {
 
         log.debug("Checking status of import in remote meveo instance {} with execution id {}", remoteInstance.getCode(), executionId);
 
@@ -1856,7 +1878,14 @@ public class EntityExportImportService implements Serializable {
         target.register(basicAuthentication);
 
         Response response = target.request().get();// post(Entity.entity(entity, MediaType.MULTIPART_FORM_DATA_TYPE));
-
+        if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+            if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
+                throw new RemoteAuthenticationException(response.getStatusInfo().getReasonPhrase());
+            } else {
+                throw new RemoteImportException("Failed to communicate to remote meveo instance. Http status " + response.getStatus() + " "
+                        + response.getStatusInfo().getReasonPhrase());
+            }
+        }
         ImportExportResponseDto resultDto = response.readEntity(ImportExportResponseDto.class);
         log.debug("The status of import in remote meveo instance {} with execution id {} is {}", remoteInstance.getCode(), executionId, resultDto);
 
