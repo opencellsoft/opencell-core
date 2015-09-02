@@ -106,7 +106,6 @@ public class RecurringRatingJobBean implements Serializable {
             log.error("Failed to run recurring rating job", e);
             result.registerError(e.getMessage());
         }
-		result.setDone(true);
 		log.debug("end running RecurringRatingJobBean!");
 	}
 }

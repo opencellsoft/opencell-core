@@ -28271,7 +28271,145 @@
          </filter>\r
       </ws:listByXmlInput>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilteredListWs/listByXmlInput"/></con:call></con:operation></con:interface><con:testSuite name="#787_jobApi" id="da2f85c3-3dbe-45a1-be85-4e670c25b3ff"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="job" searchProperties="true" id="90cd59b9-38c6-42be-9fe8-0e4dc37251ec"><con:settings/><con:testStep type="request" name="create timerEntity" id="8fda5421-5479-4076-b1cb-6e14800b7dec"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="create timerEntity" id="f9d25749-416c-4bab-9c4a-19a8fc04a79b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilteredListWs/listByXmlInput"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="a8f7665e-82ab-4acf-8a79-fd8dea171252" wsaVersion="NONE" name="CommunicationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CommunicationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CommunicationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CommunicationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CommunicationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CommunicationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/CommunicationWs?wsdl=CommunicationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+  <wsdl:binding name="CommunicationWsSoapBinding" type="ns1:CommunicationWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="inboundCommunication">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="inboundCommunication">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="inboundCommunicationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CommunicationWs">
+    <wsdl:port binding="tns:CommunicationWsSoapBinding" name="CommunicationWsImplPort">
+      <soap:address location="http://localhost:8080/meveo/CommunicationWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/CommunicationWs?wsdl=CommunicationWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CommunicationWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="CommunicationRequest" type="tns:communicationRequestDto"/>
+      <xs:element name="inboundCommunication" type="tns:inboundCommunication"/>
+      <xs:element name="inboundCommunicationResponse" type="tns:inboundCommunicationResponse"/>
+      <xs:element name="index" type="tns:index"/>
+      <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="inboundCommunication">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="communicationRequest" type="tns:communicationRequestDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="communicationRequestDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="meveoInstanceCode" type="xs:string"/>
+              <xs:element name="macAddress" type="xs:string"/>
+              <xs:element name="subject" type="xs:string"/>
+              <xs:element minOccurs="0" name="body" type="xs:string"/>
+              <xs:element minOccurs="0" name="additionnalInfo1" type="xs:string"/>
+              <xs:element minOccurs="0" name="additionnalInfo2" type="xs:string"/>
+              <xs:element minOccurs="0" name="additionnalInfo3" type="xs:string"/>
+              <xs:element minOccurs="0" name="additionnalInfo4" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="inboundCommunicationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="actionStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="inboundCommunication">
+    <wsdl:part element="ns1:inboundCommunication" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="inboundCommunicationResponse">
+    <wsdl:part element="ns1:inboundCommunicationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="CommunicationWs">
+    <wsdl:operation name="index">
+      <wsdl:input message="ns1:index" name="index"></wsdl:input>
+      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="inboundCommunication">
+      <wsdl:input message="ns1:inboundCommunication" name="inboundCommunication"></wsdl:input>
+      <wsdl:output message="ns1:inboundCommunicationResponse" name="inboundCommunicationResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/CommunicationWs</con:endpoint></con:endpoints><con:operation id="c15e2782-7ce3-47e2-a8d2-8af43dd97a33" isOneWay="false" action="" name="inboundCommunication" bindingOperationName="inboundCommunication" type="Request-Response" outputName="inboundCommunicationResponse" inputName="inboundCommunication" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="950628b0-be76-4b92-87fe-b342d0653894" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CommunicationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:inboundCommunication>\r
+         <!--Optional:-->\r
+         <communicationRequest>\r
+            <meveoInstanceCode>?</meveoInstanceCode>\r
+            <macAddress>?</macAddress>\r
+            <subject>?</subject>\r
+            <!--Optional:-->\r
+            <body>?</body>\r
+            <!--Optional:-->\r
+            <additionnalInfo1>?</additionnalInfo1>\r
+            <!--Optional:-->\r
+            <additionnalInfo2>?</additionnalInfo2>\r
+            <!--Optional:-->\r
+            <additionnalInfo3>?</additionnalInfo3>\r
+            <!--Optional:-->\r
+            <additionnalInfo4>?</additionnalInfo4>\r
+         </communicationRequest>\r
+      </ws:inboundCommunication>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CommunicationWs/inboundCommunication"/></con:call></con:operation><con:operation id="62cd0f31-65f5-41d2-9afb-23791d9ad952" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a9a565dd-799f-4251-b6bd-238ed2971c16" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CommunicationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:index/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CommunicationWs/index"/></con:call></con:operation></con:interface><con:testSuite name="#787_jobApi" id="da2f85c3-3dbe-45a1-be85-4e670c25b3ff"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="job" searchProperties="true" id="90cd59b9-38c6-42be-9fe8-0e4dc37251ec"><con:settings/><con:testStep type="request" name="create timerEntity" id="8fda5421-5479-4076-b1cb-6e14800b7dec"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="create timerEntity" id="f9d25749-416c-4bab-9c4a-19a8fc04a79b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createTimer>
@@ -40516,4 +40654,16 @@ for( testCase in testSuite.getTestCaseList() ) {
          </filter>\r
       </ws:listByXmlInput>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="70a177ac-1d86-49f6-90f3-b5b33324460d"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="70a177ac-1d86-49f6-90f3-b5b33324460d"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="bd83d6dd-2c87-4081-bbfd-e25911eb2353" name="#795_fire_notif_if_meveo_instance_is_null"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="4495b77f-c781-4cb2-b9cf-8012dbbae84d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase 1" searchProperties="true"><con:settings/><con:testStep type="manualTestStep" name="Create meveo instance with code=MEVEO_INTEG" id="004eac25-2ff0-4791-97c0-8126b7238562"><con:description>Create meveo instance with code=MEVEO_INTEG</con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:expectedResult/></con:config></con:testStep><con:testStep type="request" name="request" id="2c141071-e21b-49b2-a462-882516e2686a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CommunicationWsSoapBinding</con:interface><con:operation>inboundCommunication</con:operation><con:request name="request" id="a5b44ca3-210b-4f85-8c8d-e423f04f580a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CommunicationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:inboundCommunication>\r
+         <!--Optional:-->\r
+         <communicationRequest>\r
+            <meveoInstanceCode>MEVEO_INTEG</meveoInstanceCode>\r
+            <macAddress>1234</macAddress>\r
+            <subject>TEST</subject>\r
+         </communicationRequest>\r
+      </ws:inboundCommunication>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2fa5ee05-467f-45e6-b93c-62df329f2c7c"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

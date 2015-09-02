@@ -1451,5 +1451,11 @@
           <addPrimaryKey columnNames="webhook_id, webhookparams_key" constraintName="adm_notif_webhookparam_pkey" tableName="adm_notif_webhook_param"/>
            <addForeignKeyConstraint baseColumnNames="webhook_id" baseTableName="adm_notif_webhook_param" constraintName="fk_17fe7mcjmmcgcntqmjm9hlaots" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notif_webhooks"/>
                </changeSet>
+               
+         <changeSet id="1_20150831" author="Mbarek">
+        <addColumn tableName="CAT_PRICE_PLAN_MATRIX">
+            <column name="SEQUENCE" type="BIGINT"/>            
+        </addColumn>    
+    	</changeSet>
     
 </databaseChangeLog>
