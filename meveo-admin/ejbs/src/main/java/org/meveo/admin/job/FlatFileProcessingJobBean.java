@@ -124,7 +124,6 @@ public class FlatFileProcessingJobBean {
 				}
 
 				log.info("InputFiles job {} done.", file.getName());
-				result.setDone(true);
 			} catch (Exception e) {
 				log.error("Failed to process Record file {}", file.getName(), e);
 				result.registerError(e.getMessage());
