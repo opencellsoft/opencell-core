@@ -18,6 +18,7 @@ import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
+import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
 import org.meveo.event.qualifier.Created;
@@ -301,6 +302,10 @@ public class DefaultObserver {
    
 	public void customFieldEndPeriodEvent(@Observes CFEndPeriodEvent event) {
 		log.debug("DefaultObserver.customFieldEndPeriodEvent : {}", event);
+	}
+	
+	public void knownMeveoInstance(@Observes InboundCommunicationEvent event) {
+		log.debug("DefaultObserver.knownMeveoInstance" + event);
 	}
    
 }

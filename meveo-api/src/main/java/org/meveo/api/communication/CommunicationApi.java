@@ -30,7 +30,7 @@ public class CommunicationApi extends BaseApi {
 		}
 		
 		MeveoInstance meveoInstance	 = meveoInstanceService.findByCode(communicationRequestDto.getMeveoInstanceCode());
-		if(meveoInstance != null){
+		if(meveoInstance != null) {
 			//if(meveoInstance.getStatus() == MeveoInstanceStatusEnum.UNKNOWN)
 			meveoInstanceService.fireInboundCommunicationEvent(communicationRequestDto);
 		}
