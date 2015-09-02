@@ -155,5 +155,21 @@ public class UserAccountApi extends AccountApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	/**
+	 * Create or update User Account entity based on code.
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(UserAccountDto postData, User currentUser) throws MeveoApiException {
+		
+		UserAccount userAccount = userAccountService.findByCode(postData.getCode(), currentUser.getProvider());
+		
+		if (userAccount == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

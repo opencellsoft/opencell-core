@@ -131,7 +131,10 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
+	
 	// price plan
 
 	@WebMethod
