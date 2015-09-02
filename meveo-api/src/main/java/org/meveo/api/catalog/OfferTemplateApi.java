@@ -147,5 +147,21 @@ public class OfferTemplateApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
+	
+	/**
+	 * Create or updates the OfferTemplate based on code
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
+		
+		if (offerTemplate == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 
 }

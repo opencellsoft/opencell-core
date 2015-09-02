@@ -124,7 +124,10 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	UserAccountsResponseDto listByBillingAccount(@WebParam(name = "billingAccountCode") String billingAccountCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateUserAccount(@WebParam(name = "userAccount") UserAccountDto postData);
+	
 	// access
 
 	@WebMethod
@@ -141,6 +144,9 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	AccessesResponseDto listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
+	
+	@WebMethod
+	ActionStatus createOrUpdateAccess(@WebParam(name = "access") AccessDto postData);
 
 	// account hierarchy
 
