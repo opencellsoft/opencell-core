@@ -67,5 +67,14 @@ public interface UserRs extends IBaseRs {
 	@GET
 	@Path("/")
 	public GetUserResponse find(@QueryParam("username") String username);
+	
+	/**
+	 * Create or update user based on the username
+	 * @param postData
+	 * @return
+	 */
+	@POST
+	@Path("/createOrUpdate")
+	public ActionStatus createOrUpdate(UserDto postData);
 
 }

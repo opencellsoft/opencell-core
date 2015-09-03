@@ -116,7 +116,6 @@ public class XMLInvoiceGenerationJobBean {
 	            }
 	            
 				updateBillingRun(billingRun.getId(), currentUser);
-				result.setDone(true);
 			} catch (Exception e) {
 	            log.error("Failed to generate XML invoices",e);
 	            result.registerError(e.getMessage());

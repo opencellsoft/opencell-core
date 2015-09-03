@@ -578,3 +578,6 @@ display : none;
 .ui-tabs-panels #layout-topbar{
 display : none;
 }
+ .ui-tabs-panels #admin-bar, .ui-tabs-panels .ui-menubar,.ui-tabs-panels .footer{
+display : none;
+}

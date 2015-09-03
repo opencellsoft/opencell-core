@@ -22,7 +22,7 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
 import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInterface;

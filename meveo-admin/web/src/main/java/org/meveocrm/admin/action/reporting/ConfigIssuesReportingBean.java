@@ -22,6 +22,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -33,6 +34,7 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.TabChangeEvent;
  
@@ -72,6 +74,9 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 		@SuppressWarnings("rawtypes")
         @Inject
 		private CounterTemplateService counterTemplateService;
+		
+		@Inject
+		private ScriptInstanceService scriptInstanceService;
 				
 		@Inject
 	    @CurrentProvider
@@ -90,6 +95,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 	    List<RecurringChargeTemplate> recurringNotAssociatedList = new ArrayList<RecurringChargeTemplate>();
 	    List<OneShotChargeTemplate> terminationNotAssociatedList=new ArrayList<OneShotChargeTemplate>();
 	    List<OneShotChargeTemplate> subNotAssociatedList=new ArrayList<OneShotChargeTemplate>();
+	    List<ScriptInstance> scriptInstanceWithErrorList = new ArrayList<ScriptInstance>();
 		
 		
 		
@@ -148,7 +154,9 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
      public void constructSubChrgNotAssociated(TabChangeEvent event){
     	 subNotAssociatedList= oneShotChargeTemplateService.getSubscriptionChrgNotAssociated(currentProvider);
      }
-     
+     public void constructScriptInstancesWithError(TabChangeEvent event){
+    	 scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError(currentProvider);
+     }     
   
 	       ConfigIssuesReportingDTO reportConfigDto;
 	       
@@ -202,6 +210,11 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 	        public Integer getNbrSubscriptionChrgNotAssociated(){
 				return oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated(currentProvider);
 			}
+	        
+	        public long getNbrScriptInstanceWithError(){
+				return scriptInstanceService.countScriptInstancesWithError(currentProvider);
+			}
+	   
 	   
 			public ConfigIssuesReportingDTO getReportConfigDto() {
 				return reportConfigDto;
@@ -245,6 +258,10 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 			}
 			public List<OneShotChargeTemplate> getSubNotAssociatedList() {
 				return subNotAssociatedList;
+			}
+			
+			public List<ScriptInstance> getScriptInstanceWithErrorList() {
+				return scriptInstanceWithErrorList;
 			}
 			
 			@Override

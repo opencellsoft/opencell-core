@@ -186,5 +186,13 @@ public class UserApi extends BaseApi {
 
 		return result;
 	}
-
+	
+	public void createOrUpdate(UserDto postData, User currentUser) throws MeveoApiException {
+		User user = userService.findByUsername(postData.getUsername());
+		if (user == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

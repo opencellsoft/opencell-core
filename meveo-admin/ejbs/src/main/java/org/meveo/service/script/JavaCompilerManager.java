@@ -24,103 +24,105 @@ import org.jboss.vfs.VirtualFile;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.ScriptInstance;
-import org.meveo.model.jobs.ScriptTypeEnum;
+import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstanceError;
+import org.meveo.model.scripts.ScriptTypeEnum;
 import org.slf4j.Logger;
 
-
 /**
- *  JavaCompilerManager executed on startup, find all java scriptsInstance from DB,
- *   and then compile and store classes in a map 
+ * JavaCompilerManager executed on startup, find all java scriptsInstance from
+ * DB, and then compile and store classes in a map
  * 
  */
 
 @Startup
 @Singleton
-public class JavaCompilerManager  {
+public class JavaCompilerManager {
 
-	private Map<String,Map<String, Class<ScriptInterface>>> allScriptInterfaces = new HashMap<String, Map<String, Class<ScriptInterface>>>();
+	private Map<String, Map<String, Class<ScriptInterface>>> allScriptInterfaces = new HashMap<String, Map<String, Class<ScriptInterface>>>();
 
 	@Inject
 	protected Logger log;
 
-	@Inject 
+	@Inject
 	private ScriptInstanceService scriptInstanceService;
 
-	private	 CharSequenceCompiler<ScriptInterface> compiler;
+	@Inject
+	private ScriptInstanceErrorService scriptInstanceErrorService;
+
+	private CharSequenceCompiler<ScriptInterface> compiler;
 
 	@PostConstruct
 	void compileAll() {
-		try {	
-				
-			String classpath="";
-			VirtualFile virtualLibDir = VFS.getChild("/content/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+".war/WEB-INF/lib");  			
-			if(!virtualLibDir.exists()){
+		try {
+			String classpath = "";
+			VirtualFile virtualLibDir = VFS.getChild("/content/" + ParamBean.getInstance().getProperty("meveo.moduleName", "meveo") + ".war/WEB-INF/lib");
+			if (!virtualLibDir.exists()) {
 				log.info("cannot find /content in VFS ");
 				VirtualFile virtualDeploymentDirs = VFS.getChild("deployment");
-				if(!virtualDeploymentDirs.exists() || virtualDeploymentDirs.getChildren().size()==0 ){
+				if (!virtualDeploymentDirs.exists() || virtualDeploymentDirs.getChildren().size() == 0) {
 					log.info("cannot find /deployment in VFS");
 				} else {
-					//get the last deployment dir
-					VirtualFile virtualDeploymentDir=null;
-					for(VirtualFile virtualDeployment:virtualDeploymentDirs.getChildren()){
-						if(virtualDeploymentDir==null){
+					// get the last deployment dir
+					VirtualFile virtualDeploymentDir = null;
+					for (VirtualFile virtualDeployment : virtualDeploymentDirs.getChildren()) {
+						if (virtualDeploymentDir == null) {
 							virtualDeploymentDir = virtualDeployment;
 						} else {
-							if(virtualDeployment.getLastModified()>virtualDeploymentDir.getLastModified()){
+							if (virtualDeployment.getLastModified() > virtualDeploymentDir.getLastModified()) {
 								virtualDeploymentDir = virtualDeployment;
 							}
 						}
 					}
 					File physicalLibDirs = virtualDeploymentDir.getPhysicalFile();
-					for(File physicalLibDir : physicalLibDirs.listFiles()){
-						if(physicalLibDir.isDirectory()){
-							for(File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")){
-								classpath+=f.getCanonicalPath()+File.pathSeparator;
+					for (File physicalLibDir : physicalLibDirs.listFiles()) {
+						if (physicalLibDir.isDirectory()) {
+							for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
+								classpath += f.getCanonicalPath() + File.pathSeparator;
 							}
 						}
 					}
 				}
 			} else {
 				File physicalLibDir = virtualLibDir.getPhysicalFile();
-				for(File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")){
-					classpath+=f.getCanonicalPath()+File.pathSeparator;
+				for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
+					classpath += f.getCanonicalPath() + File.pathSeparator;
 				}
 			}
-			if(classpath.length()==0){
+			if (classpath.length() == 0) {
 				String jbossHome = System.getProperty("jboss.home.dir");
-				File deploymentLibDirs = new File(jbossHome+"/standalone/tmp/vfs/deployment");
-				if(!deploymentLibDirs.exists()){
-					log.error("cannot find "+jbossHome+"/standalone/tmp/vfs/deployment .. are you deploying on jboss 7 ?");
+				File deploymentLibDirs = new File(jbossHome + "/standalone/tmp/vfs/deployment");
+				if (!deploymentLibDirs.exists()) {
+					log.error("cannot find " + jbossHome + "/standalone/tmp/vfs/deployment .. are you deploying on jboss 7 ?");
 					return;
 				} else {
-					File deploymentDir=null;
-					for(File deployment:deploymentLibDirs.listFiles()){
-						if(deploymentDir==null){
+					File deploymentDir = null;
+					for (File deployment : deploymentLibDirs.listFiles()) {
+						if (deploymentDir == null) {
 							deploymentDir = deployment;
 						} else {
-							if(deployment.lastModified()>deploymentDir.lastModified()){
+							if (deployment.lastModified() > deploymentDir.lastModified()) {
 								deploymentDir = deployment;
 							}
 						}
 					}
-					for(File physicalLibDir : deploymentDir.listFiles()){
-						if(physicalLibDir.isDirectory()){
-							for(File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")){
-								classpath+=f.getCanonicalPath()+File.pathSeparator;
+					for (File physicalLibDir : deploymentDir.listFiles()) {
+						if (physicalLibDir.isDirectory()) {
+							for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
+								classpath += f.getCanonicalPath() + File.pathSeparator;
 							}
 						}
 					}
-				} 
+				}
 			}
-			log.info("compileAll classpath={}",classpath);
-			compiler = new CharSequenceCompiler<ScriptInterface>(ScriptInterface.class.getClassLoader(), Arrays.asList(new String[] { "-cp",classpath}));	
+			log.info("compileAll classpath={}", classpath);
+			compiler = new CharSequenceCompiler<ScriptInterface>(ScriptInterface.class.getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
 			List<ScriptInstance> scriptInstances = scriptInstanceService.findByType(ScriptTypeEnum.JAVA);
-			for(ScriptInstance scriptInstance : scriptInstances){
+			for (ScriptInstance scriptInstance : scriptInstances) {
 				compileScript(scriptInstance);
 			}
 		} catch (Exception e) {
-			log.error("",e);
+			log.error("", e);
 		}
 	}
 
@@ -133,58 +135,75 @@ public class JavaCompilerManager  {
 		}
 	}
 
-	public void compileScript(ScriptInstance scriptInstance){
+	public void compileScript(ScriptInstance scriptInstance) {
 		try {
-			final String packageName = ParamBean.getInstance().getProperty("meveo.scripting.java.packageName", "org.meveo.service.script") ;
-			final String className = scriptInstance.getCode() ;
+			
+			scriptInstance.setError(false);
+			scriptInstanceService.removeErrors(scriptInstance);
+			scriptInstanceService.update(scriptInstance);
+			//scriptInstance.getScriptInstanceErrors().clear();
+			
+			final String packageName = ParamBean.getInstance().getProperty("meveo.scripting.java.packageName", "org.meveo.service.script");
+			final String className = scriptInstance.getCode();
 			final String qName = packageName + '.' + className;
-			final String codeSource =scriptInstance.getScript();
-			log.debug("codeSource to compile:"+codeSource);
+			final String codeSource = scriptInstance.getScript();
+			log.debug("codeSource to compile:" + codeSource);
 			final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
-			Class<ScriptInterface> compiledFunction = compiler.compile(qName, codeSource, errs,new Class<?>[] { ScriptInterface.class });
-			log.debug("set script provider:{} scriptCode:{}",scriptInstance.getProvider().getCode(),scriptInstance.getCode());
-			if(!allScriptInterfaces.containsKey(scriptInstance.getProvider().getCode())){
-				allScriptInterfaces.put(scriptInstance.getProvider().getCode(),new HashMap<String,Class<ScriptInterface>>());
-				log.debug("create Map for {}",scriptInstance.getProvider().getCode());
+			Class<ScriptInterface> compiledScript = compiler.compile(qName, codeSource, errs, new Class<?>[] { ScriptInterface.class });
+			log.debug("set script provider:{} scriptCode:{}", scriptInstance.getProvider().getCode(), scriptInstance.getCode());
+			if (!allScriptInterfaces.containsKey(scriptInstance.getProvider().getCode())) {
+				allScriptInterfaces.put(scriptInstance.getProvider().getCode(), new HashMap<String, Class<ScriptInterface>>());
+				log.debug("create Map for {}", scriptInstance.getProvider().getCode());
 			}
-			Map<String,Class<ScriptInterface>> providerScriptInterfaces = allScriptInterfaces.get(scriptInstance.getProvider().getCode());
-			providerScriptInterfaces.put(scriptInstance.getCode(),compiledFunction);
-			log.debug("add script to Map -> new size {}",providerScriptInterfaces.size());
-
+			Map<String, Class<ScriptInterface>> providerScriptInterfaces = allScriptInterfaces.get(scriptInstance.getProvider().getCode());
+			providerScriptInterfaces.put(scriptInstance.getCode(), compiledScript);
+			log.debug("add script to Map -> new size {}", providerScriptInterfaces.size());
+			
 		} catch (CharSequenceCompilerException e) {
-			e.printStackTrace();
-			List<Diagnostic<? extends JavaFileObject>> list = e.getDiagnostics().getDiagnostics();
-			for(Diagnostic<? extends JavaFileObject> a :list){
-				log.warn(a.getKind().name());
-				log.warn(a.getMessage(Locale.getDefault()));
-				log.warn("line:"+a.getLineNumber());
-				log.warn("column"+a.getColumnNumber()); 
-				log.warn("source:"+a.getSource());
-				log.warn("code:"+a.getCode());
+			log.error("Compilation error...");
+
+			List<Diagnostic<? extends JavaFileObject>> diagnosticList = e.getDiagnostics().getDiagnostics();
+
+			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticList) {
+				if ("ERROR".equals(diagnostic.getKind().name())) {
+					ScriptInstanceError scriptInstanceError = new ScriptInstanceError();
+					scriptInstanceError.setMessage(diagnostic.getMessage(Locale.getDefault()));
+					scriptInstanceError.setLineNumber(diagnostic.getLineNumber());
+					scriptInstanceError.setColumnNumber(diagnostic.getColumnNumber());
+					scriptInstanceError.setSourceFile(diagnostic.getSource().toString());
+					scriptInstanceError.setScriptInstance(scriptInstance);
+					scriptInstance.getScriptInstanceErrors().add(scriptInstanceError);
+					scriptInstanceErrorService.create(scriptInstanceError, scriptInstance.getAuditable().getCreator(), scriptInstance.getProvider());
+					log.warn(diagnostic.getKind().name());
+					log.warn(diagnostic.getMessage(Locale.getDefault()));
+					log.warn("line:" + diagnostic.getLineNumber());
+					log.warn("column" + diagnostic.getColumnNumber());
+				}
 			}
+			scriptInstance.setError(true);
+			scriptInstanceService.update(scriptInstance);
+
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("",e);
-		} 
+			log.error("", e);
+		}
 	}
 
 	public Class<ScriptInterface> getScriptInterface(Provider provider, String scriptCode) {
 		Class<ScriptInterface> result = null;
-		if(allScriptInterfaces.containsKey(provider.getCode())){
-			result=allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+		if (allScriptInterfaces.containsKey(provider.getCode())) {
+			result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
 		}
-		if(result==null){
+		if (result == null) {
 			ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptCode, provider);
-			if(scriptInstance!=null){
+			if (scriptInstance != null) {
 				compileScript(scriptInstance);
-				if(allScriptInterfaces.containsKey(provider.getCode())){
-					result=allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+				if (allScriptInterfaces.containsKey(provider.getCode())) {
+					result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
 				}
 			}
 		}
-		log.debug("getScriptInterface provider:{} scriptCode:{} -> {}",provider.getCode(),scriptCode,result);
+		log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
 		return result;
 	}
 
-	
 }

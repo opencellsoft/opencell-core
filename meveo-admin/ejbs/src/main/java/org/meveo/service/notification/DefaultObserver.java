@@ -18,6 +18,7 @@ import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
+import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
 import org.meveo.event.qualifier.Created;
@@ -38,7 +39,6 @@ import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
@@ -48,6 +48,7 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
@@ -115,7 +116,7 @@ public class DefaultObserver {
     }
 
     private void executeScript(ScriptInstance scriptInstance, Object o, Map<String, String> params) throws BusinessException {
-        log.debug("execute notification script: {}", scriptInstance.getScript());
+        log.debug("execute notification script: {}", scriptInstance.getCode());
         Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
         try{
         	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
@@ -301,6 +302,10 @@ public class DefaultObserver {
    
 	public void customFieldEndPeriodEvent(@Observes CFEndPeriodEvent event) {
 		log.debug("DefaultObserver.customFieldEndPeriodEvent : {}", event);
+	}
+	
+	public void knownMeveoInstance(@Observes InboundCommunicationEvent event) {
+		log.debug("DefaultObserver.knownMeveoInstance" + event);
 	}
    
 }

@@ -31,12 +31,14 @@
 		<hftl:entityPopup id="pricPlanMatChargePopup"
 			header="#{messages['charge.popup.header']}"
 			backingBean="#{chargeTemplateBean}"
+			selection="#{chargeTemplateBean.entity}"
 			searchField1Label="#{messages['charge.code']}" searchField1="code"
 			column1Label="#{messages['charge.description']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
-			updateField=":formPricePlanPanel:formPricePlan:chargeSelectId">
-			<!-- 			selection="#{chargeTemplateBean.entity}" -->
+			updateField=":formPricePlanPanel:formPricePlan:chargeSelectId,:formPricePlanPanel:formPricePlan:pricePlanCode">
+			
+			
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="pricPlanMatCurrencyPopup"
@@ -91,10 +93,10 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel id="formPricePlanPanel" showBackButton="#{!pricePlanMatrixBean.isPricePlanCharge}"
+		<hf:formPanel id="formPricePlanPanel" showBackButton="#{pricePlanMatrixBean.chargeTemplateId==0}"
 			label="#{messages['pricePlanMatrix.panel']}"
 			backingBean="#{pricePlanMatrixBean}" formId="formPricePlan">
-                <hf:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" />
+                <hf:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" id="pricePlanCode" />
                 <hf:formField id="chargeSelectId" required="true"
 					label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode"
 					popup="true" popupId="pricPlanMatChargePopup" disabled="true" />
@@ -164,9 +166,9 @@
 					label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
 					field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />	
 			</hf:formPanel>
-			<p:outputPanel layout="block" >
-               <p:commandButton id="backButton" value="#{messages['action.back']}" style="padding-top: 0.2em;clear: both;left: 214px;top: -69px;"
-				rendered="#{pricePlanMatrixBean.isPricePlanCharge}"
+			<p:outputPanel layout="block" rendered="#{pricePlanMatrixBean.chargeTemplateId!=0}">
+               <p:commandButton id="backButton" value="#{messages['action.back']}" style="left: 35px;"
+				rendered="#{pricePlanMatrixBean.chargeTemplateId!=null}"
 				action="#{pricePlanMatrixBean.getBackCharge()}" />
 			</p:outputPanel>
 			
