@@ -51,11 +51,13 @@ public class JavaCompilerManager {
 	private ScriptInstanceErrorService scriptInstanceErrorService;
 
 	private CharSequenceCompiler<ScriptInterface> compiler;
+	
+	private String classpath = "";
 
 	@PostConstruct
 	void compileAll() {
 		try {
-			String classpath = "";
+			
 			VirtualFile virtualLibDir = VFS.getChild("/content/" + ParamBean.getInstance().getProperty("meveo.moduleName", "meveo") + ".war/WEB-INF/lib");
 			if (!virtualLibDir.exists()) {
 				log.info("cannot find /content in VFS ");
@@ -116,7 +118,6 @@ public class JavaCompilerManager {
 				}
 			}
 			log.info("compileAll classpath={}", classpath);
-			compiler = new CharSequenceCompiler<ScriptInterface>(ScriptInterface.class.getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
 			List<ScriptInstance> scriptInstances = scriptInstanceService.findByType(ScriptTypeEnum.JAVA);
 			for (ScriptInstance scriptInstance : scriptInstances) {
 				compileScript(scriptInstance);
@@ -137,12 +138,10 @@ public class JavaCompilerManager {
 
 	public void compileScript(ScriptInstance scriptInstance) {
 		try {
-			
+			compiler = new CharSequenceCompiler<ScriptInterface>(ScriptInterface.class.getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
 			scriptInstance.setError(false);
 			scriptInstanceService.removeErrors(scriptInstance);
 			scriptInstanceService.update(scriptInstance);
-			//scriptInstance.getScriptInstanceErrors().clear();
-			
 			final String packageName = ParamBean.getInstance().getProperty("meveo.scripting.java.packageName", "org.meveo.service.script");
 			final String className = scriptInstance.getCode();
 			final String qName = packageName + '.' + className;

@@ -731,7 +731,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			}
 		}
 		
-		if (filters.containsKey("$FILTER")) {
+		if (filters!=null && filters.containsKey("$FILTER")) {
 			Filter filter = (Filter) filters.get("$FILTER");
 			queryBuilder.addPaginationConfiguration(config, filter.getPrimarySelector().getAlias());
 		} else {

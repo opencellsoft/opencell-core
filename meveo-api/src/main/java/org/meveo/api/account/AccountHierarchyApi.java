@@ -2619,5 +2619,18 @@ public class AccountHierarchyApi extends BaseApi {
 		cfAccountParent.setStringValue(parentCode);
 		accountDto.getCustomFields().getCustomField().add(cfAccountParent);
 	}
-
+	
+	/**
+	 * Create or update Account Hierarchy based on code.
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(AccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+		if (customerService.findByCode(postData.getCustomerId(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }
