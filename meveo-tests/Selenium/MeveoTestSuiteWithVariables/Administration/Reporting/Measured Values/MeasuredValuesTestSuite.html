@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<!--
+
+Description Test Case 1: 
+Actions : Choose a Measurable quantity Code then click on the choosen value.
+Expected Results : A list of empty Measurement period, Date, Dimension1, Dimension2, Dimension3 and Dimension4 are chowed.
+
+Description Test Case 2: 
+Actions : Click on the Measurement period and choose a "Daily" period.
+Expected Results : A button of Display Table is showen.
+
+Description Test Case 3: 
+Actions : Let the required field "Date" not filled and click on "Display Table"
+Expected Results : A Measured Values can not be showen, an alert appears to mention that "Date" is required to show the Measured Value.
+
+Description Test Case 4: 
+Actions : Fill the required field (Date) then click on "Display Table".
+Expected Results : A table of Measured Values displayed with items "Date and Value".
+
+Description Test Case 5:
+Actions : Click on the Measurement period and choose a "Weekly" period then click on "Display Table".
+Expected Results : A table of Measured Values displayed with items "Date and Value".
+
+Description Test Case 6: 
+Actions : Click on the Measurement period and choose a "Monthly" period then click on "Display Table".
+Expected Results : A table of Measured Values displayed with items "Date and Value".
+
+Description Test Case 7: 
+Actions : Click on the Measurement period and choose a "Yearly" period then click on "Display Table".
+Expected Results : A table of Measured Values displayed with items "Date and Value".
+
+Description Test Case 8: 
+Actions : click on the link "Export Table".
+Expected Results : The table is exported on an CSV file.
+
+-->
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="variables.html">variables</a></td></tr>
+<tr><td><a href="ChooseMeasurableQuantiteCodeTestCase.html">ChooseMeasurableQuantiteCodeTestCase</a></td></tr>
+<tr><td><a href="MeasurementPeriodDailyTestCase.html">MeasurementPeriodDailyTestCase</a></td></tr>
+<tr><td><a href="DisplayTableWithoutChooseDateTestCase.html">DisplayTableWithoutChooseDateTestCase</a></td></tr>
+<tr><td><a href="ChooseDateTestCase.html">ChooseDateTestCase</a></td></tr>
+<tr><td><a href="MeasurementPeriodWeeklyTestCase.html">MeasurementPeriodWeeklyTestCase</a></td></tr>
+<tr><td><a href="MeasurementPeriodMonthlyTestCase.html">MeasurementPeriodMonthlyTestCase</a></td></tr>
+<tr><td><a href="MeasurementPeriodYearlyTestCase.html">MeasurementPeriodYearlyTestCase</a></td></tr>
+<tr><td><a href="ExportTableTestCase.html">ExportTableTestCase</a></td></tr>
+<tr><td><a href="LogoutTestCase.html">LogoutTestCase</a></td></tr>
+</tbody></table>
+</body>
+</html>

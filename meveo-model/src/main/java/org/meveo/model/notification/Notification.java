@@ -26,7 +26,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.jobs.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.validation.constraint.ClassName;
 
 @Entity

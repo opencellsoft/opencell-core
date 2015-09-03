@@ -1457,5 +1457,52 @@
             <column name="SEQUENCE" type="BIGINT"/>            
         </addColumn>    
     	</changeSet>
-    
+
+	<changeSet id="#1028_20150902" author="anasseh">
+		<createTable tableName="MEVEO_SCRIPT_INSTANCE_ERROR">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+				</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="message" type="VARCHAR(255)" />
+			<column name="line_number" type="BIGINT" />
+			<column name="column_number" type="BIGINT" />
+			<column name="source_file" type="VARCHAR(255)" />
+			<column name="script_instance_id" type="BIGINT" />			
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+		</createTable>
+		<addPrimaryKey columnNames="id" constraintName="MEVEO_SCRIPT_INSTANCE_ERROR_pkey"
+			tableName="MEVEO_SCRIPT_INSTANCE_ERROR" />
+		<addUniqueConstraint columnNames="id"
+			tableName="MEVEO_SCRIPT_INSTANCE_ERROR" />
+		<addForeignKeyConstraint constraintName="fk_creator_MEVEO_SCRIPT_INSTANCE_ERROR"
+			referencedTableName="adm_user" baseColumnNames="creator_id"
+			baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_updater_MEVEO_SCRIPT_INSTANCE_ERROR"
+			referencedTableName="adm_user" baseColumnNames="updater_id"
+			baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_script-instance_MEVEO_SCRIPT_INSTANCE_ERROR"
+			referencedTableName="MEVEO_SCRIPT_INSTANCE" baseColumnNames="script_instance_id"
+			baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" referencedColumnNames="id" />			
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" constraintName="fk_provider_MEVEO_SCRIPT_INSTANCE_ERROR"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<createSequence sequenceName="MEVEO_SCRIPT_INSTANCE_ERROR_SEQ"
+			startValue="1" />
+	</changeSet>
+    <changeSet id="#1028_20150902-2" author="anasseh">
+            <addColumn tableName="MEVEO_SCRIPT_INSTANCE">
+           			 <column name="IS_ERROR" type="BOOL"/>            
+        	</addColumn>  
+    </changeSet>
 </databaseChangeLog>

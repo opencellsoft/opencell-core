@@ -20,17 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.ScriptInstance;
-import org.meveo.model.jobs.ScriptTypeEnum;
+import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstanceError;
+import org.meveo.model.scripts.ScriptTypeEnum;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 
+	@Inject
+	ScriptInstanceErrorService scriptInstanceErrorService;
 
 	@SuppressWarnings("unchecked")
 	public List<ScriptInstance> findByType(ScriptTypeEnum type) {
@@ -53,6 +58,26 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+
+	public void removeErrors(ScriptInstance scriptInstance) {
+	 getEntityManager().createQuery("delete from ScriptInstanceError o where o.scriptInstance=:scriptInstance")
+				.setParameter("scriptInstance", scriptInstance)
+				.executeUpdate();
+	}
+
+	public List<ScriptInstance> getScriptInstancesWithError(Provider provider) {
+		return ((List<ScriptInstance>) getEntityManager().createNamedQuery("ScriptInstance.getScriptInstanceOnError", ScriptInstance.class)
+				.setParameter("isError", Boolean.TRUE)
+				.setParameter("provider", provider)
+				.getResultList());
+	}
+
+	public long countScriptInstancesWithError(Provider provider) {
+		return ((Long) getEntityManager().createNamedQuery("ScriptInstance.countScriptInstanceOnError", Long.class)
+				.setParameter("isError", Boolean.TRUE)
+				.setParameter("provider", provider)
+				.getSingleResult());
 	}
 
 }

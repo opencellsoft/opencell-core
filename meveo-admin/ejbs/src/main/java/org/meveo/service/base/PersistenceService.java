@@ -730,7 +730,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 				}
 			}
 		}
-		queryBuilder.addPaginationConfiguration(config, "a");
+		
+		if (filters.containsKey("$FILTER")) {
+			Filter filter = (Filter) filters.get("$FILTER");
+			queryBuilder.addPaginationConfiguration(config, filter.getPrimarySelector().getAlias());
+		} else {
+			queryBuilder.addPaginationConfiguration(config, "a");
+		}
 
 		return queryBuilder;
 	}

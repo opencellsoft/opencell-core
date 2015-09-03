@@ -14,12 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.model.jobs;
+package org.meveo.model.scripts;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -32,6 +39,13 @@ import org.meveo.model.ExportIdentifier;
 @ExportIdentifier({ "code" })
 @Table(name = "MEVEO_SCRIPT_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_SCRIPT_INSTANCE_SEQ")
+@NamedQueries({			
+@NamedQuery(name = "ScriptInstance.countScriptInstanceOnError", 
+	           query = "select count (*) from ScriptInstance o where o.error=:isError and o.provider=:provider"),
+	           
+@NamedQuery(name = "ScriptInstance.getScriptInstanceOnError", 
+	           query = "from ScriptInstance o where o.error=:isError and o.provider=:provider")
+	})
 public class ScriptInstance extends BusinessEntity  {
 
 	private static final long serialVersionUID = -5517252645289726288L;
@@ -42,8 +56,15 @@ public class ScriptInstance extends BusinessEntity  {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "SRC_TYPE")
-	ScriptTypeEnum scriptTypeEnum;
+	ScriptTypeEnum scriptTypeEnum = ScriptTypeEnum.JAVA;
+	
+	@OneToMany(mappedBy = "scriptInstance", orphanRemoval=true,fetch = FetchType.EAGER)
+	private List<ScriptInstanceError> scriptInstanceErrors = new ArrayList<ScriptInstanceError>();
 
+	
+	@Column(name = "IS_ERROR")
+	private Boolean error = true;
+	
 	public ScriptInstance(){
 
 	}
@@ -79,6 +100,34 @@ public class ScriptInstance extends BusinessEntity  {
 	 */
 	public void setScript(String script) {
 		this.script = script;
+	}
+
+	/**
+	 * @return the scriptInstanceErrors
+	 */
+	public List<ScriptInstanceError> getScriptInstanceErrors() {
+		return scriptInstanceErrors;
+	}
+
+	/**
+	 * @param scriptInstanceErrors the scriptInstanceErrors to set
+	 */
+	public void setScriptInstanceErrors(List<ScriptInstanceError> scriptInstanceErrors) {
+		this.scriptInstanceErrors = scriptInstanceErrors;
+	}
+
+	/**
+	 * @return the error
+	 */
+	public Boolean getError() {
+		return error;
+	}
+
+	/**
+	 * @param error the error to set
+	 */
+	public void setError(Boolean error) {
+		this.error = error;
 	}
 
 
