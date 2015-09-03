@@ -135,6 +135,9 @@ public class FilteredQueryBuilder extends QueryBuilder {
 	}
 
 	public void processOrderCondition(OrderCondition orderCondition, String alias) {
+		if (orderCondition == null)
+			return;
+
 		StringBuffer sb = new StringBuffer();
 		for (String field : orderCondition.getFieldNames()) {
 			if (field.indexOf(".") == -1) {
