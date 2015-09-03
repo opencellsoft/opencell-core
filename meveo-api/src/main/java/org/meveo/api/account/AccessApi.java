@@ -188,4 +188,28 @@ public class AccessApi extends BaseApi {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
     }
+    
+    /**
+     * 
+     * Create or update access based on the access user id and its subscription
+     * 
+     * @param postData
+     * @param currentUser
+     * @throws MeveoApiException
+     */
+    public void createOrUpdate(AccessDto postData, User currentUser) throws MeveoApiException {
+    	
+    	Subscription subscription = subscriptionService.findByCode(postData.getSubscription(), currentUser.getProvider());
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+        }
+    	
+    	Access access = accessService.findByUserIdAndSubscription(postData.getCode(), subscription);
+    			
+    	if (access == null) {
+    		create(postData, currentUser);
+    	} else {
+    		update(postData, currentUser);
+    	}
+    }
 }

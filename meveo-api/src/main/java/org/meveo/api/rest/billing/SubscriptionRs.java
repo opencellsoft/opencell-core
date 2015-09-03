@@ -71,5 +71,8 @@ public interface SubscriptionRs extends IBaseRs {
 	@GET
 	@Path("/")
 	GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode);
-
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(SubscriptionDto postData);
 }

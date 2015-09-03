@@ -618,5 +618,18 @@ public class SubscriptionApi extends BaseApi {
 
 		return result;
 	}
-
+	
+	/**
+	 * Create or update Subscription based on subscription code
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(SubscriptionDto postData, User currentUser) throws MeveoApiException {
+		if (subscriptionService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

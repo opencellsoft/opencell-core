@@ -60,5 +60,9 @@ public interface AccessRs extends IBaseRs {
 	@GET
 	@Path("/list")
 	AccessesResponseDto listBySubscription(@QueryParam("subscriptionCode") String subscriptionCode);
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(AccessDto postData);
 
 }
