@@ -892,7 +892,7 @@
 	  
 		<p:dialog id="accessDialog" widgetVar="accessWidget" dynamic="true"
 			width="900" modal="false" >
-				<hf:formPanel id="formPanel" backingBean="#{accessBean}"
+				<hf:formPanel id="formPanelAccess" backingBean="#{accessBean}"
 					showFormButtons="false" label="#{messages['access.accessPanel']}">
 
 					<p:tabView id="accessTabView">
@@ -906,11 +906,11 @@
 						</p:tab>
 
 						<p:tab title="#{messages['customFieldTemplate.cfValues']}">
-                            <hf:customFields id="customFields" edit="true" backingBean="#{accessBean}" messagesId=":formPanel:formId:messages"/>                            
+                            <hf:customFields id="customFields" edit="true" backingBean="#{accessBean}" messagesId=":formPanelAccess:formId:messages"/>                            
 						</p:tab>
 					</p:tabView>
 					<f:facet name="buttons">
-                    <p:commandButton id="saveButton" value="#{messages['action.save']}" ajaxSubmit="true" submitPartialProcess=":formPanel:formId:accessTabView"
+                    <p:commandButton id="saveButton" value="#{messages['action.save']}" ajaxSubmit="true" submitPartialProcess=":formPanelAccess:formId:accessTabView"
                         update=":hierarchyGroup,:#{p:component('medinaAccessPanel')},:#{p:component('medinaAccessMessage')}" icon="ui-icon-check"
                         action="#{accessBean.saveOrUpdate()}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('accessWidget').hide()">
                         <f:param name="subscriptionId" value="#{subscriptionBean.entity.id}"></f:param>
