@@ -2,11 +2,15 @@ package org.meveo.admin.action.filter;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.DiscriminatorValue;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.Auditable;
@@ -35,6 +39,9 @@ public class FilterBean extends BaseBean<Filter> {
 	@Inject
 	private FilterSelectorService filterSelectorService;
 
+	@Inject
+	private Validator validator;
+
 	public FilterBean() {
 		super(Filter.class);
 	}
@@ -51,6 +58,13 @@ public class FilterBean extends BaseBean<Filter> {
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
 		auditable.setCreator(getCurrentUser());
+
+		Set<ConstraintViolation<Filter>> violations = validator.validate(filter);
+
+		if (!violations.isEmpty()) {
+			messages.error(new BundleKey("messages", "message.filter.invalidXml"));
+			return "";
+		}
 
 		if (filter.getOrderCondition() != null) {
 			filter.getOrderCondition().setProvider(getCurrentProvider());
