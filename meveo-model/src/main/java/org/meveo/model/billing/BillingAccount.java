@@ -42,13 +42,18 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentTermEnum;
 
 @Entity
+@CustomFieldEntity(accountLevel = AccountLevelEnum.BA)
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_BILLING_ACCOUNT")
 @DiscriminatorValue(value = "ACCT_BA")
@@ -395,4 +400,8 @@ public class BillingAccount extends AccountEntity {
 		this.counters = counters;
 	}
 
+    @Override
+    public ICustomFieldEntity getParentCFEntity() {
+        return customerAccount;
+	}
 }

@@ -17,7 +17,6 @@
 package org.meveo.model;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,12 +40,9 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.listeners.AccountCodeGenerationListener;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 
@@ -57,7 +53,7 @@ import org.meveo.model.shared.Name;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "ACCOUNT_TYPE") // Hibernate does not support of discriminator column with Joined strategy, so need to set it manually
 @EntityListeners({ AccountCodeGenerationListener.class })
-public abstract class AccountEntity extends BusinessEntity implements ICustomFieldEntity {
+public abstract class AccountEntity extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -167,80 +163,6 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 		this.customFields = customFields;
 	}
 
-	private CustomFieldInstance getOrCreateCustomFieldInstance(String code) {
-		CustomFieldInstance cfi = null;
-
-		if (customFields.containsKey(code)) {
-			cfi = customFields.get(code);
-		} else {
-			cfi = new CustomFieldInstance();
-			Auditable au = new Auditable();
-			au.setCreated(new Date());
-			if (this.getAuditable() != null) {
-				au.setCreator(this.getAuditable().getCreator());
-			}
-			cfi.setAuditable(au);
-			cfi.setCode(code);
-			cfi.setAccount(this);
-			cfi.setProvider(this.getProvider());
-			customFields.put(code, cfi);
-		}
-
-		return cfi;
-	}
-
-	public String getStringCustomValue(String code) {
-		String result = null;
-		if (customFields.containsKey(code)) {
-			result = customFields.get(code).getStringValue();
-		}
-
-		return result;
-	}
-
-	public void setStringCustomValue(String code, String value) {
-		getOrCreateCustomFieldInstance(code).setStringValue(value);
-	}
-
-	public Date getDateCustomValue(String code) {
-		Date result = null;
-		if (customFields.containsKey(code)) {
-			result = customFields.get(code).getDateValue();
-		}
-
-		return result;
-	}
-
-	public void setDateCustomValue(String code, Date value) {
-		getOrCreateCustomFieldInstance(code).setDateValue(value);
-	}
-
-	public Long getLongCustomValue(String code) {
-		Long result = null;
-		if (customFields.containsKey(code)) {
-			result = customFields.get(code).getLongValue();
-		}
-		return result;
-	}
-
-	public void setLongCustomValue(String code, Long value) {
-		getOrCreateCustomFieldInstance(code).setLongValue(value);
-	}
-
-	public Double getDoubleCustomValue(String code) {
-		Double result = null;
-
-		if (customFields.containsKey(code)) {
-			result = customFields.get(code).getDoubleValue();
-		}
-
-		return result;
-	}
-
-	public void setDoubleCustomValue(String code, Double value) {
-		getOrCreateCustomFieldInstance(code).setDoubleValue(value);
-	}
-
 	public String getCustomFieldsAsJson() {
 		String result = "";
 		String sep = "";
@@ -252,121 +174,8 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
 
 		return result;
 	}
+	
 
-	public String getInheritedCustomStringValue(String code) {
-		String result = null;
-		if (getCustomFields().containsKey(code) && getCustomFields().get(code).getStringValue() != null) {
-			result = getCustomFields().get(code).getStringValue();
-		} else {
-			if (this instanceof CustomerAccount) {
-				CustomerAccount customerAccount = (CustomerAccount) this;
-				if (customerAccount.getCustomer() != null) {
-					result = ((CustomerAccount) this).getCustomer().getInheritedCustomStringValue(code);
-				}
-			} else if (this instanceof BillingAccount) {
-				BillingAccount billingAccount = (BillingAccount) this;
-				if (billingAccount.getCustomerAccount() != null) {
-					result = ((BillingAccount) this).getCustomerAccount().getInheritedCustomStringValue(code);
-				}
-			} else if (this instanceof UserAccount) {
-				UserAccount userAccount = (UserAccount) this;
-				if (userAccount.getBillingAccount() != null) {
-					result = ((UserAccount) this).getBillingAccount().getInheritedCustomStringValue(code);
-				}
-			}
-		}
-		return result;
-	}
-
-	public Long getInheritedCustomLongValue(String code) {
-		Long result = null;
-		if (getCustomFields().containsKey(code) && getCustomFields().get(code).getLongValue() != null) {
-			result = getCustomFields().get(code).getLongValue();
-		} else {
-			if (this instanceof CustomerAccount) {
-				CustomerAccount customerAccount = (CustomerAccount) this;
-				if (customerAccount.getCustomer() != null) {
-					result = ((CustomerAccount) this).getCustomer().getInheritedCustomLongValue(code);
-				}
-			} else if (this instanceof BillingAccount) {
-				BillingAccount billigAccount = (BillingAccount) this;
-				if (billigAccount.getCustomerAccount() != null) {
-					result = ((BillingAccount) this).getCustomerAccount().getInheritedCustomLongValue(code);
-				}
-			} else if (this instanceof UserAccount) {
-				UserAccount userAccount = (UserAccount) this;
-				if (userAccount.getBillingAccount() != null) {
-					result = ((UserAccount) this).getBillingAccount().getInheritedCustomLongValue(code);
-				}
-			}
-		}
-		return result;
-	}
-
-	public Date getInheritedCustomDateValue(String code) {
-		Date result = null;
-		if (getCustomFields().containsKey(code) && getCustomFields().get(code).getDateValue() != null) {
-			result = getCustomFields().get(code).getDateValue();
-		} else {
-			if (this instanceof CustomerAccount) {
-				CustomerAccount customerAccount = (CustomerAccount) this;
-				if (customerAccount.getCustomer() != null) {
-					result = ((CustomerAccount) this).getCustomer().getInheritedCustomDateValue(code);
-				}
-			} else if (this instanceof BillingAccount) {
-				BillingAccount billigAccount = (BillingAccount) this;
-				if (billigAccount.getCustomerAccount() != null) {
-					result = ((BillingAccount) this).getCustomerAccount().getInheritedCustomDateValue(code);
-				}
-			} else if (this instanceof UserAccount) {
-				UserAccount userAccount = (UserAccount) this;
-				if (userAccount.getBillingAccount() != null) {
-					result = ((UserAccount) this).getBillingAccount().getInheritedCustomDateValue(code);
-				}
-			}
-		}
-		return result;
-	}
-
-	public Double getInheritedCustomDoubleValue(String code) {
-		Double result = null;
-		if (getCustomFields().containsKey(code) && getCustomFields().get(code).getDoubleValue() != null) {
-			result = getCustomFields().get(code).getDoubleValue();
-			if (this instanceof CustomerAccount) {
-				CustomerAccount customerAccount = (CustomerAccount) this;
-				if (customerAccount.getCustomer() != null) {
-					result = ((CustomerAccount) this).getCustomer().getInheritedCustomDoubleValue(code);
-				}
-			} else if (this instanceof BillingAccount) {
-				BillingAccount billigAccount = (BillingAccount) this;
-				if (billigAccount.getCustomerAccount() != null) {
-					result = ((BillingAccount) this).getCustomerAccount().getInheritedCustomDoubleValue(code);
-				}
-			} else if (this instanceof UserAccount) {
-				UserAccount userAccount = (UserAccount) this;
-				if (userAccount.getBillingAccount() != null) {
-					result = ((UserAccount) this).getBillingAccount().getInheritedCustomDoubleValue(code);
-				}
-			}
-		}
-		return result;
-	}
-
-	public String getICsv(String code) {
-		return getInheritedCustomStringValue(code);
-	}
-
-	public Long getIClv(String code) {
-		return getInheritedCustomLongValue(code);
-	}
-
-	public Date getICdav(String code) {
-		return getInheritedCustomDateValue(code);
-	}
-
-	public Double getICdov(String code) {
-		return getInheritedCustomDoubleValue(code);
-	}
 
     @Override
     public String toString() {
@@ -386,6 +195,4 @@ public abstract class AccountEntity extends BusinessEntity implements ICustomFie
         builder.append("]");
         return builder.toString();
     }
-
-	
 }

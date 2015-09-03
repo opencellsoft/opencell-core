@@ -54,7 +54,7 @@ public class NotificationCacheContainerProvider {
 
             populateNotificationCache();
 
-            log.debug("NotificationCacheContainerProvider initialized");
+            log.info("NotificationCacheContainerProvider initialized");
 
         } catch (Exception e) {
             log.error("NotificationCacheContainerProvider init() error", e);
@@ -65,14 +65,14 @@ public class NotificationCacheContainerProvider {
      * Populate notification cache
      */
     private void populateNotificationCache() {
-        log.info("Start to populate notification cache");
+        log.debug("Start to populate notification cache");
 
         eventNotificationCache.clear();
         List<Notification> activeNotifications = notificationService.getNotificationsForCache();
         for (Notification notif : activeNotifications) {
             addNotificationToCache(notif);
         }
-        log.debug("Notification cache populated with {} notifications", activeNotifications.size());
+        log.info("Notification cache populated with {} notifications", activeNotifications.size());
     }
 
     /**
@@ -91,7 +91,7 @@ public class NotificationCacheContainerProvider {
             if (!eventNotificationCache.get(cacheKey).containsKey(c)) {
                 eventNotificationCache.get(cacheKey).put(c, new ArrayList<Notification>());
             }
-            log.info("Add notification {} to notification cache", notif);
+            log.trace("Add notification {} to notification cache", notif);
             eventNotificationCache.get(cacheKey).get(c).add(notif);
 
         } catch (ClassNotFoundException e) {
@@ -110,7 +110,7 @@ public class NotificationCacheContainerProvider {
         if (eventNotificationCache.containsKey(cacheKey)) {
             for (Class<BusinessEntity> c : eventNotificationCache.get(cacheKey).keySet()) {
                 eventNotificationCache.get(cacheKey).get(c).remove(notif);
-                log.info("Remove notification {} from notification cache", notif);
+                log.trace("Remove notification {} from notification cache", notif);
             }
         }
     }

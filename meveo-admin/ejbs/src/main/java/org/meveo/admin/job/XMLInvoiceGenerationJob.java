@@ -1,7 +1,7 @@
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
@@ -51,8 +51,8 @@ public class XMLInvoiceGenerationJob extends Job {
 	}
 
 	@Override
-	public List<CustomFieldTemplate> getCustomFields() {
-		List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+	public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
 		CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
 		customFieldNbRuns.setCode("XMLInvoiceGenerationJob_nbRuns");
@@ -62,7 +62,7 @@ public class XMLInvoiceGenerationJob extends Job {
 		customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
 		customFieldNbRuns.setValueRequired(false);
 		customFieldNbRuns.setDefaultValue("1");
-		result.add(customFieldNbRuns);
+		result.put("XMLInvoiceGenerationJob_nbRuns", customFieldNbRuns);
 
 		CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
 		customFieldNbWaiting.setCode("XMLInvoiceGenerationJob_waitingMillis");
@@ -72,7 +72,7 @@ public class XMLInvoiceGenerationJob extends Job {
 		customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
 		customFieldNbWaiting.setValueRequired(false);
 		customFieldNbWaiting.setDefaultValue("0");
-		result.add(customFieldNbWaiting);
+		result.put("XMLInvoiceGenerationJob_waitingMillis", customFieldNbWaiting);
 
 		return result;
 	}

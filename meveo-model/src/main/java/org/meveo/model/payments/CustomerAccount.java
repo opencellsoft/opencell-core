@@ -36,10 +36,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.shared.ContactInformation;
 
@@ -47,6 +51,7 @@ import org.meveo.model.shared.ContactInformation;
  * Customer Account entity.
  */
 @Entity
+@CustomFieldEntity(accountLevel=AccountLevelEnum.CA)
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "AR_CUSTOMER_ACCOUNT")
@@ -276,5 +281,9 @@ public class CustomerAccount extends AccountEntity {
 	public void setCreditCategory(CreditCategory creditCategory) {
 		this.creditCategory = creditCategory;
 	}
-	
+
+    @Override
+    public ICustomFieldEntity getParentCFEntity() {
+        return customer;
+    }	
 }

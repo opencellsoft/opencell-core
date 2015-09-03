@@ -1,7 +1,7 @@
 package org.meveo.service.job;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -165,7 +165,7 @@ public abstract class Job {
 
     public abstract JobCategoryEnum getJobCategory();
 
-    public List<CustomFieldTemplate> getCustomFields() {
+    public Map<String, CustomFieldTemplate> getCustomFields() {
 
         return null;
     }

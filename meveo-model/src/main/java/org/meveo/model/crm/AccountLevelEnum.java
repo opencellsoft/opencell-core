@@ -1,10 +1,20 @@
 package org.meveo.model.crm;
 
 public enum AccountLevelEnum {
-	CUST, CA, BA, UA, SUB, ACC, CHARGE, OFFER, SERVICE,TIMER,PROVIDER;
+    CUST("account"), CA("account"), BA("account"), UA("account"), SUB("subscription"), ACC("access"), CHARGE("chargeTemplate"), OFFER("offerTemplate"), SERVICE("serviceTemplate"), TIMER(
+            "jobInstance"), PROVIDER("provider");
 
-	public String getLabel() {
-		return "enum.accountLevel." + this.name();
-	}
+    private final String relationFieldname;
 
+    private AccountLevelEnum(String relationFieldname) {
+        this.relationFieldname = relationFieldname;
+    }
+
+    public String getLabel() {
+        return "enum.accountLevel." + this.name();
+    }
+
+    public String getRelationFieldname() {
+        return relationFieldname;
+    }
 }

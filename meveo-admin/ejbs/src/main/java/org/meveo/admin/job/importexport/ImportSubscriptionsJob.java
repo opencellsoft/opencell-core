@@ -1,7 +1,9 @@
 package org.meveo.admin.job.importexport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -37,8 +39,8 @@ public class ImportSubscriptionsJob extends Job {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             try {
-                nbRuns = jobInstance.getLongCustomValue("ImportSubscriptionsJob_nbRuns").longValue();
-                waitingMillis = jobInstance.getLongCustomValue("ImportSubscriptionsJob_waitingMillis").longValue();
+                nbRuns = (Long) jobInstance.getCFValue("ImportSubscriptionsJob_nbRuns");
+                waitingMillis = (Long) jobInstance.getCFValue("ImportSubscriptionsJob_waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
@@ -84,8 +86,8 @@ public class ImportSubscriptionsJob extends Job {
     }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields() {
-        List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("ImportSubscriptionsJob_nbRuns");
@@ -95,7 +97,7 @@ public class ImportSubscriptionsJob extends Job {
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setDefaultValue("1");
-        result.add(customFieldNbRuns);
+        result.put("ImportSubscriptionsJob_nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("ImportSubscriptionsJob_waitingMillis");
@@ -105,7 +107,7 @@ public class ImportSubscriptionsJob extends Job {
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setValueRequired(false);
         customFieldNbWaiting.setDefaultValue("0");
-        result.add(customFieldNbWaiting);
+        result.put("ImportSubscriptionsJob_waitingMillis", customFieldNbWaiting);
 
         return result;
     }

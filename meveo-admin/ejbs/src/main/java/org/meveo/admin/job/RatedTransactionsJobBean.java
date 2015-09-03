@@ -46,8 +46,8 @@ public class RatedTransactionsJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = jobInstance.getLongCustomValue("RatedTransactionsJob_nbRuns").longValue();  			
-				waitingMillis = jobInstance.getLongCustomValue("RatedTransactionsJob_waitingMillis").longValue();
+				nbRuns = (Long) jobInstance.getCFValue("RatedTransactionsJob_nbRuns");  			
+				waitingMillis = (Long) jobInstance.getCFValue("RatedTransactionsJob_waitingMillis");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}

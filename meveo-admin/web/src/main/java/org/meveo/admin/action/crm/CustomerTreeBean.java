@@ -18,6 +18,7 @@ package org.meveo.admin.action.crm;
 
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,6 +28,8 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
@@ -50,6 +53,7 @@ import org.primefaces.model.TreeNode;
  * links used in tree.
  */
 @Named
+@RequestScoped
 public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
 	private static final String SUBSCRIPTION_KEY = "subscription";
@@ -110,6 +114,8 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
 	@Inject
 	private AccessService accessService;
+	
+	private TreeNode accountsHierarchy;
 
 	// private TreeNodeData selectedNode;
 
@@ -121,6 +127,11 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 	public AccountEntity getInstance() throws InstantiationException, IllegalAccessException {
 		return new AccountEntity() {
 			private static final long serialVersionUID = 1L;
+
+            @Override
+            public ICustomFieldEntity getParentCFEntity() {
+                return null;
+            }
 		};
 	}
 
@@ -138,7 +149,11 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 	 * hierarchy, and delegates building logic to private build() recursion.
 	 */
 	public TreeNode buildAccountsHierarchy(BaseEntity entity) {
-
+        
+        if (accountsHierarchy != null) {
+            return accountsHierarchy;
+        }
+       
 		if (entity.isTransient())
 			return null;
 
@@ -175,10 +190,12 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 				}
 			}
 		if (customer != null && customer.getCode() != null) {
-			return build(customer);
+		    accountsHierarchy = build(customer);
 		} else {
-			return null;
+		    accountsHierarchy= null;
 		}
+		
+		return accountsHierarchy;
 	}
 
 	private TreeNode build(BaseEntity entity) {

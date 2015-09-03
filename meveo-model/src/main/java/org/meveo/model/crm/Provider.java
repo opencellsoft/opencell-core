@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -44,7 +43,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.Auditable;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
@@ -66,6 +65,7 @@ import org.meveo.model.shared.InterBankTitle;
 
 @Entity
 @ObservableEntity
+@CustomFieldEntity(accountLevel=AccountLevelEnum.PROVIDER)
 @ExportIdentifier("code")
 @Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
@@ -569,138 +569,43 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 		this.customFields = customFields;
 	}
 
-	private CustomFieldInstance getOrCreateCustomFieldInstance(String code) {
-	        CustomFieldInstance cfi = null;
+    @Override
+    public ICustomFieldEntity getParentCFEntity() {
+        return null;
+    }    
 
-	        if (customFields.containsKey(code)) {
-	            cfi = customFields.get(code);
-	        } else {
-	            cfi = new CustomFieldInstance();
-	            Auditable au = new Auditable();
-	            au.setCreated(new Date());
-	            if (this.getAuditable() != null) {
-	                au.setCreator(this.getAuditable().getCreator());
-	            }
-	            cfi.setAuditable(au);
-	            cfi.setCode(code);
-	            cfi.setProvider(this); 
-	            customFields.put(code, cfi);
-	        }
+    public Object getCFValue(String cfCode) {
+        return getCustomFields().get(cfCode);
+    }
 
-	        return cfi;
-	    }
+    @Override
+    public Object getInheritedOnlyCFValue(String cfCode) {
+        
+        return null;
+    }
 
-	    public String getStringCustomValue(String code) {
-	        String result = null;
-	        if (customFields.containsKey(code)) {
-	            result = customFields.get(code).getStringValue();
-	        }
+    @Override
+    public Object getInheritedOnlyCFValue(String cfCode, Date date) {
 
-	        return result;
-	    }
+        return null;
+    }
 
-	    public void setStringCustomValue(String code, String value) {
-	        getOrCreateCustomFieldInstance(code).setStringValue(value);
-	    }
+    @Override
+    public Object getInheritedCFValue(String cfCode) {
 
-	    public Date getDateCustomValue(String code) {
-	        Date result = null;
-	        if (customFields.containsKey(code)) {
-	            result = customFields.get(code).getDateValue();
-	        }
+        if (getCustomFields().containsKey(cfCode)) {
+            return getCustomFields().get(cfCode).getValue();
 
-	        return result;
-	    }
+        } 
+        return null;
+    }
 
-	    public void setDateCustomValue(String code, Date value) {
-	        getOrCreateCustomFieldInstance(code).setDateValue(value);
-	    }
+    @Override
+    public Object getInheritedCFValue(String cfCode, Date date) {
 
-	    public Long getLongCustomValue(String code) {
-	        Long result = null;
-	        if (customFields.containsKey(code)) {
-	            result = customFields.get(code).getLongValue();
-	        }
-	        return result;
-	    }
-
-	    public void setLongCustomValue(String code, Long value) {
-	        getOrCreateCustomFieldInstance(code).setLongValue(value);
-	    }
-
-	    public Double getDoubleCustomValue(String code) {
-	        Double result = null;
-
-	        if (customFields.containsKey(code)) {
-	            result = customFields.get(code).getDoubleValue();
-	        }
-
-	        return result;
-	    }
-
-	    public void setDoubleCustomValue(String code, Double value) {
-	        getOrCreateCustomFieldInstance(code).setDoubleValue(value);
-	    }
-
-	    public String getCustomFieldsAsJson() {
-	        String result = "";
-	        String sep = "";
-
-	        for (Entry<String, CustomFieldInstance> cf : customFields.entrySet()) {
-	            result += sep + cf.getValue().toJson();
-	            sep = ";";
-	        }
-
-	        return result;
-	    }
-	    
-	    public String getInheritedCustomStringValue(String code){
-			String stringValue=null;
-			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
-				stringValue=getCustomFields().get(code).getStringValue();}
-			return stringValue;
-			}
-		
-		public Long getInheritedCustomLongValue(String code){
-			Long result=null; 
-			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
-				result=getCustomFields().get(code).getLongValue();
-			}
-			return result;
-			}
-		
-		public Date getInheritedCustomDateValue(String code){
-			Date result=null; 
-			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
-				result=getCustomFields().get(code).getDateValue();
-			}
-			return result;
-			}
-		
-
-		public Double getInheritedCustomDoubleValue(String code){
-			Double result=null; 
-			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
-				result=getCustomFields().get(code).getDoubleValue();
-			}
-			return result;
-			}
-		
-		public String getICsv(String code){
-			return getInheritedCustomStringValue(code);
-		}
-		
-		public Long getIClv(String code){
-			return getInheritedCustomLongValue(code);
-		}
-		
-		public Date getICdav(String code){
-			return getInheritedCustomDateValue(code);
-		}
-		
-		public Double getICdov(String code){
-			return getInheritedCustomDoubleValue(code);
-		}
-
-
+        if (getCustomFields().containsKey(cfCode)) {
+            return getCustomFields().get(cfCode).getValue(date);
+        }
+        return null;
+    }
 }

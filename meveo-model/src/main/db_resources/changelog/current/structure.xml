@@ -1407,6 +1407,12 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
 
 	</changeSet> 
+    
+    <changeSet id="1005-20150830" author="AndriusKarpavicius">
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="CACHE_VALUE_FOR" type="int"/>
+        </addColumn>
+    </changeSet>
 	<changeSet id="1034-20150828-2" author="anasseh">
 	   <dropColumn columnName="ACTION_EXPRESSION" tableName="ADM_NOTIFICATION"/>
 	</changeSet>  

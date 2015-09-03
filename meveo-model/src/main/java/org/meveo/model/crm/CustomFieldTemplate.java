@@ -12,6 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -25,6 +27,7 @@ import org.meveo.model.catalog.Calendar;
 @ExportIdentifier({ "code", "accountLevel", "provider" })
 @Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "ACCOUNT_TYPE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
+@NamedQueries({ @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft  where cft.disabled=false and cft.versionable=true and cacheValueTimeperiod is not null") })
 public class CustomFieldTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -50,6 +53,9 @@ public class CustomFieldTemplate extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CALENDAR_ID")
     private Calendar calendar;
+
+    @Column(name = "CACHE_VALUE_FOR")
+    private Integer cacheValueTimeperiod;
 
     @Column(name = "DEFAULT_VALUE", length = 50)
     private String defaultValue;
@@ -172,5 +178,13 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
         this.triggerEndPeriodEvent = triggerEndPeriodEvent;
+    }
+
+    public Integer getCacheValueTimeperiod() {
+        return cacheValueTimeperiod;
+    }
+
+    public void setCacheValueTimeperiod(Integer cacheValueTimeperiod) {
+        this.cacheValueTimeperiod = cacheValueTimeperiod;
     }
 }

@@ -33,7 +33,6 @@ import javax.inject.Inject;
 import net.sf.jasperreports.engine.JRParameter;
 
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -42,7 +41,6 @@ import org.meveo.model.billing.TIP;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
@@ -186,42 +184,22 @@ public class PDFParametersConstruction {
 	
 	private Map<String, String> getBACustomFields(
 			BillingAccount billingAccount) {
-		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-				.findByAccountLevel(AccountLevelEnum.BA,billingAccount.getProvider());
+        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.BA, billingAccount.getProvider());
 		Map<String, String>  customFields = new HashMap<String, String> ();
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {
 
-				CustomFieldInstance cfi = billingAccount.getCustomFields().get(
-						cf.getCode());
-				if (cfi != null) {
-					if (cf.getFieldType() == CustomFieldTypeEnum.DATE) {
-						Date dateField = billingAccount
-								.getInheritedCustomDateValue(cf.getCode());
-						if (dateField != null) {
-							customFields.put(cf.getCode(), DateUtils.formatDateWithPattern(dateField,
-									"MM-dd-yyyy"));
-						}
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-						Double doubleField = billingAccount
-								.getInheritedCustomDoubleValue(cf.getCode());
-						if (doubleField != null) {
-							customFields.put(cf.getCode(), String.valueOf(doubleField));
-						}
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.LONG) {
-						Long longField = billingAccount
-								.getInheritedCustomLongValue(cf.getCode());
-						if (longField != null) {
-							customFields.put(cf.getCode(), 	String.valueOf(longField));
-						}
-					} else if (cf.getFieldType() == CustomFieldTypeEnum.STRING
-							|| cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-						String stringField = billingAccount
-								.getInheritedCustomStringValue(cf.getCode());
-						if (!StringUtils.isBlank(stringField)) {
-							customFields.put(cf.getCode(), 	stringField);
-						}}
-				}}}
+//                CustomFieldInstance cfi = billingAccount.getCustomFields().get(cf.getCode());
+//                if (cfi != null) {
+                    Object cfValue = billingAccount.getInheritedCFValue(cf.getCode());
+                    if (cfValue != null && cfValue instanceof Date) {
+                        customFields.put(cf.getCode(), DateUtils.formatDateWithPattern((Date) cfValue, "MM-dd-yyyy"));
+                    } else if (cfValue != null) {
+                        customFields.put(cf.getCode(), String.valueOf(cfValue));
+                    }
+//                }
+            }
+        }
 		return customFields;
 	}
 

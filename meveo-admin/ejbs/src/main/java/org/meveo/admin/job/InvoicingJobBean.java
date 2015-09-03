@@ -53,8 +53,8 @@ public class InvoicingJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = jobInstance.getLongCustomValue("InvoicingJob_nbRuns").longValue();  			
-				waitingMillis = jobInstance.getLongCustomValue("InvoicingJob_waitingMillis").longValue();
+				nbRuns = (Long) jobInstance.getCFValue("InvoicingJob_nbRuns");  			
+				waitingMillis = (Long) jobInstance.getCFValue("InvoicingJob_waitingMillis");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}

@@ -28,6 +28,7 @@
 
     <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
+    <o:importFunctions type="org.meveo.model.crm.CustomFieldValue" var="cfv" />
     <!--     <c:if test="${empty(datePattern)}"> -->
     <!--         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" /> -->
     <!--     </c:if> -->
@@ -38,48 +39,22 @@
                 <hf:namingContainer>
                     <h:panelGroup rendered="#{!cft.versionable and (not cft.disabled or (cft.disabled and not cft.instance.isValueEmptyForGui()))}">
                         <h:panelGroup rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.SINGLE }">
-                            <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" labelWidth="40" displayOneLine="false">
-                                <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cft}" field="#{cft.instance.value}" backingBean="#{cc.attrs.backingBean}" />
+                            <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" componentWidth="50" displayOneLine="false">
+                                <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cft}" field="#{cft.instance.cfValue}" backingBean="#{cc.attrs.backingBean}" />
                             </hftl:decorateFormField>
                         </h:panelGroup>
 
                         <h:panelGroup rendered="#{(cft.storageType eq CustomFieldStorageTypeEnum.MAP or cft.storageType eq CustomFieldStorageTypeEnum.LIST) }">
-                            <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cft}" backingBean="#{cc.attrs.backingBean}" field="#{cft.instance.value}"
+                            <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cft}" backingBean="#{cc.attrs.backingBean}" field="#{cft.instance.cfValue}"
                                 messagesId="#{cc.attrs.messagesId}" />
                         </h:panelGroup>
 
-                        <c:set var="InheritedStringValue" value="#{cc.attrs.backingBean.entity.getICsv(cft.code)}" />
+                        <c:set var="inheritedValue" value="#{cc.attrs.backingBean.entity.getInheritedOnlyCFValue(cft.code)}" />
 
-                        <hftl:decorateFormField fieldId="cfField_stringI" label="#{messages['customField.inheritedStringValue']}" componentWidth="50" labelWidth="50"
-                            displayOneLine="false"
-                            rendered="#{cft.fieldType eq CustomFieldTypeEnum.STRING and cft.instance.value.stringValue==null and InheritedStringValue !=null}">
-                            <h:outputText id="cfField_stringI" value="#{InheritedStringValue}" styleClass="field-value" />
+                        <hftl:decorateFormField fieldId="cfField_stringI" label="#{messages['customField.inheritedValue']}" componentWidth="50"
+                            displayOneLine="false" rendered="#{inheritedValue !=null}">
+                            <h:outputText id="cfField_stringI" value="#{cfv:getShortRepresentationOfValue(inheritedValue, cc.attrs.datePattern)}" styleClass="field-value" />
                         </hftl:decorateFormField>
-
-                        <c:set var="InheritedDoubleValue" value="#{cc.attrs.backingBean.entity.getICdov(cft.code)}" />
-
-                        <hftl:decorateFormField fieldId="cfField_doubleI" label="#{messages['customField.inheritedDoubleValue']}" componentWidth="50" labelWidth="40"
-                            displayOneLine="false"
-                            rendered="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE and cft.instance.value.doubleValue==null and InheritedDoubleValue !=null}">
-                            <h:outputText id="cfField_doubleI" value="#{InheritedDoubleValue}" styleClass="field-value" />
-                        </hftl:decorateFormField>
-
-                        <c:set var="InheritedLongValue" value="#{cc.attrs.backingBean.entity.getIClv(cft.code)}" />
-
-                        <hftl:decorateFormField fieldId="cfField_longI" label="#{messages['customField.inheritedLongValue']}" componentWidth="50" labelWidth="50"
-                            displayOneLine="false" rendered="#{cft.fieldType eq CustomFieldTypeEnum.LONG and cft.instance.value.longValue==null and InheritedLongValue !=null}">
-                            <h:outputText id="cfField_longI" value="#{InheritedLongValue}" style="font-weight:bold;" styleClass="field-value" />
-                        </hftl:decorateFormField>
-
-                        <c:set var="InheritedDateValue" value="#{cc.attrs.backingBean.entity.getICdav(cft.code)}" />
-
-                        <hftl:decorateFormField fieldId="cfField_dateI" label="#{messages['customField.inheritedDateValue']}" componentWidth="50" labelWidth="50"
-                            displayOneLine="false" rendered="#{cft.fieldType eq CustomFieldTypeEnum.DATE and cft.instance.value.dateValue==null and InheritedDateValue !=null}">
-                            <h:outputText id="cfField_dateI" value="#{InheritedDateValue}" styleClass="field-value">
-                                <f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
-                            </h:outputText>
-                        </hftl:decorateFormField>
-
                     </h:panelGroup>
 
 
@@ -107,13 +82,13 @@
                                 <p:column headerText="#{messages['customFieldTemplate.periodValue']}">
                                     <p:cellEditor rendered="#{cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
                                         <f:facet name="output">
-                                            <hftl:customFieldValueField edit="false" cft="#{cft}" field="#{period.value}" backingBean="#{cc.attrs.backingBean}" />
+                                            <hftl:customFieldValueField edit="false" cft="#{cft}" field="#{period.cfValue}" backingBean="#{cc.attrs.backingBean}" />
                                         </f:facet>
                                         <f:facet name="input">
-                                            <hftl:customFieldValueField edit="true" cft="#{cft}" field="#{period.value}" backingBean="#{cc.attrs.backingBean}" />
+                                            <hftl:customFieldValueField edit="true" cft="#{cft}" field="#{period.cfValue}" backingBean="#{cc.attrs.backingBean}" />
                                         </f:facet>
                                     </p:cellEditor>
-                                    <h:outputText value="#{period.value.getShortRepresentationOfValue(cft, cc.attrs.datePattern)}"
+                                    <h:outputText value="#{period.cfValue.getShortRepresentationOfValue(cft, cc.attrs.datePattern)}"
                                         rendered="#{cft.storageType != CustomFieldStorageTypeEnum.SINGLE}" />
                                 </p:column>
                                 <p:column headerText="#{messages['commons.actions']}" width="15%">
@@ -192,7 +167,7 @@
                     <p:remoteCommand name="updateMasterTable" update="#{cc.attrs.backingBean.customFieldSelectedPeriodId}" process="@this" partialSubmit="true"
                         partialSubmitFilter=":not([name*='addNewFields'])" />
                     <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.backingBean.customFieldSelectedTemplate}" backingBean="#{cc.attrs.backingBean}"
-                        field="#{cc.attrs.backingBean.customFieldSelectedPeriod.value}" updateOnAddEdit="#{cc.attrs.backingBean.customFieldSelectedPeriodId}"
+                        field="#{cc.attrs.backingBean.customFieldSelectedPeriod.cfValue}" updateOnAddEdit="#{cc.attrs.backingBean.customFieldSelectedPeriodId}"
                         messagesId="#{cc.attrs.messagesId}" popupWidgetVar="periodValuesDialogWidget"/>
 
                 </h:panelGroup>

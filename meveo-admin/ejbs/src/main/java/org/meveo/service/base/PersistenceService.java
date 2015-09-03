@@ -38,6 +38,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Created;
@@ -48,6 +49,7 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.IAuditable;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
@@ -103,6 +105,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@Inject
 	@Removed
 	protected Event<E> entityRemovedEventProducer;
+	
+	@Inject
+	private CustomFieldsCacheContainerProvider customFieldsCache;
 
 	/**
 	 * Constructor.
@@ -147,7 +152,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 	public E updateNoCheck(E e) {
 		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
-		return getEntityManager().merge(e);
+		
+		E mergedEntity = getEntityManager().merge(e);
+        
+		// Add/Update custom fields in cache if applicable 
+        if (e instanceof ICustomFieldEntity) {
+            customFieldsCache.addUpdateCustomFieldsInCache((ICustomFieldEntity) mergedEntity);
+        }
+		return mergedEntity;
 	}
 
 	/**
@@ -338,6 +350,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			entityRemovedEventProducer.fire(e);
 		}
 		// getEntityManager().flush();
+		
+		// Remove custom field values from cache if applicable
+		customFieldsCache.removeCustomFieldsFromCache((ICustomFieldEntity) e);
+		
 		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
 	}
 
@@ -383,7 +399,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
 			entityUpdatedEventProducer.fire(e);
 		}
+		
+        // Add/Update custom fields in cache if applicable
+        if (e instanceof ICustomFieldEntity) {
+            customFieldsCache.addUpdateCustomFieldsInCache((ICustomFieldEntity) e);
+        }
+
 		log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
+		
 		return e;
 	}
 
@@ -416,6 +439,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
 			entityCreatedEventProducer.fire(e);
 		}
+		
+        // Add/Update custom fields in cache if applicable
+        if (e instanceof ICustomFieldEntity) {
+            customFieldsCache.addUpdateCustomFieldsInCache((ICustomFieldEntity) e);
+        }
+		
 		log.debug("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
 
 	}

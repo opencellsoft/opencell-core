@@ -1,7 +1,7 @@
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
@@ -50,8 +50,8 @@ public class UsageRatingJob extends Job {
     }
     
     @Override
-	public List<CustomFieldTemplate> getCustomFields() {
-		List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+	public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
 		CustomFieldTemplate nbRuns = new CustomFieldTemplate();
 		nbRuns.setCode("UsageRatingJob_nbRuns");
@@ -61,7 +61,7 @@ public class UsageRatingJob extends Job {
 		nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
 		nbRuns.setValueRequired(false);
 		nbRuns.setDefaultValue("1");
-		result.add(nbRuns);
+		result.put("UsageRatingJob_nbRuns", nbRuns);
 
 		CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
 		waitingMillis.setCode("UsageRatingJob_waitingMillis");
@@ -71,7 +71,7 @@ public class UsageRatingJob extends Job {
 		waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
 		waitingMillis.setValueRequired(false);
 		waitingMillis.setDefaultValue("0");
-		result.add(waitingMillis);
+		result.put("UsageRatingJob_waitingMillis", waitingMillis);
 
 		return result;
 	}

@@ -1,7 +1,9 @@
 package org.meveo.admin.job.importexport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -38,8 +40,8 @@ public class ImportAccountsJob extends Job {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             try {
-                nbRuns = jobInstance.getLongCustomValue("ImportAccountsJob_nbRuns").longValue();
-                waitingMillis = jobInstance.getLongCustomValue("ImportAccountsJob_waitingMillis").longValue();
+                nbRuns = (Long) jobInstance.getCFValue("ImportAccountsJob_nbRuns");
+                waitingMillis = (Long) jobInstance.getCFValue("ImportAccountsJob_waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
@@ -85,8 +87,8 @@ public class ImportAccountsJob extends Job {
     }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields() {
-        List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("ImportAccountsJob_nbRuns");
@@ -96,7 +98,7 @@ public class ImportAccountsJob extends Job {
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setDefaultValue("1");
         customFieldNbRuns.setValueRequired(false);
-        result.add(customFieldNbRuns);
+        result.put("ImportAccountsJob_nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("ImportAccountsJob_waitingMillis");
@@ -106,7 +108,7 @@ public class ImportAccountsJob extends Job {
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setDefaultValue("0");
         customFieldNbWaiting.setValueRequired(false);
-        result.add(customFieldNbWaiting);
+        result.put("ImportAccountsJob_waitingMillis", customFieldNbWaiting);
 
         return result;
     }

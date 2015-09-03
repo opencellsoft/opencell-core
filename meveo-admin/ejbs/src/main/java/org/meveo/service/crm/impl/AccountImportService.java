@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BankCoordinates;
@@ -20,9 +19,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jaxb.customer.CustomField;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
@@ -35,19 +32,9 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.slf4j.Logger;
 
 @Stateless
-public class AccountImportService {
-
-	@Inject
-	private CustomFieldTemplateService customFieldTemplateService;
-
-	@Inject
-	private CustomFieldInstanceService customFieldInstanceService;
-
-	@Inject
-	private Logger log;
+public class AccountImportService extends ImportService{
 
 	@Inject
 	private WalletService walletService;
@@ -168,35 +155,11 @@ public class AccountImportService {
 			name.setTitle(titleService.findByCode(provider, billAccount.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
-
-		if (billAccount.getCustomFields() != null && billAccount.getCustomFields().getCustomField() != null
-				&& billAccount.getCustomFields().getCustomField().size() > 0) {
-			for (CustomField customField : billAccount.getCustomFields().getCustomField()) {
-				// check if cft exists
-				if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(), AccountLevelEnum.BA,
-						provider) == null) {
-					log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
-					continue;
-				}
-
-				CustomFieldInstance cfi = new CustomFieldInstance();
-				cfi.setAccount(billingAccount);
-				cfi.setActive(true);
-				cfi.setCode(customField.getCode());
-				cfi.setDateValue(customField.getDateValue());
-				cfi.setDescription(customField.getDescription());
-				cfi.setDoubleValue(customField.getDoubleValue());
-				cfi.setLongValue(customField.getLongValue());
-				cfi.setProvider(provider);
-				cfi.setStringValue(customField.getStringValue());
-				Auditable auditable = new Auditable();
-				auditable.setCreated(new Date());
-				auditable.setCreator(userJob);
-				cfi.setAuditable(auditable);
-				billingAccount.getCustomFields().put(cfi.getCode(), cfi);
-			}
-		}
-
+		
+        if (billAccount.getCustomFields() != null){
+            populateCustomFields(AccountLevelEnum.BA, billAccount.getCustomFields().getCustomField(), billingAccount, "account", userJob);
+        } 
+		
 		billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(
 				billAccount.getTradingCountryCode(), provider));
 		billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
@@ -302,47 +265,10 @@ public class AccountImportService {
 			name.setTitle(titleService.findByCode(provider, billingAccountDto.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
-
-		if (billingAccountDto.getCustomFields() != null && billingAccountDto.getCustomFields().getCustomField() != null
-				&& billingAccountDto.getCustomFields().getCustomField().size() > 0) {
-			for (CustomField customField : billingAccountDto.getCustomFields().getCustomField()) {
-				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(customField.getCode(),
-						billingAccount,provider);
-
-				if (cfi == null) {
-					if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(),
-							AccountLevelEnum.BA, provider) == null) {
-						log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
-						continue;
-					}
-
-					cfi = new CustomFieldInstance();
-					cfi.setAccount(billingAccount);
-					cfi.setActive(true);
-					cfi.setCode(customField.getCode());
-					cfi.setDateValue(customField.getDateValue());
-					cfi.setDescription(customField.getDescription());
-					cfi.setDoubleValue(customField.getDoubleValue());
-					cfi.setLongValue(customField.getLongValue());
-					cfi.setProvider(provider);
-					cfi.setStringValue(customField.getStringValue());
-					Auditable auditable = new Auditable();
-					auditable.setCreated(new Date());
-					auditable.setCreator(userJob);
-					cfi.setAuditable(auditable);
-					billingAccount.getCustomFields().put(cfi.getCode(), cfi);
-				} else {
-					cfi.setDateValue(customField.getDateValue());
-					cfi.setDescription(customField.getDescription());
-					cfi.setDoubleValue(customField.getDoubleValue());
-					cfi.setLongValue(customField.getLongValue());
-					cfi.setProvider(provider);
-					cfi.setStringValue(customField.getStringValue());
-					cfi.getAuditable().setUpdated(new Date());
-					cfi.getAuditable().setUpdater(userJob);
-				}
-			}
-		}
+		
+        if (billingAccountDto.getCustomFields() != null){
+            populateCustomFields(AccountLevelEnum.BA, billingAccountDto.getCustomFields().getCustomField(), billingAccount, "account", userJob);
+        } 
 
 		billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(
 				billingAccountDto.getTradingCountryCode(), provider));
@@ -388,32 +314,10 @@ public class AccountImportService {
 			userAccount.setName(nameUA);
 		}
 
-		if (uAccount.getCustomFields() != null && uAccount.getCustomFields().getCustomField() != null
-				&& uAccount.getCustomFields().getCustomField().size() > 0) {
-			for (CustomField customField : uAccount.getCustomFields().getCustomField()) {
-				if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(), AccountLevelEnum.UA,
-						provider) == null) {
-					log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
-					continue;
-				}
+        if (uAccount.getCustomFields() != null){
+            populateCustomFields(AccountLevelEnum.UA, uAccount.getCustomFields().getCustomField(), userAccount, "account", userJob);
+        } 
 
-				CustomFieldInstance cfi = new CustomFieldInstance();
-				cfi.setAccount(userAccount);
-				cfi.setActive(true);
-				cfi.setCode(customField.getCode());
-				cfi.setDateValue(customField.getDateValue());
-				cfi.setDescription(customField.getDescription());
-				cfi.setDoubleValue(customField.getDoubleValue());
-				cfi.setLongValue(customField.getLongValue());
-				cfi.setProvider(provider);
-				cfi.setStringValue(customField.getStringValue());
-				Auditable auditable = new Auditable();
-				auditable.setCreated(new Date());
-				auditable.setCreator(userJob);
-				cfi.setAuditable(auditable);
-				userAccount.getCustomFields().put(cfi.getCode(), cfi);
-			}
-		}
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(new Date());
 		userAccount.setProvider(provider);
@@ -469,45 +373,9 @@ public class AccountImportService {
 			userAccount.setName(nameUA);
 		}
 
-		if (userAccountDto.getCustomFields() != null && userAccountDto.getCustomFields().getCustomField() != null
-				&& userAccountDto.getCustomFields().getCustomField().size() > 0) {
-			for (CustomField customField : userAccountDto.getCustomFields().getCustomField()) {
-				CustomFieldInstance cfi = customFieldInstanceService.findByCodeAndAccount(customField.getCode(),
-						userAccount,provider);
-				if (cfi == null) {
-					if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(),
-							AccountLevelEnum.UA, provider) == null) {
-						log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
-						continue;
-					}
-
-					cfi = new CustomFieldInstance();
-					cfi.setAccount(userAccount);
-					cfi.setActive(true);
-					cfi.setCode(customField.getCode());
-					cfi.setDateValue(customField.getDateValue());
-					cfi.setDescription(customField.getDescription());
-					cfi.setDoubleValue(customField.getDoubleValue());
-					cfi.setLongValue(customField.getLongValue());
-					cfi.setProvider(provider);
-					cfi.setStringValue(customField.getStringValue());
-					Auditable auditable = new Auditable();
-					auditable.setCreated(new Date());
-					auditable.setCreator(userJob);
-					cfi.setAuditable(auditable);
-					userAccount.getCustomFields().put(cfi.getCode(), cfi);
-				} else {
-					cfi.setDateValue(customField.getDateValue());
-					cfi.setDescription(customField.getDescription());
-					cfi.setDoubleValue(customField.getDoubleValue());
-					cfi.setLongValue(customField.getLongValue());
-					cfi.setProvider(provider);
-					cfi.setStringValue(customField.getStringValue());
-					cfi.getAuditable().setUpdated(new Date());
-					cfi.getAuditable().setUpdater(userJob);
-				}
-			}
-		}
+        if (userAccountDto.getCustomFields() != null) {
+            populateCustomFields(AccountLevelEnum.UA, userAccountDto.getCustomFields().getCustomField(), userAccount, "account", userJob);
+        }
 
 		// userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(new Date());

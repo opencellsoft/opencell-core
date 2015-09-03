@@ -44,11 +44,11 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
     private int priority;
 
     @Embedded
-    private CustomFieldValue value;
+    private CustomFieldValue cfValue;
 
     public CustomFieldPeriod() {
         super();
-        value = new CustomFieldValue();
+        cfValue = new CustomFieldValue();
     }
 
     public CustomFieldInstance getCustomFieldInstance() {
@@ -83,12 +83,15 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
         this.priority = priority;
     }
 
-    public CustomFieldValue getValue() {
-        return value;
+    public CustomFieldValue getCfValue() {
+        if (cfValue == null) {
+            cfValue = new CustomFieldValue();
+        }
+        return cfValue;
     }
 
-    public void setValue(CustomFieldValue value) {
-        this.value = value;
+    public void setCfValue(CustomFieldValue cfValue) {
+        this.cfValue = cfValue;
     }
 
     /**
@@ -98,7 +101,7 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
      * @return True/false
      */
     public boolean isCorrespondsToPeriod(Date date) {
-        return date.compareTo(periodStartDate) >= 0 && date.before(periodEndDate);
+        return (periodStartDate == null || date.compareTo(periodStartDate) >= 0) && (periodEndDate == null || date.before(periodEndDate));
     }
 
     /**
@@ -165,7 +168,7 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
 
     @Override
     public String toString() {
-        return String.format("CustomFieldPeriod [periodStartDate=%s, periodEndDate=%s, priority=%s, value=%s]", periodStartDate, periodEndDate, priority, value);
+        return String.format("CustomFieldPeriod [periodStartDate=%s, periodEndDate=%s, priority=%s, value=%s]", periodStartDate, periodEndDate, priority, cfValue);
     }
 
     // /**
@@ -185,8 +188,8 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
      */
     @PostLoad
     private void deserializeValue() {
-        if (value != null) {
-            value.deserializeValue();
+        if (cfValue != null) {
+            cfValue.deserializeValue();
         }
     }
 }
