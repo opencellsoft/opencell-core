@@ -374,5 +374,18 @@ public class BillingAccountApi extends AccountApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	/**
+	 * Create or update Billing Account based on Billing Account Code
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(BillingAccountDto postData, User currentUser) throws MeveoApiException {
+		if (billingAccountService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

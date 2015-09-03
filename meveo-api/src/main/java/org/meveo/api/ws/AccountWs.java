@@ -107,7 +107,10 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	BillingAccountsResponseDto listByCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateBillingAccount(@WebParam(name = "billingAccount") BillingAccountDto postData);
+	
 	// user account
 
 	@WebMethod
@@ -164,7 +167,10 @@ public interface AccountWs extends IBaseWs {
 	
 	@WebMethod
 	ActionStatus updateCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+	
 	// customer hierarchy
 
 	@WebMethod

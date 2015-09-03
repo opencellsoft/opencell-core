@@ -7056,6 +7056,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateBillingAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateBillingAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateBillingAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateAccountHierarchy">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateAccountHierarchy">
@@ -7143,6 +7152,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="updateAccessResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateAccountHierarchy">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateAccountHierarchy">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateAccountHierarchyResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -7481,6 +7499,10 @@
       <xs:element name="createCustomerResponse" type="tns:createCustomerResponse"/>
       <xs:element name="createOrUpdateAccess" type="tns:createOrUpdateAccess"/>
       <xs:element name="createOrUpdateAccessResponse" type="tns:createOrUpdateAccessResponse"/>
+      <xs:element name="createOrUpdateAccountHierarchy" type="tns:createOrUpdateAccountHierarchy"/>
+      <xs:element name="createOrUpdateAccountHierarchyResponse" type="tns:createOrUpdateAccountHierarchyResponse"/>
+      <xs:element name="createOrUpdateBillingAccount" type="tns:createOrUpdateBillingAccount"/>
+      <xs:element name="createOrUpdateBillingAccountResponse" type="tns:createOrUpdateBillingAccountResponse"/>
       <xs:element name="createOrUpdateUserAccount" type="tns:createOrUpdateUserAccount"/>
       <xs:element name="createOrUpdateUserAccountResponse" type="tns:createOrUpdateUserAccountResponse"/>
       <xs:element name="createUserAccount" type="tns:createUserAccount"/>
@@ -7751,6 +7773,119 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateBillingAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="billingAccount" type="tns:BillingAccount"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BillingAccount">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element name="customerAccount" type="xs:string"/>
+              <xs:element name="billingCycle" type="xs:string"/>
+              <xs:element name="country" type="xs:string"/>
+              <xs:element name="language" type="xs:string"/>
+              <xs:element name="paymentMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="nextInvoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="paymentTerms" type="xs:string"/>
+              <xs:element minOccurs="0" name="electronicBilling" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+              <xs:element minOccurs="0" name="email" type="xs:string"/>
+              <xs:element minOccurs="0" name="bankCoordinates" type="tns:bankCoordinatesDto"/>
+              <xs:element minOccurs="0" name="userAccounts" type="tns:UserAccounts"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="accountDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="externalRef1" type="xs:string"/>
+          <xs:element minOccurs="0" name="externalRef2" type="xs:string"/>
+          <xs:element minOccurs="0" name="name" type="tns:nameDto"/>
+          <xs:element minOccurs="0" name="address" type="tns:addressDto"/>
+          <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+          <xs:element name="loaded" type="xs:boolean"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="UserAccounts">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="userAccount" nillable="true" type="tns:UserAccount"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="UserAccount">
+        <xs:complexContent>
+          <xs:extension base="tns:accountDto">
+            <xs:sequence>
+              <xs:element name="billingAccount" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptions" type="tns:Subscriptions"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Subscriptions">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="subscription" nillable="true" type="tns:Subscription"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Subscription">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="userAccount" type="xs:string"/>
+              <xs:element name="offerTemplate" type="xs:string"/>
+              <xs:element name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+              <xs:element minOccurs="0" name="accesses" type="tns:Accesses"/>
+              <xs:element minOccurs="0" name="services" type="tns:ServiceInstances"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Accesses">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="access" nillable="true" type="tns:Access"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ServiceInstances">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="serviceInstance" nillable="true" type="tns:ServiceInstance"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ServiceInstance">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateBillingAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="updateAccountHierarchy">
         <xs:sequence>
           <xs:element minOccurs="0" name="accountHierarchy" type="tns:accountHierarchyDto"/>
@@ -7819,112 +7954,9 @@
           <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="UserAccount">
-        <xs:complexContent>
-          <xs:extension base="tns:accountDto">
-            <xs:sequence>
-              <xs:element name="billingAccount" type="xs:string"/>
-              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
-              <xs:element minOccurs="0" name="subscriptions" type="tns:Subscriptions"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType abstract="true" name="accountDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="externalRef1" type="xs:string"/>
-          <xs:element minOccurs="0" name="externalRef2" type="xs:string"/>
-          <xs:element minOccurs="0" name="name" type="tns:nameDto"/>
-          <xs:element minOccurs="0" name="address" type="tns:addressDto"/>
-          <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
-          <xs:element name="loaded" type="xs:boolean"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
-      </xs:complexType>
-      <xs:complexType name="Subscriptions">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="subscription" nillable="true" type="tns:Subscription"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="Subscription">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element name="userAccount" type="xs:string"/>
-              <xs:element name="offerTemplate" type="xs:string"/>
-              <xs:element name="subscriptionDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
-              <xs:element minOccurs="0" name="accesses" type="tns:Accesses"/>
-              <xs:element minOccurs="0" name="services" type="tns:ServiceInstances"/>
-              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="Accesses">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="access" nillable="true" type="tns:Access"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="ServiceInstances">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="serviceInstance" nillable="true" type="tns:ServiceInstance"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="ServiceInstance">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
       <xs:complexType name="updateBillingAccount">
         <xs:sequence>
           <xs:element minOccurs="0" name="billingAccount" type="tns:BillingAccount"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="BillingAccount">
-        <xs:complexContent>
-          <xs:extension base="tns:accountDto">
-            <xs:sequence>
-              <xs:element name="customerAccount" type="xs:string"/>
-              <xs:element name="billingCycle" type="xs:string"/>
-              <xs:element name="country" type="xs:string"/>
-              <xs:element name="language" type="xs:string"/>
-              <xs:element name="paymentMethod" type="xs:string"/>
-              <xs:element minOccurs="0" name="nextInvoiceDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="paymentTerms" type="xs:string"/>
-              <xs:element minOccurs="0" name="electronicBilling" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
-              <xs:element minOccurs="0" name="email" type="xs:string"/>
-              <xs:element minOccurs="0" name="bankCoordinates" type="tns:bankCoordinatesDto"/>
-              <xs:element minOccurs="0" name="userAccounts" type="tns:UserAccounts"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="UserAccounts">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="userAccount" nillable="true" type="tns:UserAccount"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateBillingAccountResponse">
@@ -8082,6 +8114,16 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateAccessResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateAccountHierarchy">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="accountHierarchy" type="tns:accountHierarchyDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateAccountHierarchyResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -8640,14 +8682,17 @@
   <wsdl:message name="findAccountHierarchy2">
     <wsdl:part element="ns1:findAccountHierarchy2" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateAccountHierarchy">
+    <wsdl:part element="ns1:createOrUpdateAccountHierarchy" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createCustomerBrandResponse">
     <wsdl:part element="ns1:createCustomerBrandResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createUserAccountResponse">
-    <wsdl:part element="ns1:createUserAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createAccessResponse">
     <wsdl:part element="ns1:createAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createUserAccountResponse">
+    <wsdl:part element="ns1:createUserAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCustomerResponse">
     <wsdl:part element="ns1:updateCustomerResponse" name="parameters"></wsdl:part>
@@ -8712,6 +8757,9 @@
   <wsdl:message name="createOrUpdateAccess">
     <wsdl:part element="ns1:createOrUpdateAccess" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateBillingAccountResponse">
+    <wsdl:part element="ns1:createOrUpdateBillingAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="listByCustomer">
     <wsdl:part element="ns1:listByCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -8775,6 +8823,9 @@
   <wsdl:message name="removeUserAccount">
     <wsdl:part element="ns1:removeUserAccount" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateBillingAccount">
+    <wsdl:part element="ns1:createOrUpdateBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findBillingAccount">
     <wsdl:part element="ns1:findBillingAccount" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -8798,6 +8849,9 @@
   </wsdl:message>
   <wsdl:message name="createAccountHierarchy">
     <wsdl:part element="ns1:createAccountHierarchy" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateAccountHierarchyResponse">
+    <wsdl:part element="ns1:createOrUpdateAccountHierarchyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCustomerCategoryResponse">
     <wsdl:part element="ns1:createCustomerCategoryResponse" name="parameters"></wsdl:part>
@@ -8844,11 +8898,11 @@
   <wsdl:message name="updateUserAccountResponse">
     <wsdl:part element="ns1:updateUserAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findBillingAccountResponse">
-    <wsdl:part element="ns1:findBillingAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeCustomerAccount">
     <wsdl:part element="ns1:removeCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findBillingAccountResponse">
+    <wsdl:part element="ns1:findBillingAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
@@ -8880,11 +8934,11 @@
   <wsdl:message name="removeBillingAccount">
     <wsdl:part element="ns1:removeBillingAccount" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findAccessResponse">
-    <wsdl:part element="ns1:findAccessResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateAccountHierarchyResponse">
     <wsdl:part element="ns1:updateAccountHierarchyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAccessResponse">
+    <wsdl:part element="ns1:findAccessResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCustomerResponse">
     <wsdl:part element="ns1:createCustomerResponse" name="parameters"></wsdl:part>
@@ -8911,6 +8965,10 @@
     <wsdl:operation name="createOrUpdateAccess">
       <wsdl:input message="ns1:createOrUpdateAccess" name="createOrUpdateAccess"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateAccessResponse" name="createOrUpdateAccessResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateBillingAccount">
+      <wsdl:input message="ns1:createOrUpdateBillingAccount" name="createOrUpdateBillingAccount"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateBillingAccountResponse" name="createOrUpdateBillingAccountResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateAccountHierarchy">
       <wsdl:input message="ns1:updateAccountHierarchy" name="updateAccountHierarchy"></wsdl:input>
@@ -8951,6 +9009,10 @@
     <wsdl:operation name="updateAccess">
       <wsdl:input message="ns1:updateAccess" name="updateAccess"></wsdl:input>
       <wsdl:output message="ns1:updateAccessResponse" name="updateAccessResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateAccountHierarchy">
+      <wsdl:input message="ns1:createOrUpdateAccountHierarchy" name="createOrUpdateAccountHierarchy"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateAccountHierarchyResponse" name="createOrUpdateAccountHierarchyResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCustomer">
       <wsdl:input message="ns1:createCustomer" name="createCustomer"></wsdl:input>
@@ -9321,6 +9383,7 @@
 											<!--Optional: -->
 											<state></state>
 										</address>
+										<language>ENG</language>
 										<!--Zero or more repetitions: -->
 										<customFields>
 											<customField code="CF1" description="CF1">
@@ -9454,7 +9517,7 @@
 														<!--Zero or more repetitions: -->
 														<subscriptions>
 															<subscription code="SOAP_SUB2" description="SUBW2">
-																<offerTemplate>OFF1</offerTemplate>
+																<offerTemplate>OFFTEMP1</offerTemplate>
 																<!--Optional: -->
 																<subscriptionDate>2015-02-04</subscriptionDate>
 																<!--<terminationReason>?</terminationReason> -->
@@ -9813,10 +9876,7 @@
          </customer>
       </ws:updateCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCustomerAccount" bindingOperationName="updateCustomerAccount" type="Request-Response" outputName="updateCustomerAccountResponse" inputName="updateCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="873ac8fe-c7a9-4895-bfba-885fd6f1da44"><con:settings/><con:call name="Request 1" id="2f3138bf-69b7-4430-8455-bef8f576ee4f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
-  &lt;con:entry key="username" value="meveo.admin"/>
-  &lt;con:entry key="password" value="meveo.admin"/>
-&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="updateCustomerAccount" bindingOperationName="updateCustomerAccount" type="Request-Response" outputName="updateCustomerAccountResponse" inputName="updateCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="873ac8fe-c7a9-4895-bfba-885fd6f1da44"><con:settings/><con:call name="Request 1" id="2f3138bf-69b7-4430-8455-bef8f576ee4f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 	xmlns:ws="http://ws.api.meveo.org/">
 	<soapenv:Header />
 	<soapenv:Body>
@@ -9854,6 +9914,7 @@
 					<!--Optional: -->
 					<state></state>
 				</address>
+				<language>ENG</language>
 				<!--Zero or more repetitions: -->
 				<customFields>
 					<customField code="CA2_CF1" description="CA2_CF1">
@@ -13586,7 +13647,42 @@
          </userAccount>\r
       </ws:createOrUpdateUserAccount>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateUserAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" id="e091ebc9-a4ee-4a50-819a-8033c8d42dba" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateUserAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="ad188207-d16a-46a2-9351-abfd86b82707" isOneWay="false" action="" name="createOrUpdateBillingAccount" bindingOperationName="createOrUpdateBillingAccount" type="Request-Response" outputName="createOrUpdateBillingAccountResponse" inputName="createOrUpdateBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b8319670-d578-47d0-8104-6a7d6205b845" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateBillingAccount>\r
+         <!--Optional:-->\r
+         <billingAccount code="BILL_ACCT_00" description="Test data for billing account">\r
+            <loaded>No</loaded>\r
+            <customerAccount>ACCNT_00</customerAccount>\r
+            <billingCycle>Monthly</billingCycle>\r
+            <country>PH</country>\r
+            <language>PH</language>\r
+            <paymentMethod>Monthly</paymentMethod>\r
+         </billingAccount>\r
+      </ws:createOrUpdateBillingAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateBillingAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="e3288336-0f8b-406a-af38-9833c8d8cdce" isOneWay="false" action="" name="createOrUpdateAccountHierarchy" bindingOperationName="createOrUpdateAccountHierarchy" type="Request-Response" outputName="createOrUpdateAccountHierarchyResponse" inputName="createOrUpdateAccountHierarchy" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e0feb0d0-1a51-46f3-8ad6-306deeeb021e" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateAccountHierarchy>\r
+         <!--Optional:-->\r
+         <accountHierarchy>\r
+            <email>test@email.com</email>\r
+            <paymentMethod>1</paymentMethod>\r
+            <customerId>1</customerId>
+            <customerBrandCode>CB1</customerBrandCode>
+            <customerCategoryCode>CC1</customerCategoryCode>
+            <sellerCode>SC1</sellerCode>
+            <currencyCode>USD</currencyCode>
+            <countryCode>US</countryCode>
+            <lastName>lname</lastName>
+            <billingCycleCode>BCC1</billingCycleCode>
+            <languageCode>ENG</languageCode>
+         </accountHierarchy>\r
+      </ws:createOrUpdateAccountHierarchy>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" id="e091ebc9-a4ee-4a50-819a-8033c8d42dba" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
