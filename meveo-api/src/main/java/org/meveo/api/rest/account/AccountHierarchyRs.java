@@ -75,5 +75,14 @@ public interface AccountHierarchyRs extends IBaseRs {
 	@POST
 	@Path("/updateCRMAccountHierarchy")
 	ActionStatus updateCRMAccountHierarchy(CRMAccountHierarchyDto postData);
+	
+	/**
+	 * Create or update Account Hierarchy based on code.
+	 * @param accountHierarchyDto
+	 * @return
+	 */
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(AccountHierarchyDto accountHierarchyDto);
 
 }
