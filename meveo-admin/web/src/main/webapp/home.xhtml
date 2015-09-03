@@ -693,7 +693,39 @@
 			</hftl:panelGroup >
 			</h:panelGrid>
 		    </p:tab>
-          </p:accordionPanel>		  
+          </p:accordionPanel>
+          <!-- 
+                      StringInstance
+           -->	
+		<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
+		 <p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructScriptInstancesWithError}" />
+			<p:tab>
+				<f:facet name="title">
+	               <h:outputText value="#{messages['configIssuesReporting.scriptInstanceWithError']} : "/>
+				   <h:outputText value="#{configIssuesReportingBean.getNbrScriptInstanceWithError}" style="color:#3FCA21" rendered="#{configIssuesReportingBean.getNbrScriptInstanceWithError==0}"/>
+				   <h:outputText value="#{configIssuesReportingBean.getNbrScriptInstanceWithError}" style="color:red" rendered="#{configIssuesReportingBean.getNbrScriptInstanceWithError!=0}"/>
+	            </f:facet>
+				<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrScriptInstanceWithError!=0}">
+					<hftl:dataList label="#{messages['scriptInstance.title']}" resultsId="scriptInstances_panel" checkMany="true" backingBean="#{scriptInstanceListBean}" sortBy="code" dataModel="#{configIssuesReportingBean.scriptInstanceWithErrorList}">
+						<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+						<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+						<p:column width="50"> 
+							<f:facet name="header">
+								<h:outputText value="Actions" />
+						    </f:facet>
+							<p:button id="scriptInstancesButton" outcome="scriptInstanceDetail" icon="ui-icon-search">
+								<f:param name="objectId" value="#{entity.id}" />
+								<f:param name="edit" value="true" /> 
+							</p:button>
+							<p:commandButton icon="ui-icon-trash" action="#{scriptInstanceBean.deleteInlist}" update=":#{p:component('accordionTax')}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+								<f:setPropertyActionListener target="#{scriptInstanceBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+							</p:commandButton>
+						</p:column>
+				  </hftl:dataList> 
+				</h:panelGrid>
+		    </p:tab>
+          </p:accordionPanel>	
+                    	  
 			</h:panelGrid>
 			</h:panelGrid>
 		</p:panel>

@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.jobs.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * @author Edward P. Legaspi

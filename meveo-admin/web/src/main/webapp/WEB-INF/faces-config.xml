@@ -168,7 +168,7 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>jobInstanceDetail</from-outcome>
+			<from-outcome>scriptInstanceDetail</from-outcome>
 			<to-view-id>/pages/admin/scriptInstances/scriptInstanceDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>	
