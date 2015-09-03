@@ -59,13 +59,6 @@ public class FilterBean extends BaseBean<Filter> {
 		auditable.setCreated(new Date());
 		auditable.setCreator(getCurrentUser());
 
-		Set<ConstraintViolation<Filter>> violations = validator.validate(filter);
-
-		if (!violations.isEmpty()) {
-			messages.error(new BundleKey("messages", "message.filter.invalidXml"));
-			return "";
-		}
-
 		if (filter.getOrderCondition() != null) {
 			filter.getOrderCondition().setProvider(getCurrentProvider());
 			entity.setOrderCondition(filter.getOrderCondition());
@@ -90,6 +83,13 @@ public class FilterBean extends BaseBean<Filter> {
 		// process filterCondition
 		if (filter.getFilterCondition() != null) {
 			entity.setFilterCondition(setProviderToFilterCondition(filter.getFilterCondition()));
+		}
+		
+		Set<ConstraintViolation<Filter>> violations = validator.validate(entity);
+
+		if (!violations.isEmpty()) {
+			messages.error(new BundleKey("messages", "message.filter.invalidXml"));
+			return "";
 		}
 
 		return super.saveOrUpdate(killConversation);
