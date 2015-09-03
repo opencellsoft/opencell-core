@@ -18,12 +18,9 @@ package org.meveo.admin.action.catalog;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -74,8 +71,6 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	public ScriptInstance initEntity() {
 		log.debug("start conversation id: {}", conversation.getId());
 		ScriptInstance scriptInstance = super.initEntity();
-
-		
 		return scriptInstance;
 	}
 
@@ -113,7 +108,11 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	@Override
 	public String saveOrUpdate(ScriptInstance entity) throws BusinessException {		
 		String result = super.saveOrUpdate(entity);		
-		javaCompilerManager.compileScript(entity);		
+		javaCompilerManager.compileScript(entity);	
+		entity = scriptInstanceService.findById(entity.getId());
+		if(entity.getError().booleanValue()){
+			result=null;	
+		}
 		return result;
 	}
 	
