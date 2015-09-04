@@ -212,5 +212,12 @@ public class EmailNotificationApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	public void createOrUpdate(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
+		if (emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

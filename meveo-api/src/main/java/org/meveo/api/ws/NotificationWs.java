@@ -61,7 +61,10 @@ public interface NotificationWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeEmailNotification(@WebParam(name = "notificationCode") String notificationCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateEmailNotification(@WebParam(name = "notification") EmailNotificationDto postData);
+	
 	// history
 
 	@WebMethod
