@@ -621,5 +621,18 @@ public class WalletApi extends BaseApi {
 			missingParameters.add("walletTemplateCode");
 		}
 	}
-
+	
+	/**
+	 * Create or update walletTemplate
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(WalletTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (walletTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

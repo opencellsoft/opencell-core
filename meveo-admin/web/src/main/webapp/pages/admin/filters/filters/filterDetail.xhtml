@@ -3,6 +3,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -34,9 +35,12 @@
 							field="description" required="true" useConverter="false"
 							size="50" maxlength="50" />
 						<hf:formField field="shared" label="#{messages['filter.shared']}"></hf:formField>
-						<hf:formField label="#{messages['filter.inputXml']}"
-							maxlength="5000" field="inputXml" required="true" rows="5"
-							cols="80" textArea="true" />
+
+						<hftl:decorateFormField fieldId="inputXml"
+							label="#{messages['filter.inputXml']}" newLine="true">
+							<pe:codeMirror id="inputXml" mode="javascript" theme="eclipse"
+								value="#{filterBean.entity.inputXml}" lineNumbers="true" />
+						</hftl:decorateFormField>
 					</hf:formPanel>
 
 				</p:tab>

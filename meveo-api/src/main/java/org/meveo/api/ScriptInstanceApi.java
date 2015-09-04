@@ -1,18 +1,22 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.ScriptInstanceErrorDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidEnumValue;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptTypeEnum;
 import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInstanceService;
@@ -29,97 +33,116 @@ public class ScriptInstanceApi extends BaseApi {
 	@Inject
 	private JavaCompilerManager javaCompilerManager;
 
-	public void create(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())) {
-			if (scriptInstanceService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
-				throw new EntityAlreadyExistsException(ScriptInstance.class, postData.getCode());
-			}
-
-			ScriptInstance scriptInstance = new ScriptInstance();
-			scriptInstance.setCode(postData.getCode());
-			scriptInstance.setDescription(postData.getDescription());
-			scriptInstance.setScript(postData.getScript());
-
-			if (!StringUtils.isBlank(postData.getType())) {
-				try {
-					scriptInstance.setScriptTypeEnum(ScriptTypeEnum.valueOf(postData.getType()));
-				} catch (IllegalArgumentException e) {
-					throw new InvalidEnumValue(ScriptTypeEnum.class.getName(), postData.getType());
-				}
-			} else {
-				scriptInstance.setScriptTypeEnum(ScriptTypeEnum.JAVA);
-			}
-
-			scriptInstanceService.create(scriptInstance, currentUser, currentUser.getProvider());
-			javaCompilerManager.compileScript(scriptInstance);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+	public List<ScriptInstanceErrorDto> create(ScriptInstanceDto scriptInstanceDto, User currentUser) throws MissingParameterException, EntityAlreadyExistsException, InvalidEnumValue {
+		List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
+		checkDto(scriptInstanceDto);
+		if (scriptInstanceService.findByCode(scriptInstanceDto.getCode(), currentUser.getProvider()) != null) {
+			throw new EntityAlreadyExistsException(ScriptInstance.class, scriptInstanceDto.getCode());
 		}
+		ScriptInstance scriptInstance = new ScriptInstance();
+		scriptInstance.setCode(scriptInstanceDto.getCode());
+		scriptInstance.setDescription(scriptInstanceDto.getDescription());
+		scriptInstance.setScript(scriptInstanceDto.getScript());
+
+		if (!StringUtils.isBlank(scriptInstanceDto.getType())) {
+			try {
+				scriptInstance.setScriptTypeEnum(ScriptTypeEnum.valueOf(scriptInstanceDto.getType()));
+			} catch (IllegalArgumentException e) {
+				throw new InvalidEnumValue(ScriptTypeEnum.class.getName(), scriptInstanceDto.getType());
+			}
+		} else {
+			scriptInstance.setScriptTypeEnum(ScriptTypeEnum.JAVA);
+		}
+		scriptInstanceService.create(scriptInstance, currentUser, currentUser.getProvider());
+		javaCompilerManager.compileScript(scriptInstance);
+		scriptInstance = scriptInstanceService.findByCode(scriptInstanceDto.getCode(), currentUser.getProvider());
+		if (scriptInstance.getError().booleanValue()) {
+			for (ScriptInstanceError error : scriptInstance.getScriptInstanceErrors()) {
+				ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
+				result.add(errorDto);
+			}
+		}
+		return result;
 	}
 
-	public void update(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())) {
-			ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCode(),
-					currentUser.getProvider());
-
-			if (scriptInstance == null) {
-				throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getCode());
+	public List<ScriptInstanceErrorDto> update(ScriptInstanceDto scriptInstanceDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, InvalidEnumValue {
+		List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
+		checkDto(scriptInstanceDto);
+		ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceDto.getCode(), currentUser.getProvider());
+		if (scriptInstance == null) {
+			throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceDto.getCode());
+		}		
+		if (!StringUtils.isBlank(scriptInstanceDto.getType())) {
+			try {
+				scriptInstance.setScriptTypeEnum(ScriptTypeEnum.valueOf(scriptInstanceDto.getType()));
+			} catch (IllegalArgumentException e) {
+				throw new InvalidEnumValue(ScriptTypeEnum.class.getName(), scriptInstanceDto.getType());
 			}
-
-			scriptInstance.setDescription(postData.getDescription());
-			scriptInstance.setScript(postData.getScript());
-
-			if (!StringUtils.isBlank(postData.getType())) {
-				try {
-					scriptInstance.setScriptTypeEnum(ScriptTypeEnum.valueOf(postData.getType()));
-				} catch (IllegalArgumentException e) {
-					throw new InvalidEnumValue(ScriptTypeEnum.class.getName(), postData.getType());
-				}
-			} else {
-				scriptInstance.setScriptTypeEnum(ScriptTypeEnum.JAVA);
+		}		
+		scriptInstance.setDescription(scriptInstanceDto.getDescription());
+		scriptInstance.setScript(scriptInstanceDto.getScript());
+		scriptInstanceService.update(scriptInstance, currentUser);
+		javaCompilerManager.compileScript(scriptInstance);
+		scriptInstance = scriptInstanceService.findByCode(scriptInstanceDto.getCode(), currentUser.getProvider());
+		if (scriptInstance.getError().booleanValue()) {
+			for (ScriptInstanceError error : scriptInstance.getScriptInstanceErrors()) {
+				ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
+				result.add(errorDto);
 			}
-
-			scriptInstanceService.update(scriptInstance, currentUser);
-			javaCompilerManager.compileScript(scriptInstance);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
+		return result;
 	}
 
-	public ScriptInstanceDto find(String scriptInstanceCode, Provider provider) throws MeveoApiException {
+	public ScriptInstanceDto find(String scriptInstanceCode, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+		if (!StringUtils.isBlank(scriptInstanceCode)) {
+			missingParameters.add("scriptInstanceCode");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
 		ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceCode, provider);
 		if (scriptInstance == null) {
 			throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceCode);
 		}
-
 		return new ScriptInstanceDto(scriptInstance);
 	}
 
-	public void remove(String scriptInstanceCode, Provider provider) throws MeveoApiException {
+	public void remove(String scriptInstanceCode, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+		if (!StringUtils.isBlank(scriptInstanceCode)) {
+			missingParameters.add("scriptInstanceCode");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
 		ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceCode, provider);
 		if (scriptInstance == null) {
 			throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceCode);
 		}
-
 		scriptInstanceService.remove(scriptInstance);
 	}
-	
-	public void createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MeveoApiException {
+
+	public  List<ScriptInstanceErrorDto> createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MissingParameterException, EntityAlreadyExistsException, InvalidEnumValue, EntityDoesNotExistsException{
+		List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
+		checkDto(postData);
 		ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCode(), currentUser.getProvider());
-		
 		if (scriptInstance == null) {
-			create(postData, currentUser);
+			result = create(postData, currentUser);
 		} else {
-			update(postData, currentUser);
+			result = update(postData, currentUser);
 		}
+		return result;
 	}
 
+	private void checkDto(ScriptInstanceDto scriptInstanceDto) throws MissingParameterException {
+		if (scriptInstanceDto == null) {
+			missingParameters.add("scriptInstanceDto");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+		if (!StringUtils.isBlank(scriptInstanceDto.getCode())) {
+			missingParameters.add("code");
+		}
+		if (!StringUtils.isBlank(scriptInstanceDto.getScript())) {
+			missingParameters.add("script");
+		}
+		if (!missingParameters.isEmpty()) {
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+
+	}
 }
