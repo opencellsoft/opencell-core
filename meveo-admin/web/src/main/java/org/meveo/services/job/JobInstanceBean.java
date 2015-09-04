@@ -3,6 +3,7 @@ package org.meveo.services.job;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -10,8 +11,6 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.action.CustomFieldEnabledBean;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -23,7 +22,6 @@ import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped
-@CustomFieldEnabledBean(accountLevel = AccountLevelEnum.TIMER)
 public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     private static final long serialVersionUID = 1L;
@@ -108,10 +106,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
         // In case when job template has new custom fields defined in code, create them.
         Job job = jobInstanceService.getJobByName(entity.getJobTemplate());
-        List<CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+        Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
 
         if (jobCustomFields != null && (jobTemplates.size() != jobCustomFields.size())) {
-            for (CustomFieldTemplate cf : jobCustomFields) {
+            for (CustomFieldTemplate cf : jobCustomFields.values()) {
                 if (!jobTemplates.contains(cf)) {
                     customFieldTemplateService.create(cf, getCurrentUser(), entity.getProvider());
                     jobTemplates.add(cf);

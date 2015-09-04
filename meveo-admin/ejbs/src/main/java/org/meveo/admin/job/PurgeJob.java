@@ -1,7 +1,7 @@
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -41,8 +41,8 @@ public class PurgeJob extends Job {
     }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields() {
-        List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_jobExecHistory_jobName");
@@ -51,7 +51,7 @@ public class PurgeJob extends Job {
         cft.setDescription("Purge job execution history: job name");
         cft.setFieldType(CustomFieldTypeEnum.STRING);
         cft.setValueRequired(false);
-        result.add(cft);
+        result.put("PurgeJob_jobExecHistory_jobName", cft);
 
         cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_jobExecHistory_nbDays");
@@ -60,7 +60,7 @@ public class PurgeJob extends Job {
         cft.setDescription("Purge job execution history: older then (in days)");
         cft.setFieldType(CustomFieldTypeEnum.LONG);
         cft.setValueRequired(false);
-        result.add(cft);
+        result.put("PurgeJob_jobExecHistory_nbDays", cft);
 
         cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_counterPeriod_nbDays");
@@ -69,7 +69,7 @@ public class PurgeJob extends Job {
         cft.setDescription("Purge counter periods: period end date older then (in days)");
         cft.setFieldType(CustomFieldTypeEnum.LONG);
         cft.setValueRequired(false);
-        result.add(cft);
+        result.put("PurgeJob_counterPeriod_nbDays", cft);
 
         return result;
     }

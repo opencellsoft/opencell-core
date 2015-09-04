@@ -46,7 +46,6 @@ import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
@@ -926,18 +925,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         RequestContext requestContext = RequestContext.getCurrentInstance();
         requestContext.addCallbackParam("result", result);
         return null;
-    }
-
-    /**
-     * Get a list of custom field templates applicable to an entity.
-     * 
-     * @return A list of custom field templates
-     */
-    protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
-        AccountLevelEnum accountLevel = this.getClass().getAnnotation(CustomFieldEnabledBean.class).accountLevel();
-        List<CustomFieldTemplate> result= customFieldTemplateService.findByAccountLevel(accountLevel);
-        log.debug("Found {} custom field templates by fieldType={} for {}",result.size(),accountLevel,this.getClass());
-        return result;
     }
     
     public CSVExportOptions csvOptions(){

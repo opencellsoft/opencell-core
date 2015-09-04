@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.crm.CustomFieldValue;
 import org.meveo.model.crm.EntityReferenceWrapper;
 
 /**
@@ -32,17 +31,17 @@ public class CustomFieldValueDto implements Serializable {
     public CustomFieldValueDto() {
     }
 
-    public static CustomFieldValueDto toDTO(CustomFieldValue cfv) {
-        CustomFieldValueDto dto = new CustomFieldValueDto();
-        Object singleValue = cfv.getSingleValue();
-        if (singleValue != null && singleValue instanceof EntityReferenceWrapper) {
-            singleValue = new EntityReferenceDto((EntityReferenceWrapper) singleValue);
-        }
-        dto.value = singleValue;
-        return dto;
-    }
+//    public static CustomFieldValueDto toDTO(CustomFieldValue cfv) {
+//        CustomFieldValueDto dto = new CustomFieldValueDto();
+//        Object singleValue = cfv.getSingleValue();
+//        if (singleValue != null && singleValue instanceof EntityReferenceWrapper) {
+//            singleValue = new EntityReferenceDto((EntityReferenceWrapper) singleValue);
+//        }
+//        dto.value = singleValue;
+//        return dto;
+//    }
 
-    public Object fromDTO() {
+    private Object fromDTO() {
 
         if (value instanceof EntityReferenceDto) {
             return ((EntityReferenceDto) value).fromDTO();
@@ -51,7 +50,7 @@ public class CustomFieldValueDto implements Serializable {
         }
     }
 
-    public static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
+    protected static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
 
         List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
 
@@ -67,7 +66,7 @@ public class CustomFieldValueDto implements Serializable {
         return dtos;
     }
 
-    public static List<Object> fromDTO(List<CustomFieldValueDto> listValue) {
+    protected static List<Object> fromDTO(List<CustomFieldValueDto> listValue) {
         List<Object> values = new ArrayList<Object>();
         for (CustomFieldValueDto valueDto : listValue) {
             values.add(valueDto.fromDTO());
@@ -75,7 +74,7 @@ public class CustomFieldValueDto implements Serializable {
         return values;
     }
 
-    public static Map<String, Object> fromDTO(Map<String, CustomFieldValueDto> mapValue) {
+    protected static Map<String, Object> fromDTO(Map<String, CustomFieldValueDto> mapValue) {
         Map<String, Object> values = new HashMap<String, Object>();
         for (Map.Entry<String, CustomFieldValueDto> valueDto : mapValue.entrySet()) {
             values.put(valueDto.getKey(), valueDto.getValue().fromDTO());
@@ -83,7 +82,7 @@ public class CustomFieldValueDto implements Serializable {
         return values;
     }
 
-    public static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
+    protected static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
 
         Map<String, CustomFieldValueDto> dtos = new HashMap<String, CustomFieldValueDto>();
 

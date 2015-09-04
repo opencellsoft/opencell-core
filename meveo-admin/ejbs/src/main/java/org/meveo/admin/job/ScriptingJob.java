@@ -1,8 +1,6 @@
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Singleton;
@@ -22,7 +20,7 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
 import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInterface;
@@ -64,8 +62,8 @@ public class ScriptingJob extends Job {
     }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields() {
-		List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
 		CustomFieldTemplate scriptCF = new CustomFieldTemplate();
 		scriptCF.setCode("ScriptingJob_script");
@@ -75,7 +73,7 @@ public class ScriptingJob extends Job {
 		scriptCF.setFieldType(CustomFieldTypeEnum.ENTITY);
 		scriptCF.setEntityClazz(ScriptInstance.class.getName());
 		scriptCF.setValueRequired(true);
-		result.add(scriptCF);
+		result.put("ScriptingJob_script", scriptCF);
 		
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
 		variablesCF.setCode("ScriptingJob_variables");
@@ -85,7 +83,7 @@ public class ScriptingJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
-		result.add(variablesCF); 
+		result.put("ScriptingJob_variables", variablesCF); 
 		
 		return result;
     }

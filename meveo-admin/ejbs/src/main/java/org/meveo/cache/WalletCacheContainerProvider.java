@@ -83,14 +83,14 @@ public class WalletCacheContainerProvider {
 
             populateWalletCache();
 
-            log.debug("WalletCacheContainerProvider initialized");
+            log.info("WalletCacheContainerProvider initialized");
         } catch (Exception e) {
             log.error("WalletCacheContainerProvider init() error", e);
         }
     }
 
     private void populateWalletCache() {
-        log.info("Start to populate wallet cache");
+        log.debug("Start to populate wallet cache");
 
         balanceCache.clear();
         reservedBalanceCache.clear();
@@ -107,7 +107,7 @@ public class WalletCacheContainerProvider {
                 fillBalanceCaches(walletId);
             }
         }
-        log.debug("Wallet cache populated with {} usagecharges and {} wallets", charges.size(), walletIds.size());
+        log.info("Wallet cache populated with {} usagecharges and {} wallets", charges.size(), walletIds.size());
     }
 
     public void updateCache(UsageChargeInstance charge) {
@@ -123,7 +123,7 @@ public class WalletCacheContainerProvider {
             }
         }
 
-        log.info("UpdateCache usageChargeInstanceWallet charge {} wallets:{}", charge.getId(), walletIds.size());
+        log.debug("UpdateCache usageChargeInstanceWallet charge {} wallets:{}", charge.getId(), walletIds.size());
         if (walletIds.size() > 0) {
             usageChargeInstanceWalletCache.put(charge.getId(), walletIds);
         } else {
@@ -142,7 +142,7 @@ public class WalletCacheContainerProvider {
             reservedBalance = BigDecimal.ZERO;
         }
         reservedBalanceCache.put(walletId, reservedBalance);
-        log.info("Added to balance caches walletId:{} balance:{} reservedBalance:{}", walletId, balance, reservedBalance);
+        log.debug("Added to balance caches walletId:{} balance:{} reservedBalance:{}", walletId, balance, reservedBalance);
         return balance;
     }
 
@@ -165,14 +165,14 @@ public class WalletCacheContainerProvider {
             } else {
                 newValue = oldValue.subtract(op.getAmountWithTax());
             }
-            log.info("Update reservedBalance Cache for wallet {} {}->{}", op.getWallet().getId(), oldValue, newValue);
+            log.debug("Update reservedBalance Cache for wallet {} {}->{}", op.getWallet().getId(), oldValue, newValue);
             reservedBalanceCache.put(op.getWallet().getId(), newValue);
         }
 
         if (balanceCache.containsKey(op.getWallet().getId()) && (!(op instanceof WalletReservation) || (op.getStatus() == WalletOperationStatusEnum.OPEN))) {
             oldValue = balanceCache.get(op.getWallet().getId());
             newValue = oldValue.subtract(op.getAmountWithTax());
-            log.info("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{}", op.getWallet().getId(), oldValue, newValue, op.getWallet().getLowBalanceLevel());
+            log.debug("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{}", op.getWallet().getId(), oldValue, newValue, op.getWallet().getLowBalanceLevel());
             balanceCache.put(op.getWallet().getId(), newValue);
             if (op.getWallet().getLowBalanceLevel() != null) {
                 if (op.getWallet().getLowBalanceLevel().compareTo(newValue) >= 0 && op.getWallet().getLowBalanceLevel().compareTo(oldValue) < 0) {

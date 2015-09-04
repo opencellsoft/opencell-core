@@ -52,8 +52,8 @@ public class CustomFieldDto {
     @XmlElement()
     protected Double doubleValue;
 
-    @XmlElementWrapper(name="listValue")
-    @XmlElement(name="value")
+    @XmlElementWrapper(name = "listValue")
+    @XmlElement(name = "value")
     protected List<CustomFieldValueDto> listValue;
 
     @XmlElement()
@@ -71,14 +71,14 @@ public class CustomFieldDto {
             CustomFieldDto dto = new CustomFieldDto();
             dto.setCode(cfi.getCode());
             dto.setDescription(cfi.getDescription());
-            dto.setStringValue(cfi.getValue().getStringValue());
-            dto.setDateValue(cfi.getValue().getDateValue());
-            dto.setLongValue(cfi.getValue().getLongValue());
-            dto.setDoubleValue(cfi.getValue().getDoubleValue());
-            dto.setListValue(CustomFieldValueDto.toDTO(cfi.getValue().getListValue()));
-            dto.setMapValue(CustomFieldValueDto.toDTO(cfi.getValue().getMapValue()));
-            if (cfi.getValue().getEntityReferenceValue() != null) {
-                dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getValue().getEntityReferenceValue()));
+            dto.setStringValue(cfi.getCfValue().getStringValue());
+            dto.setDateValue(cfi.getCfValue().getDateValue());
+            dto.setLongValue(cfi.getCfValue().getLongValue());
+            dto.setDoubleValue(cfi.getCfValue().getDoubleValue());
+            dto.setListValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getListValue()));
+            dto.setMapValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getMapValue()));
+            if (cfi.getCfValue().getEntityReferenceValue() != null) {
+                dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getCfValue().getEntityReferenceValue()));
             }
             dtos.add(dto);
 
@@ -93,14 +93,14 @@ public class CustomFieldDto {
                 if (period.getPriority() > 0) {
                     dto.setValuePeriodPriority(period.getPriority());
                 }
-                dto.setStringValue(period.getValue().getStringValue());
-                dto.setDateValue(period.getValue().getDateValue());
-                dto.setLongValue(period.getValue().getLongValue());
-                dto.setDoubleValue(period.getValue().getDoubleValue());
-                dto.setListValue(CustomFieldValueDto.toDTO(period.getValue().getListValue()));
-                dto.setMapValue(CustomFieldValueDto.toDTO(period.getValue().getMapValue()));
-                if (period.getValue().getEntityReferenceValue() != null) {
-                    dto.setEntityReferenceValue(new EntityReferenceDto(period.getValue().getEntityReferenceValue()));
+                dto.setStringValue(period.getCfValue().getStringValue());
+                dto.setDateValue(period.getCfValue().getDateValue());
+                dto.setLongValue(period.getCfValue().getLongValue());
+                dto.setDoubleValue(period.getCfValue().getDoubleValue());
+                dto.setListValue(CustomFieldValueDto.toDTO(period.getCfValue().getListValue()));
+                dto.setMapValue(CustomFieldValueDto.toDTO(period.getCfValue().getMapValue()));
+                if (period.getCfValue().getEntityReferenceValue() != null) {
+                    dto.setEntityReferenceValue(new EntityReferenceDto(period.getCfValue().getEntityReferenceValue()));
                 }
 
                 dtos.add(dto);
@@ -211,10 +211,11 @@ public class CustomFieldDto {
     }
 
     /**
-     * Check if value is empty
+     * Check if value is empty given specific field or storage type
      * 
      * @param fieldType Field type to check
-     * @return
+     * @param storageType Storage type to check
+     * @return True if value is empty
      * 
      */
     public boolean isEmpty(CustomFieldTypeEnum fieldType, CustomFieldStorageTypeEnum storageType) {
@@ -256,6 +257,67 @@ public class CustomFieldDto {
             }
         }
         return false;
+    }
+
+    /**
+     * A generic way to check if value is empty
+     * 
+     * @return True if value is empty
+     */
+    public boolean isEmpty() {
+        if (mapValue != null) {
+            for (Entry<String, CustomFieldValueDto> mapItem : mapValue.entrySet()) {
+                if (mapItem.getKey() != null && !mapItem.getKey().isEmpty() && mapItem.getValue() != null && mapItem.getValue().isEmpty()) {
+                    return false;
+                }
+            }
+        }
+        if (listValue != null) {
+            for (CustomFieldValueDto listItem : listValue) {
+                if (listItem != null && !listItem.isEmpty()) {
+                    return false;
+                }
+            }
+        }
+        if (dateValue != null) {
+            return false;
+        } else if (doubleValue != null) {
+            return false;
+        } else if (doubleValue != null) {
+            return false;
+        } else if (longValue != null) {
+            return false;
+        } else if (stringValue != null && !stringValue.isEmpty()) {
+            return false;
+        } else if (entityReferenceValue == null && !entityReferenceValue.isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get a value converted from DTO a propper Map, List, EntityWrapper, Date, Long, Double or String value
+     * 
+     * @return
+     */
+    public Object getValueConverted() {
+        if (mapValue != null && !mapValue.isEmpty()) {
+            return CustomFieldValueDto.fromDTO(mapValue);
+        } else if (listValue != null && !listValue.isEmpty()) {
+            return CustomFieldValueDto.fromDTO(listValue);
+        } else if (stringValue != null) {
+            return stringValue;
+        } else if (dateValue != null) {
+            return dateValue;
+        } else if (doubleValue != null) {
+            return doubleValue;
+        } else if (longValue != null) {
+            return longValue;
+        } else if (entityReferenceValue != null) {
+            return entityReferenceValue.fromDTO();
+        }
+        return null;
     }
 
     @Override

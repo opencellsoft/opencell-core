@@ -68,5 +68,14 @@ public interface OfferTemplateRs extends IBaseRs {
 	@Path("/{offerTemplateCode}")
 	@DELETE
 	ActionStatus remove(@PathParam("offerTemplateCode") String offerTemplateCode);
-
+	
+	/**
+	 * Create or update offer template based on a given code.
+	 * @param postData
+	 * @return
+	 */
+	@Path("/createOrUpdate")
+	@POST
+	ActionStatus createOrUpdate(OfferTemplateDto postData);
+	
 }

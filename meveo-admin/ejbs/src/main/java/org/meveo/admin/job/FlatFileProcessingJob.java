@@ -64,22 +64,22 @@ public class FlatFileProcessingJob extends Job {
 			String originFilename = null;
 			Map<String, Object> context = new HashMap<String, Object>();
 			try {
-				nbRuns = jobInstance.getLongCustomValue("FlatFileProcessingJob_nbRuns").longValue();
-				waitingMillis = jobInstance.getLongCustomValue("FlatFileProcessingJob_waitingMillis").longValue();
+				nbRuns = (Long) jobInstance.getCFValue("FlatFileProcessingJob_nbRuns");
+				waitingMillis = (Long) jobInstance.getCFValue("FlatFileProcessingJob_waitingMillis");
 				if (nbRuns == -1) {
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
-				recordVariableName = jobInstance.getStringCustomValue("FlatFileProcessingJob_recordVariableName");
-				originFilename = jobInstance.getStringCustomValue("FlatFileProcessingJob_originFilename");
+				recordVariableName = (String) jobInstance.getCFValue("FlatFileProcessingJob_recordVariableName");
+				originFilename = (String) jobInstance.getCFValue("FlatFileProcessingJob_originFilename");
 				context = new HashMap<String, Object>();
 				CustomFieldInstance variablesCFI = jobInstance.getCustomFields().get("FlatFileProcessingJob_variables");
 				if (variablesCFI != null) {
 					context = variablesCFI.getMapValue();
 				}
-				mappingConf = jobInstance.getStringCustomValue("FlatFileProcessingJob_mappingConf");
-				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + jobInstance.getProvider().getCode() + jobInstance.getStringCustomValue("FlatFileProcessingJob_inputDir").replaceAll("\\..", "");
-				fileNameExtension = jobInstance.getStringCustomValue("FlatFileProcessingJob_fileNameExtension");
-				scriptInstanceFlowCode = jobInstance.getStringCustomValue("FlatFileProcessingJob_scriptsFlow");
+				mappingConf = (String) jobInstance.getCFValue("FlatFileProcessingJob_mappingConf");
+				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + jobInstance.getProvider().getCode() + ((String)jobInstance.getCFValue("FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
+				fileNameExtension = (String) jobInstance.getCFValue("FlatFileProcessingJob_fileNameExtension");
+				scriptInstanceFlowCode = (String) jobInstance.getCFValue("FlatFileProcessingJob_scriptsFlow");
 
 			} catch (Exception e) {
 				log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
@@ -135,8 +135,8 @@ public class FlatFileProcessingJob extends Job {
 	}
 
 	@Override
-	public List<CustomFieldTemplate> getCustomFields() {
-		List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+	public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
 		CustomFieldTemplate nbRuns = new CustomFieldTemplate();
 		nbRuns.setCode("FlatFileProcessingJob_nbRuns");
@@ -146,7 +146,7 @@ public class FlatFileProcessingJob extends Job {
 		nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
 		nbRuns.setDefaultValue("1");
 		nbRuns.setValueRequired(false);
-		result.add(nbRuns);
+		result.put("FlatFileProcessingJob_nbRuns", nbRuns);
 
 		CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
 		waitingMillis.setCode("FlatFileProcessingJob_waitingMillis");
@@ -156,7 +156,7 @@ public class FlatFileProcessingJob extends Job {
 		waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
 		waitingMillis.setDefaultValue("0");
 		waitingMillis.setValueRequired(false);
-		result.add(waitingMillis);
+		result.put("FlatFileProcessingJob_waitingMillis", waitingMillis);
 
 		CustomFieldTemplate inputDirectoryCF = new CustomFieldTemplate();
 		inputDirectoryCF.setCode("FlatFileProcessingJob_inputDir");
@@ -166,7 +166,7 @@ public class FlatFileProcessingJob extends Job {
 		inputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
 		inputDirectoryCF.setDefaultValue(null);
 		inputDirectoryCF.setValueRequired(true);
-		result.add(inputDirectoryCF);
+		result.put("FlatFileProcessingJob_inputDir", inputDirectoryCF);
 
 		CustomFieldTemplate fileNamePrefixCF = new CustomFieldTemplate();
 		fileNamePrefixCF.setCode("FlatFileProcessingJob_fileNameExtension");
@@ -176,7 +176,7 @@ public class FlatFileProcessingJob extends Job {
 		fileNamePrefixCF.setFieldType(CustomFieldTypeEnum.STRING);
 		fileNamePrefixCF.setDefaultValue("csv");
 		fileNamePrefixCF.setValueRequired(true);
-		result.add(fileNamePrefixCF);
+		result.put("FlatFileProcessingJob_fileNameExtension", fileNamePrefixCF);
 
 		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
 		mappingConf.setCode("FlatFileProcessingJob_mappingConf");
@@ -186,7 +186,7 @@ public class FlatFileProcessingJob extends Job {
 		mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
 		mappingConf.setDefaultValue("");
 		mappingConf.setValueRequired(true);
-		result.add(mappingConf);
+		result.put("FlatFileProcessingJob_mappingConf", mappingConf);
 
 		// CustomFieldTemplate scriptInstanceFlowCF = new CustomFieldTemplate();
 		// scriptInstanceFlowCF.setCode("FlatFileProcessingJob_scriptsFlow");
@@ -207,7 +207,7 @@ public class FlatFileProcessingJob extends Job {
 		ss.setFieldType(CustomFieldTypeEnum.STRING);
 		ss.setDefaultValue(null);
 		ss.setValueRequired(true);
-		result.add(ss);
+		result.put("FlatFileProcessingJob_scriptsFlow", ss);
 
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
 		variablesCF.setCode("FlatFileProcessingJob_variables");
@@ -217,7 +217,7 @@ public class FlatFileProcessingJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
-		result.add(variablesCF);
+		result.put("FlatFileProcessingJob_variables", variablesCF);
 
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
 		recordVariableName.setCode("FlatFileProcessingJob_recordVariableName");
@@ -227,7 +227,7 @@ public class FlatFileProcessingJob extends Job {
 		recordVariableName.setDescription("Record variable name");
 		recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
 		recordVariableName.setValueRequired(false);
-		result.add(recordVariableName);
+		result.put("FlatFileProcessingJob_recordVariableName", recordVariableName);
 
 		CustomFieldTemplate originFilename = new CustomFieldTemplate();
 		originFilename.setCode("FlatFileProcessingJob_originFilename");
@@ -237,7 +237,7 @@ public class FlatFileProcessingJob extends Job {
 		originFilename.setDescription("Filename variable name");
 		originFilename.setFieldType(CustomFieldTypeEnum.STRING);
 		originFilename.setValueRequired(false);
-		result.add(originFilename);
+		result.put("FlatFileProcessingJob_originFilename", originFilename);
 
 		return result;
 	}

@@ -36,6 +36,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.JobDoesNotExistsException;
+import org.meveo.admin.job.BillingRunJob;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -312,15 +313,18 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 				if (jobs.containsKey(entity.getJobTemplate())) {
 					Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
 
-					if(jobInstanceInfoDTO.getInvoiceDate()!=null){
-						entity.setDateCustomValue("BillingRunJob_invoiceDate",jobInstanceInfoDTO.getInvoiceDate());
-					}
-					if(jobInstanceInfoDTO.getLastTransactionDate()!=null){
-						entity.setDateCustomValue("BillingRunJob_lastTransactionDate",jobInstanceInfoDTO.getLastTransactionDate());
-					}
-					if(jobInstanceInfoDTO.getBillingCycle()!=null){
-						entity.setStringCustomValue("BillingRunJob_billingCycle",jobInstanceInfoDTO.getBillingCycle());
-					}					
+                    if (job instanceof BillingRunJob && jobInstanceInfoDTO.getInvoiceDate() != null) {
+                        entity.setCFValue("BillingRunJob_invoiceDate", jobInstanceInfoDTO.getInvoiceDate(), ((BillingRunJob) job).getCustomFields()
+                            .get("BillingRunJob_invoiceDate"));
+                    }
+                    if (job instanceof BillingRunJob && jobInstanceInfoDTO.getLastTransactionDate() != null) {
+                        entity.setCFValue("BillingRunJob_lastTransactionDate", jobInstanceInfoDTO.getLastTransactionDate(),
+                            ((BillingRunJob) job).getCustomFields().get("BillingRunJob_lastTransactionDate"));
+                    }
+                    if (job instanceof BillingRunJob && jobInstanceInfoDTO.getBillingCycle() != null) {
+                        entity.setCFValue("BillingRunJob_billingCycle", jobInstanceInfoDTO.getBillingCycle(),
+                            ((BillingRunJob) job).getCustomFields().get("BillingRunJob_billingCycle"));
+                    }			
 					jobExecutionService.create(result, currentUser, currentUser.getProvider());
 					job.execute(entity, result, currentUser);
 				}

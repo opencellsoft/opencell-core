@@ -50,7 +50,7 @@
 	<cc:attribute name="updateConfirmationMessage" default="" />
     <cc:attribute name="ajaxSubmit" required="true" />
     <cc:attribute name="submitPartialProcess" />
-    <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/>
+    <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/> <!--  instead of partial submit filter, jquery expression could be used in process attribute:  process="@this @( :input:not([name*='omitFromSubmit']))" -->
     <cc:attribute name="submitUpdate" default="@form"/>
 </cc:interface>
 

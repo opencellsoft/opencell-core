@@ -855,23 +855,9 @@ public class AccountHierarchyApi extends BaseApi {
 					result.getCustomer().add(new CustomerDto(cust));
 				} else {
 					for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-						if (!StringUtils.isBlank(cfDto.getStringValue())) {
-							if (cust.getStringCustomValue(cfDto.getCode()).equals(cfDto.getStringValue())) {
-								result.getCustomer().add(new CustomerDto(cust));
-							}
-						}
-						if (!StringUtils.isBlank(cfDto.getDateValue())) {
-							if (cust.getDateCustomValue(cfDto.getCode()).equals(cfDto.getDateValue())) {
-								result.getCustomer().add(new CustomerDto(cust));
-							}
-						}
-						if (!StringUtils.isBlank(cfDto.getDoubleValue())) {
-							if (cust.getDoubleCustomValue(cfDto.getCode()).equals(cfDto.getDoubleValue())) {
-								result.getCustomer().add(new CustomerDto(cust));
-							}
-						}
-						if (!StringUtils.isBlank(cfDto.getLongValue())) {
-							if (cust.getLongCustomValue(cfDto.getCode()).equals(cfDto.getLongValue())) {
+					    
+						if (!cfDto.isEmpty()) {
+							if (cfDto.getValueConverted().equals(cust.getCFValue(cfDto.getCode()))) {
 								result.getCustomer().add(new CustomerDto(cust));
 							}
 						}
@@ -2619,5 +2605,18 @@ public class AccountHierarchyApi extends BaseApi {
 		cfAccountParent.setStringValue(parentCode);
 		accountDto.getCustomFields().getCustomField().add(cfAccountParent);
 	}
-
+	
+	/**
+	 * Create or update Account Hierarchy based on code.
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(AccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+		if (customerService.findByCode(postData.getCustomerId(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

@@ -3,9 +3,12 @@ package org.meveo.service.crm.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
@@ -13,6 +16,9 @@ import org.meveo.service.base.BusinessService;
 
 @Stateless
 public class CustomFieldTemplateService extends BusinessService<CustomFieldTemplate> {
+
+    @Inject
+    private CustomFieldsCacheContainerProvider customFieldsCache;
 
     @SuppressWarnings("unchecked")
     public List<CustomFieldTemplate> findByJobName(String jobName) {
@@ -26,7 +32,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel) {
         QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, getCurrentProvider());
         qb.addCriterion("accountLevel", "=", accountLevel, true);
-        qb.addOrderCriterion("description",true);
+        qb.addOrderCriterion("description", true);
         return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
     }
 
@@ -48,5 +54,29 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    @Override
+    public void create(CustomFieldTemplate e, User creator, Provider provider) {
+        super.create(e, creator, provider);
+        customFieldsCache.addUpdateCustomFieldTemplate(e);
+    }
+
+    @Override
+    public CustomFieldTemplate update(CustomFieldTemplate e, User updater) {
+        CustomFieldTemplate eUpdated = super.update(e, updater);
+        customFieldsCache.addUpdateCustomFieldTemplate(e);
+
+        return eUpdated;
+    }
+
+    @Override
+    public void remove(CustomFieldTemplate e) {
+        super.remove(e);
+        customFieldsCache.removeCustomFieldTemplate(e);
+    }
+
+    public List<CustomFieldTemplate> getCFTForCache() {
+        return getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTForCache", CustomFieldTemplate.class).getResultList();
     }
 }

@@ -58,5 +58,13 @@ public interface BillingAccountRs extends IBaseRs {
 	@GET
 	@Path("/list")
 	BillingAccountsResponseDto listByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode);
-
+	
+	/**
+	 * Create or update Billing Account based on code.
+	 * @param postData
+	 * @return
+	 */
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(BillingAccountDto postData);
 }

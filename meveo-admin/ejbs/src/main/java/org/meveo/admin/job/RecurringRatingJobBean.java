@@ -65,8 +65,8 @@ public class RecurringRatingJobBean implements Serializable {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = jobInstance.getLongCustomValue("RecurringRatingJob_nbRuns").longValue();  			
-				waitingMillis = jobInstance.getLongCustomValue("RecurringRatingJob_waitingMillis").longValue();
+				nbRuns = (Long) jobInstance.getCFValue("RecurringRatingJob_nbRuns");  			
+				waitingMillis = (Long) jobInstance.getCFValue("RecurringRatingJob_waitingMillis");
 				if(nbRuns == -1){
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}

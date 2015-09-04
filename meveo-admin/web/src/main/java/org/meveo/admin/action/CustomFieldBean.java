@@ -17,12 +17,14 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
@@ -98,10 +100,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     protected void initCustomFields() {
 
-        if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class)) {
-            return;
-        }
-
         customFieldTemplates = getApplicateCustomFieldTemplates();
 
         if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
@@ -111,8 +109,8 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                 if (cfi == null) {
                     cft.setInstance(CustomFieldInstance.fromTemplate(cft));
                 } else {
-                    if (cfi.getValue() == null) {
-                        cfi.setValue(new CustomFieldValue());
+                    if (cfi.getCfValue() == null) {
+                        cfi.setCfValue(new CustomFieldValue());
                     }
                     deserializeForGUI(cft, cfi);
                     cft.setInstance(cfi);
@@ -122,10 +120,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     }
 
     private void updateCustomFieldsInEntity() {
-
-        if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class) || customFieldTemplates == null || customFieldTemplates.isEmpty()) {
-            return;
-        }
 
         for (CustomFieldTemplate cft : customFieldTemplates) {
             CustomFieldInstance cfi = cft.getInstance();
@@ -171,10 +165,10 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     private void deserializeForGUI(CustomFieldTemplate cft, CustomFieldInstance cfi) {
         if (cft.isVersionable()) {
             for (CustomFieldPeriod period : cfi.getValuePeriods()) {
-                deserializeForGUI(cft, period.getValue());
+                deserializeForGUI(cft, period.getCfValue());
             }
         } else {
-            deserializeForGUI(cft, cfi.getValue());
+            deserializeForGUI(cft, cfi.getCfValue());
         }
     }
 
@@ -253,10 +247,10 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         if (cft.isVersionable()) {
             for (CustomFieldPeriod period : cfi.getValuePeriods()) {
-                serializeForGUI(cft, period.getValue());
+                serializeForGUI(cft, period.getCfValue());
             }
         } else {
-            serializeForGUI(cft, cfi.getValue());
+            serializeForGUI(cft, cfi.getCfValue());
         }
     }
 
@@ -407,14 +401,14 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         // Set value
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
-            period.getValue().setSingleValue(value, cft.getFieldType());
+            period.getCfValue().setSingleValue(value, cft.getFieldType());
         } else {
             Map<String, Object> newValue = new HashMap<String, Object>();
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
                 newValue.put("key", key);
             }
             newValue.put("value", value);
-            period.getValue().getMapValuesForGUI().add(newValue);
+            period.getCfValue().getMapValuesForGUI().add(newValue);
         }
 
         // Create a timer if was requested
@@ -472,5 +466,17 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     public List<BusinessEntity> autocompleteCustomEntityForCFV(String wildcode) {
         String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
         return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode, this.currentProvider);
+    }
+    
+    /**
+     * Get a list of custom field templates applicable to an entity.
+     * 
+     * @return A list of custom field templates
+     */
+    protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
+        AccountLevelEnum accountLevel = this.getClazz().getAnnotation(CustomFieldEntity.class).accountLevel();
+        List<CustomFieldTemplate> result= customFieldTemplateService.findByAccountLevel(accountLevel);
+        log.debug("Found {} custom field templates by fieldType={} for {}",result.size(),accountLevel,this.getClass());
+        return result;
     }
 }

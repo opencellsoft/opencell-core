@@ -427,7 +427,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			nextInvoiceDate = DateUtils.setTimeToZero(nextInvoiceDate);
 			applicationDate = DateUtils.setTimeToZero(applicationDate);
 
-			if (applicationDate.after(nextInvoiceDate)) {
+			if (nextInvoiceDate==null || applicationDate.after(nextInvoiceDate)) {
 				billingAccount.setNextInvoiceDate(applicationDate);
 				billingAccountService.update(billingAccount, creator);
 			}

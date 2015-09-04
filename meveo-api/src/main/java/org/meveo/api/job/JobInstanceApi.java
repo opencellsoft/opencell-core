@@ -82,11 +82,11 @@ public class JobInstanceApi extends BaseApi {
 		if (jobs.containsKey(jobInstanceDto.getJobTemplate())) {
 			customFieldTemplates.clear();
 			Job job = jobInstanceService.getJobByName(jobInstanceDto.getJobTemplate());
-			List<CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+			Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
 			if (jobCustomFields != null) {
 				customFieldTemplates = customFieldTemplateService.findByJobName(jobInstanceDto.getJobTemplate());
 				if (customFieldTemplates != null && customFieldTemplates.size() != jobCustomFields.size()) {
-					for (CustomFieldTemplate cf : jobCustomFields) {
+					for (CustomFieldTemplate cf : jobCustomFields.values()) {
 						if (!customFieldTemplates.contains(cf)) {
 							try {
 								customFieldTemplateService.create(cf, currentUser);

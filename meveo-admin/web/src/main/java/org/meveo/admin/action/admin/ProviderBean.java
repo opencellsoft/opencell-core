@@ -21,13 +21,11 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
@@ -40,7 +38,6 @@ import org.primefaces.event.SelectEvent;
 
 @Named
 @ViewScoped
-@CustomFieldEnabledBean(accountLevel=AccountLevelEnum.PROVIDER)
 public class ProviderBean extends CustomFieldBean<Provider> {
 
     private static final long serialVersionUID = 1L;

@@ -2,7 +2,6 @@ package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -12,7 +11,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -24,9 +22,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jaxb.customer.CustomField;
 import org.meveo.model.jaxb.subscription.Access;
 import org.meveo.model.jaxb.subscription.Charge;
 import org.meveo.model.shared.DateUtils;
@@ -36,16 +32,9 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
-import org.slf4j.Logger;
 
 @Stateless
-public class SubscriptionImportService {
-
-	@Inject
-	private Logger log;
-
-	@Inject
-	private CustomFieldTemplateService customFieldTemplateService;
+public class SubscriptionImportService extends ImportService{
 
 	@Inject
 	private SubscriptionService subscriptionService;
@@ -137,33 +126,11 @@ public class SubscriptionImportService {
 		subscription.setOffer(checkSubscription.offerTemplate);
 		subscription.setCode(jaxbSubscription.getCode());
 		subscription.setDescription(jaxbSubscription.getDescription());
-		if (jaxbSubscription.getCustomFields() != null && jaxbSubscription.getCustomFields().getCustomField() != null
-				&& jaxbSubscription.getCustomFields().getCustomField().size() > 0) {
-			for (CustomField customField : jaxbSubscription.getCustomFields().getCustomField()) {
-				// check if cft exists
-				if (customFieldTemplateService.findByCodeAndAccountLevel(customField.getCode(), AccountLevelEnum.SUB,
-						provider) == null) {
-					log.warn("CustomFieldTemplate with code={} does not exists.", customField.getCode());
-					continue;
-				}
-
-				CustomFieldInstance cfi = new CustomFieldInstance();
-				cfi.setSubscription(subscription);
-				cfi.setActive(true);
-				cfi.setCode(customField.getCode());
-				cfi.setDateValue(customField.getDateValue());
-				cfi.setDescription(customField.getDescription());
-				cfi.setDoubleValue(customField.getDoubleValue());
-				cfi.setLongValue(customField.getLongValue());
-				cfi.setProvider(provider);
-				cfi.setStringValue(customField.getStringValue());
-				Auditable auditable = new Auditable();
-				auditable.setCreated(new Date());
-				auditable.setCreator(currentUser);
-				cfi.setAuditable(auditable);
-				subscription.getCustomFields().put(cfi.getCode(), cfi);
-			}
-		}
+		
+        if (jaxbSubscription.getCustomFields() != null) {
+            populateCustomFields(AccountLevelEnum.SUB, jaxbSubscription.getCustomFields().getCustomField(), subscription, "subscription", currentUser);
+        }		
+		
 		subscription.setSubscriptionDate(DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),
 				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
 		subscription.setEndAgrementDate(DateUtils.parseDateWithPattern(jaxbSubscription.getEndAgreementDate(),
@@ -237,6 +204,11 @@ public class SubscriptionImportService {
 					paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
 			access.setEndDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getEndDate(),
 					paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
+			
+//	        if (jaxbAccessPoint.getCustomFields() != null) {
+//	            populateCustomFields(AccountLevelEnum.ACC, jaxbAccessPoint.getCustomFields().getCustomField(), subscription, "access", currentUser);
+//	        }
+			
 			accessService.create(access, currentUser, provider);
 			log.info("File:" + fileName + ", typeEntity:access, index:" + i + ", AccessUserId:"
 					+ access.getAccessUserId());

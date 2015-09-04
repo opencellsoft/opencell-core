@@ -16,8 +16,8 @@
  */
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -42,8 +42,8 @@ public class InternalNotificationJob extends Job {
 
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        String filterCode = jobInstance.getStringCustomValue("InternalNotificationJob_filterCode");
-        String notificationCode = jobInstance.getStringCustomValue("InternalNotificationJob_notificationCode");
+        String filterCode = (String) jobInstance.getCFValue("InternalNotificationJob_filterCode");
+        String notificationCode = (String) jobInstance.getCFValue("InternalNotificationJob_notificationCode");
         internalNotificationJobBean.execute(filterCode,notificationCode,result, currentUser);
     }
 
@@ -53,8 +53,8 @@ public class InternalNotificationJob extends Job {
     }
     
     @Override
-    public List<CustomFieldTemplate> getCustomFields() {
-        List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate filterCode = new CustomFieldTemplate();
         filterCode.setCode("InternalNotificationJob_filterCode");
@@ -63,7 +63,7 @@ public class InternalNotificationJob extends Job {
         filterCode.setDescription("Filter (sql query)");
         filterCode.setFieldType(CustomFieldTypeEnum.STRING);
         filterCode.setValueRequired(true);
-        result.add(filterCode);
+        result.put("InternalNotificationJob_filterCode", filterCode);
 
         CustomFieldTemplate notificationCode = new CustomFieldTemplate();
         notificationCode.setCode("InternalNotificationJob_notificationCode");
@@ -72,7 +72,7 @@ public class InternalNotificationJob extends Job {
         notificationCode.setDescription("Notification code");
         notificationCode.setFieldType(CustomFieldTypeEnum.STRING);
         notificationCode.setValueRequired(true);
-        result.add(notificationCode);
+        result.put("InternalNotificationJob_notificationCode", notificationCode);
 
         return result;
     }

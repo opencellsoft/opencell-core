@@ -55,8 +55,8 @@ public class UsageRatingJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = jobInstance.getLongCustomValue("UsageRatingJob_nbRuns").longValue();  			
-				waitingMillis = jobInstance.getLongCustomValue("UsageRatingJob_waitingMillis").longValue();
+				nbRuns = (Long) jobInstance.getCFValue("UsageRatingJob_nbRuns");  			
+				waitingMillis = (Long) jobInstance.getCFValue("UsageRatingJob_waitingMillis");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}

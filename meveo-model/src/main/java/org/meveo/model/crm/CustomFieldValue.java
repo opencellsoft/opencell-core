@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -68,10 +67,10 @@ public class CustomFieldValue implements Serializable {
     private EntityReferenceWrapper entityReferenceValue;
 
     @Transient
-    private List<Object> listValue = new ArrayList<Object>();
+    private List<Object> listValue = null; // new ArrayList<Object>();
 
     @Transient
-    private Map<String, Object> mapValue = new HashMap<String, Object>();
+    private Map<String, Object> mapValue = null; // new HashMap<String, Object>();
 
     @Transient
     private List<Map<String, Object>> mapValuesForGUI = new ArrayList<Map<String, Object>>();
@@ -216,7 +215,7 @@ public class CustomFieldValue implements Serializable {
 
             break;
         case ENTITY:
-            entityReferenceValue = new EntityReferenceWrapper((BusinessEntity) value);
+            setEntityReferenceValue(new EntityReferenceWrapper((BusinessEntity) value));
         }
     }
 
@@ -263,17 +262,87 @@ public class CustomFieldValue implements Serializable {
      * @param dateFormat Date format
      * @return Return formated value when storage type is Single and concatenated values when storage type is multiple
      */
+    @SuppressWarnings("unchecked")
+    public static String getShortRepresentationOfValue(Object value, String dateFormat) {
+        if (value == null) {
+            return null;
+
+        } else if (value instanceof Map) {
+            SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+
+            StringBuilder builder = new StringBuilder();
+            int i = 0;
+            for (Map.Entry<String, Object> valueInfo : ((Map<String, Object>) value).entrySet()) {
+                builder.append(builder.length() == 0 ? "" : ", ");
+                Object val = valueInfo.getValue();
+                if (val instanceof Date) {
+                    val = sdf.format(val);
+                } else if (val instanceof EntityReferenceWrapper) {
+                    val = ((EntityReferenceWrapper) val).getCode();
+                }
+
+                builder.append(String.format("%s: [%s]", valueInfo.getKey(), val));
+                i++;
+                if (i >= 10) {
+                    break;
+                }
+            }
+
+            return builder.toString();
+
+        } else if (value instanceof List) {
+            StringBuilder builder = new StringBuilder();
+            SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+            int i = 0;
+            for (Object val : ((List<Object>) value)) {
+                builder.append(builder.length() == 0 ? "" : ", ");
+                if (val instanceof Date) {
+                    val = sdf.format(val);
+                } else if (val instanceof EntityReferenceWrapper) {
+                    val = ((EntityReferenceWrapper) val).getCode();
+                }
+
+                builder.append(val);
+                i++;
+                if (i >= 10) {
+                    break;
+                }
+            }
+
+            return builder.toString();
+
+        } else if (value instanceof EntityReferenceWrapper) {
+            return ((EntityReferenceWrapper) value).getCode();
+
+        } else if (value instanceof Date) {
+            SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+            return sdf.format((Date) value);
+
+        } else {
+            return value.toString();
+        }
+
+    }
+
+    /**
+     * Get a short representation of a value to be used as display in GUI.
+     * 
+     * @param cft Custom field template
+     * @param dateFormat Date format
+     * @return Return formated value when storage type is Single and concatenated values when storage type is multiple
+     */
     public String getShortRepresentationOfValue(CustomFieldTemplate cft, String dateFormat) {
 
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST || cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
             StringBuilder builder = new StringBuilder();
 
+            SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
             int i = 0;
             for (Map<String, Object> valueInfo : mapValuesForGUI) {
                 builder.append(builder.length() == 0 ? "" : ", ");
                 Object value = valueInfo.get(MAP_VALUE);
                 if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-                    SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+
                     value = sdf.format(value);
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY && value != null) {
                     value = ((BusinessEntity) value).getCode();
@@ -443,8 +512,12 @@ public class CustomFieldValue implements Serializable {
         }
     }
 
-    public Object getSingleValue() {
-        if (stringValue != null) {
+    public Object getValue() {
+        if (mapValue != null && !mapValue.isEmpty()) {
+            return mapValue;
+        } else if (listValue != null && !listValue.isEmpty()) {
+            return listValue;
+        } else if (stringValue != null) {
             return stringValue;
         } else if (dateValue != null) {
             return dateValue;
@@ -456,6 +529,44 @@ public class CustomFieldValue implements Serializable {
             return entityReferenceValue;
         }
         return null;
+    }
+
+    /**
+     * Set value of a given type
+     * 
+     * @param value
+     * @param fieldType
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void setValue(Object value) {
+
+        if (value instanceof Date) {
+            dateValue = (Date) value;
+
+        } else if (value instanceof BigDecimal) {
+            doubleValue = ((BigDecimal) value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        } else if (value instanceof Double) {
+            doubleValue = (Double) value;
+
+        } else if (value instanceof Long) {
+            longValue = (Long) value;
+
+        } else if (value instanceof String) {
+            stringValue = (String) value;
+
+        } else if (value instanceof BusinessEntity) {
+            setEntityReferenceValue(new EntityReferenceWrapper((BusinessEntity) value));
+
+        } else if (value instanceof EntityReferenceWrapper) {
+            setEntityReferenceValue((EntityReferenceWrapper) value);
+
+        } else if (value instanceof Map) {
+            setMapValue((Map) value);
+
+        } else if (value instanceof List) {
+            setListValue((List) value);
+        }
     }
 
     @Override

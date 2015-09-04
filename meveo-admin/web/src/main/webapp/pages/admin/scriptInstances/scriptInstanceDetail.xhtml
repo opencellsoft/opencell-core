@@ -21,36 +21,22 @@
 						value="#{messages['menu.scriptInstances']}" />
 				</p:breadCrumb>
 			</h:form>
+			 <a href='https://www.assembla.com/spaces/meveo-enterprise/wiki/Scripts' target='_blank'>Help ?</a>
 		</p:panel>
-		<hf:formPanel id="formPanel" label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" columns="1">
-			<p:tabView id="tabView">
-							<p:tab title="#{messages['scriptInstance.panel']}" id="tab0">				
-			<a href="https://www.assembla.com/spaces/meveo-enterprise/wiki/Scripts" target="_blank">Help ?</a>
+		<hf:formPanel id="formPanel" label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" >								
+           <pe:codeMirror id="codeMirror"  theme="eclipse" mode="javascript" value="#{scriptInstanceBean.entity.script}"  lineNumbers="true"  required="true"/>
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true" />			
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" />
 			<hf:formField label="#{messages['scriptInstance.scriptTypeEnum']}" field="scriptTypeEnum" />
-			<!-- <pe:codeMirror id="codeMirror"  theme="eclipse"  value="#{scriptInstanceBean.entity.script}"  lineNumbers="true" /> --> 					
-			<h:inputTextarea value="#{scriptInstanceBean.entity.script}" cols="100" rows="50" />
-			</p:tab>
-			<!-- <p:tab title="#{messages['scriptInstance.errorsTab']}" id="tab1" disabled="#{ empty scriptInstanceBean.getErrors()}"> -->
-			<p:tab title="#{messages['scriptInstance.errorsTab']}" id="tab1" >
-				<p:dataTable var="diag" value="#{scriptInstanceBean.getErrors()}" tableStyle="table-layout: auto;" >				   		 
-				    <p:column headerText="#{messages['scriptInstance.compilation.message']}" >
-				        <h:outputText value="#{diag.getMessage(java.util.Locale.getDefault())}"  />
-				    </p:column>
-				    <p:column headerText="#{messages['scriptInstance.compilation.lineNumber']}" >
-				        <h:outputText value="#{diag.getLineNumber()}"  />
-				    </p:column>
-				    <p:column headerText="#{messages['scriptInstance.compilation.columnNumber']}" >
-				        <h:outputText value="#{diag.getColumnNumber()}"  />
-				    </p:column>
-				    <p:column headerText="#{messages['scriptInstance.compilation.sourceFile']}" >
-				        <h:outputText value="#{diag.getSource()}"  />
-				    </p:column>				    				    				    				    
-				</p:dataTable>
-			</p:tab>
-			</p:tabView>
+			<p:panel rendered="#{scriptInstanceBean.entity.error}">
+				<hftl:dataList label="#{messages['scriptInstance.title']}"
+				backingBean="#{scriptInstanceErrorListBean}" sortBy="lineNumber" checkMany="false" 
+				dataModel="#{scriptInstanceBean.entity.scriptInstanceErrors}" rendered="#{scriptInstanceBean.entity.error}">				
+					<hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" />
+					<hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" />
+					<hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />										    
+				</hftl:dataList>
+			</p:panel>
 		</hf:formPanel>
 	</ui:define>
-
 </ui:composition>

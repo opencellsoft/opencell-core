@@ -75,8 +75,8 @@ public class XMLInvoiceGenerationJobBean {
 				Long nbRuns = new Long(1);		
 				Long waitingMillis = new Long(0);
 				try{
-					nbRuns = jobInstance.getLongCustomValue("XMLInvoiceGenerationJob_nbRuns").longValue();  			
-					waitingMillis = jobInstance.getLongCustomValue("XMLInvoiceGenerationJob_waitingMillis").longValue();
+					nbRuns = (Long) jobInstance.getCFValue("XMLInvoiceGenerationJob_nbRuns");  			
+					waitingMillis = (Long) jobInstance.getCFValue("XMLInvoiceGenerationJob_waitingMillis");
 					if(nbRuns == -1){
 						nbRuns = (long) Runtime.getRuntime().availableProcessors();
 					}

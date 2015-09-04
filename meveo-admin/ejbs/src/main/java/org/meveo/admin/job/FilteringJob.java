@@ -1,8 +1,6 @@
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Singleton;
@@ -16,11 +14,12 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
 import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInterface;
@@ -38,9 +37,9 @@ public class FilteringJob extends Job {
 	@Override
 	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser)
 			throws BusinessException {
-		String filterCode = jobInstance.getCustomFields().get("FilteringJob_filter").getEntityReferenceValue().getCode();
-		String scriptCode =  jobInstance.getCustomFields().get("FilteringJob_script").getEntityReferenceValue().getCode();
-		String recordVariableName = jobInstance.getStringCustomValue("FilteringJob_recordVariableName");
+		String filterCode = ((EntityReferenceWrapper)jobInstance.getCFValue("FilteringJob_filter")).getCode();
+		String scriptCode =  ((EntityReferenceWrapper)jobInstance.getCFValue("FilteringJob_script")).getCode();
+		String recordVariableName = (String) jobInstance.getCFValue("FilteringJob_recordVariableName");
         Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(currentUser.getProvider(),scriptCode);
     	if(scriptInterfaceClass==null){
     		result.registerError("cannot find script with code "+scriptCode);
@@ -60,8 +59,8 @@ public class FilteringJob extends Job {
 	}
 
 	@Override
-	public List<CustomFieldTemplate> getCustomFields() {
-		List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+	public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
 		CustomFieldTemplate filter = new CustomFieldTemplate();
 		filter.setCode("FilteringJob_filter");
@@ -71,7 +70,7 @@ public class FilteringJob extends Job {
 		filter.setFieldType(CustomFieldTypeEnum.ENTITY);
 		filter.setEntityClazz(Filter.class.getName());
 		filter.setValueRequired(true);
-		result.add(filter);
+		result.put("FilteringJob_filter", filter);
 
 		CustomFieldTemplate scriptCF = new CustomFieldTemplate();
 		scriptCF.setCode("FilteringJob_script");
@@ -81,7 +80,7 @@ public class FilteringJob extends Job {
 		scriptCF.setFieldType(CustomFieldTypeEnum.ENTITY);
 		scriptCF.setEntityClazz(ScriptInstance.class.getName());
 		scriptCF.setValueRequired(true);
-		result.add(scriptCF);
+		result.put("FilteringJob_script", scriptCF);
 		
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
 		variablesCF.setCode("FilteringJob_variables");
@@ -91,7 +90,7 @@ public class FilteringJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
-		result.add(variablesCF); 
+		result.put("FilteringJob_variables", variablesCF); 
 
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
 		recordVariableName.setCode("FilteringJob_recordVariableName");
@@ -101,7 +100,7 @@ public class FilteringJob extends Job {
 		recordVariableName.setDescription("Record variable name");
 		recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
 		recordVariableName.setValueRequired(false);
-		result.add(recordVariableName);
+		result.put("FilteringJob_recordVariableName", recordVariableName);
 
 		return result;
 	}
