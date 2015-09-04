@@ -14986,6 +14986,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateWalletTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOperation">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOperation">
@@ -15022,6 +15031,24 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeWalletTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateWalletTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="openBalance">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="openBalance">
@@ -15031,12 +15058,30 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findWalletTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="cancelReservation">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="cancelReservation">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="cancelReservationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createWalletTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -15069,6 +15114,7 @@
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="FindWalletOperationsResponse" type="tns:findWalletOperationsResponseDto"/>
+      <xs:element name="GetWalletTemplateResponse" type="tns:getWalletTemplateResponseDto"/>
       <xs:element name="WalletBalance" type="tns:walletBalanceDto"/>
       <xs:element name="WalletOperation" type="tns:walletOperationDto"/>
       <xs:element name="WalletReservation" type="tns:walletReservationDto"/>
@@ -15078,20 +15124,30 @@
       <xs:element name="confirmReservationResponse" type="tns:confirmReservationResponse"/>
       <xs:element name="createOperation" type="tns:createOperation"/>
       <xs:element name="createOperationResponse" type="tns:createOperationResponse"/>
+      <xs:element name="createOrUpdateWalletTemplate" type="tns:createOrUpdateWalletTemplate"/>
+      <xs:element name="createOrUpdateWalletTemplateResponse" type="tns:createOrUpdateWalletTemplateResponse"/>
       <xs:element name="createReservation" type="tns:createReservation"/>
       <xs:element name="createReservationResponse" type="tns:createReservationResponse"/>
+      <xs:element name="createWalletTemplate" type="tns:createWalletTemplate"/>
+      <xs:element name="createWalletTemplateResponse" type="tns:createWalletTemplateResponse"/>
       <xs:element name="currentBalance" type="tns:currentBalance"/>
       <xs:element name="currentBalanceResponse" type="tns:currentBalanceResponse"/>
       <xs:element name="findOperations" type="tns:findOperations"/>
       <xs:element name="findOperationsResponse" type="tns:findOperationsResponse"/>
+      <xs:element name="findWalletTemplate" type="tns:findWalletTemplate"/>
+      <xs:element name="findWalletTemplateResponse" type="tns:findWalletTemplateResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
       <xs:element name="openBalance" type="tns:openBalance"/>
       <xs:element name="openBalanceResponse" type="tns:openBalanceResponse"/>
+      <xs:element name="removeWalletTemplate" type="tns:removeWalletTemplate"/>
+      <xs:element name="removeWalletTemplateResponse" type="tns:removeWalletTemplateResponse"/>
       <xs:element name="reservedBalance" type="tns:reservedBalance"/>
       <xs:element name="reservedBalanceResponse" type="tns:reservedBalanceResponse"/>
       <xs:element name="updateReservation" type="tns:updateReservation"/>
       <xs:element name="updateReservationResponse" type="tns:updateReservationResponse"/>
+      <xs:element name="updateWalletTemplate" type="tns:updateWalletTemplate"/>
+      <xs:element name="updateWalletTemplateResponse" type="tns:updateWalletTemplateResponse"/>
       <xs:complexType name="reservedBalance">
         <xs:sequence>
           <xs:element minOccurs="0" name="walletBalance" type="tns:walletBalanceDto"/>
@@ -15156,6 +15212,30 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplate" type="tns:WalletTemplate"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="WalletTemplate">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="walletType" type="xs:string"/>
+              <xs:element name="consumptionAlertSet" type="xs:boolean"/>
+              <xs:element name="fastRatingLevel" type="xs:int"/>
+              <xs:element minOccurs="0" name="lowBalanceLevel" type="xs:decimal"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateWalletTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createOperation">
         <xs:sequence>
           <xs:element minOccurs="0" name="walletOperation" type="tns:walletOperationDto"/>
@@ -15173,7 +15253,7 @@
               <xs:element minOccurs="0" name="currency" type="xs:string"/>
               <xs:element minOccurs="0" name="type" type="xs:string"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element minOccurs="0" name="unityDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
               <xs:element minOccurs="0" name="taxPercent" type="xs:decimal"/>
               <xs:element minOccurs="0" name="unitAmountWithoutTax" type="xs:decimal"/>
               <xs:element minOccurs="0" name="unitAmountWithTax" type="xs:decimal"/>
@@ -15189,6 +15269,7 @@
               <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="operationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="offerCode" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
@@ -15209,9 +15290,9 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="offerCode" type="xs:string"/>
-              <xs:element minOccurs="0" name="seller" type="xs:string"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="walletTemplate" type="xs:string"/>
+              <xs:element name="userAccount" type="xs:string"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -15233,6 +15314,26 @@
       <xs:complexType abstract="true" name="baseResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplate" type="tns:WalletTemplate"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateWalletTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeWalletTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="index">
@@ -15259,6 +15360,35 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="openBalanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findWalletTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getWalletTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getWalletTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="walletTemplate" type="tns:WalletTemplate"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplate" type="tns:WalletTemplate"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createWalletTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -15304,8 +15434,8 @@
   <wsdl:message name="reservedBalance">
     <wsdl:part element="ns1:reservedBalance" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="openBalance">
-    <wsdl:part element="ns1:openBalance" name="parameters"></wsdl:part>
+  <wsdl:message name="createWalletTemplate">
+    <wsdl:part element="ns1:createWalletTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateReservationResponse">
     <wsdl:part element="ns1:updateReservationResponse" name="parameters"></wsdl:part>
@@ -15319,29 +15449,17 @@
   <wsdl:message name="confirmReservation">
     <wsdl:part element="ns1:confirmReservation" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOperationResponse">
-    <wsdl:part element="ns1:createOperationResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="removeWalletTemplateResponse">
+    <wsdl:part element="ns1:removeWalletTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findOperations">
     <wsdl:part element="ns1:findOperations" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="indexResponse">
-    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="confirmReservationResponse">
-    <wsdl:part element="ns1:confirmReservationResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="index">
-    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  <wsdl:message name="findWalletTemplateResponse">
+    <wsdl:part element="ns1:findWalletTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createReservationResponse">
     <wsdl:part element="ns1:createReservationResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="cancelReservationResponse">
-    <wsdl:part element="ns1:cancelReservationResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createReservation">
-    <wsdl:part element="ns1:createReservation" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOperation">
     <wsdl:part element="ns1:createOperation" name="parameters"></wsdl:part>
@@ -15352,11 +15470,53 @@
   <wsdl:message name="updateReservation">
     <wsdl:part element="ns1:updateReservation" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="currentBalanceResponse">
-    <wsdl:part element="ns1:currentBalanceResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="findWalletTemplate">
+    <wsdl:part element="ns1:findWalletTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="cancelReservation">
     <wsdl:part element="ns1:cancelReservation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateWalletTemplateResponse">
+    <wsdl:part element="ns1:updateWalletTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="openBalance">
+    <wsdl:part element="ns1:openBalance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateWalletTemplate">
+    <wsdl:part element="ns1:createOrUpdateWalletTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOperationResponse">
+    <wsdl:part element="ns1:createOperationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateWalletTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateWalletTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateWalletTemplate">
+    <wsdl:part element="ns1:updateWalletTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="confirmReservationResponse">
+    <wsdl:part element="ns1:confirmReservationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="cancelReservationResponse">
+    <wsdl:part element="ns1:cancelReservationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createWalletTemplateResponse">
+    <wsdl:part element="ns1:createWalletTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeWalletTemplate">
+    <wsdl:part element="ns1:removeWalletTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createReservation">
+    <wsdl:part element="ns1:createReservation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="currentBalanceResponse">
+    <wsdl:part element="ns1:currentBalanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="reservedBalanceResponse">
     <wsdl:part element="ns1:reservedBalanceResponse" name="parameters"></wsdl:part>
@@ -15370,6 +15530,10 @@
       <wsdl:input message="ns1:createReservation" name="createReservation"></wsdl:input>
       <wsdl:output message="ns1:createReservationResponse" name="createReservationResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateWalletTemplate">
+      <wsdl:input message="ns1:createOrUpdateWalletTemplate" name="createOrUpdateWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateWalletTemplateResponse" name="createOrUpdateWalletTemplateResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOperation">
       <wsdl:input message="ns1:createOperation" name="createOperation"></wsdl:input>
       <wsdl:output message="ns1:createOperationResponse" name="createOperationResponse"></wsdl:output>
@@ -15377,6 +15541,14 @@
     <wsdl:operation name="findOperations">
       <wsdl:input message="ns1:findOperations" name="findOperations"></wsdl:input>
       <wsdl:output message="ns1:findOperationsResponse" name="findOperationsResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateWalletTemplate">
+      <wsdl:input message="ns1:updateWalletTemplate" name="updateWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateWalletTemplateResponse" name="updateWalletTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeWalletTemplate">
+      <wsdl:input message="ns1:removeWalletTemplate" name="removeWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:removeWalletTemplateResponse" name="removeWalletTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="index">
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
@@ -15389,6 +15561,14 @@
     <wsdl:operation name="openBalance">
       <wsdl:input message="ns1:openBalance" name="openBalance"></wsdl:input>
       <wsdl:output message="ns1:openBalanceResponse" name="openBalanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findWalletTemplate">
+      <wsdl:input message="ns1:findWalletTemplate" name="findWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findWalletTemplateResponse" name="findWalletTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createWalletTemplate">
+      <wsdl:input message="ns1:createWalletTemplate" name="createWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createWalletTemplateResponse" name="createWalletTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="cancelReservation">
       <wsdl:input message="ns1:cancelReservation" name="cancelReservation"></wsdl:input>
@@ -15657,7 +15837,60 @@
          </findWalletOperations>
       </ws:findOperations>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/findOperations"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/NotificationWs?wsdl" id="b9606d9d-8fb2-4b84-a609-f2a2ff7cb274" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/findOperations"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="365498a0-abef-4473-aa28-63fb214c60a5" isOneWay="false" action="" name="createOrUpdateWalletTemplate" bindingOperationName="createOrUpdateWalletTemplate" type="Request-Response" outputName="createOrUpdateWalletTemplateResponse" inputName="createOrUpdateWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e30cbee6-ed94-4524-9e89-5dbcd768eb43" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateWalletTemplate>
+         <!--Optional:-->
+         <walletTemplate code="WT_00" description="Test data for wallet template">
+            <consumptionAlertSet>1</consumptionAlertSet>
+            <fastRatingLevel>1</fastRatingLevel>
+            <walletType>POSTPAID</walletType>
+         </walletTemplate>
+      </ws:createOrUpdateWalletTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/createOrUpdateWalletTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="50e7415c-9c71-4b9a-89dc-06c464252ed3" isOneWay="false" action="" name="removeWalletTemplate" bindingOperationName="removeWalletTemplate" type="Request-Response" outputName="removeWalletTemplateResponse" inputName="removeWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b5e795c8-88fc-4eff-899c-d00d4dd8cbbf" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeWalletTemplate>\r
+         <!--Optional:-->\r
+         <walletTemplateCode>?</walletTemplateCode>\r
+      </ws:removeWalletTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/removeWalletTemplate"/></con:call></con:operation><con:operation id="554b2427-6a23-4e4a-a173-5a3ac82df715" isOneWay="false" action="" name="updateWalletTemplate" bindingOperationName="updateWalletTemplate" type="Request-Response" outputName="updateWalletTemplateResponse" inputName="updateWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2ffb1d43-c69f-43e5-8366-9831004e7b42" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateWalletTemplate>\r
+         <!--Optional:-->\r
+         <walletTemplate code="?" description="?">\r
+            <!--Optional:-->\r
+            <walletType>?</walletType>\r
+            <consumptionAlertSet>?</consumptionAlertSet>\r
+            <fastRatingLevel>?</fastRatingLevel>\r
+            <!--Optional:-->\r
+            <lowBalanceLevel>?</lowBalanceLevel>\r
+         </walletTemplate>\r
+      </ws:updateWalletTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/updateWalletTemplate"/></con:call></con:operation><con:operation id="8367dc95-4eda-45ec-ad8c-1d1e412beead" isOneWay="false" action="" name="findWalletTemplate" bindingOperationName="findWalletTemplate" type="Request-Response" outputName="findWalletTemplateResponse" inputName="findWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5653ecba-64bd-476d-8fba-4fec18c63ba5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findWalletTemplate>\r
+         <!--Optional:-->\r
+         <walletTemplateCode>?</walletTemplateCode>\r
+      </ws:findWalletTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/findWalletTemplate"/></con:call></con:operation><con:operation id="aa6a8e30-bc55-4edd-824c-b528b534bd38" isOneWay="false" action="" name="createWalletTemplate" bindingOperationName="createWalletTemplate" type="Request-Response" outputName="createWalletTemplateResponse" inputName="createWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2b18ad53-304e-437c-bf7f-246744517766" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createWalletTemplate>\r
+         <!--Optional:-->\r
+         <walletTemplate code="WT_00" description="Test data for wallet template">\r
+            <walletType>POSTPAID</walletType>
+         </walletTemplate>\r
+      </ws:createWalletTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/createWalletTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/NotificationWs?wsdl" id="b9606d9d-8fb2-4b84-a609-f2a2ff7cb274" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/NotificationWs?wsdl=NotificationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="NotificationWsSoapBinding" type="ns1:NotificationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

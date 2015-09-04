@@ -17999,6 +17999,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateWalletTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOperation">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOperation">
@@ -18128,6 +18137,8 @@
       <xs:element name="confirmReservationResponse" type="tns:confirmReservationResponse"/>
       <xs:element name="createOperation" type="tns:createOperation"/>
       <xs:element name="createOperationResponse" type="tns:createOperationResponse"/>
+      <xs:element name="createOrUpdateWalletTemplate" type="tns:createOrUpdateWalletTemplate"/>
+      <xs:element name="createOrUpdateWalletTemplateResponse" type="tns:createOrUpdateWalletTemplateResponse"/>
       <xs:element name="createReservation" type="tns:createReservation"/>
       <xs:element name="createReservationResponse" type="tns:createReservationResponse"/>
       <xs:element name="createWalletTemplate" type="tns:createWalletTemplate"/>
@@ -18210,6 +18221,30 @@
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createReservationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplate" type="tns:WalletTemplate"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="WalletTemplate">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="walletType" type="xs:string"/>
+              <xs:element name="consumptionAlertSet" type="xs:boolean"/>
+              <xs:element name="fastRatingLevel" type="xs:int"/>
+              <xs:element minOccurs="0" name="lowBalanceLevel" type="xs:decimal"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateWalletTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -18298,20 +18333,6 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="walletTemplate" type="tns:WalletTemplate"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="WalletTemplate">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="walletType" type="xs:string"/>
-              <xs:element name="consumptionAlertSet" type="xs:boolean"/>
-              <xs:element name="fastRatingLevel" type="xs:int"/>
-              <xs:element minOccurs="0" name="lowBalanceLevel" type="xs:decimal"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="updateWalletTemplateResponse">
         <xs:sequence>
@@ -18474,8 +18495,14 @@
   <wsdl:message name="openBalance">
     <wsdl:part element="ns1:openBalance" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateWalletTemplate">
+    <wsdl:part element="ns1:createOrUpdateWalletTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createOperationResponse">
     <wsdl:part element="ns1:createOperationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateWalletTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateWalletTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateWalletTemplate">
     <wsdl:part element="ns1:updateWalletTemplate" name="parameters"></wsdl:part>
@@ -18489,11 +18516,11 @@
   <wsdl:message name="index">
     <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createWalletTemplateResponse">
-    <wsdl:part element="ns1:createWalletTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="cancelReservationResponse">
     <wsdl:part element="ns1:cancelReservationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createWalletTemplateResponse">
+    <wsdl:part element="ns1:createWalletTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeWalletTemplate">
     <wsdl:part element="ns1:removeWalletTemplate" name="parameters"></wsdl:part>
@@ -18515,6 +18542,10 @@
     <wsdl:operation name="createReservation">
       <wsdl:input message="ns1:createReservation" name="createReservation"></wsdl:input>
       <wsdl:output message="ns1:createReservationResponse" name="createReservationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateWalletTemplate">
+      <wsdl:input message="ns1:createOrUpdateWalletTemplate" name="createOrUpdateWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateWalletTemplateResponse" name="createOrUpdateWalletTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOperation">
       <wsdl:input message="ns1:createOperation" name="createOperation"></wsdl:input>
@@ -18845,7 +18876,19 @@
          <walletTemplateCode>?</walletTemplateCode>
       </ws:findWalletTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/findWalletTemplate"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/MediationWs?wsdl" id="32a59458-1e95-449a-a999-7b2b95d59c6c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/MediationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/MediationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="MediationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/findWalletTemplate"/></con:call></con:operation><con:operation id="c145367b-f5af-44a9-8d6f-07ddc948bae0" isOneWay="false" action="" name="createOrUpdateWalletTemplate" bindingOperationName="createOrUpdateWalletTemplate" type="Request-Response" outputName="createOrUpdateWalletTemplateResponse" inputName="createOrUpdateWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="29b92caf-9c43-4f14-91dd-cdecd4a8713b" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateWalletTemplate>
+         <!--Optional:-->
+         <walletTemplate code="WT_00" description="Test data for wallet template">
+            <consumptionAlertSet>1</consumptionAlertSet>
+            <fastRatingLevel>1</fastRatingLevel>
+            <walletType>POSTPAID</walletType>
+         </walletTemplate>
+      </ws:createOrUpdateWalletTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/createOrUpdateWalletTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/MediationWs?wsdl" id="32a59458-1e95-449a-a999-7b2b95d59c6c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/MediationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/MediationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="MediationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/MediationWs?wsdl=MediationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="MediationWsSoapBinding" type="ns1:MediationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
