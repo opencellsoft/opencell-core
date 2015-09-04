@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Test4.1" resourceRoot="${projectDir}" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" id="76105cae-19da-46ea-8031-5afcf7dd2308" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Test4.1" resourceRoot="${projectDir}" soapui-version="5.1.3" abortOnError="false" runType="SEQUENTIAL" id="76105cae-19da-46ea-8031-5afcf7dd2308" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="#825_Invoicing"/>
@@ -29334,7 +29334,323 @@
          </filter>\r
       </ws:listByXmlInput>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilteredListWs/listByXmlInput"/></con:call></con:operation></con:interface><con:testSuite name="#787_jobApi" id="da2f85c3-3dbe-45a1-be85-4e670c25b3ff"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="job" searchProperties="true" id="90cd59b9-38c6-42be-9fe8-0e4dc37251ec"><con:settings/><con:testStep type="request" name="create timerEntity" id="8fda5421-5479-4076-b1cb-6e14800b7dec"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="create timerEntity" id="f9d25749-416c-4bab-9c4a-19a8fc04a79b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/FilteredListWs/listByXmlInput"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="8888cf27-ba2c-4104-9aa2-6d95058b024f" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/ScriptInstanceWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/ScriptInstanceWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ScriptInstanceWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/ScriptInstanceWs?wsdl=ScriptInstanceWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+  <wsdl:binding name="ScriptInstanceWsSoapBinding" type="ns1:ScriptInstanceWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="createOrUpdate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="remove">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="remove">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="update">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="find">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="find">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="create">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="create">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ScriptInstanceWs">
+    <wsdl:port binding="tns:ScriptInstanceWsSoapBinding" name="ScriptInstanceWsImplPort">
+      <soap:address location="http://localhost:8080/meveo/ScriptInstanceWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/ScriptInstanceWs?wsdl=ScriptInstanceWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ScriptInstanceWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="ScriptInstance" type="tns:scriptInstanceDto"/>
+      <xs:element name="ScriptInstanceError" type="tns:scriptInstanceErrorDto"/>
+      <xs:element name="ScriptInstanceResponse" type="tns:scriptInstanceReponseDto"/>
+      <xs:element name="create" type="tns:create"/>
+      <xs:element name="createOrUpdate" type="tns:createOrUpdate"/>
+      <xs:element name="createOrUpdateResponse" type="tns:createOrUpdateResponse"/>
+      <xs:element name="createResponse" type="tns:createResponse"/>
+      <xs:element name="find" type="tns:find"/>
+      <xs:element name="findResponse" type="tns:findResponse"/>
+      <xs:element name="index" type="tns:index"/>
+      <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="remove" type="tns:remove"/>
+      <xs:element name="removeResponse" type="tns:removeResponse"/>
+      <xs:element name="update" type="tns:update"/>
+      <xs:element name="updateResponse" type="tns:updateResponse"/>
+      <xs:complexType name="createOrUpdate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="createOrUpdateScriptInstanceRequest" type="tns:scriptInstanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="scriptInstanceDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="type" type="xs:string"/>
+          <xs:element minOccurs="0" name="script" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:scriptInstanceReponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="scriptInstanceReponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="compilationErrors" nillable="true" type="tns:scriptInstanceErrorDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="scriptInstanceErrorDto">
+        <xs:sequence>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="lineNumber" type="xs:long" use="required"/>
+        <xs:attribute name="columnNumber" type="xs:long" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="remove">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="removeScriptInstanceRequest" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="update">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="updateScriptInstanceRequest" type="tns:scriptInstanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:scriptInstanceReponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="find">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="findScriptInstanceRequest" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getScriptInstanceResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getScriptInstanceResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="scriptInstance" type="tns:scriptInstanceDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="create">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="createScriptInstanceRequest" type="tns:scriptInstanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:scriptInstanceReponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="actionStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="update">
+    <wsdl:part element="ns1:update" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeResponse">
+    <wsdl:part element="ns1:removeResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateResponse">
+    <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="remove">
+    <wsdl:part element="ns1:remove" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdate">
+    <wsdl:part element="ns1:createOrUpdate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createResponse">
+    <wsdl:part element="ns1:createResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findResponse">
+    <wsdl:part element="ns1:findResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="find">
+    <wsdl:part element="ns1:find" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="create">
+    <wsdl:part element="ns1:create" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateResponse">
+    <wsdl:part element="ns1:createOrUpdateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ScriptInstanceWs">
+    <wsdl:operation name="createOrUpdate">
+      <wsdl:input message="ns1:createOrUpdate" name="createOrUpdate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateResponse" name="createOrUpdateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="remove">
+      <wsdl:input message="ns1:remove" name="remove"></wsdl:input>
+      <wsdl:output message="ns1:removeResponse" name="removeResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <wsdl:input message="ns1:update" name="update"></wsdl:input>
+      <wsdl:output message="ns1:updateResponse" name="updateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <wsdl:input message="ns1:index" name="index"></wsdl:input>
+      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="find">
+      <wsdl:input message="ns1:find" name="find"></wsdl:input>
+      <wsdl:output message="ns1:findResponse" name="findResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="create">
+      <wsdl:input message="ns1:create" name="create"></wsdl:input>
+      <wsdl:output message="ns1:createResponse" name="createResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint></con:endpoints><con:operation id="8f1adc1d-ae29-4ba8-95fa-ae398c4dea27" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="98a935d8-39b8-4184-bc85-0558419f1277" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <!--Optional:-->
+         <createScriptInstanceRequest code="?" description="?">
+            <!--Optional:-->
+            <type>?</type>
+            <!--Optional:-->
+            <script>?</script>
+         </createScriptInstanceRequest>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/create"/></con:call></con:operation><con:operation id="99bf59b2-572c-44e7-9086-a3af62a4c6c4" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4944d7d1-5b73-4c73-9bb6-96dd99d0ae76" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdate>
+         <!--Optional:-->
+         <createOrUpdateScriptInstanceRequest code="?" description="?">
+            <!--Optional:-->
+            <type>?</type>
+            <!--Optional:-->
+            <script>?</script>
+         </createOrUpdateScriptInstanceRequest>
+      </ws:createOrUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/createOrUpdate"/></con:call></con:operation><con:operation id="098ac19b-d120-4246-b11f-a59710d1cd34" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="0f430a2f-383b-4da2-987b-152219b75030" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:find>
+         <!--Optional:-->
+         <findScriptInstanceRequest>?</findScriptInstanceRequest>
+      </ws:find>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/find"/></con:call></con:operation><con:operation id="02861a82-edaa-464a-a49e-32e996f0850b" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b04fb6cc-c211-4ffd-903e-7df9c9540883" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:index/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/index"/></con:call></con:operation><con:operation id="8ae5a0b2-bbb6-444b-8b6f-a9921748939b" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a153c899-0015-4522-99fc-0442c30cdff9" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:remove>
+         <!--Optional:-->
+         <removeScriptInstanceRequest>?</removeScriptInstanceRequest>
+      </ws:remove>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/remove"/></con:call></con:operation><con:operation id="bd9196ad-8dea-4e63-890f-9d05568e27c9" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ebfb78d8-0569-4ad6-ad3f-5c32bcf1a4a3" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:update>
+         <!--Optional:-->
+         <updateScriptInstanceRequest code="?" description="?">
+            <!--Optional:-->
+            <type>?</type>
+            <!--Optional:-->
+            <script>?</script>
+         </updateScriptInstanceRequest>
+      </ws:update>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ScriptInstanceWs/update"/></con:call></con:operation></con:interface><con:testSuite name="#787_jobApi" id="da2f85c3-3dbe-45a1-be85-4e670c25b3ff"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="job" searchProperties="true" id="90cd59b9-38c6-42be-9fe8-0e4dc37251ec"><con:settings/><con:testStep type="request" name="create timerEntity" id="8fda5421-5479-4076-b1cb-6e14800b7dec"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="create timerEntity" id="f9d25749-416c-4bab-9c4a-19a8fc04a79b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createTimer>
@@ -41579,4 +41895,72 @@ for( testCase in testSuite.getTestCaseList() ) {
          </filter>\r
       </ws:listByXmlInput>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="70a177ac-1d86-49f6-90f3-b5b33324460d"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="70a177ac-1d86-49f6-90f3-b5b33324460d"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="7a9560f9-2b62-4b1a-8cd3-679cd1f4c72b" name="ScriptInstanceWs_TestSuite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="629f14e9-4730-4fc4-928f-86387c280b8c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase 1" searchProperties="true"><con:settings/><con:testStep type="request" name="Create" id="24708604-7858-4c3c-b838-8391d024e1a9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create" id="c8824d81-b8ee-4f55-8404-6c5b8c7c40ee"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <!--Optional:-->
+         <createScriptInstanceRequest code="Demo" description="demo from api">
+            <!--Optional:-->
+            <type>JAVA</type>
+            <!--Optional:-->
+            <script><![CDATA[package org.meveo.service.script;
+
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Demo extends org.meveo.service.script.Script {
+	
+	private static final Logger log = LoggerFactory.getLogger(Demo.class);
+	
+	public void execute(Map<String, Object> initContext, Provider provider) throws BusinessException {
+		log.info("Execute...");
+		for (Map.Entry entry : initContext.entrySet()) {
+    log.info(entry.getKey() + ", " + entry.getValue());
+}
+		log.info("Execute update entity OK");
+	}
+
+}]]]]>><![CDATA[</script>
+         </createScriptInstanceRequest>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8d5605b5-00b7-4a91-9e4e-715a660939fd"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update" id="0c56523a-3909-4781-b29a-2e5396c42bb8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update" id="9ae42dfe-0e73-47ef-8a96-2b5d68f8eeab"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:update>
+         <!--Optional:-->
+         <updateScriptInstanceRequest code="Demo" description="demo from api">
+            <!--Optional:-->
+            <type>JAVA</type>
+            <!--Optional:-->
+            <script><![CDATA[package org.meveo.service.script;
+
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Demo extends org.meveo.service.script.Script {
+	
+	private static final Logger log = LoggerFactory.getLogger(Demo.class);
+	
+	public void execute(Map<String, Object> initContext, Provider provider) throws BusinessException {
+		log.info("Execute...");
+		for (Map.Entry entry : initContext.entrySet()) {
+    log.info(entry.getKey() + ", " + entry.getValue());
+}
+		log.inf("Execute update entity OK");
+	}
+
+}]]]]>><![CDATA[</script>
+         </updateScriptInstanceRequest>
+      </ws:update>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d4fa0631-db27-430f-af23-36958a4d693f"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
