@@ -94,7 +94,7 @@ public class ScriptInstanceApi extends BaseApi {
 	}
 
 	public ScriptInstanceDto find(String scriptInstanceCode, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
-		if (!StringUtils.isBlank(scriptInstanceCode)) {
+		if (StringUtils.isBlank(scriptInstanceCode)) {
 			missingParameters.add("scriptInstanceCode");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
@@ -106,7 +106,7 @@ public class ScriptInstanceApi extends BaseApi {
 	}
 
 	public void remove(String scriptInstanceCode, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
-		if (!StringUtils.isBlank(scriptInstanceCode)) {
+		if (StringUtils.isBlank(scriptInstanceCode)) {
 			missingParameters.add("scriptInstanceCode");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
@@ -134,10 +134,10 @@ public class ScriptInstanceApi extends BaseApi {
 			missingParameters.add("scriptInstanceDto");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
-		if (!StringUtils.isBlank(scriptInstanceDto.getCode())) {
+		if (StringUtils.isBlank(scriptInstanceDto.getCode())) {
 			missingParameters.add("code");
 		}
-		if (!StringUtils.isBlank(scriptInstanceDto.getScript())) {
+		if (StringUtils.isBlank(scriptInstanceDto.getScript())) {
 			missingParameters.add("script");
 		}
 		if (!missingParameters.isEmpty()) {
