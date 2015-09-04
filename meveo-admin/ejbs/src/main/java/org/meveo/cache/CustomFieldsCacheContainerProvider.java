@@ -148,8 +148,6 @@ public class CustomFieldsCacheContainerProvider {
             log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
         }
 
-        
-        
         customFieldValueCache.put(cacheKey, values);
     }
 
@@ -173,10 +171,21 @@ public class CustomFieldsCacheContainerProvider {
      * @return A map of CachedCFPeriodValue values with CF code as a key
      */
     public Map<String, Object> getValues(ICustomFieldEntity entity) {
+        return getValues(entity.getClass(), ((IEntity) entity).getId());
+    }
+
+    /**
+     * Get a map of custom field values (not versioned) mapped by a CF code that apply to an entity
+     * 
+     * @param entityClass Entity class to match
+     * @param id Entity id
+     * @return A map of CachedCFPeriodValue values with CF code as a key
+     */
+    public Map<String, Object> getValues(Class<? extends ICustomFieldEntity> entityClass, Serializable id) {
 
         Map<String, Object> values = new HashMap<String, Object>();
 
-        String cacheKey = getCacheKey((IEntity) entity);
+        String cacheKey = getCacheKey(entityClass, id);
 
         if (!customFieldValueCache.containsKey(cacheKey)) {
             return values;
@@ -204,11 +213,23 @@ public class CustomFieldsCacheContainerProvider {
      * @return A single custom field value
      */
     public Object getValue(ICustomFieldEntity entity, String cfCode) {
+        return getValue(entity.getClass(), ((IEntity) entity).getId(), cfCode);
+    }
 
-        String cacheKey = getCacheKey((IEntity) entity);
+    /**
+     * Get a single custom field value (not versioned) for a given custom field code that applies to an entity
+     * 
+     * @param entityClass Entity class to match
+     * @param id Entity id
+     * @param cfCode Custom field code
+     * @return A single custom field value
+     */
+    public Object getValue(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode) {
+
+        String cacheKey = getCacheKey(entityClass, id);
 
         if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
-            // Add only values that are not versioned
+            // Only value that is not versioned
             for (CachedCFPeriodValue cfValue : customFieldValueCache.get(cacheKey).get(cfCode)) {
                 if (!cfValue.isVersioned()) {
                     return cfValue.getValue();
@@ -228,10 +249,22 @@ public class CustomFieldsCacheContainerProvider {
      * @return A map of CachedCFPeriodValue values with CF code as a key
      */
     public Map<String, Object> getValues(ICustomFieldEntity entity, Date date) {
+        return getValues(entity.getClass(), ((IEntity) entity).getId(), date);
+    }
+
+    /**
+     * Get a map of custom field values mapped by a CF code that apply to an entity for a given date
+     * 
+     * @param entityClass Entity class to match
+     * @param id Entity id
+     * @param date Date to match
+     * @return A map of CachedCFPeriodValue values with CF code as a key
+     */
+    public Map<String, Object> getValues(Class<? extends ICustomFieldEntity> entityClass, Serializable id, Date date) {
 
         Map<String, Object> values = new HashMap<String, Object>();
 
-        String cacheKey = getCacheKey((IEntity) entity);
+        String cacheKey = getCacheKey(entityClass, id);
 
         if (!customFieldValueCache.containsKey(cacheKey)) {
             return values;
@@ -263,8 +296,21 @@ public class CustomFieldsCacheContainerProvider {
      * @return A single custom field value
      */
     public Object getValues(ICustomFieldEntity entity, String cfCode, Date date) {
+        return getValues(entity.getClass(), ((IEntity) entity).getId(), cfCode, date);
+    }
 
-        String cacheKey = getCacheKey((IEntity) entity);
+    /**
+     * Get a single custom field value (versioned) for a given custom field code that applies to an entity in a given date
+     * 
+     * @param entityClass Entity class to match
+     * @param id Entity id
+     * @param cfCode Custom field code
+     * @param date Date to match
+     * @return A single custom field value
+     */
+    public Object getValues(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode, Date date) {
+
+        String cacheKey = getCacheKey(entityClass, id);
 
         if (!(customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode))) {
             return null;
@@ -363,13 +409,18 @@ public class CustomFieldsCacheContainerProvider {
     }
 
     private String getCacheKey(IEntity entity) {
-        String className = entity.getClass().getSimpleName();
+        return getCacheKey(entity.getClass(), entity.getId());
+    }
+
+    @SuppressWarnings("rawtypes")
+    private String getCacheKey(Class entityClass, Serializable id) {
+        String className = entityClass.getSimpleName();
         int pos = className.indexOf("_$$_");
         if (pos > 0) {
             className = className.substring(0, pos);
         }
 
-        return className + "_" + entity.getId();
+        return className + "_" + id;
     }
 
     /**
