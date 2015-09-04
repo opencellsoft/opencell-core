@@ -1,8 +1,8 @@
-package org.meveo.api.rest.impl;
+package org.meveo.api.ws.impl;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.ScriptInstanceApi;
@@ -17,14 +17,12 @@ import org.meveo.api.exception.InvalidEnumValue;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.ScriptInstanceRs;
+import org.meveo.api.ws.ScriptInstanceWs;
 
-/**
- * @author Edward P. Legaspi
- **/
-@RequestScoped
+@WebService(serviceName = "ScriptInstanceWs", endpointInterface = "org.meveo.api.ws.ScriptInstanceWs")
 @Interceptors({ LoggingInterceptor.class })
-public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
+public class ScriptInstanceWsImpl extends BaseWs implements ScriptInstanceWs {
+
 
 	@Inject
 	private ScriptInstanceApi scriptInstanceApi;
@@ -167,5 +165,6 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
 	log.debug("RESPONSE={}", result);
 	return result;
 }
+
 
 }

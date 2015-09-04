@@ -7155,6 +7155,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomerAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCustomerAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCustomerAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateAccountHierarchy">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateAccountHierarchy">
@@ -7503,6 +7512,8 @@
       <xs:element name="createOrUpdateAccountHierarchyResponse" type="tns:createOrUpdateAccountHierarchyResponse"/>
       <xs:element name="createOrUpdateBillingAccount" type="tns:createOrUpdateBillingAccount"/>
       <xs:element name="createOrUpdateBillingAccountResponse" type="tns:createOrUpdateBillingAccountResponse"/>
+      <xs:element name="createOrUpdateCustomerAccount" type="tns:createOrUpdateCustomerAccount"/>
+      <xs:element name="createOrUpdateCustomerAccountResponse" type="tns:createOrUpdateCustomerAccountResponse"/>
       <xs:element name="createOrUpdateUserAccount" type="tns:createOrUpdateUserAccount"/>
       <xs:element name="createOrUpdateUserAccountResponse" type="tns:createOrUpdateUserAccountResponse"/>
       <xs:element name="createUserAccount" type="tns:createUserAccount"/>
@@ -8114,6 +8125,16 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateAccessResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerAccount" type="tns:CustomerAccount"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerAccountResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -8880,8 +8901,14 @@
   <wsdl:message name="createCRMAccountHierarchy">
     <wsdl:part element="ns1:createCRMAccountHierarchy" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomerAccountResponse">
+    <wsdl:part element="ns1:createOrUpdateCustomerAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findAccountHierarchyResponse">
     <wsdl:part element="ns1:findAccountHierarchyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomerAccount">
+    <wsdl:part element="ns1:createOrUpdateCustomerAccount" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeCustomerBrandResponse">
     <wsdl:part element="ns1:removeCustomerBrandResponse" name="parameters"></wsdl:part>
@@ -9009,6 +9036,10 @@
     <wsdl:operation name="updateAccess">
       <wsdl:input message="ns1:updateAccess" name="updateAccess"></wsdl:input>
       <wsdl:output message="ns1:updateAccessResponse" name="updateAccessResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomerAccount">
+      <wsdl:input message="ns1:createOrUpdateCustomerAccount" name="createOrUpdateCustomerAccount"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCustomerAccountResponse" name="createOrUpdateCustomerAccountResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOrUpdateAccountHierarchy">
       <wsdl:input message="ns1:createOrUpdateAccountHierarchy" name="createOrUpdateAccountHierarchy"></wsdl:input>
@@ -13654,11 +13685,11 @@
          <!--Optional:-->\r
          <billingAccount code="BILL_ACCT_00" description="Test data for billing account">\r
             <loaded>No</loaded>\r
-            <customerAccount>ACCNT_00</customerAccount>\r
-            <billingCycle>Monthly</billingCycle>\r
-            <country>PH</country>\r
-            <language>PH</language>\r
-            <paymentMethod>Monthly</paymentMethod>\r
+            <customerAccount>CA_00</customerAccount>\r
+            <billingCycle>CYC_INV_MT_1</billingCycle>\r
+            <country>US</country>\r
+            <language>ENG</language>\r
+            <paymentMethod>CHECK</paymentMethod>\r
          </billingAccount>\r
       </ws:createOrUpdateBillingAccount>\r
    </soapenv:Body>\r
@@ -13682,7 +13713,23 @@
          </accountHierarchy>\r
       </ws:createOrUpdateAccountHierarchy>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" id="e091ebc9-a4ee-4a50-819a-8033c8d42dba" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateAccountHierarchy"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="21bd5052-e0b2-438f-8c41-99d78ee46a9d" isOneWay="false" action="" name="createOrUpdateCustomerAccount" bindingOperationName="createOrUpdateCustomerAccount" type="Request-Response" outputName="createOrUpdateCustomerAccountResponse" inputName="createOrUpdateCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e135a10d-06ee-4945-b801-09aaa78a1e87" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomerAccount>\r
+         <!--Optional:-->\r
+         <customerAccount code="CA_00" description="Test data for customer account">\r
+            <loaded>No</loaded>\r
+            <customer>CA_00</customer>\r
+            <currency>USD</currency>\r
+            <language>ENG</language>\r
+            <name>
+			<lastName>lastName1</lastName>
+            </name>
+         </customerAccount>\r
+      </ws:createOrUpdateCustomerAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" id="e091ebc9-a4ee-4a50-819a-8033c8d42dba" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -14939,6 +14986,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateWalletTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOperation">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOperation">
@@ -14975,6 +15031,24 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeWalletTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateWalletTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="openBalance">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="openBalance">
@@ -14984,12 +15058,30 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findWalletTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="cancelReservation">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="cancelReservation">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="cancelReservationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createWalletTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createWalletTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createWalletTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -15022,6 +15114,7 @@
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
       <xs:element name="FindWalletOperationsResponse" type="tns:findWalletOperationsResponseDto"/>
+      <xs:element name="GetWalletTemplateResponse" type="tns:getWalletTemplateResponseDto"/>
       <xs:element name="WalletBalance" type="tns:walletBalanceDto"/>
       <xs:element name="WalletOperation" type="tns:walletOperationDto"/>
       <xs:element name="WalletReservation" type="tns:walletReservationDto"/>
@@ -15031,20 +15124,30 @@
       <xs:element name="confirmReservationResponse" type="tns:confirmReservationResponse"/>
       <xs:element name="createOperation" type="tns:createOperation"/>
       <xs:element name="createOperationResponse" type="tns:createOperationResponse"/>
+      <xs:element name="createOrUpdateWalletTemplate" type="tns:createOrUpdateWalletTemplate"/>
+      <xs:element name="createOrUpdateWalletTemplateResponse" type="tns:createOrUpdateWalletTemplateResponse"/>
       <xs:element name="createReservation" type="tns:createReservation"/>
       <xs:element name="createReservationResponse" type="tns:createReservationResponse"/>
+      <xs:element name="createWalletTemplate" type="tns:createWalletTemplate"/>
+      <xs:element name="createWalletTemplateResponse" type="tns:createWalletTemplateResponse"/>
       <xs:element name="currentBalance" type="tns:currentBalance"/>
       <xs:element name="currentBalanceResponse" type="tns:currentBalanceResponse"/>
       <xs:element name="findOperations" type="tns:findOperations"/>
       <xs:element name="findOperationsResponse" type="tns:findOperationsResponse"/>
+      <xs:element name="findWalletTemplate" type="tns:findWalletTemplate"/>
+      <xs:element name="findWalletTemplateResponse" type="tns:findWalletTemplateResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
       <xs:element name="openBalance" type="tns:openBalance"/>
       <xs:element name="openBalanceResponse" type="tns:openBalanceResponse"/>
+      <xs:element name="removeWalletTemplate" type="tns:removeWalletTemplate"/>
+      <xs:element name="removeWalletTemplateResponse" type="tns:removeWalletTemplateResponse"/>
       <xs:element name="reservedBalance" type="tns:reservedBalance"/>
       <xs:element name="reservedBalanceResponse" type="tns:reservedBalanceResponse"/>
       <xs:element name="updateReservation" type="tns:updateReservation"/>
       <xs:element name="updateReservationResponse" type="tns:updateReservationResponse"/>
+      <xs:element name="updateWalletTemplate" type="tns:updateWalletTemplate"/>
+      <xs:element name="updateWalletTemplateResponse" type="tns:updateWalletTemplateResponse"/>
       <xs:complexType name="reservedBalance">
         <xs:sequence>
           <xs:element minOccurs="0" name="walletBalance" type="tns:walletBalanceDto"/>
@@ -15109,6 +15212,30 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplate" type="tns:WalletTemplate"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="WalletTemplate">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="walletType" type="xs:string"/>
+              <xs:element name="consumptionAlertSet" type="xs:boolean"/>
+              <xs:element name="fastRatingLevel" type="xs:int"/>
+              <xs:element minOccurs="0" name="lowBalanceLevel" type="xs:decimal"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateWalletTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createOperation">
         <xs:sequence>
           <xs:element minOccurs="0" name="walletOperation" type="tns:walletOperationDto"/>
@@ -15126,7 +15253,7 @@
               <xs:element minOccurs="0" name="currency" type="xs:string"/>
               <xs:element minOccurs="0" name="type" type="xs:string"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
-              <xs:element minOccurs="0" name="unityDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
               <xs:element minOccurs="0" name="taxPercent" type="xs:decimal"/>
               <xs:element minOccurs="0" name="unitAmountWithoutTax" type="xs:decimal"/>
               <xs:element minOccurs="0" name="unitAmountWithTax" type="xs:decimal"/>
@@ -15142,6 +15269,7 @@
               <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="operationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="subscriptionDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="offerCode" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
@@ -15162,9 +15290,9 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="offerCode" type="xs:string"/>
-              <xs:element minOccurs="0" name="seller" type="xs:string"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
+              <xs:element minOccurs="0" name="walletTemplate" type="xs:string"/>
+              <xs:element name="userAccount" type="xs:string"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -15186,6 +15314,26 @@
       <xs:complexType abstract="true" name="baseResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplate" type="tns:WalletTemplate"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateWalletTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeWalletTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="index">
@@ -15212,6 +15360,35 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="openBalanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findWalletTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getWalletTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getWalletTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="walletTemplate" type="tns:WalletTemplate"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createWalletTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="walletTemplate" type="tns:WalletTemplate"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createWalletTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -15257,8 +15434,8 @@
   <wsdl:message name="reservedBalance">
     <wsdl:part element="ns1:reservedBalance" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="openBalance">
-    <wsdl:part element="ns1:openBalance" name="parameters"></wsdl:part>
+  <wsdl:message name="createWalletTemplate">
+    <wsdl:part element="ns1:createWalletTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateReservationResponse">
     <wsdl:part element="ns1:updateReservationResponse" name="parameters"></wsdl:part>
@@ -15272,29 +15449,17 @@
   <wsdl:message name="confirmReservation">
     <wsdl:part element="ns1:confirmReservation" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOperationResponse">
-    <wsdl:part element="ns1:createOperationResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="removeWalletTemplateResponse">
+    <wsdl:part element="ns1:removeWalletTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findOperations">
     <wsdl:part element="ns1:findOperations" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="indexResponse">
-    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="confirmReservationResponse">
-    <wsdl:part element="ns1:confirmReservationResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="index">
-    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  <wsdl:message name="findWalletTemplateResponse">
+    <wsdl:part element="ns1:findWalletTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createReservationResponse">
     <wsdl:part element="ns1:createReservationResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="cancelReservationResponse">
-    <wsdl:part element="ns1:cancelReservationResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createReservation">
-    <wsdl:part element="ns1:createReservation" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOperation">
     <wsdl:part element="ns1:createOperation" name="parameters"></wsdl:part>
@@ -15305,11 +15470,53 @@
   <wsdl:message name="updateReservation">
     <wsdl:part element="ns1:updateReservation" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="currentBalanceResponse">
-    <wsdl:part element="ns1:currentBalanceResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="findWalletTemplate">
+    <wsdl:part element="ns1:findWalletTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="cancelReservation">
     <wsdl:part element="ns1:cancelReservation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateWalletTemplateResponse">
+    <wsdl:part element="ns1:updateWalletTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="openBalance">
+    <wsdl:part element="ns1:openBalance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateWalletTemplate">
+    <wsdl:part element="ns1:createOrUpdateWalletTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOperationResponse">
+    <wsdl:part element="ns1:createOperationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateWalletTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateWalletTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateWalletTemplate">
+    <wsdl:part element="ns1:updateWalletTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="confirmReservationResponse">
+    <wsdl:part element="ns1:confirmReservationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="cancelReservationResponse">
+    <wsdl:part element="ns1:cancelReservationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createWalletTemplateResponse">
+    <wsdl:part element="ns1:createWalletTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeWalletTemplate">
+    <wsdl:part element="ns1:removeWalletTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createReservation">
+    <wsdl:part element="ns1:createReservation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="currentBalanceResponse">
+    <wsdl:part element="ns1:currentBalanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="reservedBalanceResponse">
     <wsdl:part element="ns1:reservedBalanceResponse" name="parameters"></wsdl:part>
@@ -15323,6 +15530,10 @@
       <wsdl:input message="ns1:createReservation" name="createReservation"></wsdl:input>
       <wsdl:output message="ns1:createReservationResponse" name="createReservationResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateWalletTemplate">
+      <wsdl:input message="ns1:createOrUpdateWalletTemplate" name="createOrUpdateWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateWalletTemplateResponse" name="createOrUpdateWalletTemplateResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOperation">
       <wsdl:input message="ns1:createOperation" name="createOperation"></wsdl:input>
       <wsdl:output message="ns1:createOperationResponse" name="createOperationResponse"></wsdl:output>
@@ -15330,6 +15541,14 @@
     <wsdl:operation name="findOperations">
       <wsdl:input message="ns1:findOperations" name="findOperations"></wsdl:input>
       <wsdl:output message="ns1:findOperationsResponse" name="findOperationsResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateWalletTemplate">
+      <wsdl:input message="ns1:updateWalletTemplate" name="updateWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateWalletTemplateResponse" name="updateWalletTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeWalletTemplate">
+      <wsdl:input message="ns1:removeWalletTemplate" name="removeWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:removeWalletTemplateResponse" name="removeWalletTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="index">
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
@@ -15342,6 +15561,14 @@
     <wsdl:operation name="openBalance">
       <wsdl:input message="ns1:openBalance" name="openBalance"></wsdl:input>
       <wsdl:output message="ns1:openBalanceResponse" name="openBalanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findWalletTemplate">
+      <wsdl:input message="ns1:findWalletTemplate" name="findWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findWalletTemplateResponse" name="findWalletTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createWalletTemplate">
+      <wsdl:input message="ns1:createWalletTemplate" name="createWalletTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createWalletTemplateResponse" name="createWalletTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="cancelReservation">
       <wsdl:input message="ns1:cancelReservation" name="cancelReservation"></wsdl:input>
@@ -15610,7 +15837,60 @@
          </findWalletOperations>
       </ws:findOperations>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/findOperations"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/NotificationWs?wsdl" id="b9606d9d-8fb2-4b84-a609-f2a2ff7cb274" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/findOperations"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="365498a0-abef-4473-aa28-63fb214c60a5" isOneWay="false" action="" name="createOrUpdateWalletTemplate" bindingOperationName="createOrUpdateWalletTemplate" type="Request-Response" outputName="createOrUpdateWalletTemplateResponse" inputName="createOrUpdateWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e30cbee6-ed94-4524-9e89-5dbcd768eb43" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateWalletTemplate>
+         <!--Optional:-->
+         <walletTemplate code="WT_00" description="Test data for wallet template">
+            <consumptionAlertSet>1</consumptionAlertSet>
+            <fastRatingLevel>1</fastRatingLevel>
+            <walletType>POSTPAID</walletType>
+         </walletTemplate>
+      </ws:createOrUpdateWalletTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/createOrUpdateWalletTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="50e7415c-9c71-4b9a-89dc-06c464252ed3" isOneWay="false" action="" name="removeWalletTemplate" bindingOperationName="removeWalletTemplate" type="Request-Response" outputName="removeWalletTemplateResponse" inputName="removeWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b5e795c8-88fc-4eff-899c-d00d4dd8cbbf" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeWalletTemplate>\r
+         <!--Optional:-->\r
+         <walletTemplateCode>?</walletTemplateCode>\r
+      </ws:removeWalletTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/removeWalletTemplate"/></con:call></con:operation><con:operation id="554b2427-6a23-4e4a-a173-5a3ac82df715" isOneWay="false" action="" name="updateWalletTemplate" bindingOperationName="updateWalletTemplate" type="Request-Response" outputName="updateWalletTemplateResponse" inputName="updateWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2ffb1d43-c69f-43e5-8366-9831004e7b42" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateWalletTemplate>\r
+         <!--Optional:-->\r
+         <walletTemplate code="?" description="?">\r
+            <!--Optional:-->\r
+            <walletType>?</walletType>\r
+            <consumptionAlertSet>?</consumptionAlertSet>\r
+            <fastRatingLevel>?</fastRatingLevel>\r
+            <!--Optional:-->\r
+            <lowBalanceLevel>?</lowBalanceLevel>\r
+         </walletTemplate>\r
+      </ws:updateWalletTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/updateWalletTemplate"/></con:call></con:operation><con:operation id="8367dc95-4eda-45ec-ad8c-1d1e412beead" isOneWay="false" action="" name="findWalletTemplate" bindingOperationName="findWalletTemplate" type="Request-Response" outputName="findWalletTemplateResponse" inputName="findWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5653ecba-64bd-476d-8fba-4fec18c63ba5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findWalletTemplate>\r
+         <!--Optional:-->\r
+         <walletTemplateCode>?</walletTemplateCode>\r
+      </ws:findWalletTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/findWalletTemplate"/></con:call></con:operation><con:operation id="aa6a8e30-bc55-4edd-824c-b528b534bd38" isOneWay="false" action="" name="createWalletTemplate" bindingOperationName="createWalletTemplate" type="Request-Response" outputName="createWalletTemplateResponse" inputName="createWalletTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2b18ad53-304e-437c-bf7f-246744517766" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createWalletTemplate>\r
+         <!--Optional:-->\r
+         <walletTemplate code="WT_00" description="Test data for wallet template">\r
+            <walletType>POSTPAID</walletType>
+         </walletTemplate>\r
+      </ws:createWalletTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/WalletWs/createWalletTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/NotificationWs?wsdl" id="b9606d9d-8fb2-4b84-a609-f2a2ff7cb274" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/NotificationWs?wsdl=NotificationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="NotificationWsSoapBinding" type="ns1:NotificationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -15647,6 +15927,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="updateWebHookNotificationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateNotification">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateNotification">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateNotificationResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -15731,6 +16020,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateEmailNotification">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateEmailNotification">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateEmailNotificationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="listNotificationHistory">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="listNotificationHistory">
@@ -15764,17 +16062,21 @@
       <xs:element name="GetNotificationResponse" type="tns:getNotificationResponseDto"/>
       <xs:element name="GetWebHookNotificationResponse" type="tns:getWebHookNotificationResponseDto"/>
       <xs:element name="InboundRequest" type="tns:inboundRequestDto"/>
+      <xs:element name="InboundRequestsResponse" type="tns:inboundRequestsResponseDto"/>
       <xs:element name="InboutRequests" type="tns:inboundRequestsDto"/>
-      <xs:element name="ListInboundRequestResponse" type="tns:listInboundRequestResponseDto"/>
-      <xs:element name="ListNotificationHistoryResponse" type="tns:listNotificationHistoryResponseDto"/>
       <xs:element name="Notification" type="tns:notificationDto"/>
       <xs:element name="NotificationHistories" type="tns:notificationHistoriesDto"/>
+      <xs:element name="NotificationHistoriesResponse" type="tns:notificationHistoriesResponseDto"/>
       <xs:element name="NotificationHistory" type="tns:notificationHistoryDto"/>
       <xs:element name="WebhookNotification" type="tns:webhookNotificationDto"/>
       <xs:element name="createEmailNotification" type="tns:createEmailNotification"/>
       <xs:element name="createEmailNotificationResponse" type="tns:createEmailNotificationResponse"/>
       <xs:element name="createNotification" type="tns:createNotification"/>
       <xs:element name="createNotificationResponse" type="tns:createNotificationResponse"/>
+      <xs:element name="createOrUpdateEmailNotification" type="tns:createOrUpdateEmailNotification"/>
+      <xs:element name="createOrUpdateEmailNotificationResponse" type="tns:createOrUpdateEmailNotificationResponse"/>
+      <xs:element name="createOrUpdateNotification" type="tns:createOrUpdateNotification"/>
+      <xs:element name="createOrUpdateNotificationResponse" type="tns:createOrUpdateNotificationResponse"/>
       <xs:element name="createWebHookNotification" type="tns:createWebHookNotification"/>
       <xs:element name="createWebHookNotificationResponse" type="tns:createWebHookNotificationResponse"/>
       <xs:element name="findEmailNotification" type="tns:findEmailNotification"/>
@@ -15813,7 +16115,21 @@
               <xs:element name="classNameFilter" type="xs:string"/>
               <xs:element name="eventTypeFilter" type="xs:string"/>
               <xs:element minOccurs="0" name="elFilter" type="xs:string"/>
-              <xs:element minOccurs="0" name="elAction" type="xs:string"/>
+              <xs:element minOccurs="0" name="scriptInstanceCode" type="xs:string"/>
+              <xs:element name="scriptParams">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element minOccurs="0" name="key" type="xs:string"/>
+                          <xs:element minOccurs="0" name="value" type="xs:string"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
               <xs:element minOccurs="0" name="counterTemplate" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
@@ -15934,6 +16250,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateNotification">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="notification" type="tns:notificationDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateNotificationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="findEmailNotification">
         <xs:sequence>
           <xs:element minOccurs="0" name="notificationCode" type="xs:string"/>
@@ -15968,10 +16294,10 @@
       </xs:complexType>
       <xs:complexType name="listInboundRequestResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:listInboundRequestResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:inboundRequestsResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listInboundRequestResponseDto">
+      <xs:complexType name="inboundRequestsResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -16076,6 +16402,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateEmailNotification">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="notification" type="tns:emailNotificationDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateEmailNotificationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="removeWebHookNotification">
         <xs:sequence>
           <xs:element minOccurs="0" name="notificationCode" type="xs:string"/>
@@ -16091,10 +16427,10 @@
       </xs:complexType>
       <xs:complexType name="listNotificationHistoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:listNotificationHistoryResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:notificationHistoriesResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listNotificationHistoryResponseDto">
+      <xs:complexType name="notificationHistoriesResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -16144,6 +16480,12 @@
       </xs:simpleType>
     </xs:schema>
   </wsdl:types>
+  <wsdl:message name="createOrUpdateEmailNotification">
+    <wsdl:part element="ns1:createOrUpdateEmailNotification" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateEmailNotificationResponse">
+    <wsdl:part element="ns1:createOrUpdateEmailNotificationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createWebHookNotificationResponse">
     <wsdl:part element="ns1:createWebHookNotificationResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -16207,14 +16549,14 @@
   <wsdl:message name="findEmailNotificationResponse">
     <wsdl:part element="ns1:findEmailNotificationResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findWebHookNotification">
+    <wsdl:part element="ns1:findWebHookNotification" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeNotificationResponse">
     <wsdl:part element="ns1:removeNotificationResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findWebHookNotification">
-    <wsdl:part element="ns1:findWebHookNotification" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateNotificationResponse">
     <wsdl:part element="ns1:updateNotificationResponse" name="parameters"></wsdl:part>
@@ -16225,8 +16567,14 @@
   <wsdl:message name="listInboundRequest">
     <wsdl:part element="ns1:listInboundRequest" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateNotification">
+    <wsdl:part element="ns1:createOrUpdateNotification" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="listNotificationHistory">
     <wsdl:part element="ns1:listNotificationHistory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateNotificationResponse">
+    <wsdl:part element="ns1:createOrUpdateNotificationResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createNotificationResponse">
     <wsdl:part element="ns1:createNotificationResponse" name="parameters"></wsdl:part>
@@ -16250,6 +16598,10 @@
     <wsdl:operation name="updateWebHookNotification">
       <wsdl:input message="ns1:updateWebHookNotification" name="updateWebHookNotification"></wsdl:input>
       <wsdl:output message="ns1:updateWebHookNotificationResponse" name="updateWebHookNotificationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateNotification">
+      <wsdl:input message="ns1:createOrUpdateNotification" name="createOrUpdateNotification"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateNotificationResponse" name="createOrUpdateNotificationResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findEmailNotification">
       <wsdl:input message="ns1:findEmailNotification" name="findEmailNotification"></wsdl:input>
@@ -16286,6 +16638,10 @@
     <wsdl:operation name="updateNotification">
       <wsdl:input message="ns1:updateNotification" name="updateNotification"></wsdl:input>
       <wsdl:output message="ns1:updateNotificationResponse" name="updateNotificationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateEmailNotification">
+      <wsdl:input message="ns1:createOrUpdateEmailNotification" name="createOrUpdateEmailNotification"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateEmailNotificationResponse" name="createOrUpdateEmailNotificationResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeWebHookNotification">
       <wsdl:input message="ns1:removeWebHookNotification" name="removeWebHookNotification"></wsdl:input>
@@ -16531,7 +16887,33 @@
    <soapenv:Body>
       <ws:listNotificationHistory/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/listNotificationHistory"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite name="CatalogWsSoapBinding TestSuite" id="17378c48-6a2d-4b07-bb26-0309b164ba88"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createCounterTemplate TestCase" searchProperties="true" id="732a29bb-dcee-49a0-b447-1918139d7d1b"><con:settings/><con:testStep type="request" name="createCounterTemplate" id="6102ffc2-cd03-478f-abbc-2816720c0cad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="createCounterTemplate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8f487693-453e-4107-a739-ad22020770cf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/listNotificationHistory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="71b6df1d-fa11-4c07-9664-0f2cc4f3c2f4" isOneWay="false" action="" name="createOrUpdateEmailNotification" bindingOperationName="createOrUpdateEmailNotification" type="Request-Response" outputName="createOrUpdateEmailNotificationResponse" inputName="createOrUpdateEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5fd581fc-0a70-494d-bad7-621661cbd6e5" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/NotificationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateEmailNotification>
+         <!--Optional:-->
+         <notification code="EN_00">
+            <classNameFilter>org.meveo.model.admin.User</classNameFilter>
+            <eventTypeFilter>CREATED</eventTypeFilter>
+            <scriptParams>
+            </scriptParams>
+            <emailFrom>test@email.com</emailFrom>
+            <subject>subject1</subject>
+         </notification>
+      </ws:createOrUpdateEmailNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/createOrUpdateEmailNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="e22f8673-1373-4309-abef-b44fb02ade81" isOneWay="false" action="" name="createOrUpdateNotification" bindingOperationName="createOrUpdateNotification" type="Request-Response" outputName="createOrUpdateNotificationResponse" inputName="createOrUpdateNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="41d8cc84-b083-49d8-b694-08050bd254fc" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/NotificationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateNotification>
+         <!--Optional:-->
+         <notification code="NOTIF_00">
+            <classNameFilter>org.meveo.model.admin.Seller</classNameFilter>
+            <eventTypeFilter>CREATED</eventTypeFilter>
+         </notification>
+      </ws:createOrUpdateNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/createOrUpdateNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite name="CatalogWsSoapBinding TestSuite" id="17378c48-6a2d-4b07-bb26-0309b164ba88"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createCounterTemplate TestCase" searchProperties="true" id="732a29bb-dcee-49a0-b447-1918139d7d1b"><con:settings/><con:testStep type="request" name="createCounterTemplate" id="6102ffc2-cd03-478f-abbc-2816720c0cad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="createCounterTemplate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8f487693-453e-4107-a739-ad22020770cf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCounterTemplate>
