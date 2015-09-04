@@ -90,7 +90,10 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateCustomerAccount(@WebParam(name = "customerAccount") CustomerAccountDto postData);
+	
 	// billing account
 
 	@WebMethod
