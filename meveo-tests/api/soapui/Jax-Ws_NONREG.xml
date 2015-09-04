@@ -13685,11 +13685,11 @@
          <!--Optional:-->\r
          <billingAccount code="BILL_ACCT_00" description="Test data for billing account">\r
             <loaded>No</loaded>\r
-            <customerAccount>ACCNT_00</customerAccount>\r
-            <billingCycle>Monthly</billingCycle>\r
-            <country>PH</country>\r
-            <language>PH</language>\r
-            <paymentMethod>Monthly</paymentMethod>\r
+            <customerAccount>CA_00</customerAccount>\r
+            <billingCycle>CYC_INV_MT_1</billingCycle>\r
+            <country>US</country>\r
+            <language>ENG</language>\r
+            <paymentMethod>CHECK</paymentMethod>\r
          </billingAccount>\r
       </ws:createOrUpdateBillingAccount>\r
    </soapenv:Body>\r
