@@ -163,7 +163,10 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	PricePlanMatrixesResponseDto listPricePlanByEventCode(@WebParam(name = "eventCode") String eventCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdatePricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
+	
 	// triggered Edr
 
 	@WebMethod
