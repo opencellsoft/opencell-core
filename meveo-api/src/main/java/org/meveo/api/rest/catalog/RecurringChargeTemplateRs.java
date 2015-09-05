@@ -70,5 +70,9 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 	@Path("/{recurringChargeTemplateCode}")
 	public ActionStatus remove(
 			@PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
-
+	
+	
+	@POST
+	@Path("/createOrUpdate")
+	public ActionStatus createOrUpdate(RecurringChargeTemplateDto postData);
 }

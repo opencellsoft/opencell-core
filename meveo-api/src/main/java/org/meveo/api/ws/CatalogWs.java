@@ -65,7 +65,11 @@ public interface CatalogWs extends IBaseWs {
 	@WebMethod
 	public ActionStatus removeRecurringChargeTemplate(
 			@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateRecurringChargeTemplate(
+			@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
+	
 	@WebMethod
 	public ActionStatus createOneShotChargeTemplate(
 			@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
@@ -124,6 +128,7 @@ public interface CatalogWs extends IBaseWs {
 	
 	@WebMethod
 	ActionStatus createOrUpdateServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
+		
 	
 	// offer
 

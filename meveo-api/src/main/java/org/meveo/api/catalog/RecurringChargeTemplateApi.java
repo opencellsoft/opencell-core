@@ -302,4 +302,13 @@ public class RecurringChargeTemplateApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
+	
+	public void createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		
+		if (recurringChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }
