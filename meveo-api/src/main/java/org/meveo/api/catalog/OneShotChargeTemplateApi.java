@@ -355,5 +355,12 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
 		return oneShotChargeTemplateListDto;
 	}
-
+	
+	public void createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (oneShotChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

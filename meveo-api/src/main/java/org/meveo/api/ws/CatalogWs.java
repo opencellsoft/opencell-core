@@ -81,7 +81,11 @@ public interface CatalogWs extends IBaseWs {
 	@WebMethod
 	public GetOneShotChargeTemplateResponseDto findOneShotChargeTemplate(
 			@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateOneShotChargeTemplate(
+			@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
+	
 	@WebMethod
 	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(
 			@WebParam(name = "languageCode") String languageCode, @WebParam(name = "countryCode") String countryCode,
