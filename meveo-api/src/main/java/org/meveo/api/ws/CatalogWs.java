@@ -169,5 +169,7 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeTriggeredEdr(@WebParam(name = "triggeredEdrCode") String triggeredEdrCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
 }
