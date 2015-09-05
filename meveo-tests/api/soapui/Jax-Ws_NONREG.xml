@@ -15912,6 +15912,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateWebHookNotification">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateWebHookNotification">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateWebHookNotificationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findNotification">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findNotification">
@@ -16077,6 +16086,8 @@
       <xs:element name="createOrUpdateEmailNotificationResponse" type="tns:createOrUpdateEmailNotificationResponse"/>
       <xs:element name="createOrUpdateNotification" type="tns:createOrUpdateNotification"/>
       <xs:element name="createOrUpdateNotificationResponse" type="tns:createOrUpdateNotificationResponse"/>
+      <xs:element name="createOrUpdateWebHookNotification" type="tns:createOrUpdateWebHookNotification"/>
+      <xs:element name="createOrUpdateWebHookNotificationResponse" type="tns:createOrUpdateWebHookNotificationResponse"/>
       <xs:element name="createWebHookNotification" type="tns:createWebHookNotification"/>
       <xs:element name="createWebHookNotificationResponse" type="tns:createWebHookNotificationResponse"/>
       <xs:element name="findEmailNotification" type="tns:findEmailNotification"/>
@@ -16151,6 +16162,58 @@
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateWebHookNotification">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="notification" type="tns:webhookNotificationDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="webhookNotificationDto">
+        <xs:complexContent>
+          <xs:extension base="tns:notificationDto">
+            <xs:sequence>
+              <xs:element name="host" type="xs:string"/>
+              <xs:element name="port" type="xs:int"/>
+              <xs:element name="page" type="xs:string"/>
+              <xs:element name="httpMethod" type="xs:string"/>
+              <xs:element minOccurs="0" name="username" type="xs:string"/>
+              <xs:element minOccurs="0" name="password" type="xs:string"/>
+              <xs:element name="headers">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element minOccurs="0" name="key" type="xs:string"/>
+                          <xs:element minOccurs="0" name="value" type="xs:string"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="params">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element minOccurs="0" name="key" type="xs:string"/>
+                          <xs:element minOccurs="0" name="value" type="xs:string"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateWebHookNotificationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createEmailNotification">
         <xs:sequence>
           <xs:element minOccurs="0" name="notification" type="tns:emailNotificationDto"/>
@@ -16202,48 +16265,6 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="notification" type="tns:webhookNotificationDto"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="webhookNotificationDto">
-        <xs:complexContent>
-          <xs:extension base="tns:notificationDto">
-            <xs:sequence>
-              <xs:element name="host" type="xs:string"/>
-              <xs:element name="port" type="xs:int"/>
-              <xs:element name="page" type="xs:string"/>
-              <xs:element name="httpMethod" type="xs:string"/>
-              <xs:element minOccurs="0" name="username" type="xs:string"/>
-              <xs:element minOccurs="0" name="password" type="xs:string"/>
-              <xs:element name="headers">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
-                      <xs:complexType>
-                        <xs:sequence>
-                          <xs:element minOccurs="0" name="key" type="xs:string"/>
-                          <xs:element minOccurs="0" name="value" type="xs:string"/>
-                        </xs:sequence>
-                      </xs:complexType>
-                    </xs:element>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element name="params">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
-                      <xs:complexType>
-                        <xs:sequence>
-                          <xs:element minOccurs="0" name="key" type="xs:string"/>
-                          <xs:element minOccurs="0" name="value" type="xs:string"/>
-                        </xs:sequence>
-                      </xs:complexType>
-                    </xs:element>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="updateWebHookNotificationResponse">
         <xs:sequence>
@@ -16501,6 +16522,9 @@
   <wsdl:message name="removeWebHookNotification">
     <wsdl:part element="ns1:removeWebHookNotification" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateWebHookNotificationResponse">
+    <wsdl:part element="ns1:createOrUpdateWebHookNotificationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeWebHookNotificationResponse">
     <wsdl:part element="ns1:removeWebHookNotificationResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -16528,11 +16552,11 @@
   <wsdl:message name="createNotification">
     <wsdl:part element="ns1:createNotification" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateWebHookNotificationResponse">
-    <wsdl:part element="ns1:updateWebHookNotificationResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateEmailNotificationResponse">
     <wsdl:part element="ns1:updateEmailNotificationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateWebHookNotificationResponse">
+    <wsdl:part element="ns1:updateWebHookNotificationResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createEmailNotification">
     <wsdl:part element="ns1:createEmailNotification" name="parameters"></wsdl:part>
@@ -16548,6 +16572,9 @@
   </wsdl:message>
   <wsdl:message name="findEmailNotificationResponse">
     <wsdl:part element="ns1:findEmailNotificationResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateWebHookNotification">
+    <wsdl:part element="ns1:createOrUpdateWebHookNotification" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findWebHookNotification">
     <wsdl:part element="ns1:findWebHookNotification" name="parameters"></wsdl:part>
@@ -16586,6 +16613,10 @@
     <wsdl:operation name="createNotification">
       <wsdl:input message="ns1:createNotification" name="createNotification"></wsdl:input>
       <wsdl:output message="ns1:createNotificationResponse" name="createNotificationResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateWebHookNotification">
+      <wsdl:input message="ns1:createOrUpdateWebHookNotification" name="createOrUpdateWebHookNotification"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateWebHookNotificationResponse" name="createOrUpdateWebHookNotificationResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createEmailNotification">
       <wsdl:input message="ns1:createEmailNotification" name="createEmailNotification"></wsdl:input>
@@ -16913,7 +16944,22 @@
          </notification>
       </ws:createOrUpdateNotification>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/createOrUpdateNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite name="CatalogWsSoapBinding TestSuite" id="17378c48-6a2d-4b07-bb26-0309b164ba88"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createCounterTemplate TestCase" searchProperties="true" id="732a29bb-dcee-49a0-b447-1918139d7d1b"><con:settings/><con:testStep type="request" name="createCounterTemplate" id="6102ffc2-cd03-478f-abbc-2816720c0cad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="createCounterTemplate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8f487693-453e-4107-a739-ad22020770cf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/createOrUpdateNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="ac81aab0-e996-46bc-860f-e047fcca0435" isOneWay="false" action="" name="createOrUpdateWebHookNotification" bindingOperationName="createOrUpdateWebHookNotification" type="Request-Response" outputName="createOrUpdateWebHookNotificationResponse" inputName="createOrUpdateWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7b3066ff-61a7-470f-8639-ea592b1c0659" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/NotificationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateWebHookNotification>\r
+         <!--Optional:-->\r
+         <notification code="WHN_00">\r
+            <classNameFilter>org.meveo.model.admin.User</classNameFilter>\r
+            <eventTypeFilter>CREATED</eventTypeFilter>\r
+            <host>localhost</host>\r
+            <port>8080</port>\r
+            <page>home</page>\r
+            <httpMethod>HTTP_GET</httpMethod>\r
+         </notification>\r
+      </ws:createOrUpdateWebHookNotification>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/createOrUpdateWebHookNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite name="CatalogWsSoapBinding TestSuite" id="17378c48-6a2d-4b07-bb26-0309b164ba88"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createCounterTemplate TestCase" searchProperties="true" id="732a29bb-dcee-49a0-b447-1918139d7d1b"><con:settings/><con:testStep type="request" name="createCounterTemplate" id="6102ffc2-cd03-478f-abbc-2816720c0cad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createCounterTemplate</con:operation><con:request name="createCounterTemplate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="8f487693-453e-4107-a739-ad22020770cf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCounterTemplate>
