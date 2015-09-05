@@ -44,7 +44,10 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateCounterTemplate(@WebParam(name = "counterTemplate") CounterTemplateDto postData);
+	
 	// charges
 
 	@WebMethod

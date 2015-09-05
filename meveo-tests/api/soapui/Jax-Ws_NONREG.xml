@@ -4902,6 +4902,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCounterTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCounterTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCounterTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findServiceTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findServiceTemplate">
@@ -5239,6 +5248,8 @@
       <xs:element name="createOfferTemplateResponse" type="tns:createOfferTemplateResponse"/>
       <xs:element name="createOneShotChargeTemplate" type="tns:createOneShotChargeTemplate"/>
       <xs:element name="createOneShotChargeTemplateResponse" type="tns:createOneShotChargeTemplateResponse"/>
+      <xs:element name="createOrUpdateCounterTemplate" type="tns:createOrUpdateCounterTemplate"/>
+      <xs:element name="createOrUpdateCounterTemplateResponse" type="tns:createOrUpdateCounterTemplateResponse"/>
       <xs:element name="createOrUpdateOfferTemplate" type="tns:createOrUpdateOfferTemplate"/>
       <xs:element name="createOrUpdateOfferTemplateResponse" type="tns:createOrUpdateOfferTemplateResponse"/>
       <xs:element name="createOrUpdateOneShotChargeTemplate" type="tns:createOrUpdateOneShotChargeTemplate"/>
@@ -5623,6 +5634,29 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateCounterTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="counterTemplateDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="unity" type="xs:string"/>
+          <xs:element minOccurs="0" name="type" type="xs:string"/>
+          <xs:element minOccurs="0" name="ceiling" type="xs:decimal"/>
+          <xs:element name="disabled" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="counterLevel" type="xs:string"/>
+          <xs:element minOccurs="0" name="ceilingExpressionEl" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="calendar" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCounterTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="removeServiceTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="serviceTemplateCode" type="xs:string"/>
@@ -5781,19 +5815,6 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="counterTemplateDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="unity" type="xs:string"/>
-          <xs:element minOccurs="0" name="type" type="xs:string"/>
-          <xs:element minOccurs="0" name="ceiling" type="xs:decimal"/>
-          <xs:element name="disabled" type="xs:boolean"/>
-          <xs:element minOccurs="0" name="counterLevel" type="xs:string"/>
-          <xs:element minOccurs="0" name="ceilingExpressionEl" type="xs:string"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
-        <xs:attribute name="calendar" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="updateCounterTemplateResponse">
         <xs:sequence>
@@ -6148,6 +6169,9 @@
   <wsdl:message name="createRecurringChargeTemplate">
     <wsdl:part element="ns1:createRecurringChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCounterTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateCounterTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createOrUpdateOfferTemplate">
     <wsdl:part element="ns1:createOrUpdateOfferTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -6253,11 +6277,11 @@
   <wsdl:message name="updateTriggeredEdr">
     <wsdl:part element="ns1:updateTriggeredEdr" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateOfferTemplateResponse">
-    <wsdl:part element="ns1:createOrUpdateOfferTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateCounterTemplate">
     <wsdl:part element="ns1:updateCounterTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateOfferTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findPricePlan">
     <wsdl:part element="ns1:findPricePlan" name="parameters"></wsdl:part>
@@ -6321,6 +6345,9 @@
   </wsdl:message>
   <wsdl:message name="updateServiceTemplateResponse">
     <wsdl:part element="ns1:updateServiceTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCounterTemplate">
+    <wsdl:part element="ns1:createOrUpdateCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeTriggeredEdrResponse">
     <wsdl:part element="ns1:removeTriggeredEdrResponse" name="parameters"></wsdl:part>
@@ -6391,6 +6418,10 @@
     <wsdl:operation name="createServiceTemplate">
       <wsdl:input message="ns1:createServiceTemplate" name="createServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:createServiceTemplateResponse" name="createServiceTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCounterTemplate">
+      <wsdl:input message="ns1:createOrUpdateCounterTemplate" name="createOrUpdateCounterTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCounterTemplateResponse" name="createOrUpdateCounterTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeServiceTemplate">
       <wsdl:input message="ns1:removeServiceTemplate" name="removeServiceTemplate"></wsdl:input>
@@ -7271,7 +7302,17 @@
          </oneShotChargeTemplate>\r
       </ws:createOrUpdateOneShotChargeTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateOneShotChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" id="7396bbb9-e90e-4f2b-bb94-362fd57a2512" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateOneShotChargeTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="e9dff6e7-8985-42e1-843d-19b07b8d4df6" isOneWay="false" action="" name="createOrUpdateCounterTemplate" bindingOperationName="createOrUpdateCounterTemplate" type="Request-Response" outputName="createOrUpdateCounterTemplateResponse" inputName="createOrUpdateCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="f80673ed-c864-4600-a608-018d11add2a5" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCounterTemplate>\r
+         <!--Optional:-->\r
+         <counterTemplate code="CT_00" description="Test data for counter template" calendar="MONTHLY">\r
+            <disabled>Yes</disabled>\r
+         </counterTemplate>\r
+      </ws:createOrUpdateCounterTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateCounterTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" id="7396bbb9-e90e-4f2b-bb94-362fd57a2512" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
