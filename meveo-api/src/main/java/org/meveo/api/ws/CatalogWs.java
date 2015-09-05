@@ -103,7 +103,11 @@ public interface CatalogWs extends IBaseWs {
 	@WebMethod
 	public ActionStatus removeUsageChargeTemplate(
 			@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateUsageChargeTemplate(
+			@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
+	
 	// service
 
 	@WebMethod

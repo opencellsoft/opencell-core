@@ -330,5 +330,66 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+	
+	@Override
+	public ActionStatus createOrUpdateEmailNotification(EmailNotificationDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+		try {
+			emailNotificationApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error occurred while creating notification ",e);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error generated while creating notification ",e);
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateNotification(NotificationDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			notificationApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error occurred while creating notification ",e);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error generated while creating notification ",e);
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateWebHookNotification(WebhookNotificationDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			webhookNotificationApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error occurred while creating webHook notification ",e);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error generated while creating webHook notification ",e);
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 }

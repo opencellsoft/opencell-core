@@ -230,5 +230,12 @@ public class NotificationApi extends BaseApi {
 
 		return result;
 	}
-
+	
+	public void createOrUpdate(NotificationDto postData, User currentUser) throws MeveoApiException {
+		if (notificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }
