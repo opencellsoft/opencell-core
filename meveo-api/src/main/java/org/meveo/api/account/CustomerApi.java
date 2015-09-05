@@ -344,4 +344,11 @@ public class CustomerApi extends AccountApi {
 		}
 	}
 
+	public void createOrUpdate(CustomerDto postData, User currentUser) throws MeveoApiException {
+		if (customerService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

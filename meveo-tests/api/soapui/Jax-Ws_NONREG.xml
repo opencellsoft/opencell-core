@@ -7586,6 +7586,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCustomer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCustomerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateUserAccount">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateUserAccount">
@@ -7667,21 +7676,21 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateCustomerAccount">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateCustomerAccount">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateCustomerAccountResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeCustomerBrand">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeCustomerBrand">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeCustomerBrandResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomerAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCustomerAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCustomerAccountResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -7808,8 +7817,10 @@
       <xs:element name="createOrUpdateAccountHierarchyResponse" type="tns:createOrUpdateAccountHierarchyResponse"/>
       <xs:element name="createOrUpdateBillingAccount" type="tns:createOrUpdateBillingAccount"/>
       <xs:element name="createOrUpdateBillingAccountResponse" type="tns:createOrUpdateBillingAccountResponse"/>
+      <xs:element name="createOrUpdateCustomer" type="tns:createOrUpdateCustomer"/>
       <xs:element name="createOrUpdateCustomerAccount" type="tns:createOrUpdateCustomerAccount"/>
       <xs:element name="createOrUpdateCustomerAccountResponse" type="tns:createOrUpdateCustomerAccountResponse"/>
+      <xs:element name="createOrUpdateCustomerResponse" type="tns:createOrUpdateCustomerResponse"/>
       <xs:element name="createOrUpdateUserAccount" type="tns:createOrUpdateUserAccount"/>
       <xs:element name="createOrUpdateUserAccountResponse" type="tns:createOrUpdateUserAccountResponse"/>
       <xs:element name="createUserAccount" type="tns:createUserAccount"/>
@@ -8718,6 +8729,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="updateUserAccount">
         <xs:sequence>
           <xs:element minOccurs="0" name="userAccount" type="tns:UserAccount"/>
@@ -8990,6 +9011,9 @@
       </xs:simpleType>
     </xs:schema>
   </wsdl:types>
+  <wsdl:message name="createOrUpdateCustomerResponse">
+    <wsdl:part element="ns1:createOrUpdateCustomerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="listByCustomerResponse">
     <wsdl:part element="ns1:listByCustomerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -9178,6 +9202,9 @@
   </wsdl:message>
   <wsdl:message name="listAccessResponse">
     <wsdl:part element="ns1:listAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomer">
+    <wsdl:part element="ns1:createOrUpdateCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeUserAccountResponse">
     <wsdl:part element="ns1:removeUserAccountResponse" name="parameters"></wsdl:part>
@@ -9392,6 +9419,10 @@
     <wsdl:operation name="updateCustomer">
       <wsdl:input message="ns1:updateCustomer" name="updateCustomer"></wsdl:input>
       <wsdl:output message="ns1:updateCustomerResponse" name="updateCustomerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomer">
+      <wsdl:input message="ns1:createOrUpdateCustomer" name="createOrUpdateCustomer"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCustomerResponse" name="createOrUpdateCustomerResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateUserAccount">
       <wsdl:input message="ns1:updateUserAccount" name="updateUserAccount"></wsdl:input>
@@ -14025,7 +14056,23 @@
          </customerAccount>\r
       </ws:createOrUpdateCustomerAccount>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" id="e091ebc9-a4ee-4a50-819a-8033c8d42dba" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomerAccount"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="757a89ce-bf62-4b6e-add5-82e0cf37f9c5" isOneWay="false" action="" name="createOrUpdateCustomer" bindingOperationName="createOrUpdateCustomer" type="Request-Response" outputName="createOrUpdateCustomerResponse" inputName="createOrUpdateCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="940a76ea-8cd6-4544-89d5-9b9419001b21" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomer>\r
+         <!--Optional:-->\r
+         <customer code="CUST_00" description="Test data for customer">\r
+            <name>\r
+               <lastName>lastName_00</lastName>\r
+            </name>\r
+            <loaded>Yes</loaded>\r
+            <customerCategory>Client</customerCategory>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <seller>MAIN_SELLER</seller>\r
+         </customer>\r
+      </ws:createOrUpdateCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" id="e091ebc9-a4ee-4a50-819a-8033c8d42dba" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

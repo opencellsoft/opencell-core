@@ -70,5 +70,9 @@ public interface CustomerRs extends IBaseRs {
 	@DELETE
 	@Path("/removeCategory/{categoryCode}")
 	ActionStatus removeCategory(@PathParam("categoryCode") String categoryCode);
-
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(CustomerDto postData);
+	
 }
