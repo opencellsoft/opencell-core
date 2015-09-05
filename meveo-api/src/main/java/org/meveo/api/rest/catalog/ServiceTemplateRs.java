@@ -65,5 +65,9 @@ public interface ServiceTemplateRs extends IBaseRs {
 	@DELETE
 	ActionStatus remove(
 			@PathParam("serviceTemplateCode") String serviceTemplateCode);
+	
+	@Path("/createOrUpdate")
+	@POST
+	ActionStatus createOrUpdate(ServiceTemplateDto postData);
 
 }

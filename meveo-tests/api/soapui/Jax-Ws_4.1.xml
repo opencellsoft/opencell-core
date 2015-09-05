@@ -204,6 +204,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateServiceTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateServiceTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateServiceTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateCounterTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateCounterTemplate">
@@ -426,6 +435,8 @@
       <xs:element name="createOneShotChargeTemplateResponse" type="tns:createOneShotChargeTemplateResponse"/>
       <xs:element name="createOrUpdateOfferTemplate" type="tns:createOrUpdateOfferTemplate"/>
       <xs:element name="createOrUpdateOfferTemplateResponse" type="tns:createOrUpdateOfferTemplateResponse"/>
+      <xs:element name="createOrUpdateServiceTemplate" type="tns:createOrUpdateServiceTemplate"/>
+      <xs:element name="createOrUpdateServiceTemplateResponse" type="tns:createOrUpdateServiceTemplateResponse"/>
       <xs:element name="createOrUpdateTriggeredEdr" type="tns:createOrUpdateTriggeredEdr"/>
       <xs:element name="createOrUpdateTriggeredEdrResponse" type="tns:createOrUpdateTriggeredEdrResponse"/>
       <xs:element name="createOrUpdateUsageChargeTemplate" type="tns:createOrUpdateUsageChargeTemplate"/>
@@ -914,6 +925,16 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateServiceTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="serviceTemplate" type="tns:serviceTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateServiceTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="updateOneShotChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
@@ -1333,6 +1354,9 @@
   <wsdl:message name="updateOfferTemplateResponse">
     <wsdl:part element="ns1:updateOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateServiceTemplate">
+    <wsdl:part element="ns1:createOrUpdateServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findServiceTemplateResponse">
     <wsdl:part element="ns1:findServiceTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1356,6 +1380,9 @@
   </wsdl:message>
   <wsdl:message name="updateServiceTemplate">
     <wsdl:part element="ns1:updateServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateServiceTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateServiceTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removePricePlan">
     <wsdl:part element="ns1:removePricePlan" name="parameters"></wsdl:part>
@@ -1423,11 +1450,11 @@
   <wsdl:message name="removeServiceTemplate">
     <wsdl:part element="ns1:removeServiceTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="index">
-    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateOfferTemplate">
     <wsdl:part element="ns1:updateOfferTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeOneShotChargeTemplate">
     <wsdl:part element="ns1:removeOneShotChargeTemplate" name="parameters"></wsdl:part>
@@ -1532,6 +1559,10 @@
     <wsdl:operation name="findOneShotChargeTemplate">
       <wsdl:input message="ns1:findOneShotChargeTemplate" name="findOneShotChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:findOneShotChargeTemplateResponse" name="findOneShotChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateServiceTemplate">
+      <wsdl:input message="ns1:createOrUpdateServiceTemplate" name="createOrUpdateServiceTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateServiceTemplateResponse" name="createOrUpdateServiceTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateOneShotChargeTemplate">
       <wsdl:input message="ns1:updateOneShotChargeTemplate" name="updateOneShotChargeTemplate"></wsdl:input>
@@ -2602,7 +2633,16 @@
          </triggeredEdrTemplate>
       </ws:createOrUpdateTriggeredEdr>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateTriggeredEdr"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" id="bd2b6458-2ee4-4185-aabb-1e87212c3c31" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateTriggeredEdr"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="0e19a55b-6af9-4ad1-8b1d-168837204847" isOneWay="false" action="" name="createOrUpdateServiceTemplate" bindingOperationName="createOrUpdateServiceTemplate" type="Request-Response" outputName="createOrUpdateServiceTemplateResponse" inputName="createOrUpdateServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7be1934b-e3da-430f-8202-1012392cbc9b" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateServiceTemplate>
+         <!--Optional:-->
+         <serviceTemplate code="ST_00" description="Test data for service template">
+         </serviceTemplate>
+      </ws:createOrUpdateServiceTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateServiceTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" id="bd2b6458-2ee4-4185-aabb-1e87212c3c31" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

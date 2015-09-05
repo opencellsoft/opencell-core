@@ -121,7 +121,10 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeServiceTemplate(@WebParam(name = "serviceTemplateCode") String serviceTemplateCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
+	
 	// offer
 
 	@WebMethod
