@@ -26,5 +26,11 @@ public interface JobWs extends IBaseWs {
 	
 	@WebMethod
 	public ActionStatus createTimer(@WebParam(name = "timerEntity") TimerEntityDto postData);
+	
+	@WebMethod
+	public ActionStatus updateTimer(@WebParam(name = "timerEntity") TimerEntityDto postData);
+	
+	@WebMethod
+	public ActionStatus createOrUpdateTimer(@WebParam(name = "timerEntity") TimerEntityDto postData);
 
 }
