@@ -18,12 +18,22 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='datatable_results_data']/tr/td/div/div[2]/span</td>
+	<td>${searchJobCategory}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>id=results_formdeleteEntitieslink</td>
+	<td>click</td>
+	<td>${SearchWithWallet}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${buttonSearch}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>10000</td>
 	<td></td>
 </tr>
 <tr>
@@ -33,10 +43,19 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${CleanFilters}</td>
+	<td>//tbody[@id='datatable_timersBean_results_data']/tr/td/div/div[2]/span</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>clickAndWait</td>
+	<td>id=timersBean_results_formdeleteEntitieslink</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>MEVEO | Open Source Billing Platform</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>
