@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="MEVEO API - SOAP" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" id="2f54001a-e294-45e3-b31b-9f879444ecc5" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="ProjectSettings@shadowPassword"/><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="MEVEO API - SOAP" resourceRoot="" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" id="2f54001a-e294-45e3-b31b-9f879444ecc5" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="ProjectSettings@shadowPassword"/><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="CatalogWsSoapBinding TestSuite"/>
@@ -18610,11 +18610,11 @@
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/index"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="registerUsage TestCase" searchProperties="true" id="97e2b35b-c8f1-44f9-91c9-6087f7e1f08a"><con:settings/><con:properties/></con:testCase><con:properties/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/MediationWs/index"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="registerUsage TestCase" searchProperties="true" id="97e2b35b-c8f1-44f9-91c9-6087f7e1f08a"><con:settings/><con:properties/></con:testCase><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();
-headers.put("Authorization","${#Project#authorization}");
+headers.put("Authorization","Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=");
 
 for( testCase in testSuite.getTestCaseList() ) {
 	log.info("Setting basic auth for all WSDL test requests in test case ["+testCase.getLabel()+"]")
@@ -20331,11 +20331,11 @@ for( testCase in testSuite.getTestCaseList() ) {
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="151d8967-40db-47ea-a5e4-ba762955f730"/><con:assertion type="Simple Contains" name="Contains" id="a80f4af2-1c2c-43e0-843e-0902cbeb4f20"><con:configuration><token>INVALID_ACCOUNT_TYPE</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>ticket</con:name><con:value>createCRMAccountHierarchy</con:value></con:property><con:property><con:name>currentDate</con:name><con:value>2015-08-27</con:value></con:property></con:properties></con:testCase><con:properties/><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="151d8967-40db-47ea-a5e4-ba762955f730"/><con:assertion type="Simple Contains" name="Contains" id="a80f4af2-1c2c-43e0-843e-0902cbeb4f20"><con:configuration><token>INVALID_ACCOUNT_TYPE</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>ticket</con:name><con:value>createCRMAccountHierarchy</con:value></con:property><con:property><con:name>currentDate</con:name><con:value>2015-08-27</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();
-headers.put("Authorization","${#Project#authorization}");
+headers.put("Authorization","Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=");
 
 for( testCase in testSuite.getTestCaseList() ) {
 	log.info("Setting basic auth for all WSDL test requests in test case ["+testCase.getLabel()+"]")

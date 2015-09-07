@@ -352,7 +352,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		// getEntityManager().flush();
 		
 		// Remove custom field values from cache if applicable
-		customFieldsCache.removeCustomFieldsFromCache((ICustomFieldEntity) e);
+        if (e instanceof ICustomFieldEntity) {
+            customFieldsCache.removeCustomFieldsFromCache((ICustomFieldEntity) e);
+        }
 		
 		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
 	}
