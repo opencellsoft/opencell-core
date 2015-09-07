@@ -245,5 +245,12 @@ public class WebhookNotificationApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	public void createOrUpdate(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
+		if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

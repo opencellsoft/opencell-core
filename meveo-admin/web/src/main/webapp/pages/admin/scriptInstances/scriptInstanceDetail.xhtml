@@ -23,8 +23,8 @@
 			</h:form>
 			 <a href='https://www.assembla.com/spaces/meveo-enterprise/wiki/Scripts' target='_blank'>Help ?</a>
 		</p:panel>
-		<hf:formPanel id="formPanel" label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" >								
-           <pe:codeMirror id="codeMirror"  theme="eclipse" mode="javascript" value="#{scriptInstanceBean.entity.script}"  lineNumbers="true"  required="true"/>
+		<hf:formPanel id="formPanel" label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" >						
+           <pe:codeMirror id="codeMirror"  theme="eclipse" mode="text/x-java" value="#{scriptInstanceBean.entity.script}"  lineNumbers="true"  required="true"/>
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true" />			
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" />
 			<hf:formField label="#{messages['scriptInstance.scriptTypeEnum']}" field="scriptTypeEnum" />

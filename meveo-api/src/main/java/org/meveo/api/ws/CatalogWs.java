@@ -44,7 +44,10 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeCounterTemplate(@WebParam(name = "counterTemplateCode") String counterTemplateCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateCounterTemplate(@WebParam(name = "counterTemplate") CounterTemplateDto postData);
+	
 	// charges
 
 	@WebMethod
@@ -65,7 +68,11 @@ public interface CatalogWs extends IBaseWs {
 	@WebMethod
 	public ActionStatus removeRecurringChargeTemplate(
 			@WebParam(name = "recurringChargeTemplateCode") String recurringChargeTemplateCode);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateRecurringChargeTemplate(
+			@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
+	
 	@WebMethod
 	public ActionStatus createOneShotChargeTemplate(
 			@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
@@ -77,7 +84,11 @@ public interface CatalogWs extends IBaseWs {
 	@WebMethod
 	public GetOneShotChargeTemplateResponseDto findOneShotChargeTemplate(
 			@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateOneShotChargeTemplate(
+			@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
+	
 	@WebMethod
 	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(
 			@WebParam(name = "languageCode") String languageCode, @WebParam(name = "countryCode") String countryCode,
@@ -103,7 +114,11 @@ public interface CatalogWs extends IBaseWs {
 	@WebMethod
 	public ActionStatus removeUsageChargeTemplate(
 			@WebParam(name = "usageChargeTemplateCode") String usageChargeTemplateCode);
-
+	
+	@WebMethod
+	public ActionStatus createOrUpdateUsageChargeTemplate(
+			@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
+	
 	// service
 
 	@WebMethod
@@ -117,7 +132,11 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeServiceTemplate(@WebParam(name = "serviceTemplateCode") String serviceTemplateCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
+		
+	
 	// offer
 
 	@WebMethod
@@ -151,7 +170,10 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	PricePlanMatrixesResponseDto listPricePlanByEventCode(@WebParam(name = "eventCode") String eventCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdatePricePlan(@WebParam(name = "pricePlan") PricePlanDto postData);
+	
 	// triggered Edr
 
 	@WebMethod
@@ -165,5 +187,7 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeTriggeredEdr(@WebParam(name = "triggeredEdrCode") String triggeredEdrCode);
-
+	
+	@WebMethod
+	ActionStatus createOrUpdateTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
 }

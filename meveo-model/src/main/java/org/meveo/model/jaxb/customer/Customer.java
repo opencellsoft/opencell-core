@@ -104,6 +104,7 @@ public class Customer {
 	    	customerBrand=cust.getCustomerBrand()==null?"":cust.getCustomerBrand().getCode();
 	    	customFields=new CustomFields(cust.getCustomFields());
 	    	address=new Address(cust.getAddress());
+	    	name=new Name(cust.getName());
 	    	mandateDate=cust.getMandateDate();
 	    	mandateIdentification=cust.getMandateIdentification();
 	    	customerAccounts=new CustomerAccounts(cust.getCustomerAccounts());
