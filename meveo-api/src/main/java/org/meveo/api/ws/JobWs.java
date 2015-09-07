@@ -22,7 +22,7 @@ public interface JobWs extends IBaseWs {
 	public ActionStatus update(@WebParam(name = "jobInstance") JobInstanceDto postData);
 	
 	@WebMethod
-	public ActionStatus createOrUpdate(@WebParam(name = "jobInstance") JobInstanceDto postData);
+	public ActionStatus createOrUpdateJobInstance(@WebParam(name = "jobInstance") JobInstanceDto postData);
 	
 	@WebMethod
 	public ActionStatus createTimer(@WebParam(name = "timerEntity") TimerEntityDto postData);

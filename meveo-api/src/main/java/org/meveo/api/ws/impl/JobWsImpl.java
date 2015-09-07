@@ -110,7 +110,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
 	}
 	
 	@Override
-	public ActionStatus createOrUpdate(JobInstanceDto jobInstanceDto) {
+	public ActionStatus createOrUpdateJobInstance(JobInstanceDto jobInstanceDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
 			jobInstanceApi.createOrUpdate(jobInstanceDto, getCurrentUser());
