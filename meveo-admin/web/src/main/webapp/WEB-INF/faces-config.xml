@@ -443,6 +443,10 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>providerSelfDetail</from-outcome>
+			<to-view-id>/pages/admin/providers/providerSelfDetail.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>providerContacts</from-outcome>
 			<to-view-id>/pages/crm/providerContacts/providerContacts.xhtml
 			</to-view-id>

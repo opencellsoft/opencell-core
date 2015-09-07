@@ -43,7 +43,14 @@
 			<p:menuitem id="providers" outcome="providers"
 				value="#{messages['menu.providers']}"
 				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
-			
+				
+			<p:menuitem id="provider" outcome="providerSelfDetail"
+				value="#{messages['menu.provider']}"
+				rendered="#{identity.hasPermission('administration','administrationManagement')}" >
+				<f:param name="objectId" value="#{providerBean.getCurrentProvider().id}" />
+				<f:param name="edit" value="true" />
+			</p:menuitem>
+				
 			<p:menuitem id="providerContacts" outcome="providerContacts"
 					value="#{messages['menu.providerContacts']}" />
 
