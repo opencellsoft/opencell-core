@@ -141,6 +141,7 @@ public class JavaCompilerManager {
 			compiler = new CharSequenceCompiler<ScriptInterface>(ScriptInterface.class.getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
 			scriptInstance.setError(false);
 			scriptInstanceService.removeErrors(scriptInstance);
+			scriptInstance.getScriptInstanceErrors().clear();
 			scriptInstanceService.update(scriptInstance);
 			final String packageName = ParamBean.getInstance().getProperty("meveo.scripting.java.packageName", "org.meveo.service.script");
 			final String className = scriptInstance.getCode();
