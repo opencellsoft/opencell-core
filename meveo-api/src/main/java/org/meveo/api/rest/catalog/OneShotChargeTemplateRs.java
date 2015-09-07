@@ -92,5 +92,8 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 	@Path("/{oneShotChargeTemplateCode}")
 	public ActionStatus remove(
 			@PathParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
-
+	
+	@POST
+	@Path("/createOrUpdate")
+	public ActionStatus createOrUpdate(OneShotChargeTemplateDto postData);
 }

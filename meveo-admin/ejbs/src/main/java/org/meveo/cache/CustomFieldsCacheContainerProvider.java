@@ -27,7 +27,6 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
@@ -148,8 +147,6 @@ public class CustomFieldsCacheContainerProvider {
             log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
         }
 
-        
-        
         customFieldValueCache.put(cacheKey, values);
     }
 
@@ -173,10 +170,21 @@ public class CustomFieldsCacheContainerProvider {
      * @return A map of CachedCFPeriodValue values with CF code as a key
      */
     public Map<String, Object> getValues(ICustomFieldEntity entity) {
+        return getValues(entity.getClass(), ((IEntity) entity).getId());
+    }
+
+    /**
+     * Get a map of custom field values (not versioned) mapped by a CF code that apply to an entity
+     * 
+     * @param entityClass Entity class to match
+     * @param id Entity id
+     * @return A map of CachedCFPeriodValue values with CF code as a key
+     */
+    public Map<String, Object> getValues(Class<? extends ICustomFieldEntity> entityClass, Serializable id) {
 
         Map<String, Object> values = new HashMap<String, Object>();
 
-        String cacheKey = getCacheKey((IEntity) entity);
+        String cacheKey = getCacheKey(entityClass, id);
 
         if (!customFieldValueCache.containsKey(cacheKey)) {
             return values;
@@ -204,17 +212,77 @@ public class CustomFieldsCacheContainerProvider {
      * @return A single custom field value
      */
     public Object getValue(ICustomFieldEntity entity, String cfCode) {
+        return getValue(entity.getClass(), ((IEntity) entity).getId(), cfCode);
+    }
 
-        String cacheKey = getCacheKey((IEntity) entity);
+    /**
+     * Get a single custom field value (not versioned) for a given custom field code that applies to an entity
+     * 
+     * @param entityClass Entity class to match
+     * @param id Entity id
+     * @param cfCode Custom field code
+     * @return A single custom field value
+     */
+    public Object getValue(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode) {
+
+        String cacheKey = getCacheKey(entityClass, id);
 
         if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
-            // Add only values that are not versioned
+            // Only value that is not versioned
             for (CachedCFPeriodValue cfValue : customFieldValueCache.get(cacheKey).get(cfCode)) {
                 if (!cfValue.isVersioned()) {
                     return cfValue.getValue();
                 }
             }
 
+        }
+
+        return null;
+    }
+
+    /**
+     * Match for a given entity's custom field as close as possible map's key to the key provided and return a map value. Match is performed by matching a full string and then
+     * reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param entitys Entity to match
+     * @param cfCode Custom field code
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public Object getClosestMatchValue(ICustomFieldEntity entity, String cfCode, String keyToMatch) {
+        return getClosestMatchValue(entity.getClass(), ((IEntity) entity).getId(), cfCode, keyToMatch);
+    }
+
+    /**
+     * Match for a given entity's custom field as close as possible map's key to the key provided and return a map value. Match is performed by matching a full string and then
+     * reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param entityClass Entity class to match
+     * @param id Entity id
+     * @param cfCode Custom field code
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public Object getClosestMatchValue(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode, String keyToMatch) {
+
+        String cacheKey = getCacheKey(entityClass, id);
+        CachedCFPeriodValue value = null;
+
+        if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
+            // Only value that is not versioned
+            for (CachedCFPeriodValue cfValue : customFieldValueCache.get(cacheKey).get(cfCode)) {
+                if (!cfValue.isVersioned()) {
+                    value = cfValue;
+                }
+            }
+
+            if (value != null) {
+                return value.getClosestMatchValue(keyToMatch);
+            }
         }
 
         return null;
@@ -228,10 +296,22 @@ public class CustomFieldsCacheContainerProvider {
      * @return A map of CachedCFPeriodValue values with CF code as a key
      */
     public Map<String, Object> getValues(ICustomFieldEntity entity, Date date) {
+        return getValues(entity.getClass(), ((IEntity) entity).getId(), date);
+    }
+
+    /**
+     * Get a map of custom field values mapped by a CF code that apply to an entity for a given date
+     * 
+     * @param entityClass Entity class to match
+     * @param id Entity id
+     * @param date Date to match
+     * @return A map of CachedCFPeriodValue values with CF code as a key
+     */
+    public Map<String, Object> getValues(Class<? extends ICustomFieldEntity> entityClass, Serializable id, Date date) {
 
         Map<String, Object> values = new HashMap<String, Object>();
 
-        String cacheKey = getCacheKey((IEntity) entity);
+        String cacheKey = getCacheKey(entityClass, id);
 
         if (!customFieldValueCache.containsKey(cacheKey)) {
             return values;
@@ -263,8 +343,21 @@ public class CustomFieldsCacheContainerProvider {
      * @return A single custom field value
      */
     public Object getValues(ICustomFieldEntity entity, String cfCode, Date date) {
+        return getValues(entity.getClass(), ((IEntity) entity).getId(), cfCode, date);
+    }
 
-        String cacheKey = getCacheKey((IEntity) entity);
+    /**
+     * Get a single custom field value (versioned) for a given custom field code that applies to an entity in a given date
+     * 
+     * @param entityClass Entity class to match
+     * @param id Entity id
+     * @param cfCode Custom field code
+     * @param date Date to match
+     * @return A single custom field value
+     */
+    public Object getValues(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode, Date date) {
+
+        String cacheKey = getCacheKey(entityClass, id);
 
         if (!(customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode))) {
             return null;
@@ -316,14 +409,14 @@ public class CustomFieldsCacheContainerProvider {
         List<CachedCFPeriodValue> values = new ArrayList<CachedCFPeriodValue>();
 
         if (!cfi.isVersionable()) {
-            CachedCFPeriodValue value = this.new CachedCFPeriodValue(cfi.getCfValue().getValue());
+            CachedCFPeriodValue value = new CachedCFPeriodValue(cfi.getCfValue().getValue());
             values.add(value);
 
         } else {
 
             for (CustomFieldPeriod period : cfi.getValuePeriods()) {
                 if (cutoffDate == null || period.getPeriodEndDate() == null || (period.getPeriodEndDate() != null && cutoffDate.before(period.getPeriodEndDate()))) {
-                    CachedCFPeriodValue value = this.new CachedCFPeriodValue(period.getCfValue().getValue(), period.getPriority(), period.getPeriodStartDate(),
+                    CachedCFPeriodValue value = new CachedCFPeriodValue(period.getCfValue().getValue(), period.getPriority(), period.getPeriodStartDate(),
                         period.getPeriodEndDate());
                     values.add(value);
                 }
@@ -363,13 +456,18 @@ public class CustomFieldsCacheContainerProvider {
     }
 
     private String getCacheKey(IEntity entity) {
-        String className = entity.getClass().getSimpleName();
+        return getCacheKey(entity.getClass(), entity.getId());
+    }
+
+    @SuppressWarnings("rawtypes")
+    private String getCacheKey(Class entityClass, Serializable id) {
+        String className = entityClass.getSimpleName();
         int pos = className.indexOf("_$$_");
         if (pos > 0) {
             className = className.substring(0, pos);
         }
 
-        return className + "_" + entity.getId();
+        return className + "_" + id;
     }
 
     /**
@@ -398,70 +496,6 @@ public class CustomFieldsCacheContainerProvider {
 
         if (cft.isVersionable()) {
             cfValueCacheTime.remove(cft.getProvider().getId() + "_" + cft.getCode());
-        }
-    }
-
-    private class CachedCFPeriodValue implements Serializable {
-
-        private static final long serialVersionUID = -6850614096852110306L;
-
-        private Date periodStartDate;
-
-        private Date periodEndDate;
-
-        private Object value;
-
-        private boolean versioned;
-
-        private int priority;
-
-        public CachedCFPeriodValue(Object value) {
-            super();
-            this.value = value;
-        }
-
-        public CachedCFPeriodValue(Object value, int priority, Date periodStartDate, Date periodEndDate) {
-            super();
-            this.value = value;
-            this.priority = priority;
-            this.periodStartDate = periodStartDate;
-            this.periodEndDate = periodEndDate;
-            versioned = true;
-        }
-
-        private boolean isCorrespondsToPeriod(Date date) {
-            return (periodStartDate == null || date.compareTo(periodStartDate) >= 0) && (periodEndDate == null || date.before(periodEndDate));
-        }
-
-        // public Date getPeriodStartDate() {
-        // return periodStartDate;
-        // }
-        //
-        // public Date getPeriodEndDate() {
-        // return periodEndDate;
-        // }
-
-        private Object getValue() {
-            return value;
-        }
-
-        private boolean isVersioned() {
-            return versioned;
-        }
-
-        private int getPriority() {
-            return priority;
-        }
-
-        @Override
-        public String toString() {
-
-            if (versioned) {
-                return String.format("CachedCFPeriodValue [priority=%s, periodStartDate=%s, periodEndDate=%s, value=%s, versioned=%s]", priority,
-                    DateUtils.formatDateWithPattern(periodStartDate, "yyyy-MM-dd"), DateUtils.formatDateWithPattern(periodEndDate, "yyyy-MM-dd"), value, versioned);
-            } else {
-                return String.format("CachedCFPeriodValue [value=%s]", value);
-            }
         }
     }
 }

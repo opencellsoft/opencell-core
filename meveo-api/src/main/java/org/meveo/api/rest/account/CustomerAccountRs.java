@@ -74,5 +74,8 @@ public interface CustomerAccountRs extends IBaseRs {
 	@DELETE
 	@Path("/creditCategory")
 	ActionStatus removeCreditCategory(@PathParam("creditCategoryCode") String creditCategoryCode);
-
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(CustomerAccountDto postData);
 }

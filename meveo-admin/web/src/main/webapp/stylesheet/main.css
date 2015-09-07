@@ -572,12 +572,3 @@ vertical-align:top !important;
 	border:none !important;
 	padding-bottom:0 !important;
 }
-.ui-tabs-panels .ui-menubar{
-display : none;
-}
-.ui-tabs-panels #layout-topbar{
-display : none;
-}
- .ui-tabs-panels #admin-bar, .ui-tabs-panels .ui-menubar,.ui-tabs-panels .footer{
-display : none;
-}

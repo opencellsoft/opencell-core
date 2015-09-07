@@ -411,5 +411,13 @@ public class CustomerAccountApi extends AccountApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	public void createOrUpdate(CustomerAccountDto postData, User currentUser) throws MeveoApiException {
+		
+		if (customerAccountService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }
