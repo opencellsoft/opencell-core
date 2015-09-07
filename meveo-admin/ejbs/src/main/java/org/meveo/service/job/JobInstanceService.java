@@ -34,6 +34,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.JobDoesNotExistsException;
 import org.meveo.admin.job.BillingRunJob;
@@ -289,20 +290,27 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	public Long executeAPITimer(JobInstanceInfoDto jobInstanceInfoDTO, User currentUser) throws BusinessException {
 		log.info("execute timer={} via api", jobInstanceInfoDTO.getTimerName());
 		JobInstance entity = null;
-		try {
-			entity = (JobInstance) getEntityManager()
-					.createQuery("FROM JobInstance where code=:codeIN and provider=:providerIN")
-					.setParameter("codeIN", jobInstanceInfoDTO.getTimerName())
-					.setParameter("providerIN", currentUser.getProvider()).getSingleResult();
-		} catch (NoResultException e) {
-			log.warn("No job with name={} was found.", jobInstanceInfoDTO.getTimerName());
-			entity = null;
+		
+		if (!StringUtils.isBlank(jobInstanceInfoDTO.getCode())) {
+			entity = findByCode(jobInstanceInfoDTO.getCode(), currentUser.getProvider());
+		} else {
+			try {
+				entity = (JobInstance) getEntityManager()
+						.createQuery("FROM JobInstance where code=:codeIN and provider=:providerIN")
+						.setParameter("codeIN", jobInstanceInfoDTO.getTimerName())
+						.setParameter("providerIN", currentUser.getProvider()).getSingleResult();
+			} catch (NoResultException e) {
+				log.warn("No job with name={} was found.", jobInstanceInfoDTO.getTimerName());
+				entity = null;
+			}
 		}
 		
-		if(entity == null) {
-			throw new JobDoesNotExistsException(jobInstanceInfoDTO.getTimerName());
+		if (entity == null) {
+			throw new JobDoesNotExistsException(
+					StringUtils.isBlank(jobInstanceInfoDTO.getTimerName()) ? jobInstanceInfoDTO.getCode()
+							: jobInstanceInfoDTO.getTimerName());
 		}
-		
+	
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		result.setJobInstance(entity);
 		InitialContext ic;
