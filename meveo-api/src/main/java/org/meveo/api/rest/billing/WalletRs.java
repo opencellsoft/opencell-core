@@ -82,5 +82,8 @@ public interface WalletRs extends IBaseRs {
 	@POST
 	@Path("/operation/find")
 	FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData);
-
+	
+	@POST
+	@Path("/template/createOrUpdate")	
+	ActionStatus createOrUpdateWalletTemplate(WalletTemplateDto postData);
 }

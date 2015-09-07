@@ -51,5 +51,8 @@ public interface NotificationRs extends IBaseRs {
 	@GET
 	@Path("/listInboundRequest")
 	InboundRequestsResponseDto listInboundRequest();
-
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(NotificationDto postData);
 }

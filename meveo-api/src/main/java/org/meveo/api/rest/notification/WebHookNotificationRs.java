@@ -41,5 +41,8 @@ public interface WebHookNotificationRs extends IBaseRs {
 	@DELETE
 	@Path("/{notificationCode}")
 	ActionStatus remove(@PathParam("notificationCode") String notificationCode);
-
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(WebhookNotificationDto postData);
 }
