@@ -45,7 +45,7 @@
 		
 		<hf:formPanel id="jobTriggerFormPanel" formId="jobTriggerForm"
 			label="#{messages['jobTrigger.title']}"
-			backingBean="#{jobTriggerBean}" columns="2" showEnableDisableButton="true">
+			backingBean="#{jobTriggerBean}"  showEnableDisableButton="true">
 			<hf:formField label="#{messages['entity.code']}" field="code"
 				required="true" maxLength="60" />
 			<hf:formField
@@ -60,14 +60,14 @@
 			
 			<hf:formField id="scriptInstanceSelectId"
 										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
-										valueLabelField="description" required="false" popup="true"
+										valueLabelField="code" required="false" popup="true"
 										popupId="scriptInstancePopup" />
 										
 			<hf:formField label="#{messages['entity.notification.params']}" field="params"  />  
 			
 			<hf:formField id="jobInstanceSelectId"
 							label="#{messages['entity.notification.jobInstance']}" field="jobInstance"
-							valueLabelField="description" required="true" popup="true"
+							valueLabelField="code" required="true" popup="true"
 							popupId="jobInstancePopup" />
 							
             <hf:formField label="#{messages['entity.notification.jobParams']}" field="jobParams"  />  							

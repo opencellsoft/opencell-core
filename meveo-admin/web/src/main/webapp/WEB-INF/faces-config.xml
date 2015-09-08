@@ -1296,6 +1296,19 @@
 			<redirect />
 		</navigation-case>
 		
+		<navigation-case>
+			<from-outcome>jobTriggerDetail</from-outcome>
+			<to-view-id>/pages/notification/jobTriggerDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>jobTriggers</from-outcome>
+			<to-view-id>/pages/notification/jobTriggers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>		
+		
 		
 		<navigation-case>
 			<from-outcome>instantMessagingNotificationDetail</from-outcome>
