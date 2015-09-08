@@ -9,7 +9,7 @@
 
 Description Test Case 1: 
 Actions : Make a first search by filling the tow fields "Code, Description, Customer Category, Parent Seller and Brand" then click on the button "search".
-Expected Results : The result of research gives the items matching with the fields filled bellow
+Expected Results : The result of research gives the items matching with the Code, Status, Description and Filters filled bellow
 
 Description Test Case 2: 
 Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "clean filters".
@@ -17,7 +17,7 @@ Expected Results : The fileds (Code, Description, Customer Category, Parent Sell
 
 Description Test Case 3: 
 Actions : Click on the button "New" in order to add a new Customers.
-Expected Results : A list of empty items are showed.
+Expected Results : A list of empty items are chowed.
 
 Description Test Case 4: 
 Actions : Don't fill any field then click on "save".
@@ -60,102 +60,110 @@ Actions : Click on "back".
 Expected Results : Return to the previous page. 
 
 Description Test Case 14: 
-Actions : Fill the required fields (Code, Description, Last Name, Customer Category, Brand and Parent Seller) then fill not required fields and click on "save".
+Actions : Fill in the tab 'Account' the required fields (Code, Description, Last Name, Customer Category, Brand and Parent Seller) then fill (Ref ext1, Ref ext2, Title and First name) and click on "save".
 Expected Results : A new Customers is created.
 
 Description Test Case 15: 
+Actions : Fill in the tab 'Informations' the fields (Email, address1, address2, address3, zip code, city, country, mandate indentification, signature date) and click on "save"
+Expected Results : A new information is created.
+
+Description Test Case 16: 
+Actions : In the tab 'Custom Fields' Add a new record, CRM Account Type, CRM Parent Account Code, MAP_list, PAM_list2 and TOPTEN_NUMBERS and click on "save"
+Expected Results : A new Custom Fields is created.
+
+Description Test Case 17: 
 Actions : Make a search by filling the field "Code" then click on the button "search".
 Expected Results :The result of research gives the items which are matching with the chosen Customers.
 
-Description Test Case 16: 
+Description Test Case 18: 
 Actions : Click on the link in the datatable to modify the Customers just created, fill all the fields and click "save".
 Expected Results : The Customers is updated with success.
 
-Description Test Case 17: 
+Description Test Case 19: 
 Actions : Pick a line from the table then click on the icon "delete ".
 Expected Results : An alert appears in order to make sure that you really you want to delete the Customers.
 
-Description Test Case 18: 
+Description Test Case 20: 
 Actions : Click on "No" to confirm that you don't want to delete the Customers.
 Expected Results : The picked Customers is not deleted.
 
-Description Test Case 19: 
+Description Test Case 21: 
 Actions : Make a search by filling the field "Code, Description and Customer Category" then click on the button "search".
 Expected Results :The result of research gives the items which are matching with the chosen Customers.
 
-Description Test Case 20: 
+Description Test Case 22: 
 Actions : Pick one or more lines from the table then click on the button "Export to Excel"
 Expected Results : The picked lines are exported on an Excel file
 
-Description Test Case 21: 
+Description Test Case 23: 
 Actions : Click on the button "Export to excel", without picking any line from the table
 Expected Results : All the lines from the table are been exported on an excel file
 
-Description Test Case 22: 
+Description Test Case 24: 
 Actions : Make a search by filling the field "Code, Description and Brand" then click on the button "search".
 Expected Results :The result of research gives the items which are matching with the chosen Customers.
 
-Description Test Case 23: 
+Description Test Case 25: 
 Actions : Click on the button "Delete multiple" wihout picking any line from the table.
 Expected Results : Nothing happened.
 
-Description Test Case 24: 
+Description Test Case 26: 
 Actions : Pick more than one line from the table then click on the button "Delete multiple"
 Expected Results : The picked lines are erased
 
-Description Test Case 25: 
+Description Test Case 27: 
 Actions : Pick a line from the table then click on the icon "delete ".
 Expected Results : An alert appears in order to make sure that you really you want to delete the Customers.
 
-Description Test Case 26: 
+Description Test Case 28: 
 Actions : Click on "yes" to confirm that you want to delete the Customers.
 Expected Results : The picked Customers is deleted.
 
-Description Test Case 27: 
+Description Test Case 29: 
 Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
 Expected Results : The table shows 15 lines per page 
 
-Description Test Case 28: 
+Description Test Case 30: 
 Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
 Expected Results : The table shows 20 lines per page 
 
-Description Test Case 29: 
+Description Test Case 31: 
 Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
 Expected Results : The table shows 50 lines per page 
 
-Description Test Case 30: 
+Description Test Case 32: 
 Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
 Expected Results : The table shows 10 lines per page 
 
-Description Test Case 31: 
+Description Test Case 33: 
 Actions : Click on the button to move to the next page 
 Expected Results : The next page is displayed
 
-Description Test Case 32: 
+Description Test Case 34: 
 Actions : Click on the button to move to the last page 
 Expected Results :The last page is displayed
 
-Description Test Case 33: 
+Description Test Case 35: 
 Actions : Click on the button to move to the previous page
 Expected Results :The previous page is displayed
 
-Description Test Case 34: 
+Description Test Case 36: 
 Actions : In each column from the table (Code, Customer Category, Brand, Description and Seller) there is a filter , click on the filter in column "Code" in order to refine your search in an ascending/descending order.
 Expected Results : The lines become ordered in an ascending/descending order
 
-Description Test Case 35: 
+Description Test Case 37: 
 Actions : Click on the filter in column "Customer Category" in order to refine your search in an ascending/descending order
 Expected Results : The lines become ordered in an ascending/descending order
 
-Description Test Case 36: 
+Description Test Case 38: 
 Actions : Click on the filter in column "Brand" in order to refine your search in an ascending/descending order
 Expected Results : The lines become ordered in an ascending/descending order.
 
-Description Test Case 37: 
+Description Test Case 39: 
 Actions : Click on the filter in column "Description" in order to refine your search in an ascending/descending order
 Expected Results : The lines become ordered in an ascending/descending order.
 
-Description Test Case 38: 
+Description Test Case 40: 
 Actions : Click on the filter in column "Seller" in order to refine your search in an ascending/descending order
 Expected Results : The lines become ordered in an ascending/descending order.
 
