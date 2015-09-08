@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Test4.1" resourceRoot="${projectDir}" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" id="76105cae-19da-46ea-8031-5afcf7dd2308" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Test4.1" resourceRoot="${projectDir}" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" id="76105cae-19da-46ea-8031-5afcf7dd2308" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="#825_Invoicing"/>
@@ -17576,12 +17576,12 @@
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <wsdl:operation name="applyOneShotChargeInstance">
+    <wsdl:operation name="createOrUpdateSubscription">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="applyOneShotChargeInstance">
+      <wsdl:input name="createOrUpdateSubscription">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="applyOneShotChargeInstanceResponse">
+      <wsdl:output name="createOrUpdateSubscriptionResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -17600,6 +17600,24 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="updateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="applyOneShotChargeInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="applyOneShotChargeInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="applyOneShotChargeInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findSubscription">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findSubscription">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findSubscriptionResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -17667,24 +17685,31 @@
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
-      <xs:element name="ActivateServices" type="tns:activateServicesDto"/>
-      <xs:element name="ApplyOneShotChargeInstance" type="tns:applyOneShotChargeInstanceDto"/>
+      <xs:element name="ActivateServicesRequest" type="tns:activateServicesRequestDto"/>
+      <xs:element name="ApplyOneShotChargeInstanceRequest" type="tns:applyOneShotChargeInstanceRequestDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
+      <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
       <xs:element name="CustomFields" type="tns:customFieldsDto"/>
-      <xs:element name="InstantiateServices" type="tns:instantiateServicesDto"/>
-      <xs:element name="ListSubscriptionResponse" type="tns:listSubscriptionResponseDto"/>
+      <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
+      <xs:element name="GetSubscriptionResponse" type="tns:getSubscriptionResponseDto"/>
+      <xs:element name="InstantiateServicesRequest" type="tns:instantiateServicesRequestDto"/>
       <xs:element name="ServiceToActivate" type="tns:serviceToActivateDto"/>
       <xs:element name="ServiceToInstantiate" type="tns:serviceToInstantiateDto"/>
       <xs:element name="ServicesToActivate" type="tns:servicesToActivateDto"/>
       <xs:element name="ServicesToInstantiate" type="tns:servicesToInstantiateDto"/>
-      <xs:element name="TerminateSubscription" type="tns:terminateSubscriptionDto"/>
-      <xs:element name="TerminateSubscriptionServices" type="tns:terminateSubscriptionServicesDto"/>
+      <xs:element name="SubscriptionsResponse" type="tns:subscriptionsResponseDto"/>
+      <xs:element name="TerminateSubscriptionRequest" type="tns:terminateSubscriptionRequestDto"/>
+      <xs:element name="TerminateSubscriptionServicesRequest" type="tns:terminateSubscriptionServicesRequestDto"/>
       <xs:element name="activateServices" type="tns:activateServices"/>
       <xs:element name="activateServicesResponse" type="tns:activateServicesResponse"/>
       <xs:element name="applyOneShotChargeInstance" type="tns:applyOneShotChargeInstance"/>
       <xs:element name="applyOneShotChargeInstanceResponse" type="tns:applyOneShotChargeInstanceResponse"/>
       <xs:element name="create" type="tns:create"/>
+      <xs:element name="createOrUpdateSubscription" type="tns:createOrUpdateSubscription"/>
+      <xs:element name="createOrUpdateSubscriptionResponse" type="tns:createOrUpdateSubscriptionResponse"/>
       <xs:element name="createResponse" type="tns:createResponse"/>
+      <xs:element name="findSubscription" type="tns:findSubscription"/>
+      <xs:element name="findSubscriptionResponse" type="tns:findSubscriptionResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
       <xs:element name="instantiateServices" type="tns:instantiateServices"/>
@@ -17697,46 +17722,6 @@
       <xs:element name="terminateSubscriptionResponse" type="tns:terminateSubscriptionResponse"/>
       <xs:element name="update" type="tns:update"/>
       <xs:element name="updateResponse" type="tns:updateResponse"/>
-      <xs:complexType name="applyOneShotChargeInstance">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="applyOneShotChargeInstance" type="tns:applyOneShotChargeInstanceDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="applyOneShotChargeInstanceDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element name="oneShotCharge" type="xs:string"/>
-              <xs:element name="subscription" type="xs:string"/>
-              <xs:element minOccurs="0" name="wallet" type="xs:string"/>
-              <xs:element minOccurs="0" name="createWallet" type="xs:boolean"/>
-              <xs:element name="operationDate" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="description" type="xs:string"/>
-              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="criteria1" type="xs:string"/>
-              <xs:element minOccurs="0" name="criteria2" type="xs:string"/>
-              <xs:element minOccurs="0" name="criteria3" type="xs:string"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType abstract="true" name="baseDto">
-        <xs:sequence/>
-      </xs:complexType>
-      <xs:complexType name="applyOneShotChargeInstanceResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="actionStatus">
-        <xs:sequence>
-          <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
-          <xs:element name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="listSubscriptionByUserAccount">
         <xs:sequence>
           <xs:element minOccurs="0" name="userAccountCode" type="xs:string"/>
@@ -17744,10 +17729,10 @@
       </xs:complexType>
       <xs:complexType name="listSubscriptionByUserAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:listSubscriptionResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:subscriptionsResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType final="extension restriction" name="listSubscriptionResponseDto">
+      <xs:complexType final="extension restriction" name="subscriptionsResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -17785,6 +17770,9 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
       <xs:complexType name="customFieldsDto">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
@@ -17796,9 +17784,51 @@
           <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
           <xs:element minOccurs="0" name="longValue" type="xs:long"/>
           <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+          <xs:element minOccurs="0" name="listValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="mapValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string"/>
+                      <xs:element minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" name="entityReferenceValue" type="tns:entityReferenceDto"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string"/>
+        <xs:attribute name="valueDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodStartDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodEndDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodPriority" type="xs:int"/>
+      </xs:complexType>
+      <xs:complexType name="customFieldValueDto">
+        <xs:sequence>
+          <xs:choice minOccurs="0">
+            <xs:element name="dateValue" type="xs:dateTime"/>
+            <xs:element name="doubleValue" type="xs:double"/>
+            <xs:element name="longValue" type="xs:long"/>
+            <xs:element name="stringValue" type="xs:string"/>
+            <xs:element name="entityReferenceValue" type="tns:entityReferenceDto"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entityReferenceDto">
+        <xs:sequence/>
+        <xs:attribute name="classname" type="xs:string" use="required"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="Accesses">
         <xs:sequence>
@@ -17812,6 +17842,7 @@
               <xs:element name="subscription" type="xs:string"/>
               <xs:element minOccurs="0" name="startDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="endDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string"/>
           </xs:extension>
@@ -17837,6 +17868,23 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateSubscription">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="subscription" type="tns:Subscription"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateSubscriptionResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="update">
         <xs:sequence>
           <xs:element minOccurs="0" name="subscription" type="tns:Subscription"/>
@@ -17847,12 +17895,61 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="instantiateServices">
+      <xs:complexType name="applyOneShotChargeInstance">
         <xs:sequence>
-          <xs:element minOccurs="0" name="instantiateServices" type="tns:instantiateServicesDto"/>
+          <xs:element minOccurs="0" name="applyOneShotChargeInstance" type="tns:applyOneShotChargeInstanceRequestDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="instantiateServicesDto">
+      <xs:complexType name="applyOneShotChargeInstanceRequestDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="oneShotCharge" type="xs:string"/>
+              <xs:element name="subscription" type="xs:string"/>
+              <xs:element minOccurs="0" name="wallet" type="xs:string"/>
+              <xs:element minOccurs="0" name="createWallet" type="xs:boolean"/>
+              <xs:element name="operationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="criteria1" type="xs:string"/>
+              <xs:element minOccurs="0" name="criteria2" type="xs:string"/>
+              <xs:element minOccurs="0" name="criteria3" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="applyOneShotChargeInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findSubscription">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="subscriptionCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findSubscriptionResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getSubscriptionResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getSubscriptionResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="subscription" type="tns:Subscription"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="instantiateServices">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="instantiateServices" type="tns:instantiateServicesRequestDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="instantiateServicesRequestDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -17883,6 +17980,7 @@
       <xs:complexType name="ChargeInstanceOverride">
         <xs:sequence>
           <xs:element name="amountWithoutTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
         </xs:sequence>
         <xs:attribute name="chargeInstanceCode" type="xs:string" use="required"/>
       </xs:complexType>
@@ -17901,10 +17999,10 @@
       </xs:complexType>
       <xs:complexType name="terminateServices">
         <xs:sequence>
-          <xs:element minOccurs="0" name="terminateSubscriptionServices" type="tns:terminateSubscriptionServicesDto"/>
+          <xs:element minOccurs="0" name="terminateSubscriptionServices" type="tns:terminateSubscriptionServicesRequestDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="terminateSubscriptionServicesDto">
+      <xs:complexType name="terminateSubscriptionServicesRequestDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -17933,10 +18031,10 @@
       </xs:complexType>
       <xs:complexType name="terminateSubscription">
         <xs:sequence>
-          <xs:element minOccurs="0" name="terminateSubscription" type="tns:terminateSubscriptionDto"/>
+          <xs:element minOccurs="0" name="terminateSubscription" type="tns:terminateSubscriptionRequestDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="terminateSubscriptionDto">
+      <xs:complexType name="terminateSubscriptionRequestDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -17954,10 +18052,10 @@
       </xs:complexType>
       <xs:complexType name="activateServices">
         <xs:sequence>
-          <xs:element minOccurs="0" name="activateServices" type="tns:activateServicesDto"/>
+          <xs:element minOccurs="0" name="activateServices" type="tns:activateServicesRequestDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="activateServicesDto">
+      <xs:complexType name="activateServicesRequestDto">
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
@@ -18002,11 +18100,17 @@
   <wsdl:message name="terminateSubscription">
     <wsdl:part element="ns1:terminateSubscription" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findSubscription">
+    <wsdl:part element="ns1:findSubscription" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="listSubscriptionByUserAccountResponse">
     <wsdl:part element="ns1:listSubscriptionByUserAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateResponse">
     <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findSubscriptionResponse">
+    <wsdl:part element="ns1:findSubscriptionResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="instantiateServices">
     <wsdl:part element="ns1:instantiateServices" name="parameters"></wsdl:part>
@@ -18017,11 +18121,17 @@
   <wsdl:message name="createResponse">
     <wsdl:part element="ns1:createResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateSubscription">
+    <wsdl:part element="ns1:createOrUpdateSubscription" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="index">
     <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateSubscriptionResponse">
+    <wsdl:part element="ns1:createOrUpdateSubscriptionResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="update">
     <wsdl:part element="ns1:update" name="parameters"></wsdl:part>
@@ -18048,17 +18158,25 @@
     <wsdl:part element="ns1:create" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="SubscriptionWs">
-    <wsdl:operation name="applyOneShotChargeInstance">
-      <wsdl:input message="ns1:applyOneShotChargeInstance" name="applyOneShotChargeInstance"></wsdl:input>
-      <wsdl:output message="ns1:applyOneShotChargeInstanceResponse" name="applyOneShotChargeInstanceResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="listSubscriptionByUserAccount">
       <wsdl:input message="ns1:listSubscriptionByUserAccount" name="listSubscriptionByUserAccount"></wsdl:input>
       <wsdl:output message="ns1:listSubscriptionByUserAccountResponse" name="listSubscriptionByUserAccountResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateSubscription">
+      <wsdl:input message="ns1:createOrUpdateSubscription" name="createOrUpdateSubscription"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateSubscriptionResponse" name="createOrUpdateSubscriptionResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="update">
       <wsdl:input message="ns1:update" name="update"></wsdl:input>
       <wsdl:output message="ns1:updateResponse" name="updateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="applyOneShotChargeInstance">
+      <wsdl:input message="ns1:applyOneShotChargeInstance" name="applyOneShotChargeInstance"></wsdl:input>
+      <wsdl:output message="ns1:applyOneShotChargeInstanceResponse" name="applyOneShotChargeInstanceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findSubscription">
+      <wsdl:input message="ns1:findSubscription" name="findSubscription"></wsdl:input>
+      <wsdl:output message="ns1:findSubscriptionResponse" name="findSubscriptionResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="instantiateServices">
       <wsdl:input message="ns1:instantiateServices" name="instantiateServices"></wsdl:input>
@@ -18320,7 +18438,27 @@
          </instantiateServices>
       </ws:instantiateServices>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/instantiateServices"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/WalletWs?wsdl" id="072e79be-e59e-40fe-859b-a2a60470037f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/WalletWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/WalletWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/instantiateServices"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="4e7d803c-d5b8-433a-9516-2b65fe3e161d" isOneWay="false" action="" name="createOrUpdateSubscription" bindingOperationName="createOrUpdateSubscription" type="Request-Response" outputName="createOrUpdateSubscriptionResponse" inputName="createOrUpdateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="911a7272-d6d7-41d2-92cf-45a6596f70ff" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateSubscription>
+         <!--Optional:-->
+         <subscription code="SUB_00" description="Test Data for subscription">
+            <userAccount>test_user1</userAccount>
+            <offerTemplate>OFFTEMP1</offerTemplate>
+            <subscriptionDate>2015-08-02</subscriptionDate>
+         </subscription>
+      </ws:createOrUpdateSubscription>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/createOrUpdateSubscription"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="2fd8f8ae-3d36-414d-a414-c875d5ffe89f" isOneWay="false" action="" name="findSubscription" bindingOperationName="findSubscription" type="Request-Response" outputName="findSubscriptionResponse" inputName="findSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1df2f14e-71e6-41ae-b04e-9ffe54fa1ba7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <!--Optional:-->\r
+         <subscriptionCode>?</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/findSubscription"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/WalletWs?wsdl" id="072e79be-e59e-40fe-859b-a2a60470037f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/WalletWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/WalletWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="WalletWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/WalletWs?wsdl=WalletWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="WalletWsSoapBinding" type="ns1:WalletWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -19341,7 +19479,7 @@
       <xs:complexType name="actionStatus">
         <xs:sequence>
           <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element name="errorCode" type="xs:int"/>
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
@@ -28123,19 +28261,10 @@
          </notification>
       </ws:createOrUpdateWebHookNotification>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/createOrUpdateWebHookNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/JobWs?wsdl" id="32c415ed-6271-4992-81aa-b92cb4f86643" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/JobWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/JobWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="JobWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/NotificationWs/createOrUpdateWebHookNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/JobWs?wsdl" id="32c415ed-6271-4992-81aa-b92cb4f86643" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/JobWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/JobWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="JobWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/JobWs?wsdl=JobWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="JobWsSoapBinding" type="ns1:JobWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <wsdl:operation name="createOrUpdate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createTimer">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createTimer">
@@ -28151,6 +28280,33 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="updateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateJobInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateJobInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateJobInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTimer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateTimer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateTimerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateTimer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateTimer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateTimerResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -28199,8 +28355,10 @@
       <xs:element name="JobInstanceInfo" type="tns:jobInstanceInfoDto"/>
       <xs:element name="TimerEntity" type="tns:timerEntityDto"/>
       <xs:element name="create" type="tns:create"/>
-      <xs:element name="createOrUpdate" type="tns:createOrUpdate"/>
-      <xs:element name="createOrUpdateResponse" type="tns:createOrUpdateResponse"/>
+      <xs:element name="createOrUpdateJobInstance" type="tns:createOrUpdateJobInstance"/>
+      <xs:element name="createOrUpdateJobInstanceResponse" type="tns:createOrUpdateJobInstanceResponse"/>
+      <xs:element name="createOrUpdateTimer" type="tns:createOrUpdateTimer"/>
+      <xs:element name="createOrUpdateTimerResponse" type="tns:createOrUpdateTimerResponse"/>
       <xs:element name="createResponse" type="tns:createResponse"/>
       <xs:element name="createTimer" type="tns:createTimer"/>
       <xs:element name="createTimerResponse" type="tns:createTimerResponse"/>
@@ -28210,7 +28368,46 @@
       <xs:element name="indexResponse" type="tns:indexResponse"/>
       <xs:element name="update" type="tns:update"/>
       <xs:element name="updateResponse" type="tns:updateResponse"/>
-      <xs:complexType name="createOrUpdate">
+      <xs:element name="updateTimer" type="tns:updateTimer"/>
+      <xs:element name="updateTimerResponse" type="tns:updateTimerResponse"/>
+      <xs:complexType name="createTimer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="timerEntityDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="code" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="description" type="xs:string"/>
+            <xs:attribute name="hour" type="xs:string" use="required"/>
+            <xs:attribute name="minute" type="xs:string" use="required"/>
+            <xs:attribute name="second" type="xs:string" use="required"/>
+            <xs:attribute name="year" type="xs:string" use="required"/>
+            <xs:attribute name="month" type="xs:string" use="required"/>
+            <xs:attribute name="dayOfMonth" type="xs:string" use="required"/>
+            <xs:attribute name="dayOfWeek" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="createTimerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="update">
         <xs:sequence>
           <xs:element minOccurs="0" name="jobInstance" type="tns:jobInstanceDto"/>
         </xs:sequence>
@@ -28232,9 +28429,6 @@
             <xs:attribute name="timerCode" type="xs:string"/>
           </xs:extension>
         </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType abstract="true" name="baseDto">
-        <xs:sequence/>
       </xs:complexType>
       <xs:complexType name="customFieldsDto">
         <xs:sequence>
@@ -28293,51 +28487,37 @@
         <xs:attribute name="classname" type="xs:string" use="required"/>
         <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
-      <xs:complexType name="createOrUpdateResponse">
+      <xs:complexType name="updateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="actionStatus">
-        <xs:sequence>
-          <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
-          <xs:element name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createTimer">
+      <xs:complexType name="updateTimer">
         <xs:sequence>
           <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="timerEntityDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element name="code" type="xs:string"/>
-            </xs:sequence>
-            <xs:attribute name="description" type="xs:string"/>
-            <xs:attribute name="hour" type="xs:string" use="required"/>
-            <xs:attribute name="minute" type="xs:string" use="required"/>
-            <xs:attribute name="second" type="xs:string" use="required"/>
-            <xs:attribute name="year" type="xs:string" use="required"/>
-            <xs:attribute name="month" type="xs:string" use="required"/>
-            <xs:attribute name="dayOfMonth" type="xs:string" use="required"/>
-            <xs:attribute name="dayOfWeek" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="createTimerResponse">
+      <xs:complexType name="updateTimerResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="update">
+      <xs:complexType name="createOrUpdateTimer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateTimerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateJobInstance">
         <xs:sequence>
           <xs:element minOccurs="0" name="jobInstance" type="tns:jobInstanceDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateResponse">
+      <xs:complexType name="createOrUpdateJobInstanceResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -28387,6 +28567,36 @@
       </xs:simpleType>
     </xs:schema>
   </wsdl:types>
+  <wsdl:message name="createTimer">
+    <wsdl:part element="ns1:createTimer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createTimerResponse">
+    <wsdl:part element="ns1:createTimerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateResponse">
+    <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="executeResponse">
+    <wsdl:part element="ns1:executeResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateTimer">
+    <wsdl:part element="ns1:updateTimer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createResponse">
+    <wsdl:part element="ns1:createResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateTimerResponse">
+    <wsdl:part element="ns1:createOrUpdateTimerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateJobInstanceResponse">
+    <wsdl:part element="ns1:createOrUpdateJobInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateTimerResponse">
+    <wsdl:part element="ns1:updateTimerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="execute">
     <wsdl:part element="ns1:execute" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -28396,38 +28606,16 @@
   <wsdl:message name="update">
     <wsdl:part element="ns1:update" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createTimerResponse">
-    <wsdl:part element="ns1:createTimerResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateJobInstance">
+    <wsdl:part element="ns1:createOrUpdateJobInstance" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createTimer">
-    <wsdl:part element="ns1:createTimer" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateResponse">
-    <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdate">
-    <wsdl:part element="ns1:createOrUpdate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="executeResponse">
-    <wsdl:part element="ns1:executeResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createResponse">
-    <wsdl:part element="ns1:createResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateTimer">
+    <wsdl:part element="ns1:createOrUpdateTimer" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="create">
     <wsdl:part element="ns1:create" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="indexResponse">
-    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateResponse">
-    <wsdl:part element="ns1:createOrUpdateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:portType name="JobWs">
-    <wsdl:operation name="createOrUpdate">
-      <wsdl:input message="ns1:createOrUpdate" name="createOrUpdate"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateResponse" name="createOrUpdateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createTimer">
       <wsdl:input message="ns1:createTimer" name="createTimer"></wsdl:input>
       <wsdl:output message="ns1:createTimerResponse" name="createTimerResponse"></wsdl:output>
@@ -28435,6 +28623,18 @@
     <wsdl:operation name="update">
       <wsdl:input message="ns1:update" name="update"></wsdl:input>
       <wsdl:output message="ns1:updateResponse" name="updateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateTimer">
+      <wsdl:input message="ns1:updateTimer" name="updateTimer"></wsdl:input>
+      <wsdl:output message="ns1:updateTimerResponse" name="updateTimerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTimer">
+      <wsdl:input message="ns1:createOrUpdateTimer" name="createOrUpdateTimer"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateTimerResponse" name="createOrUpdateTimerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateJobInstance">
+      <wsdl:input message="ns1:createOrUpdateJobInstance" name="createOrUpdateJobInstance"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateJobInstanceResponse" name="createOrUpdateJobInstanceResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="index">
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
@@ -28489,7 +28689,7 @@
          </timerEntity>
       </ws:createTimer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createTimer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="execute" bindingOperationName="execute" type="Request-Response" outputName="executeResponse" inputName="execute" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="5696bde1-bf79-4a29-9926-527cec98f875"><con:settings/><con:call name="Request 1" id="b2f30cc8-be4a-45da-8b1e-d76c8659e9eb"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createTimer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="execute" bindingOperationName="execute" type="Request-Response" outputName="executeResponse" inputName="execute" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="5696bde1-bf79-4a29-9926-527cec98f875"><con:settings/><con:call name="Request 1" id="b2f30cc8-be4a-45da-8b1e-d76c8659e9eb"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:execute>
@@ -28510,128 +28710,60 @@
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/index"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="26382a5a-f2a5-4ec6-9230-8e771533901d" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="40937c59-084c-4714-a5bc-2fe03416313f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdate>\r
-         <!--Optional:-->\r
-         <jobInstance jobTemplate="?" code="?" description="?" timerCode="?">\r
-            <jobCategory>?</jobCategory>\r
-            <!--Optional:-->\r
-            <followingJob>?</followingJob>\r
-            <!--Optional:-->\r
-            <parameter>?</parameter>\r
-            <active>?</active>\r
-            <userId>?</userId>\r
-            <!--Optional:-->\r
-            <customFields>\r
-               <!--Zero or more repetitions:-->\r
-               <customField code="?" description="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
-                  <!--Optional:-->\r
-                  <stringValue>?</stringValue>\r
-                  <!--Optional:-->\r
-                  <dateValue>?</dateValue>\r
-                  <!--Optional:-->\r
-                  <longValue>?</longValue>\r
-                  <!--Optional:-->\r
-                  <doubleValue>?</doubleValue>\r
-                  <!--Optional:-->\r
-                  <listValue>\r
-                     <!--Zero or more repetitions:-->\r
-                     <value>\r
-                        <!--You have a CHOICE of the next 5 items at this level-->\r
-                        <dateValue>?</dateValue>\r
-                        <doubleValue>?</doubleValue>\r
-                        <longValue>?</longValue>\r
-                        <stringValue>?</stringValue>\r
-                        <entityReferenceValue classname="?" code="?"/>\r
-                     </value>\r
-                  </listValue>\r
-                  <mapValue>\r
-                     <!--Zero or more repetitions:-->\r
-                     <entry>\r
-                        <!--Optional:-->\r
-                        <key>?</key>\r
-                        <!--Optional:-->\r
-                        <value>\r
-                           <!--You have a CHOICE of the next 5 items at this level-->\r
-                           <dateValue>?</dateValue>\r
-                           <doubleValue>?</doubleValue>\r
-                           <longValue>?</longValue>\r
-                           <stringValue>?</stringValue>\r
-                           <entityReferenceValue classname="?" code="?"/>\r
-                        </value>\r
-                     </entry>\r
-                  </mapValue>\r
-                  <!--Optional:-->\r
-                  <entityReferenceValue classname="?" code="?"/>\r
-               </customField>\r
-            </customFields>\r
-         </jobInstance>\r
-      </ws:createOrUpdate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdate"/></con:call></con:operation><con:operation id="a54e79af-22a1-4b37-b0ce-eb9ed5ff88a5" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="897a5318-1c8c-4ede-869a-b31af6daee19" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/index"/></con:call></con:operation><con:operation id="6d9470b6-1b47-4c7b-a776-9e82c82d1d89" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c0550a61-31a1-439b-8701-6d1ae6dbb379" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:update>\r
          <!--Optional:-->\r
-         <jobInstance jobTemplate="?" code="?" description="?" timerCode="?">\r
-            <jobCategory>?</jobCategory>\r
-            <!--Optional:-->\r
-            <followingJob>?</followingJob>\r
-            <!--Optional:-->\r
-            <parameter>?</parameter>\r
-            <active>?</active>\r
-            <userId>?</userId>\r
-            <!--Optional:-->\r
-            <customFields>\r
-               <!--Zero or more repetitions:-->\r
-               <customField code="?" description="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
-                  <!--Optional:-->\r
-                  <stringValue>?</stringValue>\r
-                  <!--Optional:-->\r
-                  <dateValue>?</dateValue>\r
-                  <!--Optional:-->\r
-                  <longValue>?</longValue>\r
-                  <!--Optional:-->\r
-                  <doubleValue>?</doubleValue>\r
-                  <!--Optional:-->\r
-                  <listValue>\r
-                     <!--Zero or more repetitions:-->\r
-                     <value>\r
-                        <!--You have a CHOICE of the next 5 items at this level-->\r
-                        <dateValue>?</dateValue>\r
-                        <doubleValue>?</doubleValue>\r
-                        <longValue>?</longValue>\r
-                        <stringValue>?</stringValue>\r
-                        <entityReferenceValue classname="?" code="?"/>\r
-                     </value>\r
-                  </listValue>\r
-                  <mapValue>\r
-                     <!--Zero or more repetitions:-->\r
-                     <entry>\r
-                        <!--Optional:-->\r
-                        <key>?</key>\r
-                        <!--Optional:-->\r
-                        <value>\r
-                           <!--You have a CHOICE of the next 5 items at this level-->\r
-                           <dateValue>?</dateValue>\r
-                           <doubleValue>?</doubleValue>\r
-                           <longValue>?</longValue>\r
-                           <stringValue>?</stringValue>\r
-                           <entityReferenceValue classname="?" code="?"/>\r
-                        </value>\r
-                     </entry>\r
-                  </mapValue>\r
-                  <!--Optional:-->\r
-                  <entityReferenceValue classname="?" code="?"/>\r
-               </customField>\r
-            </customFields>\r
-         </jobInstance>\r
+         <jobInstance jobTemplate="ReRatingJob" code="JT_00" description="test data for job template" timerCode="code_1">
+            <jobCategory>Rating</jobCategory>
+            <!--Optional:-->
+            <followingJob>U_Job</followingJob>
+            <!--Optional:-->
+            <parameter>?</parameter>
+            <active>No</active>
+            <userId>1</userId>
+         </jobInstance>
       </ws:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/update"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="e9113740-ba7b-4eca-baf2-9d005801c26c" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://i.meveo.info/meveo/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://i.meveo.info/meveo/InvoiceWs?wsdl"><con:part><con:url>http://i.meveo.info/meveo/InvoiceWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="InvoiceWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
-  <wsdl:import location="http://localhost:8080/meveo/InvoiceWs?wsdl=InvoiceWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/update"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="5ed65d19-4edd-4f7b-b0fd-9f2bf7cc77e7" isOneWay="false" action="" name="createOrUpdateTimer" bindingOperationName="createOrUpdateTimer" type="Request-Response" outputName="createOrUpdateTimerResponse" inputName="createOrUpdateTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="532a1e00-46b2-421d-9063-ee34b597a7ab" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateTimer>\r
+         <!--Optional:-->\r
+         <timerEntity description="test data for timer entity" hour="1" minute="1" second="1" year="1" month="1" dayOfMonth="1" dayOfWeek="1">\r
+            <code>TE_00</code>\r
+         </timerEntity>\r
+      </ws:createOrUpdateTimer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdateTimer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="a16864b4-2120-433b-969f-86a9324e665d" isOneWay="false" action="" name="updateTimer" bindingOperationName="updateTimer" type="Request-Response" outputName="updateTimerResponse" inputName="updateTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b9ae3fdb-71cf-488d-b701-afbb716e8997" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateTimer>\r
+         <!--Optional:-->\r
+         <timerEntity description="test data for timer entity" hour="1" minute="1" second="1" year="1" month="1" dayOfMonth="1" dayOfWeek="1">
+            <code>TE_00</code>
+         </timerEntity>
+      </ws:updateTimer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/updateTimer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="3c428b52-9cef-4f50-aa06-3a491c4c35e1" isOneWay="false" action="" name="createOrUpdateJobInstance" bindingOperationName="createOrUpdateJobInstance" type="Request-Response" outputName="createOrUpdateJobInstanceResponse" inputName="createOrUpdateJobInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1694131e-aeef-499f-87db-3bc1b12653b6" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateJobInstance>\r
+         <!--Optional:-->\r
+         <jobInstance jobTemplate="ReRatingJob" code="JT_00" description="test data for job template" timerCode="code_1">\r
+            <jobCategory>Rating</jobCategory>\r
+            <!--Optional:-->\r
+            <followingJob>U_Job</followingJob>\r
+            <!--Optional:-->\r
+            <parameter>?</parameter>\r
+            <active>No</active>\r
+            <userId>1</userId>\r
+         </jobInstance>\r
+      </ws:createOrUpdateJobInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdateJobInstance"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="e9113740-ba7b-4eca-baf2-9d005801c26c" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://i.meveo.info/meveo/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://i.meveo.info/meveo/InvoiceWs?wsdl"><con:part><con:url>http://i.meveo.info/meveo/InvoiceWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="InvoiceWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://i.meveo.info/meveo/InvoiceWs?wsdl=InvoiceWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="InvoiceWsSoapBinding" type="ns1:InvoiceWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="generateInvoice">
@@ -28691,10 +28823,10 @@
   </wsdl:binding>
   <wsdl:service name="InvoiceWs">
     <wsdl:port binding="tns:InvoiceWsSoapBinding" name="InvoiceWsImplPort">
-      <soap:address location="http://localhost:8080/meveo/InvoiceWs"/>
+      <soap:address location="http://i.meveo.info/meveo/InvoiceWs"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/InvoiceWs?wsdl=InvoiceWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="InvoiceWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://i.meveo.info/meveo/InvoiceWs?wsdl=InvoiceWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="InvoiceWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
@@ -28727,7 +28859,7 @@
       </xs:complexType>
       <xs:complexType name="generateInvoiceRequestDto">
         <xs:sequence>
-          <xs:element name="billingAccountId" type="xs:long"/>
+          <xs:element name="billingAccountCode" type="xs:string"/>
           <xs:element name="invoicingDate" type="xs:dateTime"/>
           <xs:element name="lastTransactionDate" type="xs:dateTime"/>
         </xs:sequence>
@@ -28978,7 +29110,7 @@
       <wsdl:output message="ns1:getXMLInvoiceResponse" name="getXMLInvoiceResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint></con:endpoints><con:operation id="0c8cef6c-ac7c-4b6a-a2f7-13501355e36f" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ae055102-20eb-4c4b-8031-bea28ca590c7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://i.meveo.info/meveo/InvoiceWs</con:endpoint><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint></con:endpoints><con:operation id="0c8cef6c-ac7c-4b6a-a2f7-13501355e36f" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ae055102-20eb-4c4b-8031-bea28ca590c7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:create>
@@ -29193,7 +29325,9 @@
       <xs:element name="BillingRun" type="tns:billingRunDto"/>
       <xs:element name="CreateBillingRunDto" type="tns:createBillingRunDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
+      <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
       <xs:element name="CustomFields" type="tns:customFieldsDto"/>
+      <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
       <xs:element name="GetBillingAccountListInRunResponse" type="tns:getBillingAccountListInRunResponseDto"/>
       <xs:element name="GetBillingRunInfoResponse" type="tns:getBillingRunInfoResponseDto"/>
       <xs:element name="GetPostInvoicingReportsResponse" type="tns:getPostInvoicingReportsResponseDto"/>
@@ -29559,6 +29693,28 @@
           <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
           <xs:element minOccurs="0" name="longValue" type="xs:long"/>
           <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+          <xs:element minOccurs="0" name="listValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="mapValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string"/>
+                      <xs:element minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" name="entityReferenceValue" type="tns:entityReferenceDto"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string"/>
@@ -29566,6 +29722,22 @@
         <xs:attribute name="valuePeriodStartDate" type="xs:dateTime"/>
         <xs:attribute name="valuePeriodEndDate" type="xs:dateTime"/>
         <xs:attribute name="valuePeriodPriority" type="xs:int"/>
+      </xs:complexType>
+      <xs:complexType name="customFieldValueDto">
+        <xs:sequence>
+          <xs:choice minOccurs="0">
+            <xs:element name="dateValue" type="xs:dateTime"/>
+            <xs:element name="doubleValue" type="xs:double"/>
+            <xs:element name="longValue" type="xs:long"/>
+            <xs:element name="stringValue" type="xs:string"/>
+            <xs:element name="entityReferenceValue" type="tns:entityReferenceDto"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entityReferenceDto">
+        <xs:sequence/>
+        <xs:attribute name="classname" type="xs:string" use="required"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="Accesses">
         <xs:sequence>
@@ -42575,30 +42747,4 @@ public class Demo extends org.meveo.service.script.Script {
          </updateScriptInstanceRequest>
       </ws:update>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d4fa0631-db27-430f-af23-36958a4d693f"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="13f7053f-de71-4a51-afe0-29c073b9c7de" name="#1059_execute_job_api_via_code"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="b271f4ec-6d89-48b8-9f3f-bdd93fd8a55c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase 1" searchProperties="true"><con:settings/><con:testStep type="request" name="SOAP Request" id="a05cd986-4e65-4a69-9ea9-606204e4f4e9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="SOAP Request" id="60b644ca-7b26-4495-819a-86be0ad7e2fc"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:execute>\r
-         <!--Optional:-->\r
-         <jobInstanceInfo code="M_Job">\r
-         </jobInstanceInfo>\r
-      </ws:execute>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a3ccad23-c68e-4c64-91ac-41055d887f6b"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="SOAP Request2" id="a88bdac5-e8e7-4051-9b9f-b3d4ba779574"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="SOAP Request2" id="85d4edd0-0212-4509-abab-7c281b276b67"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:execute>\r
-         <!--Optional:-->\r
-         <jobInstanceInfo code="?">\r
-            <!--Optional:-->\r
-            <timerName>?</timerName>\r
-            <!--Optional:-->\r
-            <lastTransactionDate>?</lastTransactionDate>\r
-            <!--Optional:-->\r
-            <invoiceDate>?</invoiceDate>\r
-            <!--Optional:-->\r
-            <billingCycle>?</billingCycle>\r
-         </jobInstanceInfo>\r
-      </ws:execute>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8f4161e5-3697-4557-a596-b4da643b3f10"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>i.meveo.info/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d4fa0631-db27-430f-af23-36958a4d693f"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

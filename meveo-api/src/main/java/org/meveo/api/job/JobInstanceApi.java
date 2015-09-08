@@ -26,7 +26,6 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.job.TimerEntityService;
-import org.picketlink.idm.common.p3p.P3PConstants.PostalInfo;
 
 @Stateless
 public class JobInstanceApi extends BaseApi {
@@ -153,9 +152,7 @@ public class JobInstanceApi extends BaseApi {
 		Provider provider = currentUser.getProvider();
 		
 		if (StringUtils.isBlank(jobInstanceCode)) {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("Code");
-			}			
+			missingParameters.add("Code");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		} else {
 			
@@ -238,7 +235,7 @@ public class JobInstanceApi extends BaseApi {
 				}
 			}
 			
-			
+			jobInstanceService.update(jobInstance, currentUser);
 		}
 	}
 	

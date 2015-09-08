@@ -37,11 +37,11 @@ import javax.persistence.NoResultException;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.JobDoesNotExistsException;
-import org.meveo.admin.job.BillingRunJob;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -288,7 +288,9 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	}
 
 	public Long executeAPITimer(JobInstanceInfoDto jobInstanceInfoDTO, User currentUser) throws BusinessException {
-		log.info("execute timer={} via api", jobInstanceInfoDTO.getTimerName());
+		log.info("execute timer={} via api",
+				StringUtils.isBlank(jobInstanceInfoDTO.getTimerName()) ? jobInstanceInfoDTO.getCode()
+						: jobInstanceInfoDTO.getTimerName());
 		JobInstance entity = null;
 		
 		if (!StringUtils.isBlank(jobInstanceInfoDTO.getCode())) {
@@ -310,6 +312,14 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 					StringUtils.isBlank(jobInstanceInfoDTO.getTimerName()) ? jobInstanceInfoDTO.getCode()
 							: jobInstanceInfoDTO.getTimerName());
 		}
+		
+		// lazy loading
+		if (entity.getCustomFields() != null) {
+			Map<String, CustomFieldInstance> map = entity.getCustomFields();
+			for (Map.Entry<String, CustomFieldInstance> entry : map.entrySet()) {
+				entry.getKey();
+			}
+		}
 	
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		result.setJobInstance(entity);
@@ -320,19 +330,6 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
 				if (jobs.containsKey(entity.getJobTemplate())) {
 					Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
-
-                    if (job instanceof BillingRunJob && jobInstanceInfoDTO.getInvoiceDate() != null) {
-                        entity.setCFValue("BillingRunJob_invoiceDate", jobInstanceInfoDTO.getInvoiceDate(), ((BillingRunJob) job).getCustomFields()
-                            .get("BillingRunJob_invoiceDate"));
-                    }
-                    if (job instanceof BillingRunJob && jobInstanceInfoDTO.getLastTransactionDate() != null) {
-                        entity.setCFValue("BillingRunJob_lastTransactionDate", jobInstanceInfoDTO.getLastTransactionDate(),
-                            ((BillingRunJob) job).getCustomFields().get("BillingRunJob_lastTransactionDate"));
-                    }
-                    if (job instanceof BillingRunJob && jobInstanceInfoDTO.getBillingCycle() != null) {
-                        entity.setCFValue("BillingRunJob_billingCycle", jobInstanceInfoDTO.getBillingCycle(),
-                            ((BillingRunJob) job).getCustomFields().get("BillingRunJob_billingCycle"));
-                    }			
 					jobExecutionService.create(result, currentUser, currentUser.getProvider());
 					job.execute(entity, result, currentUser);
 				}
@@ -340,7 +337,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 				throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
 			}
 		} catch (NamingException e) {
-			log.error("failed to execute API timer",e);
+			log.error("failed to execute API timer", e);
 		}
 		
 		return result.getId();

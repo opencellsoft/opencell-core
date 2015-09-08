@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="MEVEO API - SOAP" resourceRoot="" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" id="2f54001a-e294-45e3-b31b-9f879444ecc5" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="ProjectSettings@shadowPassword"/><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="MEVEO API - SOAP" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" id="2f54001a-e294-45e3-b31b-9f879444ecc5" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="ProjectSettings@shadowPassword"/><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="CatalogWsSoapBinding TestSuite"/>
@@ -4787,6 +4787,7 @@
       <ws:createOrUpdateScriptInstance>\r
          <!--Optional:-->\r
          <scriptInstance code="SI_00" description="Test data for script instance">\r
+         	<script>Test</script>
          </scriptInstance>\r
       </ws:createOrUpdateScriptInstance>\r
    </soapenv:Body>\r
@@ -15109,7 +15110,7 @@
       <xs:complexType name="actionStatus">
         <xs:sequence>
           <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element name="errorCode" type="xs:int"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>

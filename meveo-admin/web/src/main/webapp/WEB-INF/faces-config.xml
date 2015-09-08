@@ -443,6 +443,10 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>providerSelfDetail</from-outcome>
+			<to-view-id>/pages/admin/providers/providerSelfDetail.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>providerContacts</from-outcome>
 			<to-view-id>/pages/crm/providerContacts/providerContacts.xhtml
 			</to-view-id>
@@ -1291,6 +1295,19 @@
 			<to-view-id>/pages/notification/emailNotifications.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>jobTriggerDetail</from-outcome>
+			<to-view-id>/pages/notification/jobTriggerDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>jobTriggers</from-outcome>
+			<to-view-id>/pages/notification/jobTriggers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>		
 		
 		
 		<navigation-case>
