@@ -15,7 +15,7 @@
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
-					<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
 					<p:menuitem outcome="jobTriggers"
 						value="#{messages['menu.jobTriggers']}" />
 				</p:breadCrumb>
@@ -44,7 +44,7 @@
 		</hftl:entityPopup>
 		
 		<hf:formPanel id="jobTriggerFormPanel" formId="jobTriggerForm"
-			label="#{messages['menu.jobTrigger']}"
+			label="#{messages['jobTrigger.title']}"
 			backingBean="#{jobTriggerBean}" columns="2" showEnableDisableButton="true">
 			<hf:formField label="#{messages['entity.code']}" field="code"
 				required="true" maxLength="60" />
@@ -60,7 +60,7 @@
 			
 			<hf:formField id="scriptInstanceSelectId"
 										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
-										valueLabelField="description" required="true" popup="true"
+										valueLabelField="description" required="false" popup="true"
 										popupId="scriptInstancePopup" />
 										
 			<hf:formField label="#{messages['entity.notification.params']}" field="params"  />  
@@ -69,6 +69,7 @@
 							label="#{messages['entity.notification.jobInstance']}" field="jobInstance"
 							valueLabelField="description" required="true" popup="true"
 							popupId="jobInstancePopup" />
+							
             <hf:formField label="#{messages['entity.notification.jobParams']}" field="jobParams"  />  							
 				
             <hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
