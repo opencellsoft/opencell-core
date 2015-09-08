@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation" resourceRoot="" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation" resourceRoot="" soapui-version="5.1.3" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -2180,7 +2180,7 @@
       <wsdl:output message="ns1:removeCustomerResponse" name="removeCustomerResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="createAccess" bindingOperationName="createAccess" type="Request-Response" outputName="createAccessResponse" inputName="createAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="49f6e7a0-8e5f-42db-8ab3-f765d8d28829"><con:settings/><con:call name="Request 1" id="0a406c88-a6d4-4992-bfdd-8c4b75297fc1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://i.meveo.info/meveo/AccountWs</con:endpoint><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="createAccess" bindingOperationName="createAccess" type="Request-Response" outputName="createAccessResponse" inputName="createAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="49f6e7a0-8e5f-42db-8ab3-f765d8d28829"><con:settings/><con:call name="Request 1" id="0a406c88-a6d4-4992-bfdd-8c4b75297fc1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createAccess>
@@ -11525,6 +11525,15 @@
   <wsdl:import location="http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="CatalogWsSoapBinding" type="ns1:CatalogWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="createOrUpdateRecurringChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateRecurringChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateRecurringChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeTriggeredEdr">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeTriggeredEdr">
@@ -11558,6 +11567,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findTriggeredEdrResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTriggeredEdr">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateTriggeredEdr">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateTriggeredEdrResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -11669,6 +11687,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOfferTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateOfferTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateOfferTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeOneShotChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeOneShotChargeTemplate">
@@ -11684,6 +11711,24 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="updateUsageChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOneShotChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateOneShotChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateOneShotChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateServiceTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateServiceTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateServiceTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -11759,6 +11804,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdatePricePlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdatePricePlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdatePricePlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateCounterTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateCounterTemplate">
@@ -11819,6 +11873,24 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeRecurringChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCounterTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCounterTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCounterTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateUsageChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateUsageChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateUsageChargeTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -11889,6 +11961,22 @@
       <xs:element name="createOfferTemplateResponse" type="tns:createOfferTemplateResponse"/>
       <xs:element name="createOneShotChargeTemplate" type="tns:createOneShotChargeTemplate"/>
       <xs:element name="createOneShotChargeTemplateResponse" type="tns:createOneShotChargeTemplateResponse"/>
+      <xs:element name="createOrUpdateCounterTemplate" type="tns:createOrUpdateCounterTemplate"/>
+      <xs:element name="createOrUpdateCounterTemplateResponse" type="tns:createOrUpdateCounterTemplateResponse"/>
+      <xs:element name="createOrUpdateOfferTemplate" type="tns:createOrUpdateOfferTemplate"/>
+      <xs:element name="createOrUpdateOfferTemplateResponse" type="tns:createOrUpdateOfferTemplateResponse"/>
+      <xs:element name="createOrUpdateOneShotChargeTemplate" type="tns:createOrUpdateOneShotChargeTemplate"/>
+      <xs:element name="createOrUpdateOneShotChargeTemplateResponse" type="tns:createOrUpdateOneShotChargeTemplateResponse"/>
+      <xs:element name="createOrUpdatePricePlan" type="tns:createOrUpdatePricePlan"/>
+      <xs:element name="createOrUpdatePricePlanResponse" type="tns:createOrUpdatePricePlanResponse"/>
+      <xs:element name="createOrUpdateRecurringChargeTemplate" type="tns:createOrUpdateRecurringChargeTemplate"/>
+      <xs:element name="createOrUpdateRecurringChargeTemplateResponse" type="tns:createOrUpdateRecurringChargeTemplateResponse"/>
+      <xs:element name="createOrUpdateServiceTemplate" type="tns:createOrUpdateServiceTemplate"/>
+      <xs:element name="createOrUpdateServiceTemplateResponse" type="tns:createOrUpdateServiceTemplateResponse"/>
+      <xs:element name="createOrUpdateTriggeredEdr" type="tns:createOrUpdateTriggeredEdr"/>
+      <xs:element name="createOrUpdateTriggeredEdrResponse" type="tns:createOrUpdateTriggeredEdrResponse"/>
+      <xs:element name="createOrUpdateUsageChargeTemplate" type="tns:createOrUpdateUsageChargeTemplate"/>
+      <xs:element name="createOrUpdateUsageChargeTemplateResponse" type="tns:createOrUpdateUsageChargeTemplateResponse"/>
       <xs:element name="createPricePlan" type="tns:createPricePlan"/>
       <xs:element name="createPricePlanResponse" type="tns:createPricePlanResponse"/>
       <xs:element name="createRecurringChargeTemplate" type="tns:createRecurringChargeTemplate"/>
@@ -11955,12 +12043,65 @@
       <xs:element name="updateTriggeredEdrResponse" type="tns:updateTriggeredEdrResponse"/>
       <xs:element name="updateUsageChargeTemplate" type="tns:updateUsageChargeTemplate"/>
       <xs:element name="updateUsageChargeTemplateResponse" type="tns:updateUsageChargeTemplateResponse"/>
-      <xs:complexType name="removeTriggeredEdr">
+      <xs:complexType name="createOrUpdateRecurringChargeTemplate">
         <xs:sequence>
-          <xs:element minOccurs="0" name="triggeredEdrCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="removeTriggeredEdrResponse">
+      <xs:complexType name="recurringChargeTemplateDto">
+        <xs:complexContent>
+          <xs:extension base="tns:chargeTemplateDto">
+            <xs:sequence>
+              <xs:element name="calendar" type="xs:string"/>
+              <xs:element minOccurs="0" name="durationTermInMonth" type="xs:int"/>
+              <xs:element minOccurs="0" name="subscriptionProrata" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="terminationProrata" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="applyInAdvance" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="shareLevel" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="chargeTemplateDto">
+        <xs:sequence>
+          <xs:element name="invoiceSubCategory" type="xs:string"/>
+          <xs:element name="disabled" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="amountEditable" type="xs:boolean"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
+          <xs:element minOccurs="0" name="inputUnitDescription" type="xs:string"/>
+          <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
+          <xs:element minOccurs="0" name="unitMultiplicator" type="xs:decimal"/>
+          <xs:element name="unitNbDecimal" type="xs:int"/>
+          <xs:element minOccurs="0" name="triggeredEdrs" type="tns:triggeredEdrTemplatesDto"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="languageDescriptionDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="triggeredEdrTemplatesDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="triggeredEdr" nillable="true" type="tns:triggeredEdrTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="triggeredEdrTemplateDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="subscriptionEl" type="xs:string"/>
+          <xs:element minOccurs="0" name="conditionEl" type="xs:string"/>
+          <xs:element name="quantityEl" type="xs:string"/>
+          <xs:element minOccurs="0" name="param1El" type="xs:string"/>
+          <xs:element minOccurs="0" name="param2El" type="xs:string"/>
+          <xs:element minOccurs="0" name="param3El" type="xs:string"/>
+          <xs:element minOccurs="0" name="param4El" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateRecurringChargeTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -11970,6 +12111,16 @@
           <xs:element name="status" type="tns:actionStatusEnum"/>
           <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
           <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeTriggeredEdr">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="triggeredEdrCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeTriggeredEdrResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="listPricePlanByEventCode">
@@ -12059,18 +12210,15 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="triggeredEdrTemplateDto">
+      <xs:complexType name="createOrUpdateTriggeredEdr">
         <xs:sequence>
-          <xs:element minOccurs="0" name="subscriptionEl" type="xs:string"/>
-          <xs:element minOccurs="0" name="conditionEl" type="xs:string"/>
-          <xs:element name="quantityEl" type="xs:string"/>
-          <xs:element minOccurs="0" name="param1El" type="xs:string"/>
-          <xs:element minOccurs="0" name="param2El" type="xs:string"/>
-          <xs:element minOccurs="0" name="param3El" type="xs:string"/>
-          <xs:element minOccurs="0" name="param4El" type="xs:string"/>
+          <xs:element minOccurs="0" name="triggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
         </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string"/>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateTriggeredEdrResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updatePricePlan">
         <xs:sequence>
@@ -12242,32 +12390,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="chargeTemplateDto">
-        <xs:sequence>
-          <xs:element name="invoiceSubCategory" type="xs:string"/>
-          <xs:element name="disabled" type="xs:boolean"/>
-          <xs:element minOccurs="0" name="amountEditable" type="xs:boolean"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
-          <xs:element minOccurs="0" name="inputUnitDescription" type="xs:string"/>
-          <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
-          <xs:element minOccurs="0" name="unitMultiplicator" type="xs:decimal"/>
-          <xs:element name="unitNbDecimal" type="xs:int"/>
-          <xs:element minOccurs="0" name="triggeredEdrs" type="tns:triggeredEdrTemplatesDto"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
-      </xs:complexType>
-      <xs:complexType name="languageDescriptionDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
-          <xs:element minOccurs="0" name="description" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="triggeredEdrTemplatesDto">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="triggeredEdr" nillable="true" type="tns:triggeredEdrTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="updateOneShotChargeTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
@@ -12277,20 +12399,6 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="recurringChargeTemplateDto">
-        <xs:complexContent>
-          <xs:extension base="tns:chargeTemplateDto">
-            <xs:sequence>
-              <xs:element name="calendar" type="xs:string"/>
-              <xs:element minOccurs="0" name="durationTermInMonth" type="xs:int"/>
-              <xs:element minOccurs="0" name="subscriptionProrata" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="terminationProrata" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="applyInAdvance" type="xs:boolean"/>
-              <xs:element minOccurs="0" name="shareLevel" type="xs:int"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createRecurringChargeTemplateResponse">
         <xs:sequence>
@@ -12370,6 +12478,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateOfferTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOfferTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="removeOneShotChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="oneShotChargeTemplateCode" type="xs:string"/>
@@ -12386,6 +12504,26 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateUsageChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOneShotChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOneShotChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateServiceTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="serviceTemplate" type="tns:serviceTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateServiceTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -12497,6 +12635,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdatePricePlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="pricePlan" type="tns:pricePlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdatePricePlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="updateCounterTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
@@ -12586,6 +12734,26 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateCounterTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCounterTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateUsageChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateUsageChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="findChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="chargeTemplateCode" type="xs:string"/>
@@ -12651,6 +12819,9 @@
       </xs:simpleType>
     </xs:schema>
   </wsdl:types>
+  <wsdl:message name="createOrUpdatePricePlanResponse">
+    <wsdl:part element="ns1:createOrUpdatePricePlanResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:createOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -12659,6 +12830,9 @@
   </wsdl:message>
   <wsdl:message name="removeCounterTemplate">
     <wsdl:part element="ns1:removeCounterTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateTriggeredEdr">
+    <wsdl:part element="ns1:createOrUpdateTriggeredEdr" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updatePricePlan">
     <wsdl:part element="ns1:updatePricePlan" name="parameters"></wsdl:part>
@@ -12671,6 +12845,9 @@
   </wsdl:message>
   <wsdl:message name="updateOneShotChargeTemplate">
     <wsdl:part element="ns1:updateOneShotChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateServiceTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateServiceTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createRecurringChargeTemplate">
     <wsdl:part element="ns1:createRecurringChargeTemplate" name="parameters"></wsdl:part>
@@ -12705,6 +12882,15 @@
   <wsdl:message name="findServiceTemplateResponse">
     <wsdl:part element="ns1:findServiceTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateOfferTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateOfferTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateOneShotChargeTemplate">
+    <wsdl:part element="ns1:createOrUpdateOneShotChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateServiceTemplate">
+    <wsdl:part element="ns1:createOrUpdateServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removePricePlanResponse">
     <wsdl:part element="ns1:removePricePlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -12713,6 +12899,9 @@
   </wsdl:message>
   <wsdl:message name="findCounterTemplateResponse">
     <wsdl:part element="ns1:findCounterTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateOneShotChargeTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeCounterTemplateResponse">
     <wsdl:part element="ns1:removeCounterTemplateResponse" name="parameters"></wsdl:part>
@@ -12756,8 +12945,14 @@
   <wsdl:message name="createOneShotChargeTemplate">
     <wsdl:part element="ns1:createOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCounterTemplate">
+    <wsdl:part element="ns1:createOrUpdateCounterTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateServiceTemplateResponse">
     <wsdl:part element="ns1:updateServiceTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateUsageChargeTemplate">
+    <wsdl:part element="ns1:createOrUpdateUsageChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findTriggeredEdrResponse">
     <wsdl:part element="ns1:findTriggeredEdrResponse" name="parameters"></wsdl:part>
@@ -12771,6 +12966,9 @@
   <wsdl:message name="findOneShotChargeTemplate">
     <wsdl:part element="ns1:findOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateRecurringChargeTemplate">
+    <wsdl:part element="ns1:createOrUpdateRecurringChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeTriggeredEdr">
     <wsdl:part element="ns1:removeTriggeredEdr" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -12779,6 +12977,9 @@
   </wsdl:message>
   <wsdl:message name="removeServiceTemplateResponse">
     <wsdl:part element="ns1:removeServiceTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCounterTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateCounterTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findTriggeredEdr">
     <wsdl:part element="ns1:findTriggeredEdr" name="parameters"></wsdl:part>
@@ -12794,6 +12995,9 @@
   </wsdl:message>
   <wsdl:message name="listOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:listOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateRecurringChargeTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOfferTemplate">
     <wsdl:part element="ns1:createOfferTemplate" name="parameters"></wsdl:part>
@@ -12813,8 +13017,14 @@
   <wsdl:message name="updateOfferTemplate">
     <wsdl:part element="ns1:updateOfferTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateTriggeredEdrResponse">
+    <wsdl:part element="ns1:createOrUpdateTriggeredEdrResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createUsageChargeTemplate">
     <wsdl:part element="ns1:createUsageChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateOfferTemplate">
+    <wsdl:part element="ns1:createOrUpdateOfferTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createUsageChargeTemplateResponse">
     <wsdl:part element="ns1:createUsageChargeTemplateResponse" name="parameters"></wsdl:part>
@@ -12840,6 +13050,9 @@
   <wsdl:message name="findServiceTemplate">
     <wsdl:part element="ns1:findServiceTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdatePricePlan">
+    <wsdl:part element="ns1:createOrUpdatePricePlan" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateCounterTemplate">
     <wsdl:part element="ns1:updateCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -12858,6 +13071,9 @@
   <wsdl:message name="removeRecurringChargeTemplate">
     <wsdl:part element="ns1:removeRecurringChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateUsageChargeTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:removeRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -12868,6 +13084,10 @@
     <wsdl:part element="ns1:createCounterTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="CatalogWs">
+    <wsdl:operation name="createOrUpdateRecurringChargeTemplate">
+      <wsdl:input message="ns1:createOrUpdateRecurringChargeTemplate" name="createOrUpdateRecurringChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateRecurringChargeTemplateResponse" name="createOrUpdateRecurringChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeTriggeredEdr">
       <wsdl:input message="ns1:removeTriggeredEdr" name="removeTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:removeTriggeredEdrResponse" name="removeTriggeredEdrResponse"></wsdl:output>
@@ -12883,6 +13103,10 @@
     <wsdl:operation name="findTriggeredEdr">
       <wsdl:input message="ns1:findTriggeredEdr" name="findTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:findTriggeredEdrResponse" name="findTriggeredEdrResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTriggeredEdr">
+      <wsdl:input message="ns1:createOrUpdateTriggeredEdr" name="createOrUpdateTriggeredEdr"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateTriggeredEdrResponse" name="createOrUpdateTriggeredEdrResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updatePricePlan">
       <wsdl:input message="ns1:updatePricePlan" name="updatePricePlan"></wsdl:input>
@@ -12932,6 +13156,10 @@
       <wsdl:input message="ns1:updateServiceTemplate" name="updateServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateServiceTemplateResponse" name="updateServiceTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOfferTemplate">
+      <wsdl:input message="ns1:createOrUpdateOfferTemplate" name="createOrUpdateOfferTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateOfferTemplateResponse" name="createOrUpdateOfferTemplateResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeOneShotChargeTemplate">
       <wsdl:input message="ns1:removeOneShotChargeTemplate" name="removeOneShotChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeOneShotChargeTemplateResponse" name="removeOneShotChargeTemplateResponse"></wsdl:output>
@@ -12939,6 +13167,14 @@
     <wsdl:operation name="updateUsageChargeTemplate">
       <wsdl:input message="ns1:updateUsageChargeTemplate" name="updateUsageChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateUsageChargeTemplateResponse" name="updateUsageChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOneShotChargeTemplate">
+      <wsdl:input message="ns1:createOrUpdateOneShotChargeTemplate" name="createOrUpdateOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateOneShotChargeTemplateResponse" name="createOrUpdateOneShotChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateServiceTemplate">
+      <wsdl:input message="ns1:createOrUpdateServiceTemplate" name="createOrUpdateServiceTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateServiceTemplateResponse" name="createOrUpdateServiceTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findRecurringChargeTemplate">
       <wsdl:input message="ns1:findRecurringChargeTemplate" name="findRecurringChargeTemplate"></wsdl:input>
@@ -12972,6 +13208,10 @@
       <wsdl:input message="ns1:removePricePlan" name="removePricePlan"></wsdl:input>
       <wsdl:output message="ns1:removePricePlanResponse" name="removePricePlanResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdatePricePlan">
+      <wsdl:input message="ns1:createOrUpdatePricePlan" name="createOrUpdatePricePlan"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdatePricePlanResponse" name="createOrUpdatePricePlanResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateCounterTemplate">
       <wsdl:input message="ns1:updateCounterTemplate" name="updateCounterTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateCounterTemplateResponse" name="updateCounterTemplateResponse"></wsdl:output>
@@ -12999,6 +13239,14 @@
     <wsdl:operation name="removeRecurringChargeTemplate">
       <wsdl:input message="ns1:removeRecurringChargeTemplate" name="removeRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeRecurringChargeTemplateResponse" name="removeRecurringChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCounterTemplate">
+      <wsdl:input message="ns1:createOrUpdateCounterTemplate" name="createOrUpdateCounterTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCounterTemplateResponse" name="createOrUpdateCounterTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateUsageChargeTemplate">
+      <wsdl:input message="ns1:createOrUpdateUsageChargeTemplate" name="createOrUpdateUsageChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateUsageChargeTemplateResponse" name="createOrUpdateUsageChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findChargeTemplate">
       <wsdl:input message="ns1:findChargeTemplate" name="findChargeTemplate"></wsdl:input>
@@ -13968,7 +14216,402 @@
          <eventCode>?</eventCode>
       </ws:listPricePlanByEventCode>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/listPricePlanByEventCode"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="b7c9429b-1d05-4ac6-a0de-37a098d0ac40" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/InvoiceWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/InvoiceWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="InvoiceWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/listPricePlanByEventCode"/></con:call></con:operation><con:operation id="c4c751ad-b9ea-4282-9de0-a88bc9ceb83c" isOneWay="false" action="" name="createOrUpdateRecurringChargeTemplate" bindingOperationName="createOrUpdateRecurringChargeTemplate" type="Request-Response" outputName="createOrUpdateRecurringChargeTemplateResponse" inputName="createOrUpdateRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b206578f-1137-43f2-9fd3-80690a5dc509" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateRecurringChargeTemplate>\r
+         <!--Optional:-->\r
+         <recurringChargeTemplate code="?" description="?">\r
+            <invoiceSubCategory>?</invoiceSubCategory>\r
+            <disabled>?</disabled>\r
+            <!--Optional:-->\r
+            <amountEditable>?</amountEditable>\r
+            <!--Zero or more repetitions:-->\r
+            <languageDescriptions>\r
+               <!--Optional:-->\r
+               <languageCode>?</languageCode>\r
+               <!--Optional:-->\r
+               <description>?</description>\r
+            </languageDescriptions>\r
+            <!--Optional:-->\r
+            <inputUnitDescription>?</inputUnitDescription>\r
+            <!--Optional:-->\r
+            <ratingUnitDescription>?</ratingUnitDescription>\r
+            <!--Optional:-->\r
+            <unitMultiplicator>?</unitMultiplicator>\r
+            <unitNbDecimal>?</unitNbDecimal>\r
+            <!--Optional:-->\r
+            <triggeredEdrs>\r
+               <!--Zero or more repetitions:-->\r
+               <triggeredEdr code="?" description="?">\r
+                  <!--Optional:-->\r
+                  <subscriptionEl>?</subscriptionEl>\r
+                  <!--Optional:-->\r
+                  <conditionEl>?</conditionEl>\r
+                  <quantityEl>?</quantityEl>\r
+                  <!--Optional:-->\r
+                  <param1El>?</param1El>\r
+                  <!--Optional:-->\r
+                  <param2El>?</param2El>\r
+                  <!--Optional:-->\r
+                  <param3El>?</param3El>\r
+                  <!--Optional:-->\r
+                  <param4El>?</param4El>\r
+               </triggeredEdr>\r
+            </triggeredEdrs>\r
+            <calendar>?</calendar>\r
+            <!--Optional:-->\r
+            <durationTermInMonth>?</durationTermInMonth>\r
+            <!--Optional:-->\r
+            <subscriptionProrata>?</subscriptionProrata>\r
+            <!--Optional:-->\r
+            <terminationProrata>?</terminationProrata>\r
+            <!--Optional:-->\r
+            <applyInAdvance>?</applyInAdvance>\r
+            <!--Optional:-->\r
+            <shareLevel>?</shareLevel>\r
+         </recurringChargeTemplate>\r
+      </ws:createOrUpdateRecurringChargeTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateRecurringChargeTemplate"/></con:call></con:operation><con:operation id="48c94bb4-28a0-4833-8cdc-d16bbd538f83" isOneWay="false" action="" name="createOrUpdateTriggeredEdr" bindingOperationName="createOrUpdateTriggeredEdr" type="Request-Response" outputName="createOrUpdateTriggeredEdrResponse" inputName="createOrUpdateTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a951c1a4-3105-4983-a153-c162d5be6576" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateTriggeredEdr>\r
+         <!--Optional:-->\r
+         <triggeredEdrTemplate code="?" description="?">\r
+            <!--Optional:-->\r
+            <subscriptionEl>?</subscriptionEl>\r
+            <!--Optional:-->\r
+            <conditionEl>?</conditionEl>\r
+            <quantityEl>?</quantityEl>\r
+            <!--Optional:-->\r
+            <param1El>?</param1El>\r
+            <!--Optional:-->\r
+            <param2El>?</param2El>\r
+            <!--Optional:-->\r
+            <param3El>?</param3El>\r
+            <!--Optional:-->\r
+            <param4El>?</param4El>\r
+         </triggeredEdrTemplate>\r
+      </ws:createOrUpdateTriggeredEdr>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateTriggeredEdr"/></con:call></con:operation><con:operation id="b2990896-0f8a-4eff-afbf-3e1e65e2e5de" isOneWay="false" action="" name="createOrUpdateOfferTemplate" bindingOperationName="createOrUpdateOfferTemplate" type="Request-Response" outputName="createOrUpdateOfferTemplateResponse" inputName="createOrUpdateOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fd8b225a-f192-40bd-b0a4-070bc2027e2e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateOfferTemplate>\r
+         <!--Optional:-->\r
+         <offerTemplate code="?" description="?">\r
+            <disabled>?</disabled>\r
+            <!--Optional:-->\r
+            <serviceTemplates>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceTemplate code="?" description="?">\r
+                  <!--Optional:-->\r
+                  <invoicingCalendar>?</invoicingCalendar>\r
+                  <!--Optional:-->\r
+                  <serviceChargeTemplateRecurrings>\r
+                     <!--Zero or more repetitions:-->\r
+                     <serviceChargeTemplateRecurring>\r
+                        <!--Optional:-->\r
+                        <code>?</code>\r
+                        <!--Optional:-->\r
+                        <wallets>\r
+                           <!--Zero or more repetitions:-->\r
+                           <wallet>?</wallet>\r
+                        </wallets>\r
+                     </serviceChargeTemplateRecurring>\r
+                  </serviceChargeTemplateRecurrings>\r
+                  <!--Optional:-->\r
+                  <serviceChargeTemplateSubscriptions>\r
+                     <!--Zero or more repetitions:-->\r
+                     <serviceChargeTemplateSubscription>\r
+                        <!--Optional:-->\r
+                        <code>?</code>\r
+                        <!--Optional:-->\r
+                        <wallets>\r
+                           <!--Zero or more repetitions:-->\r
+                           <wallet>?</wallet>\r
+                        </wallets>\r
+                     </serviceChargeTemplateSubscription>\r
+                  </serviceChargeTemplateSubscriptions>\r
+                  <!--Optional:-->\r
+                  <serviceChargeTemplateTerminations>\r
+                     <!--Zero or more repetitions:-->\r
+                     <serviceChargeTemplateTermination>\r
+                        <!--Optional:-->\r
+                        <code>?</code>\r
+                        <!--Optional:-->\r
+                        <wallets>\r
+                           <!--Zero or more repetitions:-->\r
+                           <wallet>?</wallet>\r
+                        </wallets>\r
+                     </serviceChargeTemplateTermination>\r
+                  </serviceChargeTemplateTerminations>\r
+                  <!--Optional:-->\r
+                  <serviceChargeTemplateUsages>\r
+                     <!--Zero or more repetitions:-->\r
+                     <serviceChargeTemplateUsage>\r
+                        <!--Optional:-->\r
+                        <code>?</code>\r
+                        <!--Optional:-->\r
+                        <wallets>\r
+                           <!--Zero or more repetitions:-->\r
+                           <wallet>?</wallet>\r
+                        </wallets>\r
+                        <!--Optional:-->\r
+                        <counterTemplate>?</counterTemplate>\r
+                     </serviceChargeTemplateUsage>\r
+                  </serviceChargeTemplateUsages>\r
+               </serviceTemplate>\r
+            </serviceTemplates>\r
+         </offerTemplate>\r
+      </ws:createOrUpdateOfferTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateOfferTemplate"/></con:call></con:operation><con:operation id="a8ede64b-c876-4a5f-bc22-c902bae4f148" isOneWay="false" action="" name="createOrUpdateOneShotChargeTemplate" bindingOperationName="createOrUpdateOneShotChargeTemplate" type="Request-Response" outputName="createOrUpdateOneShotChargeTemplateResponse" inputName="createOrUpdateOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="98a0eaa2-594a-4820-8e1c-7171d51f1b2e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateOneShotChargeTemplate>\r
+         <!--Optional:-->\r
+         <oneShotChargeTemplate code="?" description="?">\r
+            <invoiceSubCategory>?</invoiceSubCategory>\r
+            <disabled>?</disabled>\r
+            <!--Optional:-->\r
+            <amountEditable>?</amountEditable>\r
+            <!--Zero or more repetitions:-->\r
+            <languageDescriptions>\r
+               <!--Optional:-->\r
+               <languageCode>?</languageCode>\r
+               <!--Optional:-->\r
+               <description>?</description>\r
+            </languageDescriptions>\r
+            <!--Optional:-->\r
+            <inputUnitDescription>?</inputUnitDescription>\r
+            <!--Optional:-->\r
+            <ratingUnitDescription>?</ratingUnitDescription>\r
+            <!--Optional:-->\r
+            <unitMultiplicator>?</unitMultiplicator>\r
+            <unitNbDecimal>?</unitNbDecimal>\r
+            <!--Optional:-->\r
+            <triggeredEdrs>\r
+               <!--Zero or more repetitions:-->\r
+               <triggeredEdr code="?" description="?">\r
+                  <!--Optional:-->\r
+                  <subscriptionEl>?</subscriptionEl>\r
+                  <!--Optional:-->\r
+                  <conditionEl>?</conditionEl>\r
+                  <quantityEl>?</quantityEl>\r
+                  <!--Optional:-->\r
+                  <param1El>?</param1El>\r
+                  <!--Optional:-->\r
+                  <param2El>?</param2El>\r
+                  <!--Optional:-->\r
+                  <param3El>?</param3El>\r
+                  <!--Optional:-->\r
+                  <param4El>?</param4El>\r
+               </triggeredEdr>\r
+            </triggeredEdrs>\r
+            <oneShotChargeTemplateType>?</oneShotChargeTemplateType>\r
+            <!--Optional:-->\r
+            <immediateInvoicing>?</immediateInvoicing>\r
+         </oneShotChargeTemplate>\r
+      </ws:createOrUpdateOneShotChargeTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateOneShotChargeTemplate"/></con:call></con:operation><con:operation id="42f190fa-1f8f-4660-8e1e-c554934c0a26" isOneWay="false" action="" name="createOrUpdateServiceTemplate" bindingOperationName="createOrUpdateServiceTemplate" type="Request-Response" outputName="createOrUpdateServiceTemplateResponse" inputName="createOrUpdateServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ec8cf118-6da7-414e-af3c-3d6866e963ac" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateServiceTemplate>\r
+         <!--Optional:-->\r
+         <serviceTemplate code="?" description="?">\r
+            <!--Optional:-->\r
+            <invoicingCalendar>?</invoicingCalendar>\r
+            <!--Optional:-->\r
+            <serviceChargeTemplateRecurrings>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceChargeTemplateRecurring>\r
+                  <!--Optional:-->\r
+                  <code>?</code>\r
+                  <!--Optional:-->\r
+                  <wallets>\r
+                     <!--Zero or more repetitions:-->\r
+                     <wallet>?</wallet>\r
+                  </wallets>\r
+               </serviceChargeTemplateRecurring>\r
+            </serviceChargeTemplateRecurrings>\r
+            <!--Optional:-->\r
+            <serviceChargeTemplateSubscriptions>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceChargeTemplateSubscription>\r
+                  <!--Optional:-->\r
+                  <code>?</code>\r
+                  <!--Optional:-->\r
+                  <wallets>\r
+                     <!--Zero or more repetitions:-->\r
+                     <wallet>?</wallet>\r
+                  </wallets>\r
+               </serviceChargeTemplateSubscription>\r
+            </serviceChargeTemplateSubscriptions>\r
+            <!--Optional:-->\r
+            <serviceChargeTemplateTerminations>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceChargeTemplateTermination>\r
+                  <!--Optional:-->\r
+                  <code>?</code>\r
+                  <!--Optional:-->\r
+                  <wallets>\r
+                     <!--Zero or more repetitions:-->\r
+                     <wallet>?</wallet>\r
+                  </wallets>\r
+               </serviceChargeTemplateTermination>\r
+            </serviceChargeTemplateTerminations>\r
+            <!--Optional:-->\r
+            <serviceChargeTemplateUsages>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceChargeTemplateUsage>\r
+                  <!--Optional:-->\r
+                  <code>?</code>\r
+                  <!--Optional:-->\r
+                  <wallets>\r
+                     <!--Zero or more repetitions:-->\r
+                     <wallet>?</wallet>\r
+                  </wallets>\r
+                  <!--Optional:-->\r
+                  <counterTemplate>?</counterTemplate>\r
+               </serviceChargeTemplateUsage>\r
+            </serviceChargeTemplateUsages>\r
+         </serviceTemplate>\r
+      </ws:createOrUpdateServiceTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateServiceTemplate"/></con:call></con:operation><con:operation id="8bab2695-5a9f-4f1d-bd32-cbca76623436" isOneWay="false" action="" name="createOrUpdatePricePlan" bindingOperationName="createOrUpdatePricePlan" type="Request-Response" outputName="createOrUpdatePricePlanResponse" inputName="createOrUpdatePricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a37a9138-6b29-4068-8b02-9a1c84c5e147" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdatePricePlan>\r
+         <!--Optional:-->\r
+         <pricePlan code="?" description="?">\r
+            <eventCode>?</eventCode>\r
+            <!--Optional:-->\r
+            <seller>?</seller>\r
+            <!--Optional:-->\r
+            <country>?</country>\r
+            <!--Optional:-->\r
+            <currency>?</currency>\r
+            <!--Optional:-->\r
+            <minQuantity>?</minQuantity>\r
+            <!--Optional:-->\r
+            <maxQuantity>?</maxQuantity>\r
+            <!--Optional:-->\r
+            <offerTemplate>?</offerTemplate>\r
+            <!--Optional:-->\r
+            <startSubscriptionDate>?</startSubscriptionDate>\r
+            <!--Optional:-->\r
+            <endSubscriptionDate>?</endSubscriptionDate>\r
+            <!--Optional:-->\r
+            <startRatingDate>?</startRatingDate>\r
+            <!--Optional:-->\r
+            <endRatingDate>?</endRatingDate>\r
+            <!--Optional:-->\r
+            <minSubscriptionAgeInMonth>?</minSubscriptionAgeInMonth>\r
+            <!--Optional:-->\r
+            <maxSubscriptionAgeInMonth>?</maxSubscriptionAgeInMonth>\r
+            <!--Optional:-->\r
+            <amountWithoutTax>?</amountWithoutTax>\r
+            <!--Optional:-->\r
+            <amountWithTax>?</amountWithTax>\r
+            <!--Optional:-->\r
+            <amountWithoutTaxEL>?</amountWithoutTaxEL>\r
+            <!--Optional:-->\r
+            <amountWithTaxEL>?</amountWithTaxEL>\r
+            <priority>?</priority>\r
+            <!--Optional:-->\r
+            <criteria1>?</criteria1>\r
+            <!--Optional:-->\r
+            <criteria2>?</criteria2>\r
+            <!--Optional:-->\r
+            <criteria3>?</criteria3>\r
+            <!--Optional:-->\r
+            <criteriaEL>?</criteriaEL>\r
+            <!--Optional:-->\r
+            <validityCalendarCode>?</validityCalendarCode>\r
+         </pricePlan>\r
+      </ws:createOrUpdatePricePlan>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdatePricePlan"/></con:call></con:operation><con:operation id="bbbbd0ea-a305-40fa-834b-e0f2aeb46cd5" isOneWay="false" action="" name="createOrUpdateCounterTemplate" bindingOperationName="createOrUpdateCounterTemplate" type="Request-Response" outputName="createOrUpdateCounterTemplateResponse" inputName="createOrUpdateCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a5c936c7-9a7b-4582-aeb9-a6a35d6ef32a" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCounterTemplate>\r
+         <!--Optional:-->\r
+         <counterTemplate code="?" description="?" calendar="?">\r
+            <!--Optional:-->\r
+            <unity>?</unity>\r
+            <!--Optional:-->\r
+            <type>?</type>\r
+            <!--Optional:-->\r
+            <ceiling>?</ceiling>\r
+            <disabled>?</disabled>\r
+            <!--Optional:-->\r
+            <counterLevel>?</counterLevel>\r
+            <!--Optional:-->\r
+            <ceilingExpressionEl>?</ceilingExpressionEl>\r
+         </counterTemplate>\r
+      </ws:createOrUpdateCounterTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateCounterTemplate"/></con:call></con:operation><con:operation id="821e538e-9daf-43c1-9b4a-2506e21fcfdd" isOneWay="false" action="" name="createOrUpdateUsageChargeTemplate" bindingOperationName="createOrUpdateUsageChargeTemplate" type="Request-Response" outputName="createOrUpdateUsageChargeTemplateResponse" inputName="createOrUpdateUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5e154c30-e250-4d52-a076-3d8cd2ea1ef9" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <!--Optional:-->\r
+         <usageChargeTemplate code="?" description="?">\r
+            <invoiceSubCategory>?</invoiceSubCategory>\r
+            <disabled>?</disabled>\r
+            <!--Optional:-->\r
+            <amountEditable>?</amountEditable>\r
+            <!--Zero or more repetitions:-->\r
+            <languageDescriptions>\r
+               <!--Optional:-->\r
+               <languageCode>?</languageCode>\r
+               <!--Optional:-->\r
+               <description>?</description>\r
+            </languageDescriptions>\r
+            <!--Optional:-->\r
+            <inputUnitDescription>?</inputUnitDescription>\r
+            <!--Optional:-->\r
+            <ratingUnitDescription>?</ratingUnitDescription>\r
+            <!--Optional:-->\r
+            <unitMultiplicator>?</unitMultiplicator>\r
+            <unitNbDecimal>?</unitNbDecimal>\r
+            <!--Optional:-->\r
+            <triggeredEdrs>\r
+               <!--Zero or more repetitions:-->\r
+               <triggeredEdr code="?" description="?">\r
+                  <!--Optional:-->\r
+                  <subscriptionEl>?</subscriptionEl>\r
+                  <!--Optional:-->\r
+                  <conditionEl>?</conditionEl>\r
+                  <quantityEl>?</quantityEl>\r
+                  <!--Optional:-->\r
+                  <param1El>?</param1El>\r
+                  <!--Optional:-->\r
+                  <param2El>?</param2El>\r
+                  <!--Optional:-->\r
+                  <param3El>?</param3El>\r
+                  <!--Optional:-->\r
+                  <param4El>?</param4El>\r
+               </triggeredEdr>\r
+            </triggeredEdrs>\r
+            <!--Optional:-->\r
+            <filterParam1>?</filterParam1>\r
+            <!--Optional:-->\r
+            <filterParam2>?</filterParam2>\r
+            <!--Optional:-->\r
+            <filterParam3>?</filterParam3>\r
+            <!--Optional:-->\r
+            <filterParam4>?</filterParam4>\r
+            <!--Optional:-->\r
+            <filterExpression>?</filterExpression>\r
+            <priority>?</priority>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateUsageChargeTemplate"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="b7c9429b-1d05-4ac6-a0de-37a098d0ac40" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/InvoiceWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/InvoiceWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="InvoiceWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/InvoiceWs?wsdl=InvoiceWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="InvoiceWsSoapBinding" type="ns1:InvoiceWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -20731,15 +21374,6 @@
   <wsdl:import location="http://localhost:8080/meveo/JobWs?wsdl=JobWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="JobWsSoapBinding" type="ns1:JobWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <wsdl:operation name="createOrUpdate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createTimer">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createTimer">
@@ -20758,12 +21392,30 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateTimer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateTimer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateTimerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="create">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="create">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateJobInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateJobInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateJobInstanceResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -20785,6 +21437,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTimer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateTimer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateTimerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="JobWs">
     <wsdl:port binding="tns:JobWsSoapBinding" name="JobWsImplPort">
@@ -20803,8 +21464,10 @@
       <xs:element name="JobInstanceInfo" type="tns:jobInstanceInfoDto"/>
       <xs:element name="TimerEntity" type="tns:timerEntityDto"/>
       <xs:element name="create" type="tns:create"/>
-      <xs:element name="createOrUpdate" type="tns:createOrUpdate"/>
-      <xs:element name="createOrUpdateResponse" type="tns:createOrUpdateResponse"/>
+      <xs:element name="createOrUpdateJobInstance" type="tns:createOrUpdateJobInstance"/>
+      <xs:element name="createOrUpdateJobInstanceResponse" type="tns:createOrUpdateJobInstanceResponse"/>
+      <xs:element name="createOrUpdateTimer" type="tns:createOrUpdateTimer"/>
+      <xs:element name="createOrUpdateTimerResponse" type="tns:createOrUpdateTimerResponse"/>
       <xs:element name="createResponse" type="tns:createResponse"/>
       <xs:element name="createTimer" type="tns:createTimer"/>
       <xs:element name="createTimerResponse" type="tns:createTimerResponse"/>
@@ -20814,7 +21477,75 @@
       <xs:element name="indexResponse" type="tns:indexResponse"/>
       <xs:element name="update" type="tns:update"/>
       <xs:element name="updateResponse" type="tns:updateResponse"/>
-      <xs:complexType name="createOrUpdate">
+      <xs:element name="updateTimer" type="tns:updateTimer"/>
+      <xs:element name="updateTimerResponse" type="tns:updateTimerResponse"/>
+      <xs:complexType name="createTimer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="timerEntityDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="code" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="description" type="xs:string"/>
+            <xs:attribute name="hour" type="xs:string" use="required"/>
+            <xs:attribute name="minute" type="xs:string" use="required"/>
+            <xs:attribute name="second" type="xs:string" use="required"/>
+            <xs:attribute name="year" type="xs:string" use="required"/>
+            <xs:attribute name="month" type="xs:string" use="required"/>
+            <xs:attribute name="dayOfMonth" type="xs:string" use="required"/>
+            <xs:attribute name="dayOfWeek" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="createTimerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="execute">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="jobInstanceInfo" type="tns:jobInstanceInfoDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="jobInstanceInfoDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timerName" type="xs:string"/>
+          <xs:element minOccurs="0" name="lastTransactionDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="billingCycle" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="executeResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateTimer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateTimerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="create">
         <xs:sequence>
           <xs:element minOccurs="0" name="jobInstance" type="tns:jobInstanceDto"/>
         </xs:sequence>
@@ -20836,9 +21567,6 @@
             <xs:attribute name="timerCode" type="xs:string"/>
           </xs:extension>
         </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType abstract="true" name="baseDto">
-        <xs:sequence/>
       </xs:complexType>
       <xs:complexType name="customFieldsDto">
         <xs:sequence>
@@ -20897,69 +21625,17 @@
         <xs:attribute name="classname" type="xs:string" use="required"/>
         <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
-      <xs:complexType name="createOrUpdateResponse">
+      <xs:complexType name="createResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="actionStatus">
-        <xs:sequence>
-          <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
-          <xs:element name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createTimer">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="timerEntityDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element name="code" type="xs:string"/>
-            </xs:sequence>
-            <xs:attribute name="description" type="xs:string"/>
-            <xs:attribute name="hour" type="xs:string" use="required"/>
-            <xs:attribute name="minute" type="xs:string" use="required"/>
-            <xs:attribute name="second" type="xs:string" use="required"/>
-            <xs:attribute name="year" type="xs:string" use="required"/>
-            <xs:attribute name="month" type="xs:string" use="required"/>
-            <xs:attribute name="dayOfMonth" type="xs:string" use="required"/>
-            <xs:attribute name="dayOfWeek" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="createTimerResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="execute">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="jobInstanceInfo" type="tns:jobInstanceInfoDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="jobInstanceInfoDto">
-        <xs:sequence>
-          <xs:element name="timerName" type="xs:string"/>
-          <xs:element minOccurs="0" name="lastTransactionDate" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="billingCycle" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="executeResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="create">
+      <xs:complexType name="createOrUpdateJobInstance">
         <xs:sequence>
           <xs:element minOccurs="0" name="jobInstance" type="tns:jobInstanceDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createResponse">
+      <xs:complexType name="createOrUpdateJobInstanceResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -20982,6 +21658,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateTimer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateTimerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:simpleType name="actionStatusEnum">
         <xs:restriction base="xs:string">
           <xs:enumeration value="SUCCESS"/>
@@ -20990,29 +21676,20 @@
       </xs:simpleType>
     </xs:schema>
   </wsdl:types>
-  <wsdl:message name="indexResponse">
-    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateTimerResponse">
+    <wsdl:part element="ns1:createOrUpdateTimerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdate">
-    <wsdl:part element="ns1:createOrUpdate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createTimer">
-    <wsdl:part element="ns1:createTimer" name="parameters"></wsdl:part>
+  <wsdl:message name="updateTimerResponse">
+    <wsdl:part element="ns1:updateTimerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="execute">
     <wsdl:part element="ns1:execute" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="executeResponse">
-    <wsdl:part element="ns1:executeResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="updateTimer">
+    <wsdl:part element="ns1:updateTimer" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateResponse">
-    <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateResponse">
-    <wsdl:part element="ns1:createOrUpdateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="create">
-    <wsdl:part element="ns1:create" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateJobInstanceResponse">
+    <wsdl:part element="ns1:createOrUpdateJobInstanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createResponse">
     <wsdl:part element="ns1:createResponse" name="parameters"></wsdl:part>
@@ -21023,14 +21700,31 @@
   <wsdl:message name="update">
     <wsdl:part element="ns1:update" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateTimer">
+    <wsdl:part element="ns1:createOrUpdateTimer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createTimer">
+    <wsdl:part element="ns1:createTimer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="executeResponse">
+    <wsdl:part element="ns1:executeResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateResponse">
+    <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="create">
+    <wsdl:part element="ns1:create" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateJobInstance">
+    <wsdl:part element="ns1:createOrUpdateJobInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createTimerResponse">
     <wsdl:part element="ns1:createTimerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="JobWs">
-    <wsdl:operation name="createOrUpdate">
-      <wsdl:input message="ns1:createOrUpdate" name="createOrUpdate"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateResponse" name="createOrUpdateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createTimer">
       <wsdl:input message="ns1:createTimer" name="createTimer"></wsdl:input>
       <wsdl:output message="ns1:createTimerResponse" name="createTimerResponse"></wsdl:output>
@@ -21039,9 +21733,17 @@
       <wsdl:input message="ns1:execute" name="execute"></wsdl:input>
       <wsdl:output message="ns1:executeResponse" name="executeResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateTimer">
+      <wsdl:input message="ns1:updateTimer" name="updateTimer"></wsdl:input>
+      <wsdl:output message="ns1:updateTimerResponse" name="updateTimerResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="create">
       <wsdl:input message="ns1:create" name="create"></wsdl:input>
       <wsdl:output message="ns1:createResponse" name="createResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateJobInstance">
+      <wsdl:input message="ns1:createOrUpdateJobInstance" name="createOrUpdateJobInstance"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateJobInstanceResponse" name="createOrUpdateJobInstanceResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="index">
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
@@ -21050,6 +21752,10 @@
     <wsdl:operation name="update">
       <wsdl:input message="ns1:update" name="update"></wsdl:input>
       <wsdl:output message="ns1:updateResponse" name="updateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTimer">
+      <wsdl:input message="ns1:createOrUpdateTimer" name="createOrUpdateTimer"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateTimerResponse" name="createOrUpdateTimerResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="d15eac2f-9765-4bd2-b0ff-9b23d15f8884"><con:settings/><con:call name="Request 1" id="86da9788-82af-4b6d-91dc-94c638791f44"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -21127,7 +21833,8 @@
    <soapenv:Body>
       <ws:execute>
          <!--Optional:-->
-         <jobInstanceInfo>
+         <jobInstanceInfo code="?">
+            <!--Optional:-->
             <timerName>?</timerName>
             <!--Optional:-->
             <lastTransactionDate>?</lastTransactionDate>
@@ -21143,67 +21850,7 @@
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/index"/></con:call></con:operation><con:operation id="f87932c1-6ac0-4fa9-adf3-9ee82e16a8a6" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c7313427-53ec-48a6-83e4-4bb512025af5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdate>\r
-         <!--Optional:-->\r
-         <jobInstance jobTemplate="?" code="?" description="?" timerCode="?">\r
-            <jobCategory>?</jobCategory>\r
-            <!--Optional:-->\r
-            <followingJob>?</followingJob>\r
-            <!--Optional:-->\r
-            <parameter>?</parameter>\r
-            <active>?</active>\r
-            <userId>?</userId>\r
-            <!--Optional:-->\r
-            <customFields>\r
-               <!--Zero or more repetitions:-->\r
-               <customField code="?" description="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
-                  <!--Optional:-->\r
-                  <stringValue>?</stringValue>\r
-                  <!--Optional:-->\r
-                  <dateValue>?</dateValue>\r
-                  <!--Optional:-->\r
-                  <longValue>?</longValue>\r
-                  <!--Optional:-->\r
-                  <doubleValue>?</doubleValue>\r
-                  <!--Optional:-->\r
-                  <listValue>\r
-                     <!--Zero or more repetitions:-->\r
-                     <value>\r
-                        <!--You have a CHOICE of the next 5 items at this level-->\r
-                        <dateValue>?</dateValue>\r
-                        <doubleValue>?</doubleValue>\r
-                        <longValue>?</longValue>\r
-                        <stringValue>?</stringValue>\r
-                        <entityReferenceValue classname="?" code="?"/>\r
-                     </value>\r
-                  </listValue>\r
-                  <mapValue>\r
-                     <!--Zero or more repetitions:-->\r
-                     <entry>\r
-                        <!--Optional:-->\r
-                        <key>?</key>\r
-                        <!--Optional:-->\r
-                        <value>\r
-                           <!--You have a CHOICE of the next 5 items at this level-->\r
-                           <dateValue>?</dateValue>\r
-                           <doubleValue>?</doubleValue>\r
-                           <longValue>?</longValue>\r
-                           <stringValue>?</stringValue>\r
-                           <entityReferenceValue classname="?" code="?"/>\r
-                        </value>\r
-                     </entry>\r
-                  </mapValue>\r
-                  <!--Optional:-->\r
-                  <entityReferenceValue classname="?" code="?"/>\r
-               </customField>\r
-            </customFields>\r
-         </jobInstance>\r
-      </ws:createOrUpdate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdate"/></con:call></con:operation><con:operation id="9b6932ec-1e63-4df0-9a1f-7c27c3379c33" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="cf3bcf48-8bd3-446f-8c7b-0424290542ad" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/index"/></con:call></con:operation><con:operation id="9b6932ec-1e63-4df0-9a1f-7c27c3379c33" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="cf3bcf48-8bd3-446f-8c7b-0424290542ad" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:update>\r
@@ -21263,7 +21910,87 @@
          </jobInstance>\r
       </ws:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/update"/></con:call></con:operation></con:interface><con:testSuite id="0c2315ed-45da-48e2-a86a-8f9083f8a792" name="custom mediation"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="13a2d7e8-7f01-4b17-8459-2c63d20b3a0b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true"><con:settings/><con:testStep type="request" name="create Mediation_CreateEdr" id="607fe1ee-fd45-49d9-a40f-05dcc9a75121"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="create Mediation_CreateEdr" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/update"/></con:call></con:operation><con:operation id="461d69fc-9f4c-47b8-8a91-47aaad4ba39f" isOneWay="false" action="" name="updateTimer" bindingOperationName="updateTimer" type="Request-Response" outputName="updateTimerResponse" inputName="updateTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="57f9d093-8f45-433d-8b12-d5d32c282434" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateTimer>\r
+         <!--Optional:-->\r
+         <timerEntity description="?" hour="?" minute="?" second="?" year="?" month="?" dayOfMonth="?" dayOfWeek="?">\r
+            <code>?</code>\r
+         </timerEntity>\r
+      </ws:updateTimer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/updateTimer"/></con:call></con:operation><con:operation id="da3398ae-0585-469a-b750-efbbc7a1ad53" isOneWay="false" action="" name="createOrUpdateJobInstance" bindingOperationName="createOrUpdateJobInstance" type="Request-Response" outputName="createOrUpdateJobInstanceResponse" inputName="createOrUpdateJobInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="45c5327f-edca-40eb-8885-c930270a7a7b" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateJobInstance>\r
+         <!--Optional:-->\r
+         <jobInstance jobTemplate="?" code="?" description="?" timerCode="?">\r
+            <jobCategory>?</jobCategory>\r
+            <!--Optional:-->\r
+            <followingJob>?</followingJob>\r
+            <!--Optional:-->\r
+            <parameter>?</parameter>\r
+            <active>?</active>\r
+            <userId>?</userId>\r
+            <!--Optional:-->\r
+            <customFields>\r
+               <!--Zero or more repetitions:-->\r
+               <customField code="?" description="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                  <!--Optional:-->\r
+                  <stringValue>?</stringValue>\r
+                  <!--Optional:-->\r
+                  <dateValue>?</dateValue>\r
+                  <!--Optional:-->\r
+                  <longValue>?</longValue>\r
+                  <!--Optional:-->\r
+                  <doubleValue>?</doubleValue>\r
+                  <!--Optional:-->\r
+                  <listValue>\r
+                     <!--Zero or more repetitions:-->\r
+                     <value>\r
+                        <!--You have a CHOICE of the next 5 items at this level-->\r
+                        <dateValue>?</dateValue>\r
+                        <doubleValue>?</doubleValue>\r
+                        <longValue>?</longValue>\r
+                        <stringValue>?</stringValue>\r
+                        <entityReferenceValue classname="?" code="?"/>\r
+                     </value>\r
+                  </listValue>\r
+                  <mapValue>\r
+                     <!--Zero or more repetitions:-->\r
+                     <entry>\r
+                        <!--Optional:-->\r
+                        <key>?</key>\r
+                        <!--Optional:-->\r
+                        <value>\r
+                           <!--You have a CHOICE of the next 5 items at this level-->\r
+                           <dateValue>?</dateValue>\r
+                           <doubleValue>?</doubleValue>\r
+                           <longValue>?</longValue>\r
+                           <stringValue>?</stringValue>\r
+                           <entityReferenceValue classname="?" code="?"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+                  <!--Optional:-->\r
+                  <entityReferenceValue classname="?" code="?"/>\r
+               </customField>\r
+            </customFields>\r
+         </jobInstance>\r
+      </ws:createOrUpdateJobInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdateJobInstance"/></con:call></con:operation><con:operation id="1397e4ee-9712-4adc-88fd-e38350ad201f" isOneWay="false" action="" name="createOrUpdateTimer" bindingOperationName="createOrUpdateTimer" type="Request-Response" outputName="createOrUpdateTimerResponse" inputName="createOrUpdateTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8f88dbef-afb5-4fec-b2b8-6ea5924cdb85" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateTimer>\r
+         <!--Optional:-->\r
+         <timerEntity description="?" hour="?" minute="?" second="?" year="?" month="?" dayOfMonth="?" dayOfWeek="?">\r
+            <code>?</code>\r
+         </timerEntity>\r
+      </ws:createOrUpdateTimer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdateTimer"/></con:call></con:operation></con:interface><con:testSuite id="0c2315ed-45da-48e2-a86a-8f9083f8a792" name="custom mediation"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="13a2d7e8-7f01-4b17-8459-2c63d20b3a0b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true"><con:settings/><con:testStep type="request" name="create Mediation_CreateEdr" id="607fe1ee-fd45-49d9-a40f-05dcc9a75121"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="create Mediation_CreateEdr" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createScriptInstance>\r
@@ -21540,7 +22267,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
          </scriptInstance>\r
       </ws:createScriptInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="2f8667b3-2414-48c3-a0d3-35b96d03f0dd" name="top ten numbers"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="32f693a9-73cd-4543-b906-8084583ce99d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true"><con:settings/><con:testStep type="request" name="create Mediation_TopTen_EDR" id="fe7fed56-0336-4fef-8bc7-f9122247f5ee"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="create Mediation_TopTen_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="2f8667b3-2414-48c3-a0d3-35b96d03f0dd" name="top ten numbers"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="cb97b874-7f45-4f8a-837e-e7a00d9ff9f1" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Exectute mediation" searchProperties="true"><con:settings/><con:testStep type="calltestcase" name="Run TestCase" id="e2eccdce-d196-4d21-a753-6b6a2256faa8"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>13a2d7e8-7f01-4b17-8459-2c63d20b3a0b</con:targetTestCase><con:properties/><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="32f693a9-73cd-4543-b906-8084583ce99d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true"><con:settings/><con:testStep type="request" name="create Mediation_TopTen_EDR" id="fe7fed56-0336-4fef-8bc7-f9122247f5ee"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="create Mediation_TopTen_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createScriptInstance>\r
@@ -22059,7 +22786,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
          </access>
       </ws:createAccess>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2be0c4bc-705a-431a-9b55-f03338e216ae"/><con:assertion type="Simple Contains" name="Contains" id="f3d3a97c-550e-4c06-ad1f-2b54747790a6"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>false</con:preemptive><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="httprequest" name="CDR HTTP Request" id="1100fa44-ac2d-4828-a2be-2c9b490ae701"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/meveo/inbound/DEMO/mediation</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#ticket}_${#TestCase#index}_access</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-16T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0102030405</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR HTTP Request 1" id="3c37b052-e255-461e-a4ea-fb323defcc53"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request 1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/meveo/inbound/DEMO/mediation</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#ticket}_${#TestCase#index}_access</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-17T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0101010101</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR HTTP Request 2" id="1492e78e-c65a-4194-8957-a3f5092a756e"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request 2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/meveo/inbound/DEMO/mediation</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#ticket}_${#TestCase#index}_access</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-18T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0202020202</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>TOPTEN_20150908</con:value></con:property><con:property><con:name>authorization</con:name><con:value/></con:property></con:properties></con:testSuite><con:testSuite id="736f9d2a-5162-4ee6-9c2b-426816d07422" name="CreateFileFromHTTPrequest"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="6a48355b-ee95-4781-addf-c21b3d3e3f9e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Script" searchProperties="true"><con:settings/><con:testStep type="request" name="CreateFileFromContent" id="9eeb5a8a-5f11-4f04-8357-9c7c77a95b3a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="CreateFileFromContent" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2be0c4bc-705a-431a-9b55-f03338e216ae"/><con:assertion type="Simple Contains" name="Contains" id="f3d3a97c-550e-4c06-ad1f-2b54747790a6"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>false</con:preemptive><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="httprequest" name="CDR HTTP Request" id="1100fa44-ac2d-4828-a2be-2c9b490ae701"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/meveo/inbound/DEMO/mediation</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#ticket}_${#TestCase#index}_access</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-16T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0102030405</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR HTTP Request 1" id="3c37b052-e255-461e-a4ea-fb323defcc53"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request 1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/meveo/inbound/DEMO/mediation</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#ticket}_${#TestCase#index}_access</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-17T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0101010101</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR HTTP Request 2" id="1492e78e-c65a-4194-8957-a3f5092a756e"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request 2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/meveo/inbound/DEMO/mediation</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#ticket}_${#TestCase#index}_access</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-18T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0202020202</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>TOPTEN</con:value></con:property><con:property><con:name>authorization</con:name><con:value/></con:property></con:properties></con:testSuite><con:testSuite id="736f9d2a-5162-4ee6-9c2b-426816d07422" name="CreateFileFromHTTPrequest"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="6a48355b-ee95-4781-addf-c21b3d3e3f9e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Script" searchProperties="true"><con:settings/><con:testStep type="request" name="CreateFileFromContent" id="9eeb5a8a-5f11-4f04-8357-9c7c77a95b3a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="CreateFileFromContent" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createScriptInstance>\r
@@ -22645,10 +23372,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
       </ws:listByXmlInput>\r
    </soapenv:Body>\r
 <<<<<<< HEAD
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="cd2e0127-25e0-4151-8017-0465ab51274d"/><con:assertion type="Schema Compliance" id="1c5d6a89-d773-4028-b382-225a7729db89"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="00836bde-f352-487c-bc3d-f1cea2c1c133"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>TOPTEN_F_20150908</con:value></con:property><con:property><con:name>authorization</con:name><con:value/></con:property></con:properties></con:testSuite><con:testSuite id="a642c711-f6fd-41e1-b9c6-94969512c663" name="Zoning plan"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="5650f331-f803-4643-b9b4-e0d6c5224072" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true"><con:settings/><con:testStep type="request" name="create Mediation_Zoning_EDR" id="96a3e523-21f6-41fb-901d-36a76d51b432"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="create Mediation_Zoning_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-=======
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="cd2e0127-25e0-4151-8017-0465ab51274d"/><con:assertion type="Schema Compliance" id="1c5d6a89-d773-4028-b382-225a7729db89"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="00836bde-f352-487c-bc3d-f1cea2c1c133"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>TOPTEN_F</con:value></con:property><con:property><con:name>authorization</con:name><con:value/></con:property></con:properties></con:testSuite><con:testSuite id="a642c711-f6fd-41e1-b9c6-94969512c663" name="Zoning plan"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="3e173027-b467-429f-aeb6-11292a627ad8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="exectute mediation" searchProperties="true"><con:settings/><con:testStep type="calltestcase" name="Run TestCase" id="3de5ad62-11ca-47f0-8d3d-37214f8975f5"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>13a2d7e8-7f01-4b17-8459-2c63d20b3a0b</con:targetTestCase><con:properties/><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="5650f331-f803-4643-b9b4-e0d6c5224072" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true"><con:settings/><con:testStep type="request" name="create Mediation_Zoning_EDR" id="96a3e523-21f6-41fb-901d-36a76d51b432"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="create Mediation_Zoning_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
->>>>>>> branch 'master' of git@git.assembla.com:meveo.git
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="cd2e0127-25e0-4151-8017-0465ab51274d"/><con:assertion type="Schema Compliance" id="1c5d6a89-d773-4028-b382-225a7729db89"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="00836bde-f352-487c-bc3d-f1cea2c1c133"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>TOPTEN_F_20150908</con:value></con:property><con:property><con:name>authorization</con:name><con:value/></con:property></con:properties></con:testSuite><con:testSuite id="a642c711-f6fd-41e1-b9c6-94969512c663" name="Zoning plan"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="3e173027-b467-429f-aeb6-11292a627ad8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="exectute mediation" searchProperties="true"><con:settings/><con:testStep type="calltestcase" name="Run TestCase" id="3de5ad62-11ca-47f0-8d3d-37214f8975f5"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>13a2d7e8-7f01-4b17-8459-2c63d20b3a0b</con:targetTestCase><con:properties/><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="5650f331-f803-4643-b9b4-e0d6c5224072" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true"><con:settings/><con:testStep type="request" name="create Mediation_Zoning_EDR" id="96a3e523-21f6-41fb-901d-36a76d51b432"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="create Mediation_Zoning_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createScriptInstance>\r
@@ -22736,12 +23460,12 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_EDR extends 
 				if("VOICE".equals(cdr.getParam1())){
 				    Subscription sub = subService.findById(accessPoint.getSubscription().getId());
 				    Customer cust= sub.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
-					String zoningCode = (String)cfccProvider.getClosestMatchValue(cust, CF_NAME, accessPoint.getAccessUserId());
+					String zoningCode = (String)cfccProvider.getClosestMatchValue(cust, CF_NAME,cdr.getTimestamp(), accessPoint.getAccessUserId());
 					if(zoningCode==null){
 					     zoningCode="NOT_FOUND";
 					}
 					edr.setParameter2(zoningCode);
-					zoningCode = (String)cfccProvider.getClosestMatchValue(cust, CF_NAME, cdr.getParam2());
+					zoningCode = (String)cfccProvider.getClosestMatchValue(cust, CF_NAME,cdr.getTimestamp(), cdr.getParam2());
 					if(zoningCode==null){
 					     zoningCode="NOT_FOUND";
 					}
@@ -22889,7 +23613,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
             <accountLevel>CUST</accountLevel>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
+            <versionable>true</versionable>\r
             <triggerEndPeriodEvent>true</triggerEndPeriodEvent>\r
          </customField>\r
       </ws:createCustomFieldTemplate>\r
@@ -23047,7 +23771,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
                         <customerCategory>CLIENT</customerCategory>
                         <customerBrand>DEFAULT</customerBrand>
                         <customFields>
-                             <customField code="${#TestSuite#ticket}" description="">
+                             <customField code="${#TestSuite#ticket}" description="" valueDate="2015-06-15" valuePeriodStartDate="2015-01-01" valuePeriodEndDate="2018-01-01">
 			                <mapValue>
 			                     <entry>
 			                        <key>+</key>
@@ -23148,4 +23872,4 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
          </jobInstanceInfo>\r
       </ws:execute>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>ZONING_20150908</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>i.meveo.info/meveo</con:value></con:property><con:property><con:name>Authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>ZONING</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>Authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
