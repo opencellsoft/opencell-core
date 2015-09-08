@@ -2,6 +2,12 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{providerBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="navigation">
         <ui:include src="/layout/navigation.xhtml" />
     </ui:define>

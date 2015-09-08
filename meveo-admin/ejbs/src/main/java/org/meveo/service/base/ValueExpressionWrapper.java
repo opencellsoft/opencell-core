@@ -58,7 +58,7 @@ public class ValueExpressionWrapper {
             log.debug("EL {} => {}", expression, result);
 
         } catch (Exception e) {
-            log.warn("EL {} throw error {}", expression, e.getMessage());
+            log.warn("EL {} throw error", expression, e);
             throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage());
         }
         return result;

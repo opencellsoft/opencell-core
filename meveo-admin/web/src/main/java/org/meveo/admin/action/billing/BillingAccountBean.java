@@ -242,7 +242,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		try {
 			billingAccountService.billingAccountCancellation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?billingAccountId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
 			log.error("error occured while canceling account ",e);
 			messages.error(e.getMessage());
@@ -258,7 +258,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		try {
 			billingAccountService.closeBillingAccount(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?billingAccountId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
 			log.error("error occured while closing account ",e);
 			messages.error(e.getMessage());

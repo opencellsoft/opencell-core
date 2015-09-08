@@ -14,17 +14,13 @@
 			<f:event type="preRenderView"
 				listener="#{subscriptionBean.preRenderView}" />
 
-			<f:viewParam name="subscriptionId"
-				value="#{subscriptionBean.objectId}" />
-			<f:viewParam name="userAccountId"
-				value="#{subscriptionBean.userAccountId}" />
-			<f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
-			<f:viewParam name="billingAccountId"
-				value="#{billingAccountBean.objectId}" />
-			<f:viewParam name="customerAccountId"
-				value="#{customerAccountBean.objectId}" />
-			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
-		</f:metadata>
+            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectId}" />
+            <f:viewParam name="userAccountId" value="#{subscriptionBean.userAccountId}" />
+            <f:viewParam name="userAccountIdw" value="#{userAccountBean.objectId}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+        </f:metadata>
 	</ui:define>
 
 	<ui:define name="navigation">
@@ -322,7 +318,7 @@
 											field="defaultLevel" isMessage="true" />
 								</hf:formPanel>
 							</p:tab>
-							<p:tab title="#{messages['customFieldTemplate.cfValues']}">
+							<p:tab title="#{messages['customFieldTemplate.cfValues']}" rendered="#{not empty subscriptionBean.entity.id}">
                             <hf:formPanel id="subscriptionCustomFormPanel" showDeleteButton="false" backingBean="#{subscriptionBean}" useCustomIdParam="true" ajaxSubmit="true"
                                 submitPartialProcess=":subscriptionTab:subscriptionCustomFormPanel:formId:fieldGroup">
                                 <h:panelGroup id="fieldGroup">
@@ -910,12 +906,12 @@
 						</p:tab>
 					</p:tabView>
 					<f:facet name="buttons">
-                    <p:commandButton id="saveButton" value="#{messages['action.save']}" ajaxSubmit="true" submitPartialProcess=":formPanelAccess:formId:accessTabView"
-                        update=":hierarchyGroup,:#{p:component('medinaAccessPanel')},:#{p:component('medinaAccessMessage')}" icon="ui-icon-check"
-                        action="#{accessBean.saveOrUpdate()}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('accessWidget').hide()">
-                        <f:param name="subscriptionId" value="#{subscriptionBean.entity.id}"></f:param>
-                    </p:commandButton>
-                </f:facet>	
+                        <p:commandButton id="saveButton" value="#{messages['action.save']}" ajaxSubmit="true"  process="@this :formPanelAccess:formId:accessTabView" partialSubmit="true" partialSubmitFilter=":not([name*='omitFromSubmit'])"
+                            update=":hierarchyGroup,:#{p:component('medinaAccessPanel')},:#{p:component('medinaAccessMessage')}" icon="ui-icon-check"
+                            action="#{accessBean.saveOrUpdate()}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('accessWidget').hide()">
+                            <f:param name="subscriptionId" value="#{subscriptionBean.entity.id}"></f:param>
+                        </p:commandButton>
+                    </f:facet>	
 				</hf:formPanel>
 		</p:dialog>
 
