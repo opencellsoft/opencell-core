@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -139,11 +138,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 		}
 
 		String outcome = super.saveOrUpdate(killConversation);
-        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
-            return null;
-        } else {
-            return outcome;
-        }
+        return outcome;
 	}
 
 	/**
@@ -172,8 +167,9 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 		return edrTemplates;
 	}
 
-	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> temp) {
-		getEntity().setEdrTemplates(temp.getTarget());
+	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {
+		getEntity().setEdrTemplates(edrTemplates.getTarget());
+		this.edrTemplates = edrTemplates;
 	}
 
 	@Override

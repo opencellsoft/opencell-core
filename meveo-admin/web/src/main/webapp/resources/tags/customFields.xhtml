@@ -53,7 +53,7 @@
 
                         <hftl:decorateFormField fieldId="cfField_stringI" label="#{messages['customField.inheritedValue']}" componentWidth="50"
                             displayOneLine="false" rendered="#{inheritedValue !=null}">
-                            <h:outputText id="cfField_stringI" value="#{cfv:getShortRepresentationOfValue(inheritedValue, cc.attrs.datePattern)}" styleClass="field-value" />
+                            <h:outputText id="cfField_stringI" value="#{cfv:getShortRepresentationOfValueObj(inheritedValue, cc.attrs.datePattern)}" styleClass="field-value" />
                         </hftl:decorateFormField>
                     </h:panelGroup>
 

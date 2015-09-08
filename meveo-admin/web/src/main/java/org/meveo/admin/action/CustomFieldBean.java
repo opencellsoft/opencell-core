@@ -89,7 +89,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         String outcome = super.saveOrUpdate(killConversation);
         
         if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
-            return null;
+            return null; //getEditViewName();
         } else {
             return outcome;
         }

@@ -241,14 +241,14 @@
 
 									</p:tabView>
 
-									<hf:formButtons columns="5"
+									<hf:formButtons
 										backingBean="#{customerAccountBean}"
 										edit="#{customerAccountBean.edit}"
 										useCustomIdParam="true" ajaxSubmit="true" submitPartialProcess=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab">
 										<p:commandButton
 											rendered="#{customerAccountBean.isActiveAccount() and not empty customerAccountBean.entity.id}"
 											action="#{customerAccountBean.closeCustomerAccount}"
-											value="#{messages['customerAccount.buttonCloseAccount']}"
+											value="#{messages['customerAccount.buttonCloseAccount']}" immediate="true"
 											onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}">
 											<!-- 										<f:attribute name="backView" value="#{backView}" /> -->
 										</p:commandButton>

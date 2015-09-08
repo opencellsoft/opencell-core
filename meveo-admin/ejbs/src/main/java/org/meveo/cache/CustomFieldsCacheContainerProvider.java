@@ -241,12 +241,12 @@ public class CustomFieldsCacheContainerProvider {
     }
 
     /**
-     * Match for a given entity's custom field as close as possible map's key to the key provided and return a map value. Match is performed by matching a full string and then
-     * reducing one by one symbol until a match is found.
+     * Match for a given entity's custom field (non-versionable values) as close as possible map's key to the key provided and return a map value. Match is performed by matching a
+     * full string and then reducing one by one symbol until a match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
      * 
-     * @param entitys Entity to match
+     * @param entity Entity to match
      * @param cfCode Custom field code
      * @param keyToMatch Key to match
      * @return Map value that closely matches map key
@@ -256,8 +256,24 @@ public class CustomFieldsCacheContainerProvider {
     }
 
     /**
-     * Match for a given entity's custom field as close as possible map's key to the key provided and return a map value. Match is performed by matching a full string and then
-     * reducing one by one symbol until a match is found.
+     * Match for a given date (versionable values) for a given entity's custom field as close as possible map's key to the key provided and return a map value. Match is performed
+     * by matching a full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param entity Entity to match
+     * @param cfCode Custom field code
+     * @param date Date
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public Object getClosestMatchValue(ICustomFieldEntity entity, String cfCode, Date date, String keyToMatch) {
+        return getClosestMatchValue(entity.getClass(), ((IEntity) entity).getId(), cfCode, date, keyToMatch);
+    }
+
+    /**
+     * Match for a given entity's custom field (non-versionable values) as close as possible map's key to the key provided and return a map value. Match is performed by matching a
+     * full string and then reducing one by one symbol until a match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
      * 
@@ -274,14 +290,53 @@ public class CustomFieldsCacheContainerProvider {
 
         if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
             // Only value that is not versioned
-            for (CachedCFPeriodValue cfValue : customFieldValueCache.get(cacheKey).get(cfCode)) {
-                if (!cfValue.isVersioned()) {
-                    value = cfValue;
+            for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(cfCode)) {
+                if (!period.isVersioned()) {
+                    value = period;
                 }
             }
 
             if (value != null) {
                 return value.getClosestMatchValue(keyToMatch);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Match for a given date (versionable values, but also works with non-versioned values) for a given entity's custom field as close as possible map's key to the key provided
+     * and return a map value. Match is performed by matching a full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param entityClass Entity class to match
+     * @param id Entity id
+     * @param cfCode Custom field code
+     * @param date Date
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public Object getClosestMatchValue(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode, Date date, String keyToMatch) {
+
+        String cacheKey = getCacheKey(entityClass, id);
+
+        if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
+
+            // Add only values that are versioned, with highest priority
+            CachedCFPeriodValue periodFound = null;
+            for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(cfCode)) {
+                if (period.isVersioned() && period.isCorrespondsToPeriod(date)) {
+                    if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
+                        periodFound = period;
+                    }
+                } else if (!period.isVersioned()) {
+                    periodFound = period;
+                    break;
+                }
+            }
+            if (periodFound != null) {
+                return periodFound.getClosestMatchValue(keyToMatch);
             }
         }
 
@@ -342,8 +397,8 @@ public class CustomFieldsCacheContainerProvider {
      * @param date Date to match
      * @return A single custom field value
      */
-    public Object getValues(ICustomFieldEntity entity, String cfCode, Date date) {
-        return getValues(entity.getClass(), ((IEntity) entity).getId(), cfCode, date);
+    public Object getValue(ICustomFieldEntity entity, String cfCode, Date date) {
+        return getValue(entity.getClass(), ((IEntity) entity).getId(), cfCode, date);
     }
 
     /**
@@ -355,7 +410,7 @@ public class CustomFieldsCacheContainerProvider {
      * @param date Date to match
      * @return A single custom field value
      */
-    public Object getValues(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode, Date date) {
+    public Object getValue(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode, Date date) {
 
         String cacheKey = getCacheKey(entityClass, id);
 

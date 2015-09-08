@@ -159,7 +159,7 @@
 		<navigation-case>
 			<from-outcome>jobInstanceDetail</from-outcome>
 			<to-view-id>/pages/admin/job/jobInstanceDetail.xhtml</to-view-id>
-			<redirect />
+			<redirect include-view-params="true" />
 		</navigation-case>		
 
 		<navigation-case>
@@ -440,7 +440,11 @@
 		<navigation-case>
 			<from-outcome>providerDetail</from-outcome>
 			<to-view-id>/pages/admin/providers/providerDetail.xhtml</to-view-id>
-			<redirect />
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>providerSelfDetail</from-outcome>
+			<to-view-id>/pages/admin/providers/providerSelfDetail.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>providerContacts</from-outcome>
@@ -558,7 +562,7 @@
 			<from-outcome>offerTemplateDetail</from-outcome>
 			<to-view-id>/pages/catalog/offerTemplates/offerTemplateDetail.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>usagePricePlanItems</from-outcome>
@@ -617,7 +621,7 @@
 			<from-outcome>serviceTemplateDetail</from-outcome>
 			<to-view-id>/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true" />
 		</navigation-case>
 
 		<navigation-case>
@@ -642,7 +646,7 @@
 			<from-outcome>oneShotChargeTemplateDetail</from-outcome>
 			<to-view-id>/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>recurringChargeTemplates</from-outcome>
@@ -654,7 +658,7 @@
 			<from-outcome>recurringChargeTemplateDetail</from-outcome>
 			<to-view-id>/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>triggeredEdrTemplates</from-outcome>
@@ -761,7 +765,7 @@
 			<from-outcome>usageChargeTemplateDetail</from-outcome>
 			<to-view-id>/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>walletTemplates</from-outcome>
@@ -1056,7 +1060,7 @@
 		<navigation-case>
 			<from-outcome>accessDetail</from-outcome>
 			<to-view-id>/pages/medina/access/accessDetail.xhtml</to-view-id>
-			<redirect />
+            <redirect include-view-params="true" />
 		</navigation-case>
 
 		<navigation-case>
@@ -1291,6 +1295,19 @@
 			<to-view-id>/pages/notification/emailNotifications.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>jobTriggerDetail</from-outcome>
+			<to-view-id>/pages/notification/jobTriggerDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>jobTriggers</from-outcome>
+			<to-view-id>/pages/notification/jobTriggers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>		
 		
 		
 		<navigation-case>

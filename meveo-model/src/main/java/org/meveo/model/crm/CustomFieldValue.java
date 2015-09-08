@@ -263,7 +263,7 @@ public class CustomFieldValue implements Serializable {
      * @return Return formated value when storage type is Single and concatenated values when storage type is multiple
      */
     @SuppressWarnings("unchecked")
-    public static String getShortRepresentationOfValue(Object value, String dateFormat) {
+    public static String getShortRepresentationOfValueObj(Object value, String dateFormat) {
         if (value == null) {
             return null;
 

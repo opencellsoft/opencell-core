@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.enterprise.inject.Instance;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -135,8 +136,11 @@ public class AccessBean extends CustomFieldBean<Access> {
 		}
 		super.saveOrUpdate(killConversation);
 		
-		return "/pages/medina/access/accessDetail.xhtml?edit=true&accessId=" + entity.getId()
-				+ "&faces-redirect=true";
+        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
+            return null;
+        } else {
+            return "/pages/medina/access/accessDetail.xhtml?edit=true&accessId=" + entity.getId() + "&faces-redirect=true";
+        }
 	}
 	
 	public void resetEntity() {

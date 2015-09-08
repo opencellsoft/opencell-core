@@ -193,7 +193,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	 * @see
 	 * org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	@Override
+	@Override 
+	// TODO this has to be removed as BaseBean has identical method. Only need to take care of userAccountService.createUserAccount method call
 	protected String saveOrUpdate(UserAccount entity) {
 		try {
 			if (entity.isTransient()) {
@@ -207,6 +208,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			log.error("error generated while saving or updating user account ",e);
 			messages.error(e.getMessage());
 		}
+        setObjectId((Long) entity.getId());
 
 		return back();
 	}

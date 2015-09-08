@@ -6,6 +6,12 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{usageChargeTemplateBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>

@@ -19,17 +19,14 @@ package org.meveo.admin.action.crm;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
@@ -48,425 +45,403 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 /**
- * Standard backing bean for {@link AccountEntity} that allows build accounts
- * hierarchy for richfaces tree component. In this Bean you can set icons and
- * links used in tree.
+ * Standard backing bean for {@link AccountEntity} that allows build accounts hierarchy for richfaces tree component. In this Bean you can set icons and links used in tree.
  */
 @Named
 @RequestScoped
 public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
-	private static final String SUBSCRIPTION_KEY = "subscription";
-	private static final String ACCESS_KEY = "access";
+    private static final String SUBSCRIPTION_KEY = "subscription";
+    private static final String ACCESS_KEY = "access";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link AccountEntity} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private AccountEntitySearchService accountEntitySearchService;
+    /**
+     * Injected @{link AccountEntity} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private AccountEntitySearchService accountEntitySearchService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public CustomerTreeBean() {
-		super(AccountEntity.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public CustomerTreeBean() {
+        super(AccountEntity.class);
+    }
 
-	@Inject
-	@RequestParam
-	private Instance<Long> customerId;
+    @Inject
+    private CustomerAccountService customerAccountService;
 
-	@Inject
-	@RequestParam
-	private Instance<Long> customerAccountId;
+    @Inject
+    private BillingAccountService billingAccountService;
 
-	@Inject
-	@RequestParam
-	private Instance<Long> billingAccountId;
+    @Inject
+    private UserAccountService userAccountService;
 
-	@Inject
-	@RequestParam
-	private Instance<Long> userAccountId;
+    @Inject
+    private SubscriptionService subscriptionService;
 
-	@Inject
-	@RequestParam
-	private Instance<Long> subscriptionId;
-	
-	@Inject
-	@RequestParam
-	private Instance<Long> accessId;
+    @Inject
+    private AccessService accessService;
 
-	@Inject
-	private CustomerAccountService customerAccountService;
+    private TreeNode accountsHierarchy;
 
-	@Inject
-	private BillingAccountService billingAccountService;
+    private Long selectedEntityId;
+    @SuppressWarnings("rawtypes")
+    private Class selectedEntityClass;
 
-	@Inject
-	private UserAccountService userAccountService;
+    // private TreeNodeData selectedNode;
 
-	@Inject
-	private SubscriptionService subscriptionService;
-
-	@Inject
-	private AccessService accessService;
-	
-	private TreeNode accountsHierarchy;
-
-	// private TreeNodeData selectedNode;
-
-	/**
-	 * Override get instance method because AccountEntity is abstract class and
-	 * can not be instantiated in {@link BaseBean}.
-	 */
-	@Override
-	public AccountEntity getInstance() throws InstantiationException, IllegalAccessException {
-		return new AccountEntity() {
-			private static final long serialVersionUID = 1L;
+    /**
+     * Override get instance method because AccountEntity is abstract class and can not be instantiated in {@link BaseBean}.
+     */
+    @Override
+    public AccountEntity getInstance() throws InstantiationException, IllegalAccessException {
+        return new AccountEntity() {
+            private static final long serialVersionUID = 1L;
 
             @Override
             public ICustomFieldEntity getParentCFEntity() {
                 return null;
             }
-		};
-	}
+        };
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<AccountEntity> getPersistenceService() {
-		return accountEntitySearchService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<AccountEntity> getPersistenceService() {
+        return accountEntitySearchService;
+    }
 
-	/**
-	 * Build account hierarchy for Primefaces tree component. Check entity type
-	 * that was provided then loads {@link Customer} entity that is on top on
-	 * hierarchy, and delegates building logic to private build() recursion.
-	 */
-	public TreeNode buildAccountsHierarchy(BaseEntity entity) {
-        
+    /**
+     * Build account hierarchy for Primefaces tree component. Check entity type that was provided then loads {@link Customer} entity that is on top on hierarchy, and delegates
+     * building logic to private build() recursion.
+     */
+    public TreeNode buildAccountsHierarchy(BaseEntity entity) {
+
         if (accountsHierarchy != null) {
+            log.error("AKK buildAccountsHierarchy {} - using existing tree", entity.getId());
             return accountsHierarchy;
         }
-       
-		if (entity.isTransient())
-			return null;
+        log.error("AKK buildAccountsHierarchy {} - creating NEW tree", entity.getId());
 
-		Customer customer = null;
+        if (entity.isTransient()) {
+            log.error("AKK buildAccountsHierarchy {} - is transient", entity.getId());
+            return null;
+        }
 
-		if (entity instanceof Customer) {
-			customer = (Customer) entity;
-		} else if (entity instanceof CustomerAccount) {
-			CustomerAccount acc = (CustomerAccount) entity;
-			customer = acc.getCustomer();
-		} else if (entity instanceof BillingAccount) {
-			BillingAccount acc = (BillingAccount) entity;
-			// this kind of check is not really necessary, because tree
-			// hierarchy should not be shown when creating new page
-			if (acc.getCustomerAccount() != null) {
-				customer = acc.getCustomerAccount().getCustomer();
-			}
-		} else if (entity instanceof UserAccount) {
-			UserAccount acc = (UserAccount) entity;
-			if (acc.getBillingAccount() != null && acc.getBillingAccount().getCustomerAccount() != null) {
-				customer = acc.getBillingAccount().getCustomerAccount().getCustomer();
-			}
-		} else if (entity instanceof Subscription) {
-			Subscription s = (Subscription) entity;
-			if (s.getUserAccount() != null && s.getUserAccount().getBillingAccount() != null
-					&& s.getUserAccount().getBillingAccount().getCustomerAccount() != null) {
-				customer = s.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
-			}
-		} else if (entity instanceof Access) {
-			Access access = (Access) entity;
-			if (access.getSubscription() !=null && access.getSubscription().getUserAccount() != null && access.getSubscription().getUserAccount().getBillingAccount()!=null
-				&& access.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount() != null) {
-				customer =  access.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
-				}
-			}
-		if (customer != null && customer.getCode() != null) {
-		    accountsHierarchy = build(customer);
-		} else {
-		    accountsHierarchy= null;
-		}
-		
-		return accountsHierarchy;
-	}
+        selectedEntityId = entity.getId();
 
-	private TreeNode build(BaseEntity entity) {
-		TreeNode tree = new DefaultTreeNode("Root", null);
-		return build(entity, tree);
-	}
+        Customer customer = null;
 
-	/**
-	 * Builds accounts hierarchy for Primefaces tree component. Customer has
-	 * list of CustomerAccounts which has list of BillingAccounts which has list
-	 * of UserAccounts which has list of Susbcriptions. Any of those entities
-	 * can be provided for this method and it will return remaining hierarchy in
-	 * Primefaces tree format.
-	 * 
-	 * @param entity
-	 *            Customer entity.
-	 * @return Primefaces tree hierarchy.
-	 */
-	private TreeNode build(BaseEntity entity, TreeNode parent) {
+        if (entity instanceof Customer) {
+            customer = (Customer) entity;
+            selectedEntityClass = Customer.class;
 
-		if (entity instanceof Customer) {
-			Customer customer = (Customer) entity;
-			TreeNodeData treeNodeData = new TreeNodeData(customer.getId(), customer.getCode(), null, null, false,
-					Customer.ACCOUNT_TYPE, customer.getId().equals(customerId.get()));
-			TreeNode treeNode = new DefaultTreeNode(Customer.ACCOUNT_TYPE, treeNodeData, parent);
-			if (treeNodeData.isSelected()) {
-				expandTreeNode(treeNode);
-			}
+        } else if (entity instanceof CustomerAccount) {
+            CustomerAccount acc = (CustomerAccount) entity;
+            customer = acc.getCustomer();
+            selectedEntityClass = CustomerAccount.class;
 
-			List<CustomerAccount> customerAccounts = customerAccountService.listByCustomer(customer);
-			if (customerAccounts != null) {
-				for (int i = 0; i < customerAccounts.size(); i++) {
-					build(customerAccounts.get(i), treeNode);
-				}
-			}
+        } else if (entity instanceof BillingAccount) {
+            BillingAccount acc = (BillingAccount) entity;
+            // this kind of check is not really necessary, because tree
+            // hierarchy should not be shown when creating new page
+            if (acc.getCustomerAccount() != null) {
+                customer = acc.getCustomerAccount().getCustomer();
+            }
+            selectedEntityClass = BillingAccount.class;
 
-			return parent;
-		} else if (entity instanceof CustomerAccount) {
-			CustomerAccount customerAccount = (CustomerAccount) entity;
-			String firstName = (customerAccount.getName() != null && customerAccount.getName().getFirstName() != null) ? customerAccount
-					.getName().getFirstName() : "";
-			String lastName = (customerAccount.getName() != null && customerAccount.getName().getLastName() != null) ? customerAccount
-					.getName().getLastName() : "";
-			TreeNodeData treeNodeData = new TreeNodeData(customerAccount.getId(), customerAccount.getCode(), firstName,
-					lastName, false, CustomerAccount.ACCOUNT_TYPE, customerAccount.getId().equals(
-							customerAccountId.get()));
-			TreeNode treeNode = new DefaultTreeNode(CustomerAccount.ACCOUNT_TYPE, treeNodeData, parent);
-			if (treeNodeData.isSelected()) {
-				expandTreeNode(treeNode);
-			}
+        } else if (entity instanceof UserAccount) {
+            UserAccount acc = (UserAccount) entity;
+            if (acc.getBillingAccount() != null && acc.getBillingAccount().getCustomerAccount() != null) {
+                customer = acc.getBillingAccount().getCustomerAccount().getCustomer();
+            }
+        } else if (entity instanceof Subscription) {
+            Subscription s = (Subscription) entity;
+            if (s.getUserAccount() != null && s.getUserAccount().getBillingAccount() != null && s.getUserAccount().getBillingAccount().getCustomerAccount() != null) {
+                customer = s.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
+            }
+            selectedEntityClass = Subscription.class;
 
-			List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
-			if (billingAccounts != null) {
-				for (int i = 0; i < billingAccounts.size(); i++) {
-					build(billingAccounts.get(i), treeNode);
-				}
-			}
+        } else if (entity instanceof Access) {
+            Access access = (Access) entity;
+            if (access.getSubscription() != null && access.getSubscription().getUserAccount() != null && access.getSubscription().getUserAccount().getBillingAccount() != null
+                    && access.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount() != null) {
+                customer = access.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
+            }
+            selectedEntityClass = Access.class;
+        }
+        if (customer != null && customer.getCode() != null) {
+            accountsHierarchy = build(customer);
+        } else {
+            accountsHierarchy = null;
+        }
 
-			return parent;
-		} else if (entity instanceof BillingAccount) {
-			BillingAccount billingAccount = (BillingAccount) entity;
+        return accountsHierarchy;
+    }
 
-			String firstName = (billingAccount.getName() != null && billingAccount.getName().getFirstName() != null) ? billingAccount
-					.getName().getFirstName() : "";
-			String lastName = (billingAccount.getName() != null && billingAccount.getName().getLastName() != null) ? billingAccount
-					.getName().getLastName() : "";
-			TreeNodeData treeNodeData = new TreeNodeData(billingAccount.getId(), billingAccount.getCode(), firstName,
-					lastName, false, BillingAccount.ACCOUNT_TYPE, billingAccount.getId().equals(billingAccountId.get()));
-			TreeNode treeNode = new DefaultTreeNode(BillingAccount.ACCOUNT_TYPE, treeNodeData, parent);
-			if (treeNodeData.isSelected()) {
-				expandTreeNode(treeNode);
-			}
+    private TreeNode build(BaseEntity entity) {
+        TreeNode tree = new DefaultTreeNode("Root", null);
+        return build(entity, tree);
+    }
 
-			List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
-			if (userAccounts != null) {
-				for (int i = 0; i < userAccounts.size(); i++) {
-					build(userAccounts.get(i), treeNode);
-				}
-			}
+    /**
+     * Builds accounts hierarchy for Primefaces tree component. Customer has list of CustomerAccounts which has list of BillingAccounts which has list of UserAccounts which has
+     * list of Susbcriptions. Any of those entities can be provided for this method and it will return remaining hierarchy in Primefaces tree format.
+     * 
+     * @param entity Customer entity.
+     * @return Primefaces tree hierarchy.
+     */
+    private TreeNode build(BaseEntity entity, TreeNode parent) {
 
-			return parent;
-		} else if (entity instanceof UserAccount) {
-			UserAccount userAccount = (UserAccount) entity;
-			String firstName = (userAccount.getName() != null && userAccount.getName().getFirstName() != null) ? userAccount
-					.getName().getFirstName() : "";
-			String lastName = (userAccount.getName() != null && userAccount.getName().getLastName() != null) ? userAccount
-					.getName().getLastName() : "";
-			TreeNodeData treeNodeData = new TreeNodeData(userAccount.getId(), userAccount.getCode(), firstName,
-					lastName, false, UserAccount.ACCOUNT_TYPE, userAccount.getId().equals(userAccountId.get()));
-			TreeNode treeNode = new DefaultTreeNode(UserAccount.ACCOUNT_TYPE, treeNodeData, parent);
-			if (treeNodeData.isSelected()) {
-				expandTreeNode(treeNode);
-			}
+        if (entity instanceof Customer) {
+            Customer customer = (Customer) entity;
+            TreeNodeData treeNodeData = new TreeNodeData(customer.getId(), customer.getCode(), null, null, false, Customer.ACCOUNT_TYPE, selectedEntityClass == Customer.class
+                    && customer.getId().equals(selectedEntityId));
+            TreeNode treeNode = new DefaultTreeNode(Customer.ACCOUNT_TYPE, treeNodeData, parent);
+            if (treeNodeData.isSelected()) {
+                expandTreeNode(treeNode);
+            }
 
-			List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount);
-			if (subscriptions != null) {
-				if (subscriptions != null) {
-					for (int i = 0; i < subscriptions.size(); i++) {
-						build(subscriptions.get(i), treeNode);
-					}
-				}
-			}
+            List<CustomerAccount> customerAccounts = customerAccountService.listByCustomer(customer);
+            if (customerAccounts != null) {
+                for (int i = 0; i < customerAccounts.size(); i++) {
+                    build(customerAccounts.get(i), treeNode);
+                }
+            }
 
-			return parent;
-		} else if (entity instanceof Subscription) {
-			Subscription subscription = (Subscription) entity;
-			TreeNodeData treeNodeData = new TreeNodeData(subscription.getId(), subscription.getCode(), null, null,
-					false, SUBSCRIPTION_KEY, subscription.getId().equals(subscriptionId.get()));
-			TreeNode treeNode = new DefaultTreeNode(SUBSCRIPTION_KEY, treeNodeData, parent);
-			if (treeNodeData.isSelected()) {
-				expandTreeNode(treeNode);
-			}
+            return parent;
 
-			List<Access> accesses = accessService.listBySubscription(subscription);
-			if (accesses != null) {
-				if (accesses != null) {
-					for (int i = 0; i < accesses.size(); i++) {
-						build(accesses.get(i), treeNode);
-					}
-				}
-			}
+        } else if (entity instanceof CustomerAccount) {
+            CustomerAccount customerAccount = (CustomerAccount) entity;
+            String firstName = (customerAccount.getName() != null && customerAccount.getName().getFirstName() != null) ? customerAccount.getName().getFirstName() : "";
+            String lastName = (customerAccount.getName() != null && customerAccount.getName().getLastName() != null) ? customerAccount.getName().getLastName() : "";
+            TreeNodeData treeNodeData = new TreeNodeData(customerAccount.getId(), customerAccount.getCode(), firstName, lastName, false, CustomerAccount.ACCOUNT_TYPE,
+                selectedEntityClass == CustomerAccount.class && customerAccount.getId().equals(selectedEntityId));
+            TreeNode treeNode = new DefaultTreeNode(CustomerAccount.ACCOUNT_TYPE, treeNodeData, parent);
+            if (treeNodeData.isSelected()) {
+                expandTreeNode(treeNode);
+            }
 
-			return parent;
-		} else if (entity instanceof Access) {
-			Access access = (Access) entity;
-			TreeNodeData treeNodeData = new TreeNodeData(access.getId(), access.getAccessUserId(),
-					null, null, false, ACCESS_KEY, access.getId().equals(accessId.get()));
-			TreeNode treeNode = new DefaultTreeNode(ACCESS_KEY, treeNodeData, parent);
+            List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
+            if (billingAccounts != null) {
+                for (int i = 0; i < billingAccounts.size(); i++) {
+                    build(billingAccounts.get(i), treeNode);
+                }
+            }
 
-			if (treeNodeData.isSelected()) {
-				expandTreeNode(treeNode);
-			}
+            return parent;
 
-			return parent;
-		}
+        } else if (entity instanceof BillingAccount) {
+            BillingAccount billingAccount = (BillingAccount) entity;
 
-		throw new IllegalStateException("Unsupported entity for hierarchy");
-	}
+            String firstName = (billingAccount.getName() != null && billingAccount.getName().getFirstName() != null) ? billingAccount.getName().getFirstName() : "";
+            String lastName = (billingAccount.getName() != null && billingAccount.getName().getLastName() != null) ? billingAccount.getName().getLastName() : "";
+            TreeNodeData treeNodeData = new TreeNodeData(billingAccount.getId(), billingAccount.getCode(), firstName, lastName, false, BillingAccount.ACCOUNT_TYPE,
+                selectedEntityClass == BillingAccount.class && billingAccount.getId().equals(selectedEntityId));
+            TreeNode treeNode = new DefaultTreeNode(BillingAccount.ACCOUNT_TYPE, treeNodeData, parent);
+            if (treeNodeData.isSelected()) {
+                expandTreeNode(treeNode);
+            }
 
-	private void expandTreeNode(TreeNode treeNode) {
-		treeNode.setExpanded(true);
+            List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
+            if (userAccounts != null) {
+                for (int i = 0; i < userAccounts.size(); i++) {
+                    build(userAccounts.get(i), treeNode);
+                }
+            }
 
-		if (treeNode.getParent() != null) {
-			expandTreeNode(treeNode.getParent());
-		}
-	}
+            return parent;
 
-	public String getIcon(String type) {
-		if (type.equals(Customer.ACCOUNT_TYPE)) {
-			return "/img/customer-icon.png";
-		}
+        } else if (entity instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) entity;
+            String firstName = (userAccount.getName() != null && userAccount.getName().getFirstName() != null) ? userAccount.getName().getFirstName() : "";
+            String lastName = (userAccount.getName() != null && userAccount.getName().getLastName() != null) ? userAccount.getName().getLastName() : "";
+            TreeNodeData treeNodeData = new TreeNodeData(userAccount.getId(), userAccount.getCode(), firstName, lastName, false, UserAccount.ACCOUNT_TYPE,
+                selectedEntityClass == UserAccount.class && userAccount.getId().equals(selectedEntityId));
+            TreeNode treeNode = new DefaultTreeNode(UserAccount.ACCOUNT_TYPE, treeNodeData, parent);
+            if (treeNodeData.isSelected()) {
+                expandTreeNode(treeNode);
+            }
 
-		if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
-			return "/img/customerAccount-icon.png";
-		}
+            List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount);
+            if (subscriptions != null) {
+                if (subscriptions != null) {
+                    for (int i = 0; i < subscriptions.size(); i++) {
+                        build(subscriptions.get(i), treeNode);
+                    }
+                }
+            }
 
-		if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
-			return "/img/billingAccount-icon.png";
-		}
+            return parent;
 
-		if (type.equals(UserAccount.ACCOUNT_TYPE)) {
-			return "/img/userAccount-icon.png";
-		}
+        } else if (entity instanceof Subscription) {
+            Subscription subscription = (Subscription) entity;
+            TreeNodeData treeNodeData = new TreeNodeData(subscription.getId(), subscription.getCode(), null, null, false, SUBSCRIPTION_KEY,
+                selectedEntityClass == Subscription.class && subscription.getId().equals(selectedEntityId));
+            TreeNode treeNode = new DefaultTreeNode(SUBSCRIPTION_KEY, treeNodeData, parent);
+            if (treeNodeData.isSelected()) {
+                expandTreeNode(treeNode);
+            }
 
-		if (type.equals(SUBSCRIPTION_KEY)) {
-			return "/img/subscription-icon.gif";
-		}
+            List<Access> accesses = accessService.listBySubscription(subscription);
+            if (accesses != null) {
+                if (accesses != null) {
+                    for (int i = 0; i < accesses.size(); i++) {
+                        build(accesses.get(i), treeNode);
+                    }
+                }
+            }
 
-		if (type.equals(ACCESS_KEY)) {
-			return "/img/subscription-icon.gif";
-		}
+            return parent;
 
-		return null;
-	}
+        } else if (entity instanceof Access) {
+            Access access = (Access) entity;
+            TreeNodeData treeNodeData = new TreeNodeData(access.getId(), access.getAccessUserId(), null, null, false, ACCESS_KEY, selectedEntityClass == Access.class
+                    && access.getId().equals(selectedEntityId));
+            TreeNode treeNode = new DefaultTreeNode(ACCESS_KEY, treeNodeData, parent);
 
-	public class TreeNodeData {
-		private Long id;
-		private String code;
-		private String firstName;
-		private String lastName;
-		/**
-		 * Flag for toString() method to know if it needs to show
-		 * firstName/lastName.
-		 */
-		private boolean showName;
-		private String type;
-		private boolean selected;
+            if (treeNodeData.isSelected()) {
+                expandTreeNode(treeNode);
+            }
 
-		public TreeNodeData(Long id, String code, String firstName, String lastName, boolean showName, String type,
-				boolean selected) {
-			super();
-			this.id = id;
-			this.code = code;
-			this.firstName = firstName;
-			this.lastName = lastName;
-			this.showName = showName;
-			this.type = type;
-			this.selected = selected;
-		}
+            return parent;
+        }
 
-		public Long getId() {
-			return id;
-		}
+        throw new IllegalStateException("Unsupported entity for hierarchy");
+    }
 
-		public String getCode() {
-			return code;
-		}
+    private void expandTreeNode(TreeNode treeNode) {
+        treeNode.setExpanded(true);
 
-		public String getFirstName() {
-			return firstName;
-		}
+        if (treeNode.getParent() != null) {
+            expandTreeNode(treeNode.getParent());
+        }
+    }
 
-		public String getLastName() {
-			return lastName;
-		}
+    public String getIcon(String type) {
+        if (type.equals(Customer.ACCOUNT_TYPE)) {
+            return "/img/customer-icon.png";
+        }
 
-		public String getType() {
-			return type;
-		}
+        if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
+            return "/img/customerAccount-icon.png";
+        }
 
-		public String getFirstAndLastName() {
-			String result = lastName;
-			if (firstName != null) {
-				result = firstName + " " + lastName;
-			}
-			return result;
-		}
+        if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
+            return "/img/billingAccount-icon.png";
+        }
 
-		@Override
-		public String toString() {
-			if (!StringUtils.isBlank(code)) {
-				StringBuilder builder = new StringBuilder(code);
-				if (showName) {
-					builder.append(" ").append(firstName).append(" ").append(lastName);
-				}
-				return builder.toString();
-			} else {
-				return "";
-			}
-		}
+        if (type.equals(UserAccount.ACCOUNT_TYPE)) {
+            return "/img/userAccount-icon.png";
+        }
 
-		/**
-		 * Because in customer search any type of customer can appear, this
-		 * method is used in UI to get link to concrete customer edit page.
-		 * 
-		 * @param type
-		 *            Account type of Customer
-		 * 
-		 * @return Edit page url.
-		 */
-		public String getView() {
-			if (type.equals(Customer.ACCOUNT_TYPE)) {
-				return "customerDetail";
-			} else if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
-				return "customerAccountDetail";
-			} else if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
-				return "billingAccountDetail";
-			} else if (type.equals(UserAccount.ACCOUNT_TYPE)) {
-				return "userAccountDetail";
-			} else if (type.equals(SUBSCRIPTION_KEY)) {
-				return "subscriptionDetail";
-			} else if (type.equals(ACCESS_KEY)) {
-				return "accessDetail";
-			} else {
-				throw new IllegalStateException("Wrong customer type " + type + " provided in EL in .xhtml");
-			}
-		}
+        if (type.equals(SUBSCRIPTION_KEY)) {
+            return "/img/subscription-icon.gif";
+        }
 
-		public boolean isSelected() {
-			return selected;
-		}
-	}
+        if (type.equals(ACCESS_KEY)) {
+            return "/img/subscription-icon.gif";
+        }
+
+        return null;
+    }
+
+    public class TreeNodeData {
+        private Long id;
+        private String code;
+        private String firstName;
+        private String lastName;
+        /**
+         * Flag for toString() method to know if it needs to show firstName/lastName.
+         */
+        private boolean showName;
+        private String type;
+        private boolean selected;
+
+        public TreeNodeData(Long id, String code, String firstName, String lastName, boolean showName, String type, boolean selected) {
+            super();
+            this.id = id;
+            this.code = code;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.showName = showName;
+            this.type = type;
+            this.selected = selected;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getFirstAndLastName() {
+            String result = lastName;
+            if (firstName != null) {
+                result = firstName + " " + lastName;
+            }
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            if (!StringUtils.isBlank(code)) {
+                StringBuilder builder = new StringBuilder(code);
+                if (showName) {
+                    builder.append(" ").append(firstName).append(" ").append(lastName);
+                }
+                return builder.toString();
+            } else {
+                return "";
+            }
+        }
+
+        /**
+         * Because in customer search any type of customer can appear, this method is used in UI to get link to concrete customer edit page.
+         * 
+         * @param type Account type of Customer
+         * 
+         * @return Edit page url.
+         */
+        public String getView() {
+            if (type.equals(Customer.ACCOUNT_TYPE)) {
+                return "customerDetail";
+            } else if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
+                return "customerAccountDetail";
+            } else if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
+                return "billingAccountDetail";
+            } else if (type.equals(UserAccount.ACCOUNT_TYPE)) {
+                return "userAccountDetail";
+            } else if (type.equals(SUBSCRIPTION_KEY)) {
+                return "subscriptionDetail";
+            } else if (type.equals(ACCESS_KEY)) {
+                return "accessDetail";
+            } else {
+                throw new IllegalStateException("Wrong customer type " + type + " provided in EL in .xhtml");
+            }
+        }
+
+        public boolean isSelected() {
+            return selected;
+        }
+    }
 
 }

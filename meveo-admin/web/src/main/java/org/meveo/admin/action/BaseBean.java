@@ -365,6 +365,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             messages.info(new BundleKey("messages", "update.successful"));
         }
 
+        objectIdFromSet = (Long) entity.getId();
+
         return back();
     }
 

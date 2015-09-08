@@ -8,14 +8,15 @@
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
     xmlns:e="http://primefaces.org/extension">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{jobInstanceBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="navigation">
         <ui:include src="/layout/navigation.xhtml" />
     </ui:define>
-
-<!--     <f:metadata> -->
-<!-- 		<f:event type="preRenderView" -->
-<!-- 			listener="#{jobInstanceBean.preRenderView}" /> -->
-<!--     </f:metadata> -->
 
     <ui:param name="pageTitle" value="#{messages['job.page.title']}" />
     <ui:define name="body">

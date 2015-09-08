@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -108,11 +107,7 @@ public class RecurringChargeTemplateBean extends
 		}
 
         String outcome = super.saveOrUpdate(killConversation);
-        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
-            return null;
-        } else {
-            return outcome;
-        }
+        return outcome;
 	}
 
 	/**
@@ -143,22 +138,21 @@ public class RecurringChargeTemplateBean extends
 	}
 
 	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
-		if (edrTemplates == null) {
-			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService
-					.list();
-			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
-			if (getEntity().getEdrTemplates() != null) {
-				target.addAll(getEntity().getEdrTemplates());
-			}
-			source.removeAll(target);
-			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source,
-					target);
-		}
-		return edrTemplates;
+        if (edrTemplates == null) {
+            List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
+            List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
+            if (getEntity().getEdrTemplates() != null) {
+                target.addAll(getEntity().getEdrTemplates());
+            }
+            source.removeAll(target);
+            edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
+        }
+        return edrTemplates;
 	}
 
-	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> temp) {
-		getEntity().setEdrTemplates(temp.getTarget());
+	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {
+		getEntity().setEdrTemplates(edrTemplates.getTarget());
+		this.edrTemplates = edrTemplates;
 	}
 	
 	@Inject

@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -237,29 +238,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 				return null;
 			}
 		}
-
+		boolean isNew = entity.isTransient();
 		super.saveOrUpdate(killConversation);
-
-		return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId()
-				+ "&faces-redirect=true&includeViewParams=true";
-	}
-
-	@Override
-	protected String saveOrUpdate(Subscription entity) throws BusinessException {
-
-		if (entity.isTransient()) {
-			log.debug("SubscriptionBean save, # of service templates={}", entity.getOffer().getServiceTemplates()
-					.size());
-			subscriptionService.create(entity);
-			serviceTemplates.addAll(entity.getOffer().getServiceTemplates());
-			messages.info(new BundleKey("messages", "save.successful"));
-		} else {
-			log.debug("SubscriptionBean update");
-			subscriptionService.update(entity);
-			messages.info(new BundleKey("messages", "update.successful"));
+		if (isNew){
+		    serviceTemplates.addAll(entity.getOffer().getServiceTemplates());
 		}
 
-		return back();
+        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
+            return null;
+        } else {
+            return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+        }
 	}
 
 	public void newOneShotChargeInstance() {

@@ -77,6 +77,7 @@ public class UserRoleBean extends BaseBean<Role> {
 
     public void setDualListModel(DualListModel<Permission> perks) {
         getEntity().setPermissions(perks.getTarget());
+        this.perks = perks;
     }
 
     /**

@@ -2,87 +2,63 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:viewParam name="objectId" value="#{providerBean.objectId}" />
-        </f:metadata>
-    </ui:define>
-    
     <ui:define name="navigation">
         <ui:include src="/layout/navigation.xhtml" />
     </ui:define>
 
-    <ui:define name="body">
-
-        <c:if test="#{providerBean.edit}">
-            <hftl:entityPopup id="languagePopup" header="#{messages['tradingLanguage.popup.header']}"
-				updateField=":providerFormPanel:providerFormId:languageSelectedId:languageSelectedId" selection="#{providerBean.entity.language}"
-				backingBean="#{languageBean}" searchField1Label="#{messages['language.languageCode']}" searchField1="languageCode"
-				column1Label="#{messages['language.languageCode']}" column1="languageCode" column2Label="#{messages['tradingLanguage.prDescription']}"
-				column2="descriptionEn" eventBackingBean="#{providerBean}">
-            </hftl:entityPopup>
-        </c:if>
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-					<p:menuitem outcome="providers"
-						value="#{messages['menu.providers']}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+    <ui:define name="body">  
 
         <hf:formPanel id="providerFormPanel" formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormPanel:providerFormId:tabView"
-            label="#{messages['provider.title']}" backingBean="#{providerBean}">
+            label="#{messages['provider.title']}" backingBean="#{providerBean}" showBackButton="false">
             <p:tabView id="tabView">
                 <p:tab title="#{messages['customer.tab.information']}">
 							<hf:formField label="#{messages['businessEntity.code']}"
-								field="code" maxlength="35" required="true" />
+								field="code" maxlength="35" required="true" edit="false" />
 
 							<hf:formField label="#{messages['businessEntity.description']}"
-								field="description" id="description" maxlength="100" componentWidth="50" />
+								field="description" id="description" maxlength="100" componentWidth="50"  edit="false"/>
 
 							<!-- <hf:formField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" field="language" valueLabelField="languageCode"
 								popup="true" popupId="languagePopup" clearButton="true" required="true" /> -->
 				
 							<hf:formField label="#{messages['provider.enterprise']}"
-								field="entreprise" id="enterprise" />
+								field="entreprise" id="enterprise" edit="false"/>
 								
 							<hf:formField label="#{messages['provider.rounding']}"
-								field="rounding" id="rounding"/>
+								field="rounding" id="rounding" edit="false"/>
 							
 							<hf:formField label="#{messages['provider.prepaidReservationExpirationDelayinMillisec']}"
-								field="prepaidReservationExpirationDelayinMillisec" id="prepaidReservationExpirationDelayinMillisec"/>
+								field="prepaidReservationExpirationDelayinMillisec" id="prepaidReservationExpirationDelayinMillisec" edit="false"/>
 								
 							<hf:formField label="#{messages['provider.invoicePrefix']}"
-								field="invoicePrefix" id="invoicePrefix"/>
+								field="invoicePrefix" id="invoicePrefix" edit="false"/>
 								
 							<hf:formField label="#{messages['provider.currentInvoiceNb']}"
-								field="currentInvoiceNb" id="currentInvoiceNb"/>
+								field="currentInvoiceNb" id="currentInvoiceNb" edit="false"/>
 						
 							<!-- <hf:formField label="#{messages['provider.amountValidation']}"
 								field="amountValidation" id="amountValidation"/> -->
 						
 							<hf:formField label="#{messages['provider.discountAccountingCode']}"
-								field="discountAccountingCode" id="discountAccountingCode"/>
+								field="discountAccountingCode" id="discountAccountingCode" edit="false"/>
 								
 							<hf:formField label="#{messages['provider.levelDuplication']}"
-								field="levelDuplication" id="levelDuplication"/>
+								field="levelDuplication" id="levelDuplication" edit="false"/>
 								
 							<hf:formField label="#{messages['provider.email']}"
-								field="email" id="email"/>
+								field="email" id="email" edit="false"/>
 							
 							<hf:formField label="#{messages['invoiceConfiguration.displaySubscriptions']}"
-								field="invoiceConfiguration" childField="displaySubscriptions" id="displaySubscriptions"/>
+								field="invoiceConfiguration" childField="displaySubscriptions" id="displaySubscriptions" edit="false"/>
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayServices']}"
-								field="invoiceConfiguration" childField="displayServices" id="displayServices"/>
+								field="invoiceConfiguration" childField="displayServices" id="displayServices" edit="false"/>
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayOffers']}"
-								field="invoiceConfiguration" childField="displayOffers" id="displayOffers"/>
+								field="invoiceConfiguration" childField="displayOffers" id="displayOffers" edit="false"/>
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayEdrs']}"
-								field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs"/>	
+								field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs" edit="false"/>	
                 </p:tab>
 
                 <p:tab title="#{messages['customFieldTemplate.cfValues']}">

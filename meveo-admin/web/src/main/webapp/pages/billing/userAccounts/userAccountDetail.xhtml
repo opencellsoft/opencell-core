@@ -16,15 +16,12 @@
 			<f:event type="preRenderView"
 				listener="#{userAccountBean.preRenderView}" />
 
-			<f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
-			<f:viewParam name="billingAccountId"
-				value="#{userAccountBean.billingAccountId}" />
-			<f:viewParam name="billingAccountId"
-				value="#{billingAccountBean.objectId}" />
-			<f:viewParam name="customerAccountId"
-				value="#{customerAccountBean.objectId}" />
-			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
-		</f:metadata>
+            <f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
+            <f:viewParam name="billingAccountId" value="#{userAccountBean.billingAccountId}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+        </f:metadata>
 
 		<o:importConstants
 			type="org.meveo.model.billing.WalletOperationStatusEnum" />
@@ -393,37 +390,39 @@
 								</p:panel>
 							</p:tab>
 						</p:tabView>
+                        
+                        <f:facet name="buttons">
 
+                            <h:panelGroup rendered="#{not empty userAccountBean.entity.id}">
+                                <div class="action-buttons">    
+                                    <p:button outcome="addNewSubscription"
+                                        value="#{messages['userAccount.addNewSubscription']}"
+                                        disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}">
+<!--                                                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" /> -->
+                                    </p:button>
+                                    <p:commandButton value="#{messages['button.terminateButton']}"
+                                        oncomplete="PF('dlg_userAccountTerminationPopup').show()"
+                                        disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
+                                    <p:commandButton action="#{userAccountBean.cancelAccount()}"
+                                        value="#{messages['button.cancelButton']}" immediate="true"
+                                        onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
+                                        disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
+                                    <p:commandButton action="#{userAccountBean.reactivateAccount()}"
+                                        value="#{messages['button.reactivateButton']}" immediate="true"
+                                        onclick="if(confirm('#{messages['confirmationMessage.confirmReactivation']}')){return true;}else{return false;}"
+                                        disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />
+                                    <!--<p:commandButton type="button"
+                                        value="#{messages['walletOperationPopup.button']}"
+                                        onclick="PF('dlg_walletOperationPopup').show();" />
+                                     <p:commandButton type="button"
+                                    value="#{messages['ratedTransactionInvoiced.button']}"
+                                    onclick="PF('dlg_ratedTransactionsInvoicedPopup').show();" /> -->
+                                    <!--                            </custom:listPanel> -->                                
+                                </div>
+                                
+                            </h:panelGroup>                    
+                        </f:facet>
 					</hf:formPanel>
-
-					<h:form id="operationsForm" rendered="#{not empty userAccountBean.entity.id}">
-						<!-- 							<custom:listPanel label="#{messages['customerAccount.operations']}"> -->
-						<div class="action-buttons">
-							<p:button outcome="addNewSubscription"
-								value="#{messages['userAccount.addNewSubscription']}"
-								disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}">
-								<!-- 								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" /> -->
-							</p:button>
-							<p:commandButton value="#{messages['button.terminateButton']}"
-								oncomplete="PF('dlg_userAccountTerminationPopup').show()"
-								disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
-							<p:commandButton action="#{userAccountBean.cancelAccount()}"
-								value="#{messages['button.cancelButton']}"
-								onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
-								disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
-							<p:commandButton action="#{userAccountBean.reactivateAccount()}"
-								value="#{messages['button.reactivateButton']}"
-								onclick="if(confirm('#{messages['confirmationMessage.confirmReactivation']}')){return true;}else{return false;}"
-								disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />
-							<!--<p:commandButton type="button"
-								value="#{messages['walletOperationPopup.button']}"
-								onclick="PF('dlg_walletOperationPopup').show();" />
-							 <p:commandButton type="button"
-							value="#{messages['ratedTransactionInvoiced.button']}"
-							onclick="PF('dlg_ratedTransactionsInvoicedPopup').show();" /> -->
-							<!-- 							</custom:listPanel> -->
-						</div>
-					</h:form>
 
             </h:panelGroup>
         </h:panelGroup>
@@ -447,7 +446,7 @@
 						<p:commandButton action="#{userAccountBean.terminateAccount()}"
 							value="#{messages['button.terminateButton']}"
 							onsuccess="PF('dlg_userAccountTerminationPopup').hide()"
-							update=":#{p:component('operationsForm')} :userAccountFormPanel:formId:messages">
+							update=":userAccountFormPanel:formId">
 						</p:commandButton>
 						<p:commandButton immediate="true"
 							onclick="PF('dlg_userAccountTerminationPopup').hide()"
