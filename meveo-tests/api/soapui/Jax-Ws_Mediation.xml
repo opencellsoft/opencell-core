@@ -22644,7 +22644,11 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
          </filter>\r
       </ws:listByXmlInput>\r
    </soapenv:Body>\r
+<<<<<<< HEAD
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="cd2e0127-25e0-4151-8017-0465ab51274d"/><con:assertion type="Schema Compliance" id="1c5d6a89-d773-4028-b382-225a7729db89"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="00836bde-f352-487c-bc3d-f1cea2c1c133"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>TOPTEN_F_20150908</con:value></con:property><con:property><con:name>authorization</con:name><con:value/></con:property></con:properties></con:testSuite><con:testSuite id="a642c711-f6fd-41e1-b9c6-94969512c663" name="Zoning plan"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="5650f331-f803-4643-b9b4-e0d6c5224072" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true"><con:settings/><con:testStep type="request" name="create Mediation_Zoning_EDR" id="96a3e523-21f6-41fb-901d-36a76d51b432"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="create Mediation_Zoning_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+=======
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="cd2e0127-25e0-4151-8017-0465ab51274d"/><con:assertion type="Schema Compliance" id="1c5d6a89-d773-4028-b382-225a7729db89"><con:configuration/></con:assertion><con:assertion type="SOAP Fault Assertion" id="00836bde-f352-487c-bc3d-f1cea2c1c133"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>2</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>TOPTEN_F</con:value></con:property><con:property><con:name>authorization</con:name><con:value/></con:property></con:properties></con:testSuite><con:testSuite id="a642c711-f6fd-41e1-b9c6-94969512c663" name="Zoning plan"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="3e173027-b467-429f-aeb6-11292a627ad8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="exectute mediation" searchProperties="true"><con:settings/><con:testStep type="calltestcase" name="Run TestCase" id="3de5ad62-11ca-47f0-8d3d-37214f8975f5"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>13a2d7e8-7f01-4b17-8459-2c63d20b3a0b</con:targetTestCase><con:properties/><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="5650f331-f803-4643-b9b4-e0d6c5224072" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true"><con:settings/><con:testStep type="request" name="create Mediation_Zoning_EDR" id="96a3e523-21f6-41fb-901d-36a76d51b432"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createScriptInstance</con:operation><con:request name="create Mediation_Zoning_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+>>>>>>> branch 'master' of git@git.assembla.com:meveo.git
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createScriptInstance>\r
@@ -22659,13 +22663,14 @@ package org.meveo.service.script;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.Map;
+import java.util.List;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
@@ -22673,6 +22678,7 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22725,23 +22731,21 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_EDR extends 
 				edr.setAccessCode(accessPoint.getAccessUserId());
 				edr.setProvider(accessPoint.getProvider());
 				edr.setQuantity(cdr.getQuantity());
-				edr.setStatus(EDRStatusEnum.MEDIATING);
+				edr.setStatus(EDRStatusEnum.OPEN);
 				edr.setSubscription(accessPoint.getSubscription());
 				if("VOICE".equals(cdr.getParam1())){
-				     Subscription sub = subService.findById(accessPoint.getSubscription().getId());
-					Map<String, CustomFieldInstance> CFs = sub.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getCustomFields();
-					if(CFs.containsKey(CF_NAME)){
-						String zoningCode = (String)cfccProvider.getClosestMatchValue(provider, CF_NAME, accessPoint.getAccessUserId());
-					     if(zoningCode==null){
-						     zoningCode="NOT_FOUND";
-						}
-						edr.setParameter2(zoningCode);
-						zoningCode = (String)cfccProvider.getClosestMatchValue(provider, CF_NAME, cdr.getParam2());
-					     if(zoningCode==null){
-						     zoningCode="NOT_FOUND";
-						}
-						edr.setParameter3(zoningCode);
+				    Subscription sub = subService.findById(accessPoint.getSubscription().getId());
+				    Customer cust= sub.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
+					String zoningCode = (String)cfccProvider.getClosestMatchValue(cust, CF_NAME, accessPoint.getAccessUserId());
+					if(zoningCode==null){
+					     zoningCode="NOT_FOUND";
 					}
+					edr.setParameter2(zoningCode);
+					zoningCode = (String)cfccProvider.getClosestMatchValue(cust, CF_NAME, cdr.getParam2());
+					if(zoningCode==null){
+					     zoningCode="NOT_FOUND";
+					}
+					edr.setParameter3(zoningCode);
 				}
 				edrService.create(edr, currentUser, provider);
 			}
@@ -22875,17 +22879,17 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
          </notification>
       </ws:createNotification>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="6bb0bff2-a63c-467d-a33d-ae6748467fec" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Copy of Create CF" searchProperties="true"><con:settings/><con:testStep type="request" name="create ZONING Map CF" id="2c1c765d-c0ff-4ee7-b01f-b8c3a3641f64"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="create ZONING Map CF" id="767a27d6-8d53-4b08-b0ce-c05b64d28617"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="6bb0bff2-a63c-467d-a33d-ae6748467fec" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CF" searchProperties="true"><con:settings/><con:testStep type="request" name="create ZONING Map CF" id="2c1c765d-c0ff-4ee7-b01f-b8c3a3641f64"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="create ZONING Map CF" id="767a27d6-8d53-4b08-b0ce-c05b64d28617"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createCustomFieldTemplate>\r
          <!--Optional:-->\r
-         <customField code="${#TestSuite#ticket}" description="TOPTEN_NUMBERS">\r
+         <customField code="${#TestSuite#ticket}" description="Zonning plan">\r
             <fieldType>STRING</fieldType>\r
             <accountLevel>CUST</accountLevel>\r
             <storageType>MAP</storageType>\r
             <valueRequired>false</valueRequired>\r
-            <versionable>true</versionable>\r
+            <versionable>false</versionable>\r
             <triggerEndPeriodEvent>true</triggerEndPeriodEvent>\r
          </customField>\r
       </ws:createCustomFieldTemplate>\r
@@ -23043,7 +23047,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
                         <customerCategory>CLIENT</customerCategory>
                         <customerBrand>DEFAULT</customerBrand>
                         <customFields>
-                             <customField code="${#TestSuite#ticket}" description="" valueDate="2015-07-15"  valuePeriodStartDate="2015-07-01" valuePeriodEndDate="2018-01-01"><!-- valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">-->
+                             <customField code="${#TestSuite#ticket}" description="">
 			                <mapValue>
 			                     <entry>
 			                        <key>+</key>
