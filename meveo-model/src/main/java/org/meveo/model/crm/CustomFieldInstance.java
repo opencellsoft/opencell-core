@@ -138,35 +138,35 @@ public class CustomFieldInstance extends ProviderlessEntity {
     }
 
     public String getStringValue() {
-        return cfValue.getStringValue();
+        return getCfValue().getStringValue();
     }
 
     public void setStringValue(String stringValue) {
-        this.cfValue.setStringValue(stringValue);
+        getCfValue().setStringValue(stringValue);
     }
 
     public Date getDateValue() {
-        return cfValue.getDateValue();
+        return getCfValue().getDateValue();
     }
 
     public void setDateValue(Date dateValue) {
-        this.cfValue.setDateValue(dateValue);
+        getCfValue().setDateValue(dateValue);
     }
 
     public Long getLongValue() {
-        return cfValue.getLongValue();
+        return getCfValue().getLongValue();
     }
 
     public void setLongValue(Long longValue) {
-        this.cfValue.setLongValue(longValue);
+        getCfValue().setLongValue(longValue);
     }
 
     public Double getDoubleValue() {
-        return cfValue.getDoubleValue();
+        return getCfValue().getDoubleValue();
     }
 
     public void setDoubleValue(Double doubleValue) {
-        this.cfValue.setDoubleValue(doubleValue);
+        getCfValue().setDoubleValue(doubleValue);
     }
 
     public AccountEntity getAccount() {
@@ -488,11 +488,11 @@ public class CustomFieldInstance extends ProviderlessEntity {
     }
 
     public List<Object> getListValue() {
-        return cfValue.getListValue();
+        return getCfValue().getListValue();
     }
 
     public void setListValue(List<Object> listValue) {
-        cfValue.setListValue(listValue);
+        getCfValue().setListValue(listValue);
     }
 
     /**
@@ -558,11 +558,11 @@ public class CustomFieldInstance extends ProviderlessEntity {
     }
 
     public Map<String, Object> getMapValue() {
-        return cfValue.getMapValue();
+        return getCfValue().getMapValue();
     }
 
     public void setMapValue(Map<String, Object> mapValue) {
-        cfValue.setMapValue(mapValue);
+        getCfValue().setMapValue(mapValue);
     }
 
     /**
@@ -628,11 +628,11 @@ public class CustomFieldInstance extends ProviderlessEntity {
     }
 
     public EntityReferenceWrapper getEntityReferenceValue() {
-        return cfValue.getEntityReferenceValue();
+        return getCfValue().getEntityReferenceValue();
     }
 
     public void setEntityReferenceValue(EntityReferenceWrapper entityReference) {
-        cfValue.setEntityReferenceValue(entityReference);
+        getCfValue().setEntityReferenceValue(entityReference);
     }
 
     /**
@@ -702,7 +702,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (versionable) {
 
         } else {
-            result += cfValue.toJson(sdf);
+            result += getCfValue().toJson(sdf);
         }
 
         return result;
@@ -748,7 +748,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (value == null) {
             this.cfValue = new CustomFieldValue();
         } else {
-            this.cfValue.setValue(value);
+            getCfValue().setValue(value);
         }
     }
 
@@ -800,7 +800,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (versionable) {
             return null;
         } else {
-            return cfValue.getValueAsString(sdf);
+            return getCfValue().getValueAsString(sdf);
         }
     }
 
@@ -950,7 +950,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
      * @return True is value is empty
      */
     public boolean isValueEmptyForGui() {
-        return (!isVersionable() && cfValue.isValueEmptyForGui()) || (isVersionable() && valuePeriods.isEmpty());
+        return (!isVersionable() && getCfValue().isValueEmptyForGui()) || (isVersionable() && valuePeriods.isEmpty());
     }
 
     /**
@@ -959,7 +959,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
      * @return True is value is empty
      */
     public boolean isValueEmpty() {
-        return (!isVersionable() && cfValue.isValueEmpty()) || (isVersionable() && valuePeriods.isEmpty());
+        return (!isVersionable() && getCfValue().isValueEmpty()) || (isVersionable() && valuePeriods.isEmpty());
     }
 
     @Override
@@ -1066,7 +1066,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
     @PostLoad
     private void deserializeValue() {
         if (cfValue != null) {
-            cfValue.deserializeValue();
+            getCfValue().deserializeValue();
         }
     }
 }
