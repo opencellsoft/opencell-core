@@ -138,10 +138,6 @@ public class DefaultObserver {
     private void fireNotification(Notification notif, IEntity e) {
         log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
         try {
-            if (notif.getScriptInstance() == null) {
-            	log.error("No scriptInstance on this Notification");
-                return;
-            }
             if (!(notif instanceof WebHook)) {
                 executeScript(notif.getScriptInstance(), e,notif.getParams());
             }
