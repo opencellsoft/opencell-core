@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -72,5 +73,41 @@ public class TimerEntityApi extends BaseApi {
 		timerEntity.setDayOfWeek(timerEntityDto.getDayOfWeek());
 
 		timerEntityService.create(timerEntity, currentUser, provider);
+	}
+	
+	public void update(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException {
+		
+		String timerEntityCode = timerEntityDto.getCode();
+		Provider provider = currentUser.getProvider();
+		
+		if (StringUtils.isBlank(timerEntityCode)) {
+			missingParameters.add("Code");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		} 
+		
+		TimerEntity timerEntity = timerEntityService.findByCode(timerEntityCode, provider);
+		if (timerEntity == null) {
+			throw new EntityDoesNotExistsException(TimerEntity.class, timerEntityCode);
+		}
+		
+		timerEntity.setYear(timerEntityDto.getYear());
+		timerEntity.setMonth(timerEntityDto.getMonth());
+		timerEntity.setDayOfMonth(timerEntityDto.getDayOfMonth());
+		timerEntity.setDayOfWeek(timerEntityDto.getDayOfWeek());
+		timerEntity.setHour(timerEntityDto.getHour());
+		timerEntity.setMinute(timerEntityDto.getMinute());
+		timerEntity.setSecond(timerEntityDto.getSecond());
+		
+		timerEntityService.update(timerEntity, currentUser);
+		
+	}
+	
+	public void createOrUpdate(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException {
+		
+		if (timerEntityService.findByCode(timerEntityDto.getCode(), currentUser.getProvider()) == null) {
+			create(timerEntityDto, currentUser);
+		} else {
+			update(timerEntityDto, currentUser);
+		}
 	}
 }

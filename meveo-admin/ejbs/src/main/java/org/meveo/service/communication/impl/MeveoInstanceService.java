@@ -50,14 +50,6 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
 		}
 	}
 
-	public MeveoInstance getThis() {
-		List<MeveoInstance> meveoInstances = list();
-		if (meveoInstances == null || meveoInstances.isEmpty()) {
-			return null;
-		}
-		return meveoInstances.get(0);
-	}
-
 	public void fireInboundCommunicationEvent(CommunicationRequestDto communicationRequestDto) {
 		InboundCommunicationEvent inboundCommunicationEvent = new InboundCommunicationEvent();
 		inboundCommunicationEvent.setCommunicationRequestDto(communicationRequestDto);

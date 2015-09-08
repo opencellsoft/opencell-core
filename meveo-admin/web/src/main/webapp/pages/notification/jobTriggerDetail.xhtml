@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+					<p:menuitem outcome="jobTriggers"
+						value="#{messages['menu.jobTriggers']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		
+		
+		<hftl:entityPopup id="jobInstancePopup"
+			header="#{messages['jobInstance.title']}" backingBean="#{jobInstanceBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code" selection="#{jobTriggerBean.entity.jobInstance}"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":jobTriggerFormPanel:jobTriggerForm:jobInstanceSelectId">
+		</hftl:entityPopup>
+				
+		<hftl:entityPopup id="scriptInstancePopup"
+			header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code" selection="#{jobTriggerBean.entity.scriptInstance}"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":jobTriggerFormPanel:jobTriggerForm:scriptInstanceSelectId">
+		</hftl:entityPopup>
+		
+		<hf:formPanel id="jobTriggerFormPanel" formId="jobTriggerForm"
+			label="#{messages['menu.jobTrigger']}"
+			backingBean="#{jobTriggerBean}" columns="2" showEnableDisableButton="true">
+			<hf:formField label="#{messages['entity.code']}" field="code"
+				required="true" maxLength="60" />
+			<hf:formField
+				label="#{messages['entity.notification.classNameFilter']}"
+				field="classNameFilter" required="true" size="60" maxlength="255"
+				autocompleteMethod="#{jobTriggerBean.autocompleteClassNames}" isAutocomplete="true" />
+			<hf:formField
+				label="#{messages['entity.notification.eventTypeFilter']}"
+				field="eventTypeFilter" required="true" />
+			<hf:formField label="#{messages['entity.notification.elFilter']}"
+				field="elFilter" textArea="true" maxlength="1000" componentWidth="50" newLine="true"/>
+			
+			<hf:formField id="scriptInstanceSelectId"
+										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
+										valueLabelField="description" required="true" popup="true"
+										popupId="scriptInstancePopup" />
+										
+			<hf:formField label="#{messages['entity.notification.params']}" field="params"  />  
+			
+			<hf:formField id="jobInstanceSelectId"
+							label="#{messages['entity.notification.jobInstance']}" field="jobInstance"
+							valueLabelField="description" required="true" popup="true"
+							popupId="jobInstancePopup" />
+            <hf:formField label="#{messages['entity.notification.jobParams']}" field="jobParams"  />  							
+				
+            <hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+                field="disabled" isMessage="true" />
+                
+              
+		</hf:formPanel>
+
+	</ui:define>
+
+</ui:composition>
