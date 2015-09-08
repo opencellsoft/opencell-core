@@ -111,8 +111,10 @@ public class MonitoringBean implements Serializable {
 	
 	public String getLastVersion() {
 		String result = versionOutput;
+		long age=(System.currentTimeMillis()-lastVersionCheckDate.getTime());
+		//log.debug("getLastVersion versionOutput={} age={}",versionOutput,age);
 		if(versionOutput!=null){
-			if((System.currentTimeMillis()-lastVersionCheckDate.getTime())>3600000l){
+			if(age>3600000l){
 				versionOutput=null;
 			}
 			return result;
@@ -204,11 +206,15 @@ public class MonitoringBean implements Serializable {
 				if("SUCCESS".equals(responseStatus) && newVersion.booleanValue()){ 
 						JSONObject jsonVersionObjectDto =  (JSONObject) jsonResponseObject.get("versionObjectDto");
 						versionOutput = (String)jsonVersionObjectDto.get("htmlContent");
+						if(versionOutput==null){
+							versionOutput="";
+						}
 				}
 			} catch (Exception e) {
 				versionOutput="-";
 			}
 		}
+		//log.debug("return {}",versionOutput);
 		return versionOutput;
 	}
 	
