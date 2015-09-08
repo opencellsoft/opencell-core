@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>FillOnlyMinuteTestCase</title>
+<title>FillNotRequiredFieldsTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">FillOnlyMinuteTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">FillNotRequiredFieldsTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>assertTitle</td>
@@ -28,32 +28,12 @@
 </tr>
 <tr>
 	<td>pause</td>
-	<td>5000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/form/div[1]/div[2]/span/div/div/input</td>
-	<td>10_ba</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
+	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/form/div[1]/div[3]/button[1]/span</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=td</td>
+	<td>xpath=/html/body/div[1]/div[2]/div[1]/a/span</td>
 	<td></td>
 </tr>
 <tr>
@@ -67,6 +47,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;DEMO_ADMIN&quot;)</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
 	<td></td>
@@ -74,16 +59,21 @@
 <tr>
 	<td>type</td>
 	<td>${ExternalRef1}</td>
-	<td></td>
+	<td>External Ref1</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ExternalRef2}</td>
-	<td></td>
+	<td>External Ref2</td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${SelectTitle}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;Agency&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -94,7 +84,7 @@
 <tr>
 	<td>type</td>
 	<td>${FirtName}</td>
-	<td></td>
+	<td>First Name</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -114,31 +104,36 @@
 <tr>
 	<td>type</td>
 	<td>${Address1}</td>
-	<td></td>
+	<td>Address1</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Address2}</td>
-	<td></td>
+	<td>Address2</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Address3}</td>
-	<td></td>
+	<td>Address3</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ZipCode}</td>
-	<td></td>
+	<td>1000</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${City}</td>
-	<td></td>
+	<td>Tunis</td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${Country}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;Tunisia&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -154,12 +149,12 @@
 <tr>
 	<td>type</td>
 	<td>${CRMAccountType}</td>
-	<td></td>
+	<td>crm type</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${CRMParentAccountCode}</td>
-	<td></td>
+	<td>crm code</td>
 </tr>
 <tr>
 	<td>pause</td>
@@ -174,11 +169,6 @@
 <tr>
 	<td>assertTitle</td>
 	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${resetButton}</td>
 	<td></td>
 </tr>
 </tbody></table>

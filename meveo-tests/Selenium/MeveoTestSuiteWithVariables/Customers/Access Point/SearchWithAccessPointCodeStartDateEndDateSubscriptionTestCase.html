@@ -43,7 +43,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${UserAccounts}</td>
+	<td>${AccessPoints}</td>
 	<td></td>
 </tr>
 <tr>
@@ -53,43 +53,63 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>${searchWithCode}</td>
-	<td>1_ua</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SearchWithStatus}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${Active}</td>
-	<td></td>
+	<td>${searchWithAccessPointCode}</td>
+	<td>1_access</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${SearchWithInitialAgreementDateFrom}</td>
+	<td>${SearchWithStartDateFrom}</td>
 	<td>01/01/2015</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${SearchWithInitialAgreementDateTo}</td>
+	<td>${SearchWithStartDateTo}</td>
 	<td>31/12/2015</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${SearchWithTerminationDateFrom}</td>
+	<td>${SearchWithEndDateFrom}</td>
 	<td>04/09/2015</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${SearchWithTerminationDateTo}</td>
+	<td>${SearchWithEndDateTo}</td>
 	<td>30/09/2015</td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>${SearchWithSubscription}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>5000</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
-	<td>${SearchWithLastName}</td>
-	<td>Sir Mbarek Ait</td>
+	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[2]/span/div/div/input</td>
+	<td>1_sub</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[3]/button[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
