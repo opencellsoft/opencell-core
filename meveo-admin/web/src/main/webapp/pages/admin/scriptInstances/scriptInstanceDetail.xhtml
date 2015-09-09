@@ -25,7 +25,7 @@
 		</p:panel>
 		<hf:formPanel id="formPanel" label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" >						
            <pe:codeMirror id="codeMirror"  theme="eclipse" mode="text/x-java" value="#{scriptInstanceBean.entity.script}"  lineNumbers="true"  required="true"/>
-			<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true" size="80"  />			
+			<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true" size="80"  doNotShowOnNew="true" disabled="true" />			
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" />
 			<hf:formField label="#{messages['scriptInstance.scriptTypeEnum']}" field="scriptTypeEnum" />
 			<p:panel rendered="#{scriptInstanceBean.entity.error}">

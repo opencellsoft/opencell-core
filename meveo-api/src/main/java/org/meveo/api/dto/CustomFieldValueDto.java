@@ -51,6 +51,7 @@ public class CustomFieldValueDto implements Serializable {
     }
 
     protected static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
+
         if (listValue == null) {
             return null;
         }

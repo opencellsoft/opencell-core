@@ -324,4 +324,85 @@
             <column name="permission_id" valueNumeric="13" />
         </insert>    
     </changeSet>
+    
+	<changeSet author="AndriusKarpavicius" id="rebuild-data-providerDEMO">
+		<insert tableName="crm_provider">
+			<column name="id" valueNumeric="2" />
+			<column name="version" valueNumeric="1" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="2015-03-19 00:04:08.922" />
+			<column name="code" value="ANASSEH" />
+			<column name="description" />
+			<column name="amount_validation" valueBoolean="false" />
+			<column name="automatic_invoicing" valueBoolean="false" />
+			<column name="account_number" value="33333333333" />
+			<column name="account_owner" value="owner" />
+			<column name="bank_code" value="SGMB" />
+			<column name="bank_id" value="11" />
+			<column name="bank_name" value="SGMB" />
+			<column name="bic" value="11" />
+			<column name="branch_code" value="12345" />
+			<column name="iban" value="11" />
+			<column name="ics" />
+			<column name="issuer_name" value="ANASSEH" />
+			<column name="issuer_number" value="1111" />
+			<column name="hash_key" value="11" />
+			<column name="current_invoice_nb" />
+			<column name="discount_accounting_code" />
+			<column name="display_free_tx_in_invoice" valueBoolean="true" />
+			<column name="email" />
+			<column name="entreprise" valueBoolean="false" />
+			<column name="address_1" />
+			<column name="address_2" />
+			<column name="address_3" />
+			<column name="address_city" />
+			<column name="address_country" />
+			<column name="address_state" />
+			<column name="address_zipcode" />
+			<column name="center_code" />
+			<column name="creditor_code" />
+			<column name="financial_institution_code" />
+			<column name="nne" />
+			<column name="invoice_prefix" />
+			<column name="level_duplication" valueBoolean="false" />
+			<column name="logo" />
+			<column name="multicountry_flag" valueBoolean="true" />
+			<column name="multicurrency_flag" valueBoolean="true" />
+			<column name="multilanguage_flag" valueBoolean="true" />
+			<column name="prepaid_resrv_delay_ms" valueNumeric="60000" />
+			<column name="rating_rounding" />
+			<column name="payment_methods" />
+			<column name="billing_account_id" />
+			<column name="country_id" valueNumeric="1" />
+			<column name="currency_id" valueNumeric="1" />
+			<column name="customer_id" />
+			<column name="customer_account_id" />
+			<column name="language_id" valueNumeric="1" />
+			<column name="user_account_id" />
+		</insert>
+		<insert tableName="crm_provider_contact">
+			<column name="id" valueNumeric="2" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueBoolean="false" />
+			<column name="created" valueDate="2015-03-19 00:04:19.892" />
+			<column name="code" value="ANASSEH_ADMIN" />
+			<column name="description" value="anasseh Administrator" />
+			<column name="address_1" />
+			<column name="address_2" />
+			<column name="address_3" />
+			<column name="address_city" value="Casablanca" />
+			<column name="address_country" />
+			<column name="address_state" />
+			<column name="address_zipcode" value="21000" />
+			<column name="email" value="anasseh@yahoo.fr" />
+			<column name="fax" />
+			<column name="firstname" value="Admin" />
+			<column name="generic_mail" />
+			<column name="lastname" value="Admin" />
+			<column name="mobile" />
+			<column name="phone" value="09152154716" />
+			<column name="provider_id" valueNumeric="2" />
+		</insert>
+	</changeSet>
+    
 </databaseChangeLog>

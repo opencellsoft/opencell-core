@@ -29,6 +29,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.CalendarService;
@@ -263,6 +264,18 @@ public class ServiceTemplateApi extends BaseApi {
 			serviceTemplate.setDescription(postData.getDescription());
 			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
 			serviceTemplate.setProvider(provider);
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+				try {
+					populateCustomFields(AccountLevelEnum.SERVICE, postData.getCustomFields().getCustomField(),
+							serviceTemplate, "serviceTemplate", currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
+			
 			serviceTemplateService.create(serviceTemplate, currentUser, provider);
 
 			// check for recurring charges
@@ -311,6 +324,17 @@ public class ServiceTemplateApi extends BaseApi {
 			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
 			
 			setAllWalletTemplatesToNull(serviceTemplate);
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+				try {
+					populateCustomFields(AccountLevelEnum.SERVICE, postData.getCustomFields().getCustomField(),
+							serviceTemplate, "serviceTemplate", currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
 
 			serviceTemplateService.update(serviceTemplate, currentUser);
 			serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, provider);

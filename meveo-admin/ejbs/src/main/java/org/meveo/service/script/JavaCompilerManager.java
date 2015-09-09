@@ -207,11 +207,11 @@ public class JavaCompilerManager {
 		return result;
 	}
 	
-	private String getPackageName(String src){
+	public String getPackageName(String src){
 		return StringUtils.patternMacher("package (.*?);", src);
 	}
 		
-	private String getClassName(String src){
+	public String getClassName(String src){
 		return StringUtils.patternMacher("public class (.*) extends", src);
 	}
 

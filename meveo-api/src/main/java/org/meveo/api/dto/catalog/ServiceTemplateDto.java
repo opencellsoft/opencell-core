@@ -7,12 +7,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -36,6 +39,8 @@ public class ServiceTemplateDto implements Serializable {
 	private ServiceChargeTemplateSubscriptionsDto serviceChargeTemplateSubscriptions;
 	private ServiceChargeTemplateTerminationsDto serviceChargeTemplateTerminations;
 	private ServiceChargeTemplateUsagesDto serviceChargeTemplateUsages;
+	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public ServiceTemplateDto() {
 	}
@@ -116,6 +121,12 @@ public class ServiceTemplateDto implements Serializable {
 				serviceChargeTemplateUsages.getServiceChargeTemplateUsage().add(serviceUsageChargeTemplate);
 			}
 		}
+		
+		if (serviceTemplate.getCustomFields() != null) {
+			for (CustomFieldInstance cfi : serviceTemplate.getCustomFields().values()) {
+				customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+			}
+		}
 
 	}
 
@@ -183,10 +194,19 @@ public class ServiceTemplateDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ServiceTemplateDto [code=" + code + ", description=" + description+", invoicingCalendar=" + invoicingCalendar  
-				+ ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings
+		return "ServiceTemplateDto [code=" + code + ", description=" + description + ", invoicingCalendar="
+				+ invoicingCalendar + ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings
 				+ ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
 				+ ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations
-				+ ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + "]";
+				+ ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields=" + customFields
+				+ "]";
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }

@@ -1,7 +1,6 @@
 package org.meveo.api.dto.account;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -55,6 +54,12 @@ public abstract class AccountDto implements Serializable {
 		    for (CustomFieldInstance cfi : e.getCustomFields().values()) {
                 customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
             }
+		}
+		
+		if (e.getCustomFields() != null) {
+			for (CustomFieldInstance cfi : e.getCustomFields().values()) {
+				customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+			}
 		}
 
 		loaded = true;
