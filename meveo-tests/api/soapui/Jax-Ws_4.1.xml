@@ -2817,6 +2817,15 @@
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="createTitle">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createTitle">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createTitleResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeBillingAccount">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeBillingAccount">
@@ -2931,6 +2940,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findAccessResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateTitle">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateTitle">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateTitleResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -3231,6 +3249,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeTitle">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeTitle">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeTitleResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findCustomer">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findCustomer">
@@ -3246,6 +3273,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="listByCustomerAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="retrieveTitle">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="retrieveTitle">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="retrieveTitleResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -3291,6 +3327,8 @@
       <xs:element name="MatchingCode" type="tns:matchingCodeDto"/>
       <xs:element name="MatchingCodes" type="tns:matchingCodesDto"/>
       <xs:element name="Name" type="tns:nameDto"/>
+      <xs:element name="Title" type="tns:titleDto"/>
+      <xs:element name="TitleResponse" type="tns:titleResponseDto"/>
       <xs:element name="UserAccountsResponse" type="tns:userAccountsResponseDto"/>
       <xs:element name="createAccess" type="tns:createAccess"/>
       <xs:element name="createAccessResponse" type="tns:createAccessResponse"/>
@@ -3324,6 +3362,8 @@
       <xs:element name="createOrUpdateCustomerResponse" type="tns:createOrUpdateCustomerResponse"/>
       <xs:element name="createOrUpdateUserAccount" type="tns:createOrUpdateUserAccount"/>
       <xs:element name="createOrUpdateUserAccountResponse" type="tns:createOrUpdateUserAccountResponse"/>
+      <xs:element name="createTitle" type="tns:createTitle"/>
+      <xs:element name="createTitleResponse" type="tns:createTitleResponse"/>
       <xs:element name="createUserAccount" type="tns:createUserAccount"/>
       <xs:element name="createUserAccountResponse" type="tns:createUserAccountResponse"/>
       <xs:element name="customerHierarchyUpdate" type="tns:customerHierarchyUpdate"/>
@@ -3372,8 +3412,12 @@
       <xs:element name="removeCustomerCategory" type="tns:removeCustomerCategory"/>
       <xs:element name="removeCustomerCategoryResponse" type="tns:removeCustomerCategoryResponse"/>
       <xs:element name="removeCustomerResponse" type="tns:removeCustomerResponse"/>
+      <xs:element name="removeTitle" type="tns:removeTitle"/>
+      <xs:element name="removeTitleResponse" type="tns:removeTitleResponse"/>
       <xs:element name="removeUserAccount" type="tns:removeUserAccount"/>
       <xs:element name="removeUserAccountResponse" type="tns:removeUserAccountResponse"/>
+      <xs:element name="retrieveTitle" type="tns:retrieveTitle"/>
+      <xs:element name="retrieveTitleResponse" type="tns:retrieveTitleResponse"/>
       <xs:element name="updateAccess" type="tns:updateAccess"/>
       <xs:element name="updateAccessResponse" type="tns:updateAccessResponse"/>
       <xs:element name="updateAccountHierarchy" type="tns:updateAccountHierarchy"/>
@@ -3386,6 +3430,8 @@
       <xs:element name="updateCustomerAccount" type="tns:updateCustomerAccount"/>
       <xs:element name="updateCustomerAccountResponse" type="tns:updateCustomerAccountResponse"/>
       <xs:element name="updateCustomerResponse" type="tns:updateCustomerResponse"/>
+      <xs:element name="updateTitle" type="tns:updateTitle"/>
+      <xs:element name="updateTitleResponse" type="tns:updateTitleResponse"/>
       <xs:element name="updateUserAccount" type="tns:updateUserAccount"/>
       <xs:element name="updateUserAccountResponse" type="tns:updateUserAccountResponse"/>
       <xs:complexType name="removeBillingAccount">
@@ -3403,6 +3449,23 @@
           <xs:element name="status" type="tns:actionStatusEnum"/>
           <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
           <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createTitle">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="title" type="tns:titleDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="titleDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element minOccurs="0" name="isCompany" type="xs:boolean"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="createTitleResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCRMAccountHierarchy">
@@ -3916,6 +3979,16 @@
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updateTitle">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="title" type="tns:titleDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateTitleResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCustomer">
         <xs:sequence>
@@ -4466,6 +4539,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="removeTitle">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="titleCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeTitleResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="findCustomer">
         <xs:sequence>
           <xs:element minOccurs="0" name="customerCode" type="xs:string"/>
@@ -4504,6 +4587,25 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="retrieveTitle">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="titleCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="retrieveTitleResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:titleResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="titleResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="titleDto" type="tns:titleDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
       <xs:simpleType name="actionStatusEnum">
         <xs:restriction base="xs:string">
           <xs:enumeration value="SUCCESS"/>
@@ -4515,23 +4617,11 @@
   <wsdl:message name="createOrUpdateCustomerResponse">
     <wsdl:part element="ns1:createOrUpdateCustomerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="listByCustomerResponse">
-    <wsdl:part element="ns1:listByCustomerResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findAccountHierarchy2Response">
     <wsdl:part element="ns1:findAccountHierarchy2Response" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findAccountHierarchy2">
-    <wsdl:part element="ns1:findAccountHierarchy2" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateAccountHierarchy">
     <wsdl:part element="ns1:createOrUpdateAccountHierarchy" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createCustomerBrandResponse">
-    <wsdl:part element="ns1:createCustomerBrandResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createAccessResponse">
-    <wsdl:part element="ns1:createAccessResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createUserAccountResponse">
     <wsdl:part element="ns1:createUserAccountResponse" name="parameters"></wsdl:part>
@@ -4548,38 +4638,23 @@
   <wsdl:message name="createAccountHierarchyResponse">
     <wsdl:part element="ns1:createAccountHierarchyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createCreditCategoryResponse">
-    <wsdl:part element="ns1:createCreditCategoryResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createCRMAccountHierarchyResponse">
     <wsdl:part element="ns1:createCRMAccountHierarchyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateBillingAccountResponse">
     <wsdl:part element="ns1:updateBillingAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeBillingAccountResponse">
-    <wsdl:part element="ns1:removeBillingAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateUserAccountResponse">
-    <wsdl:part element="ns1:createOrUpdateUserAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeAccess">
-    <wsdl:part element="ns1:removeAccess" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeCreditCategoryResponse">
     <wsdl:part element="ns1:removeCreditCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createUserAccount">
-    <wsdl:part element="ns1:createUserAccount" name="parameters"></wsdl:part>
+  <wsdl:message name="removeAccess">
+    <wsdl:part element="ns1:removeAccess" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createAccountOperationResponse">
     <wsdl:part element="ns1:createAccountOperationResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listCustomerWithFilter">
     <wsdl:part element="ns1:listCustomerWithFilter" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeCreditCategory">
-    <wsdl:part element="ns1:removeCreditCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateAccess">
     <wsdl:part element="ns1:updateAccess" name="parameters"></wsdl:part>
@@ -4590,9 +4665,6 @@
   <wsdl:message name="removeCustomerResponse">
     <wsdl:part element="ns1:removeCustomerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeCustomerCategory">
-    <wsdl:part element="ns1:removeCustomerCategory" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateAccountHierarchy">
     <wsdl:part element="ns1:updateAccountHierarchy" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -4602,26 +4674,8 @@
   <wsdl:message name="createOrUpdateBillingAccountResponse">
     <wsdl:part element="ns1:createOrUpdateBillingAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="listByCustomer">
-    <wsdl:part element="ns1:listByCustomer" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findUserAccount">
-    <wsdl:part element="ns1:findUserAccount" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="listAccountOperationsResponse">
-    <wsdl:part element="ns1:listAccountOperationsResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="listByCustomerAccount">
     <wsdl:part element="ns1:listByCustomerAccount" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createCreditCategory">
-    <wsdl:part element="ns1:createCreditCategory" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateCRMAccountHierarchyResponse">
-    <wsdl:part element="ns1:updateCRMAccountHierarchyResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findCustomerAccountResponse">
-    <wsdl:part element="ns1:findCustomerAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCustomerAccount">
     <wsdl:part element="ns1:updateCustomerAccount" name="parameters"></wsdl:part>
@@ -4629,53 +4683,23 @@
   <wsdl:message name="createCustomerBrand">
     <wsdl:part element="ns1:createCustomerBrand" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findAccess">
-    <wsdl:part element="ns1:findAccess" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findCustomerResponse">
-    <wsdl:part element="ns1:findCustomerResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeAccessResponse">
-    <wsdl:part element="ns1:removeAccessResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findUserAccountResponse">
     <wsdl:part element="ns1:findUserAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findAccountHierarchy">
-    <wsdl:part element="ns1:findAccountHierarchy" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeCustomerCategoryResponse">
     <wsdl:part element="ns1:removeCustomerCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createBillingAccount">
-    <wsdl:part element="ns1:createBillingAccount" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateCRMAccountHierarchy">
-    <wsdl:part element="ns1:updateCRMAccountHierarchy" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="listByCustomerAccountResponse">
-    <wsdl:part element="ns1:listByCustomerAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createCustomerAccountResponse">
     <wsdl:part element="ns1:createCustomerAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createCustomerCategory">
-    <wsdl:part element="ns1:createCustomerCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeUserAccount">
     <wsdl:part element="ns1:removeUserAccount" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateBillingAccount">
-    <wsdl:part element="ns1:createOrUpdateBillingAccount" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findBillingAccount">
-    <wsdl:part element="ns1:findBillingAccount" name="parameters"></wsdl:part>
+  <wsdl:message name="createCustomerCategory">
+    <wsdl:part element="ns1:createCustomerCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listAccountOperations">
     <wsdl:part element="ns1:listAccountOperations" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateCustomerAccountResponse">
-    <wsdl:part element="ns1:updateCustomerAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCustomer">
     <wsdl:part element="ns1:createCustomer" name="parameters"></wsdl:part>
@@ -4686,8 +4710,8 @@
   <wsdl:message name="customerHierarchyUpdateResponse">
     <wsdl:part element="ns1:customerHierarchyUpdateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createAccess">
-    <wsdl:part element="ns1:createAccess" name="parameters"></wsdl:part>
+  <wsdl:message name="retrieveTitle">
+    <wsdl:part element="ns1:retrieveTitle" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createAccountHierarchy">
     <wsdl:part element="ns1:createAccountHierarchy" name="parameters"></wsdl:part>
@@ -4695,11 +4719,11 @@
   <wsdl:message name="createOrUpdateAccountHierarchyResponse">
     <wsdl:part element="ns1:createOrUpdateAccountHierarchyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createCustomerCategoryResponse">
-    <wsdl:part element="ns1:createCustomerCategoryResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="listByBillingAccountResponse">
     <wsdl:part element="ns1:listByBillingAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateTitleResponse">
+    <wsdl:part element="ns1:updateTitleResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listAccessResponse">
     <wsdl:part element="ns1:listAccessResponse" name="parameters"></wsdl:part>
@@ -4707,50 +4731,23 @@
   <wsdl:message name="createOrUpdateCustomer">
     <wsdl:part element="ns1:createOrUpdateCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeUserAccountResponse">
-    <wsdl:part element="ns1:removeUserAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findCustomer">
     <wsdl:part element="ns1:findCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="dunningInclusionExclusion">
     <wsdl:part element="ns1:dunningInclusionExclusion" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createCustomerAccount">
-    <wsdl:part element="ns1:createCustomerAccount" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeCustomer">
     <wsdl:part element="ns1:removeCustomer" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createCRMAccountHierarchy">
-    <wsdl:part element="ns1:createCRMAccountHierarchy" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateCustomerAccountResponse">
     <wsdl:part element="ns1:createOrUpdateCustomerAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findAccountHierarchyResponse">
-    <wsdl:part element="ns1:findAccountHierarchyResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateCustomerAccount">
-    <wsdl:part element="ns1:createOrUpdateCustomerAccount" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeCustomerBrandResponse">
     <wsdl:part element="ns1:removeCustomerBrandResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="listAccess">
-    <wsdl:part element="ns1:listAccess" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createBillingAccountResponse">
     <wsdl:part element="ns1:createBillingAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeCustomerBrand">
-    <wsdl:part element="ns1:removeCustomerBrand" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateUserAccountResponse">
-    <wsdl:part element="ns1:updateUserAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeCustomerAccount">
-    <wsdl:part element="ns1:removeCustomerAccount" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findBillingAccountResponse">
     <wsdl:part element="ns1:findBillingAccountResponse" name="parameters"></wsdl:part>
@@ -4761,41 +4758,170 @@
   <wsdl:message name="index">
     <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createAccountOperation">
-    <wsdl:part element="ns1:createAccountOperation" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="listByBillingAccount">
-    <wsdl:part element="ns1:listByBillingAccount" name="parameters"></wsdl:part>
+  <wsdl:message name="updateCustomer">
+    <wsdl:part element="ns1:updateCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateUserAccount">
     <wsdl:part element="ns1:updateUserAccount" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateCustomer">
-    <wsdl:part element="ns1:updateCustomer" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateBillingAccount">
-    <wsdl:part element="ns1:updateBillingAccount" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findCustomerAccount">
-    <wsdl:part element="ns1:findCustomerAccount" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="dunningInclusionExclusionResponse">
     <wsdl:part element="ns1:dunningInclusionExclusionResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createTitle">
+    <wsdl:part element="ns1:createTitle" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeBillingAccount">
     <wsdl:part element="ns1:removeBillingAccount" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="listCustomerWithFilterResponse">
+    <wsdl:part element="ns1:listCustomerWithFilterResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateAccountHierarchyResponse">
     <wsdl:part element="ns1:updateAccountHierarchyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findAccessResponse">
-    <wsdl:part element="ns1:findAccessResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="removeTitle">
+    <wsdl:part element="ns1:removeTitle" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listByCustomerResponse">
+    <wsdl:part element="ns1:listByCustomerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAccountHierarchy2">
+    <wsdl:part element="ns1:findAccountHierarchy2" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCustomerBrandResponse">
+    <wsdl:part element="ns1:createCustomerBrandResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createAccessResponse">
+    <wsdl:part element="ns1:createAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCreditCategoryResponse">
+    <wsdl:part element="ns1:createCreditCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeBillingAccountResponse">
+    <wsdl:part element="ns1:removeBillingAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateUserAccountResponse">
+    <wsdl:part element="ns1:createOrUpdateUserAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateTitle">
+    <wsdl:part element="ns1:updateTitle" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createUserAccount">
+    <wsdl:part element="ns1:createUserAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCreditCategory">
+    <wsdl:part element="ns1:removeCreditCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomerCategory">
+    <wsdl:part element="ns1:removeCustomerCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listByCustomer">
+    <wsdl:part element="ns1:listByCustomer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findUserAccount">
+    <wsdl:part element="ns1:findUserAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listAccountOperationsResponse">
+    <wsdl:part element="ns1:listAccountOperationsResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCreditCategory">
+    <wsdl:part element="ns1:createCreditCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCRMAccountHierarchyResponse">
+    <wsdl:part element="ns1:updateCRMAccountHierarchyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCustomerAccountResponse">
+    <wsdl:part element="ns1:findCustomerAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAccess">
+    <wsdl:part element="ns1:findAccess" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCustomerResponse">
+    <wsdl:part element="ns1:findCustomerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAccountHierarchy">
+    <wsdl:part element="ns1:findAccountHierarchy" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeAccessResponse">
+    <wsdl:part element="ns1:removeAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBillingAccount">
+    <wsdl:part element="ns1:createBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCRMAccountHierarchy">
+    <wsdl:part element="ns1:updateCRMAccountHierarchy" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listByCustomerAccountResponse">
+    <wsdl:part element="ns1:listByCustomerAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateBillingAccount">
+    <wsdl:part element="ns1:createOrUpdateBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findBillingAccount">
+    <wsdl:part element="ns1:findBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomerAccountResponse">
+    <wsdl:part element="ns1:updateCustomerAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createAccess">
+    <wsdl:part element="ns1:createAccess" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCustomerCategoryResponse">
+    <wsdl:part element="ns1:createCustomerCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeTitleResponse">
+    <wsdl:part element="ns1:removeTitleResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeUserAccountResponse">
+    <wsdl:part element="ns1:removeUserAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createTitleResponse">
+    <wsdl:part element="ns1:createTitleResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCustomerAccount">
+    <wsdl:part element="ns1:createCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createCRMAccountHierarchy">
+    <wsdl:part element="ns1:createCRMAccountHierarchy" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAccountHierarchyResponse">
+    <wsdl:part element="ns1:findAccountHierarchyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomerAccount">
+    <wsdl:part element="ns1:createOrUpdateCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listAccess">
+    <wsdl:part element="ns1:listAccess" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="retrieveTitleResponse">
+    <wsdl:part element="ns1:retrieveTitleResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomerAccount">
+    <wsdl:part element="ns1:removeCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateUserAccountResponse">
+    <wsdl:part element="ns1:updateUserAccountResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomerBrand">
+    <wsdl:part element="ns1:removeCustomerBrand" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createAccountOperation">
+    <wsdl:part element="ns1:createAccountOperation" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBillingAccount">
+    <wsdl:part element="ns1:updateBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listByBillingAccount">
+    <wsdl:part element="ns1:listByBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCustomerAccount">
+    <wsdl:part element="ns1:findCustomerAccount" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCustomerResponse">
     <wsdl:part element="ns1:createCustomerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="listCustomerWithFilterResponse">
-    <wsdl:part element="ns1:listCustomerWithFilterResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="findAccessResponse">
+    <wsdl:part element="ns1:findAccessResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeCustomerAccountResponse">
     <wsdl:part element="ns1:removeCustomerAccountResponse" name="parameters"></wsdl:part>
@@ -4804,6 +4930,10 @@
     <wsdl:operation name="removeBillingAccount">
       <wsdl:input message="ns1:removeBillingAccount" name="removeBillingAccount"></wsdl:input>
       <wsdl:output message="ns1:removeBillingAccountResponse" name="removeBillingAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createTitle">
+      <wsdl:input message="ns1:createTitle" name="createTitle"></wsdl:input>
+      <wsdl:output message="ns1:createTitleResponse" name="createTitleResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateCRMAccountHierarchy">
       <wsdl:input message="ns1:updateCRMAccountHierarchy" name="updateCRMAccountHierarchy"></wsdl:input>
@@ -4852,6 +4982,10 @@
     <wsdl:operation name="findAccess">
       <wsdl:input message="ns1:findAccess" name="findAccess"></wsdl:input>
       <wsdl:output message="ns1:findAccessResponse" name="findAccessResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateTitle">
+      <wsdl:input message="ns1:updateTitle" name="updateTitle"></wsdl:input>
+      <wsdl:output message="ns1:updateTitleResponse" name="updateTitleResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeCustomer">
       <wsdl:input message="ns1:removeCustomer" name="removeCustomer"></wsdl:input>
@@ -4985,6 +5119,10 @@
       <wsdl:input message="ns1:createBillingAccount" name="createBillingAccount"></wsdl:input>
       <wsdl:output message="ns1:createBillingAccountResponse" name="createBillingAccountResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeTitle">
+      <wsdl:input message="ns1:removeTitle" name="removeTitle"></wsdl:input>
+      <wsdl:output message="ns1:removeTitleResponse" name="removeTitleResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findCustomer">
       <wsdl:input message="ns1:findCustomer" name="findCustomer"></wsdl:input>
       <wsdl:output message="ns1:findCustomerResponse" name="findCustomerResponse"></wsdl:output>
@@ -4992,6 +5130,10 @@
     <wsdl:operation name="listByCustomerAccount">
       <wsdl:input message="ns1:listByCustomerAccount" name="listByCustomerAccount"></wsdl:input>
       <wsdl:output message="ns1:listByCustomerAccountResponse" name="listByCustomerAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="retrieveTitle">
+      <wsdl:input message="ns1:retrieveTitle" name="retrieveTitle"></wsdl:input>
+      <wsdl:output message="ns1:retrieveTitleResponse" name="retrieveTitleResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="createAccess" bindingOperationName="createAccess" type="Request-Response" outputName="createAccessResponse" inputName="createAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="85bdc2a1-6967-416e-8036-c2ecf2786c56"><con:settings/><con:call name="Request 1" id="9b7fdb0e-3ba9-4244-9485-1a15a7085efa"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
@@ -17572,7 +17714,47 @@
          </customer>
       </ws:createOrUpdateCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/SubscriptionWs?wsdl" id="9706ad8c-66b3-42a7-941a-9324a9aaba97" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomer"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="b2a68ca5-33bc-4745-918e-11cb37d05b4c" isOneWay="false" action="" name="createTitle" bindingOperationName="createTitle" type="Request-Response" outputName="createTitleResponse" inputName="createTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="549e3ac5-21c9-451b-acf4-242d4d582c11" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createTitle>\r
+         <!--Optional:-->\r
+         <title code="AC_00">\r
+            <!--Optional:-->\r
+            <description>Test data for title</description>\r
+         </title>\r
+      </ws:createTitle>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createTitle"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="0ce279de-d841-4106-b34d-8200aca94310" isOneWay="false" action="" name="updateTitle" bindingOperationName="updateTitle" type="Request-Response" outputName="updateTitleResponse" inputName="updateTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="516420e5-f127-4a9f-807c-d93177124c35" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateTitle>\r
+         <!--Optional:-->\r
+         <title code="AC_00">\r
+            <!--Optional:-->\r
+            <description>Test data</description>\r
+            <!--Optional:-->\r
+            <isCompany>True</isCompany>\r
+         </title>\r
+      </ws:updateTitle>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateTitle"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="8af6050f-56b8-4a41-b594-d1e1d9c57235" isOneWay="false" action="" name="removeTitle" bindingOperationName="removeTitle" type="Request-Response" outputName="removeTitleResponse" inputName="removeTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b21ca183-af8e-4b55-a8c9-aaa73bb26750" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeTitle>\r
+         <!--Optional:-->\r
+         <titleCode>AC_00</titleCode>\r
+      </ws:removeTitle>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/removeTitle"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="be84a8a4-d318-4046-8a03-c47057d73496" isOneWay="false" action="" name="retrieveTitle" bindingOperationName="retrieveTitle" type="Request-Response" outputName="retrieveTitleResponse" inputName="retrieveTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="39598b44-38ed-41de-b543-b14804542939" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:retrieveTitle>\r
+         <!--Optional:-->\r
+         <titleCode>AGCE</titleCode>\r
+      </ws:retrieveTitle>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/retrieveTitle"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/SubscriptionWs?wsdl" id="9706ad8c-66b3-42a7-941a-9324a9aaba97" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -23123,7 +23305,7 @@
          </currency>
       </ws:createCurrency>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCurrency"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createInvoiceCategory" bindingOperationName="createInvoiceCategory" type="Request-Response" outputName="createInvoiceCategoryResponse" inputName="createInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="405edb63-c6ef-416a-8acb-1d14d779f4d5"><con:settings/><con:call name="Request 1" id="2ac5f55b-65d7-4cf3-b7f0-f39632e1910a"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCurrency"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="createInvoiceCategory" bindingOperationName="createInvoiceCategory" type="Request-Response" outputName="createInvoiceCategoryResponse" inputName="createInvoiceCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="405edb63-c6ef-416a-8acb-1d14d779f4d5"><con:settings/><con:call name="Request 1" id="2ac5f55b-65d7-4cf3-b7f0-f39632e1910a"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createInvoiceCategory>
