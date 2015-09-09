@@ -45,6 +45,9 @@ public class CustomFieldTemplateDto {
 	@XmlElement
 	protected String calendar;
 	
+	@XmlElement
+	protected String entityClazz;
+	
 	public CustomFieldTemplateDto() {
 		
 	}
@@ -59,6 +62,7 @@ public class CustomFieldTemplateDto {
 		valueRequired = cf.isValueRequired();
 		versionable = cf.isVersionable();
 		triggerEndPeriodEvent = cf.isTriggerEndPeriodEvent();
+		entityClazz = cf.getEntityClazz();
 		if (cf.getCalendar() != null) {
 			calendar = cf.getCalendar().getCode();
 		}
@@ -149,7 +153,15 @@ public class CustomFieldTemplateDto {
 		return "CustomFieldTemplateDto [code=" + code + ", description=" + description + ", fieldType=" + fieldType
 				+ ", accountLevel=" + accountLevel + ", defaultValue=" + defaultValue + ", storageType=" + storageType
 				+ ", valueRequired=" + valueRequired + ", versionable=" + versionable + ", triggerEndPeriodEvent="
-				+ triggerEndPeriodEvent + ", calendar=" + calendar + "]";
+				+ triggerEndPeriodEvent + ", calendar=" + calendar + ", entityClazz=" + entityClazz + "]";
+	}
+
+	public String getEntityClazz() {
+		return entityClazz;
+	}
+
+	public void setEntityClazz(String entityClazz) {
+		this.entityClazz = entityClazz;
 	}
 
 }
