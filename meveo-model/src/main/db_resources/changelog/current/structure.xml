@@ -1511,4 +1511,9 @@
            			 <column name="IS_ERROR" type="BOOL"/>            
         	</addColumn>  
     </changeSet>
+    
+        <changeSet author="anasseh" id="multiProvider_09092015">
+            <dropUniqueConstraint  constraintName="uk_meveo_script_instance"    tableName="MEVEO_SCRIPT_INSTANCE"/>
+            <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_script_instance" deferrable="false" disabled="false" initiallyDeferred="false" tableName="MEVEO_SCRIPT_INSTANCE"/>
+    </changeSet>
 </databaseChangeLog>
