@@ -86,8 +86,7 @@ public class CustomFieldValueDto implements Serializable {
     }
 
     protected static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
-
-        if (mapValue == null) {
+        if (mapValue == null || mapValue.entrySet().size() == 0) {
             return null;
         }
         Map<String, CustomFieldValueDto> dtos = new HashMap<String, CustomFieldValueDto>();
