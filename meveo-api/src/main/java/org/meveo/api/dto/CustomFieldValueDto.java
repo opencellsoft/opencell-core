@@ -31,15 +31,15 @@ public class CustomFieldValueDto implements Serializable {
     public CustomFieldValueDto() {
     }
 
-//    public static CustomFieldValueDto toDTO(CustomFieldValue cfv) {
-//        CustomFieldValueDto dto = new CustomFieldValueDto();
-//        Object singleValue = cfv.getSingleValue();
-//        if (singleValue != null && singleValue instanceof EntityReferenceWrapper) {
-//            singleValue = new EntityReferenceDto((EntityReferenceWrapper) singleValue);
-//        }
-//        dto.value = singleValue;
-//        return dto;
-//    }
+    // public static CustomFieldValueDto toDTO(CustomFieldValue cfv) {
+    // CustomFieldValueDto dto = new CustomFieldValueDto();
+    // Object singleValue = cfv.getSingleValue();
+    // if (singleValue != null && singleValue instanceof EntityReferenceWrapper) {
+    // singleValue = new EntityReferenceDto((EntityReferenceWrapper) singleValue);
+    // }
+    // dto.value = singleValue;
+    // return dto;
+    // }
 
     private Object fromDTO() {
 
@@ -51,7 +51,9 @@ public class CustomFieldValueDto implements Serializable {
     }
 
     protected static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
-
+        if (listValue == null) {
+            return null;
+        }
         List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
 
         for (Object listItem : listValue) {
@@ -84,6 +86,9 @@ public class CustomFieldValueDto implements Serializable {
 
     protected static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
 
+        if (mapValue == null) {
+            return null;
+        }
         Map<String, CustomFieldValueDto> dtos = new HashMap<String, CustomFieldValueDto>();
 
         for (Map.Entry<String, Object> mapItem : mapValue.entrySet()) {

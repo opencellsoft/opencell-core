@@ -13,6 +13,11 @@ public class EntityReferenceWrapper {
             return;
         }
         classname = entity.getClass().getName();
+        int pos = classname.indexOf("_$$_");
+        if (pos > 0) {
+            classname = classname.substring(0, pos);
+        }
+
         code = entity.getCode();
     }
 
