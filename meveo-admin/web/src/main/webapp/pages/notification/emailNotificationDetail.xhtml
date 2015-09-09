@@ -64,8 +64,9 @@
 				field="elFilter" textArea="true" maxlength="1000" componentWidth="50"/>
 			<hf:formField id="scriptInstanceSelectId"
 										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
-										valueLabelField="description" required="true" popup="true"
+										valueLabelField="description" required="false" popup="true"
 										popupId="scriptInstancePopup" />
+			<hf:formField label="#{messages['entity.notification.params']}" field="params"  />  							
 			<hf:formField
 				label="#{messages['entity.emailNotification.emailFrom']}"
 				field="emailFrom" textArea="true" maxlength="1000" required="true" componentWidth="50"/>
