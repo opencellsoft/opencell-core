@@ -50,21 +50,26 @@ public class CustomFieldValueDto implements Serializable {
         }
     }
 
-    protected static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
+	protected static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
+		List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
+		
+		if (listValue == null) {
+			return dtos;
+		}
 
-        List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
-
-        for (Object listItem : listValue) {
-            CustomFieldValueDto dto = new CustomFieldValueDto();
-            if (listItem instanceof EntityReferenceWrapper) {
-                dto.value = new EntityReferenceDto((EntityReferenceWrapper) listItem);
-            } else {
-                dto.value = listItem;
-            }
-            dtos.add(dto);
-        }
-        return dtos;
-    }
+		for (Object listItem : listValue) {
+			CustomFieldValueDto dto = new CustomFieldValueDto();
+			if (listItem instanceof EntityReferenceWrapper) {
+				dto.value = new EntityReferenceDto((EntityReferenceWrapper) listItem);
+			} else {
+				dto.value = listItem;
+			}
+			
+			dtos.add(dto);
+		}
+		
+		return dtos;
+	}
 
     protected static List<Object> fromDTO(List<CustomFieldValueDto> listValue) {
         List<Object> values = new ArrayList<Object>();
@@ -82,21 +87,26 @@ public class CustomFieldValueDto implements Serializable {
         return values;
     }
 
-    protected static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
+	protected static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
+		Map<String, CustomFieldValueDto> dtos = new HashMap<String, CustomFieldValueDto>();
 
-        Map<String, CustomFieldValueDto> dtos = new HashMap<String, CustomFieldValueDto>();
+		if (mapValue == null || mapValue.entrySet().size() <= 0) {
+			return dtos;
+		}
 
-        for (Map.Entry<String, Object> mapItem : mapValue.entrySet()) {
-            CustomFieldValueDto dto = new CustomFieldValueDto();
-            if (mapItem.getValue() instanceof EntityReferenceWrapper) {
-                dto.value = new EntityReferenceDto((EntityReferenceWrapper) mapItem.getValue());
-            } else {
-                dto.value = mapItem.getValue();
-            }
-            dtos.put(mapItem.getKey(), dto);
-        }
-        return dtos;
-    }
+		for (Map.Entry<String, Object> mapItem : mapValue.entrySet()) {
+			CustomFieldValueDto dto = new CustomFieldValueDto();
+			if (mapItem.getValue() instanceof EntityReferenceWrapper) {
+				dto.value = new EntityReferenceDto((EntityReferenceWrapper) mapItem.getValue());
+			} else {
+				dto.value = mapItem.getValue();
+			}
+
+			dtos.put(mapItem.getKey(), dto);
+		}
+
+		return dtos;
+	}
 
     public CustomFieldValueDto(Object e) {
         this.value = e;
