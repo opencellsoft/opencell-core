@@ -24,10 +24,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptTypeEnum;
 import org.meveo.service.base.PersistenceService;
 
@@ -53,7 +51,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	public ScriptInstance findByCode(String code, Provider provider) {
 		log.debug("find ScriptInstance by code {}",code);
 		QueryBuilder qb = new QueryBuilder(ScriptInstance.class, "t", null, provider);
-		qb.addCriterionWildcard("t.code", code, true);
+		qb.addCriterion("t.code", "=", code, false);
 		try {
 			return (ScriptInstance) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
