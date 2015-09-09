@@ -51,6 +51,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	}
 
 	public ScriptInstance findByCode(String code, Provider provider) {
+		log.debug("find ScriptInstance by code {}",code);
 		QueryBuilder qb = new QueryBuilder(ScriptInstance.class, "t", null, provider);
 		qb.addCriterionWildcard("t.code", code, true);
 		try {
