@@ -7,8 +7,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -27,6 +30,8 @@ public class OfferTemplateDto implements Serializable {
 
 	private boolean disabled;
 	private ServiceTemplatesDto serviceTemplates = new ServiceTemplatesDto();
+	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public OfferTemplateDto() {
 
@@ -40,6 +45,12 @@ public class OfferTemplateDto implements Serializable {
 		if (e.getServiceTemplates() != null && e.getServiceTemplates().size() > 0) {
 			for (ServiceTemplate st : e.getServiceTemplates()) {
 				serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getCode()));
+			}
+		}
+		
+		if (e.getCustomFields() != null) {
+			for (CustomFieldInstance cfi : e.getCustomFields().values()) {
+				customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
 			}
 		}
 	}
@@ -71,7 +82,7 @@ public class OfferTemplateDto implements Serializable {
 	@Override
 	public String toString() {
 		return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled
-				+ ", serviceTemplates=" + serviceTemplates + "]";
+				+ ", serviceTemplates=" + serviceTemplates + ", customFields=" + customFields + "]";
 	}
 
 	public ServiceTemplatesDto getServiceTemplates() {
@@ -80,6 +91,14 @@ public class OfferTemplateDto implements Serializable {
 
 	public void setServiceTemplates(ServiceTemplatesDto serviceTemplates) {
 		this.serviceTemplates = serviceTemplates;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 }

@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -23,6 +25,7 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
@@ -139,15 +142,15 @@ public class JavaCompilerManager {
 	public void compileScript(ScriptInstance scriptInstance) {
 		try {
 			compiler = new CharSequenceCompiler<ScriptInterface>(ScriptInterface.class.getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
+			final String packageName = getPackageName(scriptInstance.getScript());
+			final String qName = packageName + '.' + getClassName(scriptInstance.getScript());
+			final String codeSource = scriptInstance.getScript();
+			log.debug("codeSource to compile:" + codeSource);
 			scriptInstance.setError(false);
+			scriptInstance.setCode(qName);
 			scriptInstanceService.removeErrors(scriptInstance);
 			scriptInstance.getScriptInstanceErrors().clear();
 			scriptInstanceService.update(scriptInstance);
-			final String packageName = ParamBean.getInstance().getProperty("meveo.scripting.java.packageName", "org.meveo.service.script");
-			final String className = scriptInstance.getCode();
-			final String qName = packageName + '.' + className;
-			final String codeSource = scriptInstance.getScript();
-			log.debug("codeSource to compile:" + codeSource);
 			final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
 			Class<ScriptInterface> compiledScript = compiler.compile(qName, codeSource, errs, new Class<?>[] { ScriptInterface.class });
 			log.debug("set script provider:{} scriptCode:{}", scriptInstance.getProvider().getCode(), scriptInstance.getCode());
@@ -161,9 +164,7 @@ public class JavaCompilerManager {
 			
 		} catch (CharSequenceCompilerException e) {
 			log.error("Compilation error...");
-
 			List<Diagnostic<? extends JavaFileObject>> diagnosticList = e.getDiagnostics().getDiagnostics();
-
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticList) {
 				if ("ERROR".equals(diagnostic.getKind().name())) {
 					ScriptInstanceError scriptInstanceError = new ScriptInstanceError();
@@ -204,6 +205,14 @@ public class JavaCompilerManager {
 		}
 		log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
 		return result;
+	}
+	
+	public String getPackageName(String src){
+		return StringUtils.patternMacher("package (.*?);", src);
+	}
+		
+	public String getClassName(String src){
+		return StringUtils.patternMacher("public class (.*) extends", src);
 	}
 
 }

@@ -122,13 +122,10 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     public TreeNode buildAccountsHierarchy(BaseEntity entity) {
 
         if (accountsHierarchy != null) {
-            log.error("AKK buildAccountsHierarchy {} - using existing tree", entity.getId());
             return accountsHierarchy;
         }
-        log.error("AKK buildAccountsHierarchy {} - creating NEW tree", entity.getId());
 
         if (entity.isTransient()) {
-            log.error("AKK buildAccountsHierarchy {} - is transient", entity.getId());
             return null;
         }
 

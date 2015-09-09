@@ -20,6 +20,7 @@ import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.CustomerListResponse;
+import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
@@ -30,6 +31,7 @@ import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
+import org.meveo.api.dto.response.account.TitleResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 
@@ -197,5 +199,19 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	FindAccountHierarchyResponseDto findAccountHierarchy2(@WebParam(name = "findAccountHierachyRequest") FindAccountHierachyRequestDto postData);
-
+	
+	// title
+	
+	@WebMethod
+	ActionStatus createTitle(@WebParam(name = "title") TitleDto postData);
+	
+	@WebMethod
+	TitleResponseDto retrieveTitle(@WebParam(name = "titleCode") String titleCode);
+	
+	@WebMethod
+	ActionStatus updateTitle(@WebParam(name = "title") TitleDto postData);
+	
+	@WebMethod
+	ActionStatus removeTitle(@WebParam(name = "titleCode") String titleCode);
+	
 }

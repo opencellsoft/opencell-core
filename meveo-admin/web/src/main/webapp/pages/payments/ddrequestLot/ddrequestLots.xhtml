@@ -40,6 +40,10 @@
 				field="invoicesAmount" />
 			<hftl:column label="#{messages['ddrequestLot.paymentCreated']}"
 				field="paymentCreated" isMessage="true" />
+			<hftl:column label="#{messages['ddrequestLot.rejectedCause']}"
+				field="rejectedCause" />
+			<hftl:column label="#{messages['ddrequestLot.rejectedInvoices']}"
+				field="rejectedInvoices" />				
 			<hftl:actionsColumn renderDeleteLink="false" renderViewLink="true"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
