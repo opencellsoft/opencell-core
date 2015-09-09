@@ -56,7 +56,7 @@ public class ScriptInstanceApi extends BaseApi {
 		scriptInstanceService.create(scriptInstance, currentUser, currentUser.getProvider());
 		javaCompilerManager.compileScript(scriptInstance);
 		scriptInstance = scriptInstanceService.findByCode(scriptInstanceDto.getCode(), currentUser.getProvider());
-		if (scriptInstance.getError().booleanValue()) {
+		if (scriptInstance!=null && scriptInstance.getError()!=null && scriptInstance.getError().booleanValue()) {
 			for (ScriptInstanceError error : scriptInstance.getScriptInstanceErrors()) {
 				ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
 				result.add(errorDto);

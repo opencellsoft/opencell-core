@@ -21,6 +21,8 @@ import java.io.FileReader;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utils class for working with strings.
@@ -173,4 +175,13 @@ public class StringUtils {
 		}
 		return Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
 	}
+    public static String patternMacher(String regex, String text){
+    	String result=null;
+    	Pattern pattern = Pattern.compile(regex);
+    	Matcher matcher = pattern.matcher(text);
+    	if(matcher.find()) {
+    		result = matcher.group(1);
+    	}
+    	return result;
+    }
 }
