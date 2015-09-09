@@ -22,6 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.scripts.ScriptInstance;
@@ -106,7 +107,14 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	}
 	
 	@Override
-	public String saveOrUpdate(ScriptInstance entity) throws BusinessException {		
+	public String saveOrUpdate(ScriptInstance entity) throws BusinessException {
+		String packageName = javaCompilerManager.getPackageName(entity.getScript());
+		String className = javaCompilerManager.getClassName(entity.getScript());
+		if(packageName == null || className == null){
+			messages.error(new BundleKey("messages", "message.scriptInstance.sourceInvalid"));
+			return null;
+		}
+		entity.setCode(packageName+"."+className);
 		String result = super.saveOrUpdate(entity);		
 		javaCompilerManager.compileScript(entity);	
 		entity = scriptInstanceService.findById(entity.getId());

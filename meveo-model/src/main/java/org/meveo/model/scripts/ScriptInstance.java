@@ -63,7 +63,7 @@ public class ScriptInstance extends BusinessEntity  {
 
 	
 	@Column(name = "IS_ERROR")
-	private Boolean error = true;
+	private Boolean error = false;
 	
 	public ScriptInstance(){
 
