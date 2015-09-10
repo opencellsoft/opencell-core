@@ -126,9 +126,8 @@ public class RecurringChargeTemplateApi extends BaseApi {
 			
 			// populate customFields
 			if (postData.getCustomFields() != null) {
-				try {
-					populateCustomFields(AccountLevelEnum.CHARGE, postData.getCustomFields().getCustomField(),
-							chargeTemplate, "chargeTemplate", currentUser);
+                try {
+                    populateCustomFields(AccountLevelEnum.CHARGE, postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -249,8 +248,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
 			// populate customFields
 			if (postData.getCustomFields() != null) {
 				try {
-					populateCustomFields(AccountLevelEnum.CHARGE, postData.getCustomFields().getCustomField(),
-							chargeTemplate, "chargeTemplate", currentUser);
+                    populateCustomFields(AccountLevelEnum.CHARGE, postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");

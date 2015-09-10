@@ -17,6 +17,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -129,7 +130,7 @@ public class JobInstanceApi extends BaseApi {
 		// populate customFields
 		if (jobInstanceDto.getCustomFields() != null) {
 			try {
-				populateCustomFields(customFieldTemplates, jobInstanceDto.getCustomFields().getCustomField(), jobInstance, "jobInstance", currentUser);
+				populateCustomFields(customFieldTemplates, jobInstanceDto.getCustomFields().getCustomField(), jobInstance, AccountLevelEnum.TIMER, currentUser);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				log.error("Failed to associate custom field instance to an entity", e);
 				throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -201,7 +202,7 @@ public class JobInstanceApi extends BaseApi {
 			// populate customFields
 			if (postData.getCustomFields() != null) {
 				try {
-					populateCustomFields(customFieldTemplates, postData.getCustomFields().getCustomField(), jobInstance, "jobInstance", currentUser);
+					populateCustomFields(customFieldTemplates, postData.getCustomFields().getCustomField(), jobInstance, AccountLevelEnum.TIMER, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");

@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
@@ -114,7 +113,7 @@ public class SubscriptionApi extends BaseApi {
             // populate customFields
             if (postData.getCustomFields() != null) {
                 try {
-                    populateCustomFields(AccountLevelEnum.SUB, postData.getCustomFields().getCustomField(), subscription, "subscription", currentUser);
+                    populateCustomFields(AccountLevelEnum.SUB, postData.getCustomFields().getCustomField(), subscription, currentUser);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     log.error("Failed to associate custom field instance to an entity", e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -179,7 +178,7 @@ public class SubscriptionApi extends BaseApi {
             // populate customFields
             if (postData.getCustomFields() != null) {
                 try {
-                    populateCustomFields(AccountLevelEnum.SUB, postData.getCustomFields().getCustomField(), subscription, "subscription", currentUser);
+                    populateCustomFields(AccountLevelEnum.SUB, postData.getCustomFields().getCustomField(), subscription, currentUser);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     log.error("Failed to associate custom field instance to an entity", e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity");
