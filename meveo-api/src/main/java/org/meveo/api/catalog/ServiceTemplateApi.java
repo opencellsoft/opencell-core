@@ -268,8 +268,7 @@ public class ServiceTemplateApi extends BaseApi {
 			// populate customFields
 			if (postData.getCustomFields() != null) {
 				try {
-					populateCustomFields(AccountLevelEnum.SERVICE, postData.getCustomFields().getCustomField(),
-							serviceTemplate, "serviceTemplate", currentUser);
+                    populateCustomFields(AccountLevelEnum.SERVICE, postData.getCustomFields().getCustomField(), serviceTemplate, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -327,9 +326,8 @@ public class ServiceTemplateApi extends BaseApi {
 			
 			// populate customFields
 			if (postData.getCustomFields() != null) {
-				try {
-					populateCustomFields(AccountLevelEnum.SERVICE, postData.getCustomFields().getCustomField(),
-							serviceTemplate, "serviceTemplate", currentUser);
+                try {
+                    populateCustomFields(AccountLevelEnum.SERVICE, postData.getCustomFields().getCustomField(), serviceTemplate, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");

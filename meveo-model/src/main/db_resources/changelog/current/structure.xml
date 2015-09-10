@@ -479,11 +479,11 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
-			<column name="code" type="VARCHAR(60)">
+			<column name="code" type="VARCHAR(200)">
 				<constraints nullable="false" />
 			</column>
 			<column name="description" type="VARCHAR(100)" />				
-			<column name="script" type="VARCHAR(10000)">
+			<column name="script" type="TEXT">
 				<constraints nullable="false" />
 			</column>
 			<column name="provider_id" type="BIGINT" />
@@ -1515,10 +1515,6 @@
         <changeSet author="anasseh" id="multiProvider_09092015">
             <dropUniqueConstraint  constraintName="uk_meveo_script_instance"    tableName="MEVEO_SCRIPT_INSTANCE"/>
             <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_script_instance" deferrable="false" disabled="false" initiallyDeferred="false" tableName="MEVEO_SCRIPT_INSTANCE"/>
-    </changeSet>
-    
-    <changeSet author="anasseh" id="changeCodeLenght_09092015">
-            <sql>UPDATE pg_attribute SET atttypmod = 200+4 WHERE attrelid = 'MEVEO_SCRIPT_INSTANCE'::regclass AND attname = 'code';  </sql>
     </changeSet>
    
 </databaseChangeLog>

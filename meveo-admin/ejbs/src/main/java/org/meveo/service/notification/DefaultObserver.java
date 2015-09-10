@@ -38,7 +38,6 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
@@ -95,8 +94,6 @@ public class DefaultObserver {
     @Inject
     private JobTriggerLauncher jobTriggerLauncher;
     
-    @Inject
-    private MeveoInstanceService meveoInstanceService;
 
     private boolean matchExpression(String expression, Object o) throws BusinessException {
         Boolean result = true;
@@ -139,7 +136,9 @@ public class DefaultObserver {
         log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
         try {
             if (!(notif instanceof WebHook)) {
-                executeScript(notif.getScriptInstance(), e,notif.getParams());
+            	if(notif.getScriptInstance() != null){
+            		executeScript(notif.getScriptInstance(), e,notif.getParams());
+            	}
             }
             
             boolean sendNotify = true;

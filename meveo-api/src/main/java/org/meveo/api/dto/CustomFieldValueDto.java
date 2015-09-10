@@ -31,15 +31,15 @@ public class CustomFieldValueDto implements Serializable {
     public CustomFieldValueDto() {
     }
 
-//    public static CustomFieldValueDto toDTO(CustomFieldValue cfv) {
-//        CustomFieldValueDto dto = new CustomFieldValueDto();
-//        Object singleValue = cfv.getSingleValue();
-//        if (singleValue != null && singleValue instanceof EntityReferenceWrapper) {
-//            singleValue = new EntityReferenceDto((EntityReferenceWrapper) singleValue);
-//        }
-//        dto.value = singleValue;
-//        return dto;
-//    }
+    // public static CustomFieldValueDto toDTO(CustomFieldValue cfv) {
+    // CustomFieldValueDto dto = new CustomFieldValueDto();
+    // Object singleValue = cfv.getSingleValue();
+    // if (singleValue != null && singleValue instanceof EntityReferenceWrapper) {
+    // singleValue = new EntityReferenceDto((EntityReferenceWrapper) singleValue);
+    // }
+    // dto.value = singleValue;
+    // return dto;
+    // }
 
     private Object fromDTO() {
 
@@ -50,26 +50,24 @@ public class CustomFieldValueDto implements Serializable {
         }
     }
 
-	protected static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
-		List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
-		
-		if (listValue == null) {
-			return dtos;
-		}
+    protected static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
 
-		for (Object listItem : listValue) {
-			CustomFieldValueDto dto = new CustomFieldValueDto();
-			if (listItem instanceof EntityReferenceWrapper) {
-				dto.value = new EntityReferenceDto((EntityReferenceWrapper) listItem);
-			} else {
-				dto.value = listItem;
-			}
-			
-			dtos.add(dto);
-		}
-		
-		return dtos;
-	}
+        if (listValue == null) {
+            return null;
+        }
+        List<CustomFieldValueDto> dtos = new ArrayList<CustomFieldValueDto>();
+
+        for (Object listItem : listValue) {
+            CustomFieldValueDto dto = new CustomFieldValueDto();
+            if (listItem instanceof EntityReferenceWrapper) {
+                dto.value = new EntityReferenceDto((EntityReferenceWrapper) listItem);
+            } else {
+                dto.value = listItem;
+            }
+            dtos.add(dto);
+        }
+        return dtos;
+    }
 
     protected static List<Object> fromDTO(List<CustomFieldValueDto> listValue) {
         List<Object> values = new ArrayList<Object>();
@@ -87,26 +85,23 @@ public class CustomFieldValueDto implements Serializable {
         return values;
     }
 
-	protected static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
-		Map<String, CustomFieldValueDto> dtos = new HashMap<String, CustomFieldValueDto>();
+    protected static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
+        if (mapValue == null || mapValue.entrySet().size() == 0) {
+            return null;
+        }
+        Map<String, CustomFieldValueDto> dtos = new HashMap<String, CustomFieldValueDto>();
 
-		if (mapValue == null || mapValue.entrySet().size() <= 0) {
-			return dtos;
-		}
-
-		for (Map.Entry<String, Object> mapItem : mapValue.entrySet()) {
-			CustomFieldValueDto dto = new CustomFieldValueDto();
-			if (mapItem.getValue() instanceof EntityReferenceWrapper) {
-				dto.value = new EntityReferenceDto((EntityReferenceWrapper) mapItem.getValue());
-			} else {
-				dto.value = mapItem.getValue();
-			}
-
-			dtos.put(mapItem.getKey(), dto);
-		}
-
-		return dtos;
-	}
+        for (Map.Entry<String, Object> mapItem : mapValue.entrySet()) {
+            CustomFieldValueDto dto = new CustomFieldValueDto();
+            if (mapItem.getValue() instanceof EntityReferenceWrapper) {
+                dto.value = new EntityReferenceDto((EntityReferenceWrapper) mapItem.getValue());
+            } else {
+                dto.value = mapItem.getValue();
+            }
+            dtos.put(mapItem.getKey(), dto);
+        }
+        return dtos;
+    }
 
     public CustomFieldValueDto(Object e) {
         this.value = e;

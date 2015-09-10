@@ -1568,7 +1568,7 @@ public class AccountHierarchyApi extends BaseApi {
                                                             if (subscriptionDto.getCustomFields() != null) {
                                                                 try {
                                                                     populateCustomFields(AccountLevelEnum.SUB, subscriptionDto.getCustomFields().getCustomField(), subscription,
-                                                                        "subscription", currentUser);
+                                                                        currentUser);
                                                                 } catch (IllegalArgumentException | IllegalAccessException e) {
                                                                     log.error("Failed to associate custom field instance to a subscription {}", subscriptionDto.getCode(), e);
                                                                     throw new MeveoApiException("Failed to associate custom field instance to a subscription "
@@ -1615,7 +1615,7 @@ public class AccountHierarchyApi extends BaseApi {
                                                                     if (accessDto.getCustomFields() != null) {
                                                                         try {
                                                                             populateCustomFields(AccountLevelEnum.ACC, accessDto.getCustomFields().getCustomField(), access,
-                                                                                "access", currentUser);
+                                                                                currentUser);
                                                                         } catch (IllegalArgumentException | IllegalAccessException e) {
                                                                             log.error("Failed to associate custom field instance to an access {}", subscriptionDto.getCode(), e);
                                                                             throw new MeveoApiException("Failed to associate custom field instance to an access "
@@ -1842,9 +1842,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 		// populate customFields
 		if (accountDto.getCustomFields() != null) {
-			try {
-				populateCustomFields(accountLevel, accountDto.getCustomFields().getCustomField(), accountEntity,
-						"account", currentUser);
+            try {
+                populateCustomFields(accountLevel, accountDto.getCustomFields().getCustomField(), accountEntity, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity {}", accountDto.getCode(), e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity " + accountDto.getCode());

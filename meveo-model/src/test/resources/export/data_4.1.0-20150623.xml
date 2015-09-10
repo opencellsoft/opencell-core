@@ -80,6 +80,7 @@
             <hour>*</hour>
             <minute>0</minute>
             <second>0</second>
+            <jobCategoryEnum>ACCOUNT_RECEIVABLES</jobCategoryEnum>
         </org.meveo.model.jobs.TimerEntity>
         <org.meveo.model.jobs.TimerEntity xsId="1">
             <id>1</id>

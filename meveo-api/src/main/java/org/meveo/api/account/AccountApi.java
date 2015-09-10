@@ -80,7 +80,7 @@ public class AccountApi extends BaseApi {
         // populate customFields
         if (postData.getCustomFields() != null) {
             try {
-                populateCustomFields(accountLevel, postData.getCustomFields().getCustomField(), accountEntity, "account", currentUser);
+                populateCustomFields(accountLevel, postData.getCustomFields().getCustomField(), accountEntity, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -199,7 +199,7 @@ public class AccountApi extends BaseApi {
         // populate customFields
         if (postData.getCustomFields() != null) {
             try {
-                populateCustomFields(accountLevel, postData.getCustomFields().getCustomField(), accountEntity, "account", currentUser);
+                populateCustomFields(accountLevel, postData.getCustomFields().getCustomField(), accountEntity, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");

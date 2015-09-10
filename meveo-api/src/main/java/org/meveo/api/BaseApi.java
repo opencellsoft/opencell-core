@@ -60,7 +60,7 @@ public abstract class BaseApi {
     /**
      * Populate custom field values from DTO
      * 
-     * @param cfType An entity that custom field template applies to
+     * @param cfType An entity type that custom field template applies to
      * @param customFieldDtos Custom field values
      * @param entity Entity
      * @param cfiFieldName Custom field name in an entity
@@ -69,12 +69,12 @@ public abstract class BaseApi {
      * @throws IllegalAccessException
      * @throws MissingParameterException
      */
-    protected void populateCustomFields(AccountLevelEnum cfType, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, String cfiFieldName, User currentUser)
+    protected void populateCustomFields(AccountLevelEnum cfType, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, User currentUser)
             throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
 
         List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(cfType, currentUser.getProvider());
 
-        populateCustomFields(customFieldTemplates, customFieldDtos, entity, cfiFieldName, currentUser);
+        populateCustomFields(customFieldTemplates, customFieldDtos, entity, cfType, currentUser);
     }
 
     /**
@@ -83,13 +83,13 @@ public abstract class BaseApi {
      * @param customFieldTemplates Custom field templates
      * @param customFieldDtos Custom field values
      * @param entity Entity
-     * @param cfiFieldName Custom field name in an entity
+     * @param cfType An entity type that custom field template applies to
      * @param currentUser User that authenticated for API
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      * @throws MissingParameterException
      */
-    protected void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, String cfiFieldName,
+    protected void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, AccountLevelEnum cfType,
             User currentUser) throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
 
         // check if any templates are applicable
@@ -125,7 +125,7 @@ public abstract class BaseApi {
                     // Create an instance if does not exist yet
                     if (cfi == null) {
                         cfi = CustomFieldInstance.fromTemplate(cft);
-                        FieldUtils.getField(CustomFieldInstance.class, cfiFieldName, true).set(cfi, entity);
+                        FieldUtils.getField(CustomFieldInstance.class, cfType.getRelationFieldname(), true).set(cfi, entity);
                         entity.getCustomFields().put(cfi.getCode(), cfi);
                     }
 
