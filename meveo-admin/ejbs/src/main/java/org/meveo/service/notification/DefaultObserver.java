@@ -136,7 +136,9 @@ public class DefaultObserver {
         log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
         try {
             if (!(notif instanceof WebHook)) {
-                executeScript(notif.getScriptInstance(), e,notif.getParams());
+            	if(notif.getScriptInstance() != null){
+            		executeScript(notif.getScriptInstance(), e,notif.getParams());
+            	}
             }
             
             boolean sendNotify = true;
