@@ -6,7 +6,6 @@ import javax.jws.WebService;
 
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.account.AccessApi;
-import org.meveo.api.account.AccountApi;
 import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.account.BillingAccountApi;
 import org.meveo.api.account.CustomerAccountApi;
@@ -1025,7 +1024,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 
 	@Override
-	public TitleResponseDto retrieveTitle(String titleCode) {
+	public TitleResponseDto findTitle(String titleCode) {
 		
 		TitleResponseDto result = new TitleResponseDto();
 		

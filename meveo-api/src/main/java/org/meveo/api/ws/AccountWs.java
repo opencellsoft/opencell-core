@@ -206,7 +206,7 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus createTitle(@WebParam(name = "title") TitleDto postData);
 	
 	@WebMethod
-	TitleResponseDto retrieveTitle(@WebParam(name = "titleCode") String titleCode);
+	TitleResponseDto findTitle(@WebParam(name = "titleCode") String titleCode);
 	
 	@WebMethod
 	ActionStatus updateTitle(@WebParam(name = "title") TitleDto postData);
