@@ -7650,6 +7650,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTitle">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateTitle">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateTitleResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateUserAccount">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateUserAccount">
@@ -7860,6 +7869,8 @@
       <xs:element name="createOrUpdateCustomerAccount" type="tns:createOrUpdateCustomerAccount"/>
       <xs:element name="createOrUpdateCustomerAccountResponse" type="tns:createOrUpdateCustomerAccountResponse"/>
       <xs:element name="createOrUpdateCustomerResponse" type="tns:createOrUpdateCustomerResponse"/>
+      <xs:element name="createOrUpdateTitle" type="tns:createOrUpdateTitle"/>
+      <xs:element name="createOrUpdateTitleResponse" type="tns:createOrUpdateTitleResponse"/>
       <xs:element name="createOrUpdateUserAccount" type="tns:createOrUpdateUserAccount"/>
       <xs:element name="createOrUpdateUserAccountResponse" type="tns:createOrUpdateUserAccountResponse"/>
       <xs:element name="createTitle" type="tns:createTitle"/>
@@ -8910,6 +8921,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateTitle">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="title" type="tns:titleDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateTitleResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createAccountHierarchy">
         <xs:sequence>
           <xs:element minOccurs="0" name="accountHierarchy" type="tns:accountHierarchyDto"/>
@@ -9186,6 +9207,9 @@
   <wsdl:message name="updateCustomerAccount">
     <wsdl:part element="ns1:updateCustomerAccount" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateTitleResponse">
+    <wsdl:part element="ns1:createOrUpdateTitleResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createCustomerBrand">
     <wsdl:part element="ns1:createCustomerBrand" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -9408,6 +9432,9 @@
   <wsdl:message name="createAccountOperation">
     <wsdl:part element="ns1:createAccountOperation" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateTitle">
+    <wsdl:part element="ns1:createOrUpdateTitle" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updateBillingAccount">
     <wsdl:part element="ns1:updateBillingAccount" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -9578,6 +9605,10 @@
     <wsdl:operation name="createOrUpdateUserAccount">
       <wsdl:input message="ns1:createOrUpdateUserAccount" name="createOrUpdateUserAccount"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateUserAccountResponse" name="createOrUpdateUserAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTitle">
+      <wsdl:input message="ns1:createOrUpdateTitle" name="createOrUpdateTitle"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateTitleResponse" name="createOrUpdateTitleResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createAccountHierarchy">
       <wsdl:input message="ns1:createAccountHierarchy" name="createAccountHierarchy"></wsdl:input>
@@ -14255,7 +14286,20 @@
          <titleCode>?</titleCode>\r
       </ws:findTitle>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findTitle"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" id="e091ebc9-a4ee-4a50-819a-8033c8d42dba" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/findTitle"/></con:call></con:operation><con:operation id="b634fc11-5941-48b4-a774-ac3a61bd96d2" isOneWay="false" action="" name="createOrUpdateTitle" bindingOperationName="createOrUpdateTitle" type="Request-Response" outputName="createOrUpdateTitleResponse" inputName="createOrUpdateTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c2528813-5398-4a1a-bd19-cff7d648bf8c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateTitle>\r
+         <!--Optional:-->\r
+         <titleCode code="?">\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <!--Optional:-->\r
+            <isCompany>?</isCompany>\r
+         </titleCode>\r
+      </ws:createOrUpdateTitle>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateTitle"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SubscriptionWs?wsdl" id="e091ebc9-a4ee-4a50-819a-8033c8d42dba" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SubscriptionWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SubscriptionWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SubscriptionWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SubscriptionWs?wsdl=SubscriptionWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SubscriptionWsSoapBinding" type="ns1:SubscriptionWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -19474,7 +19518,33 @@ for( testCase in testSuite.getTestCaseList() ) {
          </title>
       </ws:updateTitle>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bc2c9077-4d11-453e-aa06-01678490d69f"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="removeUserAccount TestCase" searchProperties="true" id="9437ede9-c6a7-4b0e-b4dd-2dbaad6589b1"><con:settings/><con:testStep type="request" name="removeUserAccount" id="d17c6de3-7c4a-44ea-a660-d0bd4d6622cf"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeUserAccount</con:operation><con:request name="removeUserAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a6fba5ac-3435-4b8f-b3aa-e2cd7e4e274d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bc2c9077-4d11-453e-aa06-01678490d69f"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="2411c8b6-55b1-4933-97a0-d92ccf9b21d8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createOrUpdateTitle" searchProperties="true"><con:settings/><con:testStep type="request" name="SOAP Request" id="bf7ebda6-2077-457a-a433-5cb08faaa7c9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateTitle</con:operation><con:request name="SOAP Request" id="8fd0f473-5616-430e-9e7d-8341af763931"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateTitle>\r
+         <!--Optional:-->\r
+          <title code="TITLE2">
+            <!--Optional:-->
+            <description>TITLE2</description>
+            <!--Optional:-->
+            <isCompany>false</isCompany>
+         </title>
+      </ws:createOrUpdateTitle>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5408e36c-418f-4c98-b1e2-3ed55640e029"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Copy of SOAP Request" id="e093f565-3d56-4d35-8e82-8b67b5c2ccb0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateTitle</con:operation><con:request name="Copy of SOAP Request" id="8fd0f473-5616-430e-9e7d-8341af763931"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateTitle>
+         <!--Optional:-->
+          <title code="TITLE2">
+            <!--Optional:-->
+            <description>TITLE2-Updated</description>
+            <!--Optional:-->
+            <isCompany>false</isCompany>
+         </title>
+      </ws:createOrUpdateTitle>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5408e36c-418f-4c98-b1e2-3ed55640e029"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="removeUserAccount TestCase" searchProperties="true" id="9437ede9-c6a7-4b0e-b4dd-2dbaad6589b1"><con:settings/><con:testStep type="request" name="removeUserAccount" id="d17c6de3-7c4a-44ea-a660-d0bd4d6622cf"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeUserAccount</con:operation><con:request name="removeUserAccount" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="a6fba5ac-3435-4b8f-b3aa-e2cd7e4e274d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeUserAccount>
@@ -20554,6 +20624,14 @@ for( testCase in testSuite.getTestCaseList() ) {
       <ws:removeTitle>\r
          <!--Optional:-->\r
          <titleCode>TITLE1</titleCode>\r
+      </ws:removeTitle>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="658e41d1-7288-4f8b-bcfe-28396e9a810f"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Copy of SOAP Request" id="7257f4b1-fc83-4ada-9f7d-70f4711bfceb"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>removeTitle</con:operation><con:request name="Copy of SOAP Request" id="fb152258-2e20-4572-a922-960623c951e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoUrl}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeTitle>\r
+         <!--Optional:-->\r
+         <titleCode>TITLE2</titleCode>\r
       </ws:removeTitle>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="658e41d1-7288-4f8b-bcfe-28396e9a810f"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*

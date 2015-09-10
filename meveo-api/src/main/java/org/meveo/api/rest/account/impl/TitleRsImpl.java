@@ -18,16 +18,16 @@ import org.meveo.api.rest.impl.BaseRs;
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
 public class TitleRsImpl extends BaseRs implements TitleRs {
-	
+
 	@Inject
 	private TitleApi titleApi;
-	
+
 	@Override
 	public ActionStatus create(TitleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
-			titleApi.createTitle(postData, getCurrentUser());
+			titleApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -37,7 +37,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
-		
+
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
@@ -45,18 +45,18 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 	@Override
 	public TitleResponseDto find(String titleCode) {
 		TitleResponseDto result = new TitleResponseDto();
-		
+
 		try {
-			result.setTitleDto(titleApi.findTitle(titleCode, getCurrentUser().getProvider()));
+			result.setTitleDto(titleApi.find(titleCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occurred while getting notification ",e);
+			log.error("error occurred while getting notification ", e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting notification ",e);
+			log.error("error generated while getting notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -66,9 +66,9 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 	@Override
 	public ActionStatus update(TitleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
-			titleApi.updateTitle(postData, getCurrentUser());
+			titleApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -78,7 +78,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
-		
+
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
@@ -86,9 +86,9 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 	@Override
 	public ActionStatus remove(String titleCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
-			titleApi.removeTitle(titleCode, getCurrentUser());
+			titleApi.remove(titleCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -98,7 +98,27 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
-		
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createOrUpdate(TitleDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			titleApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
 		log.debug("RESPONSE={}", result);
 		return result;
 	}

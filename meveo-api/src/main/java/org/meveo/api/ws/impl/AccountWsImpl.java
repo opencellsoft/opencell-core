@@ -75,7 +75,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 
 	@Inject
 	private AccessApi accessApi;
-	
+
 	@Inject
 	private TitleApi titleApi;
 
@@ -744,7 +744,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		BillingAccountsResponseDto result = new BillingAccountsResponseDto();
 
 		try {
-			result.setBillingAccounts(billingAccountApi.listByCustomerAccount(customerAccountCode, getCurrentUser().getProvider()));
+			result.setBillingAccounts(billingAccountApi.listByCustomerAccount(customerAccountCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -764,7 +765,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		UserAccountsResponseDto result = new UserAccountsResponseDto();
 
 		try {
-			result.setUserAccounts(userAccountApi.listByBillingAccount(billingAccountCode, getCurrentUser().getProvider()));
+			result.setUserAccounts(userAccountApi.listByBillingAccount(billingAccountCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -867,7 +869,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus updateCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
 		ActionStatus result = new ActionStatus();
@@ -888,7 +890,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	@Override
 	public ActionStatus createOrUpdateAccess(AccessDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			accessApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
@@ -902,7 +904,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdateUserAccount(UserAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -922,11 +924,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
-	@Override 
+
+	@Override
 	public ActionStatus createOrUpdateBillingAccount(BillingAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			billingAccountApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
@@ -942,11 +944,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdateAccountHierarchy(AccountHierarchyDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			accountHierarchyApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
@@ -962,11 +964,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdateCustomerAccount(CustomerAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			customerAccountApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
@@ -982,7 +984,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdateCustomer(CustomerDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -1006,9 +1008,9 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	@Override
 	public ActionStatus createTitle(TitleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
-			titleApi.createTitle(postData, getCurrentUser());
+			titleApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1018,27 +1020,27 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
-		
+
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
 
 	@Override
 	public TitleResponseDto findTitle(String titleCode) {
-		
+
 		TitleResponseDto result = new TitleResponseDto();
-		
+
 		try {
-			result.setTitleDto(titleApi.findTitle(titleCode, getCurrentUser().getProvider()));
+			result.setTitleDto(titleApi.find(titleCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occurred while getting notification ",e);
+			log.error("error occurred while getting notification ", e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting notification ",e);
+			log.error("error generated while getting notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -1048,9 +1050,9 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	@Override
 	public ActionStatus updateTitle(TitleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
-			titleApi.updateTitle(postData, getCurrentUser());
+			titleApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1060,7 +1062,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
-		
+
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
@@ -1068,9 +1070,9 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	@Override
 	public ActionStatus removeTitle(String titleCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
-			titleApi.removeTitle(titleCode, getCurrentUser());
+			titleApi.remove(titleCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1080,8 +1082,27 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
-		
+
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+
+	@Override
+	public ActionStatus createOrUpdateTitle(TitleDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			titleApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
 }
