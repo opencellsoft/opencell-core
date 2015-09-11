@@ -135,7 +135,11 @@ public class DefaultObserver {
     private void fireNotification(Notification notif, IEntity e) {
         log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
         try {
-            if (!(notif instanceof WebHook)) {
+            if (!matchExpression(notif.getElFilter(), e)) {
+            	log.debug("Expression {} does not match", notif.getElFilter());
+                return;
+            }
+            if (notif.getScriptInstance()!=null) {
                 executeScript(notif.getScriptInstance(), e,notif.getParams());
             }
             
