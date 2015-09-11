@@ -55,12 +55,6 @@ public abstract class AccountDto implements Serializable {
                 customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
             }
 		}
-		
-		if (e.getCustomFields() != null) {
-			for (CustomFieldInstance cfi : e.getCustomFields().values()) {
-				customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
-			}
-		}
 
 		loaded = true;
 	}

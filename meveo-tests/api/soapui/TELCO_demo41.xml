@@ -24121,7 +24121,28 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	        testStep.getTestRequest().setRequestHeaders(headers);
 	    }
 	}
-}</con:setupScript><con:properties/></con:testCase><con:testCase id="3184573f-bf41-4fc5-9206-e4afc5773586" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Basic Settings" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Seller TELCO" id="6b5ab4ee-e832-4f95-9279-ebf3b4828e0d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createSeller</con:operation><con:request name="Create Seller TELCO" id="266c18f7-caa6-495e-9d65-5c3ea2ce01cd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+}</con:setupScript><con:properties/></con:testCase><con:testCase id="3184573f-bf41-4fc5-9206-e4afc5773586" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Basic Settings" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Title Mr" id="25a22aa5-b546-4625-a2c9-3233016210ca"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createTitle</con:operation><con:request name="Create Title Mr" id="02322ba7-efc3-436a-832a-7e379f305cac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createTitle>
+         <title code="Mr">
+            <description>Mister</description>
+            <isCompany>false</isCompany>
+         </title>
+      </ws:createTitle>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f32c758c-7a78-4484-b332-a5d1ba623a75"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Title Company" id="4198751e-7174-4de1-a372-d2a3903aa82f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createTitle</con:operation><con:request name="Create Title Company" id="02322ba7-efc3-436a-832a-7e379f305cac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createTitle>
+         <title code="Company">
+            <description>Company</description>
+            <isCompany>true</isCompany>
+         </title>
+
+      </ws:createTitle>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f32c758c-7a78-4484-b332-a5d1ba623a75"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Seller TELCO" id="6b5ab4ee-e832-4f95-9279-ebf3b4828e0d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createSeller</con:operation><con:request name="Create Seller TELCO" id="266c18f7-caa6-495e-9d65-5c3ea2ce01cd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateSeller>
@@ -25026,7 +25047,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
          <notification code="MEDIATION_TOPTEN">
             <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
             <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
-            <elFilter>#{event.pathInfo.startsWith("/mediation")}</elFilter>
+            <elFilter>#{event.pathInfo.startsWith("${#Project#provider}/mediation")}</elFilter>
             <scriptInstanceCode>org.meveo.service.script.Mediation_${#TestSuite#ticket}_Flow</scriptInstanceCode>
             <scriptParams>
                <entry>
@@ -25273,7 +25294,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
          <notification code="MEDIATION_ZONING">
             <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
             <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
-            <elFilter>#{event.pathInfo.startsWith("/zoning")}</elFilter>
+            <elFilter>#{event.pathInfo.startsWith("${#Project#provider}/zoning")}</elFilter>
             <scriptInstanceCode>org.meveo.service.script.Mediation_${#TestSuite#ticket}_Flow</scriptInstanceCode>
             <scriptParams>
                <entry>
@@ -25731,7 +25752,409 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
          </serviceTemplate>
       </ws:createServiceTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="68e1ddb8-140a-44ec-bc22-1055b754350f"/><con:assertion type="Simple Contains" id="72b5eb74-4ac5-42bc-8167-77ce6dba2e07" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/><con:setupScript/></con:testSuite><con:testSuite id="016958c9-46b5-450c-9559-db9d3d77bd8e" name="Test suite Customer B2B"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation Offer B2B" searchProperties="true" id="3b1987d4-a358-40ee-b0f5-688f7e20bb8b"><con:settings/><con:testStep type="request" name="Create Offer Telco B2B" id="276bcd23-10ba-4103-a1ec-37ccc2595dca"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create Offer Telco B2B" id="4f037d56-3dc9-4b07-992b-9f9cc199c789"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="68e1ddb8-140a-44ec-bc22-1055b754350f"/><con:assertion type="Simple Contains" id="72b5eb74-4ac5-42bc-8167-77ce6dba2e07" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/><con:setupScript/></con:testSuite><con:testSuite id="259e9f9d-ddae-4642-9dea-611883092228" name="Test suite Customer B2C (Zoning)"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation Offer B2C Zoning" searchProperties="true" id="d4289be0-9cf6-430e-9424-2ac7738c2075"><con:settings/><con:testStep type="request" name="Create Offer Telco B2C Zoning" id="b8446ec2-4eee-441d-99b2-82e447a3beae"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create Offer Telco B2C Zoning" id="4f037d56-3dc9-4b07-992b-9f9cc199c789"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOfferTemplate>
+         <!--Optional:-->
+         <offerTemplate code="OF_TELCO_B2C_${#TestSuite#OFFERVERSION}" description="Offer telco B2C Zoning">
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <serviceTemplates>
+               <!--Zero or more repetitions:-->            
+               <serviceTemplate code="SERV_REC_ONEOFF" description="Monthly recurring">
+               </serviceTemplate>
+               <serviceTemplate code="SERV_VOICE" description="Voice service">
+               </serviceTemplate>
+               <serviceTemplate code="SERV_SMS" description="SMS Service">
+               </serviceTemplate>
+            </serviceTemplates>
+         </offerTemplate>
+      </ws:createOfferTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c7c79097-e452-4901-93a5-9d3312311741"/><con:assertion type="Simple Contains" id="0e5a0378-395f-4390-9f8e-ccc8e0703bd6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_REC" id="36bb88ed-154e-43d2-b8b0-f70f86fbf64b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_REC" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PP_TELCO_B2C_REC_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C recurring">
+            <eventCode>CH_REC_MONTH</eventCode>
+            <!--Optional:-->
+            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+            <!--Optional:-->
+            <amountWithoutTax>8</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>10</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_ONEOFF" id="6009c6b2-4a2f-4b91-94a0-28449d4f48a9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_ONEOFF" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PP_TELCO_B2C_ONEOFF_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C one off">
+            <eventCode>CH_ONESHOT_SUB</eventCode>
+            <!--Optional:-->
+            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+            <!--Optional:-->
+            <amountWithoutTax>0</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>0</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_VOICE_LOCAL" id="171ed690-85b4-4d5d-996b-f952e1af4976"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_VOICE_LOCAL" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PP_TELCO_B2C_VOICE_LOCAL_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C voice local">
+            <eventCode>CH_VOICE_USAGE</eventCode>
+            <!--Optional:-->
+            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+            <!--Optional:-->
+            <amountWithoutTax>0.1</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>0.1</amountWithTax>
+            <criteria3>LOCAL</criteria3>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_VOICE_INT1" id="2bbeadfe-1582-4d02-8df0-7d2dc1bc0a02"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_VOICE_INT1" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PP_TELCO_B2C_VOICE_INT1_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2B voice int1">
+            <eventCode>CH_VOICE_USAGE</eventCode>
+            <!--Optional:-->
+            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+            <!--Optional:-->
+            <amountWithoutTax>0.1</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>0.1</amountWithTax>
+            <criteria3>INTERNATIONAL1</criteria3>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_VOICE_INT2" id="7fa5a6bd-b851-4f38-8916-257720da2c33"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_VOICE_INT2" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PP_TELCO_B2C_VOICE_INT2_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2B voice int2">
+            <eventCode>CH_VOICE_USAGE</eventCode>
+            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+            <amountWithoutTax>0.2</amountWithoutTax>
+            <amountWithTax>0.2</amountWithTax>
+            <criteria3>INTERNATIONAL2</criteria3>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_VOICE_INT3" id="c1cd53e0-857d-404b-9fac-c6a5e808e7b9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_VOICE_INT3" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PP_TELCO_B2C_VOICE_INT3_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2B voice int3">
+            <eventCode>CH_VOICE_USAGE</eventCode>
+            <!--Optional:-->
+            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+            <!--Optional:-->
+            <amountWithoutTax>0.3</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>0.3</amountWithTax>
+            <criteria3>INTERNATIONAL3</criteria3>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_SMS_LOCAL" id="a27f0fe1-1931-4f79-a261-2ecb99c4b567"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_SMS_LOCAL" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PP_TELCO_B2C_SMS_LOCAL_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C SMS">
+            <eventCode>CH_SMS_USAGE</eventCode>
+            <!--Optional:-->
+            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+            <!--Optional:-->
+            <amountWithoutTax>0.5</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>0.5</amountWithTax>
+            <criteria3>LOCAL</criteria3>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_SMS_INT1" id="20853be5-4eb8-4021-8d7a-dc6ac35944ba"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_SMS_INT1" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PP_TELCO_B2C_SMS_INT1_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C SMS">
+            <eventCode>CH_SMS_USAGE</eventCode>
+            <!--Optional:-->
+            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+            <!--Optional:-->
+            <amountWithoutTax>1</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>1</amountWithTax>
+            <criteria3>INTERNATIONAL1</criteria3>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_SMS_INT2" id="3542bf70-185a-457c-aa0e-27bce7e81bc2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_SMS_INT2" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PP_TELCO_B2C_SMS_INT2_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C SMS">
+            <eventCode>CH_SMS_USAGE</eventCode>
+            <!--Optional:-->
+            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+            <!--Optional:-->
+            <amountWithoutTax>2</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>2</amountWithTax>
+            <criteria3>INTERNATIONAL2</criteria3>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_SMS_INT3" id="72b45d23-53c0-4bf2-946e-c0c241306176"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_SMS_INT3" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="PP_TELCO_B2C_SMS_INT3_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C SMS">
+            <eventCode>CH_SMS_USAGE</eventCode>
+            <!--Optional:-->
+            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+            <!--Optional:-->
+            <amountWithoutTax>3</amountWithoutTax>
+            <!--Optional:-->
+            <amountWithTax>3</amountWithTax>
+            <criteria3>INTERNATIONAL3</criteria3>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer for Offer B2C Zoning" searchProperties="true" id="093fda00-b151-425b-b847-350519c1937b"><con:settings/><con:testStep type="request" name="Create customer hierarchy B2C Zoning" id="2e0bf72d-63d9-485e-898b-34b033841603"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer hierarchy B2C Zoning" id="6dbd4fe8-3082-4c18-a36f-3dd00bc55e9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <!--Optional:-->
+         <customerHierarchy>
+            <sellers>
+            <seller code="TELCO" description="TELCO">
+                  <customers>
+                     <!--Zero or more repetitions:-->
+                     <customer code="${#TestSuite#CUST}" description="cust">
+                        <!--Optional:-->
+                        <externalRef1>e1</externalRef1>
+                        <!--Optional:-->
+                        <externalRef2>e2</externalRef2>
+                        <!--Optional:-->
+                        <name>
+                           <!--Optional:-->
+                           <title>Mr</title>
+                           <!--Optional:-->
+                           <firstName></firstName>
+                           <lastName>Opener</lastName>
+                        </name>
+                        <!--Optional:-->
+                        <address>
+                           <!--Optional:-->
+                           <address1>200 Open street</address1>
+                           <!--Optional:-->
+                           <address2></address2>
+                           <!--Optional:-->
+                           <address3></address3>
+                           <!--Optional:-->
+                           <zipCode>20000</zipCode>
+                           <!--Optional:-->
+                           <city>Atlanta</city>
+                           <!--Optional:-->
+                           <country>US</country>                          
+                        </address>
+                        <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>TELCO</customerBrand>
+                        <seller>TELCO</seller>
+                        <customFields>
+                             <customField code="${#TestSuite#ticket}" description="" valueDate="2015-06-15" valuePeriodStartDate="2015-01-01" valuePeriodEndDate="2018-01-01">
+			                <mapValue>
+			                     <entry>
+			                        <key>+32</key>
+			                        <value>
+			                           <stringValue>INTERNATIONAL1</stringValue>
+			                        </value>
+			                     </entry>
+			                     <entry>
+			                        <key>+1</key>
+			                        <value>
+			                           <stringValue>INTERNATIONAL2</stringValue>
+			                        </value>
+			                     </entry>
+			                     <entry>
+			                        <key>+225</key>
+			                        <value>
+			                           <stringValue>INTERNATIONAL3</stringValue>
+			                        </value>
+			                     </entry>
+			                     <entry>
+			                        <key>+33</key>
+			                        <value>
+			                           <stringValue>LOCAL</stringValue>
+			                        </value>
+			                     </entry>
+                  			</mapValue>
+                  			</customField>
+	                 </customFields>
+                        <customerAccounts>
+                           <!--Zero or more repetitions:-->
+                           <customerAccount code="${#TestSuite#CUST}_PAYER" description="Payer">
+                              <!--Optional:-->
+                              <externalRef1>e1</externalRef1>
+                              <!--Optional:-->
+                              <externalRef2>e2</externalRef2>
+                              <!--Optional:-->
+                              <name>
+                                 <!--Optional:-->
+                                 <title>Mr</title>
+                                 <!--Optional:-->
+                                 <firstName></firstName>
+                                 <lastName>Opener</lastName>
+                              </name>
+                              <!--Optional:-->
+                              <address>
+                                 <!--Optional:-->
+                                 <address1>200 Open street</address1>
+                                 <!--Optional:-->
+                                 <address2></address2>
+                                 <!--Optional:-->
+                                 <address3></address3>
+                                 <!--Optional:-->
+                                 <zipCode>20000</zipCode>
+                                 <!--Optional:-->
+                                 <city>Atlanta</city>
+                                 <!--Optional:-->
+                                 <country>US</country>
+                              </address>
+                              
+                              <customer>${#TestSuite#CUST}</customer>
+                              <currency>USD</currency>
+                              <language>ENG</language>
+                              
+                              <billingAccounts>
+                                 <!--Zero or more repetitions:-->
+                                 <billingAccount code="${#TestSuite#CUST}_PAYER_BA" description="POSTPAID Bill account">
+                                    <!--Optional:-->
+                                    <externalRef1>e1</externalRef1>
+                                    <!--Optional:-->
+                                    <externalRef2>e2</externalRef2>
+                                    <!--Optional:-->
+                                    <name>
+                                        <!--Optional:-->
+                                       <title>Mr</title>
+                                       <!--Optional:-->
+                                       <firstName></firstName>
+                                       <lastName>Opener</lastName>
+                                    </name>
+                                    <!--Optional:-->
+                                    <address>
+                                       <!--Optional:-->
+                                       <address1>200 Open street</address1>
+                                       <!--Optional:-->
+                                       <address2></address2>
+                                       <!--Optional:-->
+                                       <address3></address3>
+                                       <!--Optional:-->
+                                       <zipCode>20000</zipCode>
+                                       <!--Optional:-->
+                                       <city>Atlanta</city>
+                                       <!--Optional:-->
+                                       <country>US</country>
+                                    </address>
+                                    
+                                    <customerAccount>${#TestSuite#CUST}_PAYER</customerAccount>
+                                    <billingCycle>BILLCYCLE1</billingCycle>
+                                    <country>US</country>
+                                    <language>ENG</language>
+                                    <paymentMethod>CHECK</paymentMethod>
+                                    
+                                    <userAccounts>
+                                       <!--Zero or more repetitions:-->
+                                       <userAccount code="${#TestSuite#CUST}_OPENER" description="Mr Opener">                                          
+                                          <billingAccount>${#TestSuite#CUST}_PAYER_BA</billingAccount>
+                                          <!--Optional:-->
+                                          <subscriptionDate>2015-07-01</subscriptionDate>
+                                          <subscriptions>
+                                             <!--Zero or more repetitions:-->
+                                             <subscription code="${#TestSuite#CUST}_SUB" description="SUB OPENER">
+                                                <userAccount>${#TestSuite#CUST}_OPENER</userAccount>
+                                                <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
+                                                <subscriptionDate>2015-07-01</subscriptionDate>
+                                                <accesses>
+                                                   <!--Zero or more repetitions:-->
+                                                   <access code="${#TestSuite#CUST}_SUB_AC">
+                                                      <subscription>${#TestSuite#CUST}_SUB</subscription>
+                                                </access>
+                                                </accesses>
+                                                <!--Optional:-->
+                                                <services>
+                                                   <!--Zero or more repetitions:-->
+                                                   <serviceInstance code="SERV_REC_ONEOFF" description="REC">
+                                                      <!--Optional:-->
+                                                      <subscriptionDate>2015-07-01</subscriptionDate>
+                                                      <!--Optional:-->
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                   <serviceInstance code="SERV_VOICE" description="?">
+                                                      <!--Optional:-->
+                                                      <subscriptionDate>2015-07-01</subscriptionDate>
+                                                      <!--Optional:-->
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                   <serviceInstance code="SERV_SMS" description="?">
+                                                      <!--Optional:-->
+                                                      <subscriptionDate>2015-07-01</subscriptionDate>
+                                                      <!--Optional:-->
+                                                      <quantity>1</quantity>
+                                                   </serviceInstance>
+                                                </services>
+                                             </subscription>
+                                          </subscriptions>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8572c8e2-41d0-426a-b196-aa491d7abfee"/><con:assertion type="Simple Contains" name="Contains" id="38fd1305-ba77-49e2-849b-5c7f2d7ae6df"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="a122842d-0233-48e1-9782-4a3bade1eb70" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Charge B2C Zoning" searchProperties="true"><con:settings/><con:testStep type="httprequest" name="CDR VOICE HTTP Request" id="c00dad55-4192-432f-b896-13e33b7fb2a3"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR VOICE HTTP Request" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/zoning</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_SUB_AC</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>100</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-09-01T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>+102030405</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR VOICE HTTP Request 1" id="54f9251b-c151-4400-a874-70b8aef8de92"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR VOICE HTTP Request 1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/zoning</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="ff48def5-0617-4780-9ec9-74e3dc25b93c" name="Invalid HTTP Status Codes"><con:configuration><codes/></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_SUB_AC</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-17T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>+3301010101</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR VOICE HTTP Request 2" id="be263e92-7322-44be-9a3e-dd6279a65e6b"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR VOICE HTTP Request 2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/zoning</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="210a3d80-9ca8-4cf7-90df-e7174db00c81" name="Invalid HTTP Status Codes"><con:configuration><codes/></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_SUB_AC</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-18T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>+3202020202</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR Voice HTTP Request 3" id="b0f9e482-4db6-4d41-997e-29647966803e"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR Voice HTTP Request 3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/zoning</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="9d343718-a8c0-40d2-8e32-749315088c36" name="Invalid HTTP Status Codes"><con:configuration><codes/></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_SUB_AC</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-18T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>+22502020202</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR SMS HTTP Request" id="ac9482cb-ebb1-4e40-9f1e-c50aed705f26"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR SMS HTTP Request" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/zoning</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_SUB_AC</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>1</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-09-01T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>SMS</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>+102030405</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="request" name="Usage rating job" id="c7c07a78-b8fe-4cfc-80f4-f0d6b738fb8b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="Usage rating job" id="8a305f24-bf57-4e5e-aeaf-080ba62f859a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:execute>\r
+         <jobInstanceInfo>\r
+            <timerName>U_Job</timerName>\r
+         </jobInstanceInfo>\r
+      </ws:execute>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>CUST</con:name><con:value>B2C_CUST2_Z</con:value></con:property><con:property><con:name>OFFERVERSION</con:name><con:value>Z_V1</con:value></con:property><con:property><con:name>ticket</con:name><con:value>ZONEPLAN</con:value></con:property></con:properties><con:setupScript/></con:testSuite><con:testSuite id="016958c9-46b5-450c-9559-db9d3d77bd8e" name="Test suite Customer B2B"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation Offer B2B" searchProperties="true" id="3b1987d4-a358-40ee-b0f5-688f7e20bb8b"><con:settings/><con:testStep type="request" name="Create Offer Telco B2B" id="276bcd23-10ba-4103-a1ec-37ccc2595dca"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create Offer Telco B2B" id="4f037d56-3dc9-4b07-992b-9f9cc199c789"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOfferTemplate>
@@ -25836,11 +26259,6 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
             <amountWithoutTax>0.1</amountWithoutTax>
             <!--Optional:-->
             <amountWithTax>0.1</amountWithTax>
-            <!--Optional:-->
-            <criteria1>?</criteria1>
-            <!--Optional:-->
-            <criteria2>?</criteria2>
-            <!--Optional:-->
             <criteria3>LOCAL</criteria3>
             <priority>1</priority>
          </pricePlan>
@@ -25859,12 +26277,6 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
             <amountWithoutTax>0</amountWithoutTax>
             <!--Optional:-->
             <amountWithTax>0</amountWithTax>
-            <!--Optional:-->
-            <criteria1>?</criteria1>
-            <!--Optional:-->
-            <criteria2>?</criteria2>
-            <!--Optional:-->
-            <criteria3>?</criteria3>
             <priority>1</priority>
          </pricePlan>
       </ws:createPricePlan>
@@ -26374,7 +26786,16 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
          </customerHierarchy>
       </ws:customerHierarchyUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8572c8e2-41d0-426a-b196-aa491d7abfee"/><con:assertion type="Simple Contains" name="Contains" id="38fd1305-ba77-49e2-849b-5c7f2d7ae6df"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="eaf2f270-532d-4698-8b33-f68f02ed0e5c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Charge B2B" searchProperties="true"><con:settings/><con:testStep type="httprequest" name="CDR HTTP Request" id="9bfec6f6-e7d2-4f97-9478-09466ee72de0"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/mediation</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_AC_UserS1</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-08-16T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0102030405</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR HTTP Request 1" id="e522ad64-75bd-4430-b203-fb87dc10ed80"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request 1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#project#meveoendpoint}/inbound/demo/mediation</con:endpoint><con:request/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_AC_UserS1</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-17T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0101010101</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR HTTP Request 2" id="1f27578b-83ee-4d45-b6f4-ac8cd1a78985"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request 2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/mediation</con:endpoint><con:request/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_AC_UserS1</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-18T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0202020202</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>CUST</con:name><con:value>B2B_CUST5</con:value></con:property><con:property><con:name>ticket</con:name><con:value>TOPTEN</con:value></con:property></con:properties><con:setupScript/></con:testSuite><con:testSuite id="a1962c99-d024-4406-b2d2-e5c153daa90b" name="Test suite Customer B2C"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation Offer B2C" searchProperties="true" id="f87335a9-2d4f-47c2-8c64-dcb8bad9eda4"><con:settings/><con:testStep type="request" name="Create Prepaid wallet" id="e7f6f6b1-deba-4ee1-a42a-ef043211497b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WalletWsSoapBinding</con:interface><con:operation>createWalletTemplate</con:operation><con:request name="Create Prepaid wallet" id="b2a137ab-167e-4944-b532-2562dfc005ff"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8572c8e2-41d0-426a-b196-aa491d7abfee"/><con:assertion type="Simple Contains" name="Contains" id="38fd1305-ba77-49e2-849b-5c7f2d7ae6df"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="eaf2f270-532d-4698-8b33-f68f02ed0e5c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Charge B2B" searchProperties="true"><con:settings/><con:testStep type="httprequest" name="CDR HTTP Request" id="9bfec6f6-e7d2-4f97-9478-09466ee72de0"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/mediation</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_AC_UserS1</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-08-16T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0102030405</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR HTTP Request 1" id="e522ad64-75bd-4430-b203-fb87dc10ed80"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request 1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#project#meveoendpoint}/inbound/demo/mediation</con:endpoint><con:request/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_AC_UserS1</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-17T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0101010101</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR HTTP Request 2" id="1f27578b-83ee-4d45-b6f4-ac8cd1a78985"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request 2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/mediation</con:endpoint><con:request/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_AC_UserS1</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-18T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>0202020202</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="request" name="Usage rating job" id="14922a0f-6b68-450b-9dc3-fd33955d34bf"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>execute</con:operation><con:request name="Usage rating job" id="8a305f24-bf57-4e5e-aeaf-080ba62f859a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:execute>\r
+         <jobInstanceInfo>\r
+            <timerName>U_Job</timerName>\r
+         </jobInstanceInfo>\r
+      </ws:execute>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>CUST</con:name><con:value>B2B_CUST5</con:value></con:property><con:property><con:name>ticket</con:name><con:value>TOPTEN</con:value></con:property></con:properties><con:setupScript/></con:testSuite><con:testSuite id="a1962c99-d024-4406-b2d2-e5c153daa90b" name="Test suite Customer B2C"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation Offer B2C" searchProperties="true" id="f87335a9-2d4f-47c2-8c64-dcb8bad9eda4"><con:settings/><con:testStep type="request" name="Create Prepaid wallet" id="e7f6f6b1-deba-4ee1-a42a-ef043211497b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>WalletWsSoapBinding</con:interface><con:operation>createWalletTemplate</con:operation><con:request name="Create Prepaid wallet" id="b2a137ab-167e-4944-b532-2562dfc005ff"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/WalletWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createWalletTemplate>
@@ -26387,7 +26808,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
          </walletTemplate>
       </ws:createWalletTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ba6241bf-dee3-457f-874a-8115f3a03a77"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create One off Charge recharge" id="c8fdb1ac-1a2f-4cef-a166-23406c2ffc60"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="Create One off Charge recharge" id="5d29d8d3-2c7c-4e4c-bab8-c27a779b063c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ba6241bf-dee3-457f-874a-8115f3a03a77"/><con:assertion type="Simple Contains" id="b0ed3091-e710-4543-b2da-5857e84d82e9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create One off Charge recharge" id="c8fdb1ac-1a2f-4cef-a166-23406c2ffc60"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="Create One off Charge recharge" id="5d29d8d3-2c7c-4e4c-bab8-c27a779b063c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOneShotChargeTemplate>
@@ -26575,7 +26996,6 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
             <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
             <!--Optional:-->
             <amountWithoutTax>0.2</amountWithoutTax>
-            <!--Optional:-->
             <amountWithTax>0.2</amountWithTax>
             <priority>1</priority>
          </pricePlan>
@@ -26946,440 +27366,4 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
          <cdr>2015-08-01T00:15:11.000Z;50;${#TestSuite#CUST}_AC_UserChild1;VOICE</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="90d6be5a-c28e-4471-8add-46b553e9f065"/><con:assertion type="Simple Contains" id="c20bc35a-d8d3-4ba7-9db1-6e41fb250a89" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>CUST</con:name><con:value>B2C_CUST4</con:value></con:property><con:property><con:name>OFFERVERSION</con:name><con:value>V3</con:value></con:property></con:properties><con:setupScript/></con:testSuite><con:testSuite id="259e9f9d-ddae-4642-9dea-611883092228" name="Test suite Customer B2C (Zoning)"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation Offer B2C Zoning" searchProperties="true" id="d4289be0-9cf6-430e-9424-2ac7738c2075"><con:settings/><con:testStep type="request" name="Create Offer Telco B2C Zoning" id="b8446ec2-4eee-441d-99b2-82e447a3beae"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create Offer Telco B2C Zoning" id="4f037d56-3dc9-4b07-992b-9f9cc199c789"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOfferTemplate>
-         <!--Optional:-->
-         <offerTemplate code="OF_TELCO_B2C_${#TestSuite#OFFERVERSION}" description="Offer telco B2C Zoning">
-            <disabled>false</disabled>
-            <!--Optional:-->
-            <serviceTemplates>
-               <!--Zero or more repetitions:-->            
-               <serviceTemplate code="SERV_REC_ONEOFF" description="Monthly recurring">
-               </serviceTemplate>
-               <serviceTemplate code="SERV_VOICE" description="Voice service">
-               </serviceTemplate>
-               <serviceTemplate code="SERV_SMS" description="SMS Service">
-               </serviceTemplate>
-            </serviceTemplates>
-         </offerTemplate>
-      </ws:createOfferTemplate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c7c79097-e452-4901-93a5-9d3312311741"/><con:assertion type="Simple Contains" id="0e5a0378-395f-4390-9f8e-ccc8e0703bd6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_REC" id="36bb88ed-154e-43d2-b8b0-f70f86fbf64b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_REC" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createPricePlan>
-         <!--Optional:-->
-         <pricePlan code="PP_TELCO_B2C_REC_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C recurring">
-            <eventCode>CH_REC_MONTH</eventCode>
-            <!--Optional:-->
-            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-            <!--Optional:-->
-            <amountWithoutTax>8</amountWithoutTax>
-            <!--Optional:-->
-            <amountWithTax>10</amountWithTax>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createPricePlan>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_ONEOFF" id="6009c6b2-4a2f-4b91-94a0-28449d4f48a9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_ONEOFF" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createPricePlan>
-         <!--Optional:-->
-         <pricePlan code="PP_TELCO_B2C_ONEOFF_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C one off">
-            <eventCode>CH_ONESHOT_SUB</eventCode>
-            <!--Optional:-->
-            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-            <!--Optional:-->
-            <amountWithoutTax>0</amountWithoutTax>
-            <!--Optional:-->
-            <amountWithTax>0</amountWithTax>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createPricePlan>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_VOICE_LOCAL" id="171ed690-85b4-4d5d-996b-f952e1af4976"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_VOICE_LOCAL" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createPricePlan>
-         <!--Optional:-->
-         <pricePlan code="PP_TELCO_B2C_VOICE_LOCAL_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C voice local">
-            <eventCode>CH_VOICE_USAGE</eventCode>
-            <!--Optional:-->
-            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-            <!--Optional:-->
-            <amountWithoutTax>0.1</amountWithoutTax>
-            <!--Optional:-->
-            <amountWithTax>0.1</amountWithTax>
-            <!--Optional:-->
-            <criteria1>?</criteria1>
-            <!--Optional:-->
-            <criteria2>?</criteria2>
-            <!--Optional:-->
-            <criteria3>LOCAL</criteria3>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createPricePlan>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_VOICE_INT1" id="2bbeadfe-1582-4d02-8df0-7d2dc1bc0a02"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_VOICE_INT1" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createPricePlan>
-         <!--Optional:-->
-         <pricePlan code="PP_TELCO_B2C_VOICE_INT1_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2B voice int1">
-            <eventCode>CH_VOICE_USAGE</eventCode>
-            <!--Optional:-->
-            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-            <!--Optional:-->
-            <amountWithoutTax>0.1</amountWithoutTax>
-            <!--Optional:-->
-            <amountWithTax>0.1</amountWithTax>
-            <!--Optional:-->
-            <criteria1>?</criteria1>
-            <!--Optional:-->
-            <criteria2>?</criteria2>
-            <!--Optional:-->
-            <criteria3>INTERNATIONAL1</criteria3>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createPricePlan>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_VOICE_INT2" id="7fa5a6bd-b851-4f38-8916-257720da2c33"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_VOICE_INT2" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createPricePlan>
-         <!--Optional:-->
-         <pricePlan code="PP_TELCO_B2C_VOICE_INT2_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2B voice int2">
-            <eventCode>CH_VOICE_USAGE</eventCode>
-            <!--Optional:-->
-            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-            <!--Optional:-->
-            <amountWithoutTax>0.2</amountWithoutTax>
-            <!--Optional:-->
-            <amountWithTax>0.2</amountWithTax>
-            <!--Optional:-->
-            <criteria1>?</criteria1>
-            <!--Optional:-->
-            <criteria2>?</criteria2>
-            <!--Optional:-->
-            <criteria3>INTERNATIONAL2</criteria3>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createPricePlan>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_VOICE_INT3" id="c1cd53e0-857d-404b-9fac-c6a5e808e7b9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_VOICE_INT3" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createPricePlan>
-         <!--Optional:-->
-         <pricePlan code="PP_TELCO_B2C_VOICE_INT3_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2B voice int3">
-            <eventCode>CH_VOICE_USAGE</eventCode>
-            <!--Optional:-->
-            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-            <!--Optional:-->
-            <amountWithoutTax>0.3</amountWithoutTax>
-            <!--Optional:-->
-            <amountWithTax>0.3</amountWithTax>
-            <!--Optional:-->
-            <criteria1>?</criteria1>
-            <!--Optional:-->
-            <criteria2>?</criteria2>
-            <!--Optional:-->
-            <criteria3>INTERNATIONAL3</criteria3>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createPricePlan>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_SMS_LOCAL" id="a27f0fe1-1931-4f79-a261-2ecb99c4b567"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_SMS_LOCAL" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createPricePlan>
-         <!--Optional:-->
-         <pricePlan code="PP_TELCO_B2C_SMS_LOCAL_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C SMS">
-            <eventCode>CH_SMS_USAGE</eventCode>
-            <!--Optional:-->
-            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-            <!--Optional:-->
-            <amountWithoutTax>0.5</amountWithoutTax>
-            <!--Optional:-->
-            <amountWithTax>0.5</amountWithTax>
-            <!--Optional:-->
-            <criteria1>?</criteria1>
-            <!--Optional:-->
-            <criteria2>?</criteria2>
-            <!--Optional:-->
-            <criteria3>LOCAL</criteria3>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createPricePlan>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_SMS_INT1" id="20853be5-4eb8-4021-8d7a-dc6ac35944ba"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_SMS_INT1" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createPricePlan>
-         <!--Optional:-->
-         <pricePlan code="PP_TELCO_B2C_SMS_INT1_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C SMS">
-            <eventCode>CH_SMS_USAGE</eventCode>
-            <!--Optional:-->
-            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-            <!--Optional:-->
-            <amountWithoutTax>1</amountWithoutTax>
-            <!--Optional:-->
-            <amountWithTax>1</amountWithTax>
-            <!--Optional:-->
-            <criteria1>?</criteria1>
-            <!--Optional:-->
-            <criteria2>?</criteria2>
-            <!--Optional:-->
-            <criteria3>INTERNATIONAL1</criteria3>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createPricePlan>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_SMS_INT2" id="3542bf70-185a-457c-aa0e-27bce7e81bc2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_SMS_INT2" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createPricePlan>
-         <!--Optional:-->
-         <pricePlan code="PP_TELCO_B2C_SMS_INT2_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C SMS">
-            <eventCode>CH_SMS_USAGE</eventCode>
-            <!--Optional:-->
-            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-            <!--Optional:-->
-            <amountWithoutTax>2</amountWithoutTax>
-            <!--Optional:-->
-            <amountWithTax>2</amountWithTax>
-            <!--Optional:-->
-            <criteria1>?</criteria1>
-            <!--Optional:-->
-            <criteria2>?</criteria2>
-            <!--Optional:-->
-            <criteria3>INTERNATIONAL2</criteria3>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createPricePlan>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create price plan PP_TELCO_B2C_SMS_INT3" id="72b45d23-53c0-4bf2-946e-c0c241306176"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="Create price plan PP_TELCO_B2C_SMS_INT3" id="a28c22d8-f75c-48f1-a59f-11302fa7c318"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createPricePlan>
-         <!--Optional:-->
-         <pricePlan code="PP_TELCO_B2C_SMS_INT3_${#TestSuite#OFFERVERSION}" description="Price Plan telco B2C SMS">
-            <eventCode>CH_SMS_USAGE</eventCode>
-            <!--Optional:-->
-            <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-            <!--Optional:-->
-            <amountWithoutTax>3</amountWithoutTax>
-            <!--Optional:-->
-            <amountWithTax>3</amountWithTax>
-            <!--Optional:-->
-            <criteria1>?</criteria1>
-            <!--Optional:-->
-            <criteria2>?</criteria2>
-            <!--Optional:-->
-            <criteria3>INTERNATIONAL3</criteria3>
-            <priority>1</priority>
-         </pricePlan>
-      </ws:createPricePlan>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d202771b-4500-48a9-8c59-5af15f07dd8a"/><con:assertion type="Simple Contains" id="d4660673-39e4-4cde-8caf-7963e93e4f53" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer for Offer B2C Zoning" searchProperties="true" id="093fda00-b151-425b-b847-350519c1937b"><con:settings/><con:testStep type="request" name="Create customer hierarchy B2C Zoning" id="2e0bf72d-63d9-485e-898b-34b033841603"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer hierarchy B2C Zoning" id="6dbd4fe8-3082-4c18-a36f-3dd00bc55e9a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:customerHierarchyUpdate>
-         <!--Optional:-->
-         <customerHierarchy>
-            <sellers>
-            <seller code="TELCO" description="TELCO">
-                  <customers>
-                     <!--Zero or more repetitions:-->
-                     <customer code="${#TestSuite#CUST}" description="cust">
-                        <!--Optional:-->
-                        <externalRef1>e1</externalRef1>
-                        <!--Optional:-->
-                        <externalRef2>e2</externalRef2>
-                        <!--Optional:-->
-                        <name>
-                           <!--Optional:-->
-                           <title>Mr</title>
-                           <!--Optional:-->
-                           <firstName></firstName>
-                           <lastName>Opener</lastName>
-                        </name>
-                        <!--Optional:-->
-                        <address>
-                           <!--Optional:-->
-                           <address1>200 Open street</address1>
-                           <!--Optional:-->
-                           <address2></address2>
-                           <!--Optional:-->
-                           <address3></address3>
-                           <!--Optional:-->
-                           <zipCode>20000</zipCode>
-                           <!--Optional:-->
-                           <city>Atlanta</city>
-                           <!--Optional:-->
-                           <country>US</country>                          
-                        </address>
-                        <customerCategory>CLIENT</customerCategory>
-                        <customerBrand>TELCO</customerBrand>
-                        <seller>TELCO</seller>
-                        <customFields>
-                             <customField code="${#TestSuite#ticket}" description="" valueDate="2015-06-15" valuePeriodStartDate="2015-01-01" valuePeriodEndDate="2018-01-01">
-			                <mapValue>
-			                     <entry>
-			                        <key>+32</key>
-			                        <value>
-			                           <stringValue>INTERNATIONAL1</stringValue>
-			                        </value>
-			                     </entry>
-			                     <entry>
-			                        <key>+1</key>
-			                        <value>
-			                           <stringValue>INTERNATIONAL2</stringValue>
-			                        </value>
-			                     </entry>
-			                     <entry>
-			                        <key>+225</key>
-			                        <value>
-			                           <stringValue>INTERNATIONAL3</stringValue>
-			                        </value>
-			                     </entry>
-			                     <entry>
-			                        <key>+33</key>
-			                        <value>
-			                           <stringValue>LOCAL</stringValue>
-			                        </value>
-			                     </entry>
-                  			</mapValue>
-                  			</customField>
-	                 </customFields>
-                        <customerAccounts>
-                           <!--Zero or more repetitions:-->
-                           <customerAccount code="${#TestSuite#CUST}_PAYER" description="Payer">
-                              <!--Optional:-->
-                              <externalRef1>e1</externalRef1>
-                              <!--Optional:-->
-                              <externalRef2>e2</externalRef2>
-                              <!--Optional:-->
-                              <name>
-                                 <!--Optional:-->
-                                 <title>Mr</title>
-                                 <!--Optional:-->
-                                 <firstName></firstName>
-                                 <lastName>Opener</lastName>
-                              </name>
-                              <!--Optional:-->
-                              <address>
-                                 <!--Optional:-->
-                                 <address1>200 Open street</address1>
-                                 <!--Optional:-->
-                                 <address2></address2>
-                                 <!--Optional:-->
-                                 <address3></address3>
-                                 <!--Optional:-->
-                                 <zipCode>20000</zipCode>
-                                 <!--Optional:-->
-                                 <city>Atlanta</city>
-                                 <!--Optional:-->
-                                 <country>US</country>
-                              </address>
-                              
-                              <customer>${#TestSuite#CUST}</customer>
-                              <currency>USD</currency>
-                              <language>ENG</language>
-                              
-                              <billingAccounts>
-                                 <!--Zero or more repetitions:-->
-                                 <billingAccount code="${#TestSuite#CUST}_PAYER_BA" description="POSTPAID Bill account">
-                                    <!--Optional:-->
-                                    <externalRef1>e1</externalRef1>
-                                    <!--Optional:-->
-                                    <externalRef2>e2</externalRef2>
-                                    <!--Optional:-->
-                                    <name>
-                                        <!--Optional:-->
-                                       <title>Mr</title>
-                                       <!--Optional:-->
-                                       <firstName></firstName>
-                                       <lastName>Opener</lastName>
-                                    </name>
-                                    <!--Optional:-->
-                                    <address>
-                                       <!--Optional:-->
-                                       <address1>200 Open street</address1>
-                                       <!--Optional:-->
-                                       <address2></address2>
-                                       <!--Optional:-->
-                                       <address3></address3>
-                                       <!--Optional:-->
-                                       <zipCode>20000</zipCode>
-                                       <!--Optional:-->
-                                       <city>Atlanta</city>
-                                       <!--Optional:-->
-                                       <country>US</country>
-                                    </address>
-                                    
-                                    <customerAccount>${#TestSuite#CUST}_PAYER</customerAccount>
-                                    <billingCycle>BILLCYCLE1</billingCycle>
-                                    <country>US</country>
-                                    <language>ENG</language>
-                                    <paymentMethod>CHECK</paymentMethod>
-                                    
-                                    <userAccounts>
-                                       <!--Zero or more repetitions:-->
-                                       <userAccount code="${#TestSuite#CUST}_OPENER" description="Mr Opener">                                          
-                                          <billingAccount>${#TestSuite#CUST}_PAYER_BA</billingAccount>
-                                          <!--Optional:-->
-                                          <subscriptionDate>2015-07-01</subscriptionDate>
-                                          <subscriptions>
-                                             <!--Zero or more repetitions:-->
-                                             <subscription code="${#TestSuite#CUST}_SUB" description="SUB OPENER">
-                                                <userAccount>${#TestSuite#CUST}_OPENER</userAccount>
-                                                <offerTemplate>OF_TELCO_B2C_${#TestSuite#OFFERVERSION}</offerTemplate>
-                                                <subscriptionDate>2015-07-01</subscriptionDate>
-                                                <accesses>
-                                                   <!--Zero or more repetitions:-->
-                                                   <access code="${#TestSuite#CUST}_SUB_AC">
-                                                      <subscription>${#TestSuite#CUST}_SUB</subscription>
-                                                </access>
-                                                </accesses>
-                                                <!--Optional:-->
-                                                <services>
-                                                   <!--Zero or more repetitions:-->
-                                                   <serviceInstance code="SERV_REC_ONEOFF" description="REC">
-                                                      <!--Optional:-->
-                                                      <subscriptionDate>2015-07-01</subscriptionDate>
-                                                      <!--Optional:-->
-                                                      <quantity>1</quantity>
-                                                   </serviceInstance>
-                                                   <serviceInstance code="SERV_VOICE" description="?">
-                                                      <!--Optional:-->
-                                                      <subscriptionDate>2015-07-01</subscriptionDate>
-                                                      <!--Optional:-->
-                                                      <quantity>1</quantity>
-                                                   </serviceInstance>
-                                                   <serviceInstance code="SERV_SMS" description="?">
-                                                      <!--Optional:-->
-                                                      <subscriptionDate>2015-07-01</subscriptionDate>
-                                                      <!--Optional:-->
-                                                      <quantity>1</quantity>
-                                                   </serviceInstance>
-                                                </services>
-                                             </subscription>
-                                          </subscriptions>
-                                       </userAccount>
-                                    </userAccounts>
-                                 </billingAccount>
-                              </billingAccounts>
-                           </customerAccount>
-                        </customerAccounts>
-                     </customer>
-                  </customers>
-               </seller>
-            </sellers>
-         </customerHierarchy>
-      </ws:customerHierarchyUpdate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8572c8e2-41d0-426a-b196-aa491d7abfee"/><con:assertion type="Simple Contains" name="Contains" id="38fd1305-ba77-49e2-849b-5c7f2d7ae6df"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="a122842d-0233-48e1-9782-4a3bade1eb70" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Charge B2C Zoning" searchProperties="true"><con:settings/><con:testStep type="httprequest" name="CDR VOICE HTTP Request" id="c00dad55-4192-432f-b896-13e33b7fb2a3"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR VOICE HTTP Request" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/DEMO/zoning</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_SUB_AC</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>100</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-09-01T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>+102030405</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR VOICE HTTP Request 1" id="54f9251b-c151-4400-a874-70b8aef8de92"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR VOICE HTTP Request 1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/DEMO/zoning</con:endpoint><con:request/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_SUB_AC</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-17T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>+3301010101</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR VOICE HTTP Request 2" id="be263e92-7322-44be-9a3e-dd6279a65e6b"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR VOICE HTTP Request 2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/DEMO/zoning</con:endpoint><con:request/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_SUB_AC</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-18T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>+3202020202</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR Voice HTTP Request 3" id="b0f9e482-4db6-4d41-997e-29647966803e"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR Voice HTTP Request 3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/DEMO/zoning</con:endpoint><con:request/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_SUB_AC</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>10</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-06-18T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>VOICE</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>+22502020202</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:testStep type="httprequest" name="CDR SMS HTTP Request" id="ac9482cb-ebb1-4e40-9f1e-c50aed705f26"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR SMS HTTP Request" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08ucGFzc3dvcmQ=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/DEMO/zoning</con:endpoint><con:request/><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><con:parameter><con:name>accessId</con:name><con:value>${#TestSuite#CUST}_SUB_AC</con:value><con:style>QUERY</con:style><con:default>toto</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>quantity</con:name><con:value>1</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>time</con:name><con:value>2015-09-01T00:00:22</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param1</con:name><con:value>SMS</con:value><con:style>QUERY</con:style></con:parameter><con:parameter><con:name>param2</con:name><con:value>+102030405</con:value><con:style>QUERY</con:style></con:parameter></con:parameters></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>CUST</con:name><con:value>B2C_CUST2_Z</con:value></con:property><con:property><con:name>OFFERVERSION</con:name><con:value>Z_V1</con:value></con:property><con:property><con:name>ticket</con:name><con:value>ZONEPLAN</con:value></con:property></con:properties><con:setupScript/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>TELCO.ADMIN</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>TELCO.password</con:value></con:property><con:property><con:name>VERSIONOFFER</con:name><con:value>V0</con:value></con:property><con:property><con:name>provider</con:name><con:value>TELCO</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="90d6be5a-c28e-4471-8add-46b553e9f065"/><con:assertion type="Simple Contains" id="c20bc35a-d8d3-4ba7-9db1-6e41fb250a89" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>CUST</con:name><con:value>B2C_CUST4</con:value></con:property><con:property><con:name>OFFERVERSION</con:name><con:value>V3</con:value></con:property></con:properties><con:setupScript/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>TELCO.ADMIN</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>TELCO.password</con:value></con:property><con:property><con:name>VERSIONOFFER</con:name><con:value>V0</con:value></con:property><con:property><con:name>provider</con:name><con:value>TELCO</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

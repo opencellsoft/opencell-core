@@ -22,7 +22,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
-import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 
 @Startup
@@ -30,7 +30,7 @@ import org.meveo.service.script.ScriptInterface;
 public class ScriptingJob extends Job {
 	
 	@Inject
-	JavaCompilerManager javaCompilerManager;
+	ScriptInstanceService scriptInstanceService;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
@@ -38,7 +38,7 @@ public class ScriptingJob extends Job {
 
         CustomFieldInstance scriptCFI = jobInstance.getCustomFields().get("ScriptingJob_script");
         String scriptCode = scriptCFI.getEntityReferenceValue().getCode();
-        Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(currentUser.getProvider(),scriptCode);
+        Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(),scriptCode);
     	if(scriptInterfaceClass==null){
     		result.registerError("cannot find script with code "+scriptCode);
     	} else {

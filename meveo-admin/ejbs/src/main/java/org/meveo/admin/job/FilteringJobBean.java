@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -20,7 +19,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.filter.FilterService;
-import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
@@ -33,8 +32,8 @@ public class FilteringJobBean {
 	@Inject
 	private FilterService filterService;
 	
-	@EJB
-	private JavaCompilerManager javaCompilerManager;
+	@Inject
+	private ScriptInstanceService scriptInstanceService;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -45,7 +44,7 @@ public class FilteringJobBean {
 		Provider provider = currentUser.getProvider();
 		Filter filter = filterService.findByCode(filterCode, provider);
 		if (filter != null) {
-			Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(currentUser.getProvider(), scriptInstanceCode);
+			Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(), scriptInstanceCode);
 			ScriptInterface scriptInterface = null;
 			try {
 				scriptInterface = scriptInterfaceClass.newInstance();

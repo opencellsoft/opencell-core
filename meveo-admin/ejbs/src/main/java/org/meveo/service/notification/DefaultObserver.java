@@ -51,8 +51,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
-import org.meveo.service.communication.impl.MeveoInstanceService;
-import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
@@ -89,7 +88,7 @@ public class DefaultObserver {
     private RemoteInstanceNotifier remoteInstanceNotifier;
     
     @Inject
-    private JavaCompilerManager javaCompilerManager;
+    private ScriptInstanceService scriptInstanceService;
     
     @Inject
     private JobTriggerLauncher jobTriggerLauncher;
@@ -114,7 +113,7 @@ public class DefaultObserver {
 
     private void executeScript(ScriptInstance scriptInstance, Object o, Map<String, String> params) throws BusinessException {
         log.debug("execute notification script: {}", scriptInstance.getCode());
-        Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
+        Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
         try{
         	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
         	Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
@@ -135,10 +134,12 @@ public class DefaultObserver {
     private void fireNotification(Notification notif, IEntity e) {
         log.debug("Fire Notification for notif with {} and entity with id={}", notif, e.getId());
         try {
-            if (!(notif instanceof WebHook)) {
-            	if(notif.getScriptInstance() != null){
-            		executeScript(notif.getScriptInstance(), e,notif.getParams());
-            	}
+            if (!matchExpression(notif.getElFilter(), e)) {
+            	log.debug("Expression {} does not match", notif.getElFilter());
+                return;
+            }
+            if (notif.getScriptInstance()!=null) {
+                executeScript(notif.getScriptInstance(), e,notif.getParams());
             }
             
             boolean sendNotify = true;

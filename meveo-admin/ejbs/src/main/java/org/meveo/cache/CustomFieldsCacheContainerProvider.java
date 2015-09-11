@@ -336,6 +336,7 @@ public class CustomFieldsCacheContainerProvider {
                 }
             }
             if (periodFound != null) {
+            	log.debug("found period, keyToMatch={}",keyToMatch);
                 return periodFound.getClosestMatchValue(keyToMatch);
             }
         }

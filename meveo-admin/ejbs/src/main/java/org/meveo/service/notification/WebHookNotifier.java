@@ -25,7 +25,7 @@ import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.MeveoJpaForJobs;
 import org.primefaces.json.JSONException;
@@ -46,7 +46,7 @@ public class WebHookNotifier {
 	NotificationHistoryService notificationHistoryService;
 	
 	@Inject
-	JavaCompilerManager javaCompilerManager;
+	ScriptInstanceService scriptInstanceService;
 
 	private String evaluate(String expression, IEntity e) throws BusinessException {
 		HashMap<Object, Object> userMap = new HashMap<Object, Object>();
@@ -154,7 +154,7 @@ public class WebHookNotifier {
 				userMap.put("event", e);
 				userMap.put("response",result);
 			
-			        Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(webHook.getScriptInstance().getProvider(),webHook.getScriptInstance().getCode());
+			        Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(webHook.getScriptInstance().getProvider(),webHook.getScriptInstance().getCode());
 			        try{
 			        	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
 			        	Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
