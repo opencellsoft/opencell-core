@@ -24,7 +24,7 @@ public class ScriptInstanceDto {
 	@XmlElement
 	private String type;
 
-	@XmlElement
+	@XmlElement(required = true)
 	private String script;
 
 	public ScriptInstanceDto() {
