@@ -51,7 +51,6 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
-import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;

@@ -4,7 +4,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="objectId" value="#{providerBean.objectId}" />
+            <f:viewParam name="objectId" value="#{providerBean.objectId}" /> 
         </f:metadata>
     </ui:define>
     
@@ -71,6 +71,21 @@
 								
 							<hf:formField label="#{messages['provider.email']}"
 								field="email" id="email"/>
+								
+							<hf:formField
+								label="#{messages['bankCoordinates.bic']}"
+								field="bankCoordinates" childField="bic" size="15"
+								maxlength="11" />
+								
+							<hf:formField
+								label="#{messages['bankCoordinates.iban']}"
+								field="bankCoordinates" childField="iban" size="45"
+								maxlength="34" />
+								
+							<hf:formField
+								label="#{messages['bankCoordinates.ics']}"
+								field="bankCoordinates" childField="ics" size="45"
+								maxlength="35" />
 							
 							<hf:formField label="#{messages['invoiceConfiguration.displaySubscriptions']}"
 								field="invoiceConfiguration" childField="displaySubscriptions" id="displaySubscriptions"/>

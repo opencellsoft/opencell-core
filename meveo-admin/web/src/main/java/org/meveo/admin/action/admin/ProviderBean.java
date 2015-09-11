@@ -24,6 +24,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.crm.Provider;
@@ -91,6 +92,9 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 	   	    entity.setInvoiceConfiguration(invoiceConfiguration);
 	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
 			}
+		if (entity.getBankCoordinates() == null) {
+			entity.setBankCoordinates(new BankCoordinates());
+		}
 		}catch(BusinessException e){
 		  log.error("error while saving invoiceConfiguration "+e);	
 		 }

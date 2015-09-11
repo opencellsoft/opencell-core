@@ -89,6 +89,7 @@ public class CachedCFPeriodValue implements Serializable {
         Object valueFound = null;
         Map<String, Object> mapValue = (Map<String, Object>) value;
         for (int i = Math.min(keyToMatch.length(), maxKeyLength); i > 0; i--) {
+        	System.out.println("test "+keyToMatch.substring(0, i));
             valueFound = mapValue.get(keyToMatch.substring(0, i));
             if (valueFound != null) {
                 return valueFound;
