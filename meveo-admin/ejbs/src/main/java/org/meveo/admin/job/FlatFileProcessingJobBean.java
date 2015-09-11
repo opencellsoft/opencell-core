@@ -26,7 +26,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
@@ -42,7 +42,7 @@ public class FlatFileProcessingJobBean {
 	private Logger log;
 	
 	@Inject
-	private JavaCompilerManager javaCompilerManager;
+	private ScriptInstanceService scriptInstanceService;
 
 	String fileName;
 	String inputDir;
@@ -90,7 +90,7 @@ public class FlatFileProcessingJobBean {
 			log.info("InputFiles job {} in progress...", file.getName());
 			fileName = file.getName();
 			File currentFile = FileUtils.addExtension(file, ".processing");			
-			Class<org.meveo.service.script.ScriptInterface> flowScriptClass = javaCompilerManager.getScriptInterface(provider,scriptInstanceFlowCode);
+			Class<org.meveo.service.script.ScriptInterface> flowScriptClass = scriptInstanceService.getScriptInterface(provider,scriptInstanceFlowCode);
 			ScriptInterface script = null;
 			try {					
 				ConfigurationReader parser = new ConfigurationReader();

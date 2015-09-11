@@ -22,13 +22,11 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -47,9 +45,6 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	 */
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
-	
-	@Inject
-	private JavaCompilerManager javaCompilerManager;
 
 	
 	/**
@@ -108,18 +103,16 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	
 	@Override
 	public String saveOrUpdate(ScriptInstance entity) throws BusinessException {
-		String packageName = javaCompilerManager.getPackageName(entity.getScript());
-		String className = javaCompilerManager.getClassName(entity.getScript());
-		if(packageName == null || className == null){
-			messages.error(new BundleKey("messages", "message.scriptInstance.sourceInvalid"));
-			return null;
-		}
-		entity.setCode(packageName+"."+className);
-		String result = super.saveOrUpdate(entity);		
-		javaCompilerManager.compileScript(entity);	
-		entity = scriptInstanceService.findById(entity.getId());
-		if(entity.getError().booleanValue()){
-			result=null;	
+		String result = getListViewName();
+		try {
+			scriptInstanceService.saveOrUpdate(entity, getCurrentUser(), getCurrentProvider());
+			if(entity.getError().booleanValue()){
+				result = null;	
+			}
+			 
+		} catch (Exception e) {
+			messages.error(e.getMessage());
+			result = null;
 		}
 		return result;
 	}

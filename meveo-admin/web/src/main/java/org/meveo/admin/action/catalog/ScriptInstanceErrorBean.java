@@ -23,14 +23,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInstanceErrorService;
-import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -49,10 +45,7 @@ public class ScriptInstanceErrorBean extends BaseBean<ScriptInstanceError> {
 	@Inject
 	private ScriptInstanceErrorService scriptInstanceErrorService;
 	
-	@Inject
-	private JavaCompilerManager javaCompilerManager;
 
-	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
