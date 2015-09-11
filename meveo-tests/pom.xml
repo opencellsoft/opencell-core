@@ -12,7 +12,11 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <endPoint>http://localhost:8080/meveo/</endPoint> 
+    <endPoint>http://localhost:8080/</endPoint>
+    <meveoUrl>localhost:8080/meveo</meveoUrl>
+    <username>meveo.admin</username>
+    <password>meveo.admin</password>
+    <authorization>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</authorization> 
  </properties>
 	<repositories>
 		<repository>
@@ -42,6 +46,12 @@
 	    <exportwAll>true</exportwAll>
 	    <printReport>true</printReport>
             <testFailIgnore>false</testFailIgnore>
+                            <projectProperties>
+                                <projectProperty>meveoUrl=${meveoUrl}</projectProperty>
+                                <projectProperty>username=${username}</projectProperty>
+                                <projectProperty>password=${password}</projectProperty>
+                                <projectProperty>authorization=${authorization}</projectProperty>
+                            </projectProperties>
 	  </configuration>
 	  <executions>
 	    <execution>
@@ -50,10 +60,9 @@
               <goals>
                 <goal>test</goal>
               </goals>
-<!--		<configuration>
-            	 <projectFile>${basedir}/api/soapui/Jax-Ws_NONREG.xml</projectFile>
+		<configuration>
+<!--            	 <projectFile>${basedir}/api/soapui/Jax-Ws_NONREG.xml</projectFile> -->
 		</configuration>
--->
 	    </execution>
 	  </executions>
 	  </plugin>
