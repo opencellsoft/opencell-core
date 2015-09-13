@@ -8,8 +8,13 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.hibernate.service.jta.platform.internal.JOnASJtaPlatform;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldValueDto;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -18,6 +23,8 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -251,6 +258,86 @@ public class JobInstanceApi extends BaseApi {
 			create(jobInstanceDto, currentUser);
 		} else {
 			update(jobInstanceDto, currentUser);
+		}
+	}
+	
+	/**
+	 * Retrieves a Job Instance base on the code if it is existing.
+	 * @param code
+	 * @param provider
+	 * @return
+	 * @throws MeveoApiException
+	 */
+	public JobInstanceDto find(String code, Provider provider) throws MeveoApiException {
+		
+		if (!StringUtils.isBlank(code)) {
+			JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
+			if (jobInstance != null) {
+				JobInstanceDto jobInstanceDto = new JobInstanceDto();
+				
+				jobInstanceDto.setJobCategory(jobInstance.getJobCategoryEnum().toString()); //TODO please review if correct
+				jobInstanceDto.setJobTemplate(jobInstance.getJobTemplate());
+				jobInstanceDto.setCode(jobInstance.getCode());
+				jobInstanceDto.setDescription(jobInstance.getDescription());
+				
+				if (jobInstance.getFollowingJob() != null) {
+					jobInstanceDto.setFollowingJob(jobInstance.getFollowingJob().getCode());
+				}
+				
+				jobInstanceDto.setParameter(jobInstance.getParametres());
+				jobInstanceDto.setActive(jobInstance.isActive());
+				jobInstanceDto.setUserId(jobInstance.getUserId());
+				
+				//TODO please review if correct
+				Map<String, CustomFieldInstance> customFields = jobInstance.getCustomFields();
+				CustomFieldsDto customFieldsDto = new CustomFieldsDto();
+				if (customFields != null) {
+					for (CustomFieldInstance cfi : customFields.values()) {
+						customFieldsDto.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+					}
+				}
+				
+				jobInstanceDto.setCustomFields(customFieldsDto);
+				jobInstanceDto.setTimerCode(jobInstance.getTimerEntity().toString());
+				
+				return jobInstanceDto;
+			} 
+			
+			throw new EntityDoesNotExistsException(JobInstance.class, code);
+			
+		} else {
+			if (StringUtils.isBlank(code)) {
+				missingParameters.add("code");
+			}
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * Removes a Job Instance base on a code.
+	 * 
+	 * @param code
+	 * @param provider
+	 * @throws MeveoApiException
+	 */
+	public void remove(String code, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(code)) {
+			JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
+			
+			if (jobInstance == null) {
+				throw new EntityDoesNotExistsException(JobInstance.class, code);
+			}
+			jobInstanceService.remove(jobInstance);
+			
+		} else {
+			if (StringUtils.isBlank(code)) {
+				missingParameters.add("code");
+			}
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 	
