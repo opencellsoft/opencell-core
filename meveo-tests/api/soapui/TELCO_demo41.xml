@@ -22294,8 +22294,8 @@
          </invoiceCategory>
       </ws:createOrUpdateInvoiceCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateInvoiceCategory"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/JobWs?wsdl" id="0eb58c11-ce7f-44a5-bd1e-0a6aec7a9961" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://i.meveo.info/meveo/JobWs?wsdl"><con:part><con:url>http://i.meveo.info/meveo/JobWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="JobWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
-  <wsdl:import location="http://i.meveo.info/meveo/JobWs?wsdl=JobWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateInvoiceCategory"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/JobWs?wsdl" id="0eb58c11-ce7f-44a5-bd1e-0a6aec7a9961" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/JobWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/JobWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="JobWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/JobWs?wsdl=JobWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="JobWsSoapBinding" type="ns1:JobWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="createTimer">
@@ -22304,51 +22304,6 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createTimerResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="update">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="update">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateJobInstance">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateJobInstance">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateJobInstanceResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateTimer">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateTimer">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateTimerResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateTimer">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateTimer">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateTimerResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="index">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="index">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="indexResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -22361,6 +22316,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateTimer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateTimer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateTimerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="create">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="create">
@@ -22370,13 +22334,49 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateJobInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateJobInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateJobInstanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="update">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateTimer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateTimer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateTimerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="JobWs">
     <wsdl:port binding="tns:JobWsSoapBinding" name="JobWsImplPort">
-      <soap:address location="http://i.meveo.info/meveo/JobWs"/>
+      <soap:address location="http://localhost:8080/meveo/JobWs"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://i.meveo.info/meveo/JobWs?wsdl=JobWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="JobWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/JobWs?wsdl=JobWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="JobWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
       <xs:element name="ActionStatus" type="tns:actionStatus"/>
@@ -22440,7 +22440,36 @@
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="update">
+      <xs:complexType name="execute">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="jobInstanceInfo" type="tns:jobInstanceInfoDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="jobInstanceInfoDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timerName" type="xs:string"/>
+          <xs:element minOccurs="0" name="lastTransactionDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="billingCycle" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="executeResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateTimer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateTimerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="create">
         <xs:sequence>
           <xs:element minOccurs="0" name="jobInstance" type="tns:jobInstanceDto"/>
         </xs:sequence>
@@ -22520,27 +22549,7 @@
         <xs:attribute name="classname" type="xs:string" use="required"/>
         <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
-      <xs:complexType name="updateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateTimer">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateTimerResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateTimer">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateTimerResponse">
+      <xs:complexType name="createResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -22563,31 +22572,22 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="execute">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="jobInstanceInfo" type="tns:jobInstanceInfoDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="jobInstanceInfoDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="timerName" type="xs:string"/>
-          <xs:element minOccurs="0" name="lastTransactionDate" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
-          <xs:element minOccurs="0" name="billingCycle" type="xs:string"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-      </xs:complexType>
-      <xs:complexType name="executeResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="create">
+      <xs:complexType name="update">
         <xs:sequence>
           <xs:element minOccurs="0" name="jobInstance" type="tns:jobInstanceDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createResponse">
+      <xs:complexType name="updateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateTimer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateTimerResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -22600,38 +22600,23 @@
       </xs:simpleType>
     </xs:schema>
   </wsdl:types>
-  <wsdl:message name="createTimer">
-    <wsdl:part element="ns1:createTimer" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createTimerResponse">
-    <wsdl:part element="ns1:createTimerResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateResponse">
-    <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="executeResponse">
-    <wsdl:part element="ns1:executeResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateTimer">
-    <wsdl:part element="ns1:updateTimer" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createResponse">
-    <wsdl:part element="ns1:createResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateTimerResponse">
     <wsdl:part element="ns1:createOrUpdateTimerResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateJobInstanceResponse">
-    <wsdl:part element="ns1:createOrUpdateJobInstanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateTimerResponse">
     <wsdl:part element="ns1:updateTimerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="indexResponse">
-    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="execute">
     <wsdl:part element="ns1:execute" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateTimer">
+    <wsdl:part element="ns1:updateTimer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateJobInstanceResponse">
+    <wsdl:part element="ns1:createOrUpdateJobInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createResponse">
+    <wsdl:part element="ns1:createResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="index">
     <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
@@ -22639,31 +22624,46 @@
   <wsdl:message name="update">
     <wsdl:part element="ns1:update" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateJobInstance">
-    <wsdl:part element="ns1:createOrUpdateJobInstance" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateTimer">
     <wsdl:part element="ns1:createOrUpdateTimer" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createTimer">
+    <wsdl:part element="ns1:createTimer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="executeResponse">
+    <wsdl:part element="ns1:executeResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateResponse">
+    <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="create">
     <wsdl:part element="ns1:create" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateJobInstance">
+    <wsdl:part element="ns1:createOrUpdateJobInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createTimerResponse">
+    <wsdl:part element="ns1:createTimerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="JobWs">
     <wsdl:operation name="createTimer">
       <wsdl:input message="ns1:createTimer" name="createTimer"></wsdl:input>
       <wsdl:output message="ns1:createTimerResponse" name="createTimerResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="update">
-      <wsdl:input message="ns1:update" name="update"></wsdl:input>
-      <wsdl:output message="ns1:updateResponse" name="updateResponse"></wsdl:output>
+    <wsdl:operation name="execute">
+      <wsdl:input message="ns1:execute" name="execute"></wsdl:input>
+      <wsdl:output message="ns1:executeResponse" name="executeResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateTimer">
       <wsdl:input message="ns1:updateTimer" name="updateTimer"></wsdl:input>
       <wsdl:output message="ns1:updateTimerResponse" name="updateTimerResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createOrUpdateTimer">
-      <wsdl:input message="ns1:createOrUpdateTimer" name="createOrUpdateTimer"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateTimerResponse" name="createOrUpdateTimerResponse"></wsdl:output>
+    <wsdl:operation name="create">
+      <wsdl:input message="ns1:create" name="create"></wsdl:input>
+      <wsdl:output message="ns1:createResponse" name="createResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOrUpdateJobInstance">
       <wsdl:input message="ns1:createOrUpdateJobInstance" name="createOrUpdateJobInstance"></wsdl:input>
@@ -22673,21 +22673,21 @@
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
       <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="execute">
-      <wsdl:input message="ns1:execute" name="execute"></wsdl:input>
-      <wsdl:output message="ns1:executeResponse" name="executeResponse"></wsdl:output>
+    <wsdl:operation name="update">
+      <wsdl:input message="ns1:update" name="update"></wsdl:input>
+      <wsdl:output message="ns1:updateResponse" name="updateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="create">
-      <wsdl:input message="ns1:create" name="create"></wsdl:input>
-      <wsdl:output message="ns1:createResponse" name="createResponse"></wsdl:output>
+    <wsdl:operation name="createOrUpdateTimer">
+      <wsdl:input message="ns1:createOrUpdateTimer" name="createOrUpdateTimer"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateTimerResponse" name="createOrUpdateTimerResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:endpoint>http://meveo-403.cloudapp.net/meveo/JobWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="2ba40869-de85-494a-a503-b9a94768d6fc"><con:settings/><con:call name="Request 1" id="5c1f5732-1889-459b-9c9a-5a9583fa9506"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:endpoint>http://meveo-403.cloudapp.net/meveo/JobWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="2ba40869-de85-494a-a503-b9a94768d6fc"><con:settings/><con:call name="Request 1" id="5c1f5732-1889-459b-9c9a-5a9583fa9506"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/index"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="022ff8d5-607f-4f1a-adb5-44568bd3265b" isOneWay="false" action="" name="createTimer" bindingOperationName="createTimer" type="Request-Response" outputName="createTimerResponse" inputName="createTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c5bd8bcd-cdbe-4fcf-b4ed-acbaeaaa7fa5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/index"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="022ff8d5-607f-4f1a-adb5-44568bd3265b" isOneWay="false" action="" name="createTimer" bindingOperationName="createTimer" type="Request-Response" outputName="createTimerResponse" inputName="createTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c5bd8bcd-cdbe-4fcf-b4ed-acbaeaaa7fa5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createTimer>
@@ -22697,7 +22697,7 @@
          </timerEntity>
       </ws:createTimer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createTimer"/></con:call></con:operation><con:operation id="ac87c8ed-00fd-43fd-8a37-583f50cd260d" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d4991d7b-1a42-4a48-9f8b-fea6f48896a7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createTimer"/></con:call></con:operation><con:operation id="ac87c8ed-00fd-43fd-8a37-583f50cd260d" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d4991d7b-1a42-4a48-9f8b-fea6f48896a7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:update>
@@ -22757,7 +22757,7 @@
          </jobInstance>
       </ws:update>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/update"/></con:call></con:operation><con:operation id="9ca15ef8-2d9f-411d-a986-c9e381826f0e" isOneWay="false" action="" name="createOrUpdateJobInstance" bindingOperationName="createOrUpdateJobInstance" type="Request-Response" outputName="createOrUpdateJobInstanceResponse" inputName="createOrUpdateJobInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1529f8dc-088d-45a5-9604-48620d97a9ad" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/update"/></con:call></con:operation><con:operation id="9ca15ef8-2d9f-411d-a986-c9e381826f0e" isOneWay="false" action="" name="createOrUpdateJobInstance" bindingOperationName="createOrUpdateJobInstance" type="Request-Response" outputName="createOrUpdateJobInstanceResponse" inputName="createOrUpdateJobInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1529f8dc-088d-45a5-9604-48620d97a9ad" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateJobInstance>
@@ -22817,7 +22817,7 @@
          </jobInstance>
       </ws:createOrUpdateJobInstance>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdateJobInstance"/></con:call></con:operation><con:operation id="0bceae96-e529-454f-a2da-79ec12efc0de" isOneWay="false" action="" name="createOrUpdateTimer" bindingOperationName="createOrUpdateTimer" type="Request-Response" outputName="createOrUpdateTimerResponse" inputName="createOrUpdateTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dc223aeb-3253-4bd5-a0aa-bb681f05eb49" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdateJobInstance"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="0bceae96-e529-454f-a2da-79ec12efc0de" isOneWay="false" action="" name="createOrUpdateTimer" bindingOperationName="createOrUpdateTimer" type="Request-Response" outputName="createOrUpdateTimerResponse" inputName="createOrUpdateTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dc223aeb-3253-4bd5-a0aa-bb681f05eb49" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateTimer>
@@ -22827,7 +22827,7 @@
          </timerEntity>
       </ws:createOrUpdateTimer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdateTimer"/></con:call></con:operation><con:operation id="1083a95c-e90b-49e0-bbab-7327dce65895" isOneWay="false" action="" name="updateTimer" bindingOperationName="updateTimer" type="Request-Response" outputName="updateTimerResponse" inputName="updateTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="cabcdec1-7b1d-477c-a4a9-c89ad175c49a" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/createOrUpdateTimer"/></con:call></con:operation><con:operation id="1083a95c-e90b-49e0-bbab-7327dce65895" isOneWay="false" action="" name="updateTimer" bindingOperationName="updateTimer" type="Request-Response" outputName="updateTimerResponse" inputName="updateTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="cabcdec1-7b1d-477c-a4a9-c89ad175c49a" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateTimer>
@@ -22837,7 +22837,7 @@
          </timerEntity>
       </ws:updateTimer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/updateTimer"/></con:call></con:operation><con:operation id="e1add6a4-0efa-4425-b812-2baa24520f1f" isOneWay="false" action="" name="execute" bindingOperationName="execute" type="Request-Response" outputName="executeResponse" inputName="execute" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e1b6dbfb-7104-43b0-8ace-b96bd66e6eea" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/updateTimer"/></con:call></con:operation><con:operation id="e1add6a4-0efa-4425-b812-2baa24520f1f" isOneWay="false" action="" name="execute" bindingOperationName="execute" type="Request-Response" outputName="executeResponse" inputName="execute" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e1b6dbfb-7104-43b0-8ace-b96bd66e6eea" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:execute>
@@ -22854,7 +22854,7 @@
          </jobInstanceInfo>
       </ws:execute>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/execute"/></con:call></con:operation><con:operation id="123703fd-5927-4ced-8014-805191de9505" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4e2385d5-2c63-4735-a1a9-1a7a764be523" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/execute"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="123703fd-5927-4ced-8014-805191de9505" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4e2385d5-2c63-4735-a1a9-1a7a764be523" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:create>
@@ -24121,7 +24121,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	        testStep.getTestRequest().setRequestHeaders(headers);
 	    }
 	}
-}</con:setupScript><con:properties/></con:testCase><con:testCase id="3184573f-bf41-4fc5-9206-e4afc5773586" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Basic Settings" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Title Mr" id="25a22aa5-b546-4625-a2c9-3233016210ca"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createTitle</con:operation><con:request name="Create Title Mr" id="02322ba7-efc3-436a-832a-7e379f305cac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08uQURNSU4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+}</con:setupScript><con:properties/></con:testCase><con:testCase id="3184573f-bf41-4fc5-9206-e4afc5773586" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Basic Settings" searchProperties="true"><con:settings/><con:testStep type="request" name="Create UsageRatingJob instance" id="530f0413-7715-41ea-897b-e8c9c16a262b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>createOrUpdateJobInstance</con:operation><con:request name="Create UsageRatingJob instance" id="649e7b1d-d31a-45d1-a439-683999b38cfe"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08uQURNSU4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateJobInstance>
+        <jobInstance jobTemplate="UsageRatingJob" code="U_Job" description="usage rating">
+            <jobCategory>Rating</jobCategory>
+        </jobInstance>
+      </ws:createOrUpdateJobInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="08f8e479-698b-4fcb-a264-c88deb79cbd6"/><con:assertion type="Simple Contains" id="8efda91e-73f1-463e-a322-2e834777b2c5" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Title Mr" id="25a22aa5-b546-4625-a2c9-3233016210ca"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createTitle</con:operation><con:request name="Create Title Mr" id="02322ba7-efc3-436a-832a-7e379f305cac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08uQURNSU4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createTitle>
@@ -24131,7 +24140,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          </title>
       </ws:createTitle>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f32c758c-7a78-4484-b332-a5d1ba623a75"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Title Company" id="4198751e-7174-4de1-a372-d2a3903aa82f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createTitle</con:operation><con:request name="Create Title Company" id="02322ba7-efc3-436a-832a-7e379f305cac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08uQURNSU4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f32c758c-7a78-4484-b332-a5d1ba623a75"/><con:assertion type="Simple Contains" id="0ed962f7-f214-40ca-88ea-af9a693bad74" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Title Company" id="4198751e-7174-4de1-a372-d2a3903aa82f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createTitle</con:operation><con:request name="Create Title Company" id="02322ba7-efc3-436a-832a-7e379f305cac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08uQURNSU4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createTitle>
@@ -24142,7 +24151,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 
       </ws:createTitle>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f32c758c-7a78-4484-b332-a5d1ba623a75"/><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Seller TELCO" id="6b5ab4ee-e832-4f95-9279-ebf3b4828e0d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createSeller</con:operation><con:request name="Create Seller TELCO" id="266c18f7-caa6-495e-9d65-5c3ea2ce01cd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08uQURNSU4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f32c758c-7a78-4484-b332-a5d1ba623a75"/><con:assertion type="Simple Contains" id="e9c05c27-07b8-41a7-bf3a-bf198ea7d2ef" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Seller TELCO" id="6b5ab4ee-e832-4f95-9279-ebf3b4828e0d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createSeller</con:operation><con:request name="Create Seller TELCO" id="266c18f7-caa6-495e-9d65-5c3ea2ce01cd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08uQURNSU4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateSeller>
@@ -26148,12 +26157,12 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:execute>\r
-         <jobInstanceInfo>\r
-            <timerName>U_Job</timerName>\r
+         <jobInstanceInfo code="U_Job"> \r\r
          </jobInstanceInfo>\r
       </ws:execute>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>CUST</con:name><con:value>B2C_CUST2_Z</con:value></con:property><con:property><con:name>OFFERVERSION</con:name><con:value>Z_V1</con:value></con:property><con:property><con:name>ticket</con:name><con:value>ZONING</con:value></con:property></con:properties><con:setupScript/></con:testSuite><con:testSuite id="016958c9-46b5-450c-9559-db9d3d77bd8e" name="Test suite Customer B2B"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation Offer B2B" searchProperties="true" id="3b1987d4-a358-40ee-b0f5-688f7e20bb8b"><con:settings/><con:testStep type="request" name="Create Offer Telco B2B" id="276bcd23-10ba-4103-a1ec-37ccc2595dca"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create Offer Telco B2B" id="4f037d56-3dc9-4b07-992b-9f9cc199c789"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08uQURNSU4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/><con:assertion type="Simple Contains" id="1efb2d04-be3a-463b-8400-92ddd5cafea3" name="Contains"><con:configuration><token>&lt;message>5&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>CUST</con:name><con:value>B2C_CUST2_Z</con:value></con:property><con:property><con:name>OFFERVERSION</con:name><con:value>Z_V1</con:value></con:property><con:property><con:name>ticket</con:name><con:value>ZONING</con:value></con:property></con:properties><con:setupScript/></con:testSuite><con:testSuite id="016958c9-46b5-450c-9559-db9d3d77bd8e" name="Test suite Customer B2B"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation Offer B2B" searchProperties="true" id="3b1987d4-a358-40ee-b0f5-688f7e20bb8b"><con:settings/><con:testStep type="request" name="Create Offer Telco B2B" id="276bcd23-10ba-4103-a1ec-37ccc2595dca"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create Offer Telco B2B" id="4f037d56-3dc9-4b07-992b-9f9cc199c789"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic VEVMQ08uQURNSU46VEVMQ08uQURNSU4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOfferTemplate>
@@ -26789,8 +26798,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:execute>\r
-         <jobInstanceInfo>\r
-            <timerName>U_Job</timerName>\r
+         <jobInstanceInfo code="U_Job">\r
          </jobInstanceInfo>\r
       </ws:execute>\r
    </soapenv:Body>\r
