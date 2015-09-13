@@ -139,7 +139,8 @@ public class DefaultObserver {
                 return;
             }
             if (notif.getScriptInstance()!=null) {
-                executeScript(notif.getScriptInstance(), e,notif.getParams());
+            	ScriptInstance script = (ScriptInstance) scriptInstanceService.attach(notif.getScriptInstance());
+                executeScript(script, e,notif.getParams());
             }
             
             boolean sendNotify = true;
