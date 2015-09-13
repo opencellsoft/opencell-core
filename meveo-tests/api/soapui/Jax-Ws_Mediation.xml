@@ -23352,6 +23352,7 @@ public class Mediation_DuplicatedCheck extends Script {
 		log.info("Execute...");
 		String originBatch = (String) initContext.get("originBatch");
 		String originRecord = getOriginRecord(initContext.get("record"));
+		initContext.put("originRecord", originRecord);
 		boolean result = edrService.duplicateFound(provider, originBatch, originRecord);
 		initContext.put("duplicateFound", Boolean.valueOf(result));
 		log.info("Execute result:"+result);
@@ -23455,9 +23456,9 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	Class<ScriptInterface> mediation_CreateEdr;
 
 	public void init(Map<String,Object> methodContext,Provider provider){
-		mediation_DuplicatedCheck = scriptInstanceService.getScriptInterface(provider, "Mediation_DuplicatedCheck");
-		mediation_RoutingSub = scriptInstanceService.getScriptInterface(provider, "Mediation_RoutingSub");
-		mediation_CreateEdr = scriptInstanceService.getScriptInterface(provider, "Mediation_CreateEdr");
+		mediation_DuplicatedCheck = scriptInstanceService.getScriptInterface(provider, "org.meveo.service.script.Mediation_DuplicatedCheck");
+		mediation_RoutingSub = scriptInstanceService.getScriptInterface(provider, "org.meveo.service.script.Mediation_RoutingSub");
+		mediation_CreateEdr = scriptInstanceService.getScriptInterface(provider, "org.meveo.service.script.Mediation_CreateEdr");
 	}
 		
 	public void execute(Map<String, Object> initContext, Provider provider) throws BusinessException {
