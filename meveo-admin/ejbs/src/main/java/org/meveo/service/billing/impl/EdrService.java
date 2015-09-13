@@ -106,7 +106,7 @@ public class EdrService extends PersistenceService<EDR> {
         return result;
     }
 
-	public void create(EntityManager em, EDR edr, User user, Provider provider) {
+	public void create(EDR edr, User user, Provider provider) {
 		super.create(edr, user, provider);
 		if (useInMemoryDeduplication) {
 		    cdrEdrProcessingCacheContainerProvider.addEdrToCache(edr);

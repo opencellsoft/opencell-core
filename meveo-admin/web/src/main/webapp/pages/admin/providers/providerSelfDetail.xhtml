@@ -13,52 +13,67 @@
             <p:tabView id="tabView">
                 <p:tab title="#{messages['customer.tab.information']}">
 							<hf:formField label="#{messages['businessEntity.code']}"
-								field="code" maxlength="35" required="true" edit="false" />
+								field="code" maxlength="35" required="true"/>
 
 							<hf:formField label="#{messages['businessEntity.description']}"
-								field="description" id="description" maxlength="100" componentWidth="50"  edit="false"/>
+								field="description" id="description" maxlength="100" componentWidth="50"/>
 
 							<!-- <hf:formField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" field="language" valueLabelField="languageCode"
 								popup="true" popupId="languagePopup" clearButton="true" required="true" /> -->
 				
 							<hf:formField label="#{messages['provider.enterprise']}"
-								field="entreprise" id="enterprise" edit="false"/>
+								field="entreprise" id="enterprise" />
 								
 							<hf:formField label="#{messages['provider.rounding']}"
-								field="rounding" id="rounding" edit="false"/>
+								field="rounding" id="rounding"/>
 							
 							<hf:formField label="#{messages['provider.prepaidReservationExpirationDelayinMillisec']}"
-								field="prepaidReservationExpirationDelayinMillisec" id="prepaidReservationExpirationDelayinMillisec" edit="false"/>
+								field="prepaidReservationExpirationDelayinMillisec" id="prepaidReservationExpirationDelayinMillisec"/>
 								
 							<hf:formField label="#{messages['provider.invoicePrefix']}"
-								field="invoicePrefix" id="invoicePrefix" edit="false"/>
+								field="invoicePrefix" id="invoicePrefix" />
 								
 							<hf:formField label="#{messages['provider.currentInvoiceNb']}"
-								field="currentInvoiceNb" id="currentInvoiceNb" edit="false"/>
+								field="currentInvoiceNb" id="currentInvoiceNb"/>
 						
 							<!-- <hf:formField label="#{messages['provider.amountValidation']}"
 								field="amountValidation" id="amountValidation"/> -->
 						
 							<hf:formField label="#{messages['provider.discountAccountingCode']}"
-								field="discountAccountingCode" id="discountAccountingCode" edit="false"/>
+								field="discountAccountingCode" id="discountAccountingCode"/>
 								
 							<hf:formField label="#{messages['provider.levelDuplication']}"
-								field="levelDuplication" id="levelDuplication" edit="false"/>
+								field="levelDuplication" id="levelDuplication"/>
 								
 							<hf:formField label="#{messages['provider.email']}"
-								field="email" id="email" edit="false"/>
+								field="email" id="email"/>
+							
+							<hf:formField
+								label="#{messages['bankCoordinates.bic']}"
+								field="bankCoordinates" childField="bic" size="15"
+								maxlength="11" />
+								
+							<hf:formField
+								label="#{messages['bankCoordinates.iban']}"
+								field="bankCoordinates" childField="iban" size="45"
+								maxlength="34" />
+								
+							<hf:formField
+								label="#{messages['bankCoordinates.ics']}"
+								field="bankCoordinates" childField="ics" size="45"
+								maxlength="35" />							
 							
 							<hf:formField label="#{messages['invoiceConfiguration.displaySubscriptions']}"
-								field="invoiceConfiguration" childField="displaySubscriptions" id="displaySubscriptions" edit="false"/>
+								field="invoiceConfiguration" childField="displaySubscriptions" id="displaySubscriptions"/>
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayServices']}"
-								field="invoiceConfiguration" childField="displayServices" id="displayServices" edit="false"/>
+								field="invoiceConfiguration" childField="displayServices" id="displayServices"/>
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayOffers']}"
-								field="invoiceConfiguration" childField="displayOffers" id="displayOffers" edit="false"/>
+								field="invoiceConfiguration" childField="displayOffers" id="displayOffers"/>
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayEdrs']}"
-								field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs" edit="false"/>	
+								field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs"/>	
                 </p:tab>
 
                 <p:tab title="#{messages['customFieldTemplate.cfValues']}">

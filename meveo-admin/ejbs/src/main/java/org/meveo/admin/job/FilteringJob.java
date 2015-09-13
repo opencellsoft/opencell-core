@@ -21,7 +21,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
-import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 
 @Startup
@@ -32,7 +32,7 @@ public class FilteringJob extends Job {
 	private FilteringJobBean filteringJobBean;
 
 	@Inject
-	private JavaCompilerManager javaCompilerManager;
+	private ScriptInstanceService scriptInstanceService;
 
 	@Override
 	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser)
@@ -40,7 +40,7 @@ public class FilteringJob extends Job {
 		String filterCode = ((EntityReferenceWrapper)jobInstance.getCFValue("FilteringJob_filter")).getCode();
 		String scriptCode =  ((EntityReferenceWrapper)jobInstance.getCFValue("FilteringJob_script")).getCode();
 		String recordVariableName = (String) jobInstance.getCFValue("FilteringJob_recordVariableName");
-        Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(currentUser.getProvider(),scriptCode);
+        Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(),scriptCode);
     	if(scriptInterfaceClass==null){
     		result.registerError("cannot find script with code "+scriptCode);
     	} else {
@@ -55,7 +55,7 @@ public class FilteringJob extends Job {
 
 	@Override
 	public JobCategoryEnum getJobCategory() {
-		return JobCategoryEnum.UTILS;
+		return JobCategoryEnum.MEDIATION;
 	}
 
 	@Override

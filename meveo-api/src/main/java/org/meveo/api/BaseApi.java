@@ -36,7 +36,7 @@ public abstract class BaseApi {
             missingParameters = new ArrayList<String>();
         }
 
-        StringBuilder sb = new StringBuilder("The following parameters are required :");
+        StringBuilder sb = new StringBuilder("The following parameters are required ");
         List<String> missingFields = new ArrayList<String>();
 
         if (missingParameters != null) {

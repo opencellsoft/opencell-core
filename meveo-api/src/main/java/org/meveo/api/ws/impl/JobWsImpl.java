@@ -9,6 +9,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.JobApi;
 import org.meveo.api.job.JobInstanceApi;
@@ -154,6 +155,47 @@ public class JobWsImpl extends BaseWs implements JobWs {
 
 		try {
 			timerEntityApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public JobInstanceResponseDto findJobInstance(String jobInstanceCode) {
+		JobInstanceResponseDto result = new JobInstanceResponseDto();
+		
+		try {
+			result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode, getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+			log.error("error occurred while getting webhook notification ",e);
+		} catch (Exception e) {
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+			log.error("error generated while getting webhook notification ",e);
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus removeJobInstance(String jobInstanceCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			jobInstanceApi.remove(jobInstanceCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

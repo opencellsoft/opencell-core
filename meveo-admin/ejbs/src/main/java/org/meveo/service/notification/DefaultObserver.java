@@ -51,7 +51,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
-import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
@@ -88,7 +88,7 @@ public class DefaultObserver {
     private RemoteInstanceNotifier remoteInstanceNotifier;
     
     @Inject
-    private JavaCompilerManager javaCompilerManager;
+    private ScriptInstanceService scriptInstanceService;
     
     @Inject
     private JobTriggerLauncher jobTriggerLauncher;
@@ -113,7 +113,7 @@ public class DefaultObserver {
 
     private void executeScript(ScriptInstance scriptInstance, Object o, Map<String, String> params) throws BusinessException {
         log.debug("execute notification script: {}", scriptInstance.getCode());
-        Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
+        Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
         try{
         	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
         	Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
@@ -139,7 +139,8 @@ public class DefaultObserver {
                 return;
             }
             if (notif.getScriptInstance()!=null) {
-                executeScript(notif.getScriptInstance(), e,notif.getParams());
+            	ScriptInstance script = (ScriptInstance) scriptInstanceService.attach(notif.getScriptInstance());
+                executeScript(script, e,notif.getParams());
             }
             
             boolean sendNotify = true;

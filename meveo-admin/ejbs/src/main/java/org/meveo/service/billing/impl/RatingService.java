@@ -295,8 +295,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 						if (chargeInstance.getAuditable() == null) {
 							log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
 						} else {
-							edrService.create(entityManager, newEdr, chargeInstance.getAuditable().getCreator(),
-									chargeInstance.getProvider());
+							edrService.create(newEdr, chargeInstance.getAuditable().getCreator(),chargeInstance.getProvider());
 						}
 					}
 				}

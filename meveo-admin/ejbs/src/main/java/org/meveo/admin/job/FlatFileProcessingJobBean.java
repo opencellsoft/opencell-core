@@ -26,7 +26,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
@@ -42,7 +42,7 @@ public class FlatFileProcessingJobBean {
 	private Logger log;
 	
 	@Inject
-	private JavaCompilerManager javaCompilerManager;
+	private ScriptInstanceService scriptInstanceService;
 
 	String fileName;
 	String inputDir;
@@ -51,8 +51,6 @@ public class FlatFileProcessingJobBean {
 	String rejectDir;
 	PrintWriter rejectFileWriter;
 	String report;
-    String batchName;
-    String originBatch;
     String username;
     
 	static MessageDigest messageDigest = null;
@@ -67,7 +65,7 @@ public class FlatFileProcessingJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, String inputDir, User currentUser,File file,String mappingConf, String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename) {
-		log.debug("Running for user={}, inputDir={}", currentUser, inputDir);
+		log.debug("Running for user={}, inputDir={}, scriptInstanceFlowCode={}", currentUser, inputDir,scriptInstanceFlowCode);
 
 		Provider provider = currentUser.getProvider();
 
@@ -90,7 +88,7 @@ public class FlatFileProcessingJobBean {
 			log.info("InputFiles job {} in progress...", file.getName());
 			fileName = file.getName();
 			File currentFile = FileUtils.addExtension(file, ".processing");			
-			Class<org.meveo.service.script.ScriptInterface> flowScriptClass = javaCompilerManager.getScriptInterface(provider,scriptInstanceFlowCode);
+			Class<org.meveo.service.script.ScriptInterface> flowScriptClass = scriptInstanceService.getScriptInterface(provider,scriptInstanceFlowCode);
 			ScriptInterface script = null;
 			try {					
 				ConfigurationReader parser = new ConfigurationReader();
@@ -107,6 +105,7 @@ public class FlatFileProcessingJobBean {
 						Map<String, Object> executeParams = new HashMap<String, Object>();
 						executeParams.put(recordVariableName, recordBean);
 						executeParams.put(originFilename, file.getName());
+						executeParams.put("originBatch",file.getName());
 						script.execute(executeParams,provider);	 				    	
 						outputRecord(record);
 						result.registerSucces();
