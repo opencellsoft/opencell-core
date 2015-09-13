@@ -23643,7 +23643,7 @@ import org.meveo.model.notification.InboundRequest;
 public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends Script {
 
 	private static final Logger log = LoggerFactory.getLogger(Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow.class);
-	JavaCompilerManager javaCompilerManager = (JavaCompilerManager) getServiceInterface("JavaCompilerManager");
+	ScriptInstanceService javaCompilerManager = (ScriptInstanceService) getServiceInterface("ScriptInstanceService");
 
 	Class<ScriptInterface> mediation_DuplicatedCheck;
 	Class<ScriptInterface> mediation_RoutingSub;
@@ -24149,7 +24149,7 @@ import org.meveo.model.notification.InboundRequest;
 public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends Script {
 
 	private static final Logger log = LoggerFactory.getLogger(Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow.class);
-	JavaCompilerManager javaCompilerManager = (JavaCompilerManager) getServiceInterface("JavaCompilerManager");
+	ScriptInstanceService javaCompilerManager = (ScriptInstanceService) getServiceInterface("ScriptInstanceService");
 
 	Class<ScriptInterface> mediation_DuplicatedCheck;
 	Class<ScriptInterface> mediation_RoutingSub;
@@ -24744,7 +24744,7 @@ import org.meveo.model.notification.InboundRequest;
 public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends Script {
 
 	private static final Logger log = LoggerFactory.getLogger(Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow.class);
-	JavaCompilerManager javaCompilerManager = (JavaCompilerManager) getServiceInterface("JavaCompilerManager");
+	ScriptInstanceService javaCompilerManager = (ScriptInstanceService) getServiceInterface("ScriptInstanceService");
 
 	Class<ScriptInterface> mediation_DuplicatedCheck;
 	Class<ScriptInterface> mediation_RoutingSub;
@@ -25237,7 +25237,7 @@ import org.meveo.model.notification.InboundRequest;
 public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends Script {
 
 	private static final Logger log = LoggerFactory.getLogger(Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow.class);
-	JavaCompilerManager javaCompilerManager = (JavaCompilerManager) getServiceInterface("JavaCompilerManager");
+	ScriptInstanceService javaCompilerManager = (ScriptInstanceService) getServiceInterface("ScriptInstanceService");
 
 	Class<ScriptInterface> mediation_DuplicatedCheck;
 	Class<ScriptInterface> mediation_RoutingSub;
