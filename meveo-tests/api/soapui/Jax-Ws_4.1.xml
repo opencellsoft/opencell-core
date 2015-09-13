@@ -28597,6 +28597,7 @@
       <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
       <xs:element name="JobInstance" type="tns:jobInstanceDto"/>
       <xs:element name="JobInstanceInfo" type="tns:jobInstanceInfoDto"/>
+      <xs:element name="JobInstanceResponse" type="tns:jobInstanceResponseDto"/>
       <xs:element name="TimerEntity" type="tns:timerEntityDto"/>
       <xs:element name="create" type="tns:create"/>
       <xs:element name="createOrUpdateJobInstance" type="tns:createOrUpdateJobInstance"/>
@@ -28625,49 +28626,21 @@
       </xs:complexType>
       <xs:complexType name="findJobInstanceResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:jobInstanceResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="actionStatus">
-        <xs:sequence>
-          <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
-          <xs:element name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createTimer">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="timerEntityDto">
+      <xs:complexType name="jobInstanceResponseDto">
         <xs:complexContent>
-          <xs:extension base="tns:baseDto">
+          <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element name="code" type="xs:string"/>
+              <xs:element minOccurs="0" name="jobInstanceDto" type="tns:jobInstanceDto"/>
             </xs:sequence>
-            <xs:attribute name="description" type="xs:string"/>
-            <xs:attribute name="hour" type="xs:string" use="required"/>
-            <xs:attribute name="minute" type="xs:string" use="required"/>
-            <xs:attribute name="second" type="xs:string" use="required"/>
-            <xs:attribute name="year" type="xs:string" use="required"/>
-            <xs:attribute name="month" type="xs:string" use="required"/>
-            <xs:attribute name="dayOfMonth" type="xs:string" use="required"/>
-            <xs:attribute name="dayOfWeek" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType abstract="true" name="baseDto">
-        <xs:sequence/>
-      </xs:complexType>
-      <xs:complexType name="createTimerResponse">
+      <xs:complexType abstract="true" name="baseResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="update">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="jobInstance" type="tns:jobInstanceDto"/>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="jobInstanceDto">
@@ -28687,6 +28660,9 @@
             <xs:attribute name="timerCode" type="xs:string"/>
           </xs:extension>
         </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
       </xs:complexType>
       <xs:complexType name="customFieldsDto">
         <xs:sequence>
@@ -28744,6 +28720,45 @@
         <xs:sequence/>
         <xs:attribute name="classname" type="xs:string" use="required"/>
         <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createTimer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timerEntity" type="tns:timerEntityDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="timerEntityDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="code" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="description" type="xs:string"/>
+            <xs:attribute name="hour" type="xs:string" use="required"/>
+            <xs:attribute name="minute" type="xs:string" use="required"/>
+            <xs:attribute name="second" type="xs:string" use="required"/>
+            <xs:attribute name="year" type="xs:string" use="required"/>
+            <xs:attribute name="month" type="xs:string" use="required"/>
+            <xs:attribute name="dayOfMonth" type="xs:string" use="required"/>
+            <xs:attribute name="dayOfWeek" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createTimerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="update">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="jobInstance" type="tns:jobInstanceDto"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateResponse">
         <xs:sequence>
@@ -43111,4 +43126,56 @@ public class Demo extends org.meveo.service.script.Script {
          <titleCode>${#TestSuite#ticket}_TITLE1</titleCode>\r
       </ws:removeTitle>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ea25ec21-00d5-42d5-815d-374d200af4ff"/><con:assertion type="Simple Contains" id="6fd9834a-6152-404b-a8cc-5c44700693f0" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1068</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ea25ec21-00d5-42d5-815d-374d200af4ff"/><con:assertion type="Simple Contains" id="6fd9834a-6152-404b-a8cc-5c44700693f0" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1068</con:value></con:property></con:properties></con:testSuite><con:testSuite id="6ab7755c-ec8b-4e08-a07f-20139a27b113" name="#1061_job_instance_api"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="57b72668-0bc2-43d0-a55d-e9ee27069b04" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Tests" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="ae040f1a-d4ae-4865-b901-badde6bbf96b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create" id="8dc303f6-e195-4cac-b81a-9e83e0a18ac6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:create>\r
+         <!--Optional:-->\r
+         <jobInstance jobTemplate="MediationJob" code="M_Job2" description="M_Job2" timerCode="code_1">\r
+         </jobInstance>\r
+      </ws:create>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a01e4ef0-8478-4f2c-9a0a-96ef3168fd48"/><con:assertion type="Simple Contains" id="e27dae48-8e3f-4777-925a-08f0bb104a63" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="73a12aa6-3a75-4ab5-aa7d-2764875e97be"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="update" id="0a7d6c6e-2860-4830-98b5-bccc2476fecc"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:update>\r
+                 <!--Optional:-->
+         <jobInstance jobTemplate="MediationJob" code="M_Job2" description="M_Job21" timerCode="code_1">
+         </jobInstance>
+
+      </ws:update>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c849617b-3c67-4979-af66-db01963d1738"/><con:assertion type="Simple Contains" id="0d315c6a-05d2-4dc9-a3ed-89468faef9f3" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createOrUpdate" id="d88b7a19-ff74-419e-aa8e-abfc4c2c9e84"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>createOrUpdateJobInstance</con:operation><con:request name="createOrUpdate" id="2d2dcb5b-fe3a-4f78-8f94-173235dd12cf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateJobInstance>\r
+                  <!--Optional:-->
+         <jobInstance jobTemplate="MediationJob" code="M_Job2" description="M_Job212" timerCode="code_1">
+         </jobInstance>
+      </ws:createOrUpdateJobInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bc08f798-57d4-4ffd-80d1-2fae16d75e33"/><con:assertion type="Simple Contains" id="80521f19-ec9d-456b-bb65-499447a815db" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="34f6946a-b5a2-4290-b2e4-efa2205978ef"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>findJobInstance</con:operation><con:request name="find" id="1aca80dd-5280-4841-b602-ba4e8015ea37"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findJobInstance>\r
+         <!--Optional:-->\r
+         <jobInstanceCode>M_Job</jobInstanceCode>\r
+      </ws:findJobInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0cc79850-10a1-4c64-8e64-d3ccee9deffc"/><con:assertion type="Simple Contains" id="b05c928d-67ef-428f-ba1f-582fb5f604a2" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove" id="1b5199e6-0074-4652-bf97-97b56ddcc006"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>removeJobInstance</con:operation><con:request name="remove" id="1f0ef0ea-acbf-4347-9848-5175d4c0320a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeJobInstance>\r
+         <!--Optional:-->\r
+         <jobInstanceCode>M_Job2</jobInstanceCode>\r
+      </ws:removeJobInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="55881382-2b4c-41a4-8f72-239c208a59c6"/><con:assertion type="Simple Contains" id="964c11c0-3a2b-4b29-b73e-0585a904577b" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find2" id="80828bf9-35d4-4523-ba81-7575aa14675a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>JobWsSoapBinding</con:interface><con:operation>findJobInstance</con:operation><con:request name="find2" id="1aca80dd-5280-4841-b602-ba4e8015ea37"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findJobInstance>\r
+         <!--Optional:-->\r
+         <jobInstanceCode>M_Job2</jobInstanceCode>\r
+      </ws:findJobInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0cc79850-10a1-4c64-8e64-d3ccee9deffc"/><con:assertion type="Simple Contains" id="ac47b54f-1939-470a-b20a-7cd75856af28" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

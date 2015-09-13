@@ -196,6 +196,7 @@ public class JobInstanceApi extends BaseApi {
 			jobInstance.setParametres(postData.getParameter()); //TODO setParametres should be renamed
 			jobInstance.setActive(postData.isActive());
 			jobInstance.setJobCategoryEnum(jobCategory);
+			jobInstance.setDescription(postData.getDescription());
 			
 			if (!StringUtils.isBlank(postData.getTimerCode())) {
 				TimerEntity timerEntity = timerEntityService.findByCode(
