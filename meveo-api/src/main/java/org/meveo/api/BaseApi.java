@@ -94,9 +94,14 @@ public abstract class BaseApi {
 
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
-            log.warn("No custom field templates defined. Custom field values will be ignored");
-            return;
+            if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
+                log.error("No custom field templates defined while Custom field values were passed");
+                throw new MissingParameterException("No Custom field templates were found to match provided custom field values");
+            } else {
+                return;
+            }
         }
+
         for (CustomFieldDto cfDto : customFieldDtos) {
             boolean found = false;
             for (CustomFieldTemplate cft : customFieldTemplates) {
@@ -150,7 +155,8 @@ public abstract class BaseApi {
                 }
             }
             if (!found) {
-                log.warn("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
+                log.error("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
+                throw new MissingParameterException("Custom field template with code " + cfDto.getCode() + " and provider " + currentUser.getProvider() + " not found.");
             }
         }
 
