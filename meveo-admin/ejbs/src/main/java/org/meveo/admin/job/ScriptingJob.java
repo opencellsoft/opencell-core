@@ -58,7 +58,7 @@ public class ScriptingJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.UTILS;
+        return JobCategoryEnum.MEDIATION;
     }
 
     @Override

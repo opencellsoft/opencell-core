@@ -51,8 +51,6 @@ public class FlatFileProcessingJobBean {
 	String rejectDir;
 	PrintWriter rejectFileWriter;
 	String report;
-    String batchName;
-    String originBatch;
     String username;
     
 	static MessageDigest messageDigest = null;
@@ -67,7 +65,7 @@ public class FlatFileProcessingJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, String inputDir, User currentUser,File file,String mappingConf, String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename) {
-		log.debug("Running for user={}, inputDir={}", currentUser, inputDir);
+		log.debug("Running for user={}, inputDir={}, scriptInstanceFlowCode={}", currentUser, inputDir,scriptInstanceFlowCode);
 
 		Provider provider = currentUser.getProvider();
 
@@ -107,6 +105,7 @@ public class FlatFileProcessingJobBean {
 						Map<String, Object> executeParams = new HashMap<String, Object>();
 						executeParams.put(recordVariableName, recordBean);
 						executeParams.put(originFilename, file.getName());
+						executeParams.put("originBatch",file.getName());
 						script.execute(executeParams,provider);	 				    	
 						outputRecord(record);
 						result.registerSucces();

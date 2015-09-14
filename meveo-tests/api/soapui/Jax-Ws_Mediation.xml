@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation" resourceRoot="" soapui-version="5.1.3" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -23352,6 +23352,7 @@ public class Mediation_DuplicatedCheck extends Script {
 		log.info("Execute...");
 		String originBatch = (String) initContext.get("originBatch");
 		String originRecord = getOriginRecord(initContext.get("record"));
+		initContext.put("originRecord", originRecord);
 		boolean result = edrService.duplicateFound(provider, originBatch, originRecord);
 		initContext.put("duplicateFound", Boolean.valueOf(result));
 		log.info("Execute result:"+result);
@@ -23440,24 +23441,24 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CDR;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
-import org.meveo.service.script.JavaCompilerManager;
 import org.meveo.service.script.ScriptInterface;
+import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Mediation_Flow extends org.meveo.service.script.Script {
 	
 	private static final Logger log = LoggerFactory.getLogger(Mediation_Flow.class);
-	JavaCompilerManager javaCompilerManager = (JavaCompilerManager) getServiceInterface("JavaCompilerManager");
+	ScriptInstanceService scriptInstanceService = (ScriptInstanceService) getServiceInterface("ScriptInstanceService");
 
 	Class<ScriptInterface> mediation_DuplicatedCheck;
 	Class<ScriptInterface> mediation_RoutingSub;
 	Class<ScriptInterface> mediation_CreateEdr;
 
 	public void init(Map<String,Object> methodContext,Provider provider){
-		mediation_DuplicatedCheck = javaCompilerManager.getScriptInterface(provider, "org.meveo.service.script.Mediation_DuplicatedCheck");
-		mediation_RoutingSub = javaCompilerManager.getScriptInterface(provider, "org.meveo.service.script.Mediation_RoutingSub");
-		mediation_CreateEdr = javaCompilerManager.getScriptInterface(provider, "org.meveo.service.script.Mediation_CreateEdr");
+		mediation_DuplicatedCheck = scriptInstanceService.getScriptInterface(provider, "org.meveo.service.script.Mediation_DuplicatedCheck");
+		mediation_RoutingSub = scriptInstanceService.getScriptInterface(provider, "org.meveo.service.script.Mediation_RoutingSub");
+		mediation_CreateEdr = scriptInstanceService.getScriptInterface(provider, "org.meveo.service.script.Mediation_CreateEdr");
 	}
 		
 	public void execute(Map<String, Object> initContext, Provider provider) throws BusinessException {
@@ -23643,7 +23644,7 @@ import org.meveo.model.notification.InboundRequest;
 public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends Script {
 
 	private static final Logger log = LoggerFactory.getLogger(Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow.class);
-	JavaCompilerManager javaCompilerManager = (JavaCompilerManager) getServiceInterface("JavaCompilerManager");
+	ScriptInstanceService javaCompilerManager = (ScriptInstanceService) getServiceInterface("ScriptInstanceService");
 
 	Class<ScriptInterface> mediation_DuplicatedCheck;
 	Class<ScriptInterface> mediation_RoutingSub;
@@ -24149,7 +24150,7 @@ import org.meveo.model.notification.InboundRequest;
 public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends Script {
 
 	private static final Logger log = LoggerFactory.getLogger(Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow.class);
-	JavaCompilerManager javaCompilerManager = (JavaCompilerManager) getServiceInterface("JavaCompilerManager");
+	ScriptInstanceService javaCompilerManager = (ScriptInstanceService) getServiceInterface("ScriptInstanceService");
 
 	Class<ScriptInterface> mediation_DuplicatedCheck;
 	Class<ScriptInterface> mediation_RoutingSub;
@@ -24744,7 +24745,7 @@ import org.meveo.model.notification.InboundRequest;
 public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends Script {
 
 	private static final Logger log = LoggerFactory.getLogger(Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow.class);
-	JavaCompilerManager javaCompilerManager = (JavaCompilerManager) getServiceInterface("JavaCompilerManager");
+	ScriptInstanceService javaCompilerManager = (ScriptInstanceService) getServiceInterface("ScriptInstanceService");
 
 	Class<ScriptInterface> mediation_DuplicatedCheck;
 	Class<ScriptInterface> mediation_RoutingSub;
@@ -25237,7 +25238,7 @@ import org.meveo.model.notification.InboundRequest;
 public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends Script {
 
 	private static final Logger log = LoggerFactory.getLogger(Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow.class);
-	JavaCompilerManager javaCompilerManager = (JavaCompilerManager) getServiceInterface("JavaCompilerManager");
+	ScriptInstanceService javaCompilerManager = (ScriptInstanceService) getServiceInterface("ScriptInstanceService");
 
 	Class<ScriptInterface> mediation_DuplicatedCheck;
 	Class<ScriptInterface> mediation_RoutingSub;

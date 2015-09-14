@@ -55,7 +55,7 @@ public class FilteringJob extends Job {
 
 	@Override
 	public JobCategoryEnum getJobCategory() {
-		return JobCategoryEnum.UTILS;
+		return JobCategoryEnum.MEDIATION;
 	}
 
 	@Override

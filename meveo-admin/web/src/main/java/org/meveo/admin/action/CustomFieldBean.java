@@ -85,6 +85,20 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         updateCustomFieldsInEntity();
+        
+		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+			for (CustomFieldTemplate cft : customFieldTemplates) {
+				CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cft.getCode());
+				if (cfi != null && cft.isVersionable() && cft.getCalendar() != null && cft.isTriggerEndPeriodEvent()) {
+					// Create a timer if was requested
+					for (CustomFieldPeriod cfp : cfi.getValuePeriods()) {
+						if (cfp.getPeriodEndDate() != null) {
+							customFieldJob.triggerEndPeriodEvent(cft.getInstance(), cfp.getPeriodEndDate());
+						}
+					}
+				}
+			}
+		}
 
         String outcome = super.saveOrUpdate(killConversation);
         
@@ -409,12 +423,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             }
             newValue.put("value", value);
             period.getCfValue().getMapValuesForGUI().add(newValue);
-        }
-
-        // Create a timer if was requested
-        if (cft.isVersionable() && cft.getCalendar() != null && cft.isTriggerEndPeriodEvent()) {
-            customFieldJob.triggerEndPeriodEvent(cft.getInstance(), periodEndDate);
-        }
+        }   
 
         customFieldNewValue.clear();
         customFieldPeriodMatched = false;

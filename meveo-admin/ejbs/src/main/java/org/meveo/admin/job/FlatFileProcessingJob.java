@@ -131,7 +131,7 @@ public class FlatFileProcessingJob extends Job {
 
 	@Override
 	public JobCategoryEnum getJobCategory() {
-		return JobCategoryEnum.FLAT_FILE_PROCESSING;
+		return JobCategoryEnum.MEDIATION;
 	}
 
 	@Override
