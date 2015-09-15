@@ -187,7 +187,7 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
      * A JPA callback to deserialise reference to entity, list and map values upon retrieval from DB.
      */
     @PostLoad
-    private void deserializeValue() {
+    public void deserializeValue() {
         if (cfValue != null) {
             cfValue.deserializeValue();
         }

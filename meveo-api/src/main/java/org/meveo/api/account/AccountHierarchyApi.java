@@ -1013,13 +1013,13 @@ public class AccountHierarchyApi extends BaseApi {
 								}
 							}
 
+                            populateNameAddressAndCustomFields(customer, customerDto, AccountLevelEnum.CUST, currentUser);
+                            
 							if (customer.isTransient()) {
 								customerService.create(customer, currentUser, provider);
 							} else {
 								customerService.update(customer, currentUser);
 							}
-
-							populateNameAddressAndCustomFields(customer, customerDto, AccountLevelEnum.CUST, currentUser);
 
 							// customerAccounts
 							if (customerDto.getCustomerAccounts() != null) {
@@ -1192,14 +1192,15 @@ public class AccountHierarchyApi extends BaseApi {
 										}
 									}
 
+
+                                    populateNameAddressAndCustomFields(customerAccount, customerAccountDto, AccountLevelEnum.CA,
+                                            currentUser);
+                                    
 									if (customerAccount.isTransient()) {
 										customerAccountService.create(customerAccount, currentUser, provider);
 									} else {
 										customerAccountService.update(customerAccount, currentUser);
 									}
-
-									populateNameAddressAndCustomFields(customerAccount, customerAccountDto, AccountLevelEnum.CA,
-											currentUser);
 
 									// billing accounts
 									if (customerAccountDto.getBillingAccounts() != null) {
@@ -1357,14 +1358,14 @@ public class AccountHierarchyApi extends BaseApi {
 												billingAccount.setEmail(billingAccountDto.getEmail());
 											}
 
+                                            populateNameAddressAndCustomFields(billingAccount, billingAccountDto,
+                                                    AccountLevelEnum.BA, currentUser);
+                                            
 											if (billingAccount.isTransient()) {
 												billingAccountService.create(billingAccount, currentUser, provider);
 											} else {
 												billingAccountService.update(billingAccount, currentUser);
 											}
-
-											populateNameAddressAndCustomFields(billingAccount, billingAccountDto,
-													AccountLevelEnum.BA, currentUser);
 
 											// user accounts
 											if (billingAccountDto.getUserAccounts() != null) {
@@ -1439,6 +1440,9 @@ public class AccountHierarchyApi extends BaseApi {
 																.getTerminationDate());
 													}
 
+                                                    populateNameAddressAndCustomFields(userAccount, userAccountDto,
+                                                            AccountLevelEnum.UA, currentUser);
+                                                    
 													if (userAccount.isTransient()) {
 														try {
 															userAccountService.createUserAccount(billingAccount,
@@ -1449,9 +1453,6 @@ public class AccountHierarchyApi extends BaseApi {
 													} else {
 														userAccountService.update(userAccount, currentUser);
 													}
-
-													populateNameAddressAndCustomFields(userAccount, userAccountDto,
-															AccountLevelEnum.UA, currentUser);
 
 													// subscriptions
 													if (userAccountDto.getSubscriptions() != null) {

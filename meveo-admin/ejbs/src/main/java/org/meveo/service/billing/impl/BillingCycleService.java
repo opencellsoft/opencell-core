@@ -41,21 +41,17 @@ public class BillingCycleService extends PersistenceService<BillingCycle> {
 	 * @return Billing cycle found or null.
 	 * @throws ElementNotFoundException
 	 */
-	public BillingCycle findByBillingCycleCode(String billingCycleCode,
-			Provider provider) {
-		QueryBuilder qb = new QueryBuilder(BillingCycle.class, "b");
-		qb.addCriterion("code", "=", billingCycleCode, true);
-		qb.addCriterionEntity("provider", provider);
 
-		try {
-			return (BillingCycle) qb.getQuery(getEntityManager())
-					.getSingleResult();
-		} catch (NoResultException e) {
-			log.warn("failed to find billing cycle",e);
-			return null;
-		}
-	}
-
+	public BillingCycle findByBillingCycleCode(String billingCycleCode, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(BillingCycle.class, "b", null, provider);
+        qb.addCriterion("code", "=", billingCycleCode, true);
+        try {
+            return (BillingCycle) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+	
 	public BillingCycle findByBillingCycleCode(EntityManager em,
 			String billingCycleCode, Provider provider) {
 		try {

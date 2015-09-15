@@ -1517,4 +1517,14 @@
             <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_script_instance" deferrable="false" disabled="false" initiallyDeferred="false" tableName="MEVEO_SCRIPT_INSTANCE"/>
     </changeSet>
    
+    <changeSet author="anasseh" id="telcodemo_20150915">
+       <dropSequence sequenceName="crm_provider_seq" />
+       <dropSequence sequenceName="crm_provider_contact_seq" />
+       <dropSequence sequenceName="adm_user_seq" />
+       
+        <createSequence sequenceName="crm_provider_seq" startValue="10"/>
+        <createSequence sequenceName="crm_provider_contact_seq" startValue="10"/>
+        <createSequence sequenceName="adm_user_seq" startValue="10"/>
+    </changeSet>
+    
 </databaseChangeLog>

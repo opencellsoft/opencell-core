@@ -572,3 +572,12 @@ vertical-align:top !important;
 	border:none !important;
 	padding-bottom:0 !important;
 }
+
+/* Custom field list/map/period new value entry*/ 
+.ui-datatable-footer .ui-selectonemenu {
+	margin-bottom : -7px;
+}
+
+.ui-datatable-footer .ui-autocomplete {
+	margin-right : 30px;
+}
