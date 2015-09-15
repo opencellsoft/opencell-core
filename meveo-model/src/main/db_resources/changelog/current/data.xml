@@ -422,4 +422,64 @@
 		</insert>
 	 </changeSet>
 		
+    <changeSet id="789_2015_09_15" author="AndriusKarpavicius">
+        <sql>
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL  =replace(CEILING_EXPRESSION_EL, 'getStringCustomValue(', 'getCFValue(') where CEILING_EXPRESSION_EL  is not null; 
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL  =replace(CEILING_EXPRESSION_EL, 'getLongCustomValue(', 'getCFValue(') where CEILING_EXPRESSION_EL  is not null; 
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL  =replace(CEILING_EXPRESSION_EL, 'getDateCustomValue(', 'getCFValue(') where CEILING_EXPRESSION_EL  is not null; 
+            update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL  =replace(CEILING_EXPRESSION_EL, 'getDoubleCustomValue(', 'getCFValue(') where CEILING_EXPRESSION_EL  is not null; 
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL  = replace(EXPRESSION_EL, 'getStringCustomValue(', 'getCFValue(') where EXPRESSION_EL is not null; 
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL  = replace(EXPRESSION_EL, 'getLongCustomValue(', 'getCFValue(') where EXPRESSION_EL is not null; 
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL  = replace(EXPRESSION_EL, 'getDateCustomValue(', 'getCFValue(') where EXPRESSION_EL is not null; 
+            update CAT_DISCOUNT_PLAN_ITEM set EXPRESSION_EL  = replace(EXPRESSION_EL, 'getDoubleCustomValue(', 'getCFValue(') where EXPRESSION_EL is not null; 
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL = replace(SUBSCRIPTION_EL, 'getStringCustomValue(', 'getCFValue(') where SUBSCRIPTION_EL is not null; 
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL = replace(SUBSCRIPTION_EL, 'getLongCustomValue(', 'getCFValue(') where SUBSCRIPTION_EL is not null; 
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL = replace(SUBSCRIPTION_EL, 'getDateCustomValue(', 'getCFValue(') where SUBSCRIPTION_EL is not null; 
+            update CAT_TRIGGERED_EDR set SUBSCRIPTION_EL = replace(SUBSCRIPTION_EL, 'getDoubleCustomValue(', 'getCFValue(') where SUBSCRIPTION_EL is not null; 
+            update CAT_TRIGGERED_EDR set CONDITION_EL  = replace(CONDITION_EL, 'getStringCustomValue(', 'getCFValue(') where CONDITION_EL is not null; 
+            update CAT_TRIGGERED_EDR set CONDITION_EL  = replace(CONDITION_EL, 'getLongCustomValue(', 'getCFValue(') where CONDITION_EL is not null; 
+            update CAT_TRIGGERED_EDR set CONDITION_EL  = replace(CONDITION_EL, 'getDateCustomValue(', 'getCFValue(') where CONDITION_EL is not null; 
+            update CAT_TRIGGERED_EDR set CONDITION_EL  = replace(CONDITION_EL, 'getDoubleCustomValue(', 'getCFValue(') where CONDITION_EL is not null; 
+            update CAT_TRIGGERED_EDR set QUANTITY_EL = replace(QUANTITY_EL, 'getStringCustomValue(', 'getCFValue(') where QUANTITY_EL is not null; 
+            update CAT_TRIGGERED_EDR set QUANTITY_EL = replace(QUANTITY_EL, 'getLongCustomValue(', 'getCFValue(') where QUANTITY_EL is not null; 
+            update CAT_TRIGGERED_EDR set QUANTITY_EL = replace(QUANTITY_EL, 'getDateCustomValue(', 'getCFValue(') where QUANTITY_EL is not null; 
+            update CAT_TRIGGERED_EDR set QUANTITY_EL = replace(QUANTITY_EL, 'getDoubleCustomValue(', 'getCFValue(') where QUANTITY_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_1_EL = replace(PARAM_1_EL, 'getStringCustomValue(', 'getCFValue(') where PARAM_1_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_1_EL = replace(PARAM_1_EL, 'getLongCustomValue(', 'getCFValue(') where PARAM_1_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_1_EL = replace(PARAM_1_EL, 'getDateCustomValue(', 'getCFValue(') where PARAM_1_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_1_EL = replace(PARAM_1_EL, 'getDoubleCustomValue(', 'getCFValue(') where PARAM_1_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_2_EL = replace(PARAM_2_EL, 'getStringCustomValue(', 'getCFValue(') where PARAM_2_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_2_EL = replace(PARAM_2_EL, 'getLongCustomValue(', 'getCFValue(') where PARAM_2_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_2_EL = replace(PARAM_2_EL, 'getDateCustomValue(', 'getCFValue(') where PARAM_2_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_2_EL = replace(PARAM_2_EL, 'getDoubleCustomValue(', 'getCFValue(') where PARAM_2_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_3_EL = replace(PARAM_3_EL, 'getStringCustomValue(', 'getCFValue(') where PARAM_3_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_3_EL = replace(PARAM_3_EL, 'getLongCustomValue(', 'getCFValue(') where PARAM_3_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_3_EL = replace(PARAM_3_EL, 'getDateCustomValue(', 'getCFValue(') where PARAM_3_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_3_EL = replace(PARAM_3_EL, 'getDoubleCustomValue(', 'getCFValue(') where PARAM_3_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_4_EL =replace(PARAM_4_EL, 'getStringCustomValue(', 'getCFValue(') where PARAM_4_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_4_EL =replace(PARAM_4_EL, 'getLongCustomValue(', 'getCFValue(') where PARAM_4_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_4_EL =replace(PARAM_4_EL, 'getDateCustomValue(', 'getCFValue(') where PARAM_4_EL is not null; 
+            update CAT_TRIGGERED_EDR set PARAM_4_EL =replace(PARAM_4_EL, 'getDoubleCustomValue(', 'getCFValue(') where PARAM_4_EL is not null; 
+            update MEVEO_NATIVE_FILTER_CONDITION set EL =replace(EL, 'getStringCustomValue(', 'getCFValue(') where EL is not null; 
+            update MEVEO_NATIVE_FILTER_CONDITION set EL =replace(EL, 'getLongCustomValue(', 'getCFValue(') where EL is not null; 
+            update MEVEO_NATIVE_FILTER_CONDITION set EL =replace(EL, 'getDateCustomValue(', 'getCFValue(') where EL is not null; 
+            update MEVEO_NATIVE_FILTER_CONDITION set EL =replace(EL, 'getDoubleCustomValue(', 'getCFValue(') where EL is not null; 
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL =replace(EMAIL_TO_EL, 'getStringCustomValue(', 'getCFValue(') where EMAIL_TO_EL is not null; 
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL =replace(EMAIL_TO_EL, 'getLongCustomValue(', 'getCFValue(') where EMAIL_TO_EL is not null; 
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL =replace(EMAIL_TO_EL, 'getDateCustomValue(', 'getCFValue(') where EMAIL_TO_EL is not null; 
+            update ADM_NOTIF_EMAIL set EMAIL_TO_EL =replace(EMAIL_TO_EL, 'getDoubleCustomValue(', 'getCFValue(') where EMAIL_TO_EL is not null; 
+            update ADM_NOTIF_IM set ID_EXPRESSION =replace(ID_EXPRESSION, 'getStringCustomValue(', 'getCFValue(') where ID_EXPRESSION is not null; 
+            update ADM_NOTIF_IM set ID_EXPRESSION =replace(ID_EXPRESSION, 'getLongCustomValue(', 'getCFValue(') where ID_EXPRESSION is not null; 
+            update ADM_NOTIF_IM set ID_EXPRESSION =replace(ID_EXPRESSION, 'getDateCustomValue(', 'getCFValue(') where ID_EXPRESSION is not null; 
+            update ADM_NOTIF_IM set ID_EXPRESSION =replace(ID_EXPRESSION, 'getDoubleCustomValue(', 'getCFValue(') where ID_EXPRESSION is not null; 
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL =replace(CONDITION_EL, 'getStringCustomValue(', 'getCFValue(') where CONDITION_EL is not null; 
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL =replace(CONDITION_EL, 'getLongCustomValue(', 'getCFValue(') where CONDITION_EL is not null; 
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL =replace(CONDITION_EL, 'getDateCustomValue(', 'getCFValue(') where CONDITION_EL is not null; 
+            update AR_ACTION_PLAN_ITEM set CONDITION_EL =replace(CONDITION_EL, 'getDoubleCustomValue(', 'getCFValue(') where CONDITION_EL is not null; 
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL =replace(CONDITION_EL, 'getStringCustomValue(', 'getCFValue(') where CONDITION_EL is not null ;
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL =replace(CONDITION_EL, 'getLongCustomValue(', 'getCFValue(') where CONDITION_EL is not null ;
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL =replace(CONDITION_EL, 'getDateCustomValue(', 'getCFValue(') where CONDITION_EL is not null ;
+            update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL =replace(CONDITION_EL, 'getDoubleCustomValue(', 'getCFValue(') where CONDITION_EL is not null ;
+        </sql>
+    </changeSet>
 </databaseChangeLog>
