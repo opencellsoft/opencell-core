@@ -117,9 +117,9 @@ public class CustomFieldsCacheContainerProvider {
 
             log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
 
-            customFieldValueCache.putIfAbsent(cacheKey, new HashMap<String, List<CachedCFPeriodValue>>());
             List<CachedCFPeriodValue> cfvValues = convertFromCFI(cfi, cfValueCacheTimeAsDate.get(providerId + "_" + cfi.getCode()));
             if (!cfvValues.isEmpty()) {
+                customFieldValueCache.putIfAbsent(cacheKey, new HashMap<String, List<CachedCFPeriodValue>>());
                 customFieldValueCache.get(cacheKey).put(cfi.getCode(), cfvValues);
             }
         }
@@ -147,7 +147,11 @@ public class CustomFieldsCacheContainerProvider {
             log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
         }
 
-        customFieldValueCache.put(cacheKey, values);
+        if (!values.isEmpty()) {
+            customFieldValueCache.put(cacheKey, values);
+        } else {
+            customFieldValueCache.remove(cacheKey);
+        }
     }
 
     /**
@@ -288,17 +292,18 @@ public class CustomFieldsCacheContainerProvider {
         String cacheKey = getCacheKey(entityClass, id);
         CachedCFPeriodValue value = null;
 
-        if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
-            // Only value that is not versioned
-            for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(cfCode)) {
-                if (!period.isVersioned()) {
-                    value = period;
-                }
+        if (!customFieldValueCache.containsKey(cacheKey) || !customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
+            return null;
+        }
+        // Only value that is not versioned
+        for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(cfCode)) {
+            if (!period.isVersioned()) {
+                value = period;
             }
+        }
 
-            if (value != null) {
-                return value.getClosestMatchValue(keyToMatch);
-            }
+        if (value != null) {
+            return value.getClosestMatchValue(keyToMatch);
         }
 
         return null;
@@ -321,24 +326,26 @@ public class CustomFieldsCacheContainerProvider {
 
         String cacheKey = getCacheKey(entityClass, id);
 
-        if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
+        if (!customFieldValueCache.containsKey(cacheKey) || !customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
+            return null;
+        }
 
-            // Add only values that are versioned, with highest priority
-            CachedCFPeriodValue periodFound = null;
-            for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(cfCode)) {
-                if (period.isVersioned() && period.isCorrespondsToPeriod(date)) {
-                    if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
-                        periodFound = period;
-                    }
-                } else if (!period.isVersioned()) {
+        // Add only values that are versioned, with highest priority
+        CachedCFPeriodValue periodFound = null;
+        for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(cfCode)) {
+            if (period.isVersioned() && period.isCorrespondsToPeriod(date)) {
+                if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
                     periodFound = period;
-                    break;
                 }
+            } else if (!period.isVersioned()) {
+                periodFound = period;
+                break;
             }
-            if (periodFound != null) {
-            	log.debug("found period, keyToMatch={}",keyToMatch);
-                return periodFound.getClosestMatchValue(keyToMatch);
-            }
+        }
+        if (periodFound != null) {
+            Object result = periodFound.getClosestMatchValue(keyToMatch);
+            log.trace("Found closest match value {} for period {} and keyToMatch={}", result, date, keyToMatch);
+            return result;
         }
 
         return null;
@@ -463,8 +470,9 @@ public class CustomFieldsCacheContainerProvider {
 
     private List<CachedCFPeriodValue> convertFromCFI(CustomFieldInstance cfi, Date cutoffDate) {
         List<CachedCFPeriodValue> values = new ArrayList<CachedCFPeriodValue>();
-
+        
         if (!cfi.isVersionable()) {
+            cfi.deserializeValue();
             CachedCFPeriodValue value = new CachedCFPeriodValue(cfi.getCfValue().getValue());
             values.add(value);
 
@@ -472,6 +480,7 @@ public class CustomFieldsCacheContainerProvider {
 
             for (CustomFieldPeriod period : cfi.getValuePeriods()) {
                 if (cutoffDate == null || period.getPeriodEndDate() == null || (period.getPeriodEndDate() != null && cutoffDate.before(period.getPeriodEndDate()))) {
+                    period.deserializeValue();
                     CachedCFPeriodValue value = new CachedCFPeriodValue(period.getCfValue().getValue(), period.getPriority(), period.getPeriodStartDate(),
                         period.getPeriodEndDate());
                     values.add(value);

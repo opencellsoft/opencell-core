@@ -1,5 +1,6 @@
 package org.meveo.service.crm.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -19,30 +20,39 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @return A list of custom field instances
      */
     public List<CustomFieldInstance> getCFIForCache() {
-        return getEntityManager().createNamedQuery("CustomFieldInstance.getCFIForCache", CustomFieldInstance.class).getResultList();
+
+        List<CustomFieldInstance> results = new ArrayList<CustomFieldInstance>();
+        String[] queryNames = { "CustomFieldInstance.getCFIForCacheAccount", "CustomFieldInstance.getCFIForCacheProvider", "CustomFieldInstance.getCFIForCacheSubscription",
+                "CustomFieldInstance.getCFIForCacheCharge", "CustomFieldInstance.getCFIForCacheService", "CustomFieldInstance.getCFIForCacheOffer",
+                "CustomFieldInstance.getCFIForCacheAccess", "CustomFieldInstance.getCFIForCacheJobInstance", };
+
+        for (String queryName : queryNames) {
+            results.addAll(getEntityManager().createNamedQuery(queryName, CustomFieldInstance.class).getResultList());
+        }
+        return results;
     }
 
-//    /**
-//     * Convert BusinessEntityWrapper to an entity by doing a lookup in DB
-//     * 
-//     * @param businessEntityWrapper Business entity information
-//     * @return A BusinessEntity object
-//     */
-//    @SuppressWarnings("unchecked")
-//    public BusinessEntity convertToBusinessEntityFromCfV(EntityReferenceWrapper businessEntityWrapper, Provider provider) {
-//        if (businessEntityWrapper == null) {
-//            return null;
-//        }
-//        Query query = getEntityManager().createQuery("select e from " + businessEntityWrapper.getClassname() + " e where e.code=:code and e.provider=:provider");
-//        query.setParameter("code", businessEntityWrapper.getCode());
-//        query.setParameter("provider", provider);
-//        List<BusinessEntity> entities = query.getResultList();
-//        if (entities.size() > 0) {
-//            return entities.get(0);
-//        } else {
-//            return null;
-//        }
-//    }
+    // /**
+    // * Convert BusinessEntityWrapper to an entity by doing a lookup in DB
+    // *
+    // * @param businessEntityWrapper Business entity information
+    // * @return A BusinessEntity object
+    // */
+    // @SuppressWarnings("unchecked")
+    // public BusinessEntity convertToBusinessEntityFromCfV(EntityReferenceWrapper businessEntityWrapper, Provider provider) {
+    // if (businessEntityWrapper == null) {
+    // return null;
+    // }
+    // Query query = getEntityManager().createQuery("select e from " + businessEntityWrapper.getClassname() + " e where e.code=:code and e.provider=:provider");
+    // query.setParameter("code", businessEntityWrapper.getCode());
+    // query.setParameter("provider", provider);
+    // List<BusinessEntity> entities = query.getResultList();
+    // if (entities.size() > 0) {
+    // return entities.get(0);
+    // } else {
+    // return null;
+    // }
+    // }
 
     @SuppressWarnings("unchecked")
     public List<BusinessEntity> findBusinessEntityForCFVByCode(String className, String wildcode, Provider provider) {

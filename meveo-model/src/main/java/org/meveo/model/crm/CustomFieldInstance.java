@@ -42,14 +42,15 @@ import org.meveo.model.mediation.Access;
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID", "ACCOUNT_ID", "CHARGE_TEMPLATE_ID", "SERVICE_TEMPLATE_ID",
         "OFFER_TEMPLATE_ID", "ACCESS_ID", "JOB_INSTANCE_ID", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
-@NamedQueries({ @NamedQuery(name = "CustomFieldInstance.getCFIForCache", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.account where cfi.account is not null and cfi.disabled=false "
-        + "UNION SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.provider where cfi.provider is not null and cfi.disabled=false "
-        + "UNION SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.subscription where cfi.subscription is not null and cfi.disabled=false "
-        + "UNION SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.chargeTemplate where cfi.chargeTemplate is not null and cfi.disabled=false "
-        + "UNION SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.serviceTemplate where cfi.serviceTemplate is not null and cfi.disabled=false "
-        + "UNION SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.offerTemplate where cfi.offerTemplate is not null and cfi.disabled=false "
-        + "UNION SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.access where cf.access is not null and cfi.disabled=false "
-        + "UNION SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.jobInstance where cfi.jobInstance is not null and cfi.disabled=false ") })
+@NamedQueries({
+        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheAccount", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.account where cfi.account is not null and cfi.disabled=false "),
+        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheProvider", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.provider where cfi.provider is not null and cfi.disabled=false "),
+        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheSubscription", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.subscription where cfi.subscription is not null and cfi.disabled=false "),
+        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheCharge", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.chargeTemplate where cfi.chargeTemplate is not null and cfi.disabled=false "),
+        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheService", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.serviceTemplate where cfi.serviceTemplate is not null and cfi.disabled=false "),
+        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheOffer", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.offerTemplate where cfi.offerTemplate is not null and cfi.disabled=false "),
+        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheAccess", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.access where cfi.access is not null and cfi.disabled=false "),
+        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheJobInstance", query = " SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.jobInstance where cfi.jobInstance is not null and cfi.disabled=false ") })
 public class CustomFieldInstance extends ProviderlessEntity {
 
     private static final long serialVersionUID = 8691447585410651639L;
@@ -1064,7 +1065,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
      * A JPA callback to deserialise reference to entity, list and map values upon retrieval from DB.
      */
     @PostLoad
-    private void deserializeValue() {
+    public void deserializeValue() {
         if (cfValue != null) {
             getCfValue().deserializeValue();
         }
