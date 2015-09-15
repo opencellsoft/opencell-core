@@ -12,8 +12,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <endPoint>http://localhost:8080/</endPoint>
-    <meveoUrl>localhost:8080/meveo</meveoUrl>
+    <endPoint>http://localhost:8080/meveo</endPoint>
+    <meveoUrl>http://localhost:8080/meveo</meveoUrl>
     <username>meveo.admin</username>
     <password>meveo.admin</password>
     <authorization>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</authorization> 
