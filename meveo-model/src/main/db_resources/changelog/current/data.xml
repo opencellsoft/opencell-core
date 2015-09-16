@@ -385,4 +385,29 @@
             update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL =replace(CONDITION_EL, 'getDoubleCustomValue(', 'getCFValue(') where CONDITION_EL is not null ;
         </sql>
     </changeSet>
+    
+    <changeSet id="789_2015_09_15-1" author="AndriusKarpavicius">
+        <sql>
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL  =replace(CRITERIA_EL, 'getStringCustomValue(', 'getCFValue(') where CRITERIA_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL  =replace(CRITERIA_EL, 'getLongCustomValue(', 'getCFValue(') where CRITERIA_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL  =replace(CRITERIA_EL, 'getDateCustomValue(', 'getCFValue(') where CRITERIA_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL  =replace(CRITERIA_EL, 'getDoubleCustomValue(', 'getCFValue(') where CRITERIA_EL  is not null; 
+            
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL  =replace(AMOUNT_WITHOUT_TAX_EL, 'getStringCustomValue(', 'getCFValue(') where AMOUNT_WITHOUT_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL  =replace(AMOUNT_WITHOUT_TAX_EL, 'getLongCustomValue(', 'getCFValue(') where AMOUNT_WITHOUT_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL  =replace(AMOUNT_WITHOUT_TAX_EL, 'getDateCustomValue(', 'getCFValue(') where AMOUNT_WITHOUT_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL  =replace(AMOUNT_WITHOUT_TAX_EL, 'getDoubleCustomValue(', 'getCFValue(') where AMOUNT_WITHOUT_TAX_EL  is not null; 
+            
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL  =replace(AMOUNT_WITH_TAX_EL, 'getStringCustomValue(', 'getCFValue(') where AMOUNT_WITH_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL  =replace(AMOUNT_WITH_TAX_EL, 'getLongCustomValue(', 'getCFValue(') where AMOUNT_WITH_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL  =replace(AMOUNT_WITH_TAX_EL, 'getDateCustomValue(', 'getCFValue(') where AMOUNT_WITH_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL  =replace(AMOUNT_WITH_TAX_EL, 'getDoubleCustomValue(', 'getCFValue(') where AMOUNT_WITH_TAX_EL  is not null; 
+           
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL  =replace(FILTER_EL, 'getStringCustomValue(', 'getCFValue(') where FILTER_EL  is not null; 
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL  =replace(FILTER_EL, 'getLongCustomValue(', 'getCFValue(') where FILTER_EL  is not null; 
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL  =replace(FILTER_EL, 'getDateCustomValue(', 'getCFValue(') where FILTER_EL  is not null; 
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL  =replace(FILTER_EL, 'getDoubleCustomValue(', 'getCFValue(') where FILTER_EL  is not null; 
+           
+        </sql>
+    </changeSet>    
 </databaseChangeLog>
