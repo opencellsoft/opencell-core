@@ -198,7 +198,6 @@
 	</changeSet>
     
     <changeSet id="846-2015604-1" author="TyshanShi">
-        <dropAllForeignKeyConstraints baseTableName="adm_user_provider"/>
         <dropTable tableName="adm_user_provider"/>
     </changeSet>
     <changeSet id="789-2015630-1" author="TyshanShi">
@@ -324,103 +323,6 @@
             <column name="permission_id" valueNumeric="13" />
         </insert>    
     </changeSet>
-  			    <changeSet id="telcodemo_20150914-2" author="anasseh">
-  		<insert tableName="crm_provider">
-			<column name="id" valueNumeric="2" />
-			<column name="version" valueNumeric="1" />
-			<column name="disabled" valueBoolean="false" />
-			<column name="created" valueDate="2015-03-19 00:04:08.922" />
-			<column name="code" value="TELCO" />
-			<column name="description" />
-			<column name="amount_validation" valueBoolean="false" />
-			<column name="automatic_invoicing" valueBoolean="false" />
-			<column name="account_number" value="33333333333" />
-			<column name="account_owner" value="owner" />
-			<column name="bank_code" value="SGMB" />
-			<column name="bank_id" value="11" />
-			<column name="bank_name" value="SGMB" />
-			<column name="bic" value="11" />
-			<column name="branch_code" value="12345" />
-			<column name="iban" value="11" />
-			<column name="ics" />
-			<column name="issuer_name" value="TELCO" />
-			<column name="issuer_number" value="1111" />
-			<column name="hash_key" value="11" />
-			<column name="current_invoice_nb" />
-			<column name="discount_accounting_code" />
-			<column name="display_free_tx_in_invoice" valueBoolean="true" />
-			<column name="email" />
-			<column name="entreprise" valueBoolean="false" />
-			<column name="address_1" />
-			<column name="address_2" />
-			<column name="address_3" />
-			<column name="address_city" />
-			<column name="address_country" />
-			<column name="address_state" />
-			<column name="address_zipcode" />
-			<column name="center_code" />
-			<column name="creditor_code" />
-			<column name="financial_institution_code" />
-			<column name="nne" />
-			<column name="invoice_prefix" />
-			<column name="level_duplication" valueBoolean="false" />
-			<column name="logo" />
-			<column name="multicountry_flag" valueBoolean="true" />
-			<column name="multicurrency_flag" valueBoolean="true" />
-			<column name="multilanguage_flag" valueBoolean="true" />
-			<column name="prepaid_resrv_delay_ms" valueNumeric="60000" />
-			<column name="rating_rounding" />
-			<column name="payment_methods" />
-			<column name="billing_account_id" />
-			<column name="country_id" valueNumeric="1" />
-			<column name="currency_id" valueNumeric="1" />
-			<column name="customer_id" />
-			<column name="customer_account_id" />
-			<column name="language_id" valueNumeric="1" />
-			<column name="user_account_id" />
-		</insert>
-		<insert tableName="crm_provider_contact">
-			<column name="id" valueNumeric="2" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueBoolean="false" />
-			<column name="created" valueDate="2015-03-19 00:04:19.892" />
-			<column name="code" value="TELCO_ADMIN" />
-			<column name="description" value="Demo Administrator" />
-			<column name="address_1" />
-			<column name="address_2" />
-			<column name="address_3" />
-			<column name="address_city" value="DIJON" />
-			<column name="address_country" />
-			<column name="address_state" />
-			<column name="address_zipcode" value="21000" />
-			<column name="email" value="contact@manaty.net" />
-			<column name="fax" />
-			<column name="firstname" value="Admin" />
-			<column name="generic_mail" />
-			<column name="lastname" value="Admin" />
-			<column name="mobile" />
-			<column name="phone" value="09152154716" />
-			<column name="provider_id" valueNumeric="2" />
-		</insert>
-		<insert tableName="adm_user">
-			<column name="id" valueNumeric="3" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueBoolean="false" />
-			<column name="created" valueDate="2015-03-19 00:04:09.745" />
-			<column name="email" />
-			<column name="last_password_modification" valueDate="current_date" />
-			<column name="firstname" />
-			<column name="lastname" />
-			<column name="password" value="6431f04a1604562d180ae755ab65106966ea7987" />
-			<column name="username" value="TELCO.ADMIN" />
-			<column name="provider_id" valueNumeric="2" />
-			<column name="title_id" />
-		</insert>	
-		<insert tableName="adm_user_role">
-			<column name="user_id" valueNumeric="3" />
-			<column name="role_id" valueNumeric="1" />
-		</insert>
-	 </changeSet>
 		
     <changeSet id="789_2015_09_15" author="AndriusKarpavicius">
         <sql>
@@ -482,4 +384,29 @@
             update AR_DUNNING_PLAN_TRANSITION set CONDITION_EL =replace(CONDITION_EL, 'getDoubleCustomValue(', 'getCFValue(') where CONDITION_EL is not null ;
         </sql>
     </changeSet>
+    
+    <changeSet id="789_2015_09_15-1" author="AndriusKarpavicius">
+        <sql>
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL  =replace(CRITERIA_EL, 'getStringCustomValue(', 'getCFValue(') where CRITERIA_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL  =replace(CRITERIA_EL, 'getLongCustomValue(', 'getCFValue(') where CRITERIA_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL  =replace(CRITERIA_EL, 'getDateCustomValue(', 'getCFValue(') where CRITERIA_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set CRITERIA_EL  =replace(CRITERIA_EL, 'getDoubleCustomValue(', 'getCFValue(') where CRITERIA_EL  is not null; 
+            
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL  =replace(AMOUNT_WITHOUT_TAX_EL, 'getStringCustomValue(', 'getCFValue(') where AMOUNT_WITHOUT_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL  =replace(AMOUNT_WITHOUT_TAX_EL, 'getLongCustomValue(', 'getCFValue(') where AMOUNT_WITHOUT_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL  =replace(AMOUNT_WITHOUT_TAX_EL, 'getDateCustomValue(', 'getCFValue(') where AMOUNT_WITHOUT_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITHOUT_TAX_EL  =replace(AMOUNT_WITHOUT_TAX_EL, 'getDoubleCustomValue(', 'getCFValue(') where AMOUNT_WITHOUT_TAX_EL  is not null; 
+            
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL  =replace(AMOUNT_WITH_TAX_EL, 'getStringCustomValue(', 'getCFValue(') where AMOUNT_WITH_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL  =replace(AMOUNT_WITH_TAX_EL, 'getLongCustomValue(', 'getCFValue(') where AMOUNT_WITH_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL  =replace(AMOUNT_WITH_TAX_EL, 'getDateCustomValue(', 'getCFValue(') where AMOUNT_WITH_TAX_EL  is not null; 
+            update CAT_PRICE_PLAN_MATRIX set AMOUNT_WITH_TAX_EL  =replace(AMOUNT_WITH_TAX_EL, 'getDoubleCustomValue(', 'getCFValue(') where AMOUNT_WITH_TAX_EL  is not null; 
+           
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL  =replace(FILTER_EL, 'getStringCustomValue(', 'getCFValue(') where FILTER_EL  is not null; 
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL  =replace(FILTER_EL, 'getLongCustomValue(', 'getCFValue(') where FILTER_EL  is not null; 
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL  =replace(FILTER_EL, 'getDateCustomValue(', 'getCFValue(') where FILTER_EL  is not null; 
+            update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL  =replace(FILTER_EL, 'getDoubleCustomValue(', 'getCFValue(') where FILTER_EL  is not null; 
+           
+        </sql>
+    </changeSet>    
 </databaseChangeLog>
