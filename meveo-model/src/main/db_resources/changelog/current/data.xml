@@ -198,7 +198,6 @@
 	</changeSet>
     
     <changeSet id="846-2015604-1" author="TyshanShi">
-        <dropAllForeignKeyConstraints baseTableName="adm_user_provider"/>
         <dropTable tableName="adm_user_provider"/>
     </changeSet>
     <changeSet id="789-2015630-1" author="TyshanShi">
