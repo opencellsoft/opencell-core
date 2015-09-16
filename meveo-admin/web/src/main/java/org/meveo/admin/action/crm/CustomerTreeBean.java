@@ -156,6 +156,8 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             if (acc.getBillingAccount() != null && acc.getBillingAccount().getCustomerAccount() != null) {
                 customer = acc.getBillingAccount().getCustomerAccount().getCustomer();
             }
+            selectedEntityClass = UserAccount.class;
+            
         } else if (entity instanceof Subscription) {
             Subscription s = (Subscription) entity;
             if (s.getUserAccount() != null && s.getUserAccount().getBillingAccount() != null && s.getUserAccount().getBillingAccount().getCustomerAccount() != null) {
