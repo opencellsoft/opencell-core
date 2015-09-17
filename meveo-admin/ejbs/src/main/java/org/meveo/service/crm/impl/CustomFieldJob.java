@@ -3,23 +3,23 @@ package org.meveo.service.crm.impl;
 import java.util.Date;
 
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.meveo.event.CFEndPeriodEvent;
-import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.event.RegisterCFEndPeriodEvent;
 import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
-@Startup
 @Singleton
 public class CustomFieldJob {
 
@@ -34,11 +34,12 @@ public class CustomFieldJob {
 
 	@Timeout
 	private void triggerEndPeriodEventExpired(Timer timer) {
+		log.debug("triggerEndPeriodEventExpired={}", timer);
 		Object[] objs = (Object[]) timer.getInfo();
 		try {
-			CustomFieldInstance customFieldInstance = (CustomFieldInstance) objs[0];
+			RegisterCFEndPeriodEvent registerCFEndPeriodEvent = (RegisterCFEndPeriodEvent) objs[0];
 			CFEndPeriodEvent event = new CFEndPeriodEvent();
-			event.setCustomFieldInstance(customFieldInstance);
+			event.setCustomFieldPeriod(registerCFEndPeriodEvent.getCustomFieldPeriod());
 
 			cFEndPeriodEvent.fire(event);
 		} catch (Exception e) {
@@ -46,9 +47,9 @@ public class CustomFieldJob {
 		}
 	}
 
-	public void triggerEndPeriodEvent(CustomFieldInstance cfi, Date expiration) {
+	public void triggerEndPeriodEvent(RegisterCFEndPeriodEvent event, Date expiration) {
 		TimerConfig timerConfig = new TimerConfig();
-		Object[] objs = { cfi };
+		Object[] objs = { event };
 		timerConfig.setInfo(objs);
 
 		// used for testing
@@ -58,6 +59,19 @@ public class CustomFieldJob {
 		log.debug("creating timer for triggerEndPeriodEvent with expiration={}", expiration);
 
 		timerService.createSingleActionTimer(expiration, timerConfig);
+	}
+
+	@Asynchronous
+	public void observeEndPeriodEvent(@Observes RegisterCFEndPeriodEvent obj) {
+		log.debug("observeEndPeriodEvent={}", obj);
+
+		if (obj.getCustomFieldPeriod().getPeriodEndDate() == null) {
+			CFEndPeriodEvent event = new CFEndPeriodEvent();
+			event.setCustomFieldPeriod(obj.getCustomFieldPeriod());
+			cFEndPeriodEvent.fire(event);
+		} else {
+			triggerEndPeriodEvent(obj, obj.getCustomFieldPeriod().getPeriodEndDate());
+		}
 	}
 
 }
