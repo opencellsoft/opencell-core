@@ -28,9 +28,9 @@ public interface InvoiceWs extends IBaseWs {
 	public GenerateInvoiceResponseDto generateInvoice(@WebParam(name = "generateInvoiceRequest") GenerateInvoiceRequestDto generateInvoiceRequestDto);
 	
 	@WebMethod
-	public GetXmlInvoiceResponseDto getXMLInvoice(@WebParam(name = "invoiceId")Long invoiceId);
+	public GetXmlInvoiceResponseDto getXMLInvoice(@WebParam(name = "invoiceNumber")String invoiceNumber);
 	
 	@WebMethod
-	public GetPdfInvoiceResponseDto getPdfInvoice(@WebParam(name = "invoiceId")Long invoiceId);
+	public GetPdfInvoiceResponseDto getPdfInvoice(@WebParam(name = "invoiceNumber")String invoiceNumber);
 
 }

@@ -524,51 +524,51 @@ public class InvoiceApi extends BaseApi {
 		log.info((invoices==null)?"getInvoice is null" : "size="+ invoices.size());
 
 		GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto();
-		generateInvoiceResultDto.setInvoiceId(invoices.get(0).getId());
 		generateInvoiceResultDto.setInvoiceNumber(invoices.get(0).getInvoiceNumber());
 		return  generateInvoiceResultDto;		
 	}
 
-	public String getXMLInvoice(Long invoiceId,User currentUser) throws  FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-		log.debug("getXMLInvoice  invoiceId:{}",invoiceId);
-		if (invoiceId == null || invoiceId.longValue() <=0 ) {
-			missingParameters.add("invoiceId");
+	public String getXMLInvoice(String invoiceNumber,User currentUser) throws  FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+		log.debug("getXMLInvoice  invoiceNumber:{}",invoiceNumber);
+		if (invoiceNumber == null) {
+			missingParameters.add("invoiceNumber");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
-		Invoice invoice = invoiceService.findById(invoiceId, currentUser.getProvider());
+		
+		Invoice invoice = invoiceService.getInvoiceByNumber(invoiceNumber, currentUser.getProvider().getCode());
 		if(invoice == null){
-			throw new EntityDoesNotExistsException(Invoice.class,invoiceId);
+			throw new EntityDoesNotExistsException(Invoice.class,invoiceNumber);
 		}
 		ParamBean param = ParamBean.getInstance();
 		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo");
 		String sep = File.separator ;
 		String invoicePath = invoicesDir + sep + currentUser.getProvider().getCode() + sep + "invoices" + sep + "xml" + sep + invoice.getBillingRun().getId();
 		File billingRundir = new File(invoicePath);
-		xmlInvoiceCreator.createXMLInvoice(invoiceId, billingRundir);
-		String xmlCanonicalPath = invoicePath + sep+ (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".xml";
+		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
+		String xmlCanonicalPath = invoicePath + sep+ invoiceNumber + ".xml";
 		Scanner scanner = new Scanner(new File(xmlCanonicalPath));
 		String xmlContent = scanner.useDelimiter("\\Z").next();
 		scanner.close();
-		log.debug("getXMLInvoice  invoiceId:{} done.",invoiceId);
+		log.debug("getXMLInvoice  invoiceNumber:{} done.",invoiceNumber);
 		return xmlContent;
 	}
 
-	public byte[] getPdfInvoince(Long invoiceId,User currentUser) throws MissingParameterException, EntityDoesNotExistsException,Exception{
-		log.debug("getPdfInvoince  invoiceId:{}",invoiceId);
-		if (invoiceId == null || invoiceId.longValue() <=0 ) {
-			missingParameters.add("invoiceId");
+	public byte[] getPdfInvoince(String invoiceNumber,User currentUser) throws MissingParameterException, EntityDoesNotExistsException,Exception{
+		log.debug("getPdfInvoince  invoiceNumber:{}",invoiceNumber);
+		if (invoiceNumber == null) {
+			missingParameters.add("invoiceNumber");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
-		Invoice invoice = invoiceService.findById(invoiceId, currentUser.getProvider());
+		Invoice invoice = invoiceService.getInvoiceByNumber(invoiceNumber, currentUser.getProvider().getCode());
 		if(invoice == null){
-			throw new EntityDoesNotExistsException(Invoice.class,invoiceId);
+			throw new EntityDoesNotExistsException(Invoice.class,invoiceNumber);
 		}
 		if(invoice.getPdf() == null){
-			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoiceId, currentUser.getProvider());
-			invoiceService.producePdf(parameters, currentUser);
-			invoiceService.commit();
+		Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser.getProvider());
+		invoiceService.producePdf(parameters, currentUser);
 		}
-		log.debug("getXMLInvoice  invoiceId:{} done.",invoiceId);
+		invoiceService.findById(invoice.getId(),true);
+		log.debug("getXMLInvoice invoiceNumber:{} done.",invoiceNumber);
 		return invoice.getPdf();
 	}
 
