@@ -8,25 +8,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GenerateInvoiceResultDto {
 	
-	private Long invoiceId;
 	private String invoiceNumber;
 	
 	public GenerateInvoiceResultDto(){
 		
-	}
-
-	/**
-	 * @return the invoiceId
-	 */
-	public Long getInvoiceId() {
-		return invoiceId;
-	}
-
-	/**
-	 * @param invoiceId the invoiceId to set
-	 */
-	public void setInvoiceId(Long invoiceId) {
-		this.invoiceId = invoiceId;
 	}
 
 	/**
@@ -48,7 +33,7 @@ public class GenerateInvoiceResultDto {
 	 */
 	@Override
 	public String toString() {
-		return "GenerateInvoiceResultDto [invoiceId=" + invoiceId + ", invoiceNumber=" + invoiceNumber + "]";
+		return "GenerateInvoiceResultDto [invoiceNumber=" + invoiceNumber + "]";
 	}
 
 }

@@ -99,11 +99,11 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	}
 
 	@Override
-	public GetXmlInvoiceResponseDto getXMLInvoice(Long invoiceId) {
+	public GetXmlInvoiceResponseDto getXMLInvoice(String invoiceNumber) {
 		GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
 		try{
 			
-			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceId, getCurrentUser()));
+			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 			
 		}catch(MissingParameterException mpe){
@@ -128,11 +128,11 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	}
 
 	@Override
-	public GetPdfInvoiceResponseDto getPdfInvoice(Long invoiceId) {
+	public GetPdfInvoiceResponseDto getPdfInvoice(String invoiceNumber) {
 		GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
 		try {
 			
-			result.setPdfContent(invoiceApi.getPdfInvoince(invoiceId, getCurrentUser()));
+			result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 			
 		}catch(MissingParameterException mpe){
