@@ -1,4 +1,4 @@
-package org.meveo.event;
+package org.meveo.model.event;
 
 import java.io.Serializable;
 
@@ -7,9 +7,9 @@ import org.meveo.model.crm.CustomFieldPeriod;
 /**
  * @author Edward P. Legaspi
  **/
-public class CFEndPeriodEvent implements Serializable {
+public class RegisterCFEndPeriodEvent implements Serializable {
 
-	private static final long serialVersionUID = -1937181899381134353L;
+	private static final long serialVersionUID = 7005176879373066662L;
 	
 	private CustomFieldPeriod customFieldPeriod;
 
@@ -19,11 +19,6 @@ public class CFEndPeriodEvent implements Serializable {
 
 	public void setCustomFieldPeriod(CustomFieldPeriod customFieldPeriod) {
 		this.customFieldPeriod = customFieldPeriod;
-	}
-
-	@Override
-	public String toString() {
-		return "CFEndPeriodEvent [customFieldPeriod=" + customFieldPeriod + "]";
 	}
 
 }

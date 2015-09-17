@@ -71,12 +71,12 @@
                                 </p:column>
                                 <p:column headerText="#{messages['customFieldTemplate.periodStartDate']}" width="13%" sortBy="#{period.periodStartDate}">
                                     <h:outputText value="#{period.periodStartDate}">
-                                        <f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
+                                        <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}" />
                                     </h:outputText>
                                 </p:column>
                                 <p:column headerText="#{messages['customFieldTemplate.periodEndDate']}" width="13%" sortBy="#{period.periodEndDate}">
                                     <h:outputText value="#{period.periodEndDate}">
-                                        <f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
+                                        <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}" />
                                     </h:outputText>
                                 </p:column>
                                 <p:column headerText="#{messages['customFieldTemplate.periodValue']}">
@@ -100,26 +100,26 @@
                                         <f:setPropertyActionListener target="#{cc.attrs.backingBean.customFieldSelectedPeriodId}" value=":#{component.parent.parent.clientId}" />
                                         <p:resetInput target=":#{cc.clientId}:periodFields" />
                                     </p:commandButton>
-                                    <p:commandButton id="deletelink" action="#{cft.instance.removeValuePeriod(period)}" partialSubmit="true" process="@this" icon="ui-icon-trash"
-                                        update="periodTable_omitFromSubmit" rendered="#{cc.attrs.edit}" />
+                                    <!-- <p:commandButton id="deletelink" action="#{cft.instance.removeValuePeriod(period)}" partialSubmit="true" process="@this" icon="ui-icon-trash"
+                                        update="periodTable_omitFromSubmit" rendered="#{cc.attrs.edit}" /> -->
                                 </p:column>
                                 <f:facet name="footer">
                                     <p:messages globalOnly="false" redisplay="false" />
 
                                     <hf:namingContainer id="addNewFields" rendered="#{cc.attrs.edit}">
 
-                                        <p:calendar id="period_date" showButtonPanel="true" pattern="#{cc.attrs.datePattern}"
+                                        <p:calendar id="period_date" showButtonPanel="true" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}"
                                             value="#{cc.attrs.backingBean.customFieldNewValue[cft.code.concat('_periodStartDate')]}" required="true"
                                             label="#{messages['customFieldTemplate.periodDate']}" placeholder="#{messages['customFieldTemplate.periodDate']}"
                                             rendered="#{cft.instance.calendar!=null}">
                                         </p:calendar>
-                                        <p:calendar id="period_start_date" showButtonPanel="true" pattern="#{cc.attrs.datePattern}"
+                                        <p:calendar id="period_start_date" showButtonPanel="true" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}"
                                             value="#{cc.attrs.backingBean.customFieldNewValue[cft.code.concat('_periodStartDate')]}"
                                             label="#{messages['customFieldTemplate.periodStartDate']}" placeholder="#{messages['customFieldTemplate.periodStartDate']}"
                                             rendered="#{cft.instance.calendar==null}">
                                         </p:calendar>
 
-                                        <p:calendar id="period_end_date" showButtonPanel="true" pattern="#{cc.attrs.datePattern}"
+                                        <p:calendar id="period_end_date" showButtonPanel="true" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}"
                                             value="#{cc.attrs.backingBean.customFieldNewValue[cft.code.concat('_periodEndDate')]}"
                                             label="#{messages['customFieldTemplate.periodEndDate']}" placeholder="#{messages['customFieldTemplate.periodEndDate']}"
                                             rendered="#{cft.instance.calendar==null}">
