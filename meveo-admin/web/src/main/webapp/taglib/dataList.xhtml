@@ -124,7 +124,7 @@
                 <ui:insert />
             </p:dataTable>
 
-            <h:panelGroup rendered="#{dataModel.rowCount>0}">
+            <h:panelGroup rendered="#{dataModel.size()>0}">
                 <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{deleteManyButton}" value="#{messages['commons.deleteMultiple']}" action="#{backingBean.deleteMany()}"
                     icon="ui-icon-trash" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}" ajax="false" />
 
@@ -140,7 +140,7 @@
                 </p:commandButton>
                 <c:if test="#{exportToXml}">
                     <p:tooltip for="#{formId}exportToXml" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide" />
-                    <p:commandButton id="#{formId}exportToXml" value="#{messages['export.export']}" update=":exportParametersDialog"
+                    <p:commandButton id="#{formId}exportToXml" value="#{messages['export.export']}" update=":#{p:component('exportParametersDialog')}"
                         oncomplete="PF('exportParametersDialog').show()">
                         <f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{dataModel}" />
                     </p:commandButton>

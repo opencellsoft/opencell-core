@@ -133,7 +133,7 @@
 						<hftl:dataList id="serviceRecurringChargeTempalte_table"
 							backingBean="#{serviceChargeTemplateRecurringBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceRecurringCharges}"
-							resultsId="serviceRecurringCharges_results">
+							resultsId="serviceRecurringCharges_results" exportToXml="false">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="recurringChargeTemplateDetail"/>
@@ -226,7 +226,7 @@
 						<hftl:dataList id="serviceSubscriptionChargeTempalte_table"
 							backingBean="#{serviceChargeTemplateSubscriptionBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceSubscriptionCharges}"
-							resultsId="serviceSubscriptionCharges_results">
+							resultsId="serviceSubscriptionCharges_results" exportToXml="false">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="oneShotChargeTemplateDetail"/>
@@ -316,7 +316,7 @@
 						<hftl:dataList id="serviceTerminationChargeTempalte_table"
 							backingBean="#{serviceChargeTemplateTerminationBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceTerminationCharges}"
-							resultsId="serviceTerminationCharges_results">
+							resultsId="serviceTerminationCharges_results" exportToXml="false">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="oneShotChargeTemplateDetail"/>
@@ -405,7 +405,7 @@
                     <h:panelGroup id="serviceUsageChargeTempalte_panel">
 						<hftl:dataList backingBean="#{serviceChargeTemplateUsageBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceUsageCharges}"
-							resultsId="serviceUsageCharges_results">
+							resultsId="serviceUsageCharges_results" exportToXml="false">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="usageChargeTemplateDetail"/>
