@@ -27,7 +27,7 @@ public class PrimitiveFilterCondition extends FilterCondition {
 	@Column(name = "OPERATOR", length = 60)
 	private String operator;
 
-	@Column(name = "OPERAND", length = 60)
+	@Column(name = "OPERAND", length = 255)
 	private String operand;
 
 	@Override
