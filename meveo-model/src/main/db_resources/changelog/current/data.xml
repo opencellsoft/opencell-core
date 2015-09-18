@@ -203,7 +203,8 @@
     <changeSet id="789-2015630-1" author="TyshanShi">
     	<sql><![CDATA[update crm_custom_field_tmpl set storage_type='SINGLE' where storage_type is null]]></sql>
     </changeSet>
-        <changeSet id="#907_01072015_1" author="anasseh">
+    <changeSet id="#907_01072015_0" author="anasseh">
+        <sql>delete from crm_custom_field_inst where code='MediationJob_mappingConf'</sql>
     	<sql><![CDATA[
     	INSERT INTO crm_custom_field_inst (id,version,disabled,created,updated,code,description,date_value,
     	double_value,long_value,string_value,provider_id,creator_id,updater_id,access_id,account_id,charge_template_id,
@@ -221,7 +222,7 @@
                 <record-element length="0" beanref="cdr.timestamp" type="date">
                     <conversion-option name="format" value="yyyy-MM-dd''T''HH:mm:ss.SSS''Z''"/>                  
                 </record-element>
-                <record-element length="0" beanref="cdr.quantity" type="decimal">                 
+                <record-element length="0" beanref="cdr.quantity" type="bigDecimal">                 
                 </record-element>
                 <record-element length="0" beanref="cdr.access_id" type="char"/>
                 <record-element length="0" beanref="cdr.param1" type="char" />
@@ -231,7 +232,7 @@
             </line>
         </record-definition>
     </record>
-</file-format>', 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, 3,false, NULL);
+</file-format>', NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, 3,false, NULL);
     	]]></sql>
     </changeSet>
 
