@@ -24,6 +24,13 @@
 
 	<dependencies>
 
+		<!-- Primeface is used for api documention generation -->
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>primefaces</artifactId>
+			<version>5.2</version>
+		</dependency>
+
 		<!-- Import the CDI API, we use provided scope as the API is included in 
 			JBoss AS 7 -->
 		<dependency>
