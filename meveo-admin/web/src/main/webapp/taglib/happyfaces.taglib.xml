@@ -52,5 +52,9 @@
 	<tag>
 		<tag-name>customFieldListTable</tag-name>
 		<source>customFieldListTable.xhtml</source>
-	</tag>
+	</tag>    
+    <tag>
+        <tag-name>exportToXmlDialogs</tag-name>
+        <source>exportToXmlDialogs.xhtml</source>
+    </tag>
 </facelet-taglib>

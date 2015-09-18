@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 
 import javax.enterprise.context.Conversation;
 import javax.faces.bean.ViewScoped;
+import javax.faces.model.DataModel;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Entity;
@@ -47,6 +48,9 @@ public class EntityExportImportBean implements Serializable {
 
     private static final long serialVersionUID = -8190794739629651135L;
 
+    private static String FILTER_TEMPLATENAME = "templateName";
+    private static String FILTER_COMPLEX = "complex";
+
     @Inject
     private Logger log;
 
@@ -73,6 +77,8 @@ public class EntityExportImportBean implements Serializable {
     private Provider forceToProvider;
 
     private ExportTemplate selectedExportTemplate;
+
+    private DataModel<? extends IEntity> dataModelToExport;
 
     /** Entity selection for export search criteria. */
     protected Map<String, Object> exportParameters = initExportParameters();
@@ -111,6 +117,22 @@ public class EntityExportImportBean implements Serializable {
 
     public void setSelectedExportTemplate(ExportTemplate selectedExportTemplate) {
         this.selectedExportTemplate = selectedExportTemplate;
+    }
+
+    public void setDataModelToExport(DataModel<? extends IEntity> dataModelToExport) {
+        this.dataModelToExport = dataModelToExport;
+
+        // Determine applicable template by matching a class name
+        if (dataModelToExport.getRowCount() > 0) {
+            selectedExportTemplate = getExportImportTemplateForClass(dataModelToExport.iterator().next().getClass());
+        } else {
+            selectedExportTemplate = null;
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public DataModel getDataModelToExport() {
+        return dataModelToExport;
     }
 
     /**
@@ -198,12 +220,12 @@ public class EntityExportImportBean implements Serializable {
         Reflections reflections = new Reflections("org.meveo.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
-        if (inputFilters.get("templateName") != null) {
-            inputFilters.put("templateName", ((String) inputFilters.get("templateName")).toLowerCase());
+        if (inputFilters.get(FILTER_TEMPLATENAME) != null) {
+            inputFilters.put(FILTER_TEMPLATENAME, ((String) inputFilters.get(FILTER_TEMPLATENAME)).toLowerCase());
         }
 
         // Don't loop through classes when only "complex" templates are of interest
-        if (!inputFilters.containsKey("complex") || !(boolean) inputFilters.get("complex")) {
+        if (!inputFilters.containsKey(FILTER_COMPLEX) || !(boolean) inputFilters.get(FILTER_COMPLEX)) {
             for (Class clazz : classes) {
 
                 if (!clazz.isAnnotationPresent(Entity.class) || !IEntity.class.isAssignableFrom(clazz)) {
@@ -211,7 +233,7 @@ public class EntityExportImportBean implements Serializable {
                 }
 
                 // Filter by a template name
-                if (inputFilters.get("templateName") != null && !clazz.getName().toLowerCase().contains((String) inputFilters.get("templateName"))) {
+                if (inputFilters.get(FILTER_TEMPLATENAME) != null && !clazz.getName().toLowerCase().contains((String) inputFilters.get(FILTER_TEMPLATENAME))) {
                     continue;
                 }
 
@@ -249,6 +271,42 @@ public class EntityExportImportBean implements Serializable {
         return templates;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private ExportTemplate getExportImportTemplateForClass(Class clazz) {
+
+        // Check for a match by a classname in complex export template definitions from configuration
+        XStream xstream = new XStream();
+        xstream.alias("template", ExportTemplate.class);
+        xstream.useAttributeFor(ExportTemplate.class, "name");
+        xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
+        xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
+
+        xstream.setMode(XStream.NO_REFERENCES);
+
+        List<ExportTemplate> templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
+
+        for (ExportTemplate exportTemplate : templatesFromXml) {
+            // Filter by a template name
+            if (exportTemplate.getName().equalsIgnoreCase(clazz.getSimpleName())
+                    || (exportTemplate.getEntityToExport() != null && exportTemplate.getEntityToExport().equals(clazz))) {
+                return exportTemplate;
+            }
+        }
+
+        // Create a default export template if not found
+        ExportTemplate exportTemplate = new ExportTemplate();
+
+        if (BaseEntity.class.isAssignableFrom(clazz)) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("provider", "provider");
+            exportTemplate.setParameters(params);
+        }
+        exportTemplate.setName(clazz.getSimpleName());
+        exportTemplate.setEntityToExport(clazz);
+
+        return exportTemplate;
+    }
+
     /**
      * Export entities for a given export template. No entity search criteria.
      * 
@@ -264,7 +322,7 @@ public class EntityExportImportBean implements Serializable {
         parameters.put("provider", currentProvider);
 
         try {
-            exportImportFuture = entityExportImportService.exportEntities(exportTemplate, parameters);
+            exportImportFuture = entityExportImportService.exportEntities(exportTemplate, parameters, null);
             messages.info(new BundleKey("messages", "export.exported"), exportTemplate.getName());
 
         } catch (Exception e) {
@@ -294,7 +352,7 @@ public class EntityExportImportBean implements Serializable {
 
         try {
 
-            exportImportFuture = entityExportImportService.exportEntities(selectedExportTemplate, exportParameters);
+            exportImportFuture = entityExportImportService.exportEntities(selectedExportTemplate, exportParameters, dataModelToExport);
             messages.info(new BundleKey("messages", "export.exported"), selectedExportTemplate.getName());
 
         } catch (Exception e) {
@@ -307,6 +365,11 @@ public class EntityExportImportBean implements Serializable {
         exportParameters = initExportParameters();
     }
 
+    /**
+     * Handle a file upload and import the file
+     * 
+     * @param event File upload event
+     */
     public void uploadImportFile(FileUploadEvent event) {
         exportImportFuture = null;
         if (event.getFile() != null) {
