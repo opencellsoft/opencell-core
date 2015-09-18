@@ -1,12 +1,16 @@
 package org.meveo.commons.utils;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.apache.commons.validator.routines.IntegerValidator;
 import org.apache.commons.validator.routines.LongValidator;
+import org.meveo.admin.exception.FilterException;
 import org.meveo.model.filter.AndCompositeFilterCondition;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.filter.FilterCondition;
@@ -20,11 +24,13 @@ import org.meveo.model.filter.PrimitiveFilterCondition;
  **/
 public class FilteredQueryBuilder extends QueryBuilder {
 
+	private ParamBean paramBean = ParamBean.getInstance();
+
 	public FilteredQueryBuilder() {
 
 	}
 
-	public FilteredQueryBuilder(Filter filter) {
+	public FilteredQueryBuilder(Filter filter) throws FilterException {
 		this(filter, false, true);
 	}
 
@@ -62,7 +68,35 @@ public class FilteredQueryBuilder extends QueryBuilder {
 			}
 		} else if (filterCondition instanceof PrimitiveFilterCondition) {
 			PrimitiveFilterCondition tempFilter = (PrimitiveFilterCondition) filterCondition;
-			if (tempFilter.getOperand().indexOf("enum:") != -1) {
+			if (tempFilter.getOperand().indexOf("date:") != -1) {
+				try {
+					String strDateValue = tempFilter.getOperand().substring(5);
+					Date dateValue = null;
+
+					SimpleDateFormat sdf = new SimpleDateFormat(paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy"));
+					try {
+						dateValue = sdf.parse(strDateValue);
+					} catch (ParseException e) {
+						try {
+							sdf = new SimpleDateFormat(
+									paramBean.getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm"));
+							dateValue = sdf.parse(strDateValue);
+						} catch (ParseException e1) {
+							throw new FilterException(e1.getMessage());
+						}
+					}
+
+					if (tempFilter.getOperator().equals("=")) {
+						addCriterionDate(tempFilter.getFieldName(), dateValue);
+					} else if (tempFilter.getOperator().equals(">=")) {
+						addCriterionDateRangeFromTruncatedToDay(tempFilter.getFieldName(), dateValue);
+					} else if (tempFilter.getOperator().equals("<=")) {
+						addCriterionDateRangeToTruncatedToDay(tempFilter.getFieldName(), dateValue);
+					}
+				} catch (Exception e) {
+					throw new FilterException(e.getMessage());
+				}
+			} else if (tempFilter.getOperand().indexOf("enum:") != -1) {
 				String enumClassName = (tempFilter.getOperand().substring(5, tempFilter.getOperand().lastIndexOf(".")));
 				String enumValue = tempFilter.getOperand().substring(tempFilter.getOperand().lastIndexOf(".") + 1,
 						tempFilter.getOperand().length());
@@ -77,7 +111,7 @@ public class FilteredQueryBuilder extends QueryBuilder {
 								ReflectionUtils.getEnumFromString(enumClass, enumValue));
 					}
 				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+					throw new FilterException(e.getMessage());
 				}
 			} else if (tempFilter.getOperand().indexOf("bool:") != -1) {
 				addBooleanCriterion(tempFilter.getFieldName(),
@@ -150,4 +184,5 @@ public class FilteredQueryBuilder extends QueryBuilder {
 
 		addOrderCriterion(sb.toString(), orderCondition.isAscending());
 	}
+
 }

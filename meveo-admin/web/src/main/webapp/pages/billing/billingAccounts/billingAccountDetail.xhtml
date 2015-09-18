@@ -384,7 +384,7 @@
 													backingBean="#{counterPeriodBean}"
 													dataModel="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
 													sortBy="periodStartDate"
-													sortOrder="DESCENDING">
+													sortOrder="DESCENDING" exportToXml="false">
 													<hftl:column label="#{messages['businessEntity.code']}"
 														field="code" />
 													<hftl:column label="#{messages['businessEntity.description']}"
@@ -456,7 +456,7 @@
 							<hftl:dataList
 								dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}"
 								resultsId="i_results"
-								backingBean="#{invoiceBean}" deleteManyButton="false">
+								backingBean="#{invoiceBean}" deleteManyButton="false" exportToXml="false">
 								<hftl:column label="#{messages['invoice.invoiceNumber']}"
 									field="invoiceNumber" />
 								<hftl:column label="#{messages['invoice.invoiceDate']}" isDate="true"

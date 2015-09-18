@@ -76,24 +76,25 @@ public class CounterPeriodBean extends BaseBean<CounterPeriod> {
 	}
 	
 	
-	public LazyDataModel<CounterPeriod> getCounterPeriods(CounterInstance counterInstance) {
-		  if (counterInstance != null) {
-		   filters.put("counterInstance", counterInstance);
-		   return getLazyDataModel();
-		  }
+    public LazyDataModel<CounterPeriod> getCounterPeriods(CounterInstance counterInstance) {
+        if (counterInstance != null) {
+            filters.put("counterInstance", counterInstance);
+            return getLazyDataModel();
+        }
 
-		  return new LazyDataModel<CounterPeriod>() {  
-		   private static final long serialVersionUID = 1L;
-		   @Override
-		   public List<CounterPeriod> load(int first, int pageSize, String sortField,
-					SortOrder sortOrder, Map<String, Object> loadingFilters) {
-		    return new ArrayList<CounterPeriod>();
-		   }
-		   
-		  };
-		 }
-	
-	
+        return new LazyDataModel<CounterPeriod>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public List<CounterPeriod> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
+                return new ArrayList<CounterPeriod>();
+            }
+
+            public Integer size(){
+                return 0;
+            }
+        };
+    }
 	
 	 
 	@Override

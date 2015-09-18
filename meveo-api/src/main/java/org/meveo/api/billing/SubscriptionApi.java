@@ -8,7 +8,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
@@ -322,11 +321,11 @@ public class SubscriptionApi extends BaseApi {
 			// activate services
 			for (ServiceInstance serviceInstance : serviceInstances) {
 				if (serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-					throw new MeveoApiException(new BundleKey("messages", "error.activation.suspendedService").getBundle());
+					throw new MeveoApiException("Service "+serviceInstance.getCode()+" is Suspended");
 				}
 
 				if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-					throw new MeveoApiException(new BundleKey("messages", "error.activation.activeService").getBundle());
+					throw new MeveoApiException("Service "+serviceInstance.getCode()+" is already Active");
 				}
 
 				try {
