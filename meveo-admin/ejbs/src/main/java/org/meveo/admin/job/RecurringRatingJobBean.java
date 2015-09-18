@@ -71,6 +71,8 @@ public class RecurringRatingJobBean implements Serializable {
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
 			}catch(Exception e){
+				nbRuns = new Long(1);
+				waitingMillis = new Long(0);
 				log.warn("Cant get customFields for "+jobInstance.getJobTemplate());
 			}
 
