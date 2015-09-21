@@ -89,7 +89,7 @@
 
         <p:commandButton id="saveButtonAjax"
             rendered="#{cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit}"
-            value="tt_#{messages['action.save']} " oncomplete="$('html,body').scrollTop(0);"
+            value="#{messages['action.save']} " oncomplete="$('html,body').scrollTop(0);"
             action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
             icon="ui-icon-check" process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
