@@ -36,6 +36,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.Identity;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
+import org.meveo.admin.action.admin.CurrentUser;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
@@ -49,7 +50,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
-import org.meveo.security.MeveoUser;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -85,6 +86,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @CurrentProvider
     protected Provider currentProvider;
 
+    @Inject
+    @CurrentUser
+    protected User currentUser;
+    
     @Inject
     protected Conversation conversation;
 
@@ -715,6 +720,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                         cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
                     }
 
+//                    cleanFilters.put(PersistenceService.SEARCH_CURRENT_USER, getCurrentUser());
+                    cleanFilters.put(PersistenceService.SEARCH_CURRENT_PROVIDER, getCurrentProvider());
                     return BaseBean.this.supplementSearchCriteria(cleanFilters);
                 }
 
@@ -804,7 +811,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     protected User getCurrentUser() {
-        return ((MeveoUser) identity.getUser()).getUser();
+        return currentUser; 
+        
+        // return ((MeveoUser) identity.getUser()).getUser();
     }
 
     public List<TradingLanguage> getProviderLanguages() {
