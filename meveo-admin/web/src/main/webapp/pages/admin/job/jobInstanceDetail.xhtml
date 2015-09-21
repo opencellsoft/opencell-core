@@ -80,11 +80,9 @@
                    </p:tab>
                   </p:tabView>
 
-                <hf:formButtons backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
-                    submitPartialProcess=":formPanel:formId:tabView">
-                    <p:commandButton ajax="true" id="button_execute" value="#{messages['job.executeJobNow']}" action="#{jobInstanceBean.executeTimer()}"
-                        rendered="#{jobInstanceBean.entity.id!=null}" partialSubmit="true" process="@this :formPanel:formId:tabView" partialSubmitFilter=":not([name*='omitFromSubmit'])" />
-                </hf:formButtons>
+                <hf:formButtons execute="true" exeuteLabel="#{messages['job.executeJobNow']}" backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
+                    submitPartialProcess=":formPanel:formId:tabView"  />
+                  
                     
             </hf:formPanel>
 
