@@ -195,7 +195,7 @@
                                 </p:dataTable>
                             </p:panel>
                             <p:panel styleClass="search-panel" header="#{messages['export.fieldsNotImported']}"
-                                rendered="#{!entityExportImportBean.remoteImportResult.fieldsNotImported.isEmpty()}">
+                                rendered="#{entityExportImportBean.remoteImportResult.fieldsNotImported!=null and ! entityExportImportBean.remoteImportResult.fieldsNotImported.isEmpty()}">
 
                                 <p:dataTable id="fiDatatable" var="stat" value="#{entityExportImportBean.remoteImportResult.fieldsNotImported.entrySet().toArray()}"
                                     paginator="true" rows="20"
@@ -205,7 +205,7 @@
                                         <h:outputText value="#{stat.key}" />
                                     </p:column>
                                     <p:column headerText="#{messages['export.fields']}">
-                                        <h:outputText value="#{of:joinCollection(stat.value, ',')}" />
+                                        <h:outputText value="#{of:joinCollection(stat.value.fieldsNotImported, ',')}" />
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>

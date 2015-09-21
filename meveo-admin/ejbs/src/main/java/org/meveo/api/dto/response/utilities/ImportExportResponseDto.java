@@ -31,7 +31,7 @@ public class ImportExportResponseDto extends BaseResponse {
     private Map<String, Integer> summary = null;
 
     /**
-     * Stores a list of field names that were not imported because of differences between original and current model - field does not exist in current model
+     * Stores a list of field names that were not imported because of differences between original and current model - fields do not exist in current model
      */
     private Map<String, FieldsNotImportedStringCollectionDto> fieldsNotImported = null;
 
@@ -67,10 +67,12 @@ public class ImportExportResponseDto extends BaseResponse {
         }
         this.errorMessageKey = statistics.getErrorMessageKey();
 
-		for (Map.Entry<String, Collection<String>> entry : statistics.getFieldsNotImported().entrySet()) {
-			fieldsNotImported.put(entry.getKey(), new FieldsNotImportedStringCollectionDto(statistics.getFieldsNotImported().get(entry)));
-		}
-
+        if (!statistics.getFieldsNotImported().isEmpty()) {
+            fieldsNotImported = new HashMap<String, FieldsNotImportedStringCollectionDto>();
+            for (Map.Entry<String, Collection<String>> entry : statistics.getFieldsNotImported().entrySet()) {
+                fieldsNotImported.put(entry.getKey(), new FieldsNotImportedStringCollectionDto(entry.getValue()));
+            }
+        }
         this.summary = new HashMap<String, Integer>();
         for (Entry<Class, Integer> summaryInfo : statistics.getSummary().entrySet()) {
             this.summary.put(summaryInfo.getKey().getName(), summaryInfo.getValue());
@@ -160,11 +162,11 @@ public class ImportExportResponseDto extends BaseResponse {
         }
     }
 
-	public Map<String, FieldsNotImportedStringCollectionDto> getFieldsNotImported() {
-		return fieldsNotImported;
-	}
+    public Map<String, FieldsNotImportedStringCollectionDto> getFieldsNotImported() {
+        return fieldsNotImported;
+    }
 
-	public void setFieldsNotImported(Map<String, FieldsNotImportedStringCollectionDto> fieldsNotImported) {
-		this.fieldsNotImported = fieldsNotImported;
-	}
+    public void setFieldsNotImported(Map<String, FieldsNotImportedStringCollectionDto> fieldsNotImported) {
+        this.fieldsNotImported = fieldsNotImported;
+    }
 }
