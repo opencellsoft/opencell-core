@@ -139,11 +139,11 @@
                     <l:dataExporter fileType="csv" source="datatable_#{resultsId}" fileName="#{fileName}" fileOptions="#{backingBean.csvOptions()}" />
                 </p:commandButton>
                 <c:if test="#{exportToXml}">
-                    <!-- <p:tooltip for="#{formId}exportToXml" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide" />
+                    <p:tooltip for="#{formId}exportToXml" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide" />
                     <p:commandButton id="#{formId}exportToXml" value="#{messages['export.export']}" update=":#{p:component('exportParametersDialog')}"
                         oncomplete="PF('exportParametersDialog').show()">
                         <f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{dataModel}" />
-                    </p:commandButton> -->
+                    </p:commandButton>
                 </c:if>
 
             </h:panelGroup>
