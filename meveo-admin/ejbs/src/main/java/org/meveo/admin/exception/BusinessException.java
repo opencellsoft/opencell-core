@@ -49,7 +49,7 @@ public class BusinessException extends Exception {
 	}
 
 	public void registerEvent() {
-		if ("true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "false"))) {
+		if ("true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"))) {
 			try {
 				InitialContext ic = new InitialContext();
 				CreateEventHelper createEventHelper = (CreateEventHelper) ic.lookup("java:global/" + ParamBean.getInstance().getProperty("meveo.moduleName", "meveo") + "/CreateEventHelper");
