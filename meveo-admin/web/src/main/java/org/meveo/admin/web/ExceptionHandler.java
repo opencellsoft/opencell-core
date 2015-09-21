@@ -1,6 +1,7 @@
 package org.meveo.admin.web;
 
 import javax.enterprise.context.NonexistentConversationException;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,20 +10,25 @@ import org.jboss.solder.exception.control.CaughtException;
 import org.jboss.solder.exception.control.Handles;
 import org.jboss.solder.exception.control.HandlesExceptions;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.event.monitoring.CreateEventHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 @HandlesExceptions
 public class ExceptionHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
+	
+	@Inject
+	CreateEventHelper createEventHelper;
 
 	public void handleAuthorizationException(
 			@Handles CaughtException<AuthorizationException> evt,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
-		
+		createEventHelper.register(evt.getException());
 		log.error("Caught in handleAuthorizationException exception={}",evt.getException()!=null?evt.getException().getMessage():null);
 
 		try {
@@ -40,7 +46,7 @@ public class ExceptionHandler {
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
-		
+		createEventHelper.register(evt.getException());
 		log.error("Caught in handleInvalidConversationException exception={}", evt.getException()!=null?evt.getException().getMessage():null);
 
 		try {
@@ -76,7 +82,7 @@ public class ExceptionHandler {
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
-		
+		createEventHelper.register(evt.getException());
 		log.error("Caught in handleSqlException exception={}", evt.getException()!=null?evt.getException().getMessage():null);
 
 		try {
@@ -94,7 +100,7 @@ public class ExceptionHandler {
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
-		
+		createEventHelper.register(evt.getException());
 		log.error("Caught in handleRuntimeException exception={}", (evt.getException()!=null?evt.getException().getMessage():null),evt.getException());
 
 		try {
