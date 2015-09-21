@@ -33,6 +33,7 @@ public class ConfigIssuesReportingDTO implements Serializable {
     private Integer nbrEdrRejected;
     private Integer nbrEdrRated;
     private Integer nbrEdrOpen;
+    private Integer nbrJasperDir;
     
   
 	public ConfigIssuesReportingDTO() {
@@ -52,7 +53,7 @@ public class ConfigIssuesReportingDTO implements Serializable {
 			Integer nbrWalletOpOpen, Integer nbrWalletOpTreated,
 			Integer nbrWalletOpCancled, Integer nbrWalletOpReserved,
 			Integer nbrWalletOpTorerate, Integer nbrWalletOpRerated,
-			Integer nbrEdrRejected, Integer nbrEdrRated, Integer nbrEdrOpen) {
+			Integer nbrEdrRejected, Integer nbrEdrRated, Integer nbrEdrOpen,Integer nbrJasperDir) {
 		super();
 		this.nbrRejectedEDR = nbrRejectedEDR;
 		this.nbrWalletOpOpen = nbrWalletOpOpen;
@@ -64,6 +65,7 @@ public class ConfigIssuesReportingDTO implements Serializable {
 		this.nbrEdrRejected = nbrEdrRejected;
 		this.nbrEdrRated = nbrEdrRated;
 		this.nbrEdrOpen = nbrEdrOpen;
+		this.nbrJasperDir=nbrJasperDir;
 	}
 
 	public Integer getNbrRejectedEDR() {
@@ -165,6 +167,15 @@ public class ConfigIssuesReportingDTO implements Serializable {
 		this.nbrEdrOpen = nbrEdrOpen;
 	}
 
+	public Integer getNbrJasperDir() {
+		return nbrJasperDir;
+	}
+
+	public void setNbrJasperDir(Integer nbrJasperDir) {
+		this.nbrJasperDir = nbrJasperDir;
+	}
+
+	
 
 	
 
