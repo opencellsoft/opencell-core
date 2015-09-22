@@ -355,7 +355,7 @@ public class EntityExportImportService implements Serializable {
                 try {
                     fileWriter.close();
                 } catch (IOException e) {
-                    log.error("Failed to export data to a file {}", filename, e);
+                    log.error("Failed to export data to a file {}. Failed to close a writer.", filename, e);
                 }
             }
         }
@@ -613,7 +613,7 @@ public class EntityExportImportService implements Serializable {
             log.error("Failed to import a file {} ", filename, e);
             importStatsTotal.setException(e);
         }
-
+        
         return new AsyncResult<ExportImportStatistics>(importStatsTotal);
     }
 

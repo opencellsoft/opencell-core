@@ -13,14 +13,14 @@
 
     <ui:define name="body">
 
-        <hf:searchPanel label="#{messages['customFieldTemplate.search']}" backingBean="#{customFieldTemplateListBean}" columns="3">
-            <hf:searchField label="#{messages['BusinessEntity.code']}" field="code" />
-            <hf:searchField label="#{messages['customFieldTemplate.fieldType']}" id="fieldType" field="fieldType" />
-            <hf:searchField label="#{messages['customFieldTemplate.storageType']}" id="storageType" field="storageType" />
-            <hf:searchField label="#{messages['customFieldTemplate.accountType']}" id="accountLevel" field="accountLevel" listValues="#{customFieldTemplateListBean.accountLevelsNoTimer}"/>
-            <hf:searchField label="#{messages['customFieldTemplate.versionable']}" id="versionable" field="versionable"  newLine="true"/>
+        <hftl:searchPanel id="searchPanel" label="#{messages['customFieldTemplate.search']}" backingBean="#{customFieldTemplateListBean}" columns="3">
+            <hftl:searchField label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['customFieldTemplate.fieldType']}" id="fieldType" field="fieldType" />
+            <hftl:searchField label="#{messages['customFieldTemplate.storageType']}" id="storageType" field="storageType" />
+            <hftl:searchField label="#{messages['customFieldTemplate.accountType']}" id="accountLevel" field="accountLevel" listValues="#{customFieldTemplateListBean.accountLevelsNoTimer}"/>
+            <hftl:searchField label="#{messages['customFieldTemplate.versionable']}" id="versionable" field="versionable"  newLine="true"/>
             
-        </hf:searchPanel>
+        </hftl:searchPanel>
 
         <hftl:dataList noClose="false" backingBean="#{customFieldTemplateListBean}" sortBy="code">
             <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />

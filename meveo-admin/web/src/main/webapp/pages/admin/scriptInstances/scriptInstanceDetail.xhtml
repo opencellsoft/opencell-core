@@ -23,7 +23,7 @@
 			</h:form>
 			 <a href='https://www.assembla.com/spaces/meveo-enterprise/wiki/Scripts' target='_blank'>Help ?</a>
 		</p:panel>
-		<hf:formPanel id="formPanel" label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" >						
+		<hf:formPanel id="formPanel" label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" showFormButtons="false" >						
            <pe:codeMirror id="codeMirror"  theme="eclipse" mode="text/x-java" value="#{scriptInstanceBean.entity.script}"  lineNumbers="true"  required="true"/>
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true" size="80"  doNotShowOnNew="true" disabled="true" />			
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" />
@@ -35,8 +35,15 @@
 					<hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" />
 					<hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" />
 					<hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />										    
-				</hftl:dataList>
+				</hftl:dataList>				
 			</p:panel>
+            <hf:formButtons backingBean="#{scriptInstanceBean}" edit="#{scriptInstanceBean.edit}" ajaxSubmit="true"
+             submitPartialProcess=":formPanel:scriptInstanceForm" execute="#{scriptInstanceBean.entity.id!=null and !scriptInstanceBean.entity.error}"  executeLabel="#{messages['action.execute']}" />                               
 		</hf:formPanel>
+		<p:dataTable var="log" value="#{scriptInstanceBean.getLogs()}" rendered="#{!empty(scriptInstanceBean.getLogs())}">
+			<p:column headerText="Logs">
+    			<h:outputText value="#{log}" />
+			</p:column>
+		</p:dataTable>
 	</ui:define>
 </ui:composition>

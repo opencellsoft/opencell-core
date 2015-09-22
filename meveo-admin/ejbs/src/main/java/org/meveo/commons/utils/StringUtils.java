@@ -51,7 +51,6 @@ public class StringUtils {
         return false;
     }
 
-    // TODO test and comment those methods.
     public static boolean isBlank(Object value) {
         return ((value == null) || ((value instanceof String) && ((String) value).trim().length() == 0));
     }
