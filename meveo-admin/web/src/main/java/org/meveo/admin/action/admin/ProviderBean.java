@@ -119,10 +119,10 @@ public class ProviderBean extends CustomFieldBean<Provider> {
      * @throws BusinessException
      */
     @Override
-    protected String saveOrUpdate(Provider entity) throws BusinessException {
+    protected Provider saveOrUpdate(Provider entity) throws BusinessException {
 
         boolean isNew = entity.isTransient();
-        String back = super.saveOrUpdate(entity);
+        entity = super.saveOrUpdate(entity);
 
         // Create a default role and a user
         if (isNew) {
@@ -159,6 +159,6 @@ public class ProviderBean extends CustomFieldBean<Provider> {
             messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
          }
 
-        return back;
+        return entity;
     }
 }

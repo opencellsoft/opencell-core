@@ -30,15 +30,15 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hftl:entityPopup id="sellerParentPopup"
-			header="#{messages['seller.title']}" backingBean="#{sellerBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}"
-			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-			column1="code" selection="#{customerBean.entity.seller}"
-			column2Label="#{messages['BusinessEntity.description']}"
-			column2="description"
-			updateField=":formCustomerPanel:formCustomer:tabView:parentSelectId">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="sellerParentPopup" -->
+<!-- 			header="#{messages['seller.title']}" backingBean="#{sellerBean}" -->
+<!-- 			searchField1Label="#{messages['BusinessEntity.code']}" -->
+<!-- 			searchField1="code" column1Label="#{messages['BusinessEntity.code']}" -->
+<!-- 			column1="code" selection="#{customerBean.entity.seller}" -->
+<!-- 			column2Label="#{messages['BusinessEntity.description']}" -->
+<!-- 			column2="description" -->
+<!-- 			updateField=":formCustomerPanel:formCustomer:tabView:parentSelectId"> -->
+<!-- 		</hftl:entityPopup> -->
 
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">
@@ -54,7 +54,7 @@
 						<p:tabView id="tabView">
 							<p:tab title="#{messages['customer.tab.account']}" id="tab0">
 								
-									<hf:formField id="code" label="#{messages['businessEntity.code']}"
+                            <hf:formField id="code" label="#{messages['businessEntity.code']}"
 										field="code" validateUnique="true" required="true" displayOneLine="true" componentWidth="50"/>
 									
 									<hf:formField label="#{messages['businessEntity.description']}"
@@ -89,8 +89,8 @@
 										listBean="#{customerBrandBean}" />
 									<hf:formField id="parentSelectId"
 										label="#{messages['seller.parent']}" field="seller"
-										valueLabelField="description" required="true" popup="true"
-										popupId="sellerParentPopup" />
+										valueLabelField="description" required="true" listBean="#{sellerBean}"/> 
+<!--                                         popup="true" popupId="sellerParentPopup" /> -->
 								
 							</p:tab>
 

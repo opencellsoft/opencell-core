@@ -31,10 +31,8 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link ScriptInstance} (extends {@link BaseBean} that provides
- * almost all common methods to handle entities filtering/sorting in datatable,
- * their create, edit, view, delete operations). It works with Manaty custom JSF
- * components.
+ * Standard backing bean for {@link ScriptInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
@@ -46,10 +44,8 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
 
-	
 	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
 	 */
 	public ScriptInstanceBean() {
 		super(ScriptInstance.class);
@@ -57,8 +53,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	}
 
 	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
 	 * 
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
@@ -78,16 +73,13 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 		return scriptInstanceService;
 	}
 
-	
-
 	@Override
 	protected String getListViewName() {
 		return "scriptInstances";
 	}
 
 	/**
-	 * Fetch customer field so no LazyInitialize exception is thrown when we
-	 * access it from account edit view.
+     * Fetch customer field so no LazyInitialize exception is thrown when we access it from account edit view.
 	 * 
 	 * @see org.manaty.beans.base.BaseBean#getFormFieldsToFetch()
 	 */
@@ -102,19 +94,20 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	}
 	
 	@Override
-	public String saveOrUpdate(ScriptInstance entity) throws BusinessException {
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
 		String result = getListViewName();
 		try {
-			scriptInstanceService.saveOrUpdate(entity, getCurrentUser(), getCurrentProvider());
+            super.saveOrUpdate(killConversation);
 			if(entity.getError().booleanValue()){
 				result = null;	
 			}
-			 
 		} catch (Exception e) {
 			messages.error(e.getMessage());
 			result = null;
 		}
+
 		return result;
 	}
 	
-}
+    }

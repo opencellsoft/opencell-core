@@ -541,7 +541,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @see org.meveo.service.base.local.IPersistenceService#detach
 	 */
 	@Override
-	public void detach(Object entity) {
+	public void detach(E entity) {
 		// TODO: Hibernate. org.hibernate.Session session = (Session)
 		// getEntityManager().getDelegate();
 		// session.evict(entity);
@@ -552,7 +552,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @see org.meveo.service.base.local.IPersistenceService#refresh(org.meveo.model.BaseEntity)
 	 */
 	@Override
-	public void refresh(BaseEntity entity) {
+	public void refresh(E entity) {
 		// entity manager throws exception if trying to refresh not managed
 		// entity (ejb spec requires this).
 		/*
@@ -835,8 +835,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		return result;
 	}
 
-	public BaseEntity attach(BaseEntity e) {
-		return (BaseEntity) getEntityManager().merge(e);
+	public E attach(E e) {
+		return (E) getEntityManager().merge(e);
 	}
 
 	private boolean isConversationScoped() {
