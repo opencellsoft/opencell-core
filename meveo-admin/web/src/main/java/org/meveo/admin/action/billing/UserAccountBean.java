@@ -195,22 +195,17 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	 */
 	@Override 
 	// TODO this has to be removed as BaseBean has identical method. Only need to take care of userAccountService.createUserAccount method call
-	protected String saveOrUpdate(UserAccount entity) {
-		try {
-			if (entity.isTransient()) {
-				userAccountService.createUserAccount(entity.getBillingAccount(), entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "save.successful"));
-			} else {
-				getPersistenceService().update(entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "update.successful"));
-			}
-		} catch (Exception e) {
-			log.error("error generated while saving or updating user account ",e);
-			messages.error(e.getMessage());
-		}
+	protected UserAccount saveOrUpdate(UserAccount entity) throws BusinessException{
+
+        if (entity.isTransient()) {
+            userAccountService.createUserAccount(entity.getBillingAccount(), entity, getCurrentUser());
+        } else {
+            entity = getPersistenceService().update(entity, getCurrentUser());
+        }
+
         setObjectId((Long) entity.getId());
 
-		return back();
+		return entity;
 	}
 
 	public void terminateAccount() {

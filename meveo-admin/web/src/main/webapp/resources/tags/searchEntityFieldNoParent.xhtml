@@ -28,10 +28,18 @@
             </c:if>
 
             <!-- Entity selection from a picklist -->
-            <c:if test="#{!cc.attrs.popup and cc.attrs.listBean!=null}">
+            <c:if test="#{!cc.attrs.popup}">
+
+                <c:if test="#{cc.attrs.listElements==null}">
+                    <c:set var="elements" value="#{cc.attrs.listBean.listAll()}" />
+                </c:if>
+                <c:if test="#{cc.attrs.listElements!=null}">
+                    <c:set var="elements" value="#{cc.attrs.listElements}" />
+                </c:if>
+
                 <p:selectOneMenu id="#{cc.attrs.fieldIdPrefix}_list" value="#{cc.attrs.backingBean.filters[cc.attrs.field]}">
                     <f:selectItem itemLabel="" itemValue="" />
-                    <f:selectItems value="#{cc.attrs.listBean.listAll()}" var="elem" itemLabel="#{elem[cc.attrs.valueLabelField]}" itemValue="#{elem}" />
+                    <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[cc.attrs.valueLabelField]}" itemValue="#{elem}" />
                     <s:objectConverter />
                 </p:selectOneMenu>
             </c:if>

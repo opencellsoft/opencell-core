@@ -13,30 +13,30 @@
 
 	<ui:define name="body">
 
-		<hftl:entityPopup id="invSubCatCountryPopup"
-			header="#{messages['tradingCountry.popup.header']}"
-			updateField=":tabView:formPanelTax:formTax:countrySelectedId"
-			selection="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.tradingCountry}"
-			backingBean="#{tradingCountryBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="country.countryCode"
-			column1Label="#{messages['businessEntity.code']}"
-			column1="countryCode"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="prDescription" />
+<!-- 		<hftl:entityPopup id="invSubCatCountryPopup" -->
+<!-- 			header="#{messages['tradingCountry.popup.header']}" -->
+<!-- 			updateField=":tabView:formPanelTax:formTax:countrySelectedId" -->
+<!-- 			selection="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.tradingCountry}" -->
+<!-- 			backingBean="#{tradingCountryBean}" -->
+<!-- 			searchField1Label="#{messages['businessEntity.code']}" -->
+<!-- 			searchField1="country.countryCode" -->
+<!-- 			column1Label="#{messages['businessEntity.code']}" -->
+<!-- 			column1="countryCode" -->
+<!-- 			column2Label="#{messages['businessEntity.description']}" -->
+<!-- 			column2="prDescription" /> -->
 
-		<hftl:entityPopup id="searchInvoiceCategoryPopup"
-			header="#{messages['invoiceCategory.panel']}"
-			updateField=":tabView:formPanel:formId:categorySelectId"
-			selection="#{invoiceSubCategoryBean.entity.invoiceCategory}"
-			backingBean="#{invoiceCategoryBean}"
-			searchField1Label="#{messages['invoiceCategory.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['invoiceCategory.description']}"
-			searchField2="description"
-			column1Label="#{messages['invoiceCategory.code']}" column1="code"
-			column2Label="#{messages['invoiceCategory.description']}"
-			column2="description" />
+<!-- 		<hftl:entityPopup id="searchInvoiceCategoryPopup" -->
+<!-- 			header="#{messages['invoiceCategory.panel']}" -->
+<!-- 			updateField=":tabView:formPanel:formId:categorySelectId" -->
+<!-- 			selection="#{invoiceSubCategoryBean.entity.invoiceCategory}" -->
+<!-- 			backingBean="#{invoiceCategoryBean}" -->
+<!-- 			searchField1Label="#{messages['invoiceCategory.code']}" -->
+<!-- 			searchField1="code" -->
+<!-- 			searchField2Label="#{messages['invoiceCategory.description']}" -->
+<!-- 			searchField2="description" -->
+<!-- 			column1Label="#{messages['invoiceCategory.code']}" column1="code" -->
+<!-- 			column2Label="#{messages['invoiceCategory.description']}" -->
+<!-- 			column2="description" /> -->
 
 		<hftl:entityPopup id="invSubCatCountTaxPopup"
 			header="#{messages['tax.panel']}" backingBean="#{taxBean}"
@@ -65,8 +65,8 @@
 
 						<hf:formField id="categorySelectId"
 							label="#{messages['invoiceSubCategory.invoiceCategory']}"
-							field="invoiceCategory" valueLabelField="code" required="true"
-							popup="true" popupId="searchInvoiceCategoryPopup" />
+							field="invoiceCategory" valueLabelField="code" required="true" listBean="#{invoiceCategoryBean}"/>
+<!-- 							popup="true" popupId="searchInvoiceCategoryPopup" /> -->
 
 						<hf:formField label="#{messages['invoiceSubCategory.code']}"
 							field="code" required="true" validateUnique="true"
@@ -153,13 +153,13 @@
 
 									<hf:formField id="countrySelectedId"
 										label="#{messages['address.country']}" field="tradingCountry"
-										valueLabelField="countryCode" popup="true"
-										popupId="invSubCatCountryPopup" required="true" />
+										valueLabelField="countryCode" required="true" listBean="#{tradingCountryBean}" />
+<!--                                         popup="true" popupId="invSubCatCountryPopup" /> -->
 
 									<hf:formField id="taxSelectedId"
 										label="#{messages['invoiceSubCategoryCountry.taxe']}"
-										field="tax" valueLabelField="code" popup="true"
-										popupId="invSubCatCountTaxPopup" required="true" />
+										field="tax" valueLabelField="code" required="true" listBean="#{taxBean}"/>
+<!--                                         popup="true" popupId="invSubCatCountTaxPopup" required="true" /> -->
 										
 									<hf:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
 			        				field="filterEL" textArea="true" maxlength="2000" required="false"/>	

@@ -141,8 +141,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
 			super.saveOrUpdate(killConversation);
 
-			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
-
 			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
 	            return null;
 	        } else {
