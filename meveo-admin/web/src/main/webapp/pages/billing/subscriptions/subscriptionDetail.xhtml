@@ -57,20 +57,20 @@
 			updateField=":subscriptionTab:subscriptionFormPanel:formId:userSelectId">
 		</hftl:entityPopup>
 
-		<hftl:entityPopup id="offerPopup"
-			header="#{messages['offer.popup.header']}"
-			backingBean="#{offerTemplateBean}"
-			eventBackingBean="#{subscriptionBean}"
-			searchField1Label="#{messages['offerTemplate.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['offerTemplate.description']}"
-			searchField2="description"
-			column1Label="#{messages['offerTemplate.code']}" column1="code"
-			column2Label="#{messages['offerTemplate.description']}"
-			column2="description" selection="#{subscriptionBean.entity.offer}"
-			lazy="false" dataModel="#{offerTemplateBean.listActive}"
-			updateField=":subscriptionTab:subscriptionFormPanel:formId:offerSelectId">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="offerPopup" -->
+<!-- 			header="#{messages['offer.popup.header']}" -->
+<!-- 			backingBean="#{offerTemplateBean}" -->
+<!-- 			eventBackingBean="#{subscriptionBean}" -->
+<!-- 			searchField1Label="#{messages['offerTemplate.code']}" -->
+<!-- 			searchField1="code" -->
+<!-- 			searchField2Label="#{messages['offerTemplate.description']}" -->
+<!-- 			searchField2="description" -->
+<!-- 			column1Label="#{messages['offerTemplate.code']}" column1="code" -->
+<!-- 			column2Label="#{messages['offerTemplate.description']}" -->
+<!-- 			column2="description" selection="#{subscriptionBean.entity.offer}" -->
+<!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive}" -->
+<!-- 			updateField=":subscriptionTab:subscriptionFormPanel:formId:offerSelectId"> -->
+<!-- 		</hftl:entityPopup> -->
 
 		<hftl:entityPopup id="chargeTemplatePopup"
 			header="#{messages['chargeTemplate.popup.header']}"
@@ -231,7 +231,7 @@
 										<p:panel styleClass="action-buttons">
                                                 <p:commandButton action="#{subscriptionBean.activateService}"
                                                     value="#{messages['button.activateButton']}"
-													update=":#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages"
+													update=":subscriptionTab:srvInstansFrm :subscriptionTab:operationFrm :subscriptionTab:headerInfo1Form:headerInfo1:messages"
                                                     disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}">
 													<p:confirm header="#{messages['message.confirmation']}"
 													message="#{messages['confirmationMessage.confirmActivation']}"
@@ -296,8 +296,9 @@
 										popup="true" popupId="userAccountPopup" />
 									<hf:formField id="offerSelectId"
 										label="#{messages['subscription.offer']}" field="offer"
-										valueLabelField="code" popup="true" popupId="offerPopup"
+										valueLabelField="code" listBean="#{offerTemplateBean}"
 										required="true" modifyOnCreate="true" />
+<!--                                         popup="true" popupId="offerPopup" -->
 										<hf:formField label="#{messages['businessEntity.code']}"
 											field="code" required="true" validateUnique="true"
 											maxlength="35" />

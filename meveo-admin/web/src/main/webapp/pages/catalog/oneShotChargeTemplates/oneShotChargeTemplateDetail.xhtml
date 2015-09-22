@@ -17,19 +17,19 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
-			header="#{messages['invoiceSubCategory.panel']}"
-			backingBean="#{invoiceSubCategoryBean}"
-			selection="#{oneShotChargeTemplateBean.entity.invoiceSubCategory}"
-			updateField=":formPanel:formId:tabView:invoiceSubCategorySelectedId, :formPanel:formId:tabView:invoiceSubCategoryId"
-			searchField1Label="#{messages['invoiceSubCategory.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['invoiceSubCategory.description']}"
-			searchField2="description"
-			column1Label="#{messages['invoiceSubCategory.code']}" column1="code"
-			column2Label="#{messages['invoiceSubCategory.description']}"
-			column2="description" filtersMap="#{invoiceSubCategoryBean.filters}">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="searchInvoiceSubCategoryPopup" -->
+<!-- 			header="#{messages['invoiceSubCategory.panel']}" -->
+<!-- 			backingBean="#{invoiceSubCategoryBean}" -->
+<!-- 			selection="#{oneShotChargeTemplateBean.entity.invoiceSubCategory}" -->
+<!-- 			updateField=":formPanel:formId:tabView:invoiceSubCategorySelectedId, :formPanel:formId:tabView:invoiceSubCategoryId" -->
+<!-- 			searchField1Label="#{messages['invoiceSubCategory.code']}" -->
+<!-- 			searchField1="code" -->
+<!-- 			searchField2Label="#{messages['invoiceSubCategory.description']}" -->
+<!-- 			searchField2="description" -->
+<!-- 			column1Label="#{messages['invoiceSubCategory.code']}" column1="code" -->
+<!-- 			column2Label="#{messages['invoiceSubCategory.description']}" -->
+<!-- 			column2="description" filtersMap="#{invoiceSubCategoryBean.filters}"> -->
+<!-- 		</hftl:entityPopup> -->
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -66,8 +66,8 @@
 
 						<hf:formField id="invoiceSubCategorySelectedId"
 								label="#{messages['charge.subCategory']}"
-							field="invoiceSubCategory" valueLabelField="code" required="true"
-								popup="true" popupId="searchInvoiceSubCategoryPopup" />
+							field="invoiceSubCategory" valueLabelField="code" required="true" listBean="#{invoiceSubCategoryBean}"/>
+<!-- 								popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->
 						<hf:formField id="invoiceSubCategoryId"
 								label="#{messages['invoiceSubCategory.description']}"
 							field="invoiceSubCategory" valueLabelField="description"

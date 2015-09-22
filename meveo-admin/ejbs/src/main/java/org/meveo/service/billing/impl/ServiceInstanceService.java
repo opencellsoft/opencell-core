@@ -48,6 +48,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
@@ -63,6 +64,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 	@Inject
 	private WalletOperationService walletOperationService;
+	
+	@Inject ServiceTemplateService serviceTemplateService;
 
 	public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
 		return findByCodeAndSubscription(getEntityManager(), code, subscription);
@@ -157,6 +160,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		create(serviceInstance, creator, subscription.getProvider());
 		subscription.getServiceInstances().add(serviceInstance);
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
+
+		serviceTemplate = serviceTemplateService.attach(serviceTemplate);
 
 		for (ServiceChargeTemplate<RecurringChargeTemplate> serviceChargeTemplate : serviceTemplate
 				.getServiceRecurringCharges()) {

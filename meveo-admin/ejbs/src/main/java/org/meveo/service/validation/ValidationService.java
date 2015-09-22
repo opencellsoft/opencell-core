@@ -44,7 +44,7 @@ public class ValidationService {
 		// Proxy classes contain a name in "..._$$_javassist.. format" If a
 		// proxy class object claname was passed, string the ending
 		// "_$$_javassist.."to obtain real class name
-		int pos = className.indexOf("_$$_java");
+		int pos = className.indexOf("_$$_");
 		if (pos > 0) {
 			className = className.substring(0, pos);
 		}

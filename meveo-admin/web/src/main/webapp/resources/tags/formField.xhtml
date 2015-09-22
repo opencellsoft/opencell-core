@@ -167,7 +167,7 @@
     <cc:attribute name="labelStyle" />
     <cc:attribute name="inputStyle" />
 
-    <cc:attribute name="componentWidth" default="#{cc.attrs.size>40 or cc.attrs.textArea?50:25}" />
+    <cc:attribute name="componentWidth" default="#{cc.attrs.size>40 or cc.attrs.textArea or cc.attrs.isHtml?50:25}" />
     <cc:attribute name="labelWidth" />
     <cc:attribute name="inputWidth" />
 

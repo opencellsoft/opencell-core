@@ -97,7 +97,7 @@
         
         <p:commandButton id="ExecuteButtonAjax"
             rendered="#{ cc.attrs.execute  and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit}"
-            value="#{cc.attrs.exeuteLabel}" oncomplete="$('html,body').scrollTop(0);"
+            value="#{cc.attrs.executeLabel}" oncomplete="$('html,body').scrollTop(0);"
             action="#{cc.attrs.backingBean.execute()}"
             process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
