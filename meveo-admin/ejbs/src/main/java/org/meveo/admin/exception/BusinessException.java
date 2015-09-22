@@ -19,6 +19,7 @@ package org.meveo.admin.exception;
 import javax.ejb.ApplicationException;
 import javax.naming.InitialContext;
 
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.event.monitoring.CreateEventHelper;
 import org.slf4j.Logger;
@@ -51,8 +52,7 @@ public class BusinessException extends Exception {
 	public void registerEvent() {
 		if ("true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"))) {
 			try {
-				InitialContext ic = new InitialContext();
-				CreateEventHelper createEventHelper = (CreateEventHelper) ic.lookup("java:global/" + ParamBean.getInstance().getProperty("meveo.moduleName", "meveo") + "/CreateEventHelper");
+				CreateEventHelper createEventHelper = (CreateEventHelper) EjbUtils.getServiceInterface("CreateEventHelper");
 				createEventHelper.register(this);
 			} catch (Exception e) {
 				Logger log = LoggerFactory.getLogger(this.getClass());

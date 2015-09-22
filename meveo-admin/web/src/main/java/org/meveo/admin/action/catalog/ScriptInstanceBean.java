@@ -28,6 +28,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -67,6 +68,9 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	public ScriptInstance initEntity() {
 		log.debug("start conversation id: {}", conversation.getId());
 		ScriptInstance scriptInstance = super.initEntity();
+//		if(entity != null){
+//			scriptInstanceService.clearLogs(getCurrentProvider().getCode(), entity.getCode());	
+//		}
 		return scriptInstance;
 	}
 
@@ -117,4 +121,11 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 		return result;
 	}
 	
+	public void execute(){
+		scriptInstanceService.test(getCurrentProvider(), entity.getCode(),null);
+	}
+	
+	public List<String> getLogs(){
+		return scriptInstanceService.getLogs(getCurrentProvider().getCode(), entity.getCode());	
+	}
 }

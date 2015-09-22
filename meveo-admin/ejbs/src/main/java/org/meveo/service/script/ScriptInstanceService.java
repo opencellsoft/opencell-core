@@ -35,6 +35,7 @@ import javax.tools.JavaFileObject;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -47,7 +48,6 @@ import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptTypeEnum;
 import org.meveo.service.base.PersistenceService;
 
-
 @Singleton
 @Startup
 public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
@@ -58,12 +58,19 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	@Inject
 	private ResourceBundle resourceMessages;
 
+	private Map<String, Map<String, List<String>>> allLogs = new HashMap<String, Map<String, List<String>>>();
+
 	private Map<String, Map<String, Class<ScriptInterface>>> allScriptInterfaces = new HashMap<String, Map<String, Class<ScriptInterface>>>();
 
 	private CharSequenceCompiler<ScriptInterface> compiler;
 
 	private String classpath = "";
 
+	/**
+	 * Find ScriptInstances by type
+	 * @param type
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public List<ScriptInstance> findByType(ScriptTypeEnum type) {
 		List<ScriptInstance> result = new ArrayList<ScriptInstance>();
@@ -76,9 +83,16 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 		}
 		return result;
 	}
-
+    
+	/**
+	 * Find ScriptInstance by code and provider
+	 * 
+	 * @param code
+	 * @param provider
+	 * @return
+	 */
 	public ScriptInstance findByCode(String code, Provider provider) {
-		log.debug("find ScriptInstance by code {}",code);
+		log.debug("find ScriptInstance by code {}", code);
 		QueryBuilder qb = new QueryBuilder(ScriptInstance.class, "t", null, provider);
 		qb.addCriterion("t.code", "=", code, false);
 		try {
@@ -88,47 +102,66 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 		}
 	}
 
-	public ScriptInstance saveOrUpdate(ScriptInstance scriptInstance, User user, Provider provider)throws Exception {
+	/**
+	 * Save or update the script instance and set the code as the canonical name of script class
+	 * 
+	 * @param scriptInstance
+	 * @param user
+	 * @param provider
+	 * @return
+	 * @throws Exception
+	 */
+	public ScriptInstance saveOrUpdate(ScriptInstance scriptInstance, User user, Provider provider) throws Exception {
 
 		String packageName = getPackageName(scriptInstance.getScript());
 		String className = getClassName(scriptInstance.getScript());
-		if(packageName == null || className == null){
+		if (packageName == null || className == null) {
 			throw new Exception(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
 		}
 
-		scriptInstance.setCode(packageName+"."+className);
-		if(scriptInstance.isTransient()){
+		scriptInstance.setCode(packageName + "." + className);
+		if (scriptInstance.isTransient()) {
 			create(scriptInstance, user, provider);
-		}else{
+		} else {
 			update(scriptInstance, user);
 		}
-		compileScript(scriptInstance);	
+		compileScript(scriptInstance);
 		scriptInstance = findById(scriptInstance.getId());
 		return scriptInstance;
 	}
 
-
+	/**
+	 * Remove all compilation error for scriptInstance
+	 * 
+	 * @param scriptInstance
+	 */
 	public void removeErrors(ScriptInstance scriptInstance) {
-		getEntityManager().createQuery("delete from ScriptInstanceError o where o.scriptInstance=:scriptInstance")
-		.setParameter("scriptInstance", scriptInstance)
-		.executeUpdate();
+		getEntityManager().createQuery("delete from ScriptInstanceError o where o.scriptInstance=:scriptInstance").setParameter("scriptInstance", scriptInstance).executeUpdate();
 	}
-
+    
+	/**
+	 * Get all ScriptInstances with error for a provder
+	 * 
+	 * @param provider
+	 * @return
+	 */
 	public List<ScriptInstance> getScriptInstancesWithError(Provider provider) {
-		return ((List<ScriptInstance>) getEntityManager().createNamedQuery("ScriptInstance.getScriptInstanceOnError", ScriptInstance.class)
-				.setParameter("isError", Boolean.TRUE)
-				.setParameter("provider", provider)
-				.getResultList());
+		return ((List<ScriptInstance>) getEntityManager().createNamedQuery("ScriptInstance.getScriptInstanceOnError", ScriptInstance.class).setParameter("isError", Boolean.TRUE).setParameter("provider", provider).getResultList());
 	}
-
+    
+	/**
+	 * Count scriptInstances with error for a provider
+	 * 
+	 * @param provider
+	 * @return
+	 */
 	public long countScriptInstancesWithError(Provider provider) {
-		return ((Long) getEntityManager().createNamedQuery("ScriptInstance.countScriptInstanceOnError", Long.class)
-				.setParameter("isError", Boolean.TRUE)
-				.setParameter("provider", provider)
-				.getSingleResult());
+		return ((Long) getEntityManager().createNamedQuery("ScriptInstance.countScriptInstanceOnError", Long.class).setParameter("isError", Boolean.TRUE).setParameter("provider", provider).getSingleResult());
 	}
 
-
+	/**
+	 * Build the classpath and compile all scriptInstances
+	 */
 	@PostConstruct
 	void compileAll() {
 		try {
@@ -201,7 +234,12 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 			log.error("", e);
 		}
 	}
-
+	
+	/**
+	 * Find ScriptInstance and compile it
+	 * 
+	 * @param scriptInstance
+	 */
 	public void compileScript(String scriptInstanceCode, Provider provider) {
 		ScriptInstance scriptInstance = findByCode(scriptInstanceCode, provider);
 		if (scriptInstance == null) {
@@ -210,10 +248,14 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 			compileScript(scriptInstance);
 		}
 	}
-
+	
+	/**
+	 * Compile ScriptInstance and update status
+	 * 
+	 * @param scriptInstance
+	 */
 	public void compileScript(ScriptInstance scriptInstance) {
 		try {
-			compiler = new CharSequenceCompiler<ScriptInterface>(ScriptInterface.class.getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
 			final String packageName = getPackageName(scriptInstance.getScript());
 			final String qName = packageName + '.' + getClassName(scriptInstance.getScript());
 			final String codeSource = scriptInstance.getScript();
@@ -223,8 +265,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 			removeErrors(scriptInstance);
 			scriptInstance.getScriptInstanceErrors().clear();
 			update(scriptInstance);
-			final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
-			Class<ScriptInterface> compiledScript = compiler.compile(qName, codeSource, errs, new Class<?>[] { ScriptInterface.class });
+			Class<ScriptInterface> compiledScript = compileJavaSrouce(codeSource, qName);
 			log.debug("set script provider:{} scriptCode:{}", scriptInstance.getProvider().getCode(), scriptInstance.getCode());
 			if (!allScriptInterfaces.containsKey(scriptInstance.getProvider().getCode())) {
 				allScriptInterfaces.put(scriptInstance.getProvider().getCode(), new HashMap<String, Class<ScriptInterface>>());
@@ -260,7 +301,82 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 			log.error("", e);
 		}
 	}
+	
+	/**
+	 * Compile java Source script
+	 * 
+	 * @param javaSrc Java source to compile
+	 * @param qName Canonical Name
+	 * @return 
+	 * @throws CharSequenceCompilerException
+	 */
+	public Class<ScriptInterface> compileJavaSrouce(String javaSrc, String qName) throws CharSequenceCompilerException {
+		compiler = new CharSequenceCompiler<ScriptInterface>(ScriptInterface.class.getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
+		final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
+		Class<ScriptInterface> compiledScript = compiler.compile(qName, javaSrc, errs, new Class<?>[] { ScriptInterface.class });
+		return compiledScript;
+	}
 
+	/**
+	 *  Execute the scriptInstance
+	 *  
+	 * @param provider Provider's scriptInstance
+	 * @param scriptCode ScriptInstanceCode
+	 * @param context  Context params
+	 */
+	public void execute(Provider provider, String scriptCode, Map<String, Object> context) {
+		try {
+			execute( getScriptInterface(provider, scriptCode),context,provider);
+		} catch (Exception e) {
+			log.error("Script execution failed",e);
+		} 
+	}	
+	
+	/**
+	 * Execute a class that extends Script
+	 * 
+	 * @param scriptClass
+	 * @param context
+	 * @param provider
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws BusinessException
+	 */
+	private  void execute(Class<ScriptInterface> scriptClass, Map<String, Object> context,Provider provider) throws InstantiationException, IllegalAccessException, BusinessException {
+			ScriptInterface script = scriptClass.newInstance();
+			script.execute(context, getCurrentProvider());		
+	}
+
+	/**
+	 *  Wrap the logger and execute script
+	 *  
+	 * @param provider  
+	 * @param scriptCode
+	 * @param context
+	 */
+	public void test(Provider provider, String scriptCode, Map<String, Object> context) {		
+		try{
+			clearLogs(provider.getCode(), scriptCode);
+		    ScriptInstance scriptInstance = findByCode(scriptCode, provider);		
+			String javaSrc = scriptInstance.getScript();
+			javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\"" + provider.getCode() + "\",\"" + scriptCode + "\");//");
+			log.debug("script for testing: {}", javaSrc);
+			Class<ScriptInterface> compiledScript = compileJavaSrouce(javaSrc, getPackageName(scriptInstance.getScript()) + "." + getClassName(scriptInstance.getScript()));
+			execute(compiledScript,context,provider);
+
+		} catch (Exception e) {
+			log.error("Script test failed",e);
+		}
+
+	}
+	
+	/**
+	 * Find  the class for ScriptInstance
+	 * 
+	 * @param provider
+	 * @param scriptCode
+	 * @return Script Class
+	 */
 	public Class<ScriptInterface> getScriptInterface(Provider provider, String scriptCode) {
 		Class<ScriptInterface> result = null;
 		if (allScriptInterfaces.containsKey(provider.getCode())) {
@@ -278,14 +394,72 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 		log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
 		return result;
 	}
+	
+	/**
+	 *  Add a log line for a scriptInstance
+	 *  
+	 * @param message
+	 * @param providerCode
+	 * @param scriptCode
+	 */
+	public void addLog(String message, String providerCode, String scriptCode) {
+		if (!allLogs.containsKey(providerCode)) {
+			allLogs.put(providerCode, new HashMap<String, List<String>>());
+		}
+		if (!allLogs.get(providerCode).containsKey(scriptCode)) {
+			allLogs.get(providerCode).put(scriptCode, new ArrayList<String>());
+		}
+		allLogs.get(providerCode).get(scriptCode).add(message);
+	}
 
-	public String getPackageName(String src){
+	/**
+	 *  Get logs for scriptInstance
+	 *  
+	 * @param providerCode
+	 * @param scriptCode
+	 * @return
+	 */
+	public List<String> getLogs(String providerCode, String scriptCode) {
+		if (!allLogs.containsKey(providerCode)) {
+			return new ArrayList<String>();
+		}
+		if (!allLogs.get(providerCode).containsKey(scriptCode)) {
+			return new ArrayList<String>();
+		}
+		return allLogs.get(providerCode).get(scriptCode);
+	}
+
+	/**
+	 *  Clear all logs for a scriptInstance
+	 *  
+	 * @param providerCode
+	 * @param scriptCode
+	 */
+	public void clearLogs(String providerCode, String scriptCode) {
+		if (allLogs.containsKey(providerCode)) {
+			if (allLogs.get(providerCode).containsKey(scriptCode)) {
+				allLogs.get(providerCode).get(scriptCode).clear();
+			}
+		}
+	}
+	
+	/**
+	 * Find the package name in a source java text
+	 * 
+	 * @param src Java source code
+	 * @return Package name
+	 */
+	public String getPackageName(String src) {
 		return StringUtils.patternMacher("package (.*?);", src);
 	}
 
-	public String getClassName(String src){
+	/**
+	 * Find the class name in a source java text
+	 * 
+	 * @param src Java source code
+	 * @return Class name
+	 */
+	public String getClassName(String src) {
 		return StringUtils.patternMacher("public class (.*) extends", src);
 	}
-
-
 }
