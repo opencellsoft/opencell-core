@@ -273,6 +273,8 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 				if (allScriptInterfaces.containsKey(provider.getCode())) {
 					result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
 				}
+			}else{
+              log.debug("ScriptInstance with " + scriptCode + " does not exist");
 			}
 		}
 		log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
