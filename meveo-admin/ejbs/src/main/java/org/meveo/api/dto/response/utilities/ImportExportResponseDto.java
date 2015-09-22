@@ -17,7 +17,7 @@ import org.meveo.export.ExportImportStatistics;
 /**
  * @author Andrius Karpavicius
  **/
-@XmlRootElement(name = "AccountOperationsResponse")
+@XmlRootElement(name = "ImportExportResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ImportExportResponseDto extends BaseResponse {
 
@@ -31,9 +31,9 @@ public class ImportExportResponseDto extends BaseResponse {
     private Map<String, Integer> summary = null;
 
     /**
-     * Stores a list of field names that were not imported because of differences between original and current model - field does not exist in current model
+     * Stores a list of field names that were not imported because of differences between original and current model - fields do not exist in current model
      */
-    private Map<String, Collection<String>> fieldsNotImported = null;
+    private Map<String, FieldsNotImportedStringCollectionDto> fieldsNotImported = null;
 
     /**
      * Occurred exception
@@ -67,8 +67,12 @@ public class ImportExportResponseDto extends BaseResponse {
         }
         this.errorMessageKey = statistics.getErrorMessageKey();
 
-        this.fieldsNotImported = statistics.getFieldsNotImported();
-
+        if (!statistics.getFieldsNotImported().isEmpty()) {
+            fieldsNotImported = new HashMap<String, FieldsNotImportedStringCollectionDto>();
+            for (Map.Entry<String, Collection<String>> entry : statistics.getFieldsNotImported().entrySet()) {
+                fieldsNotImported.put(entry.getKey(), new FieldsNotImportedStringCollectionDto(entry.getValue()));
+            }
+        }
         this.summary = new HashMap<String, Integer>();
         for (Entry<Class, Integer> summaryInfo : statistics.getSummary().entrySet()) {
             this.summary.put(summaryInfo.getKey().getName(), summaryInfo.getValue());
@@ -90,14 +94,6 @@ public class ImportExportResponseDto extends BaseResponse {
 
     public void setSummary(Map<String, Integer> summary) {
         this.summary = summary;
-    }
-
-    public Map<String, Collection<String>> getFieldsNotImported() {
-        return fieldsNotImported;
-    }
-
-    public void setFieldsNotImported(Map<String, Collection<String>> fieldsNotImported) {
-        this.fieldsNotImported = fieldsNotImported;
     }
 
     public String getExceptionMessage() {
@@ -164,5 +160,13 @@ public class ImportExportResponseDto extends BaseResponse {
         } else {
             return getActionStatus().getMessage();
         }
+    }
+
+    public Map<String, FieldsNotImportedStringCollectionDto> getFieldsNotImported() {
+        return fieldsNotImported;
+    }
+
+    public void setFieldsNotImported(Map<String, FieldsNotImportedStringCollectionDto> fieldsNotImported) {
+        this.fieldsNotImported = fieldsNotImported;
     }
 }
