@@ -303,10 +303,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        String outcome = null;
 
+        String message = entity.isTransient()?"save.successful":"update.successful";
+        
         if (!isMultilanguageEntity()) {
-            outcome = saveOrUpdate(entity);
+            entity = saveOrUpdate(entity);
 
         } else {
             if (entity.getId() != null) {
@@ -323,10 +324,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     }
                 }
 
-                outcome = saveOrUpdate(entity);
+                entity = saveOrUpdate(entity);
 
             } else {
-                outcome = saveOrUpdate(entity);
+                entity = saveOrUpdate(entity);
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
@@ -340,7 +341,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             endConversation();
         }
 
-        return outcome;
+        messages.info(new BundleKey("messages", message));
+        return back();
     }
     
     public String saveOrUpdateWithMessage(boolean killConversation) throws BusinessException {
@@ -361,18 +363,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @param entity Entity to save.
      * @throws BusinessException
      */
-    protected String saveOrUpdate(T entity) throws BusinessException {
+    protected T saveOrUpdate(T entity) throws BusinessException {
         if (entity.isTransient()) {
             getPersistenceService().create(entity);
-            messages.info(new BundleKey("messages", "save.successful"));
+
         } else {
-            getPersistenceService().update(entity);
-            messages.info(new BundleKey("messages", "update.successful"));
+            entity = getPersistenceService().update(entity);
         }
 
         objectIdFromSet = (Long) entity.getId();
 
-        return back();
+        return entity;
     }
 
     /**

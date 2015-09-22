@@ -182,24 +182,22 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 				}
 			}
 
-			CustomerAccount customerAccount = entity.getCustomerAccount();
-			if (customerAccount != null) {
-				List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
-				if (billingAccounts != null) {
-					if (!billingAccounts.contains(entity)) {
-						customerAccount.getBillingAccounts().add(entity);
-					}
-				}
-			}
-
 			if (entity.isTransient()) {
 				billingAccountService.initBillingAccount(entity);
 			}
 
 			super.saveOrUpdate(killConversation);
-
-			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
-
+            
+			CustomerAccount customerAccount = entity.getCustomerAccount();
+            if (customerAccount != null) {
+                List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
+                if (billingAccounts != null) {
+                    if (!billingAccounts.contains(entity)) {
+                        customerAccount.getBillingAccounts().add(entity);
+                    }
+                }
+            }
+			
 			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
 	            return null;
 	        } else {

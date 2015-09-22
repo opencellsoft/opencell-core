@@ -16,63 +16,74 @@
  */
 package org.meveo.util;
 
-import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
-import org.jboss.solder.core.ExtensionManaged;
-
 public class Resources {
 
-	@ExtensionManaged
-	@ConversationScoped
-	@Produces
-	@PersistenceUnit(unitName = "MeveoAdmin")
-	@MeveoJpa
-	private EntityManagerFactory emf;
+//    @ExtensionManaged
+//    @RequestScoped
+//    @Produces
+    @PersistenceUnit(unitName = "MeveoAdmin")
+//    @MeveoJpa
+    private EntityManagerFactory emf;
 
-	 //@ExtensionManaged
-	 //@Produces
-	 //@PersistenceUnit(unitName = "MeveoAdmin")
-	 //@MeveoJpaForJobs
-	 //private EntityManagerFactory emfForJobs;
-	@Produces
-	@PersistenceContext(unitName = "MeveoAdmin")
-	@MeveoJpaForJobs
-	private EntityManager emfForJobs;
-
-	
     @Produces
-//    @PersistenceContext(unitName = "MeveoAdminTarget")
+    @MeveoJpa
+    @RequestScoped
+    public EntityManager create() {
+        return this.emf.createEntityManager();
+    }
+
+    public void dispose(@Disposes @MeveoJpa EntityManager entityManager) {
+        if (entityManager.isOpen()) {
+            entityManager.close();
+        }
+    }
+
+    // @ExtensionManaged
+    // @Produces
+    // @PersistenceUnit(unitName = "MeveoAdmin")
+    // @MeveoJpaForJobs
+    // private EntityManagerFactory emfForJobs;
+    @Produces
+    @PersistenceContext(unitName = "MeveoAdmin")
+    @MeveoJpaForJobs
+    private EntityManager emfForJobs;
+
+    @Produces
+    // @PersistenceContext(unitName = "MeveoAdminTarget")
     @PersistenceContext(unitName = "MeveoAdmin")
     @MeveoJpaForTarget
     static EntityManager emfForTarget;
-    
-	/*
-	 * @ExtensionManaged
-	 * 
-	 * @ConversationScoped
-	 * 
-	 * @Produces
-	 * 
-	 * @PersistenceUnit(unitName = "MeveoDWH")
-	 * 
-	 * @MeveoDWHJpa private EntityManagerFactory emfDwh;
-	 */
 
-	// @Produces
-	// @MeveoJpa
-	// @PersistenceContext(unitName = "MeveoAdmin", type =
-	// PersistenceContextType.EXTENDED)
-	// private EntityManager em;
+    /*
+     * @ExtensionManaged
+     * 
+     * @ConversationScoped
+     * 
+     * @Produces
+     * 
+     * @PersistenceUnit(unitName = "MeveoDWH")
+     * 
+     * @MeveoDWHJpa private EntityManagerFactory emfDwh;
+     */
 
-	// @Produces
-	// @MeveoDWHJpa
-	// @PersistenceContext(unitName = "MeveoDWH", type =
-	// PersistenceContextType.EXTENDED)
-	// private EntityManager emDwh;
+    // @Produces
+    // @MeveoJpa
+    // @PersistenceContext(unitName = "MeveoAdmin", type =
+    // PersistenceContextType.EXTENDED)
+    // private EntityManager em;
+
+    // @Produces
+    // @MeveoDWHJpa
+    // @PersistenceContext(unitName = "MeveoDWH", type =
+    // PersistenceContextType.EXTENDED)
+    // private EntityManager emDwh;
 
 }

@@ -28,104 +28,96 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link ScriptInstance} (extends {@link BaseBean} that provides
- * almost all common methods to handle entities filtering/sorting in datatable,
- * their create, edit, view, delete operations). It works with Manaty custom JSF
- * components.
+ * Standard backing bean for {@link ScriptInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
-	private static final long serialVersionUID = 1L;
-	/**
-	 * Injected @{link ScriptInstance} service. Extends {@link PersistenceService}.
-	 */
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
+    private static final long serialVersionUID = 1L;
+    /**
+     * Injected @{link ScriptInstance} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
-	
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public ScriptInstanceBean() {
-		super(ScriptInstance.class);
-		
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public ScriptInstanceBean() {
+        super(ScriptInstance.class);
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Override
-	public ScriptInstance initEntity() {
-		log.debug("start conversation id: {}", conversation.getId());
-		ScriptInstance scriptInstance = super.initEntity();
-//		if(entity != null){
-//			scriptInstanceService.clearLogs(getCurrentProvider().getCode(), entity.getCode());	
-//		}
-		return scriptInstance;
-	}
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<ScriptInstance> getPersistenceService() {
-		return scriptInstanceService;
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Override
+    public ScriptInstance initEntity() {
+        log.debug("start conversation id: {}", conversation.getId());
+        ScriptInstance scriptInstance = super.initEntity();
+        // if(entity != null){
+        // scriptInstanceService.clearLogs(getCurrentProvider().getCode(), entity.getCode());
+        // }
+        return scriptInstance;
+    }
 
-	
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<ScriptInstance> getPersistenceService() {
+        return scriptInstanceService;
+    }
 
-	@Override
-	protected String getListViewName() {
-		return "scriptInstances";
-	}
+    @Override
+    protected String getListViewName() {
+        return "scriptInstances";
+    }
 
-	/**
-	 * Fetch customer field so no LazyInitialize exception is thrown when we
-	 * access it from account edit view.
-	 * 
-	 * @see org.manaty.beans.base.BaseBean#getFormFieldsToFetch()
-	 */
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
+    /**
+     * Fetch customer field so no LazyInitialize exception is thrown when we access it from account edit view.
+     * 
+     * @see org.manaty.beans.base.BaseBean#getFormFieldsToFetch()
+     */
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider");
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
-	
-	@Override
-	public String saveOrUpdate(ScriptInstance entity) throws BusinessException {
-		String result = getListViewName();
-		try {
-			scriptInstanceService.saveOrUpdate(entity, getCurrentUser(), getCurrentProvider());
-			if(entity.getError().booleanValue()){
-				result = null;	
-			}
-			 
-		} catch (Exception e) {
-			messages.error(e.getMessage());
-			result = null;
-		}
-		return result;
-	}
-	
-	public void execute(){
-		scriptInstanceService.test(getCurrentProvider(), entity.getCode(),null);
-	}
-	
-	public List<String> getLogs(){
-		return scriptInstanceService.getLogs(getCurrentProvider().getCode(), entity.getCode());	
-	}
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
+
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        String result = getListViewName();
+        try {
+            super.saveOrUpdate(killConversation);
+            if (entity.getError().booleanValue()) {
+                result = null;
+            }
+        } catch (Exception e) {
+            messages.error(e.getMessage());
+            result = null;
+        }
+
+        return result;
+    }
+
+    public void execute() {
+        scriptInstanceService.test(getCurrentProvider(), entity.getCode(), null);
+    }
+
+    public List<String> getLogs() {
+        return scriptInstanceService.getLogs(getCurrentProvider().getCode(), entity.getCode());
+    }
 }

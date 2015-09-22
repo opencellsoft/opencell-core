@@ -12,21 +12,21 @@
 	</ui:define>
 
 	<ui:define name="body">
-	   <hftl:entityPopup id="offerPopup"
-			header="#{messages['offer.popup.header']}"
-			backingBean="#{offerTemplateBean}"
-			eventBackingBean="#{pricePlanMatrixBean}"
-			searchField1Label="#{messages['offerTemplate.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['offerTemplate.description']}"
-			searchField2="description"
-			column1Label="#{messages['offerTemplate.code']}" column1="code"
-			column2Label="#{messages['offerTemplate.description']}"
-			column2="description" 
-			selection="#{pricePlanMatrixBean.entity.offerTemplate}"
-			lazy="false" dataModel="#{offerTemplateBean.listActive}"
-			updateField=":formPricePlanPanel:formPricePlan:offerSelectId">
-		</hftl:entityPopup>
+<!-- 	   <hftl:entityPopup id="offerPopup" -->
+<!-- 			header="#{messages['offer.popup.header']}" -->
+<!-- 			backingBean="#{offerTemplateBean}" -->
+<!-- 			eventBackingBean="#{pricePlanMatrixBean}" -->
+<!-- 			searchField1Label="#{messages['offerTemplate.code']}" -->
+<!-- 			searchField1="code" -->
+<!-- 			searchField2Label="#{messages['offerTemplate.description']}" -->
+<!-- 			searchField2="description" -->
+<!-- 			column1Label="#{messages['offerTemplate.code']}" column1="code" -->
+<!-- 			column2Label="#{messages['offerTemplate.description']}" -->
+<!-- 			column2="description"  -->
+<!-- 			selection="#{pricePlanMatrixBean.entity.offerTemplate}" -->
+<!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive}" -->
+<!-- 			updateField=":formPricePlanPanel:formPricePlan:offerSelectId"> -->
+<!-- 		</hftl:entityPopup> -->
 		
 		<hftl:entityPopup id="pricPlanMatChargePopup"
 			header="#{messages['charge.popup.header']}"
@@ -37,52 +37,50 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" eventBackingBean="#{pricePlanMatrixBean}"
 			updateField=":formPricePlanPanel:formPricePlan:chargeSelectId,:formPricePlanPanel:formPricePlan:pricePlanCode">
-			
-			
 		</hftl:entityPopup>
 
-		<hftl:entityPopup id="pricPlanMatCurrencyPopup"
-			header="#{messages['tradingLanguage.header']}"
-			backingBean="#{tradingCurrencyBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="currency.currencyCode"
-			column1Label="#{messages['businessEntity.code']}"
-			column1="currencyCode"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="prDescription"
-			selection="#{pricePlanMatrixBean.entity.tradingCurrency}"
-			updateField=":formPricePlanPanel:formPricePlan:customerCurrencySelectId">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="pricPlanMatCurrencyPopup" -->
+<!-- 			header="#{messages['tradingLanguage.header']}" -->
+<!-- 			backingBean="#{tradingCurrencyBean}" -->
+<!-- 			searchField1Label="#{messages['businessEntity.code']}" -->
+<!-- 			searchField1="currency.currencyCode" -->
+<!-- 			column1Label="#{messages['businessEntity.code']}" -->
+<!-- 			column1="currencyCode" -->
+<!-- 			column2Label="#{messages['businessEntity.description']}" -->
+<!-- 			column2="prDescription" -->
+<!-- 			selection="#{pricePlanMatrixBean.entity.tradingCurrency}" -->
+<!-- 			updateField=":formPricePlanPanel:formPricePlan:customerCurrencySelectId"> -->
+<!-- 		</hftl:entityPopup> -->
 
-		<hftl:entityPopup id="tradingCountryPopup"
-			header="#{messages['tradingCountry.popup.header']}"
-			backingBean="#{tradingCountryBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="country.countryCode"
-			column1Label="#{messages['businessEntity.code']}"
-			column1="countryCode"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="prDescription"
-			selection="#{pricePlanMatrixBean.entity.tradingCountry}"
-			updateField=":formPricePlanPanel:formPricePlan:trCountrySelectId">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="tradingCountryPopup" -->
+<!-- 			header="#{messages['tradingCountry.popup.header']}" -->
+<!-- 			backingBean="#{tradingCountryBean}" -->
+<!-- 			searchField1Label="#{messages['businessEntity.code']}" -->
+<!-- 			searchField1="country.countryCode" -->
+<!-- 			column1Label="#{messages['businessEntity.code']}" -->
+<!-- 			column1="countryCode" -->
+<!-- 			column2Label="#{messages['businessEntity.description']}" -->
+<!-- 			column2="prDescription" -->
+<!-- 			selection="#{pricePlanMatrixBean.entity.tradingCountry}" -->
+<!-- 			updateField=":formPricePlanPanel:formPricePlan:trCountrySelectId"> -->
+<!-- 		</hftl:entityPopup> -->
 
-		<hftl:entityPopup id="sellerParentPopup"
-			header="#{messages['seller.title']}" backingBean="#{sellerBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}"
-			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-			column1="code" selection="#{pricePlanMatrixBean.entity.seller}"
-			column2Label="#{messages['BusinessEntity.description']}"
-			column2="description"
-			updateField=":formPricePlanPanel:formPricePlan:parentSelectId">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="sellerParentPopup" -->
+<!-- 			header="#{messages['seller.title']}" backingBean="#{sellerBean}" -->
+<!-- 			searchField1Label="#{messages['BusinessEntity.code']}" -->
+<!-- 			searchField1="code" column1Label="#{messages['BusinessEntity.code']}" -->
+<!-- 			column1="code" selection="#{pricePlanMatrixBean.entity.seller}" -->
+<!-- 			column2Label="#{messages['BusinessEntity.description']}" -->
+<!-- 			column2="description" -->
+<!-- 			updateField=":formPricePlanPanel:formPricePlan:parentSelectId"> -->
+<!-- 		</hftl:entityPopup> -->
         
-        <hftl:entityPopup id="validityCalendarPopup" header="#{messages['calendar.search']}" backingBean="#{calendarBean}"
-            updateField=":formPricePlanPanel:formPricePlan:validityCalendar" selection="#{pricePlanMatrixBean.entity.validityCalendar}"
-            searchField1Label="#{messages['calendar.name']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}"
-            searchField2="description" column1Label="#{messages['calendar.name']}" column1="code"
-            column2Label="#{messages['BusinessEntity.description']}" column2="description">
-        </hftl:entityPopup>        
+<!--         <hftl:entityPopup id="validityCalendarPopup" header="#{messages['calendar.search']}" backingBean="#{calendarBean}" -->
+<!--             updateField=":formPricePlanPanel:formPricePlan:validityCalendar" selection="#{pricePlanMatrixBean.entity.validityCalendar}" -->
+<!--             searchField1Label="#{messages['calendar.name']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" -->
+<!--             searchField2="description" column1Label="#{messages['calendar.name']}" column1="code" -->
+<!--             column2Label="#{messages['BusinessEntity.description']}" column2="description"> -->
+<!--         </hftl:entityPopup>         -->
         <p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -105,21 +103,23 @@
                 
 				<hf:formField id="parentSelectId"
 					label="#{messages['seller.title']}" field="seller"
-					valueLabelField="description" popup="true" popupId="sellerParentPopup" />
+					valueLabelField="description" listBean="#{sellerBean}" /> 
+<!--                     popup="true" popupId="sellerParentPopup" /> -->
 				<hf:formField id="trCountrySelectId"
 					label="#{messages['tradingCountry.tradingCountry']}"
-					field="tradingCountry" valueLabelField="countryCode"
-					popup="true" popupId="tradingCountryPopup" />
+					field="tradingCountry" valueLabelField="countryCode" listBean="#{tradingCountryBean}" />
+<!-- 					popup="true" popupId="tradingCountryPopup" /> -->
                 <hf:formField id="offerSelectId" 
                     label="#{messages['pricePlanMatrix.offerCode']}"
-                    field="offerTemplate" valueLabelField="code"
-                    popup="true" popupId="offerPopup"/>                    
+                    field="offerTemplate" valueLabelField="code" listElements="#{offerTemplateBean.listActive}"/>
+<!--                     popup="true" popupId="offerPopup"/>                     -->
                 <hf:formField id="customerCurrencySelectId"
                     label="#{messages['currency.codeCurrency']}"
-                    field="tradingCurrency" valueLabelField="currencyCode" popup="true"
-                    popupId="pricPlanMatCurrencyPopup" />
+                    field="tradingCurrency" valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}"/>
+<!--                     popup="true" popupId="pricPlanMatCurrencyPopup" /> -->
                 <hf:formField id="validityCalendar" label="#{messages['pricePlanMatrix.validityCalendar']}" field="validityCalendar"
-                    valueLabelField="code" popup="true" popupId="validityCalendarPopup" />
+                    valueLabelField="code" listBean="#{calendarBean}" /> 
+<!--                     popup="true" popupId="validityCalendarPopup" /> -->
                 <hf:formField label="#{messages['pricePlanMatrix.priority']}"
                     field="priority" />
                     

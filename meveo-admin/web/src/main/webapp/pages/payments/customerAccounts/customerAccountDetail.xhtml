@@ -35,31 +35,31 @@
 			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:customerSelectId">
 		</hftl:entityPopup>
 
-		<hftl:entityPopup id="customerAccCurrencyPopup"
-			header="#{messages['customerAccountCurrencyPopup.header']}"
-			backingBean="#{tradingCurrencyBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="currency.currencyCode"
-			column1Label="#{messages['businessEntity.code']}"
-			column1="currencyCode"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="prDescription"
-			selection="#{customerAccountBean.entity.tradingCurrency}"
-			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:currencySelectId">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="customerAccCurrencyPopup" -->
+<!-- 			header="#{messages['customerAccountCurrencyPopup.header']}" -->
+<!-- 			backingBean="#{tradingCurrencyBean}" -->
+<!-- 			searchField1Label="#{messages['businessEntity.code']}" -->
+<!-- 			searchField1="currency.currencyCode" -->
+<!-- 			column1Label="#{messages['businessEntity.code']}" -->
+<!-- 			column1="currencyCode" -->
+<!-- 			column2Label="#{messages['businessEntity.description']}" -->
+<!-- 			column2="prDescription" -->
+<!-- 			selection="#{customerAccountBean.entity.tradingCurrency}" -->
+<!-- 			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:currencySelectId"> -->
+<!-- 		</hftl:entityPopup> -->
 		
-		<hftl:entityPopup id="tradingLanguagePopup"
-				header="#{messages['tradingLanguage.popup.header']}"
-				backingBean="#{tradingLanguageBean}"
-				searchField1Label="#{messages['businessEntity.code']}"
-				searchField1="language.languageCode"
-				column1Label="#{messages['businessEntity.code']}"
-				column1="languageCode"
-				column2Label="#{messages['businessEntity.description']}"
-				column2="prDescription"
-				selection="#{customerAccountBean.entity.tradingLanguage}"
-				updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:trLanguageSelectId">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="tradingLanguagePopup" -->
+<!-- 				header="#{messages['tradingLanguage.popup.header']}" -->
+<!-- 				backingBean="#{tradingLanguageBean}" -->
+<!-- 				searchField1Label="#{messages['businessEntity.code']}" -->
+<!-- 				searchField1="language.languageCode" -->
+<!-- 				column1Label="#{messages['businessEntity.code']}" -->
+<!-- 				column1="languageCode" -->
+<!-- 				column2Label="#{messages['businessEntity.description']}" -->
+<!-- 				column2="prDescription" -->
+<!-- 				selection="#{customerAccountBean.entity.tradingLanguage}" -->
+<!-- 				updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:trLanguageSelectId"> -->
+<!-- 		</hftl:entityPopup> -->
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -116,13 +116,13 @@
 												<hf:formField id="currencySelectId"
 													label="#{messages['currency.codeCurrency']}"
 													required="true" field="tradingCurrency"
-													valueLabelField="currencyCode" popup="true"
-													popupId="customerAccCurrencyPopup" />
+													valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}"/> 
+<!--                                                     popup="true" popupId="customerAccCurrencyPopup" /> -->
                                                <hf:formField id="trLanguageSelectId"
 														label="#{messages['tradingLanguage.tradingLanguage']}"
 														field="tradingLanguage" valueLabelField="languageCode"
-														required="true" popup="true"
-														popupId="tradingLanguagePopup" />	                                               
+														required="true" listBean="#{tradingLanguageBean}"/> 
+<!--                                                         popup="true" popupId="tradingLanguagePopup" />	                                                -->
 
 
 												<h:panelGroup rendered="#{not empty customerAccountBean.entity.id}">
