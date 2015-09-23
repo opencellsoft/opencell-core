@@ -98,7 +98,7 @@ public class FlatFileProcessingJobBean {
 				MatchedRecord record = null;
 				int processed = 0;
 				script = flowScriptClass.newInstance();
-				script.init(context, provider);
+				script.init(context, provider,currentUser);
 				while ((record = ff.getNextRecord(bufIn)) != null) {	
 					Object recordBean = record.getBean(recordVariableName);											
 					try {						
@@ -106,7 +106,7 @@ public class FlatFileProcessingJobBean {
 						executeParams.put(recordVariableName, recordBean);
 						executeParams.put(originFilename, file.getName());
 						executeParams.put("originBatch",file.getName());
-						script.execute(executeParams,provider);	 				    	
+						script.execute(executeParams,provider,currentUser);	 				    	
 						outputRecord(record);
 						result.registerSucces();
 					} catch (Exception e) {
@@ -130,7 +130,7 @@ public class FlatFileProcessingJobBean {
 			} finally {
 				try{
 					if(script!=null){
-						script.finalize(context,provider);
+						script.finalize(context,provider,currentUser);
 					}
 				} catch(Exception e){
 					report+="\r\n error in script finailzation"+e.getMessage();
