@@ -38,7 +38,8 @@
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA}">
         <h:outputText value="#{field.stringValue}" rendered="#{! edit}"></h:outputText>
-        <pe:codeMirror  theme="eclipse" mode="application/xml" value="#{field.stringValue}"  lineNumbers="true"  required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
+        <pe:codeMirror  theme="eclipse" mode="application/xml" value="#{field.stringValue}"  lineNumbers="true"  required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" /> 
+          <!--<p:inputTextarea value="#{field.stringValue}" cols="#{cols}" rows="#{rows}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />-->
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
         <h:outputText value="#{field.dateValue}" rendered="#{! edit}">
