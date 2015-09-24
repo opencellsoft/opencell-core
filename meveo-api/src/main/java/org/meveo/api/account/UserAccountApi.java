@@ -34,6 +34,10 @@ public class UserAccountApi extends AccountApi {
 	private BillingAccountService billingAccountService;
 
 	public void create(UserAccountDto postData, User currentUser) throws MeveoApiException {
+		create(postData, currentUser, true);
+	}
+
+	public void create(UserAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
 				&& !StringUtils.isBlank(postData.getBillingAccount())) {
 			Provider provider = currentUser.getProvider();
@@ -44,7 +48,7 @@ public class UserAccountApi extends AccountApi {
 			}
 
 			UserAccount userAccount = new UserAccount();
-			populate(postData, userAccount, currentUser, AccountLevelEnum.UA);
+			populate(postData, userAccount, currentUser, AccountLevelEnum.UA, checkCustomFields);
 
 			userAccount.setBillingAccount(billingAccount);
 			userAccount.setProvider(currentUser.getProvider());
@@ -69,6 +73,10 @@ public class UserAccountApi extends AccountApi {
 	}
 
 	public void update(UserAccountDto postData, User currentUser) throws MeveoApiException {
+		update(postData, currentUser, true);
+	}
+
+	public void update(UserAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
 				&& !StringUtils.isBlank(postData.getBillingAccount())) {
 			Provider provider = currentUser.getProvider();
@@ -79,14 +87,15 @@ public class UserAccountApi extends AccountApi {
 			}
 
 			if (!StringUtils.isBlank(postData.getBillingAccount())) {
-				BillingAccount billingAccount = billingAccountService.findByCode(postData.getBillingAccount(), provider);
+				BillingAccount billingAccount = billingAccountService
+						.findByCode(postData.getBillingAccount(), provider);
 				if (billingAccount == null) {
 					throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
 				}
 				userAccount.setBillingAccount(billingAccount);
 			}
 
-			updateAccount(userAccount, postData, currentUser, AccountLevelEnum.UA);			
+			updateAccount(userAccount, postData, currentUser, AccountLevelEnum.UA, checkCustomFields);
 
 			userAccountService.updateAudit(userAccount, currentUser);
 		} else {
@@ -155,17 +164,18 @@ public class UserAccountApi extends AccountApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-	
+
 	/**
 	 * Create or update User Account entity based on code.
+	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
 	 */
 	public void createOrUpdate(UserAccountDto postData, User currentUser) throws MeveoApiException {
-		
+
 		UserAccount userAccount = userAccountService.findByCode(postData.getCode(), currentUser.getProvider());
-		
+
 		if (userAccount == null) {
 			create(postData, currentUser);
 		} else {

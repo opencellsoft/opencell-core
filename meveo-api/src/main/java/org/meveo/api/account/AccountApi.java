@@ -30,74 +30,89 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 @Stateless
 public class AccountApi extends BaseApi {
 
-    @Inject
-    private CountryService countryService;
+	@Inject
+	private CountryService countryService;
 
-    @Inject
-    private TitleService titleService;
-    
-    @Inject
-    private CustomFieldTemplateService customFieldTemplateService;
+	@Inject
+	private TitleService titleService;
 
-    public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser, AccountLevelEnum accountLevel) throws MeveoApiException {
-        Address address = new Address();
-        if (postData.getAddress() != null) {
-            // check country
-            if (!StringUtils.isBlank(postData.getAddress().getCountry()) && countryService.findByCode(postData.getAddress().getCountry()) == null) {
-                throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
-            }
+	@Inject
+	private CustomFieldTemplateService customFieldTemplateService;
 
-            address.setAddress1(postData.getAddress().getAddress1());
-            address.setAddress2(postData.getAddress().getAddress2());
-            address.setAddress3(postData.getAddress().getAddress3());
-            address.setZipCode(postData.getAddress().getZipCode());
-            address.setCity(postData.getAddress().getCity());
-            address.setCountry(postData.getAddress().getCountry());
-            address.setState(postData.getAddress().getState());
-        }
+	public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser,
+			AccountLevelEnum accountLevel) throws MeveoApiException {
+		populate(postData, accountEntity, currentUser, accountLevel, true);
+	}
 
-        Name name = new Name();
-        if (postData.getName() != null) {
-            name.setFirstName(postData.getName().getFirstName());
-            name.setLastName(postData.getName().getLastName());
-            if (!StringUtils.isBlank(postData.getName().getTitle())) {
-                Title title = titleService.findByCode(currentUser.getProvider(), postData.getName().getTitle());
-                if (title == null) {
-                    throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
-                } else {
-                    name.setTitle(title);
-                }
-            }
-        }
+	public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser,
+			AccountLevelEnum accountLevel, boolean checkCustomField) throws MeveoApiException {
+		Address address = new Address();
+		if (postData.getAddress() != null) {
+			// check country
+			if (!StringUtils.isBlank(postData.getAddress().getCountry())
+					&& countryService.findByCode(postData.getAddress().getCountry()) == null) {
+				throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
+			}
 
-        accountEntity.setCode(postData.getCode());
-        accountEntity.setDescription(postData.getDescription());
-        accountEntity.setExternalRef1(postData.getExternalRef1());
-        accountEntity.setExternalRef2(postData.getExternalRef2());
-        accountEntity.setAddress(address);
-        accountEntity.setName(name);
+			address.setAddress1(postData.getAddress().getAddress1());
+			address.setAddress2(postData.getAddress().getAddress2());
+			address.setAddress3(postData.getAddress().getAddress3());
+			address.setZipCode(postData.getAddress().getZipCode());
+			address.setCity(postData.getAddress().getCity());
+			address.setCountry(postData.getAddress().getCountry());
+			address.setState(postData.getAddress().getState());
+		}
 
-        // populate customFields
-        if (postData.getCustomFields() != null) {
-            try {
-                populateCustomFields(accountLevel, postData.getCustomFields().getCustomField(), accountEntity, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
-            }
-        }        
-    }
+		Name name = new Name();
+		if (postData.getName() != null) {
+			name.setFirstName(postData.getName().getFirstName());
+			name.setLastName(postData.getName().getLastName());
+			if (!StringUtils.isBlank(postData.getName().getTitle())) {
+				Title title = titleService.findByCode(currentUser.getProvider(), postData.getName().getTitle());
+				if (title == null) {
+					throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
+				} else {
+					name.setTitle(title);
+				}
+			}
+		}
 
-    @SuppressWarnings("incomplete-switch")
-	public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser, AccountLevelEnum accountLevel) throws MeveoApiException {
-        Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
-        if (postData.getAddress() != null) {
-            // check country
-            if (!StringUtils.isBlank(postData.getAddress().getCountry()) && countryService.findByCode(postData.getAddress().getCountry()) == null) {
-                throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
-            }
+		accountEntity.setCode(postData.getCode());
+		accountEntity.setDescription(postData.getDescription());
+		accountEntity.setExternalRef1(postData.getExternalRef1());
+		accountEntity.setExternalRef2(postData.getExternalRef2());
+		accountEntity.setAddress(address);
+		accountEntity.setName(name);
 
-            if (!StringUtils.isBlank(postData.getAddress().getAddress1())) {
+		// populate customFields
+		if (postData.getCustomFields() != null) {
+			try {
+				populateCustomFields(accountLevel, postData.getCustomFields().getCustomField(), accountEntity,
+						currentUser, checkCustomField);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				log.error("Failed to associate custom field instance to an entity", e);
+				throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			}
+		}
+	}
+
+	public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser,
+			AccountLevelEnum accountLevel) throws MeveoApiException {
+		updateAccount(accountEntity, postData, currentUser, accountLevel, true);
+	}
+
+	@SuppressWarnings("incomplete-switch")
+	public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser,
+			AccountLevelEnum accountLevel, boolean checkCustomFields) throws MeveoApiException {
+		Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
+		if (postData.getAddress() != null) {
+			// check country
+			if (!StringUtils.isBlank(postData.getAddress().getCountry())
+					&& countryService.findByCode(postData.getAddress().getCountry()) == null) {
+				throw new EntityDoesNotExistsException(Country.class, postData.getAddress().getCountry());
+			}
+
+			if (!StringUtils.isBlank(postData.getAddress().getAddress1())) {
 				address.setAddress1(postData.getAddress().getAddress1());
 			}
 			if (!StringUtils.isBlank(postData.getAddress().getAddress2())) {
@@ -118,31 +133,31 @@ public class AccountApi extends BaseApi {
 			if (!StringUtils.isBlank(postData.getAddress().getState())) {
 				address.setState(postData.getAddress().getState());
 			}
-			
-			accountEntity.setAddress(address);
-        }
 
-        Name name = accountEntity.getName() == null ? new Name() : accountEntity.getName();
-        if (postData.getName() != null) {
+			accountEntity.setAddress(address);
+		}
+
+		Name name = accountEntity.getName() == null ? new Name() : accountEntity.getName();
+		if (postData.getName() != null) {
 			if (!StringUtils.isBlank(postData.getName().getFirstName())) {
 				name.setFirstName(postData.getName().getFirstName());
 			}
 			if (!StringUtils.isBlank(postData.getName().getLastName())) {
 				name.setLastName(postData.getName().getLastName());
 			}
-            if (!StringUtils.isBlank(postData.getName().getTitle())) {
-                Title title = titleService.findByCode(currentUser.getProvider(), postData.getName().getTitle());
-                if (title == null) {
-                    throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
-                } else {
-                    name.setTitle(title);
-                }
-            }
-            
-            accountEntity.setName(name);
-        }
+			if (!StringUtils.isBlank(postData.getName().getTitle())) {
+				Title title = titleService.findByCode(currentUser.getProvider(), postData.getName().getTitle());
+				if (title == null) {
+					throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
+				} else {
+					name.setTitle(title);
+				}
+			}
 
-        if (!StringUtils.isBlank(postData.getDescription())) {
+			accountEntity.setName(name);
+		}
+
+		if (!StringUtils.isBlank(postData.getDescription())) {
 			accountEntity.setDescription(postData.getDescription());
 		}
 		if (!StringUtils.isBlank(postData.getExternalRef1())) {
@@ -151,11 +166,11 @@ public class AccountApi extends BaseApi {
 		if (!StringUtils.isBlank(postData.getExternalRef2())) {
 			accountEntity.setExternalRef2(postData.getExternalRef2());
 		}
-		
+
 		// check if there are required custom fields
 		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(accountLevel,
 				currentUser.getProvider());
-		if (customFieldTemplates != null) {
+		if (checkCustomFields && customFieldTemplates != null) {
 			for (CustomFieldTemplate cft : customFieldTemplates) {
 				if (cft.isValueRequired()) {
 					if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField().size() > 0) {
@@ -196,15 +211,16 @@ public class AccountApi extends BaseApi {
 			}
 		}
 
-        // populate customFields
-        if (postData.getCustomFields() != null) {
-            try {
-                populateCustomFields(accountLevel, postData.getCustomFields().getCustomField(), accountEntity, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
-            }
-        }
-    }
-    
+		// populate customFields
+		if (postData.getCustomFields() != null) {
+			try {
+				populateCustomFields(accountLevel, postData.getCustomFields().getCustomField(), accountEntity,
+						currentUser, checkCustomFields);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				log.error("Failed to associate custom field instance to an entity", e);
+				throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			}
+		}
+	}
+
 }

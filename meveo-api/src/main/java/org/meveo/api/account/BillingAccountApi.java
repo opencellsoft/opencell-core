@@ -52,6 +52,11 @@ public class BillingAccountApi extends AccountApi {
 	private CustomerAccountService customerAccountService;
 
 	public void create(BillingAccountDto postData, User currentUser) throws MeveoApiException {
+		create(postData, currentUser, true);
+	}
+
+	public void create(BillingAccountDto postData, User currentUser, boolean checkCustomFields)
+			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
 				&& !StringUtils.isBlank(postData.getCustomerAccount())
 				&& !StringUtils.isBlank(postData.getBillingCycle()) && !StringUtils.isBlank(postData.getCountry())
@@ -96,7 +101,7 @@ public class BillingAccountApi extends AccountApi {
 			}
 
 			BillingAccount billingAccount = new BillingAccount();
-			populate(postData, billingAccount, currentUser, AccountLevelEnum.BA);
+			populate(postData, billingAccount, currentUser, AccountLevelEnum.BA, checkCustomFields);
 
 			billingAccount.setCustomerAccount(customerAccount);
 			billingAccount.setBillingCycle(billingCycle);
@@ -166,6 +171,11 @@ public class BillingAccountApi extends AccountApi {
 	}
 
 	public void update(BillingAccountDto postData, User currentUser) throws MeveoApiException {
+		update(postData, currentUser, true);
+	}
+
+	public void update(BillingAccountDto postData, User currentUser, boolean checkCustomFields)
+			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
 				&& !StringUtils.isBlank(postData.getCustomerAccount())
 				&& !StringUtils.isBlank(postData.getBillingCycle()) && !StringUtils.isBlank(postData.getCountry())
@@ -223,7 +233,7 @@ public class BillingAccountApi extends AccountApi {
 					throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE,
 							"Enum for PaymentMethod with name=" + postData.getPaymentMethod() + " does not exists.");
 				}
-				
+
 				billingAccount.setPaymentMethod(paymentMethod);
 			}
 
@@ -235,7 +245,7 @@ public class BillingAccountApi extends AccountApi {
 				}
 			}
 
-			updateAccount(billingAccount, postData, currentUser, AccountLevelEnum.BA);
+			updateAccount(billingAccount, postData, currentUser, AccountLevelEnum.BA, checkCustomFields);
 
 			if (!StringUtils.isBlank(postData.getNextInvoiceDate())) {
 				billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
@@ -253,7 +263,7 @@ public class BillingAccountApi extends AccountApi {
 				billingAccount.setEmail(postData.getEmail());
 			}
 			if (postData.getBankCoordinates() != null) {
-				BankCoordinates bankCoordinates=new BankCoordinates();
+				BankCoordinates bankCoordinates = new BankCoordinates();
 				if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
 					bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
 				}
@@ -374,9 +384,10 @@ public class BillingAccountApi extends AccountApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-	
+
 	/**
 	 * Create or update Billing Account based on Billing Account Code
+	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
