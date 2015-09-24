@@ -36,6 +36,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.response.account.FindAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidEnumValue;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
@@ -855,7 +856,7 @@ public class AccountHierarchyApi extends BaseApi {
 					result.getCustomer().add(new CustomerDto(cust));
 				} else {
 					for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-					    
+
 						if (!cfDto.isEmpty()) {
 							if (cfDto.getValueConverted().equals(cust.getCFValue(cfDto.getCode()))) {
 								result.getCustomer().add(new CustomerDto(cust));
@@ -1013,8 +1014,9 @@ public class AccountHierarchyApi extends BaseApi {
 								}
 							}
 
-                            populateNameAddressAndCustomFields(customer, customerDto, AccountLevelEnum.CUST, currentUser);
-                            
+							populateNameAddressAndCustomFields(customer, customerDto, AccountLevelEnum.CUST,
+									currentUser);
+
 							if (customer.isTransient()) {
 								customerService.create(customer, currentUser, provider);
 							} else {
@@ -1192,10 +1194,9 @@ public class AccountHierarchyApi extends BaseApi {
 										}
 									}
 
+									populateNameAddressAndCustomFields(customerAccount, customerAccountDto,
+											AccountLevelEnum.CA, currentUser);
 
-                                    populateNameAddressAndCustomFields(customerAccount, customerAccountDto, AccountLevelEnum.CA,
-                                            currentUser);
-                                    
 									if (customerAccount.isTransient()) {
 										customerAccountService.create(customerAccount, currentUser, provider);
 									} else {
@@ -1358,9 +1359,9 @@ public class AccountHierarchyApi extends BaseApi {
 												billingAccount.setEmail(billingAccountDto.getEmail());
 											}
 
-                                            populateNameAddressAndCustomFields(billingAccount, billingAccountDto,
-                                                    AccountLevelEnum.BA, currentUser);
-                                            
+											populateNameAddressAndCustomFields(billingAccount, billingAccountDto,
+													AccountLevelEnum.BA, currentUser);
+
 											if (billingAccount.isTransient()) {
 												billingAccountService.create(billingAccount, currentUser, provider);
 											} else {
@@ -1440,9 +1441,9 @@ public class AccountHierarchyApi extends BaseApi {
 																.getTerminationDate());
 													}
 
-                                                    populateNameAddressAndCustomFields(userAccount, userAccountDto,
-                                                            AccountLevelEnum.UA, currentUser);
-                                                    
+													populateNameAddressAndCustomFields(userAccount, userAccountDto,
+															AccountLevelEnum.UA, currentUser);
+
 													if (userAccount.isTransient()) {
 														try {
 															userAccountService.createUserAccount(billingAccount,
@@ -1565,18 +1566,25 @@ public class AccountHierarchyApi extends BaseApi {
 																		.getTerminationDate());
 															}
 
-                                                            // populate customFields
-                                                            if (subscriptionDto.getCustomFields() != null) {
-                                                                try {
-                                                                    populateCustomFields(AccountLevelEnum.SUB, subscriptionDto.getCustomFields().getCustomField(), subscription,
-                                                                        currentUser);
-                                                                } catch (IllegalArgumentException | IllegalAccessException e) {
-                                                                    log.error("Failed to associate custom field instance to a subscription {}", subscriptionDto.getCode(), e);
-                                                                    throw new MeveoApiException("Failed to associate custom field instance to a subscription "
-                                                                            + subscriptionDto.getCode());
-                                                                }
-                                                            }
-															
+															// populate
+															// customFields
+															if (subscriptionDto.getCustomFields() != null) {
+																try {
+																	populateCustomFields(AccountLevelEnum.SUB,
+																			subscriptionDto.getCustomFields()
+																					.getCustomField(), subscription,
+																			currentUser);
+																} catch (IllegalArgumentException
+																		| IllegalAccessException e) {
+																	log.error(
+																			"Failed to associate custom field instance to a subscription {}",
+																			subscriptionDto.getCode(), e);
+																	throw new MeveoApiException(
+																			"Failed to associate custom field instance to a subscription "
+																					+ subscriptionDto.getCode());
+																}
+															}
+
 															if (subscription.isTransient()) {
 																subscriptionService.create(subscription, currentUser,
 																		provider);
@@ -1612,18 +1620,25 @@ public class AccountHierarchyApi extends BaseApi {
 																		access.setEndDate(accessDto.getEndDate());
 																	}
 
-                                                                    // populate customFields
-                                                                    if (accessDto.getCustomFields() != null) {
-                                                                        try {
-                                                                            populateCustomFields(AccountLevelEnum.ACC, accessDto.getCustomFields().getCustomField(), access,
-                                                                                currentUser);
-                                                                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                                                                            log.error("Failed to associate custom field instance to an access {}", subscriptionDto.getCode(), e);
-                                                                            throw new MeveoApiException("Failed to associate custom field instance to an access "
-                                                                                    + subscriptionDto.getCode());
-                                                                        }
-                                                                    }
-		                                                            
+																	// populate
+																	// customFields
+																	if (accessDto.getCustomFields() != null) {
+																		try {
+																			populateCustomFields(AccountLevelEnum.ACC,
+																					accessDto.getCustomFields()
+																							.getCustomField(), access,
+																					currentUser);
+																		} catch (IllegalArgumentException
+																				| IllegalAccessException e) {
+																			log.error(
+																					"Failed to associate custom field instance to an access {}",
+																					subscriptionDto.getCode(), e);
+																			throw new MeveoApiException(
+																					"Failed to associate custom field instance to an access "
+																							+ subscriptionDto.getCode());
+																		}
+																	}
+
 																	if (access.isTransient()) {
 																		accessService.create(access, currentUser,
 																				provider);
@@ -1645,98 +1660,119 @@ public class AccountHierarchyApi extends BaseApi {
 
 																	if (serviceInstanceDto.getTerminationDate() != null) {
 																		// terminate
-																		ServiceInstance serviceInstance = serviceInstanceService.findActivatedByCodeAndSubscription(serviceInstanceDto.getCode(), subscription);
-                                                                         if(serviceInstance!=null){
-																		if (!StringUtils.isBlank(serviceInstanceDto
-																				.getTerminationReason())) {
-																			SubscriptionTerminationReason serviceTerminationReason = terminationReasonService
-																					.findByCode(serviceInstanceDto
-																							.getTerminationReason(),
-																							provider);
-																			if (serviceTerminationReason == null) {
-																				throw new EntityDoesNotExistsException(
-																						SubscriptionTerminationReason.class,
-																						serviceInstanceDto
-																								.getTerminationReason());
-																			}
-																			try {
-																				serviceInstanceService
-																						.terminateService(
-																								serviceInstance,
+																		ServiceInstance serviceInstance = serviceInstanceService
+																				.findActivatedByCodeAndSubscription(
+																						serviceInstanceDto.getCode(),
+																						subscription);
+																		if (serviceInstance != null) {
+																			if (!StringUtils.isBlank(serviceInstanceDto
+																					.getTerminationReason())) {
+																				SubscriptionTerminationReason serviceTerminationReason = terminationReasonService
+																						.findByCode(
 																								serviceInstanceDto
-																										.getTerminationDate(),
-																								serviceTerminationReason,
-																								currentUser);
-																			} catch (BusinessException e) {
-																				log.error("service termination={}", e);
-																				throw new MeveoApiException(
-																						e.getMessage());
+																										.getTerminationReason(),
+																								provider);
+																				if (serviceTerminationReason == null) {
+																					throw new EntityDoesNotExistsException(
+																							SubscriptionTerminationReason.class,
+																							serviceInstanceDto
+																									.getTerminationReason());
+																				}
+																				try {
+																					serviceInstanceService
+																							.terminateService(
+																									serviceInstance,
+																									serviceInstanceDto
+																											.getTerminationDate(),
+																									serviceTerminationReason,
+																									currentUser);
+																				} catch (BusinessException e) {
+																					log.error("service termination={}",
+																							e);
+																					throw new MeveoApiException(
+																							e.getMessage());
+																				}
+
+																			} else {
+																				missingParameters
+																						.add("serviceInstance.terminationReason");
+																				throw new MissingParameterException(
+																						getMissingParametersExceptionMessage());
 																			}
-																			
-																		
 																		} else {
-																			missingParameters
-																					.add("serviceInstance.terminationReason");
-																			throw new MissingParameterException(
-																					getMissingParametersExceptionMessage());
+																			throw new MeveoApiException(
+																					"ServiceInstance with code="
+																							+ subscriptionDto.getCode()
+																							+ " must be ACTIVE.");
 																		}
-																	    }else{
-																	    	throw new MeveoApiException("ServiceInstance with code=" + subscriptionDto.getCode() + " must be ACTIVE.");
-																	    }
-                                                                        }else {
+																	} else {
 																		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
 																			throw new MeveoApiException(
 																					"Failed activating a service. Subscription is already RESILIATED.");
 																		}
 																		ServiceTemplate serviceTemplate = serviceTemplateService
-																				.findByCode(serviceInstanceDto
-																						.getCode(), provider);
+																				.findByCode(
+																						serviceInstanceDto.getCode(),
+																						provider);
 																		if (serviceTemplate == null) {
 																			throw new EntityDoesNotExistsException(
 																					ServiceTemplate.class,
 																					serviceInstanceDto.getCode());
 																		}
 																		boolean alreadyActiveOrSuspended = false;
-																		ServiceInstance serviceInstance=null;
-																List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription);
-																
-																for (ServiceInstance subscriptionServiceInstance : subscriptionServiceInstances) {
-																	if (subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CANCELED
-																			&& subscriptionServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED
-																			&& subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CLOSED){
-																		if(subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.INACTIVE)){ 
-																			alreadyActiveOrSuspended=false;
-																		}else{
-																		   throw new MeveoApiException("ServiceInstance with code=" + serviceInstanceDto.getCode() + " must not be ACTIVE or SUSPENDED.");
-																		}
-																		break;
-																	}			
-																}
+																		ServiceInstance serviceInstance = null;
+																		List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService
+																				.findByCodeSubscriptionAndStatus(
+																						serviceTemplate.getCode(),
+																						subscription);
 
-																if(!alreadyActiveOrSuspended){
-																	log.debug("instanciateService id={} checked, quantity={}",serviceTemplate.getId(), 1);
-																	serviceInstance = new ServiceInstance();
-																	serviceInstance.setProvider(serviceTemplate
-																			.getProvider());
-																	serviceInstance.setCode(serviceTemplate
-																			.getCode());
-																	serviceInstance
-																			.setDescription(serviceTemplate
-																					.getDescription());
-																	serviceInstance
-																			.setServiceTemplate(serviceTemplate);
-																	serviceInstance
-																			.setSubscription(subscription);
-																	serviceInstance
-																			.setSubscriptionDate(serviceInstanceDto
-																					.getSubscriptionDate());
-																	serviceInstance
-																			.setQuantity(serviceInstanceDto
-																					.getQuantity() == null ? BigDecimal.ONE
-																					: serviceInstanceDto
-																							.getQuantity());
-															           }
-																
+																		for (ServiceInstance subscriptionServiceInstance : subscriptionServiceInstances) {
+																			if (subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CANCELED
+																					&& subscriptionServiceInstance
+																							.getStatus() != InstanceStatusEnum.TERMINATED
+																					&& subscriptionServiceInstance
+																							.getStatus() != InstanceStatusEnum.CLOSED) {
+																				if (subscriptionServiceInstance
+																						.getStatus()
+																						.equals(InstanceStatusEnum.INACTIVE)) {
+																					alreadyActiveOrSuspended = false;
+																				} else {
+																					throw new MeveoApiException(
+																							"ServiceInstance with code="
+																									+ serviceInstanceDto
+																											.getCode()
+																									+ " must not be ACTIVE or SUSPENDED.");
+																				}
+																				break;
+																			}
+																		}
+
+																		if (!alreadyActiveOrSuspended) {
+																			log.debug(
+																					"instanciateService id={} checked, quantity={}",
+																					serviceTemplate.getId(), 1);
+																			serviceInstance = new ServiceInstance();
+																			serviceInstance.setProvider(serviceTemplate
+																					.getProvider());
+																			serviceInstance.setCode(serviceTemplate
+																					.getCode());
+																			serviceInstance
+																					.setDescription(serviceTemplate
+																							.getDescription());
+																			serviceInstance
+																					.setServiceTemplate(serviceTemplate);
+																			serviceInstance
+																					.setSubscription(subscription);
+																			serviceInstance
+																					.setSubscriptionDate(serviceInstanceDto
+																							.getSubscriptionDate());
+																			serviceInstance
+																					.setQuantity(serviceInstanceDto
+																							.getQuantity() == null ? BigDecimal.ONE
+																							: serviceInstanceDto
+																									.getQuantity());
+																		}
+
 																		try {
 																			// instantiate
 																			serviceInstanceService
@@ -1744,25 +1780,22 @@ public class AccountHierarchyApi extends BaseApi {
 																							serviceInstance,
 																							currentUser);
 																		} catch (BusinessException e) {
-																			throw new MeveoApiException(
-																					e.getMessage());
+																			throw new MeveoApiException(e.getMessage());
 																		}
-		
-																			if (serviceInstanceDto
-																					.getSubscriptionDate() != null) {
-																				// activate	
-																				try {
-																					serviceInstanceService
-																							.serviceActivation(
-																									serviceInstance,
-																									null, null,
-																									currentUser);
-																				} catch (BusinessException e) {
-																					throw new MeveoApiException(
-																							e.getMessage());
-																				}
+
+																		if (serviceInstanceDto.getSubscriptionDate() != null) {
+																			// activate
+																			try {
+																				serviceInstanceService
+																						.serviceActivation(
+																								serviceInstance, null,
+																								null, currentUser);
+																			} catch (BusinessException e) {
+																				throw new MeveoApiException(
+																						e.getMessage());
 																			}
-																		 
+																		}
+
 																	}
 																}
 															}
@@ -1843,12 +1876,14 @@ public class AccountHierarchyApi extends BaseApi {
 
 		// populate customFields
 		if (accountDto.getCustomFields() != null) {
-            try {
-                populateCustomFields(accountLevel, accountDto.getCustomFields().getCustomField(), accountEntity, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity {}", accountDto.getCode(), e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity " + accountDto.getCode());
-            }
+			try {
+				populateCustomFields(accountLevel, accountDto.getCustomFields().getCustomField(), accountEntity,
+						currentUser);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				log.error("Failed to associate custom field instance to an entity {}", accountDto.getCode(), e);
+				throw new MeveoApiException("Failed to associate custom field instance to an entity "
+						+ accountDto.getCode());
+			}
 		}
 	}
 
@@ -2021,30 +2056,40 @@ public class AccountHierarchyApi extends BaseApi {
 	}
 
 	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
-		if (postData.getCrmAccountType().equals(CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC)) {
-			NameDto name = new NameDto();
-			name.setFirstName(postData.getName().getFirstName());
-			name.setLastName(postData.getName().getLastName());
-			name.setTitle(postData.getName().getTitle());
+		NameDto name = new NameDto();
+		name.setFirstName(postData.getName().getFirstName());
+		name.setLastName(postData.getName().getLastName());
+		name.setTitle(postData.getName().getTitle());
 
-			AddressDto address = new AddressDto();
-			if (postData.getAddress() != null) {
-				address.setAddress1(postData.getAddress().getAddress1());
-				address.setAddress2(postData.getAddress().getAddress2());
-				address.setAddress3(postData.getAddress().getAddress3());
-				address.setCity(postData.getAddress().getCity());
-				address.setCountry(postData.getAddress().getCountry());
-				address.setState(postData.getAddress().getState());
-				address.setZipCode(postData.getAddress().getZipCode());
-			}
+		AddressDto address = new AddressDto();
+		if (postData.getAddress() != null) {
+			address.setAddress1(postData.getAddress().getAddress1());
+			address.setAddress2(postData.getAddress().getAddress2());
+			address.setAddress3(postData.getAddress().getAddress3());
+			address.setCity(postData.getAddress().getCity());
+			address.setCountry(postData.getAddress().getCountry());
+			address.setState(postData.getAddress().getState());
+			address.setZipCode(postData.getAddress().getZipCode());
+		}
 
-			ContactInformationDto contactInformation = new ContactInformationDto();
-			if (postData.getContactInformation() != null) {
-				contactInformation.setEmail(postData.getContactInformation().getEmail());
-				contactInformation.setFax(postData.getContactInformation().getFax());
-				contactInformation.setMobile(postData.getContactInformation().getMobile());
-				contactInformation.setPhone(postData.getContactInformation().getPhone());
-			}
+		ContactInformationDto contactInformation = new ContactInformationDto();
+		if (postData.getContactInformation() != null) {
+			contactInformation.setEmail(postData.getContactInformation().getEmail());
+			contactInformation.setFax(postData.getContactInformation().getFax());
+			contactInformation.setMobile(postData.getContactInformation().getMobile());
+			contactInformation.setPhone(postData.getContactInformation().getPhone());
+		}
+
+		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
+		try {
+			accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
+		} catch (IllegalArgumentException e) {
+			throw new InvalidEnumValue(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
+			// create seller
+			log.debug("create seller");
 
 			if (StringUtils.isBlank(postData.getSeller())) {
 				postData.setSeller(postData.getCode());
@@ -2052,32 +2097,50 @@ public class AccountHierarchyApi extends BaseApi {
 
 			SellerDto sellerDto = new SellerDto();
 			sellerDto.setCode(postData.getSeller());
-			sellerDto.setDescription(postData.getSeller());
+			sellerDto.setDescription(postData.getDescription());
 			sellerDto.setCountryCode(postData.getCountry());
 			sellerDto.setCurrencyCode(postData.getCurrency());
 			sellerDto.setLanguageCode(postData.getLanguage());
 
 			sellerApi.create(sellerDto, currentUser);
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
+			// create customer
+			log.debug("create cust");
 
 			CustomerDto customerDto = new CustomerDto();
 			customerDto.setCode(postData.getCode());
 			customerDto.setDescription(postData.getDescription());
 			customerDto.setCustomerCategory(postData.getCustomerCategory());
 			customerDto.setCustomerBrand(postData.getCustomerBrand());
-			customerDto.setSeller(postData.getSeller());
+			if (accountHierarchyTypeEnum.getHighLevel() == 3) {
+				customerDto.setSeller(postData.getCrmParentCode());
+			} else {
+				customerDto.setSeller(postData.getCode());
+			}
 			customerDto.setMandateDate(postData.getMandateDate());
 			customerDto.setMandateIdentification(postData.getMandateIdentification());
 			customerDto.setName(name);
 			customerDto.setAddress(address);
 			customerDto.setContactInformation(contactInformation);
-			setCRMAccountType(customerDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+			setCRMAccountType(customerDto, postData.getCrmAccountType(), postData.getSeller());
 
 			customerApi.create(customerDto, currentUser);
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
+			// create customer account
+			log.debug("create ca");
 
 			CustomerAccountDto customerAccountDto = new CustomerAccountDto();
 			customerAccountDto.setCode(postData.getCode());
 			customerAccountDto.setDescription(postData.getDescription());
-			customerAccountDto.setCustomer(postData.getCode());
+			if (accountHierarchyTypeEnum.getHighLevel() == 2) {
+				customerAccountDto.setCustomer(postData.getCrmParentCode());
+			} else {
+				customerAccountDto.setCustomer(postData.getCode());
+			}
 			customerAccountDto.setCurrency(postData.getCurrency());
 			customerAccountDto.setLanguage(postData.getLanguage());
 			customerAccountDto.setStatus(postData.getCaStatus());
@@ -2092,14 +2155,23 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccountDto.setName(name);
 			customerAccountDto.setAddress(address);
 			customerAccountDto.setContactInformation(contactInformation);
-			setCRMAccountType(customerAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+			setCRMAccountType(customerAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			customerAccountApi.create(customerAccountDto, currentUser);
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
+			// create billing account
+			log.debug("create ba");
 
 			BillingAccountDto billingAccountDto = new BillingAccountDto();
 			billingAccountDto.setCode(postData.getCode());
 			billingAccountDto.setDescription(postData.getDescription());
-			billingAccountDto.setCustomerAccount(postData.getCode());
+			if (accountHierarchyTypeEnum.getHighLevel() == 1) {
+				billingAccountDto.setCustomerAccount(postData.getCrmParentCode());
+			} else {
+				billingAccountDto.setCustomerAccount(postData.getCode());
+			}
 			billingAccountDto.setBillingCycle(postData.getBillingCycle());
 			billingAccountDto.setCountry(postData.getCountry());
 			billingAccountDto.setLanguage(postData.getLanguage());
@@ -2130,208 +2202,70 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 			billingAccountDto.setName(name);
 			billingAccountDto.setAddress(address);
-			setCRMAccountType(billingAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+			setCRMAccountType(billingAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			billingAccountApi.create(billingAccountDto, currentUser);
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
+			// create user account
+			log.debug("create ua");
 
 			UserAccountDto userAccountDto = new UserAccountDto();
 			userAccountDto.setCode(postData.getCode());
 			userAccountDto.setDescription(postData.getDescription());
-			userAccountDto.setBillingAccount(postData.getCode());
+			if (accountHierarchyTypeEnum.getHighLevel() == 0) {
+				userAccountDto.setBillingAccount(postData.getCrmParentCode());
+			} else {
+				userAccountDto.setBillingAccount(postData.getCode());
+			}
 			userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
 			userAccountDto.setTerminationDate(postData.getTerminationDate());
 			userAccountDto.setTerminationReason(postData.getTerminationReason());
 			userAccountDto.setStatus(postData.getUaStatus());
 			userAccountDto.setName(name);
 			userAccountDto.setAddress(address);
-			setCRMAccountType(userAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+			setCRMAccountType(userAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			userAccountApi.create(userAccountDto, currentUser);
-		} else if (postData.getCrmAccountType().equals(CRMAccountHierarchyDto.ACCOUNT_TYPE_CORP)) {
-			NameDto name = new NameDto();
-			name.setFirstName(postData.getName().getFirstName());
-			name.setLastName(postData.getName().getLastName());
-			name.setTitle(postData.getName().getTitle());
-
-			AddressDto address = new AddressDto();
-			if (postData.getAddress() != null) {
-				address.setAddress1(postData.getAddress().getAddress1());
-				address.setAddress2(postData.getAddress().getAddress2());
-				address.setAddress3(postData.getAddress().getAddress3());
-				address.setCity(postData.getAddress().getCity());
-				address.setCountry(postData.getAddress().getCountry());
-				address.setState(postData.getAddress().getState());
-				address.setZipCode(postData.getAddress().getZipCode());
-			}
-
-			ContactInformationDto contactInformation = new ContactInformationDto();
-			if (postData.getContactInformation() != null) {
-				contactInformation.setEmail(postData.getContactInformation().getEmail());
-				contactInformation.setFax(postData.getContactInformation().getFax());
-				contactInformation.setMobile(postData.getContactInformation().getMobile());
-				contactInformation.setPhone(postData.getContactInformation().getPhone());
-			}
-
-			if (StringUtils.isBlank(postData.getSeller())) {
-				postData.setSeller(postData.getCode());
-			}
-
-			SellerDto sellerDto = new SellerDto();
-			sellerDto.setCode(postData.getSeller());
-			sellerDto.setDescription(postData.getSeller());
-			sellerDto.setCountryCode(postData.getCountry());
-			sellerDto.setCurrencyCode(postData.getCurrency());
-			sellerDto.setLanguageCode(postData.getLanguage());
-
-			sellerApi.create(sellerDto, currentUser);
-
-			CustomerDto customerDto = new CustomerDto();
-			customerDto.setCode(postData.getCode());
-			customerDto.setDescription(postData.getDescription());
-			customerDto.setCustomerCategory(postData.getCustomerCategory());
-			customerDto.setCustomerBrand(postData.getCustomerBrand());
-			customerDto.setSeller(postData.getSeller());
-			customerDto.setMandateDate(postData.getMandateDate());
-			customerDto.setMandateIdentification(postData.getMandateIdentification());
-			customerDto.setName(name);
-			customerDto.setAddress(address);
-			customerDto.setContactInformation(contactInformation);
-			setCRMAccountType(customerDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
-
-			customerApi.create(customerDto, currentUser);
-
-			CustomerAccountDto customerAccountDto = new CustomerAccountDto();
-			customerAccountDto.setCode(postData.getCode());
-			customerAccountDto.setDescription(postData.getDescription());
-			customerAccountDto.setCustomer(postData.getCode());
-			customerAccountDto.setCurrency(postData.getCurrency());
-			customerAccountDto.setLanguage(postData.getLanguage());
-			customerAccountDto.setStatus(postData.getCaStatus());
-			customerAccountDto.setPaymentMethod(postData.getPaymentMethod());
-			customerAccountDto.setCreditCategory(postData.getCreditCategory());
-			customerAccountDto.setDateStatus(postData.getDateStatus());
-			customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
-			customerAccountDto.setContactInformation(contactInformation);
-			customerAccountDto.setDunningLevel(postData.getDunningLevel());
-			customerAccountDto.setMandateDate(postData.getMandateDate());
-			customerAccountDto.setMandateIdentification(postData.getMandateIdentification());
-			customerAccountDto.setName(name);
-			customerAccountDto.setAddress(address);
-			customerAccountDto.setContactInformation(contactInformation);
-			setCRMAccountType(customerAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_CORP, null);
-
-			customerAccountApi.create(customerAccountDto, currentUser);
-		} else if (postData.getCrmAccountType().equals(CRMAccountHierarchyDto.ACCOUNT_TYPE_BRANCH)) {
-			String crmParentAccountCode = StringUtils.isBlank(postData.getCrmParentCode()) ? postData.getCode()
-					: postData.getCrmParentCode();
-
-			NameDto name = new NameDto();
-			name.setFirstName(postData.getName().getFirstName());
-			name.setLastName(postData.getName().getLastName());
-			name.setTitle(postData.getName().getTitle());
-
-			AddressDto address = new AddressDto();
-			if (postData.getAddress() != null) {
-				address.setAddress1(postData.getAddress().getAddress1());
-				address.setAddress2(postData.getAddress().getAddress2());
-				address.setAddress3(postData.getAddress().getAddress3());
-				address.setCity(postData.getAddress().getCity());
-				address.setCountry(postData.getAddress().getCountry());
-				address.setState(postData.getAddress().getState());
-				address.setZipCode(postData.getAddress().getZipCode());
-			}
-
-			ContactInformationDto contactInformation = new ContactInformationDto();
-			if (postData.getContactInformation() != null) {
-				contactInformation.setEmail(postData.getContactInformation().getEmail());
-				contactInformation.setFax(postData.getContactInformation().getFax());
-				contactInformation.setMobile(postData.getContactInformation().getMobile());
-				contactInformation.setPhone(postData.getContactInformation().getPhone());
-			}
-
-			BillingAccountDto billingAccountDto = new BillingAccountDto();
-			billingAccountDto.setCode(postData.getCode());
-			billingAccountDto.setDescription(postData.getDescription());
-			billingAccountDto.setCustomerAccount(crmParentAccountCode);
-			billingAccountDto.setBillingCycle(postData.getBillingCycle());
-			billingAccountDto.setCountry(postData.getCountry());
-			billingAccountDto.setLanguage(postData.getLanguage());
-			billingAccountDto.setPaymentMethod(postData.getPaymentMethod());
-			billingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
-			billingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-			billingAccountDto.setTerminationDate(postData.getTerminationDate());
-			billingAccountDto.setPaymentTerms(postData.getPaymentTerms());
-			billingAccountDto.setElectronicBilling(postData.getElectronicBilling());
-			billingAccountDto.setStatus(postData.getBaStatus());
-			billingAccountDto.setTerminationReason(postData.getTerminationReason());
-			billingAccountDto.setEmail(postData.getEmail());
-			if (postData.getBankCoordinates() != null) {
-				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
-				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-				bankCoordinatesDto.setBankCode(postData.getBankCoordinates().getBankCode());
-				bankCoordinatesDto.setBankId(postData.getBankCoordinates().getBankId());
-				bankCoordinatesDto.setBankName(postData.getBankCoordinates().getBankName());
-				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic());
-				bankCoordinatesDto.setBranchCode(postData.getBankCoordinates().getBranchCode());
-				bankCoordinatesDto.setIban(postData.getBankCoordinates().getIban());
-				bankCoordinatesDto.setIcs(postData.getBankCoordinates().getIcs());
-				bankCoordinatesDto.setIssuerName(postData.getBankCoordinates().getIssuerName());
-				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-				bankCoordinatesDto.setKey(postData.getBankCoordinates().getKey());
-				billingAccountDto.setBankCoordinates(bankCoordinatesDto);
-			}
-			billingAccountDto.setName(name);
-			billingAccountDto.setAddress(address);
-			setCRMAccountType(billingAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BRANCH, CUSTOMER_ACCOUNT_PREFIX
-					+ crmParentAccountCode);
-
-			billingAccountApi.create(billingAccountDto, currentUser);
-
-			UserAccountDto userAccountDto = new UserAccountDto();
-			userAccountDto.setCode(postData.getCode());
-			userAccountDto.setDescription(postData.getDescription());
-			userAccountDto.setBillingAccount(postData.getCode());
-			userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-			userAccountDto.setTerminationDate(postData.getTerminationDate());
-			userAccountDto.setTerminationReason(postData.getTerminationReason());
-			userAccountDto.setStatus(postData.getUaStatus());
-			userAccountDto.setName(name);
-			userAccountDto.setAddress(address);
-			setCRMAccountType(userAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BRANCH, CUSTOMER_ACCOUNT_PREFIX
-					+ postData.getCode());
-
-			userAccountApi.create(userAccountDto, currentUser);
-		} else {
-			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "INVALID_ACCOUNT_TYPE");
 		}
 	}
 
 	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
-		if (postData.getCrmAccountType().equals(CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC)) {
-			NameDto name = new NameDto();
-			name.setFirstName(postData.getName().getFirstName());
-			name.setLastName(postData.getName().getLastName());
-			name.setTitle(postData.getName().getTitle());
+		NameDto name = new NameDto();
+		name.setFirstName(postData.getName().getFirstName());
+		name.setLastName(postData.getName().getLastName());
+		name.setTitle(postData.getName().getTitle());
 
-			AddressDto address = new AddressDto();
-			if (postData.getAddress() != null) {
-				address.setAddress1(postData.getAddress().getAddress1());
-				address.setAddress2(postData.getAddress().getAddress2());
-				address.setAddress3(postData.getAddress().getAddress3());
-				address.setCity(postData.getAddress().getCity());
-				address.setCountry(postData.getAddress().getCountry());
-				address.setState(postData.getAddress().getState());
-				address.setZipCode(postData.getAddress().getZipCode());
-			}
+		AddressDto address = new AddressDto();
+		if (postData.getAddress() != null) {
+			address.setAddress1(postData.getAddress().getAddress1());
+			address.setAddress2(postData.getAddress().getAddress2());
+			address.setAddress3(postData.getAddress().getAddress3());
+			address.setCity(postData.getAddress().getCity());
+			address.setCountry(postData.getAddress().getCountry());
+			address.setState(postData.getAddress().getState());
+			address.setZipCode(postData.getAddress().getZipCode());
+		}
 
-			ContactInformationDto contactInformation = new ContactInformationDto();
-			if (postData.getContactInformation() != null) {
-				contactInformation.setEmail(postData.getContactInformation().getEmail());
-				contactInformation.setFax(postData.getContactInformation().getFax());
-				contactInformation.setMobile(postData.getContactInformation().getMobile());
-				contactInformation.setPhone(postData.getContactInformation().getPhone());
-			}
+		ContactInformationDto contactInformation = new ContactInformationDto();
+		if (postData.getContactInformation() != null) {
+			contactInformation.setEmail(postData.getContactInformation().getEmail());
+			contactInformation.setFax(postData.getContactInformation().getFax());
+			contactInformation.setMobile(postData.getContactInformation().getMobile());
+			contactInformation.setPhone(postData.getContactInformation().getPhone());
+		}
+
+		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
+		try {
+			accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
+		} catch (IllegalArgumentException e) {
+			throw new InvalidEnumValue(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
+			// update seller
+			log.debug("update seller");
 
 			if (StringUtils.isBlank(postData.getSeller())) {
 				postData.setSeller(postData.getCode());
@@ -2339,32 +2273,50 @@ public class AccountHierarchyApi extends BaseApi {
 
 			SellerDto sellerDto = new SellerDto();
 			sellerDto.setCode(postData.getSeller());
-			sellerDto.setDescription(postData.getSeller());
+			sellerDto.setDescription(postData.getDescription());
 			sellerDto.setCountryCode(postData.getCountry());
 			sellerDto.setCurrencyCode(postData.getCurrency());
 			sellerDto.setLanguageCode(postData.getLanguage());
 
 			sellerApi.update(sellerDto, currentUser);
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
+			// update customer
+			log.debug("update");
 
 			CustomerDto customerDto = new CustomerDto();
 			customerDto.setCode(postData.getCode());
 			customerDto.setDescription(postData.getDescription());
 			customerDto.setCustomerCategory(postData.getCustomerCategory());
 			customerDto.setCustomerBrand(postData.getCustomerBrand());
-			customerDto.setSeller(postData.getSeller());
+			if (accountHierarchyTypeEnum.getHighLevel() == 3) {
+				customerDto.setSeller(postData.getCrmParentCode());
+			} else {
+				customerDto.setSeller(postData.getCode());
+			}
 			customerDto.setMandateDate(postData.getMandateDate());
 			customerDto.setMandateIdentification(postData.getMandateIdentification());
 			customerDto.setName(name);
 			customerDto.setAddress(address);
 			customerDto.setContactInformation(contactInformation);
-			setCRMAccountType(customerDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+			setCRMAccountType(customerDto, postData.getCrmAccountType(), postData.getSeller());
 
 			customerApi.update(customerDto, currentUser);
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
+			// update customer account
+			log.debug("update ca");
 
 			CustomerAccountDto customerAccountDto = new CustomerAccountDto();
 			customerAccountDto.setCode(postData.getCode());
 			customerAccountDto.setDescription(postData.getDescription());
-			customerAccountDto.setCustomer(postData.getCode());
+			if (accountHierarchyTypeEnum.getHighLevel() == 2) {
+				customerAccountDto.setCustomer(postData.getCrmParentCode());
+			} else {
+				customerAccountDto.setCustomer(postData.getCode());
+			}
 			customerAccountDto.setCurrency(postData.getCurrency());
 			customerAccountDto.setLanguage(postData.getLanguage());
 			customerAccountDto.setStatus(postData.getCaStatus());
@@ -2379,14 +2331,23 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccountDto.setName(name);
 			customerAccountDto.setAddress(address);
 			customerAccountDto.setContactInformation(contactInformation);
-			setCRMAccountType(customerAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+			setCRMAccountType(customerAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			customerAccountApi.update(customerAccountDto, currentUser);
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
+			// update billing account
+			log.debug("update ba");
 
 			BillingAccountDto billingAccountDto = new BillingAccountDto();
 			billingAccountDto.setCode(postData.getCode());
 			billingAccountDto.setDescription(postData.getDescription());
-			billingAccountDto.setCustomerAccount(postData.getCode());
+			if (accountHierarchyTypeEnum.getHighLevel() == 1) {
+				billingAccountDto.setCustomerAccount(postData.getCrmParentCode());
+			} else {
+				billingAccountDto.setCustomerAccount(postData.getCode());
+			}
 			billingAccountDto.setBillingCycle(postData.getBillingCycle());
 			billingAccountDto.setCountry(postData.getCountry());
 			billingAccountDto.setLanguage(postData.getLanguage());
@@ -2417,180 +2378,32 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 			billingAccountDto.setName(name);
 			billingAccountDto.setAddress(address);
-			setCRMAccountType(billingAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+			setCRMAccountType(billingAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			billingAccountApi.update(billingAccountDto, currentUser);
+		}
+
+		if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
+			// update user account
+			log.debug("update ua");
 
 			UserAccountDto userAccountDto = new UserAccountDto();
 			userAccountDto.setCode(postData.getCode());
 			userAccountDto.setDescription(postData.getDescription());
-			userAccountDto.setBillingAccount(postData.getCode());
+			if (accountHierarchyTypeEnum.getHighLevel() == 0) {
+				userAccountDto.setBillingAccount(postData.getCrmParentCode());
+			} else {
+				userAccountDto.setBillingAccount(postData.getCode());
+			}
 			userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
 			userAccountDto.setTerminationDate(postData.getTerminationDate());
 			userAccountDto.setTerminationReason(postData.getTerminationReason());
 			userAccountDto.setStatus(postData.getUaStatus());
 			userAccountDto.setName(name);
 			userAccountDto.setAddress(address);
-			setCRMAccountType(userAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
+			setCRMAccountType(userAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			userAccountApi.update(userAccountDto, currentUser);
-		} else if (postData.getCrmAccountType().equals(CRMAccountHierarchyDto.ACCOUNT_TYPE_CORP)) {
-			NameDto name = new NameDto();
-			name.setFirstName(postData.getName().getFirstName());
-			name.setLastName(postData.getName().getLastName());
-			name.setTitle(postData.getName().getTitle());
-
-			AddressDto address = new AddressDto();
-			if (postData.getAddress() != null) {
-				address.setAddress1(postData.getAddress().getAddress1());
-				address.setAddress2(postData.getAddress().getAddress2());
-				address.setAddress3(postData.getAddress().getAddress3());
-				address.setCity(postData.getAddress().getCity());
-				address.setCountry(postData.getAddress().getCountry());
-				address.setState(postData.getAddress().getState());
-				address.setZipCode(postData.getAddress().getZipCode());
-			}
-
-			ContactInformationDto contactInformation = new ContactInformationDto();
-			if (postData.getContactInformation() != null) {
-				contactInformation.setEmail(postData.getContactInformation().getEmail());
-				contactInformation.setFax(postData.getContactInformation().getFax());
-				contactInformation.setMobile(postData.getContactInformation().getMobile());
-				contactInformation.setPhone(postData.getContactInformation().getPhone());
-			}
-
-			if (StringUtils.isBlank(postData.getSeller())) {
-				postData.setSeller(postData.getCode());
-			}
-
-			SellerDto sellerDto = new SellerDto();
-			sellerDto.setCode(postData.getSeller());
-			sellerDto.setDescription(postData.getSeller());
-			sellerDto.setCountryCode(postData.getCountry());
-			sellerDto.setCurrencyCode(postData.getCurrency());
-			sellerDto.setLanguageCode(postData.getLanguage());
-
-			sellerApi.update(sellerDto, currentUser);
-
-			CustomerDto customerDto = new CustomerDto();
-			customerDto.setCode(postData.getCode());
-			customerDto.setDescription(postData.getDescription());
-			customerDto.setCustomerCategory(postData.getCustomerCategory());
-			customerDto.setCustomerBrand(postData.getCustomerBrand());
-			customerDto.setSeller(postData.getSeller());
-			customerDto.setMandateDate(postData.getMandateDate());
-			customerDto.setMandateIdentification(postData.getMandateIdentification());
-			customerDto.setName(name);
-			customerDto.setAddress(address);
-			customerDto.setContactInformation(contactInformation);
-			setCRMAccountType(customerDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BASIC, null);
-
-			customerApi.update(customerDto, currentUser);
-
-			CustomerAccountDto customerAccountDto = new CustomerAccountDto();
-			customerAccountDto.setCode(postData.getCode());
-			customerAccountDto.setDescription(postData.getDescription());
-			customerAccountDto.setCustomer(postData.getCode());
-			customerAccountDto.setCurrency(postData.getCurrency());
-			customerAccountDto.setLanguage(postData.getLanguage());
-			customerAccountDto.setStatus(postData.getCaStatus());
-			customerAccountDto.setPaymentMethod(postData.getPaymentMethod());
-			customerAccountDto.setCreditCategory(postData.getCreditCategory());
-			customerAccountDto.setDateStatus(postData.getDateStatus());
-			customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
-			customerAccountDto.setContactInformation(contactInformation);
-			customerAccountDto.setDunningLevel(postData.getDunningLevel());
-			customerAccountDto.setMandateDate(postData.getMandateDate());
-			customerAccountDto.setMandateIdentification(postData.getMandateIdentification());
-			customerAccountDto.setName(name);
-			customerAccountDto.setAddress(address);
-			customerAccountDto.setContactInformation(contactInformation);
-			setCRMAccountType(customerAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_CORP, null);
-
-			customerAccountApi.update(customerAccountDto, currentUser);
-		} else if (postData.getCrmAccountType().equals(CRMAccountHierarchyDto.ACCOUNT_TYPE_BRANCH)) {
-			String crmParentAccountCode = StringUtils.isBlank(postData.getCrmParentCode()) ? postData.getCode()
-					: postData.getCrmParentCode();
-
-			NameDto name = new NameDto();
-			name.setFirstName(postData.getName().getFirstName());
-			name.setLastName(postData.getName().getLastName());
-			name.setTitle(postData.getName().getTitle());
-
-			AddressDto address = new AddressDto();
-			if (postData.getAddress() != null) {
-				address.setAddress1(postData.getAddress().getAddress1());
-				address.setAddress2(postData.getAddress().getAddress2());
-				address.setAddress3(postData.getAddress().getAddress3());
-				address.setCity(postData.getAddress().getCity());
-				address.setCountry(postData.getAddress().getCountry());
-				address.setState(postData.getAddress().getState());
-				address.setZipCode(postData.getAddress().getZipCode());
-			}
-
-			ContactInformationDto contactInformation = new ContactInformationDto();
-			if (postData.getContactInformation() != null) {
-				contactInformation.setEmail(postData.getContactInformation().getEmail());
-				contactInformation.setFax(postData.getContactInformation().getFax());
-				contactInformation.setMobile(postData.getContactInformation().getMobile());
-				contactInformation.setPhone(postData.getContactInformation().getPhone());
-			}
-
-			BillingAccountDto billingAccountDto = new BillingAccountDto();
-			billingAccountDto.setCode(postData.getCode());
-			billingAccountDto.setDescription(postData.getDescription());
-			billingAccountDto.setCustomerAccount(crmParentAccountCode);
-			billingAccountDto.setBillingCycle(postData.getBillingCycle());
-			billingAccountDto.setCountry(postData.getCountry());
-			billingAccountDto.setLanguage(postData.getLanguage());
-			billingAccountDto.setPaymentMethod(postData.getPaymentMethod());
-			billingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
-			billingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-			billingAccountDto.setTerminationDate(postData.getTerminationDate());
-			billingAccountDto.setPaymentTerms(postData.getPaymentTerms());
-			billingAccountDto.setElectronicBilling(postData.getElectronicBilling());
-			billingAccountDto.setStatus(postData.getBaStatus());
-			billingAccountDto.setTerminationReason(postData.getTerminationReason());
-			billingAccountDto.setEmail(postData.getEmail());
-			if (postData.getBankCoordinates() != null) {
-				BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
-				bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-				bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-				bankCoordinatesDto.setBankCode(postData.getBankCoordinates().getBankCode());
-				bankCoordinatesDto.setBankId(postData.getBankCoordinates().getBankId());
-				bankCoordinatesDto.setBankName(postData.getBankCoordinates().getBankName());
-				bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic());
-				bankCoordinatesDto.setBranchCode(postData.getBankCoordinates().getBranchCode());
-				bankCoordinatesDto.setIban(postData.getBankCoordinates().getIban());
-				bankCoordinatesDto.setIcs(postData.getBankCoordinates().getIcs());
-				bankCoordinatesDto.setIssuerName(postData.getBankCoordinates().getIssuerName());
-				bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-				bankCoordinatesDto.setKey(postData.getBankCoordinates().getKey());
-				billingAccountDto.setBankCoordinates(bankCoordinatesDto);
-			}
-			billingAccountDto.setName(name);
-			billingAccountDto.setAddress(address);
-			setCRMAccountType(billingAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BRANCH, CUSTOMER_ACCOUNT_PREFIX
-					+ crmParentAccountCode);
-
-			billingAccountApi.update(billingAccountDto, currentUser);
-
-			UserAccountDto userAccountDto = new UserAccountDto();
-			userAccountDto.setCode(postData.getCode());
-			userAccountDto.setDescription(postData.getDescription());
-			userAccountDto.setBillingAccount(postData.getCode());
-			userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-			userAccountDto.setTerminationDate(postData.getTerminationDate());
-			userAccountDto.setTerminationReason(postData.getTerminationReason());
-			userAccountDto.setStatus(postData.getUaStatus());
-			userAccountDto.setName(name);
-			userAccountDto.setAddress(address);
-			setCRMAccountType(userAccountDto, CRMAccountHierarchyDto.ACCOUNT_TYPE_BRANCH, CUSTOMER_ACCOUNT_PREFIX
-					+ postData.getCode());
-
-			userAccountApi.update(userAccountDto, currentUser);
-		} else {
-			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "INVALID_ACCOUNT_TYPE");
 		}
 	}
 
@@ -2605,9 +2418,10 @@ public class AccountHierarchyApi extends BaseApi {
 		cfAccountParent.setStringValue(parentCode);
 		accountDto.getCustomFields().getCustomField().add(cfAccountParent);
 	}
-	
+
 	/**
 	 * Create or update Account Hierarchy based on code.
+	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException

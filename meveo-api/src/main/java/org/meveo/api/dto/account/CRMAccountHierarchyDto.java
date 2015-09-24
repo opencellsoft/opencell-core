@@ -43,6 +43,10 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	// customer
 	private String customerCategory;
 	private String customerBrand;
+	@Deprecated
+	/**
+	 * We now use crmParentCode.
+	 */
 	private String seller;
 	private String mandateIdentification = "";
 	private Date mandateDate;
@@ -326,14 +330,19 @@ public class CRMAccountHierarchyDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "CRMAccountHierarchyDto [crmAccountType=" + crmAccountType + ", crmParentCode=" + crmParentCode + ", code=" + code + ", description=" + description
-				+ ", externalRef1=" + externalRef1 + ", externalRef2=" + externalRef2 + ", name=" + name + ", address=" + address + ", contactInformation=" + contactInformation
-				+ ", language=" + language + ", paymentMethod=" + paymentMethod + ", terminationReason=" + terminationReason + ", subscriptionDate=" + subscriptionDate
-				+ ", terminationDate=" + terminationDate + ", customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller
-				+ ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", currency=" + currency + ", caStatus=" + caStatus + ", creditCategory="
-				+ creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", dunningLevel=" + dunningLevel + ", billingCycle=" + billingCycle
-				+ ", country=" + country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms + ", electronicBilling=" + electronicBilling + ", baStatus="
-				+ baStatus + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + "]";
+		return "CRMAccountHierarchyDto [crmAccountType=" + crmAccountType + ", crmParentCode=" + crmParentCode
+				+ ", code=" + code + ", description=" + description + ", externalRef1=" + externalRef1
+				+ ", externalRef2=" + externalRef2 + ", name=" + name + ", address=" + address
+				+ ", contactInformation=" + contactInformation + ", language=" + language + ", paymentMethod="
+				+ paymentMethod + ", terminationReason=" + terminationReason + ", subscriptionDate=" + subscriptionDate
+				+ ", terminationDate=" + terminationDate + ", customerCategory=" + customerCategory
+				+ ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification="
+				+ mandateIdentification + ", mandateDate=" + mandateDate + ", currency=" + currency + ", caStatus="
+				+ caStatus + ", creditCategory=" + creditCategory + ", dateStatus=" + dateStatus
+				+ ", dateDunningLevel=" + dateDunningLevel + ", dunningLevel=" + dunningLevel + ", billingCycle="
+				+ billingCycle + ", country=" + country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms="
+				+ paymentTerms + ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email="
+				+ email + ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + "]";
 	}
 
 	public String getUaStatus() {
