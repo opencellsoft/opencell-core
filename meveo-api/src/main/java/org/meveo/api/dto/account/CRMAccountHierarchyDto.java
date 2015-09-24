@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldsDto;
 
 /**
  * @author Edward P. Legaspi
@@ -71,6 +72,8 @@ public class CRMAccountHierarchyDto extends BaseDto {
 
 	// user account
 	private String uaStatus;
+
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public String getCrmAccountType() {
 		return crmAccountType;
@@ -359,6 +362,14 @@ public class CRMAccountHierarchyDto extends BaseDto {
 
 	public void setCrmParentCode(String crmParentCode) {
 		this.crmParentCode = crmParentCode;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 }

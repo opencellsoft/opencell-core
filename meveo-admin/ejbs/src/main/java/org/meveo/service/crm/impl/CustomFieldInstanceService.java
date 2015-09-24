@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
@@ -62,4 +65,17 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         List<BusinessEntity> entities = query.getResultList();
         return entities;
     }
+    
+	@SuppressWarnings("unchecked")
+	public List<CustomFieldInstance> findByAccount(AccountEntity account, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(CustomFieldInstance.class, "c", null, provider);
+		qb.addCriterionEntity("account", account);
+
+		try {
+			return qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+    
 }
