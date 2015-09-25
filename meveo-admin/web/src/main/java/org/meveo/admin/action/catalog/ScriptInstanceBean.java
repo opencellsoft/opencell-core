@@ -98,20 +98,19 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
-        String result = getListViewName();
-        try {
-            super.saveOrUpdate(killConversation);
-            if (entity.getError().booleanValue()) {
-                result = null;
-            }
-        } catch (Exception e) {
-            messages.error(e.getMessage());
-            result = null;
-        }
-
-        return result;
-    }
+		String result = getListViewName();
+		try {
+			scriptInstanceService.saveOrUpdate(entity, getCurrentUser(), getCurrentProvider());
+			if(entity.getError().booleanValue()){
+				result = null;	
+			}
+			 
+		} catch (Exception e) {
+			messages.error(e.getMessage());
+			result = null;
+		}
+		return result;
+	}
 
     public void execute() {
         scriptInstanceService.test(getCurrentProvider(), entity.getCode(), null);
