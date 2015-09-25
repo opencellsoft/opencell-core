@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.LazyDataModelWSize;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.export.EntityExportImportService;
@@ -189,7 +190,7 @@ public class EntityExportImportBean implements Serializable {
 
             final Map<String, ExportTemplate> templates = loadExportImportTemplates(inputFilters);
 
-            exportTemplates = new LazyDataModel() {
+            exportTemplates = new LazyDataModelWSize() {
 
                 private static final long serialVersionUID = -5796910936316457328L;
 

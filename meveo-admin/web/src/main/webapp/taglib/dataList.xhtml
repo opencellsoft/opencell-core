@@ -124,7 +124,7 @@
                 <ui:insert />
             </p:dataTable>
 
-            <h:panelGroup rendered="#{dataModel.size()>0}">
+            <h:panelGroup rendered="#{dataModel !=null and dataModel.size()>0}">
                 <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{deleteManyButton}" value="#{messages['commons.deleteMultiple']}" action="#{backingBean.deleteMany()}"
                     icon="ui-icon-trash" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}" ajax="false" />
 
