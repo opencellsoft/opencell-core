@@ -17,6 +17,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -220,7 +221,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeInstance> findOneShotChargeInstancesBySubscriptionId(Long subscriptionId) {
-		QueryBuilder qb = new QueryBuilder(OneShotChargeInstance.class, "c");
+		QueryBuilder qb = new QueryBuilder(OneShotChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 		return qb.getQuery(getEntityManager()).getResultList();
 	}

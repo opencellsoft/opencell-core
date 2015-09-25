@@ -184,10 +184,14 @@
             <!--  Select and entity or a FK to an entity --> 
             <ui:fragment
                 rendered="#{cc.isEntity(cc.attrs.field, cc.attrs.childField, false) or cc.attrs.fkToEntity}">
-                <hf:formEntityField id="entityFieldSingle" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}"
-                    newEntity="#{cc.entityFromBackingBeanOrAttribute.id == null}" rendered="#{cc.attrs.childField==null}" />
-                <hf:formEntityField id="entityFieldWChild" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}"
-                    newEntity="#{cc.entityFromBackingBeanOrAttribute.id == null}" rendered="#{cc.attrs.childField!=null}" />
+                <c:if test="#{cc.attrs.childField == null}">
+                    <hf:formEntityField id="entityFieldSingle" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}"
+                        newEntity="#{cc.entityFromBackingBeanOrAttribute.id == null}"/>
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">
+                    <hf:formEntityField id="entityFieldWChild" fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}"
+                        newEntity="#{cc.entityFromBackingBeanOrAttribute.id == null}"/>
+                </c:if>
             </ui:fragment> 
             
             <!--  Enter text --> 
@@ -209,47 +213,82 @@
             
             <!--  If the value binding is a number, display an input number spinner. --> 
             <ui:fragment rendered="#{cc.isInteger(cc.attrs.field, cc.attrs.childField, false)}">
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Integer'}" rendered="#{cc.attrs.childField==null}"/>
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Integer'}" rendered="#{cc.attrs.childField!=null}"/>
+                <c:if test="#{cc.attrs.childField == null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Integer'}"/>
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">                
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Integer'}"/>
+                </c:if>
             </ui:fragment> 
             <ui:fragment rendered="#{cc.isByte(cc.attrs.field, cc.attrs.childField, false)}">
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Byte'}" rendered="#{cc.attrs.childField==null}"/>
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Byte'}" rendered="#{cc.attrs.childField!=null}"/>
+                <c:if test="#{cc.attrs.childField == null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Byte'}"/>
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Byte'}"/>
+                </c:if>
             </ui:fragment> 
             <ui:fragment rendered="#{cc.isLong(cc.attrs.field, cc.attrs.childField, false)}">
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Long'}" rendered="#{cc.attrs.childField==null}"/>
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Long'}" rendered="#{cc.attrs.childField!=null}"/>
+                <c:if test="#{cc.attrs.childField == null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Long'}"/>
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Long'}"/>
+                </c:if>
             </ui:fragment> 
             <ui:fragment rendered="#{cc.isShort(cc.attrs.field, cc.attrs.childField, false)}">
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Short'}" rendered="#{cc.attrs.childField==null}"/>
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Short'}" rendered="#{cc.attrs.childField!=null}"/>
+                <c:if test="#{cc.attrs.childField == null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Short'}"/>
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="true" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Short'}"/>
+                </c:if>
             </ui:fragment>                         
             
             <!--  If the value binding is a rational number, display an input text field. --> 
             <ui:fragment rendered="#{cc.isBigDecimal(cc.attrs.field, cc.attrs.childField, false)}">
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="20" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.BigDecimal'}" rendered="#{cc.attrs.childField==null}"/>
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="false" size="20" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.BigDecimal'}" rendered="#{cc.attrs.childField!=null}"/>
+                <c:if test="#{cc.attrs.childField == null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="20" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.BigDecimal'}"/>
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="false" size="20" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.BigDecimal'}"/>
+                </c:if>
             </ui:fragment> 
             <ui:fragment rendered="#{cc.isDouble(cc.attrs.field, cc.attrs.childField, false)}">
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="5" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Double'}" rendered="#{cc.attrs.childField==null}"/>
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="false" size="5" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Double'}" rendered="#{cc.attrs.childField!=null}"/>
+                <c:if test="#{cc.attrs.childField == null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="5" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Double'}"/>
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="false" size="5" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Double'}"/>
+                </c:if>
             </ui:fragment> 
             <ui:fragment rendered="#{cc.isFloat(cc.attrs.field, cc.attrs.childField, false)}">
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="5" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Float'}" rendered="#{cc.attrs.childField==null}"/>
-                <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="false" size="5" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Float'}" rendered="#{cc.attrs.childField!=null}"/>
+                <c:if test="#{cc.attrs.childField == null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" spinner="false" size="5" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Float'}"/>
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">
+                    <hf:formNumberField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" spinner="false" size="5" converter="#{cc.attrs.converter!=null?cc.attrs.converter:'javax.faces.Float'}"/>
+                </c:if>
             </ui:fragment>             
             
             <!--  If the value binding is a boolean, display a selectBooleanCheckbox field. --> 
             <ui:fragment rendered="#{cc.isBoolean(cc.attrs.field,cc.attrs.childField, false)}">
-                <hf:formBooleanField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" rendered="#{cc.attrs.childField==null}" />
-                <hf:formBooleanField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}"
-                    rendered="#{cc.attrs.childField!=null}" />
+                <c:if test="#{cc.attrs.childField == null}">
+                    <hf:formBooleanField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}"/>
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">
+                    <hf:formBooleanField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" />
+                </c:if>
             </ui:fragment> 
             
             <!-- If the value binding is a date, display a p:calendar field. --> 
             <ui:fragment rendered="#{cc.isDate(cc.attrs.field, cc.attrs.childField, false)}">
-                <hf:formDateField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}" rendered="#{cc.attrs.childField==null}" />
-                <hf:formDateField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}" rendered="#{cc.attrs.childField!=null}" />
+                <c:if test="#{cc.attrs.childField == null}">
+                    <hf:formDateField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" edit="#{cc.attrs.edit}"/>
+                </c:if>
+                <c:if test="#{cc.attrs.childField != null}">
+                    <hf:formDateField fieldItem="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" edit="#{cc.attrs.edit}"/>
+                </c:if>
             </ui:fragment> 
             
             <!--  If the value binding is an enum, display a drop down. --> 

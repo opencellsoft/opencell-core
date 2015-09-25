@@ -1071,10 +1071,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WalletOperation> findByUserAccountAndWalletCode(String walletCode, UserAccount userAccount, Provider provider, Boolean orderAscending) {
+	public List<WalletOperation> findByUserAccountAndWalletCode(String walletCode, UserAccount userAccount, Boolean orderAscending) {
 		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
 		qb.addCriterionEntity("wallet.userAccount", userAccount);
-		qb.addCriterionEntity("provider", provider);
+        // qb.addCriterionEntity("provider", userAccount.getProvider()); // No need as userAccount is provider based already
 		qb.addCriterion("wallet.code", "=", walletCode, true);
 		if (orderAscending != null) {
 			qb.addOrderCriterion("operationDate", orderAscending);
