@@ -22,7 +22,7 @@
         <h:panelGroup rendered="#{cc.parent.attrs.popup}">
             <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_child" value="#{cc.parent.filters[cc.parent.attrs.field][cc.parent.attrs.valueLabelField]}"
                 required="#{cc.parent.attrs.required}" size="#{cc.parent.attrs.size}" disabled="true" />
-            <p:commandButton id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" icon="ui-icon-search" />
+            <p:commandButton id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" icon="ui-icon-search" type="button" />
             <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
         </h:panelGroup>
 

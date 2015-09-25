@@ -31,7 +31,7 @@
 
             <p:commandButton immediate="true"
                 rendered="#{(cc.attrs.edit and !cc.parent.attrs.showPopupOnlyOnNew) or (cc.attrs.edit and cc.parent.attrs.showPopupOnlyOnNew and cc.attrs.newEntity)}"
-                id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" icon="ui-icon-search" />
+                id="selectLink" onclick="PF('dlg_#{cc.parent.attrs.popupId}').show()" type="button" icon="ui-icon-search" />
             <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
 
 

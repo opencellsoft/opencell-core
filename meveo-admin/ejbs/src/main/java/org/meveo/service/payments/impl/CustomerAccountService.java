@@ -126,7 +126,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 	private BigDecimal computeBalance(CustomerAccount customerAccount, Date to, boolean isDue,boolean dunningExclusion,
 			MatchingStatusEnum... status) throws BusinessException {
-		log.info("computeBalance  customerAccount:{}, toDate:{}, isDue:{}, dunningExclusion:{}",(customerAccount == null ? "null" : customerAccount.getCode())
+		log.trace("start computeBalance customerAccount:{}, toDate:{}, isDue:{}, dunningExclusion:{}",(customerAccount == null ? "null" : customerAccount.getCode())
 				,to,isDue,dunningExclusion);
 		if (customerAccount == null) {
 			log.warn("Error when customerAccount is null!");
@@ -150,9 +150,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			ParamBean param = ParamBean.getInstance();
 			int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
 			balance = balance.multiply(new BigDecimal(balanceFlag));
-			log.info(
-					"successfully end customerAccountBalanceExligible with customerAccount code:{} , balanceExigible:{}",
-					customerAccount.getCode(), balance);
+            log.debug("end computeBalance customerAccount code:{} , balance:{}", customerAccount.getCode(), balance);
 		} catch (Exception e) {
 			throw new BusinessException("Internal error");
 		}
