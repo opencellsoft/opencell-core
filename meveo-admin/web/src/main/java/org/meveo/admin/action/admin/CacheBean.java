@@ -34,6 +34,7 @@ import org.infinispan.api.BasicCache;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
+import org.meveo.admin.action.LazyDataModelWSize;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
@@ -191,7 +192,7 @@ public class CacheBean implements Serializable {
 
             // final Map<String, Object> filters = inputFilters;
 
-            cacheContents = new LazyDataModel() {
+            cacheContents = new LazyDataModelWSize() {
 
                 private static final long serialVersionUID = -5796910936316457321L;
 
@@ -224,7 +225,7 @@ public class CacheBean implements Serializable {
 
             // final Map<String, Object> filters = inputFilters;
 
-            cacheMapContents = new LazyDataModel() {
+            cacheMapContents = new LazyDataModelWSize() {
 
                 private static final long serialVersionUID = -5796910936316457321L;
 
@@ -258,7 +259,7 @@ public class CacheBean implements Serializable {
 
             // final Map<String, Object> filters = inputFilters;
 
-            cacheItemContents = new LazyDataModel() {
+            cacheItemContents = new LazyDataModelWSize() {
 
                 private static final long serialVersionUID = -5796910936316457322L;
 
