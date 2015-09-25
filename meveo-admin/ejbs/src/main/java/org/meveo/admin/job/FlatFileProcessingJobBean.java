@@ -53,17 +53,10 @@ public class FlatFileProcessingJobBean {
 	String report;
     String username;
     
-	static MessageDigest messageDigest = null;
-	static {
-		try {
-			messageDigest = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			
-		}
-	}
+	
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, String inputDir, User currentUser,File file,String mappingConf, String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename) {
 		log.debug("Running for user={}, inputDir={}, scriptInstanceFlowCode={}", currentUser, inputDir,scriptInstanceFlowCode);
 
