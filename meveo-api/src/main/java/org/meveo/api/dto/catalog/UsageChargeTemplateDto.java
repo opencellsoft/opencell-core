@@ -17,15 +17,25 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 
 	private static final long serialVersionUID = -192169359113319490L;
 
-	static String WILCARD = "";
+	static String WILCARD = null;
 
+	@Size(min = 1, max = 20)
+	@NotNull
 	private String filterParam1 = WILCARD;
 	
-	@Size(max = 20)
+	@Size(min = 1, max = 20)
 	@NotNull
 	private String filterParam2 = WILCARD;
+	
+	@Size(min = 1, max = 20)
+	@NotNull
 	private String filterParam3 = WILCARD;
+	
+	@Size(min = 1, max = 20)
+	@NotNull
 	private String filterParam4 = WILCARD;
+	
+	@Size(max = 255)
 	private String filterExpression = null;
 	private int priority = 1;
 
