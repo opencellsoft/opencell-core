@@ -580,30 +580,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	
 	
 	public  Map<String,List<String>> getJasperFiles(){
-	    ParamBean paramBean = ParamBean.getInstance();
-	    String jasperDir = paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator+ getCurrentProvider().getCode() + File.separator+"jasper";
-	    File jasperFolders = new File(jasperDir);
-	    File[] foldersList = jasperFolders.listFiles();
-	    Map<String,List<String>> jasperFiles = new HashMap<String, List<String>>();
-	    List<String> jaspersName;
-	    String[] filter ={"jasper"};
-	    List<File> files=null;
-	    
-		if (foldersList != null && foldersList.length > 0) {
-		for (int i = 0; i < foldersList.length; i++) {
-			jaspersName=new ArrayList<String>();
-			files = (List<File>) FileUtils.listFiles(foldersList[i], filter, true);
-	        if(files!=null){
-	        for (File file : files) {
-	        	jaspersName.add(file.getName());
-	        }
-	        jasperFiles.put(foldersList[i].getName(), jaspersName); 
-	        }
-	        
-		   }
-		
-		}		
-	      return jasperFiles;
+	    return  new HashMap<String, List<String>>();
+	   
      }
 	
 }

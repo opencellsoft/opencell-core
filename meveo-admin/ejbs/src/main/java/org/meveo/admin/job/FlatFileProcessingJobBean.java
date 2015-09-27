@@ -1,15 +1,10 @@
 package org.meveo.admin.job;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -18,7 +13,11 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.beanio.BeanReader;
+import org.beanio.StreamFactory;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.api.dto.account.CRMAccountHierarchyDto;
+import org.meveo.commons.utils.ExcelToCsv;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
@@ -27,10 +26,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
-
-import com.blackbear.flatworm.ConfigurationReader;
-import com.blackbear.flatworm.FileFormat;
-import com.blackbear.flatworm.MatchedRecord;
 
 
 @Stateless
@@ -74,36 +69,44 @@ public class FlatFileProcessingJobBean {
 		report = "";
 
 		if (file != null) {
-			fileName = file.getAbsolutePath();
-			result.setNbItemsToProcess(1);
-			log.info("InputFiles job {} in progress...", file.getName());
 			fileName = file.getName();
-			File currentFile = FileUtils.addExtension(file, ".processing");			
-			Class<org.meveo.service.script.ScriptInterface> flowScriptClass = scriptInstanceService.getScriptInterface(provider,scriptInstanceFlowCode);
 			ScriptInterface script = null;
-			try {					
-				ConfigurationReader parser = new ConfigurationReader();
-				FileFormat ff = parser.loadConfigurationFile( new ByteArrayInputStream(mappingConf.getBytes(StandardCharsets.UTF_8)));
-				InputStream in = new FileInputStream(currentFile);
-				BufferedReader bufIn = new BufferedReader(new InputStreamReader(in));
-				MatchedRecord record = null;
+			BeanReader beanReader = null;
+			File currentFile = null;
+			try {
+				log.info("InputFiles job {} in progress...",  file.getAbsolutePath());
+				if(true){
+				     ExcelToCsv excelToCsv = new ExcelToCsv();
+					 excelToCsv.convertExcelToCSV(file.getAbsolutePath(), file.getParent(), ";");
+					 currentFile = new File( file.getAbsolutePath().replaceAll("xlsx", "csv"));
+				}else{
+					currentFile = FileUtils.addExtension(file, ".processing");
+				}				
+				result.setNbItemsToProcess(1);										
+				Class<org.meveo.service.script.ScriptInterface> flowScriptClass = scriptInstanceService.getScriptInterface(provider,scriptInstanceFlowCode);
+												
+		        StreamFactory factory = StreamFactory.newInstance();		       
+		        factory.load( new ByteArrayInputStream(mappingConf.getBytes(StandardCharsets.UTF_8)));
+		        beanReader = factory.createReader("dataSrcFile", currentFile);
+		        Object recordObject = null;
 				int processed = 0;
 				script = flowScriptClass.newInstance();
 				script.init(context, provider,currentUser);
-				while ((record = ff.getNextRecord(bufIn)) != null) {	
-					Object recordBean = record.getBean(recordVariableName);											
+				 while ((recordObject = beanReader.read()) != null) {																
 					try {						
-						Map<String, Object> executeParams = new HashMap<String, Object>();
-						executeParams.put(recordVariableName, recordBean);
-						executeParams.put(originFilename, file.getName());
-						executeParams.put("originBatch",file.getName());
-						script.execute(executeParams,provider,currentUser);	 				    	
-						outputRecord(record);
+//						Map<String, Object> executeParams = new HashMap<String, Object>();
+//						executeParams.put(recordVariableName, recordBean);
+//						executeParams.put(originFilename, file.getName());
+//						executeParams.put("originBatch",file.getName());
+//						script.execute(executeParams,provider,currentUser);	 	
+						CRMAccountHierarchyDto cRMAccountHierarchyDto = (CRMAccountHierarchyDto)recordObject;
+						log.info(cRMAccountHierarchyDto.toString());
+						outputRecord(recordObject);
 						result.registerSucces();
 					} catch (Exception e) {
 						log.warn("error on reject record ",e);
 						result.registerError("file=" + file.getName() + ", line=" + processed + ": " + e.getMessage());
-						rejectRecord(record, e.getMessage());
+						rejectRecord(recordObject, e.getMessage());
 					} finally{
 						processed++;
 					}
@@ -159,7 +162,7 @@ public class FlatFileProcessingJobBean {
 
 	}
 
-	private void outputRecord(MatchedRecord record) throws FileNotFoundException {
+	private void outputRecord(Object record) throws FileNotFoundException {
 		if (outputFileWriter == null) {
 			File outputFile = new File(outputDir + File.separator + fileName + ".processed");
 			outputFileWriter = new PrintWriter(outputFile);
@@ -167,7 +170,7 @@ public class FlatFileProcessingJobBean {
 		outputFileWriter.println(record.toString());
 	}
 
-	private void rejectRecord(MatchedRecord record, String reason) {
+	private void rejectRecord(Object record, String reason) {
 
 		if (rejectFileWriter == null) {
 			File rejectFile = new File(rejectDir + File.separator + fileName + ".rejected");

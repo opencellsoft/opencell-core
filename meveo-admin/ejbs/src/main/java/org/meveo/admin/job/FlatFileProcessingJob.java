@@ -36,7 +36,6 @@ public class FlatFileProcessingJob extends Job {
 	@Inject
 	private ResourceBundle resourceMessages;
 
-
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
@@ -56,12 +55,12 @@ public class FlatFileProcessingJob extends Job {
 					context = variablesCFI.getMapValue();
 				}
 				mappingConf = (String) jobInstance.getCFValue("FlatFileProcessingJob_mappingConf");
-				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + jobInstance.getProvider().getCode() + ((String)jobInstance.getCFValue("FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
+				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + currentUser.getProvider().getCode() + ((String)jobInstance.getCFValue("FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
 				fileNameExtension = (String) jobInstance.getCFValue("FlatFileProcessingJob_fileNameExtension");
 				scriptInstanceFlowCode = (String) jobInstance.getCFValue("FlatFileProcessingJob_scriptsFlow");
 
 			} catch (Exception e) {
-				log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
+				log.warn("Cant get customFields for " + jobInstance.getJobTemplate(),e);
 			}
 
 			ArrayList<String> fileExtensions = new ArrayList<String>();

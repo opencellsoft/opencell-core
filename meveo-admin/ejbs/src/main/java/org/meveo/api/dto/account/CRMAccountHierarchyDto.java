@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -69,6 +70,8 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	private String baStatus;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
+	private String siret;
+	private String tvaCee;
 
 	// user account
 	private String uaStatus;
@@ -331,21 +334,16 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		this.bankCoordinates = bankCoordinates;
 	}
 
+	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "CRMAccountHierarchyDto [crmAccountType=" + crmAccountType + ", crmParentCode=" + crmParentCode
-				+ ", code=" + code + ", description=" + description + ", externalRef1=" + externalRef1
-				+ ", externalRef2=" + externalRef2 + ", name=" + name + ", address=" + address
-				+ ", contactInformation=" + contactInformation + ", language=" + language + ", paymentMethod="
-				+ paymentMethod + ", terminationReason=" + terminationReason + ", subscriptionDate=" + subscriptionDate
-				+ ", terminationDate=" + terminationDate + ", customerCategory=" + customerCategory
-				+ ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification="
-				+ mandateIdentification + ", mandateDate=" + mandateDate + ", currency=" + currency + ", caStatus="
-				+ caStatus + ", creditCategory=" + creditCategory + ", dateStatus=" + dateStatus
-				+ ", dateDunningLevel=" + dateDunningLevel + ", dunningLevel=" + dunningLevel + ", billingCycle="
-				+ billingCycle + ", country=" + country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms="
-				+ paymentTerms + ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email="
-				+ email + ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + "]";
+		return "CRMAccountHierarchyDto [crmAccountType=" + crmAccountType + ", crmParentCode=" + crmParentCode + ", code=" + code + ", description=" + description + ", externalRef1=" + externalRef1 + ", externalRef2=" + externalRef2 + ", name=" + name + ", address=" + address + ", contactInformation=" + contactInformation + ", language=" + language + ", paymentMethod=" + paymentMethod + ", terminationReason=" + terminationReason + ", subscriptionDate=" + subscriptionDate
+				+ ", terminationDate=" + terminationDate + ", customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", currency=" + currency + ", caStatus=" + caStatus + ", creditCategory=" + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", dunningLevel=" + dunningLevel + ", billingCycle="
+				+ billingCycle + ", country=" + country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms + ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", siret=" + siret + ", tvaCee=" + tvaCee + ", uaStatus=" + uaStatus + ", customFields=" + customFields + "]";
 	}
 
 	public String getUaStatus() {
@@ -370,6 +368,34 @@ public class CRMAccountHierarchyDto extends BaseDto {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	/**
+	 * @return the siret
+	 */
+	public String getSiret() {
+		return siret;
+	}
+
+	/**
+	 * @param siret the siret to set
+	 */
+	public void setSiret(String siret) {
+		this.siret = siret;
+	}
+
+	/**
+	 * @return the tvaCee
+	 */
+	public String getTvaCee() {
+		return tvaCee;
+	}
+
+	/**
+	 * @param tvaCee the tvaCee to set
+	 */
+	public void setTvaCee(String tvaCee) {
+		this.tvaCee = tvaCee;
 	}
 
 }
