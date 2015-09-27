@@ -3,7 +3,6 @@ package org.meveo.api.account;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
@@ -27,7 +26,7 @@ import org.meveo.service.crm.impl.AccountHierarchyApiService;
  */
 
 @Stateless
-public class AccountHierarchyApi extends BaseApi {
+public class AccountHierarchyApi{
 
 	@Inject
 	private AccountHierarchyApiService accountHierarchyApiService;

@@ -8,7 +8,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.service.crm.impl.AccountApiService;
+import org.meveo.service.crm.impl.UserAccountApiService;
 
 /**
  * @author Edward P. Legaspi
@@ -17,7 +17,7 @@ import org.meveo.service.crm.impl.AccountApiService;
 public class AccountApi {
 
 	@Inject
-	private AccountApiService accountApiService;
+	private UserAccountApiService userAccountApiService;
 
 	/**
 	 * 
@@ -28,7 +28,7 @@ public class AccountApi {
 	 * @throws MeveoApiException
 	 */
 	public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser, AccountLevelEnum accountLevel) throws MeveoApiException {
-		accountApiService.populate(postData, accountEntity, currentUser, accountLevel);
+		userAccountApiService.populate(postData, accountEntity, currentUser, accountLevel);
 	}
 
 	/**
@@ -41,7 +41,7 @@ public class AccountApi {
 	 * @throws MeveoApiException
 	 */
 	public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser, AccountLevelEnum accountLevel, boolean checkCustomField) throws MeveoApiException {
-		accountApiService.populate(postData, accountEntity, currentUser, accountLevel, checkCustomField);
+		userAccountApiService.populate(postData, accountEntity, currentUser, accountLevel, checkCustomField);
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class AccountApi {
 	 * @throws MeveoApiException
 	 */
 	public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser, AccountLevelEnum accountLevel) throws MeveoApiException {
-		accountApiService.updateAccount(accountEntity, postData, currentUser, accountLevel);
+		userAccountApiService.updateAccount(accountEntity, postData, currentUser, accountLevel);
 	}
     
 	/**
@@ -66,7 +66,7 @@ public class AccountApi {
 	 * @throws MeveoApiException
 	 */
 	public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser, AccountLevelEnum accountLevel, boolean checkCustomFields) throws MeveoApiException {
-		accountApiService.updateAccount(accountEntity, postData, currentUser, accountLevel, checkCustomFields);
+		userAccountApiService.updateAccount(accountEntity, postData, currentUser, accountLevel, checkCustomFields);
 	}
 
 }

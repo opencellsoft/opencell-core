@@ -13,7 +13,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.crm.impl.CustomerAccountApiService;
 
 @Stateless
-public class CustomerAccountApi extends AccountApi {
+public class CustomerAccountApi {
 
 	@Inject
 	private CustomerAccountApiService customerAccountApiService;

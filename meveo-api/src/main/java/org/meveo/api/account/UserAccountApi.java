@@ -14,7 +14,7 @@ import org.meveo.service.crm.impl.UserAccountApiService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class UserAccountApi extends AccountApi {
+public class UserAccountApi{
 
 	@Inject
 	private UserAccountApiService userAccountApiService;

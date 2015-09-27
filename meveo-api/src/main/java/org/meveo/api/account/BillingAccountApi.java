@@ -14,7 +14,7 @@ import org.meveo.service.billing.impl.BillingAccountApiService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class BillingAccountApi extends AccountApi {
+public class BillingAccountApi {
 
 	@Inject
 	private BillingAccountApiService billingAccountApiService;
