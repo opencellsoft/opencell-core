@@ -10,9 +10,9 @@ import org.meveo.api.dto.response.BaseResponse;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "FindAccountHierarchyResponse")
+@XmlRootElement(name = "GetAccountHierarchyResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FindAccountHierarchyResponseDto extends BaseResponse {
+public class GetAccountHierarchyResponseDto extends BaseResponse {
 
 	private static final long serialVersionUID = 8676287369018121754L;
 

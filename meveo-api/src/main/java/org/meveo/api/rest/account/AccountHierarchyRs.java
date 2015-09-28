@@ -13,7 +13,7 @@ import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
-import org.meveo.api.dto.response.account.FindAccountHierarchyResponseDto;
+import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -66,7 +66,7 @@ public interface AccountHierarchyRs extends IBaseRs {
 
 	@POST
 	@Path("/findAccountHierarchy")
-	FindAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData);
+	GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData);
 
 	@POST
 	@Path("/createCRMAccountHierarchy")

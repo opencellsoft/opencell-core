@@ -25,7 +25,7 @@ import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
-import org.meveo.api.dto.response.account.FindAccountHierarchyResponseDto;
+import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.dto.response.account.GetAccessResponseDto;
 import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
@@ -204,7 +204,7 @@ public interface AccountWs extends IBaseWs {
 			@WebParam(name = "dunningInclusionExclusion") DunningInclusionExclusionDto dunningDto);
 
 	@WebMethod
-	FindAccountHierarchyResponseDto findAccountHierarchy2(
+	GetAccountHierarchyResponseDto findAccountHierarchy2(
 			@WebParam(name = "findAccountHierachyRequest") FindAccountHierachyRequestDto postData);
 
 	// title

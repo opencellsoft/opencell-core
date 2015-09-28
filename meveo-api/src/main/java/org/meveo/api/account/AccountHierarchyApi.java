@@ -35,7 +35,7 @@ import org.meveo.api.dto.account.NameDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.response.account.FindAccountHierarchyResponseDto;
+import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidEnumValue;
@@ -1889,9 +1889,9 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	public FindAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData,
+	public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData,
 			User currentUser) throws MeveoApiException {
-		FindAccountHierarchyResponseDto result = new FindAccountHierarchyResponseDto();
+		GetAccountHierarchyResponseDto result = new GetAccountHierarchyResponseDto();
 		Name name = null;
 
 		if (postData.getName() == null && postData.getAddress() == null) {
@@ -1967,7 +1967,7 @@ public class AccountHierarchyApi extends BaseApi {
 		return result;
 	}
 
-	private void addUserAccount(FindAccountHierarchyResponseDto result, UserAccount userAccount) {
+	private void addUserAccount(GetAccountHierarchyResponseDto result, UserAccount userAccount) {
 		BillingAccount billingAccount = userAccount.getBillingAccount();
 
 		addBillingAccount(result, billingAccount);
@@ -1991,7 +1991,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	private void addBillingAccount(FindAccountHierarchyResponseDto result, BillingAccount billingAccount) {
+	private void addBillingAccount(GetAccountHierarchyResponseDto result, BillingAccount billingAccount) {
 		CustomerAccount customerAccount = billingAccount.getCustomerAccount();
 		Customer customer = customerAccount.getCustomer();
 
@@ -2016,7 +2016,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	private void addCustomerAccount(FindAccountHierarchyResponseDto result, CustomerAccount customerAccount) {
+	private void addCustomerAccount(GetAccountHierarchyResponseDto result, CustomerAccount customerAccount) {
 		Customer customer = customerAccount.getCustomer();
 		CustomerAccountDto customerAccountDto = new CustomerAccountDto(customerAccount);
 
@@ -2035,7 +2035,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	private void addCustomer(FindAccountHierarchyResponseDto result, Customer customer) {
+	private void addCustomer(GetAccountHierarchyResponseDto result, Customer customer) {
 		if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
 			result.getCustomers().getCustomer().add(new CustomerDto(customer));
 		} else {
