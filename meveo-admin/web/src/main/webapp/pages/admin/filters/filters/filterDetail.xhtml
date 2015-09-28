@@ -46,7 +46,7 @@
 
 						<hftl:decorateFormField fieldId="inputXml"
 							label="#{messages['filter.inputXml']}" newLine="true">
-							<pe:codeMirror id="inputXml" mode="javascript" theme="eclipse"
+							<pe:codeMirror id="inputXml" mode="application/xml" theme="eclipse"
 								value="#{filterBean.entity.inputXml}" lineNumbers="true"
 								readonly="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
 						</hftl:decorateFormField>

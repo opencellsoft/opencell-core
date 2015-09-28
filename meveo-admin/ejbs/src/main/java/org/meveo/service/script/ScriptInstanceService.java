@@ -270,9 +270,17 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 			ScriptInstance scriptInstance = findByCode(scriptCode, provider);
 			if (scriptInstance != null) {
 				compileScript(scriptInstance);
-				if (allScriptInterfaces.containsKey(provider.getCode())) {
-					result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+				if (allScriptInterfaces.containsKey(provider.getCode())) {	
+					if(allScriptInterfaces.get(provider.getCode()).containsKey(scriptCode)){
+						result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+					}else{
+						log.debug("ScriptInstance with {} exist with compilation errors",scriptCode);
+					}
+				}else{
+					log.debug("No ScriptInstance compiled available for the provider {}",provider.getCode());
 				}
+			}else{
+				log.debug("ScriptInstance with {} does not exist",scriptCode);
 			}
 		}
 		log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
