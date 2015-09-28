@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<file-format>
+    <converter name="char" class="com.blackbear.flatworm.converters.CoreConverters" method="convertChar" return-type="java.lang.String"/>
+    <converter name="integer" class="com.blackbear.flatworm.converters.CoreConverters" method="convertInteger" return-type="java.lang.Integer"/>
+    <converter name="date" class="com.blackbear.flatworm.converters.CoreConverters" method="convertDate" return-type="java.util.Date"/>
+    <converter name="bigDecimal" class="com.blackbear.flatworm.converters.CoreConverters" method="convertBigDecimal" return-type="java.math.BigDecimal"/>
+    <converter name="upperCase" class="org.meveo.commons.utils.FlatwormConverters" method="convertUpperCaseString" return-type="java.lang.String"/>
+    <converter name="mandatoryString" class="org.meveo.commons.utils.FlatwormConverters" method="convertMandatoryString" return-type="java.lang.String"/>
+    
+    <record name="accountHierarchy">
+        <record-ident>
+        </record-ident>
+        <record-definition>
+            <bean name="accountHierarchy" class="org.meveo.api.dto.account.CRMAccountHierarchyDto"/>
+            <bean name="address" class="org.meveo.api.dto.account.AddressDto"/>
+            <bean name="name" class="org.meveo.api.dto.account.NameDto"/>
+            <line delimit=";">
+				<record-element length="0" beanref="accountHierarchy.externalRef1" type="char" />
+				<record-element length="1" beanref="accountHierarchy.code" type="char" />
+				<segment-element parent-beanref="accountHierarchy" addMethod="setName" beanref="name" minCount="0" maxCount="1">
+                	<field-ident field-start="2" field-length="0">
+ 						<match-string></match-string>
+		       		</field-ident>
+                <record-element length="0" beanref="name.lastName" type="upperCase"/>
+                </segment-element>                    
+				<segment-element parent-beanref="accountHierarchy" addMethod="setAddress" beanref="address" minCount="0" maxCount="1">
+                	<field-ident field-start="3" field-length="0">
+ 						<match-string></match-string>
+		       		</field-ident>                 
+                    <record-element length="0" beanref="address.adress1" type="upperCase"/>
+                    <record-element length="0" beanref="address.adress2" type="upperCase"/>
+                    <record-element length="0" beanref="address.adress3" type="upperCase"/>
+                    <record-element length="0" beanref="address.zipCode" type="char"/>
+                    <record-element length="0" beanref="address.city" type="upperCase"/>
+                </segment-element>
+				<record-element length="0" beanref="accountHierarchy.siret" type="char" />
+				<record-element length="0" beanref="accountHierarchy.tvaCee" type="char" />
+				<record-element length="0" beanref="accountHierarchy.subscriptionDate" type="date">
+				       <conversion-option name="format" value="dd/MM/yyyy"/>                  
+				</record-element>
+				<record-element length="0" beanref="accountHierarchy.terminationDate" type="date">
+				       <conversion-option name="format" value="dd/MM/yyyy"/>                  
+				</record-element>
+				<record-element length="0" beanref="accountHierarchy.paymentMethod" type="char"/>                				
+            </line>
+        </record-definition>
+    </record>
+</file-format>

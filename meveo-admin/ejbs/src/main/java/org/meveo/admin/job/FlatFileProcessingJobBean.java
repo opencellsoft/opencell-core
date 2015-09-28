@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -93,14 +94,14 @@ public class FlatFileProcessingJobBean {
 				script = flowScriptClass.newInstance();
 				script.init(context, provider,currentUser);
 				 while ((recordObject = beanReader.read()) != null) {																
-					try {						
-//						Map<String, Object> executeParams = new HashMap<String, Object>();
-//						executeParams.put(recordVariableName, recordBean);
-//						executeParams.put(originFilename, file.getName());
-//						executeParams.put("originBatch",file.getName());
-//						script.execute(executeParams,provider,currentUser);	 	
-						CRMAccountHierarchyDto cRMAccountHierarchyDto = (CRMAccountHierarchyDto)recordObject;
-						log.info(cRMAccountHierarchyDto.toString());
+					try {	
+						CRMAccountHierarchyDto cRMAccountHierarchyDto = (CRMAccountHierarchyDto) recordObject;
+						log.debug("lineObject:{}",cRMAccountHierarchyDto.toString());
+						Map<String, Object> executeParams = new HashMap<String, Object>();
+						executeParams.put(recordVariableName, recordObject);
+						executeParams.put(originFilename, file.getName());
+						executeParams.put("originBatch",file.getName());
+						script.execute(executeParams,provider,currentUser);	 							
 						outputRecord(recordObject);
 						result.registerSucces();
 					} catch (Exception e) {
