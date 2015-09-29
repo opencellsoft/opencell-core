@@ -24,6 +24,19 @@
 
 <ui:composition>
 
+    <c:if test="${empty(renderNewButton)}">
+        <c:set var="renderNewButton" value="true" />
+    </c:if>
+    <c:if test="${empty(ajax)}">
+        <c:set var="ajax" value="true" />
+    </c:if>    
+    <c:if test="${empty(ajaxUpdateIds)}">
+        <c:set var="ajaxUpdateIds" value="results_panel" />
+    </c:if>
+    <c:if test="${empty(renderAdvancedLink)}">
+        <c:set var="renderAdvancedLink" value="false" />
+    </c:if>     
+
     <hf:searchPanel id="${id}" label="#{label}" backingBean="#{backingBean}" renderNewButton="#{renderNewButton}" newButtonView="#{newButtonView}" ajax="#{ajax}"
         ajaxUpdateIds="#{ajaxUpdateIds}" renderAdvancedLink="#{renderAdvancedLink}" buttons="#{buttons}">
         <c:set var="id" value="${null}" />
