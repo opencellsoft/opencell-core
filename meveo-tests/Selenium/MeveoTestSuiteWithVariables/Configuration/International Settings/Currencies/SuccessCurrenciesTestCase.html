@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${NewCurrencies}</td>
 	<td></td>
@@ -27,68 +22,38 @@
 	<td>30000</td>
 </tr>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
+	<td>clickAndWait</td>
 	<td>${CurrencyCode}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>6000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
-	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[2]/span/div/div/input</td>
-	<td>GBP</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>5000</td>
-	<td></td>
+	<td>${InputCurrencyCode}</td>
+	<td>AED</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[3]/button[1]/span</td>
+	<td>${SearchCurrencyCode}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>3000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
+	<td>clickAndWait</td>
 	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>Livre sterling</td>
+	<td>Dirham des émirats arabes unis</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ExchangeRate}</td>
-	<td>1.00000</td>
+	<td>1.998448</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
 	<td></td>
 </tr>
 </tbody></table>
