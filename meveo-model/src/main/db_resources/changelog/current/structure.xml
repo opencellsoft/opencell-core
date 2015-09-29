@@ -1530,5 +1530,9 @@
 		<renameColumn tableName="meveo_primitive_filter_condition"
 			oldColumnName="operand2" newColumnName="operand" />
 	</changeSet>
+	
+	<changeSet author="anasseh" id="20150928_text">
+     	<modifyDataType columnName="string_value" newDataType="text"   tableName="CRM_CUSTOM_FIELD_INST"/>
+     </changeSet>
     
 </databaseChangeLog>
