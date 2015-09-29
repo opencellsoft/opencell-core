@@ -1530,7 +1530,7 @@
 		<renameColumn tableName="meveo_primitive_filter_condition"
 			oldColumnName="operand2" newColumnName="operand" />
 	</changeSet>
-	
+
 	<changeSet author="EdwardLegaspi" id="#1087_20150922">
 		<createTable tableName="meveo_filter_parameter">
 			<column name="id" type="BIGINT">
@@ -1592,7 +1592,10 @@
 		</createTable>
 
 		<createSequence sequenceName="meveo_filter_parameter_seq" />
-
 	</changeSet>
+
+	<changeSet author="anasseh" id="20150928_text">
+     	<modifyDataType columnName="string_value" newDataType="text"   tableName="CRM_CUSTOM_FIELD_INST"/>
+     </changeSet>
     
 </databaseChangeLog>

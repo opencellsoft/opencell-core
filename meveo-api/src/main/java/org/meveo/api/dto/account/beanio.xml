@@ -1,7 +1,7 @@
 <beanio xmlns="http://www.beanio.org/2012/03" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd">
-  <stream name="dataSrcFile" format="csv">
+  <stream name="FF_Hierarchy" format="csv">
     <parser>
       <property name="delimiter" value=";" />
     </parser>
@@ -78,7 +78,31 @@
         <segment name="cfToAdd" class="org.meveo.api.dto.CustomFieldDto">
              <property name="code" value="SMS_NAT_P8" />
              <field position="22" name="doubleValue"  typeHandler="doubleHandler"  />
-        </segment>                                       
+        </segment>  
+        <segment name="cfToAdd" class="org.meveo.api.dto.CustomFieldDto">
+             <property name="code" value="INT_596" />
+             <field position="23" name="doubleValue"  typeHandler="doubleHandler" />
+        </segment>
+        <segment name="cfToAdd" class="org.meveo.api.dto.CustomFieldDto">
+             <property name="code" value="INT_594" />
+             <field position="24" name="doubleValue"  typeHandler="doubleHandler"  />
+        </segment>  
+        <segment name="cfToAdd" class="org.meveo.api.dto.CustomFieldDto">
+             <property name="code" value="INT_262" />
+             <field position="25" name="doubleValue"  typeHandler="doubleHandler"  />
+        </segment>
+        <segment name="cfToAdd" class="org.meveo.api.dto.CustomFieldDto">
+             <property name="code" value="INT_590" />
+             <field position="26" name="doubleValue"  typeHandler="doubleHandler"  />
+        </segment>    
+        <segment name="cfToAdd" class="org.meveo.api.dto.CustomFieldDto">
+             <property name="code" value="INT" />
+             <field position="27" name="doubleValue"  typeHandler="doubleHandler"  />
+        </segment>  
+        <segment name="cfToAdd" class="org.meveo.api.dto.CustomFieldDto">
+             <property name="code" value="EMAIL" />
+             <field position="28" name="doubleValue"  typeHandler="doubleHandler"  />
+        </segment>                                             
     </record> 
   </stream>
 </beanio>

@@ -17,7 +17,6 @@ import javax.interceptor.Interceptors;
 import org.beanio.BeanReader;
 import org.beanio.StreamFactory;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.commons.utils.ExcelToCsv;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -49,11 +48,11 @@ public class FlatFileProcessingJobBean {
     
 	
 
+	@SuppressWarnings({ "unused", "unused" })
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void execute(JobExecutionResultImpl result, String inputDir, User currentUser,File file,String mappingConf, String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename) {
-		log.debug("Running for user={}, inputDir={}, scriptInstanceFlowCode={}", currentUser, inputDir,scriptInstanceFlowCode);
-
+	public void execute(JobExecutionResultImpl result, String inputDir, User currentUser,File file,String mappingConf, String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename,String formatTransfo) {
+		log.debug("Running for user={}, inputDir={}, scriptInstanceFlowCode={},formatTransfo={}", currentUser, inputDir,scriptInstanceFlowCode,formatTransfo);
 		Provider provider = currentUser.getProvider();
 
 		outputDir =inputDir + File.separator + "output";
@@ -61,11 +60,15 @@ public class FlatFileProcessingJobBean {
 
 		File f = new File(outputDir);
 		if (!f.exists()) {
+			log.debug("outputDir {} not exist",outputDir);
 			f.mkdirs();
+			log.debug("outputDir {} creation ok",outputDir);
 		}
 		f = new File(rejectDir);
 		if (!f.exists()) {
+			log.debug("rejectDir {} not exist",rejectDir);
 			f.mkdirs();
+			log.debug("rejectDir {} creation ok",rejectDir);
 		}
 		report = "";
 
@@ -76,37 +79,46 @@ public class FlatFileProcessingJobBean {
 			File currentFile = null;
 			try {
 				log.info("InputFiles job {} in progress...",  file.getAbsolutePath());
-				if(true){
+				if("XLSX_TO_CSV".equals(formatTransfo)){
 				     ExcelToCsv excelToCsv = new ExcelToCsv();
 					 excelToCsv.convertExcelToCSV(file.getAbsolutePath(), file.getParent(), ";");
-					 currentFile = new File( file.getAbsolutePath().replaceAll("xlsx", "csv"));
-				}else{
-					currentFile = FileUtils.addExtension(file, ".processing");
-				}				
+					 file.delete();
+					 file = new File( file.getAbsolutePath().replaceAll("xlsx", "csv"));					 
+				}
+				currentFile = FileUtils.addExtension(file, ".processing");
+								
 				result.setNbItemsToProcess(1);										
 				Class<org.meveo.service.script.ScriptInterface> flowScriptClass = scriptInstanceService.getScriptInterface(provider,scriptInstanceFlowCode);
-												
-		        StreamFactory factory = StreamFactory.newInstance();		       
-		        factory.load( new ByteArrayInputStream(mappingConf.getBytes(StandardCharsets.UTF_8)));
-		        beanReader = factory.createReader("dataSrcFile", currentFile);
-		        Object recordObject = null;
+				Object recordObject = null;
 				int processed = 0;
 				script = flowScriptClass.newInstance();
 				script.init(context, provider,currentUser);
-				 while ((recordObject = beanReader.read()) != null) {																
-					try {	
-						CRMAccountHierarchyDto cRMAccountHierarchyDto = (CRMAccountHierarchyDto) recordObject;
-						log.debug("lineObject:{}",cRMAccountHierarchyDto.toString());
+				
+				
+//				ConfigurationReader parser = new ConfigurationReader();
+//				FileFormat ff = parser.loadConfigurationFile( new ByteArrayInputStream(mappingConf.getBytes(StandardCharsets.UTF_8)));
+//				InputStream in = new FileInputStream(currentFile);
+//				BufferedReader bufIn = new BufferedReader(new InputStreamReader(in));
+//				MatchedRecord record = null;
+//              while ((record = ff.getNextRecord(bufIn)) != null) {	
+//				Object recordBean = record.getBean(recordVariableName);			
+												
+		        StreamFactory factory = StreamFactory.newInstance();		       
+		        factory.load( new ByteArrayInputStream(mappingConf.getBytes(StandardCharsets.UTF_8)));
+		        beanReader = factory.createReader(recordVariableName, currentFile);
+		      
+				while ((recordObject = beanReader.read()) != null) {																
+					try {							
+						log.debug("recordObject:{}",recordObject.toString());
 						Map<String, Object> executeParams = new HashMap<String, Object>();
 						executeParams.put(recordVariableName, recordObject);
-						executeParams.put(originFilename, file.getName());
-						executeParams.put("originBatch",file.getName());
+						executeParams.put(originFilename, fileName);
 						script.execute(executeParams,provider,currentUser);	 							
 						outputRecord(recordObject);
 						result.registerSucces();
 					} catch (Exception e) {
 						log.warn("error on reject record ",e);
-						result.registerError("file=" + file.getName() + ", line=" + processed + ": " + e.getMessage());
+						result.registerError("file=" + fileName + ", line=" + processed + ": " + e.getMessage());
 						rejectRecord(recordObject, e.getMessage());
 					} finally{
 						processed++;
@@ -117,11 +129,11 @@ public class FlatFileProcessingJobBean {
 					report += "\r\n file is empty ";
 				}
 
-				log.info("InputFiles job {} done.", file.getName());
+				log.info("InputFiles job {} done.", fileName);
 			} catch (Exception e) {
-				log.error("Failed to process Record file {}", file.getName(), e);
+				log.error("Failed to process Record file {}", fileName, e);
 				result.registerError(e.getMessage());
-				FileUtils.moveFile(rejectDir, currentFile, file.getName());
+				FileUtils.moveFile(rejectDir, currentFile, fileName);
 			} finally {
 				try{
 					if(script!=null){
@@ -144,7 +156,7 @@ public class FlatFileProcessingJobBean {
 						rejectFileWriter = null;
 					}
 				} catch (Exception e) {
-					log.error("Failed to close rejected Record writer for file {}", file.getName(), e);
+					log.error("Failed to close rejected Record writer for file {}", fileName, e);
 				}
 
 				try {
@@ -153,7 +165,7 @@ public class FlatFileProcessingJobBean {
 						outputFileWriter = null;
 					}
 				} catch (Exception e) {
-					log.error("Failed to close output file writer for file {}", file.getName(), e);
+					log.error("Failed to close output file writer for file {}", fileName, e);
 				}
 			}
 			result.setReport(report);

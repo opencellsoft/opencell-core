@@ -12,7 +12,7 @@ public class UpperCaseHandler implements TypeHandler {
 		if(StringUtils.isBlank(text)){
 			return text;
 		}
-		return text.toUpperCase(Locale.getDefault());
+		return StringUtils.truncate(text, 50, true).toUpperCase(Locale.getDefault());
     }
 	
     public String format(Object value) {
