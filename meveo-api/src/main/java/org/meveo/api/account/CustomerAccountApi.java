@@ -113,12 +113,20 @@ public class CustomerAccountApi extends AccountApi {
 			}
 			customerAccount.setMandateDate(postData.getMandateDate());
 			customerAccount.setMandateIdentification(postData.getMandateIdentification());
+			customerAccount.setDefaultLevel(postData.getDefaultLevel());
 
 			if (postData.getContactInformation() != null) {
 				customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
 				customerAccount.getContactInformation().setPhone(postData.getContactInformation().getPhone());
 				customerAccount.getContactInformation().setMobile(postData.getContactInformation().getMobile());
 				customerAccount.getContactInformation().setFax(postData.getContactInformation().getFax());
+			}
+			
+			if (customerAccount.getDefaultLevel() != null && customerAccount.getDefaultLevel()) {
+				if (customerAccountService.isDuplicationExist(customerAccount)) {
+					customerAccount.setDefaultLevel(false);
+					throw new MeveoApiException("DEFAULT_ACCOUNT_ALREADY_EXISTS");
+				}
 			}
 
 			customerAccountService.create(customerAccount, currentUser, provider);
@@ -227,6 +235,16 @@ public class CustomerAccountApi extends AccountApi {
 			}
 			if (!StringUtils.isBlank(postData.getMandateIdentification())) {
 				customerAccount.setMandateIdentification(postData.getMandateIdentification());
+			}
+			if (!StringUtils.isBlank(postData.getDefaultLevel())) {
+				customerAccount.setDefaultLevel(postData.getDefaultLevel());
+			}
+			
+			if (customerAccount.getDefaultLevel() != null && customerAccount.getDefaultLevel()) {
+				if (customerAccountService.isDuplicationExist(customerAccount)) {
+					customerAccount.setDefaultLevel(false);
+					throw new MeveoApiException("DEFAULT_ACCOUNT_ALREADY_EXISTS");
+				}
 			}
 
 			customerAccountService.updateAudit(customerAccount, currentUser);

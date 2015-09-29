@@ -31,6 +31,7 @@ public class CustomerAccountDto extends AccountDto {
 	private String creditCategory;
 	private Date dateStatus;
 	private Date dateDunningLevel;
+	private Boolean defaultLevel;
 
 	private ContactInformationDto contactInformation;
 
@@ -91,6 +92,7 @@ public class CustomerAccountDto extends AccountDto {
 		if (e.getContactInformation() != null) {
 			contactInformation = new ContactInformationDto(e.getContactInformation());
 		}
+		defaultLevel = e.getDefaultLevel();
 
 		mandateIdentification = e.getMandateIdentification();
 		mandateDate = e.getMandateDate();
@@ -235,6 +237,14 @@ public class CustomerAccountDto extends AccountDto {
 
 	public void setContactInformation(ContactInformationDto contactInformation) {
 		this.contactInformation = contactInformation;
+	}
+
+	public Boolean getDefaultLevel() {
+		return defaultLevel;
+	}
+
+	public void setDefaultLevel(Boolean defaultLevel) {
+		this.defaultLevel = defaultLevel;
 	}
 
 }
