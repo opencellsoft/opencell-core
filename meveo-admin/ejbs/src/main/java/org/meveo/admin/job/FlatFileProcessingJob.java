@@ -169,14 +169,19 @@ public class FlatFileProcessingJob extends Job {
 		result.put("FlatFileProcessingJob_originFilename", originFilename);
 
 		CustomFieldTemplate formatTransfo = new CustomFieldTemplate();
-		originFilename.setCode("FlatFileProcessingJob_formatTransfo");
-		originFilename.setAccountLevel(AccountLevelEnum.TIMER);
-		originFilename.setActive(true);
-		originFilename.setDefaultValue("NONE");
-		originFilename.setDescription("Format transformation");
-		originFilename.setFieldType(CustomFieldTypeEnum.LIST);
-		originFilename.setValueRequired(false);
+		formatTransfo.setCode("FlatFileProcessingJob_formatTransfo");
+		formatTransfo.setAccountLevel(AccountLevelEnum.TIMER);
+		formatTransfo.setActive(true);
+		formatTransfo.setDefaultValue("None");
+		formatTransfo.setDescription("Format transformation");
+		formatTransfo.setFieldType(CustomFieldTypeEnum.LIST);
+		formatTransfo.setValueRequired(false);
+		Map<String,String> listValues = new HashMap<String,String>();
+		listValues.put("None","Aucune");
+		listValues.put("Xlsx_to_Csv","Excel cvs");
+		formatTransfo.setListValues(listValues);
 		result.put("FlatFileProcessingJob_formatTransfo", formatTransfo);
+		
 		return result;
 	}
 }
