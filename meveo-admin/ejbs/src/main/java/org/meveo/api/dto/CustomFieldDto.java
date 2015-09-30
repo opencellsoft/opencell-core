@@ -324,7 +324,7 @@ public class CustomFieldDto {
     public String toString() {
         return String
             .format(
-                "CustomFieldDto [code=%s, description=%s, valueDate=%s, valuePeriodStartDate=%s, valuePeriodEndDate=%s, valuePeriodPriority=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s]",
+                "CustomFieldDto [code=%s, description=%s, valueDate=%s, valuePeriodStartDate=%s, valuePeriodEndDate=%s, valuePeriodPriority=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s,mapValue="+mapValue+"]",
                 code, description, valueDate, valuePeriodStartDate, valuePeriodEndDate, valuePeriodPriority, stringValue, dateValue, longValue, doubleValue);
     }
 }

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the field "Code, Description, External ref1, External ref2 and Type" then click on the button "search".
+Expected Results : The result of research gives the items matching with the Code, Description, External ref1, External ref2 and Type filled bellow
+
+Description Test Case 2: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "clean Filters".
+Expected Results : The filed (Code, Description, External ref1, External ref2 and Type) become empty.
+
+Description Test Case 3: 
+Actions : Make a search by filling the field "Code" then click on the button "search".
+Expected Results :The result of research gives the items which are matching with the chosen Global Search.
+
+Description Test Case 4: 
+Actions : Make a search by filling the field "Description, External ref1 and External ref2 " then click on the button "search".
+Expected Results :The result of research gives the items which are matching with the chosen Global Search.
+
+Description Test Case 5:
+Actions : Pick one or more lines from the table then click on the button "Export To Excel"
+Expected Results : The picked lines are exported on an Excel file
+
+Description Test Case 6: 
+Actions : Click on the button "Export To Excel", without picking any line from the table
+Expected Results : All the lines from the table are been exported on an Excel file
+
+Description Test Case 7: 
+Actions : Make a search by filling the field "code and Type" then click on the button "search".
+Expected Results :The result of research gives the items which are matching with the chosen Global Search.
+
+Description Test Case 8: 
+Actions : Click on the button "Delete multiple" wihout picking any line from the table.
+Expected Results : Nothing happened.
+
+Description Test Case 9: 
+Actions : Pick more than one line from the table then click on the button "Delete multiple"
+Expected Results : The picked lines are erased
+
+Description Test Case 10: 
+Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
+Expected Results : The table shows 15 lines per page 
+
+Description Test Case 11: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
+Expected Results : The table shows 20 lines per page 
+
+Description Test Case 12: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
+Expected Results : The table shows 50 lines per page 
+
+Description Test Case 13: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
+Expected Results : The table shows 10 lines per page 
+
+Description Test Case 14: 
+Actions : Click on the button to move to the next page 
+Expected Results : The next page is displayed
+
+Description Test Case 15: 
+Actions : Click on the button to move to the last page 
+Expected Results :The last page is displayed
+
+Description Test Case 16: 
+Actions : Click on the button to move to the previous page
+Expected Results :The previous page is displayed
+
+Description Test Case 17: 
+Actions : In each column from the table (Code, Description, External ref1, External ref2 and Type) there is a filter, click on the filter in column "Code" in order to refine your search in an ascending/descending order.
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 18: 
+Actions : Click on the filter in column "Description" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 19: 
+Actions : Click on the filter in column "External ref1" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 20: 
+Actions : Click on the filter in column "External ref2" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 21: 
+Actions : Click on the filter in column "Type" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+-->
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="../../VariablesGlobales.html">VariablesGlobales</a></td></tr>
+<tr><td><a href="variables.html">variables</a></td></tr>
+<tr><td><a href="SearchWithCodeDescriptionExternalRef1ExternalRef2TypeTestCase.html">SearchWithCodeDescriptionExternalRef1ExternalRef2TypeTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeTestCase.html">SearchWithCodeTestCase</a></td></tr>
+<tr><td><a href="SearchWithDescriptionExternalRef1ExternalRef2TestCase.html">SearchWithDescriptionExternalRef1ExternalRef2TestCase</a></td></tr>
+<tr><td><a href="ExportWithPickLineTestCase.html">ExportWithPickLineTestCase</a></td></tr>
+<tr><td><a href="ExportWithoutPickAnyLineTestCase.html">ExportWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeTypeTestCase.html">SearchWithCodeTypeTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithoutPickAnyLineTestCase.html">DeleteMultipleWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DropdownWith15TestCase.html">DropdownWith15TestCase</a></td></tr>
+<tr><td><a href="DropdownWith20TestCase.html">DropdownWith20TestCase</a></td></tr>
+<tr><td><a href="DropdownWith50TestCase.html">DropdownWith50TestCase</a></td></tr>
+<tr><td><a href="DropdownWith10TestCase.html">DropdownWith10TestCase</a></td></tr>
+<tr><td><a href="NextPageTestCase.html">NextPageTestCase</a></td></tr>
+<tr><td><a href="LastPageTestCase.html">LastPageTestCase</a></td></tr>
+<tr><td><a href="PreviousPageTestCase.html">PreviousPageTestCase</a></td></tr>
+<tr><td><a href="FilterWithCodeTestCase.html">FilterWithCodeTestCase</a></td></tr>
+<tr><td><a href="FilterWithDescriptionTestCase.html">FilterWithDescriptionTestCase</a></td></tr>
+<tr><td><a href="FilterWithExternalRef1TestCase.html">FilterWithExternalRef1TestCase</a></td></tr>
+<tr><td><a href="FilterWithExternalRef2TestCase.html">FilterWithExternalRef2TestCase</a></td></tr>
+<tr><td><a href="FilterWithTypeTestCase.html">FilterWithTypeTestCase</a></td></tr>
+<tr><td><a href="LogoutTestCase.html">LogoutTestCase</a></td></tr>
+</tbody></table>
+</body>
+</html>
