@@ -51,7 +51,6 @@ public class StringUtils {
         return false;
     }
 
-    // TODO test and comment those methods.
     public static boolean isBlank(Object value) {
         return ((value == null) || ((value instanceof String) && ((String) value).trim().length() == 0));
     }
@@ -175,6 +174,18 @@ public class StringUtils {
 		}
 		return Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
 	}
+    
+	public static String normalizeHierarchyCode(String value) {
+		if (StringUtils.isBlank(value)) {
+			return value;
+		}
+
+		String newValue = enleverAccent(value) ;
+
+		newValue = newValue.replaceAll("[^A-Za-z0-9]", "_");
+		return newValue;
+	}
+    
     public static String patternMacher(String regex, String text){
     	String result=null;
     	Pattern pattern = Pattern.compile(regex);
