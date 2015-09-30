@@ -1,6 +1,8 @@
 package org.meveo.api.dto.account;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 
 
@@ -75,7 +78,10 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	// user account
 	private String uaStatus;
 	
-	private CustomFieldDto cfToAdd;
+	//Used for SMS_Facile integration
+	private CustomFieldDto cfToAdd = new CustomFieldDto();
+	private CustomFieldDto cfMapToAdd = new CustomFieldDto();
+	
 	private String offerCode;
 	private String serviceCode;
 	private String access;
@@ -348,7 +354,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	public String toString() {
 		return "CRMAccountHierarchyDto [crmAccountType=" + crmAccountType + ", crmParentCode=" + crmParentCode + ", code=" + code + ", description=" + description + ", externalRef1=" + externalRef1 + ", externalRef2=" + externalRef2 + ", name=" + name + ", address=" + address + ", contactInformation=" + contactInformation + ", language=" + language + ", paymentMethod=" + paymentMethod + ", terminationReason=" + terminationReason + ", subscriptionDate=" + subscriptionDate
 				+ ", terminationDate=" + terminationDate + ", customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", currency=" + currency + ", caStatus=" + caStatus + ", creditCategory=" + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", dunningLevel=" + dunningLevel + ", billingCycle="
-				+ billingCycle + ", country=" + country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms + ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + ", customFields=" + customFields + "]";
+				+ billingCycle + ", country=" + country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms + ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + ",customFields=" + customFields + "]";
 	}
 
 	public String getUaStatus() {
@@ -431,4 +437,30 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		this.access = access;
 	}
 
+	/**
+	 * @return the cfMapToAdd
+	 */
+	public CustomFieldDto getCfMapToAdd() {
+		return cfMapToAdd;
+	}
+
+	/**
+	 * @param cfMapToAdd the cfMapToAdd to set
+	 */
+	public void setCfMapToAdd(CustomFieldDto cfMapToAdd) {		
+		CustomFieldDto customFieldDto = customFields.getCF(cfMapToAdd.getCode());
+		if(customFieldDto == null){
+			customFieldDto = new CustomFieldDto();
+			customFieldDto.setCode(cfMapToAdd.getCode());	
+			customFields.getCustomField().add(customFieldDto);
+		}
+		if(customFieldDto.getMapValue() == null){
+			customFieldDto.setMapValue(new HashMap<String,CustomFieldValueDto>());
+		}
+		if(cfMapToAdd.getDoubleValue() != null){
+			CustomFieldValueDto cfValue = new CustomFieldValueDto(cfMapToAdd.getDoubleValue());
+			customFieldDto.getMapValue().put(cfMapToAdd.getDescription(),cfValue);
+		}
+	}
+	
 }
