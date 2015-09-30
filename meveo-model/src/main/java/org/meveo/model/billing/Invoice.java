@@ -30,6 +30,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -128,6 +129,9 @@ public class Invoice extends AuditableEntity {
 	@Column(name = "PDF")
 	@Basic(fetch = FetchType.LAZY)
 	private byte[] pdf;
+
+	@OneToOne(optional = false, mappedBy = "invoice")
+	public CreditNote creditNote;
 
 	public List<RatedTransaction> getRatedTransactions() {
 		return ratedTransactions;
@@ -371,6 +375,14 @@ public class Invoice extends AuditableEntity {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public CreditNote getCreditNote() {
+		return creditNote;
+	}
+
+	public void setCreditNote(CreditNote creditNote) {
+		this.creditNote = creditNote;
 	}
 
 }
