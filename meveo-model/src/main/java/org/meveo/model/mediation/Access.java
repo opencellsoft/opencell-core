@@ -51,79 +51,78 @@ import org.meveo.model.crm.CustomFieldInstance;
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(accountLevel=AccountLevelEnum.ACC)
+@CustomFieldEntity(accountLevel = AccountLevelEnum.ACC)
 @ExportIdentifier({ "accessUserId", "subscription.code", "provider" })
-@Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
+@Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = { "ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_ACCESS_SEQ")
 @NamedQueries({ @NamedQuery(name = "Access.getAccessesForCache", query = "SELECT a from Access a where a.disabled=false order by a.accessUserId") })
-public class Access extends EnableEntity implements ICustomFieldEntity{
+public class Access extends EnableEntity implements ICustomFieldEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// input
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "START_DATE")
-	private Date startDate;
+    // input
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "START_DATE")
+    private Date startDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "END_DATE")
-	private Date endDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "END_DATE")
+    private Date endDate;
 
-	@Column(name = "ACCES_USER_ID")
-	private String accessUserId;
+    @Column(name = "ACCES_USER_ID")
+    private String accessUserId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUBSCRIPTION_ID")
-	private Subscription subscription;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SUBSCRIPTION_ID")
+    private Subscription subscription;
 
-	@OneToMany(mappedBy = "access", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@MapKeyColumn(name = "code")
-	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
-	
-	public Date getStartDate() {
-		return startDate;
-	}
+    @OneToMany(mappedBy = "access", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @MapKeyColumn(name = "code")
+    private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public String getAccessUserId() {
-		return accessUserId;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public void setAccessUserId(String accessUserId) {
-		this.accessUserId = accessUserId;
-	}
+    public String getAccessUserId() {
+        return accessUserId;
+    }
 
-	public Subscription getSubscription() {
-		return subscription;
-	}
+    public void setAccessUserId(String accessUserId) {
+        this.accessUserId = accessUserId;
+    }
 
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-	}
+    public Subscription getSubscription() {
+        return subscription;
+    }
 
-	public String getCacheKey(){
-		return getProvider().getCode()+"_"+accessUserId;
-	}
-	
-	public Map<String, CustomFieldInstance> getCustomFields() {
-		return customFields;
-	}
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 
-	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-		this.customFields = customFields;
-	}
+    public String getCacheKey() {
+        return getProvider().getCode() + "_" + accessUserId;
+    }
+
+    public Map<String, CustomFieldInstance> getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
+        this.customFields = customFields;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -143,22 +142,31 @@ public class Access extends EnableEntity implements ICustomFieldEntity{
         return false;
     }
 
-	@Override
-	public String toString() {
-		return String.format(
-				"Access [%s, accessUserId=%s, startDate=%s, endDate=%s, subscription=%s, subscription.status=%s]",
-				super.toString(), accessUserId, startDate, endDate, subscription != null ? subscription.getId() : null,
-				subscription != null ? subscription.getStatus() : null);
-	}
+    @Override
+    public String toString() {
+        return String.format("Access [%s, accessUserId=%s, startDate=%s, endDate=%s, subscription=%s, subscription.status=%s]", super.toString(), accessUserId, startDate, endDate,
+            subscription != null ? subscription.getId() : null, subscription != null ? subscription.getStatus() : null);
+    }
 
     @Override
     public ICustomFieldEntity getParentCFEntity() {
         return subscription;
-    }   
-    
+    }
 
+    @Override
     public Object getCFValue(String cfCode) {
-        return getCustomFields().get(cfCode);
+        if (getCustomFields().containsKey(cfCode)) {
+            return getCustomFields().get(cfCode);
+        }
+        return null;
+    }
+
+    @Override
+    public Object getCFValue(String cfCode, Date date) {
+        if (getCustomFields().containsKey(cfCode)) {
+            return getCustomFields().get(cfCode).getValue(date);
+        }
+        return null;
     }
 
     @Override
@@ -177,7 +185,7 @@ public class Access extends EnableEntity implements ICustomFieldEntity{
         }
         return null;
     }
-    
+
     @Override
     public Object getInheritedCFValue(String cfCode) {
 
@@ -202,5 +210,5 @@ public class Access extends EnableEntity implements ICustomFieldEntity{
             return getParentCFEntity().getInheritedCFValue(cfCode, date);
         }
         return null;
-    }   
+    }
 }

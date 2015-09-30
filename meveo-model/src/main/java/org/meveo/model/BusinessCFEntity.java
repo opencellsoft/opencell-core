@@ -31,8 +31,20 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
 
     private static final long serialVersionUID = -6054446440106807337L;
 
+    @Override
     public Object getCFValue(String cfCode) {
-        return getCustomFields().get(cfCode).getValue();
+        if (getCustomFields().containsKey(cfCode)) {
+            return getCustomFields().get(cfCode).getValue();
+        }
+        return null;
+    }
+
+    @Override
+    public Object getCFValue(String cfCode, Date date) {
+        if (getCustomFields().containsKey(cfCode)) {
+            return getCustomFields().get(cfCode).getValue(date);
+        }
+        return null;
     }
 
     public void setCFValue(String cfCode, Object value) {
@@ -77,9 +89,9 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
             if (cft != null) {
                 cfi = CustomFieldInstance.fromTemplate(cft);
             } else {
-//                cfi = new CustomFieldInstance();
-//                cfi.setCode(cfCode);
-//                cfi.setVersionable(true);
+                // cfi = new CustomFieldInstance();
+                // cfi.setCode(cfCode);
+                // cfi.setVersionable(true);
                 throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
             }
 

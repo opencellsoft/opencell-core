@@ -142,7 +142,7 @@ public class ExportImportStatistics {
      * 
      * @param entities A list of entities to remove
      */
-    public void trackEntitiesToDelete(List<IEntity> entities) {
+    public void trackEntitiesToDelete(List<? extends IEntity> entities) {
 
         for (IEntity iEntity : entities) {
 

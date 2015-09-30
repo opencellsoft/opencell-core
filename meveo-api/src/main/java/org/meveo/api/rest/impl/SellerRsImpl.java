@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.SellerApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.SellerDto;
@@ -15,6 +14,7 @@ import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.SellerRs;
+import org.meveo.service.crm.impl.SellerApiService;
 
 /**
  * @author Edward P. Legaspi
@@ -24,7 +24,7 @@ import org.meveo.api.rest.SellerRs;
 public class SellerRsImpl extends BaseRs implements SellerRs {
 
 	@Inject
-	private SellerApi sellerApi;
+	private SellerApiService sellerApi;
 
 	@Override
 	public ActionStatus create(SellerDto postData) {

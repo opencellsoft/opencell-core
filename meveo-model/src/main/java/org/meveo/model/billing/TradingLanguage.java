@@ -87,4 +87,26 @@ public class TradingLanguage extends AuditableEntity {
     public String toString() {
         return String.format("TradingLanguage [language=%s, id=%s]", language, getId());
     }
+    
+    public boolean equals(Object obj) {
+        
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof TradingLanguage)) {
+            return false;
+        }
+
+        TradingLanguage other = (TradingLanguage) obj;
+
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+            return true;
+
+        } else if (language.getId().equals(other.getLanguage().getId())) {
+            return true;
+        }
+        return false;
+    }
 }

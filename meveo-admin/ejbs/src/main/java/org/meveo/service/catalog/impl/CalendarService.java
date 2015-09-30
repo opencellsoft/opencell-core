@@ -23,6 +23,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -33,22 +34,17 @@ import org.meveo.service.base.PersistenceService;
 @Named
 public class CalendarService extends PersistenceService<Calendar> {
 
-	public Calendar findByCode(String code, Provider provider) {
-		return findByCode(getEntityManager(), code, provider);
-	}
 
-	public Calendar findByCode(EntityManager em, String code, Provider provider) {
-		try {
-			QueryBuilder qb = new QueryBuilder(Calendar.class, "c");
-			qb.addCriterion("code", "=", code, true);
-			qb.addCriterionEntity("c.provider", provider);
-
-			return (Calendar) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException e) {
-			log.warn("failed to find calendar",e);
-			return null;
-		}
-	}
+   public Calendar findByCode(String code, Provider provider) {
+	        QueryBuilder qb = new QueryBuilder(Calendar.class, "c", null, provider);
+	        qb.addCriterion("code", "=", code, true);
+	
+	        try {
+	            return (Calendar) qb.getQuery(getEntityManager()).getSingleResult();
+	        } catch (NoResultException e) {
+	            return null;
+	        }
+	    }
 
 	public Calendar findByCode(EntityManager em, String code) {
 		try {

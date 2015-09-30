@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:createCustomFieldTemplateResponse xmlns:ns2="http://ws.api.meveo.org/">
+         <return>
+            <status>SUCCESS</status>
+            <message/>
+         </return>
+      </ns2:createCustomFieldTemplateResponse>
+   </soap:Body>
+</soap:Envelope>

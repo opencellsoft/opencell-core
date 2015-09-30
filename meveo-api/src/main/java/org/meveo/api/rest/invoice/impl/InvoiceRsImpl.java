@@ -105,11 +105,11 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 	}
 
 	@Override
-	public GetXmlInvoiceResponseDto getXMLInvoice(Long invoiceId) {
+	public GetXmlInvoiceResponseDto getXMLInvoice(String invoiceNumber) {
 		GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
 		try{
 			
-			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceId, getCurrentUser()));
+			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 			
 		}catch(MissingParameterException mpe){
@@ -134,11 +134,11 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 	}
 
 	@Override
-	public GetPdfInvoiceResponseDto getPdfInvoice(Long invoiceId) {
+	public GetPdfInvoiceResponseDto getPdfInvoice(String InvoiceNumber) {
 		GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
 		try {
 			
-			result.setPdfContent(invoiceApi.getPdfInvoince(invoiceId, getCurrentUser()));
+			result.setPdfContent(invoiceApi.getPdfInvoince(InvoiceNumber, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 			
 		}catch(MissingParameterException mpe){

@@ -252,7 +252,7 @@ public class JobInstanceApi extends BaseApi {
 			if (jobInstance != null) {
 				JobInstanceDto jobInstanceDto = new JobInstanceDto();
 				
-				jobInstanceDto.setJobCategory(jobInstance.getJobCategoryEnum().toString()); //TODO please review if correct
+				jobInstanceDto.setJobCategory(jobInstance.getJobCategoryEnum() == null ? null:jobInstance.getJobCategoryEnum().name()); 
 				jobInstanceDto.setJobTemplate(jobInstance.getJobTemplate());
 				jobInstanceDto.setCode(jobInstance.getCode());
 				jobInstanceDto.setDescription(jobInstance.getDescription());
@@ -265,7 +265,6 @@ public class JobInstanceApi extends BaseApi {
 				jobInstanceDto.setActive(jobInstance.isActive());
 				jobInstanceDto.setUserId(jobInstance.getUserId());
 				
-				//TODO please review if correct
 				Map<String, CustomFieldInstance> customFields = jobInstance.getCustomFields();
 				CustomFieldsDto customFieldsDto = new CustomFieldsDto();
 				if (customFields != null) {
@@ -275,7 +274,7 @@ public class JobInstanceApi extends BaseApi {
 				}
 				
 				jobInstanceDto.setCustomFields(customFieldsDto);
-				jobInstanceDto.setTimerCode(jobInstance.getTimerEntity().toString());
+				jobInstanceDto.setTimerCode(jobInstance.getTimerEntity() == null ? null:jobInstance.getTimerEntity().toString());
 				
 				return jobInstanceDto;
 			} 

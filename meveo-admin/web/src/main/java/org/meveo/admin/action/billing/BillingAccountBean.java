@@ -182,24 +182,22 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 				}
 			}
 
-			CustomerAccount customerAccount = entity.getCustomerAccount();
-			if (customerAccount != null) {
-				List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
-				if (billingAccounts != null) {
-					if (!billingAccounts.contains(entity)) {
-						customerAccount.getBillingAccounts().add(entity);
-					}
-				}
-			}
-
 			if (entity.isTransient()) {
 				billingAccountService.initBillingAccount(entity);
 			}
 
 			super.saveOrUpdate(killConversation);
-
-			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
-
+            
+			CustomerAccount customerAccount = entity.getCustomerAccount();
+            if (customerAccount != null) {
+                List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
+                if (billingAccounts != null) {
+                    if (!billingAccounts.contains(entity)) {
+                        customerAccount.getBillingAccounts().add(entity);
+                    }
+                }
+            }
+			
 			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
 	            return null;
 	        } else {
@@ -226,7 +224,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public void terminateAccount() {
 		log.debug("terminateAccount billingAccountId: {}", entity.getId());
 		try {
-			billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
+
+		    entity = billingAccountService.attach(entity);
+			entity = billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
 			log.error("error occured while terminating account ",e);
@@ -240,7 +240,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String cancelAccount() {
 		log.info("cancelAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.billingAccountCancellation(entity, new Date(), getCurrentUser());
+		    entity = billingAccountService.attach(entity);
+            entity = billingAccountService.billingAccountCancellation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?billingAccountId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
@@ -256,7 +257,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String closeAccount() {
 		log.info("closeAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.closeBillingAccount(entity, getCurrentUser());
+			entity = billingAccountService.closeBillingAccount(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?billingAccountId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {

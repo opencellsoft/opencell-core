@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
@@ -37,7 +36,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.crm.impl.CustomFieldJob;
 
 /**
  * Backing bean for support custom field instances value data entry
@@ -63,9 +61,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     protected List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
 
-    @Inject
-    private CustomFieldJob customFieldJob;
-
     public CustomFieldBean() {
     }
 
@@ -82,32 +77,18 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         return result;
     }
 
-    @Override
-    public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        updateCustomFieldsInEntity();
-        
-		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-			for (CustomFieldTemplate cft : customFieldTemplates) {
-				CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cft.getCode());
-				if (cfi != null && cft.isVersionable() && cft.getCalendar() != null && cft.isTriggerEndPeriodEvent()) {
-					// Create a timer if was requested
-					for (CustomFieldPeriod cfp : cfi.getValuePeriods()) {
-						if (cfp.getPeriodEndDate() != null) {
-							customFieldJob.triggerEndPeriodEvent(cft.getInstance(), cfp.getPeriodEndDate());
-						}
-					}
-				}
-			}
-		}
+	@Override
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		updateCustomFieldsInEntity();
 
-        String outcome = super.saveOrUpdate(killConversation);
-        
-        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
-            return null; //getEditViewName();
-        } else {
-            return outcome;
-        }
-    }
+		String outcome = super.saveOrUpdate(killConversation);
+
+		if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
+			return null; // getEditViewName();
+		} else {
+			return outcome;
+		}
+	}
 
     /**
      * Load available custom fields (templates) and their values
@@ -139,10 +120,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             CustomFieldInstance cfi = cft.getInstance();
             // Not saving empty values
             if (cfi.isValueEmptyForGui()) {
-                if (!cfi.isTransient()) {
-                    ((ICustomFieldEntity) entity).getCustomFields().remove(cfi.getCode());
-                    log.debug("Remove empty cfi value {}", cfi.getCode());
-                }
+                ((ICustomFieldEntity) entity).getCustomFields().remove(cfi.getCode());
+                log.trace("Remove empty cfi value {}", cfi.getCode());
+                
                 // Existing value update
             } else {
                 serializeForGUI(cft, cfi);

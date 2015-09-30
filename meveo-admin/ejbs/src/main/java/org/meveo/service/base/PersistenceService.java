@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -70,6 +71,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	protected final Class<E> entityClass;
 
 	public static String SEARCH_SKIP_PROVIDER_CONSTRAINT = "skipProviderConstraint";
+	public static String SEARCH_CURRENT_USER = "currentUser";
+	public static String SEARCH_CURRENT_PROVIDER = "currentProvider";
 	public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
 
 	@Inject
@@ -538,7 +541,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @see org.meveo.service.base.local.IPersistenceService#detach
 	 */
 	@Override
-	public void detach(Object entity) {
+	public void detach(E entity) {
 		// TODO: Hibernate. org.hibernate.Session session = (Session)
 		// getEntityManager().getDelegate();
 		// session.evict(entity);
@@ -549,7 +552,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @see org.meveo.service.base.local.IPersistenceService#refresh(org.meveo.model.BaseEntity)
 	 */
 	@Override
-	public void refresh(BaseEntity entity) {
+	public void refresh(E entity) {
 		// entity manager throws exception if trying to refresh not managed
 		// entity (ejb spec requires this).
 		/*
@@ -578,9 +581,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 		Map<String, Object> filters = config.getFilters();
 
-		// Ignore current provider constraint if "skipProviderConstraint"
-		// parameter was passed to search
+		// If provider is not retrievable from service, get it from a filter
 		Provider provider = getCurrentProvider();
+        if (provider == null && filters.containsKey(SEARCH_CURRENT_PROVIDER)) {
+            provider = (Provider) filters.get(SEARCH_CURRENT_PROVIDER);
+        }
+
+        // Ignore current provider constraint if "skipProviderConstraint" parameter was passed to search
 		if (filters != null && filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
 			provider = null;
 		}
@@ -594,9 +601,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			} else {
 
 				for (String key : filters.keySet()) {
-					if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key)) {
-						continue;
-					}
+                    if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key) || SEARCH_CURRENT_PROVIDER.equals(key) || SEARCH_CURRENT_USER.equals(key)) {
+                        continue;
+                    }
 
 					String[] fieldInfo = key.split(" ");
 					String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
@@ -769,6 +776,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			queryBuilder.addPaginationConfiguration(config, "a");
 		}
 
+		// log.debug("Filters is {}", filters);
+		// log.debug("Query is {}", queryBuilder.getSqlString());
 		return queryBuilder;
 	}
 
@@ -806,22 +815,28 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public Provider getCurrentProvider() {
 
 		Provider result = null;
+
+        // This gets a current provider as set in MeveoUser uppon login
 		try {
 			if (result == null && identity.isLoggedIn() && identity.getUser() != null) {
 				result = ((MeveoUser) identity.getUser()).getCurrentProvider();
 			}
+		} catch (ContextNotActiveException e){
+		    // Ignore this exception as in async methods no context is available
+		    
 		} catch (Exception e) {
 			log.error("failed to get current provider", e);
 		}
 
+		// This gets a provider directly from a current user
 		if (result == null && getCurrentUser() != null) {
 			result = getCurrentUser().getProvider();
 		}
 		return result;
 	}
 
-	public BaseEntity attach(BaseEntity e) {
-		return (BaseEntity) getEntityManager().merge(e);
+	public E attach(E e) {
+		return (E) getEntityManager().merge(e);
 	}
 
 	private boolean isConversationScoped() {

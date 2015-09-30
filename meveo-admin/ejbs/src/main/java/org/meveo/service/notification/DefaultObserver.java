@@ -273,15 +273,15 @@ public class DefaultObserver {
    }
    
    public void businesException(@Observes  BusinessExceptionEvent bee){
-       log.info("Defaut observer : BusinessExceptionEvent {} ", bee);
+       log.debug("Defaut observer : BusinessExceptionEvent {} ", bee);
        StringWriter errors = new StringWriter();
-       bee.getBusinessException().printStackTrace(new PrintWriter(errors));
+       bee.getException().printStackTrace(new PrintWriter(errors));
 	   String meveoInstanceCode = ParamBean.getInstance().getProperty("monitoring.instanceCode","");
        int bodyMaxLegthByte = Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999"));
        String stackTrace = errors.toString();
        String input = "{"+
 				"	  #meveoInstanceCode#: #"+meveoInstanceCode+"#,"+
-				"	  #subject#: #"+bee.getBusinessException().getMessage()+"#,"+
+				"	  #subject#: #"+bee.getException().getMessage()+"#,"+
 				"	  #body#: #"+StringUtils.truncate(stackTrace, bodyMaxLegthByte, true)+"#,"+
 				"	  #additionnalInfo1#: #"+LogExtractionService.getLogs(new Date(System.currentTimeMillis()-Integer.parseInt(ParamBean.getInstance().
 						getProperty("meveo.notifier.log.timeBefore_ms", "5000"))) , new Date())+"#,"+
@@ -289,8 +289,8 @@ public class DefaultObserver {
 				"	  #additionnalInfo3#: ##,"+
 				"	  #additionnalInfo4#: ##"+
 				"}";
-       log.info("Defaut observer : input {} ", input.replaceAll("#", "\""));       
-       remoteInstanceNotifier.invoke(input.replaceAll("\"","'").replaceAll("#", "\""),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
+       log.debug("Defaut observer : input {} ", input.replaceAll("#", "\""));       
+       remoteInstanceNotifier.invoke(input.replaceAll("\"","'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
        
 		//TODO handel reponse
 		//if pertinent, if need logs

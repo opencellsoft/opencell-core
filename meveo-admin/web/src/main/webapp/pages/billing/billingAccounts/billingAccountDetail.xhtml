@@ -49,45 +49,45 @@
 				updateField=":parentTab:formBillingAccountPanel:formId:childTab:customerSelectId">
 			</hftl:entityPopup>
 
-			<hftl:entityPopup id="billingCyclePopup"
-				header="#{messages['billingCycle.popup.header']}"
-				backingBean="#{billingCycleBean}"
-				searchField1Label="#{messages['businessEntity.code']}"
-				searchField1="code"
-				searchField2Label="#{messages['businessEntity.description']}"
-				searchField2="description"
-				column1Label="#{messages['businessEntity.code']}" column1="code"
-				column2Label="#{messages['businessEntity.description']}"
-				column2="description"
-				selection="#{billingAccountBean.entity.billingCycle}"
-				updateField=":parentTab:formBillingAccountPanel:formId:childTab:cycleSelectId">
-			</hftl:entityPopup>
+<!-- 			<hftl:entityPopup id="billingCyclePopup" -->
+<!-- 				header="#{messages['billingCycle.popup.header']}" -->
+<!-- 				backingBean="#{billingCycleBean}" -->
+<!-- 				searchField1Label="#{messages['businessEntity.code']}" -->
+<!-- 				searchField1="code" -->
+<!-- 				searchField2Label="#{messages['businessEntity.description']}" -->
+<!-- 				searchField2="description" -->
+<!-- 				column1Label="#{messages['businessEntity.code']}" column1="code" -->
+<!-- 				column2Label="#{messages['businessEntity.description']}" -->
+<!-- 				column2="description" -->
+<!-- 				selection="#{billingAccountBean.entity.billingCycle}" -->
+<!-- 				updateField=":parentTab:formBillingAccountPanel:formId:childTab:cycleSelectId"> -->
+<!-- 			</hftl:entityPopup> -->
 
-			<hftl:entityPopup id="tradingCountryPopup"
-				header="#{messages['tradingCountry.popup.header']}"
-				backingBean="#{tradingCountryBean}"
-				searchField1Label="#{messages['businessEntity.code']}"
-				searchField1="country.countryCode"
-				column1Label="#{messages['businessEntity.code']}"
-				column1="countryCode"
-				column2Label="#{messages['businessEntity.description']}"
-				column2="prDescription"
-				selection="#{billingAccountBean.entity.tradingCountry}"
-				updateField=":parentTab:formBillingAccountPanel:formId:childTab:trCountrySelectId">
-			</hftl:entityPopup>
+<!-- 			<hftl:entityPopup id="tradingCountryPopup" -->
+<!-- 				header="#{messages['tradingCountry.popup.header']}" -->
+<!-- 				backingBean="#{tradingCountryBean}" -->
+<!-- 				searchField1Label="#{messages['businessEntity.code']}" -->
+<!-- 				searchField1="country.countryCode" -->
+<!-- 				column1Label="#{messages['businessEntity.code']}" -->
+<!-- 				column1="countryCode" -->
+<!-- 				column2Label="#{messages['businessEntity.description']}" -->
+<!-- 				column2="prDescription" -->
+<!-- 				selection="#{billingAccountBean.entity.tradingCountry}" -->
+<!-- 				updateField=":parentTab:formBillingAccountPanel:formId:childTab:trCountrySelectId"> -->
+<!-- 			</hftl:entityPopup> -->
 
-			<hftl:entityPopup id="tradingLanguagePopup"
-				header="#{messages['tradingLanguage.popup.header']}"
-				backingBean="#{tradingLanguageBean}"
-				searchField1Label="#{messages['businessEntity.code']}"
-				searchField1="language.languageCode"
-				column1Label="#{messages['businessEntity.code']}"
-				column1="languageCode"
-				column2Label="#{messages['businessEntity.description']}"
-				column2="prDescription"
-				selection="#{billingAccountBean.entity.tradingLanguage}"
-				updateField=":parentTab:formBillingAccountPanel:formId:childTab:trLanguageSelectId">
-			</hftl:entityPopup>
+<!-- 			<hftl:entityPopup id="tradingLanguagePopup" -->
+<!-- 				header="#{messages['tradingLanguage.popup.header']}" -->
+<!-- 				backingBean="#{tradingLanguageBean}" -->
+<!-- 				searchField1Label="#{messages['businessEntity.code']}" -->
+<!-- 				searchField1="language.languageCode" -->
+<!-- 				column1Label="#{messages['businessEntity.code']}" -->
+<!-- 				column1="languageCode" -->
+<!-- 				column2Label="#{messages['businessEntity.description']}" -->
+<!-- 				column2="prDescription" -->
+<!-- 				selection="#{billingAccountBean.entity.tradingLanguage}" -->
+<!-- 				updateField=":parentTab:formBillingAccountPanel:formId:childTab:trLanguageSelectId"> -->
+<!-- 			</hftl:entityPopup> -->
 
 		</c:if>
 		
@@ -128,8 +128,8 @@
 												
 													<hf:formField id="cycleSelectId"
 														label="#{messages['billingAccount.billingCycle']}"
-														field="billingCycle" valueLabelField="code" required="true"
-														popup="true" popupId="billingCyclePopup" />
+														field="billingCycle" valueLabelField="code" required="true" listBean="#{billingCycleBean}"/>
+<!-- 														popup="true" popupId="billingCyclePopup" /> -->
 													
 													<hf:formField
 														label="#{messages['discountPlan.title']}"
@@ -194,12 +194,13 @@
 													<hf:formField id="trCountrySelectId"
 														label="#{messages['tradingCountry.tradingCountry']}"
 														field="tradingCountry" valueLabelField="countryCode"
-														required="true" popup="true" popupId="tradingCountryPopup" />
+														required="true" listBean="#{tradingCountryBean}"/> 
+<!--                                                         popup="true" popupId="tradingCountryPopup" /> -->
 													<hf:formField id="trLanguageSelectId"
 														label="#{messages['tradingLanguage.tradingLanguage']}"
 														field="tradingLanguage" valueLabelField="languageCode"
-														required="true" popup="true"
-														popupId="tradingLanguagePopup" />
+														required="true" listBean="#{tradingLanguageBean}"/> 
+<!--                                                         popup="true" popupId="tradingLanguagePopup" /> -->
 
                                                 
                                                 
@@ -384,7 +385,7 @@
 													backingBean="#{counterPeriodBean}"
 													dataModel="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
 													sortBy="periodStartDate"
-													sortOrder="DESCENDING">
+													sortOrder="DESCENDING" exportToXml="false">
 													<hftl:column label="#{messages['businessEntity.code']}"
 														field="code" />
 													<hftl:column label="#{messages['businessEntity.description']}"
@@ -412,7 +413,7 @@
 
                                     <h:panelGroup rendered="#{not empty billingAccountBean.entity.id}">
                                         <div class="action-buttons">
-                                            <p:commandButton value="#{messages['account.buttonResiliateAccount']}" oncomplete="PF('dlg_billingAccountTerminationPopup').show()"
+                                            <p:commandButton value="#{messages['account.buttonResiliateAccount']}" onclick="PF('dlg_billingAccountTerminationPopup').show()" type="button"
                                                 disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />
                                             <p:commandButton action="#{billingAccountBean.cancelAccount()}" value="#{messages['account.buttonCancelAccount']}"
                                                 onclick="if(confirm('#{messages['account.confirmCancelAccount']}')){return true;}else{return false;}" immediate="true"
@@ -456,7 +457,7 @@
 							<hftl:dataList
 								dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}"
 								resultsId="i_results"
-								backingBean="#{invoiceBean}" deleteManyButton="false">
+								backingBean="#{invoiceBean}" deleteManyButton="false" exportToXml="false">
 								<hftl:column label="#{messages['invoice.invoiceNumber']}"
 									field="invoiceNumber" />
 								<hftl:column label="#{messages['invoice.invoiceDate']}" isDate="true"
@@ -495,9 +496,9 @@
 
 		<p:dialog id="billingAccountTerminationPopup"
 			header="#{messages['billingAccount.accountTermination']}"
-			widgetVar="dlg_billingAccountTerminationPopup" dynamic="false"
+			widgetVar="dlg_billingAccountTerminationPopup" modal="true" appendTo="@(body)" closeOnEscape="true"
 			width="400">
-			<hf:formPanel edit="true" backingBean="#{billingAccountBean}"
+            <hf:formPanel id="termPanel" edit="true" backingBean="#{billingAccountBean}"
 				styleClass="formPanel" formId="termFrm" showFormButtons="false"
 				useCustomIdParam="true">
 					<hf:formField label="#{messages['serviceInstance.code']}"
@@ -512,11 +513,11 @@
 					<p:panel styleClass="action-buttons">
 						<p:commandButton action="#{billingAccountBean.terminateAccount()}"
 							value="#{messages['button.terminateButton']}"
-							onsuccess="PF('dlg_billingAccountTerminationPopup').hide()"
-							update=":parentTab:formBillingAccountPanel:formId">
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_billingAccountTerminationPopup').hide()"
+							update=":parentTab:formBillingAccountPanel:formId :termPanel:termFrm:messages">
 						</p:commandButton>
 						<p:commandButton immediate="true"
-							onclick="PF('dlg_billingAccountTerminationPopup').hide()"
+							onclick="PF('dlg_billingAccountTerminationPopup').hide()" type="button"
 							value="#{messages['management.close']}" />
 					</p:panel>
 			</hf:formPanel>

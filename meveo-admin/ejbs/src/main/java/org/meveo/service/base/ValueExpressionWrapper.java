@@ -57,7 +57,7 @@ public class ValueExpressionWrapper {
         }
         try {
             result = ValueExpressionWrapper.getValue(expression, userMap, resultClass);
-            log.debug("EL {} => {}", expression, result);
+            log.trace("EL {} => {}", expression, result);
 
         } catch (Exception e) {
             log.warn("EL {} throw error", expression, e);

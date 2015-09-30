@@ -25,7 +25,10 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -574,8 +577,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_PATERN);
 		return dateFormat.format(invoiceDate);
 	}
-
 	
 	
+	public  Map<String,List<String>> getJasperFiles(){
+	    return  new HashMap<String, List<String>>();
+	   
+     }
 	
 }

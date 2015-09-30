@@ -17,7 +17,6 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.OccTemplateApi;
 import org.meveo.api.ProviderApi;
 import org.meveo.api.ScriptInstanceApi;
-import org.meveo.api.SellerApi;
 import org.meveo.api.TaxApi;
 import org.meveo.api.UserApi;
 import org.meveo.api.dto.ActionStatus;
@@ -61,6 +60,7 @@ import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.SettingsWs;
+import org.meveo.service.crm.impl.SellerApiService;
 
 /**
  * @author Edward P. Legaspi
@@ -97,7 +97,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	private ProviderApi providerApi;
 
 	@Inject
-	private SellerApi sellerApi;
+	private SellerApiService sellerApi;
 
 	@Inject
 	private TaxApi taxApi;

@@ -17,7 +17,7 @@
 		</h:form>
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
 			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
-			exportButton="false" exportXlsxButton="true"
+			exportButton="false" exportXlsxButton="true" exportToXml="false"
 			backingBean="#{pricePlanMatrixBean}" dataModel="#{pricePlanMatrixBean.getPricePlanMatrixList(chargeTemplateBean.entity)}">
 
 			<p:ajax event="cellEdit"

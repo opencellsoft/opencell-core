@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.enterprise.inject.Produces;
@@ -102,6 +103,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	private WalletOperation reloadOperation;
 	private String selectedWalletCode;
 
+	// Retrieved wallet operations to improve GUI performance for Ajax request
+    private Map<String, List<WalletOperation>> walletOperations = new HashMap<String, List<WalletOperation>>();
+	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -195,28 +199,24 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	 */
 	@Override 
 	// TODO this has to be removed as BaseBean has identical method. Only need to take care of userAccountService.createUserAccount method call
-	protected String saveOrUpdate(UserAccount entity) {
-		try {
-			if (entity.isTransient()) {
-				userAccountService.createUserAccount(entity.getBillingAccount(), entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "save.successful"));
-			} else {
-				getPersistenceService().update(entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "update.successful"));
-			}
-		} catch (Exception e) {
-			log.error("error generated while saving or updating user account ",e);
-			messages.error(e.getMessage());
-		}
+	protected UserAccount saveOrUpdate(UserAccount entity) throws BusinessException{
+
+        if (entity.isTransient()) {
+            userAccountService.createUserAccount(entity.getBillingAccount(), entity, getCurrentUser());
+        } else {
+            entity = getPersistenceService().update(entity, getCurrentUser());
+        }
+
         setObjectId((Long) entity.getId());
 
-		return back();
+		return entity;
 	}
 
 	public void terminateAccount() {
 		log.debug("resiliateAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountTermination(entity, entity.getTerminationDate(),
+		    entity = userAccountService.attach(entity);
+		    entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(),
 					entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
@@ -231,7 +231,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	public String cancelAccount() {
 		log.info("cancelAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountCancellation(entity, new Date(), getCurrentUser());
+		    entity = userAccountService.attach(entity);
+            entity = userAccountService.userAccountCancellation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
@@ -247,7 +248,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	public String reactivateAccount() {
 		log.info("reactivateAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountReactivation(entity, new Date(), getCurrentUser());
+		    entity = userAccountService.attach(entity);
+            entity = userAccountService.userAccountReactivation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
@@ -280,14 +282,13 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	}
 
 	public List<WalletOperation> getWalletOperations(String walletCode) {
-		log.debug("getWalletOperations {}", walletCode);
+		
+        if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
+            log.debug("getWalletOperations {}", walletCode);
+            walletOperations.put(walletCode, walletOperationService.findByUserAccountAndWalletCode(walletCode, entity, false));
+        }
 
-		if (entity != null && entity.getProvider() != null) {
-			return walletOperationService.findByUserAccountAndWalletCode(walletCode, entity, entity.getProvider(),
-					false);
-		}
-
-		return null;
+		return walletOperations.get(walletCode);
 	}
 
 	@Produces
@@ -366,7 +367,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	}
 
 	public String getBalance(WalletInstance wallet) {
-
+        
 		String result = null;
 		BigDecimal balance = walletCacheContainerProvider.getBalance(wallet.getId());
 		if (balance != null) {
@@ -397,7 +398,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getOpenBalanceWithTax(Provider provider, String sellerCode, String userAccountCode, Date startDate,
 			Date endDate) throws BusinessException {
-		String result = null;
+
+	    String result = null;
 		BigDecimal balance = walletReservationService.getOpenBalanceWithTax(provider, sellerCode, userAccountCode,
 				startDate, endDate);
 		if (balance != null) {

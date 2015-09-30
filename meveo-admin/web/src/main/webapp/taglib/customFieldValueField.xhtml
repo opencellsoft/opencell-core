@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:hftl="http://hftl.org"
+    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:hftl="http://hftl.org" 	xmlns:pe="http://primefaces.org/ui/extensions"
     xmlns:hf="http://java.sun.com/jsf/composite/tags">
 
 
@@ -38,7 +38,8 @@
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA}">
         <h:outputText value="#{field.stringValue}" rendered="#{! edit}"></h:outputText>
-        <p:inputTextarea value="#{field.stringValue}" cols="#{cols}" rows="#{rows}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
+        <pe:codeMirror  theme="eclipse" mode="application/xml" value="#{field.stringValue}"  lineNumbers="true"  required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" /> 
+          <!--<p:inputTextarea value="#{field.stringValue}" cols="#{cols}" rows="#{rows}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />-->
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
         <h:outputText value="#{field.dateValue}" rendered="#{! edit}">

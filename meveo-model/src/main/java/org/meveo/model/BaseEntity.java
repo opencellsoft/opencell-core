@@ -19,6 +19,8 @@ package org.meveo.model;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -44,6 +46,7 @@ public abstract class BaseEntity implements Serializable, IEntity, IVersionedEnt
 	@Id
 	@GeneratedValue(generator = "ID_GENERATOR")
 	@Column(name = "ID")
+	@Access(AccessType.PROPERTY)
 	protected Long id;
 
 	@Version

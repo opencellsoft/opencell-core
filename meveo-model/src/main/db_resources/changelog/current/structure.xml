@@ -182,7 +182,7 @@
 			<column name="date_value" type="TIMESTAMP WITHOUT TIME ZONE" />
 			<column name="double_value" type="FLOAT8" />
 			<column name="long_value" type="BIGINT" />
-			<column name="string_value" type="VARCHAR(255)" />
+			<column name="string_value" type="TEXT" />
 		</createTable>
 
 		<addForeignKeyConstraint baseColumnNames="calendar_id"
@@ -756,7 +756,6 @@
 	</changeSet>
 	
 	<changeSet author="anasseh" id="#907_01072015">
-        <modifyDataType columnName="string_value" newDataType="varchar(4000)"   tableName="crm_custom_field_inst"/>
     </changeSet>
 	
     <changeSet id="805_20150701" author="AndriusKarpavicius">
@@ -1516,5 +1515,24 @@
             <dropUniqueConstraint  constraintName="uk_meveo_script_instance"    tableName="MEVEO_SCRIPT_INSTANCE"/>
             <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_script_instance" deferrable="false" disabled="false" initiallyDeferred="false" tableName="MEVEO_SCRIPT_INSTANCE"/>
     </changeSet>
-   
+
+	<changeSet author="EdwardLegaspi" id="20150917">
+		<addColumn tableName="meveo_primitive_filter_condition">
+			<column name="operand2" type="VARCHAR(255)"></column>
+		</addColumn>
+
+		<sql>UPDATE MEVEO_PRIMITIVE_FILTER_CONDITION SET operand2=operand;
+		</sql>
+
+		<dropColumn tableName="meveo_primitive_filter_condition"
+			columnName="operand" />
+
+		<renameColumn tableName="meveo_primitive_filter_condition"
+			oldColumnName="operand2" newColumnName="operand" />
+	</changeSet>
+	
+	<changeSet author="anasseh" id="20150928_text">
+     	<modifyDataType columnName="string_value" newDataType="text"   tableName="CRM_CUSTOM_FIELD_INST"/>
+     </changeSet>
+    
 </databaseChangeLog>

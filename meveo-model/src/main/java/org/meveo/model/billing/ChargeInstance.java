@@ -18,6 +18,8 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -43,12 +45,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @ObservableEntity
@@ -126,6 +131,8 @@ public class ChargeInstance extends BusinessEntity {
 	@OrderColumn(name = "INDX")
 	private List<WalletInstance> walletInstances = new ArrayList<WalletInstance>();
 	
+	@Transient 
+	private List<WalletOperation> sortedWalletOperations;
 
 	@Column(name = "IS_PREPAID", length = 1)
 	protected Boolean prepaid=Boolean.FALSE;
@@ -221,6 +228,22 @@ public class ChargeInstance extends BusinessEntity {
 		this.walletOperations = walletOperations;
 	}
 
+    public List<WalletOperation> getWalletOperationsSorted() {
+        if (sortedWalletOperations == null) {
+            Logger log = LoggerFactory.getLogger(this.getClass());
+            log.debug("getSortedWalletOperations");
+            sortedWalletOperations = new ArrayList<WalletOperation>(getWalletOperations());
+
+            Collections.sort(sortedWalletOperations, new Comparator<WalletOperation>() {
+                public int compare(WalletOperation c0, WalletOperation c1) {
+                    return c1.getOperationDate().compareTo(c0.getOperationDate());
+                }
+            });
+        }
+
+        return sortedWalletOperations;
+    }
+	
 	public String getPrDescription() {
 		return prDescription;
 	}

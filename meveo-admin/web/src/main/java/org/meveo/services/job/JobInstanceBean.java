@@ -58,7 +58,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         return null;
     }
 
-    public String executeTimer() {
+    public String execute() {
         try {
             jobInstanceService.manualExecute(entity);
             messages.info(new BundleKey("messages", "info.entity.executed"), entity.getJobTemplate());

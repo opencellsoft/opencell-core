@@ -53,4 +53,32 @@
 		<tag-name>customFieldListTable</tag-name>
 		<source>customFieldListTable.xhtml</source>
 	</tag>
+    <tag>
+        <tag-name>exportToXmlDialogs</tag-name>
+        <source>exportToXmlDialogs.xhtml</source>
+    </tag>
+<!--     <tag> -->
+<!--         <tag-name>customFields</tag-name> -->
+<!--         <source>customFields.xhtml</source> -->
+<!--     </tag> -->
+    <tag>
+        <tag-name>searchPanel</tag-name>
+        <source>searchPanel.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchField</tag-name>
+        <source>searchField.xhtml</source>
+    </tag>
+<!--     <tag> -->
+<!--         <tag-name>formPanel</tag-name> -->
+<!--         <source>formPanel.xhtml</source> -->
+<!--     </tag> -->
+<!--     <tag> -->
+<!--         <tag-name>formField</tag-name> -->
+<!--         <source>formField.xhtml</source> -->
+<!--     </tag> -->
+    <tag>
+        <tag-name>getFieldInformation</tag-name>
+        <handler-class>org.meveo.util.view.GetFieldInformationHandler</handler-class>
+    </tag>
 </facelet-taglib>

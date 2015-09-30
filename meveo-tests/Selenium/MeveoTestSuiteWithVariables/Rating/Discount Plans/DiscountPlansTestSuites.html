@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the fields (Code and Description) then click on the button "search".
+Expected Results : The result of research gives the items matching with the fields filled bellow
+
+Description Test Case 2: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "Clean filters".
+Expected Results : The fileds (Code and Description) become empty.
+
+Description Test Case 3:
+Actions : Click on the button "New" in order to add a new Discount Plans
+Expected Results : A list of empty items are showed.
+
+Description Test Case 4:
+Actions : Don't fill any fields then click on "save".
+Expected Results : A new Discount Plans can not be created, an alert appears to mention that "Discount Plan Code and Description" are required to create the Discount Plans
+
+Description Test Case 5:
+Actions : Click on "reset".
+Expected Results : The field code become empty.
+
+Description Test Case 6:
+Actions : Fill only the field "Discount Plan Code" then click on "save".
+Expected Results : A new Discount Plans can not be created, an alert appears to mention that "Description" is required to create the Discount Plans.
+
+Description Test Case 7: 
+Actions : Fill only the field "Description" then click on "save".
+Expected Results : A new Discount Plans can not be created, an alert appears to mention that "Discount Plan Code" is required to create the Discount Plans.
+
+Description Test Case 8:
+Actions : Click on "back".
+Expected Results : Return to the previous page. 
+
+Description Test Case 9:
+Actions : In the tab "Informations" fill the required fields (Discount Plan Code and Description) and click on "save".
+Expected Results : A new Informations Discount Plans is created.
+
+Description Test Case 10:
+Actions : In the tab "Discount Plan Items" fill the required fields (Item Code, Category and Percentage) then fill not required fields "Subcategory and Accounting code" and click on "Add this Discount Plan Item".
+Expected Results : A new Discount Plan Items is created.
+
+Description Test Case 11:
+Actions : In the Tab "Discount Plan Items" Click on "Back button".
+Expected Results : Return to the previous page. 
+
+Description Test Case 12:
+Actions : Make a search by filling the field "Code" then click on the button "search".
+Expected Results : The result of research gives the items which are matching with the chosen Discount Plans
+
+Description Test Case 13: 
+Actions : Click on the link in the datatable in order to update the Tab "Informations" Discount Plan just created, fill all the fields and click "save".
+Expected Results : The Informations Discount Plan is updated with the new record.
+
+Description Test Case 14:
+Actions : Click In the tab "Discount Plan Items" fill all fields and click on "Modify this Discount Plan Item".
+Expected Results : The Discount Plan Items is updated with success.
+
+Description Test Case 15:
+Actions : Make a search by filling the fields "Description" then click on the button "search".
+Expected Results : The result of research gives the items which are matching with the chosen Discount Plans
+
+Description Test Case 16:
+Actions : Pick a line from the table then click on the icon "delete ".
+Expected Results : An alert appears in order to make sure that you really you want to delete the Discount Plans
+
+Description Test Case 17: 
+Actions : Click on "No" to confirm that you don't want to delete the Discount Plans
+Expected Results : The picked Discount Plans is not deleted.
+
+Description Test Case 18: 
+Actions : Pick a line from the table then click on the icon "disable ".
+Expected Results : An alert appears in order to make sure that you really you want to disable the Discount Plans
+
+Description Test Case 19: 
+Actions : Click on "No" to confirm that you don't want to disable the Discount Plans
+Expected Results : The picked Discount Plans is not disabled.
+
+Description Test Case 20: 
+Actions : Click on "yes" to confirm that you want to disable the Discount Plans
+Expected Results : The picked Discount Plans is disabled.
+
+Description Test Case 21:
+Actions : Pick one or more lines from the table then click on the button "Export To Excel"
+Expected Results : The picked lines are exported on an Excel file
+
+Description Test Case 22:
+Actions : Click on the button "Export To Excel", without picking any line from the table
+Expected Results : All the lines from the table are been exported on an Excel file
+
+Description Test Case 23:
+Actions : Click on the button "Delete Multiple" wihout picking any line from the table.
+Expected Results : Nothing happened.
+
+Description Test Case 24: 
+Actions : Pick more than one line from the table then click on the button "Delete Multiple"
+Expected Results : The picked lines are erased
+
+Description Test Case 25: 
+Actions : Pick a line from the table then click on the link in order to delete the Discount plans then click in the button "Delete ".
+Expected Results : An alert appears in order to make sure that you really you want to delete the Discount Plans
+
+Description Test Case 26: 
+Actions : Click on "yes" to confirm that you want to delete the Discount Plans
+Expected Results : The picked Discount Plans is deleted.
+
+Description Test Case 27:
+Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
+Expected Results : The table shows 15 lines per page 
+
+Description Test Case 28: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
+Expected Results : The table shows 20 lines per page 
+
+Description Test Case 29: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
+Expected Results : The table shows 50 lines per page 
+
+Description Test Case 30: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
+Expected Results : The table shows 10 lines per page 
+
+Description Test Case 31: 
+Actions : Click on the button to move to the next page 
+Expected Results : The next page is displayed
+
+Description Test Case 32: 
+Actions : Click on the button to move to the last page 
+Expected Results :The last page is displayed
+
+Description Test Case 33: 
+Actions : Click on the button to move to the previous page
+Expected Results :The previous page is displayed
+
+Description Test Case 34: 
+Actions : In each column from the table (Code, Description and Active) there is a filter, click on the filter in column "Code" in order to refine your search in an ascending/descending order.
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 35:
+Actions : Click on the filter in column "Description" in order to refine your search in an ascending/descending order.
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 36:
+Actions : Click on the filter in column "Active" in order to refine your search in an ascending/descending order.
+Expected Results : The lines become ordered in an ascending/descending order.
+
+-->
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="../../VariablesGlobales.html">VariablesGlobales</a></td></tr>
+<tr><td><a href="Variables.html">Variables</a></td></tr>
+<tr><td><a href="SearchWithCodeDescriptionTestCase.html">SearchWithCodeDescriptionTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="NewDiscountPlanTestCase.html">NewDiscountPlanTestCase</a></td></tr>
+<tr><td><a href="EmptyDiscountPlansTestCase.html">EmptyDiscountPlansTestCase</a></td></tr>
+<tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
+<tr><td><a href="FillOnlyDiscountPlanCodeTestCase.html">FillOnlyDiscountPlanCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyDescriptionTestCase.html">FillOnlyDescriptionTestCase</a></td></tr>
+<tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
+<tr><td><a href="SuccessTabInformationsDiscountPlansTestCase.html">SuccessTabInformationsDiscountPlansTestCase</a></td></tr>
+<tr><td><a href="SuccessTabDiscountPlansItemsTestCase.html">SuccessTabDiscountPlansItemsTestCase</a></td></tr>
+<tr><td><a href="BackTabDiscountPlansItemsButtonTestCase.html">BackTabDiscountPlansItemsButtonTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeTestCase.html">SearchWithCodeTestCase</a></td></tr>
+<tr><td><a href="UpdateTabInformationsDiscountPlansTestCase.html">UpdateTabInformationsDiscountPlansTestCase</a></td></tr>
+<tr><td><a href="UpdateTabDiscountPlansItemsTestCase.html">UpdateTabDiscountPlansItemsTestCase</a></td></tr>
+<tr><td><a href="SearchWithDescriptionTestCase.html">SearchWithDescriptionTestCase</a></td></tr>
+<tr><td><a href="DeleteDiscountPlansWithClickNoTestCase.html">DeleteDiscountPlansWithClickNoTestCase</a></td></tr>
+<tr><td><a href="DisableDiscountPlansWithClickNoTestCase.html">DisableDiscountPlansWithClickNoTestCase</a></td></tr>
+<tr><td><a href="DisableDiscountPlansWithClickYesTestCase.html">DisableDiscountPlansWithClickYesTestCase</a></td></tr>
+<tr><td><a href="ExportWithPickLineTestCase.html">ExportWithPickLineTestCase</a></td></tr>
+<tr><td><a href="ExportWithoutPickAnyLineTestCase.html">ExportWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithoutPickAnyLineTestCase.html">DeleteMultipleWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithPickLineTestCase.html">DeleteMultipleWithPickLineTestCase</a></td></tr>
+<tr><td><a href="DeleteDiscountPlansWithClickYesTestCase.html">DeleteDiscountPlansWithClickYesTestCase</a></td></tr>
+<tr><td><a href="DropdownWith15TestCase.html">DropdownWith15TestCase</a></td></tr>
+<tr><td><a href="DropdownWith20TestCase.html">DropdownWith20TestCase</a></td></tr>
+<tr><td><a href="DropdownWith50TestCase.html">DropdownWith50TestCase</a></td></tr>
+<tr><td><a href="DropdownWith10TestCase.html">DropdownWith10TestCase</a></td></tr>
+<tr><td><a href="NextPageTestCase.html">NextPageTestCase</a></td></tr>
+<tr><td><a href="LastPageTestCase.html">LastPageTestCase</a></td></tr>
+<tr><td><a href="PreviousPageTestCase.html">PreviousPageTestCase</a></td></tr>
+<tr><td><a href="FilterWithCodeTestCase.html">FilterWithCodeTestCase</a></td></tr>
+<tr><td><a href="FilterWithDescriptionTestCase.html">FilterWithDescriptionTestCase</a></td></tr>
+<tr><td><a href="FilterWithActiveTestCase.html">FilterWithActiveTestCase</a></td></tr>
+<tr><td><a href="LogoutTestCase.html">LogoutTestCase</a></td></tr>
+</tbody></table>
+</body>
+</html>

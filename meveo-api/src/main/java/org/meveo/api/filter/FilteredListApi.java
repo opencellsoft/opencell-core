@@ -8,6 +8,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.filter.FilterService;
@@ -21,13 +22,18 @@ public class FilteredListApi extends BaseApi {
 	@Inject
 	private FilterService filterService;
 
-	public String list(String filterCode, Integer firstRow, Integer numberOfRows, Provider provider)
+	public String list(String filterCode, Integer firstRow, Integer numberOfRows, User currentUser)
 			throws MeveoApiException {
 		String result = "";
 
-		Filter filter = filterService.findByCode(filterCode, provider);
+		Filter filter = filterService.findByCode(filterCode, currentUser.getProvider());
 		if (filter == null) {
 			throw new EntityDoesNotExistsException(Filter.class, filterCode);
+		}
+
+		// check if user owned the filter
+		if (filter.getAuditable().getCreator().getId() != currentUser.getId()) {
+			throw new MeveoApiException("INVALID_FILTER_OWNER");
 		}
 
 		try {

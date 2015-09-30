@@ -30,6 +30,7 @@
         showEnableDisableButton - show a default "enable/disable" button
         useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation
         updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message  
+        execute - show button to invoke a execute method
         
 -->
 
@@ -52,6 +53,7 @@
     <cc:attribute name="submitPartialProcess" />
     <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/> <!--  instead of partial submit filter, jquery expression could be used in process attribute:  process="@this @( :input:not([name*='omitFromSubmit']))" -->
     <cc:attribute name="submitUpdate" default="@all"/>
+    <cc:attribute name="execute" default="false" />
 </cc:interface>
 
 <cc:implementation>
@@ -92,6 +94,14 @@
             icon="ui-icon-check" process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
         </p:commandButton>
+        
+        <p:commandButton id="ExecuteButtonAjax"
+            rendered="#{ cc.attrs.execute  and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit}"
+            value="#{cc.attrs.executeLabel}" oncomplete="$('html,body').scrollTop(0);"
+            action="#{cc.attrs.backingBean.execute()}"
+            process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
+            <f:param name="edit" value="#{cc.attrs.edit}" />
+        </p:commandButton>        
 
 		<!-- Update with message -->
 		<p:remoteCommand id="remoteUpdateWithMessageButton" rendered="#{cc.attrs.submitPartialProcess==null}"
@@ -107,7 +117,7 @@
 		<p:commandButton id="#{resultsId}saveButtonWithMessage"
 			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage)}"
 			value="#{messages['action.save']}" icon="ui-icon-check"
-			oncomplete="PF('saveButtonWithMessageDialog').show()">
+			onclick="PF('saveButtonWithMessageDialog').show()" type="button">
 		</p:commandButton>
         
 		<!-- Update the message handling when  -->
@@ -170,7 +180,7 @@
 		</script>	
 		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.deleteWithBack}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}"
-			oncomplete="PF('confirmDeleteWidget').show()" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null}">
+			onclick="PF('confirmDeleteWidget').show()" type="button" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null}">
 			<f:setPropertyActionListener target="#{cc.attrs.backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>

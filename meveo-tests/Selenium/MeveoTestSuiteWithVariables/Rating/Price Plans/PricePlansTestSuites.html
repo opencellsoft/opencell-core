@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the fields (Code, Charge Code, Offer Code and Seller) then click on the button "search".
+Expected Results : The result of research gives the items matching with the fields filled bellow
+
+Description Test Case 2: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "Clean filters".
+Expected Results : The fileds (Code, Charge Code, Offer Code and Seller) become empty.
+
+Description Test Case 3:
+Actions : Click on the button "New" in order to add a new Price Plans
+Expected Results : A list of empty items are showed.
+
+Description Test Case 4:
+Actions : Don't fill any fields then click on "save".
+Expected Results : A new Price Plans can not be created, an alert appears to mention that "Code, Charge Code and Amount Without Tax" are required to create the Price Plans
+
+Description Test Case 5:
+Actions : Click on "reset".
+Expected Results : The field code become empty.
+
+Description Test Case 6:
+Actions : Fill only the field "Code" then click on "save".
+Expected Results : A new Price Plans can not be created, an alert appears to mention that "Charge Code and Amount Without Tax" are required to create the Price Plans.
+
+Description Test Case 7: 
+Actions : Fill only the field "Charge Code" then click on "save".
+Expected Results : A new Price Plans can not be created, an alert appears to mention that "Code and Amount Without Tax" are required to create the Price Plans.
+
+Description Test Case 8: 
+Actions : Fill only the field "Amount Without Tax" then click on "save".
+Expected Results : A new Price Plans can not be created, an alert appears to mention that "Code and Charge Code" are required to create the Price Plans.
+
+Description Test Case 9:
+Actions : Let the required fields (Code, Charge Code and Amount Without Tax) not filled and fill not required fields and click on "save".
+Expected Results : A new Price Plans can not be created, an alert appears to mention that Code, Charge Code and Amount Without Tax are required to create the Price Plans.
+
+Description Test Case 10:
+Actions : Click on "back".
+Expected Results : Return to the previous page. 
+
+Description Test Case 11:
+Actions : Fill the required fields (Code, Charge Code and Amount Without Tax) then fill not required fields and click on "save".
+Expected Results : A new Price Plans is created.
+
+Description Test Case 12:
+Actions : Make a search by filling the field "Code" then click on the button "search".
+Expected Results : The result of research gives the items which are matching with the chosen Price Plans
+
+Description Test Case 13: 
+Actions : Click on the "Icon Edit" in the datatable in order to update the Price Plan just created, fill all the fields and click "save".
+Expected Results : The Price Plan is updated with the new record.
+
+Description Test Case 14:
+Actions : Make a search by filling the fields "Code and Charge Code" then click on the button "search".
+Expected Results : The result of research gives the items which are matching with the chosen Price Plans
+
+Description Test Case 15: 
+Actions : Pick a line from the table then click on the icon "delete ".
+Expected Results : An alert appears in order to make sure that you really you want to delete the Price Plans
+
+Description Test Case 16: 
+Actions : Click on "No" to confirm that you don't want to delete the Price Plans
+Expected Results : The picked Price Plans is not deleted.
+
+Description Test Case 17: 
+Actions : Pick a line from the table then click on the icon "duplicate".
+Expected Results : An alert appears in order to make sure that you really you want to duplicate the Price Plans
+
+Description Test Case 18: 
+Actions : Click on "No" to confirm that you don't want to duplicate the Price Plans
+Expected Results : The picked Price Plans is not duplicated.
+
+Description Test Case 19: 
+Actions : Click on "yes" to confirm that you want to duplicate the Price Plans
+Expected Results : The picked Price Plans is duplicated.
+
+Description Test Case 20:
+Actions : Pick one or more lines from the table then click on the button "Export To Excel"
+Expected Results : The picked lines are exported on an Excel file
+
+Description Test Case 21: 
+Actions : Click on the button "Export To Excel", without picking any line from the table
+Expected Results : All the lines from the table are been exported on an Excel file
+
+Description Test Case 22:
+Actions : Click on the button "Delete Multiple" wihout picking any line from the table.
+Expected Results : Nothing happened.
+
+Description Test Case 23:
+Actions : Make a Second search by filling the fields "Code and Charge Code" then click on the button "search".
+Expected Results : The result of research gives the items which are matching with the chosen Price Plans
+
+Description Test Case 24: 
+Actions : Pick more than one line from the table then click on the button "Delete Multiple"
+Expected Results : The picked lines are erased
+
+Description Test Case 25:
+Actions : Make a Third search by filling the fields "Code and Charge Code" then click on the button "search".
+Expected Results : The result of research gives the items which are matching with the chosen Price Plans
+
+Description Test Case 26: 
+Actions : Pick a line from the table then click on the icon "delete ".
+Expected Results : An alert appears in order to make sure that you really you want to delete the Price Plans
+
+Description Test Case 27: 
+Actions : Click on "yes" to confirm that you want to delete the Price Plans
+Expected Results : The picked Price Plans is deleted.
+
+Description Test Case 28:
+Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
+Expected Results : The table shows 15 lines per page 
+
+Description Test Case 29: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
+Expected Results : The table shows 20 lines per page 
+
+Description Test Case 30: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
+Expected Results : The table shows 50 lines per page 
+
+Description Test Case 31: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
+Expected Results : The table shows 10 lines per page 
+
+Description Test Case 32: 
+Actions : Click on the button to move to the next page 
+Expected Results : The next page is displayed
+
+Description Test Case 33: 
+Actions : Click on the button to move to the last page 
+Expected Results :The last page is displayed
+
+Description Test Case 34: 
+Actions : Click on the button to move to the previous page
+Expected Results :The previous page is displayed
+
+Description Test Case 35: 
+Actions : Click on the button "Advanced" to show more optionals research. 
+Expected Results : The others optionals research fields is showed.
+
+Description Test Case 36: 
+Actions : Click on the button "Hide Advanced" to hide the optionals research. 
+Expected Results : The optionals research fields is hide.
+
+-->
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="../../VariablesGlobales.html">VariablesGlobales</a></td></tr>
+<tr><td><a href="Variables.html">Variables</a></td></tr>
+<tr><td><a href="SearchWithCodeChargeCodeOfferCodeSellerTestCase.html">SearchWithCodeChargeCodeOfferCodeSellerTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="NewPricePlanTestCase.html">NewPricePlanTestCase</a></td></tr>
+<tr><td><a href="EmptyPricePlansTestCase.html">EmptyPricePlansTestCase</a></td></tr>
+<tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyChargeCodeTestCase.html">FillOnlyChargeCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyAmountWithoutTaxTestCase.html">FillOnlyAmountWithoutTaxTestCase</a></td></tr>
+<tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
+<tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
+<tr><td><a href="SuccessPricePlansTestCase.html">SuccessPricePlansTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeTestCase.html">SearchWithCodeTestCase</a></td></tr>
+<tr><td><a href="UpdatePricePlansTestCase.html">UpdatePricePlansTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeChargeCodeTestCase.html">SearchWithCodeChargeCodeTestCase</a></td></tr>
+<tr><td><a href="DeletePricePlansWithClickNoTestCase.html">DeletePricePlansWithClickNoTestCase</a></td></tr>
+<tr><td><a href="DuplicatePricePlansWithClickNoTestCase.html">DuplicatePricePlansWithClickNoTestCase</a></td></tr>
+<tr><td><a href="DuplicatePricePlansWithClickYesTestCase.html">DuplicatePricePlansWithClickYesTestCase</a></td></tr>
+<tr><td><a href="ExportWithPickLineTestCase.html">ExportWithPickLineTestCase</a></td></tr>
+<tr><td><a href="ExportWithoutPickAnyLineTestCase.html">ExportWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithoutPickAnyLineTestCase.html">DeleteMultipleWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="SecondSearchWithCodeChargeCodeTestCase.html">SecondSearchWithCodeChargeCodeTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithPickLineTestCase.html">DeleteMultipleWithPickLineTestCase</a></td></tr>
+<tr><td><a href="ThirdSearchWithCodeChargeCodeTestCase.html">ThirdSearchWithCodeChargeCodeTestCase</a></td></tr>
+<tr><td><a href="DeletePricePlansWithClickYesTestCase.html">DeletePricePlansWithClickYesTestCase</a></td></tr>
+<tr><td><a href="DropdownWith15TestCase.html">DropdownWith15TestCase</a></td></tr>
+<tr><td><a href="DropdownWith20TestCase.html">DropdownWith20TestCase</a></td></tr>
+<tr><td><a href="DropdownWith50TestCase.html">DropdownWith50TestCase</a></td></tr>
+<tr><td><a href="DropdownWith10TestCase.html">DropdownWith10TestCase</a></td></tr>
+<tr><td><a href="NextPageTestCase.html">NextPageTestCase</a></td></tr>
+<tr><td><a href="LastPageTestCase.html">LastPageTestCase</a></td></tr>
+<tr><td><a href="PreviousPageTestCase.html">PreviousPageTestCase</a></td></tr>
+<tr><td><a href="AdvancedButtonTestCase.html">AdvancedButtonTestCase</a></td></tr>
+<tr><td><a href="HideAdvancedButtonTestCase.html">HideAdvancedButtonTestCase</a></td></tr>
+<tr><td><a href="LogoutTestCase.html">LogoutTestCase</a></td></tr>
+</tbody></table>
+</body>
+</html>

@@ -95,9 +95,10 @@ public class UserRoleBean extends BaseBean<Role> {
     protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
 
         // Do not user a check against user.provider as it contains only one value, while user can be linked to various providers
-        boolean isSuperAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
-        if (isSuperAdmin) {            
-        	searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
+        // boolean isSuperAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
+        boolean isSuperAdmin = currentUser.hasPermission("superAdmin", "superAdminManagement");
+        if (isSuperAdmin) {
+            searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
         }
 
         return searchCriteria;

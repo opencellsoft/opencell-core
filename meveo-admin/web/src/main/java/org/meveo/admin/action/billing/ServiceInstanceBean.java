@@ -16,7 +16,9 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -206,4 +208,8 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
 
 		return super.saveOrUpdate(killConversation);
 	}
+	
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("recurringChargeInstances");
+    }
 }

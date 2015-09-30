@@ -91,11 +91,4 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 		return result;
 	}
 
-	@Override
-	protected String saveOrUpdate(TriggeredEDRTemplate entity) throws BusinessException {
-		String result = super.saveOrUpdate(entity);
-		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(entity);
-		return result;
-	}
-	
 }

@@ -65,7 +65,7 @@ import org.meveo.model.shared.InterBankTitle;
 
 @Entity
 @ObservableEntity
-@CustomFieldEntity(accountLevel=AccountLevelEnum.PROVIDER)
+@CustomFieldEntity(accountLevel = AccountLevelEnum.PROVIDER)
 @ExportIdentifier("code")
 @Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
@@ -85,7 +85,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
     @Column(name = "DISABLED", nullable = false)
     private boolean disabled;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CURRENCY_ID")
     private Currency currency;
@@ -129,9 +129,9 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<TradingCountry> tradingCountries;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
-//    private List<User> users = new ArrayList<User>();
+    // @ManyToMany(fetch = FetchType.LAZY)
+    // @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
+    // private List<User> users = new ArrayList<User>();
 
     private static final String PM_SEP = ",";
 
@@ -192,13 +192,13 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
-    
-	@OneToOne(mappedBy = "provider")
-	private InvoiceConfiguration invoiceConfiguration=new InvoiceConfiguration();
-	
-	@OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@MapKeyColumn(name = "code")
-	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
+
+    @OneToOne(mappedBy = "provider")
+    private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
+
+    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @MapKeyColumn(name = "code")
+    private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
     public String getCode() {
         return code;
@@ -215,7 +215,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public boolean isDisabled() {
         return disabled;
     }
@@ -231,7 +231,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     public void setActive(boolean active) {
         setDisabled(!active);
     }
-    
+
     public String getSerializedPaymentMethods() {
         return serializedPaymentMethods;
     }
@@ -348,13 +348,13 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         }
     }
 
-//    public List<User> getUsers() {
-//        return users;
-//    }
-//
-//    public void setUsers(List<User> users) {
-//        this.users = users;
-//    }
+    // public List<User> getUsers() {
+    // return users;
+    // }
+    //
+    // public void setUsers(List<User> users) {
+    // this.users = users;
+    // }
 
     public Blob getLogo() {
         return logo;
@@ -553,34 +553,46 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         return String.format("Provider [code=%s]", code);
     }
 
-	public InvoiceConfiguration getInvoiceConfiguration() {
-		return invoiceConfiguration;
-	}
+    public InvoiceConfiguration getInvoiceConfiguration() {
+        return invoiceConfiguration;
+    }
 
-	public void setInvoiceConfiguration(InvoiceConfiguration invoiceConfiguration) {
-		this.invoiceConfiguration = invoiceConfiguration;
-	}
-	
-	public Map<String, CustomFieldInstance> getCustomFields() {
-		return customFields;
-	}
+    public void setInvoiceConfiguration(InvoiceConfiguration invoiceConfiguration) {
+        this.invoiceConfiguration = invoiceConfiguration;
+    }
 
-	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-		this.customFields = customFields;
-	}
+    public Map<String, CustomFieldInstance> getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
+        this.customFields = customFields;
+    }
 
     @Override
     public ICustomFieldEntity getParentCFEntity() {
         return null;
-    }    
+    }
 
+    @Override
     public Object getCFValue(String cfCode) {
-        return getCustomFields().get(cfCode);
+        if (getCustomFields().containsKey(cfCode)) {
+            return getCustomFields().get(cfCode);
+        }
+        return null;
+    }
+
+    @Override
+    public Object getCFValue(String cfCode, Date date) {
+        if (getCustomFields().containsKey(cfCode)) {
+            return getCustomFields().get(cfCode).getValue(date);
+        }
+        return null;
     }
 
     @Override
     public Object getInheritedOnlyCFValue(String cfCode) {
-        
+
         return null;
     }
 
@@ -596,7 +608,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         if (getCustomFields().containsKey(cfCode)) {
             return getCustomFields().get(cfCode).getValue();
 
-        } 
+        }
         return null;
     }
 

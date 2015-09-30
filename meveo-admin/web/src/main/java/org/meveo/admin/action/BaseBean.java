@@ -36,6 +36,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.Identity;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
+import org.meveo.admin.action.admin.CurrentUser;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
@@ -49,7 +50,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
-import org.meveo.security.MeveoUser;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -85,6 +86,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @CurrentProvider
     protected Provider currentProvider;
 
+    @Inject
+    @CurrentUser
+    protected User currentUser;
+    
     @Inject
     protected Conversation conversation;
 
@@ -298,10 +303,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        String outcome = null;
 
+        String message = entity.isTransient()?"save.successful":"update.successful";
+        
         if (!isMultilanguageEntity()) {
-            outcome = saveOrUpdate(entity);
+            entity = saveOrUpdate(entity);
 
         } else {
             if (entity.getId() != null) {
@@ -318,10 +324,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     }
                 }
 
-                outcome = saveOrUpdate(entity);
+                entity = saveOrUpdate(entity);
 
             } else {
-                outcome = saveOrUpdate(entity);
+                entity = saveOrUpdate(entity);
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
@@ -335,7 +341,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             endConversation();
         }
 
-        return outcome;
+        messages.info(new BundleKey("messages", message));
+        return back();
     }
     
     public String saveOrUpdateWithMessage(boolean killConversation) throws BusinessException {
@@ -356,18 +363,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @param entity Entity to save.
      * @throws BusinessException
      */
-    protected String saveOrUpdate(T entity) throws BusinessException {
+    protected T saveOrUpdate(T entity) throws BusinessException {
         if (entity.isTransient()) {
             getPersistenceService().create(entity);
-            messages.info(new BundleKey("messages", "save.successful"));
+
         } else {
-            getPersistenceService().update(entity);
-            messages.info(new BundleKey("messages", "update.successful"));
+            entity = getPersistenceService().update(entity);
         }
 
         objectIdFromSet = (Long) entity.getId();
 
-        return back();
+        return entity;
     }
 
     /**
@@ -715,6 +721,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                         cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
                     }
 
+//                    cleanFilters.put(PersistenceService.SEARCH_CURRENT_USER, getCurrentUser());
+                    cleanFilters.put(PersistenceService.SEARCH_CURRENT_PROVIDER, getCurrentProvider());
                     return BaseBean.this.supplementSearchCriteria(cleanFilters);
                 }
 
@@ -804,7 +812,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     protected User getCurrentUser() {
-        return ((MeveoUser) identity.getUser()).getUser();
+        return currentUser; 
+        
+        // return ((MeveoUser) identity.getUser()).getUser();
     }
 
     public List<TradingLanguage> getProviderLanguages() {

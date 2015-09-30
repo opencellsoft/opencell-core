@@ -18,7 +18,7 @@ package org.meveo.admin.action.crm;
 
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -48,7 +48,7 @@ import org.primefaces.model.TreeNode;
  * Standard backing bean for {@link AccountEntity} that allows build accounts hierarchy for richfaces tree component. In this Bean you can set icons and links used in tree.
  */
 @Named
-@RequestScoped
+@ViewScoped
 public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
     private static final String SUBSCRIPTION_KEY = "subscription";
@@ -156,6 +156,8 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             if (acc.getBillingAccount() != null && acc.getBillingAccount().getCustomerAccount() != null) {
                 customer = acc.getBillingAccount().getCustomerAccount().getCustomer();
             }
+            selectedEntityClass = UserAccount.class;
+            
         } else if (entity instanceof Subscription) {
             Subscription s = (Subscription) entity;
             if (s.getUserAccount() != null && s.getUserAccount().getBillingAccount() != null && s.getUserAccount().getBillingAccount().getCustomerAccount() != null) {

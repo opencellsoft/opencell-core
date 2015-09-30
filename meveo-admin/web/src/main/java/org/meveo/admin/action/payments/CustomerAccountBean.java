@@ -141,8 +141,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
 			super.saveOrUpdate(killConversation);
 
-			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
-
 			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
 	            return null;
 	        } else {
@@ -229,7 +227,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 * is current customerAccount active
 	 */
 	public boolean isActiveAccount() {
-		if (entity != null) {
+		if (entity != null && entity.getId()!=null) {
 			return entity.getStatus() == CustomerAccountStatusEnum.ACTIVE;
 		}
 		return false;

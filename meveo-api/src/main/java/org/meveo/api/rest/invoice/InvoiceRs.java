@@ -57,11 +57,11 @@ public interface InvoiceRs extends IBaseRs {
 	
 	@POST
 	@Path("/getXMLInvoice")
-	public GetXmlInvoiceResponseDto getXMLInvoice(Long invoiceId);
+	public GetXmlInvoiceResponseDto getXMLInvoice(String invoiceNumber);
 	
 	@POST
 	@Path("/getPdfInvoice")
-	public GetPdfInvoiceResponseDto getPdfInvoice(Long invoiceId);
+	public GetPdfInvoiceResponseDto getPdfInvoice(String invoiceNumber);
 
 
 }

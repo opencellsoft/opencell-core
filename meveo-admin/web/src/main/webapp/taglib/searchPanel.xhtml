@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:hftl="http://hftl.org"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<!--
+    Makes part of "happy faces" component group.
+    A custom component to display a search panel wrapping search fields and buttons implementing search and additional navigation functionality 
+ 
+    Attributes
+        backingBean - backing bean associated with search.
+        label - a panel header
+        renderNewButton - should a "create new entity" button be displayed   
+        newButtonView - an outcome view for "create new entity"
+        ajax and ajaxUpdateIds - should search be done in ajax way and a list of component ids to update upon completion
+        renderAdvancedLink - should a "show/hide advanced search fields" button be displayed
+        
+    Facets
+        buttons - additional buttons to include after the last button  
+-->
+
+<ui:composition>
+
+    <c:if test="${empty(renderNewButton)}">
+        <c:set var="renderNewButton" value="true" />
+    </c:if>
+    <c:if test="${empty(ajax)}">
+        <c:set var="ajax" value="true" />
+    </c:if>    
+    <c:if test="${empty(ajaxUpdateIds)}">
+        <c:set var="ajaxUpdateIds" value="results_panel" />
+    </c:if>
+    <c:if test="${empty(renderAdvancedLink)}">
+        <c:set var="renderAdvancedLink" value="false" />
+    </c:if>     
+
+    <hf:searchPanel id="${id}" label="#{label}" backingBean="#{backingBean}" renderNewButton="#{renderNewButton}" newButtonView="#{newButtonView}" ajax="#{ajax}"
+        ajaxUpdateIds="#{ajaxUpdateIds}" renderAdvancedLink="#{renderAdvancedLink}" buttons="#{buttons}">
+        <c:set var="id" value="${null}" />
+        <ui:insert />
+    </hf:searchPanel>
+</ui:composition>
+</html>

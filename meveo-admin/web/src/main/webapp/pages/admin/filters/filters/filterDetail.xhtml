@@ -30,16 +30,25 @@
 						showEnableDisableButton="true">
 
 						<hf:formField label="#{messages['BusinessEntity.code']}"
-							field="code" required="true" validateUnique="true" />
+							field="code" required="true" validateUnique="true"
+							disabled="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
 						<hf:formField label="#{messages['BusinessEntity.description']}"
 							field="description" required="true" useConverter="false"
-							size="50" maxlength="50" />
-						<hf:formField field="shared" label="#{messages['filter.shared']}"></hf:formField>
+							size="50" maxlength="50"
+							disabled="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
+
+						<hf:formField showOnlyOnNew="true" field="shared"
+							label="#{messages['filter.shared']}"></hf:formField>
+
+						<hf:formField
+							rendered="#{filterBean.entity != null and filterBean.entity.auditable.creator.id == filterBean.getCurrentUser().id}"
+							field="shared" label="#{messages['filter.shared']}"></hf:formField>
 
 						<hftl:decorateFormField fieldId="inputXml"
 							label="#{messages['filter.inputXml']}" newLine="true">
 							<pe:codeMirror id="inputXml" mode="javascript" theme="eclipse"
-								value="#{filterBean.entity.inputXml}" lineNumbers="true" />
+								value="#{filterBean.entity.inputXml}" lineNumbers="true"
+								readonly="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
 						</hftl:decorateFormField>
 					</hf:formPanel>
 
