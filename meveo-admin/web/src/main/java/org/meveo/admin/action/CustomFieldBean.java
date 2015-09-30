@@ -19,6 +19,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -149,6 +150,8 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                         cfi.setJobInstance((JobInstance) entity);
                     } else if (entity instanceof Provider) {
                         cfi.setProvider((Provider) entity);
+                    } else if (entity instanceof Seller) {
+                        cfi.setSeller((Seller) entity);
                     }
                 }
                 ((ICustomFieldEntity) entity).getCustomFields().put(cfi.getCode(), cfi);

@@ -2,7 +2,7 @@ package org.meveo.model.crm;
 
 public enum AccountLevelEnum {
     CUST("account"), CA("account"), BA("account"), UA("account"), SUB("subscription"), ACC("access"), CHARGE("chargeTemplate"), OFFER("offerTemplate"), SERVICE("serviceTemplate"), TIMER(
-            "jobInstance"), PROVIDER("provider");
+            "jobInstance"), PROVIDER("provider"), SELLER("seller");
 
     private final String relationFieldname;
 

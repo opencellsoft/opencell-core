@@ -1532,4 +1532,13 @@
 			oldColumnName="operand2" newColumnName="operand" />
 	</changeSet>
     
+    <changeSet author="AndriusKarpavicius" id="#1094_20150929">
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="seller_id" type="BIGINT" />
+		</addColumn>    
+    
+    	<addForeignKeyConstraint constraintName="fk_seller_id_crm_custom_field_inst"
+			referencedTableName="CRM_SELLER" baseColumnNames="seller_id"
+			baseTableName="CRM_CUSTOM_FIELD_INST" referencedColumnNames="id" />
+    </changeSet>
 </databaseChangeLog>

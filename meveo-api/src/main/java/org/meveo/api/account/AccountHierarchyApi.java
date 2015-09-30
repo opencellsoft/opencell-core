@@ -920,6 +920,16 @@ public class AccountHierarchyApi extends BaseApi {
 						}
 					}
 
+		             // populate customFields
+		            if (sellerDto.getCustomFields() != null) {
+		                try {
+		                    populateCustomFields(AccountLevelEnum.SELLER, sellerDto.getCustomFields().getCustomField(), seller, currentUser);
+		                } catch (IllegalArgumentException | IllegalAccessException e) {
+		                    log.error("Failed to associate custom field instance to an entity", e);
+		                    throw new MeveoApiException("Failed to associate custom field instance to an entity");
+		                }
+		            }
+		            
 					if (seller.isTransient()) {
 						sellerService.create(seller, currentUser, provider);
 					} else {
