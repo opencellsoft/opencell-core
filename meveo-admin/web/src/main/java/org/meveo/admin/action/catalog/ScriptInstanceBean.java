@@ -62,9 +62,6 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     public ScriptInstance initEntity() {
         log.debug("start conversation id: {}", conversation.getId());
         ScriptInstance scriptInstance = super.initEntity();
-        // if(entity != null){
-        // scriptInstanceService.clearLogs(getCurrentProvider().getCode(), entity.getCode());
-        // }
         return scriptInstance;
     }
 
@@ -98,23 +95,24 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
-        String result = getListViewName();
-        try {
-            super.saveOrUpdate(killConversation);
-            if (entity.getError().booleanValue()) {
-                result = null;
-            }
-        } catch (Exception e) {
-            messages.error(e.getMessage());
-            result = null;
-        }
-
-        return result;
-    }
+		String result = getListViewName();
+		try {
+			entity = scriptInstanceService.saveOrUpdate(entity, getCurrentUser(), getCurrentProvider());
+			if(entity.getError().booleanValue()){
+				result =  "/pages/admin/scriptInstances/scriptInstanceDetail.xhtml?objectId="+entity.getId()+"&edit=true&faces-redirect=true";
+			}
+	       if (killConversation) {
+	            endConversation();
+	        }
+		} catch (Exception e) {
+			messages.error(e.getMessage());
+			result = null;
+		}
+		return result;
+	}
 
     public void execute() {
-        scriptInstanceService.test(getCurrentProvider(), entity.getCode(), null);
+        scriptInstanceService.test(getCurrentProvider(), entity.getCode(), null,getCurrentUser());
     }
 
     public List<String> getLogs() {

@@ -1,32 +1,27 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
+    xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
-	<ui:define name="body">	
-				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation_AP.form']}" backingBean="#{automatedPaymentBean}">
-						<hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate"  />									
-						<hf:formField label="#{messages['accountOperation.reference']}" field="reference"  />
-						<hf:formField label="#{messages['accountOperation.depositDate']}" field="depositDate"  />	                    
-						<hf:formField label="#{messages['accountOperation.dueDate']}" field="dueDate"  />																	
-						<hf:formField label="#{messages['accountOperation.paymentMethod']}" field="paymentMethod"  isMessage="true"/>													
-						<hf:formField label="#{messages['accountOperation.bankLot']}" field="bankLot"  size="50" maxlength="50"  />
-						<hf:formField label="#{messages['accountOperation.occDescription']}" field="occDescription"   />
-						<hf:formField label="#{messages['accountOperation.amount']}" field="amount"   />													
-						 <f:facet name="buttons">
-						<p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
-						<f:param name="customerAccountId" value="#{automatedPayment.getCustomerAccount().getId()}" />
-						<f:param name="edit" value="false" />
-						<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-						</p:button>
-						</f:facet>
-				</hf:formPanel>				
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
+    <ui:define name="body">
+        <hf:formPanel showFormButtons="#{false}" edit="#{false}" label="#{messages['accountOperation_AP.form']}" backingBean="#{automatedPaymentBean}">
+            <hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
+            <hf:formField label="#{messages['accountOperation.reference']}" field="reference" />
+            <hf:formField label="#{messages['accountOperation.depositDate']}" field="depositDate" />
+            <hf:formField label="#{messages['accountOperation.dueDate']}" field="dueDate" />
+            <hf:formField label="#{messages['accountOperation.paymentMethod']}" field="paymentMethod" isMessage="true" />
+            <hf:formField label="#{messages['accountOperation.bankLot']}" field="bankLot" size="50" maxlength="50" />
+            <hf:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" />
+            <hf:formField label="#{messages['accountOperation.amount']}" field="amount" />
+            <f:facet name="buttons">
+                <p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
+                    <f:param name="customerAccountId" value="#{automatedPaymentBean.entity.getCustomerAccount().getId()}" />
+                    <f:param name="edit" value="false" />
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                </p:button>
+            </f:facet>
+        </hf:formPanel>
+    </ui:define>
 </ui:composition>

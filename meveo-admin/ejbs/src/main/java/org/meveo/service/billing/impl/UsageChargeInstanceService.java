@@ -16,6 +16,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -160,7 +161,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 
 	@SuppressWarnings("unchecked")
 	public List<UsageChargeInstance> findUsageChargeInstanceBySubscriptionId(Long subscriptionId) {
-		QueryBuilder qb = new QueryBuilder(UsageChargeInstance.class, "c");
+		QueryBuilder qb = new QueryBuilder(UsageChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 		return qb.getQuery(getEntityManager()).getResultList();
 	}

@@ -89,7 +89,8 @@
 									<p:tabView id="childTab">
 										<p:tab id="tab0"
 											title="#{messages['customerAccount.tab.account']}">
-												<hf:formField id="customerSelectId"
+
+                                             <hf:formField id="customerSelectId"
 													label="#{messages['customerAccount.customer']}"
 													field="customer" valueLabelField="code" required="true"
 													popup="true" popupId="searchCustomerPopup" />
@@ -154,7 +155,7 @@
     												</hf:formDecorateField>
 												</h:panelGroup>
 
-                                                <hf:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="description" required="false"
+                                                <hf:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false"
                                                     listBean="#{titleBean}" listenerUpdate=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:userNamePanel" styleClass="clearLeft"/>
                 
             									<h:panelGroup id="userNamePanel" layout="block">
@@ -246,14 +247,14 @@
 										edit="#{customerAccountBean.edit}"
 										useCustomIdParam="true" ajaxSubmit="true" submitPartialProcess=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab">
 										<p:commandButton
-											rendered="#{customerAccountBean.isActiveAccount() and not empty customerAccountBean.entity.id}"
+											rendered="#{customerAccountBean.isActiveAccount()}"
 											action="#{customerAccountBean.closeCustomerAccount}"
 											value="#{messages['customerAccount.buttonCloseAccount']}" immediate="true"
 											onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}">
 											<!-- 										<f:attribute name="backView" value="#{backView}" /> -->
 										</p:commandButton>
 										<p:button
-											rendered="#{customerAccountBean.isActiveAccount() and not empty customerAccountBean.entity.id}"
+											rendered="#{customerAccountBean.isActiveAccount()}"
 											outcome="addBillingAccount"
 											value="#{messages['customerAccount.buttonAddBillingAccount']}">
 											<f:param name="cid"
@@ -360,7 +361,7 @@
 									field="excludedFromDunning" isMessage="true"  width="10%"/>
 
 								<hftl:actionsColumn width="15%"
-									editView="#{accountOperationBean.displayOperation(entity.getId())}" renderViewLink="true"/> 
+									editView="#{accountOperationBean.displayOperation(entity)}" renderViewLink="true"/> 
 								<ui:define name="add-on-buttons"> 
 									<h:panelGroup layout="block" styleClass="form-panel-actions">
 										<p:commandButton

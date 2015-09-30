@@ -17,7 +17,6 @@
 package org.meveo.admin.exception;
 
 import javax.ejb.ApplicationException;
-import javax.naming.InitialContext;
 
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;

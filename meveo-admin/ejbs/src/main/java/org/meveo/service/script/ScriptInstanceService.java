@@ -124,7 +124,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 			create(scriptInstance, user, provider);
 		} else {
 			update(scriptInstance, user);
-		}
+		}		
 		compileScript(scriptInstance);
 		scriptInstance = findById(scriptInstance.getId());
 		return scriptInstance;
@@ -323,10 +323,11 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	 * @param provider Provider's scriptInstance
 	 * @param scriptCode ScriptInstanceCode
 	 * @param context  Context params
+	 * @param user User executor
 	 */
-	public void execute(Provider provider, String scriptCode, Map<String, Object> context) {
+	public void execute(Provider provider, String scriptCode, Map<String, Object> context,User userExecutor) {
 		try {
-			execute( getScriptInterface(provider, scriptCode),context,provider);
+			execute( getScriptInterface(provider, scriptCode),context,provider,userExecutor);
 		} catch (Exception e) {
 			log.error("Script execution failed",e);
 		} 
@@ -338,13 +339,14 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	 * @param scriptClass
 	 * @param context
 	 * @param provider
+	 * @param user User executor
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 * @throws BusinessException
 	 */
-	private  void execute(Class<ScriptInterface> scriptClass, Map<String, Object> context,Provider provider) throws InstantiationException, IllegalAccessException, BusinessException {
+	private  void execute(Class<ScriptInterface> scriptClass, Map<String, Object> context,Provider provider,User userExecutor) throws InstantiationException, IllegalAccessException, BusinessException {
 			ScriptInterface script = scriptClass.newInstance();
-			script.execute(context, getCurrentProvider());		
+			script.execute(context, getCurrentProvider(),userExecutor);		
 	}
 
 	/**
@@ -354,7 +356,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	 * @param scriptCode
 	 * @param context
 	 */
-	public void test(Provider provider, String scriptCode, Map<String, Object> context) {		
+	public void test(Provider provider, String scriptCode, Map<String, Object> context,User userExecutor) {		
 		try{
 			clearLogs(provider.getCode(), scriptCode);
 		    ScriptInstance scriptInstance = findByCode(scriptCode, provider);		
@@ -362,7 +364,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 			javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\"" + provider.getCode() + "\",\"" + scriptCode + "\");//");
 			log.debug("script for testing: {}", javaSrc);
 			Class<ScriptInterface> compiledScript = compileJavaSrouce(javaSrc, getPackageName(scriptInstance.getScript()) + "." + getClassName(scriptInstance.getScript()));
-			execute(compiledScript,context,provider);
+			execute(compiledScript,context,provider,userExecutor);
 
 		} catch (Exception e) {
 			log.error("Script test failed",e);
@@ -386,11 +388,17 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 			ScriptInstance scriptInstance = findByCode(scriptCode, provider);
 			if (scriptInstance != null) {
 				compileScript(scriptInstance);
-				if (allScriptInterfaces.containsKey(provider.getCode())) {
-					result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+				if (allScriptInterfaces.containsKey(provider.getCode())) {	
+					if(allScriptInterfaces.get(provider.getCode()).containsKey(scriptCode)){
+						result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+					}else{
+						log.debug("ScriptInstance with {} exist with compilation errors",scriptCode);
+					}
+				}else{
+					log.debug("No ScriptInstance compiled available for the provider {}",provider.getCode());
 				}
 			}else{
-              log.debug("ScriptInstance with " + scriptCode + " does not exist");
+				log.debug("ScriptInstance with {} does not exist",scriptCode);
 			}
 		}
 		log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);

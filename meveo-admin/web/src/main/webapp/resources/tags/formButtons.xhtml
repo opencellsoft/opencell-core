@@ -117,7 +117,7 @@
 		<p:commandButton id="#{resultsId}saveButtonWithMessage"
 			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage)}"
 			value="#{messages['action.save']}" icon="ui-icon-check"
-			oncomplete="PF('saveButtonWithMessageDialog').show()">
+			onclick="PF('saveButtonWithMessageDialog').show()" type="button">
 		</p:commandButton>
         
 		<!-- Update the message handling when  -->
@@ -180,7 +180,7 @@
 		</script>	
 		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.deleteWithBack}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}"
-			oncomplete="PF('confirmDeleteWidget').show()" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null}">
+			onclick="PF('confirmDeleteWidget').show()" type="button" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null}">
 			<f:setPropertyActionListener target="#{cc.attrs.backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>

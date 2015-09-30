@@ -22,7 +22,7 @@
                 <h:panelGroup>
                     <p:inputText id="#{cc.attrs.fieldIdPrefix}_child" value="#{cc.attrs.backingBean.filters[cc.attrs.field][cc.attrs.valueLabelField]}" size="#{cc.attrs.size}"
                         disabled="true" />
-                    <p:commandButton id="selectLink" onclick="PF('dlg_#{cc.attrs.popupId}').show()" icon="ui-icon-search" />
+                    <p:commandButton id="selectLink" onclick="PF('dlg_#{cc.attrs.popupId}').show()" icon="ui-icon-search" type="button" />
                     <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
                 </h:panelGroup>
             </c:if>

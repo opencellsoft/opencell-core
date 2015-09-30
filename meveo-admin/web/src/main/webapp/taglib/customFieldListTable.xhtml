@@ -83,7 +83,7 @@
                 </p:commandButton>
 
                 <p:commandButton value="#{messages['commons.close']}" immediate="true" rendered="#{!empty(popupWidgetVar)}"
-                    update="@this #{updateOnAddEdit}" onsuccess="PF('#{popupWidgetVar}').hide()">
+                    update="@this #{updateOnAddEdit}" oncomplete="PF('#{popupWidgetVar}').hide()">
                 </p:commandButton>
 
 

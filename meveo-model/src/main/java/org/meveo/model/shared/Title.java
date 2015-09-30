@@ -23,6 +23,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.MultilanguageEntity;
@@ -35,58 +36,63 @@ import org.meveo.model.MultilanguageEntity;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_TITLE_SEQ")
 public class Title extends BusinessEntity {
 
-    private static final long serialVersionUID = -6827515878506806536L;
+	private static final long serialVersionUID = -6827515878506806536L;
 
-    @Column(name = "IS_COMPANY")
-    private Boolean isCompany = Boolean.FALSE;
+	@Column(name = "IS_COMPANY")
+	private Boolean isCompany = Boolean.FALSE;
 
-    public Title() {
+	public Title() {
 
-    }
+	}
 
-    public Title(String code, boolean isCompany) {
-        this.code = code;
-        this.isCompany = isCompany;
-    }
+	public Title(String code, boolean isCompany) {
+		this.code = code;
+		this.isCompany = isCompany;
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public Boolean getIsCompany() {
-        return isCompany;
-    }
+	public Boolean getIsCompany() {
+		return isCompany;
+	}
 
-    public void setIsCompany(Boolean isCompany) {
-        this.isCompany = isCompany;
-    }
+	public void setIsCompany(Boolean isCompany) {
+		this.isCompany = isCompany;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((code == null) ? 0 : code.hashCode());
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (this == obj)
-            return true;
-        if (getClass() != obj.getClass())
-            return false;
-        Title other = (Title) obj;
-        if (code == null) {
-            if (other.code != null)
-                return false;
-        } else if (!code.equals(other.code))
-            return false;
-        return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		Title other = (Title) obj;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
+		return true;
+	}
+
+	public String getDescriptionNotNull() {
+		return StringUtils.isBlank(super.getDescription()) ? getCode() : super.getDescription();
+	}
+	
 }

@@ -13,7 +13,7 @@
 
     <ui:define name="body">
 
-        <hftl:searchPanel id="searchPanel" label="#{messages['customFieldTemplate.search']}" backingBean="#{customFieldTemplateListBean}" columns="3">
+        <hftl:searchPanel id="searchPanel" label="#{messages['customFieldTemplate.search']}" backingBean="#{customFieldTemplateListBean}">
             <hftl:searchField label="#{messages['BusinessEntity.code']}" field="code" />
             <hftl:searchField label="#{messages['customFieldTemplate.fieldType']}" id="fieldType" field="fieldType" />
             <hftl:searchField label="#{messages['customFieldTemplate.storageType']}" id="storageType" field="storageType" />

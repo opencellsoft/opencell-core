@@ -49,6 +49,9 @@ public class UsageChargeTemplateApi extends BaseApi {
 	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	public void create(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		
+		validate(postData);
+		
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())) {
 			Provider provider = currentUser.getProvider();
 
@@ -153,6 +156,9 @@ public class UsageChargeTemplateApi extends BaseApi {
 	}
 
 	public void update(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		
+		validate(postData);
+		
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())) {
 			Provider provider = currentUser.getProvider();
 
@@ -330,6 +336,7 @@ public class UsageChargeTemplateApi extends BaseApi {
 	}
 	
 	public void createOrUpdate(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		
 		if (usageChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
 			create(postData, currentUser);
 		} else {

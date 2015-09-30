@@ -204,7 +204,7 @@
 
                                                 
                                                 
-                                    <hf:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="description" required="false"
+                                    <hf:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false"
                                         listBean="#{titleBean}" listenerUpdate=":parentTab:formBillingAccountPanel:formId:childTab:userNamePanel" styleClass="clearLeft"/>
 
                                     <h:panelGroup id="userNamePanel" layout="block">
@@ -413,7 +413,7 @@
 
                                     <h:panelGroup rendered="#{not empty billingAccountBean.entity.id}">
                                         <div class="action-buttons">
-                                            <p:commandButton value="#{messages['account.buttonResiliateAccount']}" oncomplete="PF('dlg_billingAccountTerminationPopup').show()"
+                                            <p:commandButton value="#{messages['account.buttonResiliateAccount']}" onclick="PF('dlg_billingAccountTerminationPopup').show()" type="button"
                                                 disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />
                                             <p:commandButton action="#{billingAccountBean.cancelAccount()}" value="#{messages['account.buttonCancelAccount']}"
                                                 onclick="if(confirm('#{messages['account.confirmCancelAccount']}')){return true;}else{return false;}" immediate="true"
@@ -496,9 +496,9 @@
 
 		<p:dialog id="billingAccountTerminationPopup"
 			header="#{messages['billingAccount.accountTermination']}"
-			widgetVar="dlg_billingAccountTerminationPopup" dynamic="false"
+			widgetVar="dlg_billingAccountTerminationPopup" modal="true" appendTo="@(body)" closeOnEscape="true"
 			width="400">
-			<hf:formPanel edit="true" backingBean="#{billingAccountBean}"
+            <hf:formPanel id="termPanel" edit="true" backingBean="#{billingAccountBean}"
 				styleClass="formPanel" formId="termFrm" showFormButtons="false"
 				useCustomIdParam="true">
 					<hf:formField label="#{messages['serviceInstance.code']}"
@@ -513,11 +513,11 @@
 					<p:panel styleClass="action-buttons">
 						<p:commandButton action="#{billingAccountBean.terminateAccount()}"
 							value="#{messages['button.terminateButton']}"
-							onsuccess="PF('dlg_billingAccountTerminationPopup').hide()"
-							update=":parentTab:formBillingAccountPanel:formId">
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_billingAccountTerminationPopup').hide()"
+							update=":parentTab:formBillingAccountPanel:formId :termPanel:termFrm:messages">
 						</p:commandButton>
 						<p:commandButton immediate="true"
-							onclick="PF('dlg_billingAccountTerminationPopup').hide()"
+							onclick="PF('dlg_billingAccountTerminationPopup').hide()" type="button"
 							value="#{messages['management.close']}" />
 					</p:panel>
 			</hf:formPanel>

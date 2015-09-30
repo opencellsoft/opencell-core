@@ -227,7 +227,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 * is current customerAccount active
 	 */
 	public boolean isActiveAccount() {
-		if (entity != null) {
+		if (entity != null && entity.getId()!=null) {
 			return entity.getStatus() == CustomerAccountStatusEnum.ACTIVE;
 		}
 		return false;
