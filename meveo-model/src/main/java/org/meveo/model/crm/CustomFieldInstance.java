@@ -27,6 +27,7 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.ProviderlessEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -38,9 +39,9 @@ import org.meveo.model.mediation.Access;
 @Entity
 @ExportIdentifier({ "code", "subscription.code", "subscription.provider", "account.code", "account.provider", "chargeTemplate.code", "chargeTemplate.provider",
         "serviceTemplate.code", "serviceTemplate.provider", "offerTemplate.code", "offerTemplate.provider", "access.accessUserId", "access.subscription.code", "access.provider",
-        "jobInstance.code", "jobInstance.provider", "provider" })
+        "seller.code", "seller.provider", "jobInstance.code", "jobInstance.provider", "provider" })
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID", "ACCOUNT_ID", "CHARGE_TEMPLATE_ID", "SERVICE_TEMPLATE_ID",
-        "OFFER_TEMPLATE_ID", "ACCESS_ID", "JOB_INSTANCE_ID", "PROVIDER_ID" }))
+        "OFFER_TEMPLATE_ID", "ACCESS_ID", "JOB_INSTANCE_ID", "PROVIDER_ID", "SELLER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
 @NamedQueries({
         @NamedQuery(name = "CustomFieldInstance.getCFIForCacheAccount", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.account where cfi.account is not null and cfi.disabled=false "),
@@ -50,7 +51,8 @@ import org.meveo.model.mediation.Access;
         @NamedQuery(name = "CustomFieldInstance.getCFIForCacheService", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.serviceTemplate where cfi.serviceTemplate is not null and cfi.disabled=false "),
         @NamedQuery(name = "CustomFieldInstance.getCFIForCacheOffer", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.offerTemplate where cfi.offerTemplate is not null and cfi.disabled=false "),
         @NamedQuery(name = "CustomFieldInstance.getCFIForCacheAccess", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.access where cfi.access is not null and cfi.disabled=false "),
-        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheJobInstance", query = " SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.jobInstance where cfi.jobInstance is not null and cfi.disabled=false ") })
+        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheJobInstance", query = " SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.jobInstance where cfi.jobInstance is not null and cfi.disabled=false "),
+        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheSeller", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.seller where cfi.seller is not null and cfi.disabled=false "), })
 public class CustomFieldInstance extends ProviderlessEntity {
 
     private static final long serialVersionUID = 8691447585410651639L;
@@ -96,6 +98,10 @@ public class CustomFieldInstance extends ProviderlessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "JOB_INSTANCE_ID")
     private JobInstance jobInstance;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SELLER_ID")
+    private Seller seller;
 
     @Column(name = "VERSIONABLE")
     private boolean versionable;
@@ -192,6 +198,14 @@ public class CustomFieldInstance extends ProviderlessEntity {
 
     public void setAccess(Access access) {
         this.access = access;
+    }
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
 
     public ChargeTemplate getChargeTemplate() {
@@ -1043,6 +1057,9 @@ public class CustomFieldInstance extends ProviderlessEntity {
 
         } else if (jobInstance != null) {
             return jobInstance;
+            
+        } else if (seller != null) {
+            return seller;
         }
 
         return null;

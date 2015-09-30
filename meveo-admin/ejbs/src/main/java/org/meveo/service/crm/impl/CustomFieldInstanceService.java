@@ -27,7 +27,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         List<CustomFieldInstance> results = new ArrayList<CustomFieldInstance>();
         String[] queryNames = { "CustomFieldInstance.getCFIForCacheAccount", "CustomFieldInstance.getCFIForCacheProvider", "CustomFieldInstance.getCFIForCacheSubscription",
                 "CustomFieldInstance.getCFIForCacheCharge", "CustomFieldInstance.getCFIForCacheService", "CustomFieldInstance.getCFIForCacheOffer",
-                "CustomFieldInstance.getCFIForCacheAccess", "CustomFieldInstance.getCFIForCacheJobInstance", };
+                "CustomFieldInstance.getCFIForCacheAccess", "CustomFieldInstance.getCFIForCacheJobInstance", "CustomFieldInstance.getCFIForCacheSeller" };
 
         for (String queryName : queryNames) {
             results.addAll(getEntityManager().createNamedQuery(queryName, CustomFieldInstance.class).getResultList());
@@ -65,17 +65,16 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         List<BusinessEntity> entities = query.getResultList();
         return entities;
     }
-    
-	@SuppressWarnings("unchecked")
-	public List<CustomFieldInstance> findByAccount(AccountEntity account, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(CustomFieldInstance.class, "c", null, provider);
-		qb.addCriterionEntity("account", account);
 
-		try {
-			return qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-    
+    @SuppressWarnings("unchecked")
+    public List<CustomFieldInstance> findByAccount(AccountEntity account, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(CustomFieldInstance.class, "c", null, provider);
+        qb.addCriterionEntity("account", account);
+
+        try {
+            return qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

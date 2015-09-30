@@ -125,10 +125,4 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 			"org.meveo.model.catalog.DiscountPlan",
 			"org.meveo.model.communication.email.EmailTemplate");
 
-    /**
-     * get storage types for storage list and map
-     */
-//    public List<CustomFieldStorageTypeEnum> getListEnum(){
-//    	return Arrays.asList(CustomFieldStorageTypeEnum.LIST,CustomFieldStorageTypeEnum.MAP);
-//    }
 }

@@ -158,12 +158,18 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     @Override
     public Object getInheritedCFValue(String cfCode) {
 
-        if (getCustomFields().containsKey(cfCode)) {
-            return getCustomFields().get(cfCode).getValue();
+        try {
+            if (getCustomFields().containsKey(cfCode)) {
+                return getCustomFields().get(cfCode).getValue();
 
-        } else if (getParentCFEntity() != null) {
-            return getParentCFEntity().getInheritedCFValue(cfCode);
+            } else if (getParentCFEntity() != null) {
+                return getParentCFEntity().getInheritedCFValue(cfCode);
+            }
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(getClass());
+            log.error("Failed to access inherited CF values", e);
         }
+
         return null;
     }
 

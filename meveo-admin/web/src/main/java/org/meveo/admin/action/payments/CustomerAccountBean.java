@@ -131,6 +131,9 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 */
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
+	    
+	    entity.setCustomer(customerService.attach(entity.getCustomer()));
+	    
 		try {
 			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
 				if (customerAccountService.isDuplicationExist(entity)) {
