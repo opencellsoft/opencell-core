@@ -18,57 +18,37 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[3]/span</td>
 	<td>NewCounter</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
-	<td>codeID</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>${codeID}</td>
 	<td>CodeText</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
-	<td>descriptionID</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>${descriptionID}</td>
 	<td>descriptionText</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/input</td>
-	<td>UnitID</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>${UnitID}</td>
 	<td>UnitText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div[1]/div/div/div[3]/span</td>
+	<td>id=formPanel:counterTemplatId:counterType_label</td>
 	<td>counterType</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div[2]/div/div/div[3]/span</td>
+	<td>id=formPanel:counterTemplatId:counterLevel_label</td>
 	<td>counterLevel</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/input</td>
-	<td>InitialValueID</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>${InitialValueID}</td>
 	<td>InitialValue</td>
 </tr>
 <tr>
@@ -78,28 +58,28 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[41]/div/ul/li[2]</td>
-	<td>ChooseDate</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/div/div[3]/span</td>
+	<td>CalendarUpdate</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/textarea</td>
-	<td>ExpressionElTextAreaID</td>
+	<td>InitialValueElExpression</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>${ExpressionElTextAreaID}</td>
-	<td>ExpressionElTextArea</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[7]/div/div/textarea</td>
+	<td>InitialValueElExpression2</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span[2]</td>
-	<td>saveWithObjectId</td>
+	<td>saveWhenCreate</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span[2]</td>
-	<td>saveButton</td>
+	<td>saveButtonWhenUpdate</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -113,23 +93,58 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
 	<td>searchCodeText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
 	<td>searchDescriptionText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[1]/span</td>
 	<td>buttonSearch</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[2]/span</td>
 	<td>CleanFilters</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:code_id_message_link</td>
+	<td>codeIdMessageLink</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/tbody/tr[1]/td[10]/button[2]/span[2]</td>
+	<td>IconDelete</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:deleteOk</td>
+	<td>deleteYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:deleteKo</td>
+	<td>deleteNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/tbody/tr[1]/td[10]/button[1]/span[2]</td>
+	<td>IconDisable</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:disableOk</td>
+	<td>disableYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:disableKo</td>
+	<td>disableNo</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -138,73 +153,23 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=datatable_results:0:code_id_message_link</td>
-	<td>codeIdMessageLink</td>
+	<td>id=results_formexportToXml</td>
+	<td>ExportToXML</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=datatable_results:0:resultsdeletelink</td>
-	<td>deleteLink</td>
+	<td>id=results_formdeleteEntitieslink</td>
+	<td>DeleteMultiple</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=datatable_results:0:deleteOk</td>
-	<td>deleteOk</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>Check</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=datatable_results:0:code_id_message_link</td>
-	<td>codeIdMessageLink</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>Failed Test Case : All Fields are missings.</td>
-	<td>EmptyFieldsAlert</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>Failed Test Case : There are a missings Fields.</td>
-	<td>MissingFieldsAlert</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>Success Test Case : All fields are well done.</td>
-	<td>SuccessAlert</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>Success Test Case : Selected Counter updated with success.</td>
-	<td>UpdateAlert</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>Success Test Case : Selected Counter deleted with success.</td>
-	<td>DeleteAlert</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>Success Test Case : The selected data&nbsp;&nbsp;disabled with success.</td>
-	<td>DisableAlert</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>Success Test Case : You exported your data with success.</td>
-	<td>ExportDataAlert</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>Success Test Case : All required fields done with Success.</td>
-	<td>RequiredFieldsAlert</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>id=datatable_results:0:resultsdisablelink</td>
-	<td>disableLink</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>id=datatable_results:0:disableOk</td>
-	<td>disableOk</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>UnCheck</td>
 </tr>
 </tbody></table>
 </body>

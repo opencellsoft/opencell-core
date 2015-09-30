@@ -12,23 +12,8 @@
 <tr><td rowspan="1" colspan="3">UpdateCounterTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>10000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${codeIdMessageLink}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
 	<td></td>
 </tr>
 <tr>
@@ -62,18 +47,23 @@
 	<td>11</td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>${CalendarUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;CAL_INV_MONTHLY&quot;)</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[7]/div/div/textarea</td>
+	<td>${InitialValueElExpression2}</td>
 	<td>10</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${saveButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>${saveButtonWhenUpdate}</td>
 	<td></td>
 </tr>
 </tbody></table>

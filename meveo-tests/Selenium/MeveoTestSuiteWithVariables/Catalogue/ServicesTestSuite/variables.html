@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[3]/span</td>
 	<td>NewService</td>
 </tr>
 <tr>
@@ -34,22 +34,17 @@
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/div[7]/div[2]/div/div/div/form/div/div/div/div[2]/span[1]/div/div/input</td>
-	<td>codeID</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>${codeID}</td>
 	<td>CodeText</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/div[7]/div[2]/div/div/div/form/div/div/div/div[2]/span[2]/div/div/input</td>
-	<td>descriptionID</td>
+	<td>descriptionText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>${descriptionID}</td>
-	<td>descriptionText</td>
+	<td>xpath=/html/body/div[1]/div[7]/div[2]/div/div/div[1]/form/div/div/div/div[2]/span[3]/div/div/input</td>
+	<td>UpdateDescription</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -58,12 +53,17 @@
 </tr>
 <tr>
 	<td>store</td>
+	<td>xpath=/html/body/div[1]/div[7]/div[2]/div/div/div[1]/form/div/div/div/div[2]/span[4]/div/div/div/div[3]/span</td>
+	<td>SelectCalendar2</td>
+</tr>
+<tr>
+	<td>store</td>
 	<td>xpath=/html/body/div[1]/div[7]/div[2]/div/div/div/form/div/div/div/div[3]/button[1]/span[2]</td>
 	<td>saveWithObjectId</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath= /html/body/div[1]/div[7]/div[2]/div/div/div[1]/form/div/div/div/div[3]/button[1]/span[2]</td>
+	<td>xpath= /html/body/div[1]/div[7]/div[2]/div/div/div[1]/form/div/div/div/div[3]/button[2]/span[2]</td>
 	<td>ConfirmSave</td>
 </tr>
 <tr>
@@ -83,43 +83,98 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
 	<td>searchCodeText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
 	<td>searchDescriptionText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/div/div[3]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[3]/div/div/div/div[3]/span</td>
 	<td>SearchDisabled</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[37]/div/ul/li[3]</td>
+	<td>css=li:contains(&quot;Yes&quot;)</td>
 	<td>DisabledYes</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[37]/div/ul/li[2]</td>
+	<td>css=li:contains(&quot;No&quot;)</td>
 	<td>DisableNo</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[1]/span</td>
 	<td>buttonSearch</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[2]/span</td>
 	<td>cleanFilters</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/tbody/tr[1]/td[9]/button[3]/span[2]</td>
+	<td>IconDelete</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:deleteOk</td>
+	<td>deleteYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:deleteKo</td>
+	<td>deleteNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/tbody/tr[1]/td[9]/button[2]/span[2]</td>
+	<td>IconDisable</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:disableOk</td>
+	<td>disableYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:disableKo</td>
+	<td>disableNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/tbody/tr[1]/td[9]/button[1]/span[2]</td>
+	<td>IconDuplicate</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:duplicateOk</td>
+	<td>duplicateYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:duplicateKo</td>
+	<td>duplicateNo</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>id=results_formbuttonExport</td>
 	<td>buttonExport</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=results_formexportToXml</td>
+	<td>ExportToXML</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=results_formdeleteEntitieslink</td>
+	<td>DeleteMultiple</td>
 </tr>
 </tbody></table>
 </body>

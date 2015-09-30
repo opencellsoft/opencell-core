@@ -12,18 +12,8 @@
 <tr><td rowspan="1" colspan="3">SearchWithDisableYesTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>click</td>
+	<td>clickAndWait</td>
 	<td>${CleanFilters}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>10000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
 	<td></td>
 </tr>
 <tr>
@@ -33,7 +23,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[37]/div/ul/li[3]</td>
+	<td>css=li:contains(&quot;Yes&quot;)</td>
 	<td></td>
 </tr>
 <tr>

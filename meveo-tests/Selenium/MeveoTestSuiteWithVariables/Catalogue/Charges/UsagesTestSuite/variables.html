@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[3]/span</td>
 	<td>NewUsage</td>
 </tr>
 <tr>
@@ -88,7 +88,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[14]/div/div/button/span[2]</td>
+	<td>id=panelUsage:usageChargeId:tabView:invoiceSubCategorySelectedId:entityFieldSingle:invoiceSubCategory_entity_label</td>
 	<td>SearchSubcategory</td>
 </tr>
 <tr>
@@ -99,7 +99,22 @@
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[15]/div/div/div/div[2]/div/button[1]/span[2]</td>
-	<td>TriggeredEDR</td>
+	<td>AddOneTriggeredEDR</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[15]/div/div/div/div[2]/div/button[2]/span[2]</td>
+	<td>AddAllTriggeredEDR</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[15]/div/div/div/div[2]/div/button[3]/span[2]</td>
+	<td>RemoveOneTriggeredEDR</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[15]/div/div/div/div[2]/div/button[4]/span[2]</td>
+	<td>RemoveAllTriggeredEDR</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -123,53 +138,123 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
 	<td>searchCodeText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
 	<td>searchDescriptionText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/table/tbody/tr/td[2]/input</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[3]/div/div/table/tbody/tr/td[2]/input</td>
 	<td>SearchPriorityFrom</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/table/tbody/tr/td[4]/input</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[3]/div/div/table/tbody/tr/td[4]/input</td>
 	<td>SearchPriorityTo</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/div/div[3]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[4]/div/div/div/div[3]/span</td>
 	<td>SearchDisabled</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[37]/div/ul/li[2]</td>
+	<td>css=li:contains(&quot;No&quot;)</td>
 	<td>DisabledNo</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[37]/div/ul/li[3]</td>
+	<td>css=li:contains(&quot;Yes&quot;)</td>
 	<td>DisabledYes</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[1]/span</td>
 	<td>buttonSearch</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[2]/span</td>
 	<td>CleanFilters</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/tbody/tr[1]/td[11]/button[3]/span[2]</td>
+	<td>IconDelete</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:deleteOk</td>
+	<td>deleteYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:deleteKo</td>
+	<td>deleteNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/tbody/tr[1]/td[11]/button[2]/span[2]</td>
+	<td>IconDisable</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:disableOk</td>
+	<td>disableYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:disableKo</td>
+	<td>disableNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/tbody/tr[1]/td[11]/button[1]/span[2]</td>
+	<td>IconDuplicate</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:duplicateOk</td>
+	<td>duplicateYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:duplicateKo</td>
+	<td>duplicateNo</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>id=results_formbuttonExport</td>
 	<td>buttonExport</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=results_formexportToXml</td>
+	<td>ExportToXML</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=results_formdeleteEntitieslink</td>
+	<td>DeleteMultiple</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[4]/span</td>
+	<td>BackToUsagesList</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>Check</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>UnCheck</td>
 </tr>
 </tbody></table>
 </body>

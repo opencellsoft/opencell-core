@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">SuccessInformationTestSuite</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${NewOffers}</td>
 	<td></td>
@@ -25,11 +20,6 @@
 	<td>waitForPopUp</td>
 	<td>_self</td>
 	<td>30000</td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -48,22 +38,27 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='formPanel:formId:tabView:j_idt193:j_idt178:serviceTemplates_list']/div/ul/li</td>
+	<td>${SelectServices}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[@type='button']</td>
+	<td>${AddOneService}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${saveWithObjectId}</td>
+	<td>${saveWhenCreate}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>click</td>
+	<td>${BackToOffersList}</td>
 	<td></td>
 </tr>
 </tbody></table>

@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">SuccessRecurringChargeTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${NewRecurringCharge}</td>
 	<td></td>
@@ -25,11 +20,6 @@
 	<td>waitForPopUp</td>
 	<td>_self</td>
 	<td>30000</td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
 </tr>
 <tr>
 	<td>type</td>
@@ -63,7 +53,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${LevelOfChargeSharing}</td>
+	<td>css=li:contains(&quot;Customer&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -93,42 +83,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=formPanel:reccuringChargeId:tabView:invoiceSubCategorySelectedId:entityFieldSingle:selectLink</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>5000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[2]/span[1]/div/div/input</td>
-	<td>932</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>5000</td>
+	<td>${ChooseSubcategory}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[3]/button[1]/span</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>5000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>5000</td>
+	<td>css=li:contains(&quot;RECURRENT&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -138,7 +98,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[39]/div/ul/li[2]</td>
+	<td>css=li:contains(&quot;CAL_INV_MONTHLY&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -148,7 +108,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${TriggeredEDR}</td>
+	<td>${AddOneTriggeredEDR}</td>
 	<td></td>
 </tr>
 <tr>
@@ -158,20 +118,14 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${saveWithObjectId}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>${saveWhenCreate}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
+	<td>${BackToRecurringList}</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

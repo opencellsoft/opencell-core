@@ -12,19 +12,14 @@
 <tr><td rowspan="1" colspan="3">SuccessCountersTestSuite</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${NewCounter}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
+	<td>waitForPopUp</td>
+	<td>_self</td>
+	<td>30000</td>
 </tr>
 <tr>
 	<td>type</td>
@@ -63,22 +58,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[40]/div/ul/li[2]</td>
+	<td>css=li:contains(&quot;CAL_INV_MONTHLY&quot;)</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${ExpressionElTextArea}</td>
+	<td>${InitialValueElExpression}</td>
 	<td>0</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${saveWithObjectId}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>${saveWhenCreate}</td>
 	<td></td>
 </tr>
 </tbody></table>
