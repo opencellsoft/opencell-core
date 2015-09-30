@@ -40,6 +40,9 @@ public class Filter extends BusinessEntity {
 	@JoinColumn(name = "FILTER_ID")
 	private List<FilterSelector> secondarySelectors = new ArrayList<FilterSelector>();
 
+//	@OneToMany(mappedBy = "filter")
+//	public List<FilterParameter> filterParameters;
+
 	@Column(name = "INPUT_XML", columnDefinition = "TEXT")
 	private String inputXml;
 
@@ -93,5 +96,13 @@ public class Filter extends BusinessEntity {
 	public void setShared(Boolean shared) {
 		this.shared = shared;
 	}
+
+//	public List<FilterParameter> getFilterParameters() {
+//		return filterParameters;
+//	}
+//
+//	public void setFilterParameters(List<FilterParameter> filterParameters) {
+//		this.filterParameters = filterParameters;
+//	}
 
 }
