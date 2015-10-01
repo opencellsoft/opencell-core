@@ -2,7 +2,6 @@ package org.meveo.api.dto.account;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -71,45 +71,52 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel id="sellerFormPanel" formId="sellerFormId"
+		<hf:formPanel id="sellerFormPanel" formId="sellerFormId" ajaxSubmit="true" submitPartialProcess=":sellerFormPanel:sellerFormId:tabView"
 				label="#{messages['seller.title']}" backingBean="#{sellerBean}">
-				
-						<div class="alert-box alert-box-notice">#{messages['message.info.seller.invoicePrefixRequiredWhenInvoiceNoSet']}</div>
-						
-							<hf:formField label="#{messages['businessEntity.code']}"
-								field="code" maxlength="35" required="true" />
+			<p:tabView id="tabView">
 
-							<hf:formField label="#{messages['businessEntity.description']}"
-								field="description" id="description" maxlength="100" />
+				<p:tab title="#{messages['customer.tab.information']}">
+					<div class="alert-box alert-box-notice">#{messages['message.info.seller.invoicePrefixRequiredWhenInvoiceNoSet']}</div>
 
-							<hf:formField label="#{messages['seller.invoicePrefix']}"
-								field="invoicePrefix" id="invoicePrefix" maxlength="50" />
-							
-							<hftl:decorateFormField fieldId="currentInvoiceNb" label="#{messages['seller.currentInvoiceNb']}">
-							<p:inputText id="currentInvoiceNb" 
-							   value="#{sellerBean.entity.currentInvoiceNb}" />
-							</hftl:decorateFormField>	
 
-							<hf:formField id="trCurrencySelectId"
-								label="#{messages['currency.codeCurrency']}"
-								field="tradingCurrency" valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}"/>
-<!--                                 popup="true" popupId="sellerCurrencyPopup" /> -->
+					<hf:formField label="#{messages['businessEntity.code']}"
+						field="code" maxlength="35" required="true" />
 
-							<hf:formField id="trCountrySelectId"
-								label="#{messages['tradingCountry.tradingCountry']}"
-								field="tradingCountry" valueLabelField="countryCode" listBean="#{tradingCountryBean}"/>
-<!--                                 popup="true" popupId="sellerCountryPopup" /> -->
+					<hf:formField label="#{messages['businessEntity.description']}"
+						field="description" id="description" maxlength="100" />
 
-							<hf:formField id="trLanguageSelectId"
-								label="#{messages['tradingLanguage.tradingLanguage']}"
-								field="tradingLanguage" valueLabelField="languageCode" listBean="#{tradingLanguageBean}"/>
-<!--                                 popup="true"	popupId="sellerLanguagePopup" /> -->
+					<hf:formField label="#{messages['seller.invoicePrefix']}"
+						field="invoicePrefix" id="invoicePrefix" maxlength="50" />
 
-							<hf:formField id="parentSelectId"
-								label="#{messages['seller.parent']}" field="seller"
-								valueLabelField="code" listBean="#{sellerBean}" />
-<!--                                 popup="true" popupId="sellerParentPopup" /> -->
-						
+					<hftl:decorateFormField fieldId="currentInvoiceNb"
+						label="#{messages['seller.currentInvoiceNb']}">
+						<p:inputText id="currentInvoiceNb"
+							value="#{sellerBean.entity.currentInvoiceNb}" />
+					</hftl:decorateFormField>
+
+					<hf:formField id="trCurrencySelectId"
+						label="#{messages['currency.codeCurrency']}"
+						field="tradingCurrency" valueLabelField="currencyCode"
+						listBean="#{tradingCurrencyBean}" />
+					<!--                                 popup="true" popupId="sellerCurrencyPopup" /> -->
+
+					<hf:formField id="trCountrySelectId"
+						label="#{messages['tradingCountry.tradingCountry']}"
+						field="tradingCountry" valueLabelField="countryCode"
+						listBean="#{tradingCountryBean}" />
+					<!--                                 popup="true" popupId="sellerCountryPopup" /> -->
+
+					<hf:formField id="trLanguageSelectId"
+						label="#{messages['tradingLanguage.tradingLanguage']}"
+						field="tradingLanguage" valueLabelField="languageCode"
+						listBean="#{tradingLanguageBean}" />
+					<!--                                 popup="true"	popupId="sellerLanguagePopup" /> -->
+
+					<hf:formField id="parentSelectId"
+						label="#{messages['seller.parent']}" field="seller"
+						valueLabelField="code" listBean="#{sellerBean}" />
+					<!--                                 popup="true" popupId="sellerParentPopup" /> -->
+
 					<!-- <p:tab title="#{messages['billingAccount.tab.information']}">
 							<hf:formField label="#{messages['address.address1']}"
 								field="address" id="address1" childField="address1"
@@ -133,7 +140,15 @@
 
 					</p:tab> -->
 
-			</hf:formPanel>
+				</p:tab>
+
+				<p:tab title="#{messages['customFieldTemplate.cfValues']}">
+					<hf:customFields id="customFields" backingBean="#{sellerBean}"
+						messagesId=":sellerFormPanel:sellerFormId:messages" />
+				</p:tab>
+
+			</p:tabView>
+		</hf:formPanel>
 
 	</ui:define>
 
