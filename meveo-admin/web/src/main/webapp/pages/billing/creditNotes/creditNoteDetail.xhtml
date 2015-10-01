@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="creditNote"
+						value="#{messages['menu.creditNote']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<hf:formPanel edit="#{creditNoteBean.edit}"
+			label="#{messages['creditNote.title']}"
+			backingBean="#{creditNoteBean}">
+			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"
+				validateUnique="true" required="true" />
+			<hf:formField label="#{messages['BusinessEntity.description']}"
+				id="description" field="description" useConverter="false" size="50"
+				maxlength="50" required="true" />
+		</hf:formPanel>
+
+	</ui:define>
+
+</ui:composition>
