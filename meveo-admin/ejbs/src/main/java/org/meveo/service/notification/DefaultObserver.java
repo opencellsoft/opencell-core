@@ -289,7 +289,7 @@ public class DefaultObserver {
 				"	  #additionnalInfo3#: ##,"+
 				"	  #additionnalInfo4#: ##"+
 				"}";
-       log.info("Defaut observer : input {} ", input.replaceAll("#", "\""));       
+       log.trace("Defaut observer : input {} ", input.replaceAll("#", "\""));       
        remoteInstanceNotifier.invoke(input.replaceAll("\"","'").replaceAll("#", "\""),ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
        
 		//TODO handel reponse
