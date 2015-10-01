@@ -99,8 +99,8 @@ public class MediationJobBean {
 						createEdr(line, currentUser);
 						outputCDR(line);
 						result.registerSucces();
-					} catch (CDRParsingException e) {
-						log.warn("error while parsing cdr ",e);
+                    } catch (CDRParsingException e) {
+                        log.warn("error while parsing cdr {} {}", e.getClass().getSimpleName(), e.getMessage());
 						result.registerError("file=" + file.getName() + ", line=" + processed + ": " + e.getRejectionCause().name());
 						rejectCDR(e.getCdr(), e.getRejectionCause());
 					} catch (Exception e) {
