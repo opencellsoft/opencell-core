@@ -9,7 +9,7 @@ public class PaymentTypeHandler implements TypeHandler{
 		if("VIREMENT".equals(text))  return "WIRETRANSFER";
 		if("PRELEVEMENT".equals(text))  return "DIRECTDEBIT";
 		if("CHEQUE".equals(text))  return "CHECK";
-		if("CARTE".equals(text))  return "CARD";
+		if("CB".equals(text))  return "CARD";
 		throw new TypeConversionException("Unknown payment method '"+text+"'");
        
     }
@@ -17,7 +17,7 @@ public class PaymentTypeHandler implements TypeHandler{
 		if("WIRETRANSFER".equals((String)value))  return "VIREMENT";
 		if("DIRECTDEBIT".equals((String)value))  return "PRELEVEMENT";
 		if("CHECK".equals((String)value))  return "CHEQUE";
-		if("CARD".equals((String)value))  return "CARTE";
+		if("CARD".equals((String)value))  return "CB";
 		return (String)value;
     }
     public Class<?> getType() {
