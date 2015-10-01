@@ -138,6 +138,7 @@ public class ExcelToCsv {
  private DataFormatter formatter = null;
  private FormulaEvaluator evaluator = null;
  private String separator = null;
+ private int[] sheetsIdsToConvert = {0};
 
  private static final String CSV_FILE_EXTENSION = ".csv";
  private static final String DEFAULT_SEPARATOR = ",";
@@ -411,15 +412,13 @@ public class ExcelToCsv {
 
      log.debug("Converting files contents to CSV format.");
 
-     // Discover how many sheets there are in the workbook....
-     int numSheets = this.workbook.getNumberOfSheets();
 
      // and then iterate through them.
-     for(int i = 0; i < numSheets; i++) {
+     for(int i = 0; i < sheetsIdsToConvert.length; i++) {
 
          // Get a reference to a sheet and check to see if it contains
          // any rows.
-         sheet = this.workbook.getSheetAt(i);
+         sheet = this.workbook.getSheetAt(sheetsIdsToConvert[i]);
          if(sheet.getPhysicalNumberOfRows() > 0) {
 
              // Note down the index number of the bottom-most row and
