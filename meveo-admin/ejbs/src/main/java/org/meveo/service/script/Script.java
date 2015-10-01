@@ -11,25 +11,22 @@ import org.meveo.model.crm.Provider;
 
 public abstract class Script  implements ScriptInterface{
 
-	@Override
     public void init(Map<String,Object> methodContext,Provider provider,User user){
     }
     
-	@Override
     public void init(Map<String,Object> methodContext,Provider provider){
     }
     
-    @SuppressWarnings("deprecation")
-	@Override
     public void execute(Map<String,Object> methodContext,Provider provider,User user) throws BusinessException{
     		execute(methodContext,provider);
     }
     
-    @Override
+    public void execute(Map<String,Object> methodContext,Provider provider) throws BusinessException{
+    }
+    
     public void finalize(Map<String,Object> methodContext,Provider provider,User user){
     }
 
-    @Override
     public void finalize(Map<String,Object> methodContext,Provider provider){
     }
 
