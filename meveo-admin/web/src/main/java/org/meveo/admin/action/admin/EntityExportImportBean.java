@@ -32,8 +32,11 @@ import org.meveo.export.ExportTemplate;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.export.RemoteImportException;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.Provider;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
@@ -240,10 +243,16 @@ public class EntityExportImportBean implements Serializable {
 
                 ExportTemplate exportTemplate = new ExportTemplate();
 
+                // Automatically add provider as filtering parameter
                 if (BaseEntity.class.isAssignableFrom(clazz)) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("provider", "provider");
                     exportTemplate.setParameters(params);
+                }
+                // Automatically export custom fields for CF related entities
+                if (ICustomFieldEntity.class.isAssignableFrom(clazz) ){
+                    exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
+                    exportTemplate.getClassesToExportAsFull().add(CustomFieldPeriod.class);
                 }
                 exportTemplate.setName(clazz.getSimpleName());
                 exportTemplate.setEntityToExport(clazz);
@@ -297,10 +306,16 @@ public class EntityExportImportBean implements Serializable {
         // Create a default export template if not found
         ExportTemplate exportTemplate = new ExportTemplate();
 
+        // Automatically add provider as filtering parameter
         if (BaseEntity.class.isAssignableFrom(clazz)) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("provider", "provider");
             exportTemplate.setParameters(params);
+        }
+        // Automatically export custom fields for CF related entities
+        if (ICustomFieldEntity.class.isAssignableFrom(clazz) ){
+            exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
+            exportTemplate.getClassesToExportAsFull().add(CustomFieldPeriod.class);
         }
         exportTemplate.setName(clazz.getSimpleName());
         exportTemplate.setEntityToExport(clazz);
