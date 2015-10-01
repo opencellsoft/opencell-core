@@ -36,32 +36,33 @@ public class FlatFileProcessingJob extends Job {
 	@Inject
 	private ResourceBundle resourceMessages;
 
-
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 		try {
 			String mappingConf = null;
-			String inputDir = null, scriptInstanceFlowCode = null;
+			String inputDir = null;
+			String scriptInstanceFlowCode = null;
 			String fileNameExtension = null;
 			String recordVariableName = null;
 			String originFilename = null;
-			Map<String, Object> context = new HashMap<String, Object>();
+			String formatTransfo= null;
+			Map<String, Object> initContext = new HashMap<String, Object>();
 			try {
 				recordVariableName = (String) jobInstance.getCFValue("FlatFileProcessingJob_recordVariableName");
-				originFilename = (String) jobInstance.getCFValue("FlatFileProcessingJob_originFilename");
-				context = new HashMap<String, Object>();
+				originFilename = (String) jobInstance.getCFValue("FlatFileProcessingJob_originFilename");			
 				CustomFieldInstance variablesCFI = jobInstance.getCustomFields().get("FlatFileProcessingJob_variables");
 				if (variablesCFI != null) {
-					context = variablesCFI.getMapValue();
+					initContext = variablesCFI.getMapValue();
 				}
 				mappingConf = (String) jobInstance.getCFValue("FlatFileProcessingJob_mappingConf");
-				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + jobInstance.getProvider().getCode() + ((String)jobInstance.getCFValue("FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
+				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + currentUser.getProvider().getCode() + ((String)jobInstance.getCFValue("FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
 				fileNameExtension = (String) jobInstance.getCFValue("FlatFileProcessingJob_fileNameExtension");
 				scriptInstanceFlowCode = (String) jobInstance.getCFValue("FlatFileProcessingJob_scriptsFlow");
+				formatTransfo = (String) jobInstance.getCFValue("FlatFileProcessingJob_formatTransfo");
 
 			} catch (Exception e) {
-				log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
+				log.warn("Cant get customFields for " + jobInstance.getJobTemplate(),e);
 			}
 
 			ArrayList<String> fileExtensions = new ArrayList<String>();
@@ -69,14 +70,17 @@ public class FlatFileProcessingJob extends Job {
 
 			File f = new File(inputDir);
 			if (!f.exists()) {
+				log.debug("inputDir {} not exist",inputDir);
 				f.mkdirs();
+				log.debug("inputDir {} creation ok",inputDir);
 			}
 			File[] files = FileUtils.getFilesForParsing(inputDir, fileExtensions);
 			if (files == null || files.length == 0) {
+				log.debug("there no file in {} with extension {}",inputDir,fileExtensions);
 				return;
 			}
 	        for (File file : files) {
-	        	flatFileProcessingJobBean.execute(result, inputDir, currentUser, file, mappingConf,scriptInstanceFlowCode,recordVariableName,context,originFilename);
+	        	flatFileProcessingJobBean.execute(result, inputDir, currentUser, file, mappingConf,scriptInstanceFlowCode,recordVariableName,initContext,originFilename,formatTransfo);
 	        }
 
 		} catch (Exception e) {
@@ -104,15 +108,15 @@ public class FlatFileProcessingJob extends Job {
 		inputDirectoryCF.setValueRequired(true);
 		result.put("FlatFileProcessingJob_inputDir", inputDirectoryCF);
 
-		CustomFieldTemplate fileNamePrefixCF = new CustomFieldTemplate();
-		fileNamePrefixCF.setCode("FlatFileProcessingJob_fileNameExtension");
-		fileNamePrefixCF.setAccountLevel(AccountLevelEnum.TIMER);
-		fileNamePrefixCF.setActive(true);
-		fileNamePrefixCF.setDescription(resourceMessages.getString("flatFile.fileNameExtension"));
-		fileNamePrefixCF.setFieldType(CustomFieldTypeEnum.STRING);
-		fileNamePrefixCF.setDefaultValue("csv");
-		fileNamePrefixCF.setValueRequired(true);
-		result.put("FlatFileProcessingJob_fileNameExtension", fileNamePrefixCF);
+		CustomFieldTemplate fileNameExtensionCF = new CustomFieldTemplate();
+		fileNameExtensionCF.setCode("FlatFileProcessingJob_fileNameExtension");
+		fileNameExtensionCF.setAccountLevel(AccountLevelEnum.TIMER);
+		fileNameExtensionCF.setActive(true);
+		fileNameExtensionCF.setDescription(resourceMessages.getString("flatFile.fileNameExtension"));
+		fileNameExtensionCF.setFieldType(CustomFieldTypeEnum.STRING);
+		fileNameExtensionCF.setDefaultValue("csv");
+		fileNameExtensionCF.setValueRequired(true);
+		result.put("FlatFileProcessingJob_fileNameExtension", fileNameExtensionCF);
 
 		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
 		mappingConf.setCode("FlatFileProcessingJob_mappingConf");
@@ -151,7 +155,7 @@ public class FlatFileProcessingJob extends Job {
 		recordVariableName.setDefaultValue("record");
 		recordVariableName.setDescription("Record variable name");
 		recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
-		recordVariableName.setValueRequired(false);
+		recordVariableName.setValueRequired(true);
 		result.put("FlatFileProcessingJob_recordVariableName", recordVariableName);
 
 		CustomFieldTemplate originFilename = new CustomFieldTemplate();
@@ -164,6 +168,20 @@ public class FlatFileProcessingJob extends Job {
 		originFilename.setValueRequired(false);
 		result.put("FlatFileProcessingJob_originFilename", originFilename);
 
+		CustomFieldTemplate formatTransfo = new CustomFieldTemplate();
+		formatTransfo.setCode("FlatFileProcessingJob_formatTransfo");
+		formatTransfo.setAccountLevel(AccountLevelEnum.TIMER);
+		formatTransfo.setActive(true);
+		formatTransfo.setDefaultValue("None");
+		formatTransfo.setDescription("Format transformation");
+		formatTransfo.setFieldType(CustomFieldTypeEnum.LIST);
+		formatTransfo.setValueRequired(false);
+		Map<String,String> listValues = new HashMap<String,String>();
+		listValues.put("None","Aucune");
+		listValues.put("Xlsx_to_Csv","Excel cvs");
+		formatTransfo.setListValues(listValues);
+		result.put("FlatFileProcessingJob_formatTransfo", formatTransfo);
+		
 		return result;
 	}
 }

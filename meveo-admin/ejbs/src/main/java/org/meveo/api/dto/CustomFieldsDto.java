@@ -47,6 +47,16 @@ public class CustomFieldsDto implements Serializable {
         this.customField = customField;
     }
 
+    
+    public CustomFieldDto getCF(String code){
+	    for(CustomFieldDto cf : getCustomField()){
+	    	if(cf.getCode().equals(code)){
+	    		return cf;
+	    	}
+	    }
+	    return null;
+    }
+    
     @Override
     public String toString() {
         return "CustomFieldsDto [customField=" + customField + "]";

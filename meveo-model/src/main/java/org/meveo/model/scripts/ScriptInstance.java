@@ -50,8 +50,7 @@ public class ScriptInstance extends BusinessEntity  {
 
 	private static final long serialVersionUID = -5517252645289726288L;
 
-	@Column(name = "SCRIPT", nullable = false, length = 10000)
-	@Size(max = 10000)
+	@Column(name = "SCRIPT", nullable = false, columnDefinition="TEXT")
 	private String script;
 
 	@Enumerated(EnumType.STRING)

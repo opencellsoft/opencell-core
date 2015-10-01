@@ -48,7 +48,7 @@ public class CustomFieldValue implements Serializable {
     public static String MAP_KEY = "key";
     public static String MAP_VALUE = "value";
 
-    @Column(name = "STRING_VALUE")
+    @Column(name = "STRING_VALUE" ,columnDefinition="TEXT")
     private String stringValue;
 
     @Column(name = "DATE_VALUE")
