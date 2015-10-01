@@ -46,7 +46,7 @@ public class CreditNote extends BusinessEntity {
 	@OneToMany(mappedBy = "creditNote", fetch = FetchType.LAZY)
 	private List<CreditNoteLine> creditNoteLines = new ArrayList<CreditNoteLine>();
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "INVOICE_ID")
 	private Invoice invoice;
 
