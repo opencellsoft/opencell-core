@@ -2108,6 +2108,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 			CustomerDto customerDto = new CustomerDto();
 			customerDto.setCode(postData.getCode());
+			customerDto.setExternalRef1(postData.getExternalRef1());			
 			customerDto.setDescription(postData.getDescription());
 			customerDto.setCustomerCategory(postData.getCustomerCategory());
 			customerDto.setCustomerBrand(postData.getCustomerBrand());
@@ -2145,6 +2146,8 @@ public class AccountHierarchyApiService extends BaseApi {
 
 			CustomerAccountDto customerAccountDto = new CustomerAccountDto();
 			customerAccountDto.setCode(postData.getCode());
+			customerAccountDto.setExternalRef1(postData.getExternalRef1());
+			
 			customerAccountDto.setDescription(postData.getDescription());
 			if (accountHierarchyTypeEnum.getHighLevel() == 2) {
 				customerAccountDto.setCustomer(postData.getCrmParentCode());
@@ -2190,6 +2193,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 			BillingAccountDto billingAccountDto = new BillingAccountDto();
 			billingAccountDto.setCode(postData.getCode());
+			billingAccountDto.setExternalRef1(postData.getExternalRef1());
 			billingAccountDto.setDescription(postData.getDescription());
 			if (accountHierarchyTypeEnum.getHighLevel() == 1) {
 				billingAccountDto.setCustomerAccount(postData.getCrmParentCode());
@@ -2251,6 +2255,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 			UserAccountDto userAccountDto = new UserAccountDto();
 			userAccountDto.setCode(postData.getCode());
+			userAccountDto.setExternalRef1(postData.getExternalRef1());
 			userAccountDto.setDescription(postData.getDescription());
 			if (accountHierarchyTypeEnum.getHighLevel() == 0) {
 				userAccountDto.setBillingAccount(postData.getCrmParentCode());
@@ -2355,6 +2360,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 			CustomerDto customerDto = new CustomerDto();
 			customerDto.setCode(postData.getCode());
+			customerDto.setExternalRef1(postData.getExternalRef1());
 			customerDto.setDescription(postData.getDescription());
 			customerDto.setCustomerCategory(postData.getCustomerCategory());
 			customerDto.setCustomerBrand(postData.getCustomerBrand());
@@ -2392,6 +2398,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 			CustomerAccountDto customerAccountDto = new CustomerAccountDto();
 			customerAccountDto.setCode(postData.getCode());
+			customerAccountDto.setExternalRef1(postData.getExternalRef1());
 			customerAccountDto.setDescription(postData.getDescription());
 			if (accountHierarchyTypeEnum.getHighLevel() == 2) {
 				customerAccountDto.setCustomer(postData.getCrmParentCode());
@@ -2437,6 +2444,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 			BillingAccountDto billingAccountDto = new BillingAccountDto();
 			billingAccountDto.setCode(postData.getCode());
+			billingAccountDto.setExternalRef1(postData.getExternalRef1());
 			billingAccountDto.setDescription(postData.getDescription());
 			if (accountHierarchyTypeEnum.getHighLevel() == 1) {
 				billingAccountDto.setCustomerAccount(postData.getCrmParentCode());
@@ -2498,6 +2506,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 			UserAccountDto userAccountDto = new UserAccountDto();
 			userAccountDto.setCode(postData.getCode());
+			userAccountDto.setExternalRef1(postData.getExternalRef1());
 			userAccountDto.setDescription(postData.getDescription());
 			if (accountHierarchyTypeEnum.getHighLevel() == 0) {
 				userAccountDto.setBillingAccount(postData.getCrmParentCode());
