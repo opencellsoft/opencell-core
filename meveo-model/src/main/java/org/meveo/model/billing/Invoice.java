@@ -130,7 +130,7 @@ public class Invoice extends AuditableEntity {
 	@Basic(fetch = FetchType.LAZY)
 	private byte[] pdf;
 
-	@OneToOne(optional = false, mappedBy = "invoice")
+	@OneToOne(optional = false, mappedBy = "invoice", fetch = FetchType.LAZY)
 	public CreditNote creditNote;
 
 	public List<RatedTransaction> getRatedTransactions() {
@@ -275,7 +275,7 @@ public class Invoice extends AuditableEntity {
 			amountWithoutTax = BigDecimal.ZERO;
 		}
 		if (amountToAdd != null) {
-		amountWithoutTax = amountWithoutTax.add(amountToAdd);
+			amountWithoutTax = amountWithoutTax.add(amountToAdd);
 		}
 	}
 
@@ -284,7 +284,7 @@ public class Invoice extends AuditableEntity {
 			amountTax = BigDecimal.ZERO;
 		}
 		if (amountToAdd != null) {
-		amountTax = amountTax.add(amountToAdd);	
+			amountTax = amountTax.add(amountToAdd);
 		}
 	}
 
