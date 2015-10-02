@@ -34,7 +34,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
@@ -43,7 +43,7 @@ import org.meveo.model.payments.RecordedInvoice;
 @ObservableEntity
 @Table(name = "BILLING_INVOICE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
-public class Invoice extends AuditableEntity {
+public class Invoice extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 

@@ -1651,5 +1651,14 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
 	</changeSet>
+
+	<changeSet author="EdwardLegaspi" id="#1110_20151002">
+		<addColumn tableName="billing_invoice">
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>
