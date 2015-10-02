@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the tow fields "Customers, Code, Description, Status, Payment Method and Credit Category" then click on the button "search".
+Expected Results : The result of research gives the items matching with the Customers, Code, Description, Status, Payment Method and Credit Category filled bellow
+
+Description Test Case 2: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "clean filters".
+Expected Results : The fileds (Customers, Code, Description, Status, Payment Method and Credit Category) become empty.
+
+Description Test Case 3: 
+Actions : Click on the button "New" in order to add a new Customers Accounts.
+Expected Results : A list of empty items are chowed.
+
+Description Test Case 4: 
+Actions : Don't fill any field then click on "save".
+Expected Results : A new Customers Accounts can not be created, an alert appears to mention that Customer, Code, Description, Currency, Language and Last Name are required to create the Customers Accounts
+
+Description Test Case 5:
+Actions : Click on "reset".
+Expected Results : The field code become empty.
+
+Description Test Case 6: 
+Actions : Fill only the field "Customer" then click on "save".
+Expected Results : A new Customers Accounts can not be created, an alert appears to mention that Code, Description, Currency, Language and Last Name are required to create the Customers Accounts.
+
+Description Test Case 7: 
+Actions : Fill only the field "Code" then click on "save".
+Expected Results : A new Customers Accounts can not be created, an alert appears to mention that Customer, Description, Currency, Language and Last Name are required to create the Customers Accounts.
+
+Description Test Case 8: 
+Actions : Fill only the field "Description" then click on "save".
+Expected Results : A new Customers Accounts can not be created, an alert appears to mention that Customer, Code, Currency, Language and Last Name are required to create the Customers Accounts.
+
+Description Test Case 9: 
+Actions : Fill only the field "Currency" then click on "save".
+Expected Results : A new Customers Accounts can not be created, an alert appears to mention that Customer, Code, Description, Language and Last Name are required to create the Customers Accounts.
+
+Description Test Case 10: 
+Actions : Fill only the field "Language" then click on "save".
+Expected Results : A new Customers Accounts can not be created, an alert appears to mention that Customer, Code, Description, Currency and Last Name are required to create the Customers Accounts.
+
+Description Test Case 11: 
+Actions : Fill only the field "Last Name" then click on "save".
+Expected Results : A new Customers Accounts can not be created, an alert appears to mention that Customer, Code, Description, Currency and Language are required to create the Customers Accounts.
+
+Description Test Case 12: 
+Actions : Let the required fields not filled and fill not required fields and click on "save"
+Expected Results : A new Customers Accounts can not be created, an alert appears to mention that Customer, Code, Description, Currency, Language and Last Name are required to create the Customers Accounts
+
+Description Test Case 13: 
+Actions : Click on "back".
+Expected Results : Return to the previous page. 
+
+Description Test Case 14: 
+Actions : Fill in the tab 'Customer Account' the required fields (Customer, Code, Description, Currency, Language and Last Name) then fill not required fields and click on "save".
+Expected Results : A new Customers Accounts is created.
+
+Description Test Case 15: 
+Actions : Fill in the tab 'Informations' the fields (Email,Phone,Mobile,address1, address2, address3, zip code, city, country, mandate indentification, signature date) and click on "save"
+Expected Results : A new information is created.
+
+Description Test Case 16: 
+Actions :Fill in the tab 'Custom Fields' the  fields (CRM Account Type, CRM Parent Account Code and add new record for Special priceplan) and click on "save"
+Expected Results : A new Custom Fields is created.
+
+Description Test Case 17: 
+Actions : Click on "Close".
+Expected Results : The Tab Customers Accounts is Closed.
+
+Description Test Case 18: 
+Actions : Click on "Back Button".
+Expected Results :  Return to the list of Customers Accounts. 
+
+Description Test Case 19: 
+Actions : Make a search by filling the field "Code" then click on the button "search".
+Expected Results :The result of research gives the items which are matching with the chosen Customers Accounts.
+
+Description Test Case 20: 
+Actions : Pick a line from the table then click on the icon "delete ".
+Expected Results : An alert appears in order to make sure that you really you want to delete the Customers Accounts.
+
+Description Test Case 21: 
+Actions : Click on "No" to confirm that you don't want to delete the Customers Accounts.
+Expected Results : The picked Customers Accounts is not deleted.
+
+Description Test Case 22: 
+Actions : Make a search by filling the field "Code, Description and Status" then click on the button "search".
+Expected Results :The result of research gives the items which are matching with the chosen Customers Accounts.
+
+Description Test Case 23: 
+Actions : Pick one or more lines from the table then click on the button "Export to Excel"
+Expected Results : The picked lines are exported on an Excel file
+
+Description Test Case 24: 
+Actions : Click on the button "Export to excel", without picking any line from the table
+Expected Results : All the lines from the table are been exported on an excel file
+
+Description Test Case 25: 
+Actions : Make a search by filling the field "Code, Description and Payment Method" then click on the button "search".
+Expected Results :The result of research gives the items which are matching with the chosen Customers Accounts.
+
+Description Test Case 26: 
+Actions : Click on the button "Delete multiple" wihout picking any line from the table.
+Expected Results : Nothing happened.
+
+Description Test Case 27: 
+Actions : Pick more than one line from the table then click on the button "Delete multiple"
+Expected Results : The picked lines are erased
+
+Description Test Case 28: 
+Actions : Pick a line from the table then click on the icon "delete ".
+Expected Results : An alert appears in order to make sure that you really you want to delete the Customers Accounts.
+
+Description Test Case 29: 
+Actions : Click on "yes" to confirm that you want to delete the Customers Accounts.
+Expected Results : The picked Customers Accounts is deleted.
+
+Description Test Case 30: 
+Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
+Expected Results : The table shows 15 lines per page 
+
+Description Test Case 31: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
+Expected Results : The table shows 20 lines per page 
+
+Description Test Case 32: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
+Expected Results : The table shows 50 lines per page 
+
+Description Test Case 33: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
+Expected Results : The table shows 10 lines per page 
+
+Description Test Case 34: 
+Actions : Click on the button to move to the next page 
+Expected Results : The next page is displayed
+
+Description Test Case 35: 
+Actions : Click on the button to move to the last page 
+Expected Results :The last page is displayed
+
+Description Test Case 36: 
+Actions : Click on the button to move to the previous page
+Expected Results :The previous page is displayed
+
+Description Test Case 37: 
+Actions : In each column from the table (Code, Description, Name, Payment Method, Status, Credit Category, Customer, Language and Currency) there is a filter , click on the filter in column "Code" in order to refine your search in an ascending/descending order.
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 38: 
+Actions : Click on the filter in column "Description" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 39: 
+Actions : Click on the filter in column "Name" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 40: 
+Actions : Click on the filter in column "Payment Method" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 41: 
+Actions : Click on the filter in column "Status" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 42: 
+Actions : Click on the filter in column "Credit Category" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 43: 
+Actions : Click on the filter in column "Customer" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 44: 
+Actions : Click on the filter in column "Language" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 45: 
+Actions : Click on the filter in column "Currency" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+-->
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="../../VariablesGlobales.html">VariablesGlobales</a></td></tr>
+<tr><td><a href="variables.html">variables</a></td></tr>
+<tr><td><a href="SearchWithCustomerCodeDescriptionStatusPaymetMethodCreditCategoryTestCase.html">SearchWithCustomerCodeDescriptionStatusPaymetMethodCreditCategoryTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="NewCustomerAccountsTestCase.html">NewCustomerAccountsTestCase</a></td></tr>
+<tr><td><a href="EmptyCustomerAccountsTestCase.html">EmptyCustomerAccountsTestCase</a></td></tr>
+<tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCustomerTestCase.html">FillOnlyCustomerTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyDescriptionTestCase.html">FillOnlyDescriptionTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCurrencyTestCase.html">FillOnlyCurrencyTestCase</a></td></tr>
+<tr><td><a href="FillOnlyLanguageTestCase.html">FillOnlyLanguageTestCase</a></td></tr>
+<tr><td><a href="FillOnlyLastNameTestCase.html">FillOnlyLastNameTestCase</a></td></tr>
+<tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
+<tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
+<tr><td><a href="SuccessCustomerAccountsTestCase.html">SuccessCustomerAccountsTestCase</a></td></tr>
+<tr><td><a href="CloseCustomerAccountTestCase.html">CloseCustomerAccountTestCase</a></td></tr>
+<tr><td><a href="BackToListCustomersAccountsTestCase.html">BackToListCustomersAccountsTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeTestCase.html">SearchWithCodeTestCase</a></td></tr>
+<tr><td><a href="DeleteCustomerAccountsWithClickNoTestCase.html">DeleteCustomerAccountsWithClickNoTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeDescriptionStatusTestCase.html">SearchWithCodeDescriptionStatusTestCase</a></td></tr>
+<tr><td><a href="ExportWithPickLineTestCase.html">ExportWithPickLineTestCase</a></td></tr>
+<tr><td><a href="ExportWithoutPickAnyLineTestCase.html">ExportWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeDescriptionPaymentMethodTestCase.html">SearchWithCodeDescriptionPaymentMethodTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithoutPickAnyLineTestCase.html">DeleteMultipleWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithPickLineTestCase.html">DeleteMultipleWithPickLineTestCase</a></td></tr>
+<tr><td><a href="DeleteCustomerAccountsWithClickYesTestCase.html">DeleteCustomerAccountsWithClickYesTestCase</a></td></tr>
+<tr><td><a href="DropdownWith15TestCase.html">DropdownWith15TestCase</a></td></tr>
+<tr><td><a href="DropdownWith20TestCase.html">DropdownWith20TestCase</a></td></tr>
+<tr><td><a href="DropdownWith50TestCase.html">DropdownWith50TestCase</a></td></tr>
+<tr><td><a href="DropdownWith10TestCase.html">DropdownWith10TestCase</a></td></tr>
+<tr><td><a href="NextPageTestCase.html">NextPageTestCase</a></td></tr>
+<tr><td><a href="LastPageTestCase.html">LastPageTestCase</a></td></tr>
+<tr><td><a href="PreviousPageTestCase.html">PreviousPageTestCase</a></td></tr>
+<tr><td><a href="FilterWithCodeTestCase.html">FilterWithCodeTestCase</a></td></tr>
+<tr><td><a href="FilterWithDescriptionTestCase.html">FilterWithDescriptionTestCase</a></td></tr>
+<tr><td><a href="FilterWithNameTestCase.html">FilterWithNameTestCase</a></td></tr>
+<tr><td><a href="FilterWithPaymentMethodTestCase.html">FilterWithPaymentMethodTestCase</a></td></tr>
+<tr><td><a href="FilterWithStatusTestCase.html">FilterWithStatusTestCase</a></td></tr>
+<tr><td><a href="FilterWithCreditCategoryTestCase.html">FilterWithCreditCategoryTestCase</a></td></tr>
+<tr><td><a href="FilterWithCustomerTestCase.html">FilterWithCustomerTestCase</a></td></tr>
+<tr><td><a href="FilterWithLanguageTestCase.html">FilterWithLanguageTestCase</a></td></tr>
+<tr><td><a href="FilterWithCurrencyTestCase.html">FilterWithCurrencyTestCase</a></td></tr>
+<tr><td><a href="LogoutTestCase.html">LogoutTestCase</a></td></tr>
+</tbody></table>
+</body>
+</html>
