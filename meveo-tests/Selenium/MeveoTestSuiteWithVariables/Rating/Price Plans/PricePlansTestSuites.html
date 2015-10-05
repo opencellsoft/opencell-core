@@ -21,7 +21,7 @@ Expected Results : A list of empty items are showed.
 
 Description Test Case 4:
 Actions : Don't fill any fields then click on "save".
-Expected Results : A new Price Plans can not be created, an alert appears to mention that "Code, Charge Code and Amount Without Tax" are required to create the Price Plans
+Expected Results : A new Price Plans can not be created, an alert appears to mention that "Code, Charge Code, Amount Without Tax and Amount With Tax" are required to create the Price Plans
 
 Description Test Case 5:
 Actions : Click on "reset".
@@ -29,125 +29,129 @@ Expected Results : The field code become empty.
 
 Description Test Case 6:
 Actions : Fill only the field "Code" then click on "save".
-Expected Results : A new Price Plans can not be created, an alert appears to mention that "Charge Code and Amount Without Tax" are required to create the Price Plans.
+Expected Results : A new Price Plans can not be created, an alert appears to mention that "Charge Code, Amount Without Tax and Amount With Tax" are required to create the Price Plans.
 
 Description Test Case 7: 
 Actions : Fill only the field "Charge Code" then click on "save".
-Expected Results : A new Price Plans can not be created, an alert appears to mention that "Code and Amount Without Tax" are required to create the Price Plans.
+Expected Results : A new Price Plans can not be created, an alert appears to mention that "Code, Amount Without Tax and Amount With Tax" are required to create the Price Plans.
 
 Description Test Case 8: 
 Actions : Fill only the field "Amount Without Tax" then click on "save".
-Expected Results : A new Price Plans can not be created, an alert appears to mention that "Code and Charge Code" are required to create the Price Plans.
+Expected Results : A new Price Plans can not be created, an alert appears to mention that "Code, Charge Code and Amount With Tax" are required to create the Price Plans.
 
 Description Test Case 9:
-Actions : Let the required fields (Code, Charge Code and Amount Without Tax) not filled and fill not required fields and click on "save".
-Expected Results : A new Price Plans can not be created, an alert appears to mention that Code, Charge Code and Amount Without Tax are required to create the Price Plans.
+Actions : Fill only the field "Amount With Tax" then click on "save".
+Expected Results : A new Price Plans can not be created, an alert appears to mention that "Code, Charge Code Amount Without Tax" are required to create the Price Plans.
 
 Description Test Case 10:
+Actions : Let the required fields (Code, Charge Code, Amount Without Tax and Amount With Tax) not filled and fill not required fields and click on "save".
+Expected Results : A new Price Plans can not be created, an alert appears to mention that Code, Charge Code, Amount Without Tax and Amount With Tax are required to create the Price Plans.
+
+Description Test Case 11:
 Actions : Click on "back".
 Expected Results : Return to the previous page. 
 
-Description Test Case 11:
-Actions : Fill the required fields (Code, Charge Code and Amount Without Tax) then fill not required fields and click on "save".
+Description Test Case 12:
+Actions : Fill the required fields (Code, Charge Code, Amount Without Tax and Amount With Tax) then fill not required fields and click on "save".
 Expected Results : A new Price Plans is created.
 
-Description Test Case 12:
+Description Test Case 13:
 Actions : Make a search by filling the field "Code" then click on the button "search".
 Expected Results : The result of research gives the items which are matching with the chosen Price Plans
 
-Description Test Case 13: 
+Description Test Case 14:
 Actions : Click on the "Icon Edit" in the datatable in order to update the Price Plan just created, fill all the fields and click "save".
 Expected Results : The Price Plan is updated with the new record.
 
-Description Test Case 14:
+Description Test Case 15:
 Actions : Make a search by filling the fields "Code and Charge Code" then click on the button "search".
 Expected Results : The result of research gives the items which are matching with the chosen Price Plans
 
-Description Test Case 15: 
+Description Test Case 16: 
 Actions : Pick a line from the table then click on the icon "delete ".
 Expected Results : An alert appears in order to make sure that you really you want to delete the Price Plans
 
-Description Test Case 16: 
+Description Test Case 17: 
 Actions : Click on "No" to confirm that you don't want to delete the Price Plans
 Expected Results : The picked Price Plans is not deleted.
 
-Description Test Case 17: 
-Actions : Pick a line from the table then click on the icon "duplicate".
+Description Test Case 18: 
+Actions : Pick a line from the table then click on the icon "duplicate ".
 Expected Results : An alert appears in order to make sure that you really you want to duplicate the Price Plans
 
-Description Test Case 18: 
+Description Test Case 19: 
 Actions : Click on "No" to confirm that you don't want to duplicate the Price Plans
 Expected Results : The picked Price Plans is not duplicated.
 
-Description Test Case 19: 
+Description Test Case 20: 
 Actions : Click on "yes" to confirm that you want to duplicate the Price Plans
 Expected Results : The picked Price Plans is duplicated.
 
-Description Test Case 20:
+Description Test Case 21:
 Actions : Pick one or more lines from the table then click on the button "Export To Excel"
 Expected Results : The picked lines are exported on an Excel file
 
-Description Test Case 21: 
+Description Test Case 22: 
 Actions : Click on the button "Export To Excel", without picking any line from the table
 Expected Results : All the lines from the table are been exported on an Excel file
 
-Description Test Case 22:
+Description Test Case 23:
 Actions : Click on the button "Delete Multiple" wihout picking any line from the table.
 Expected Results : Nothing happened.
 
-Description Test Case 23:
+Description Test Case 24:
 Actions : Make a Second search by filling the fields "Code and Charge Code" then click on the button "search".
 Expected Results : The result of research gives the items which are matching with the chosen Price Plans
 
-Description Test Case 24: 
+Description Test Case 25: 
 Actions : Pick more than one line from the table then click on the button "Delete Multiple"
 Expected Results : The picked lines are erased
 
-Description Test Case 25:
+Description Test Case 26:
 Actions : Make a Third search by filling the fields "Code and Charge Code" then click on the button "search".
 Expected Results : The result of research gives the items which are matching with the chosen Price Plans
 
-Description Test Case 26: 
+Description Test Case 27: 
 Actions : Pick a line from the table then click on the icon "delete ".
 Expected Results : An alert appears in order to make sure that you really you want to delete the Price Plans
 
-Description Test Case 27: 
+Description Test Case 28: 
 Actions : Click on "yes" to confirm that you want to delete the Price Plans
 Expected Results : The picked Price Plans is deleted.
 
-Description Test Case 28:
+Description Test Case 29:
 Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
 Expected Results : The table shows 15 lines per page 
 
-Description Test Case 29: 
+Description Test Case 30: 
 Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
 Expected Results : The table shows 20 lines per page 
 
-Description Test Case 30: 
+Description Test Case 31: 
 Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
 Expected Results : The table shows 50 lines per page 
 
-Description Test Case 31: 
+Description Test Case 32: 
 Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
 Expected Results : The table shows 10 lines per page 
 
-Description Test Case 32: 
+Description Test Case 33: 
 Actions : Click on the button to move to the next page 
 Expected Results : The next page is displayed
 
-Description Test Case 33: 
+Description Test Case 34: 
 Actions : Click on the button to move to the last page 
 Expected Results :The last page is displayed
 
-Description Test Case 34: 
+Description Test Case 35: 
 Actions : Click on the button to move to the previous page
 Expected Results :The previous page is displayed
 
-Description Test Case 35: 
+Description Test Case 36: 
 Actions : Click on the button "Advanced" to show more optionals research. 
 Expected Results : The others optionals research fields is showed.
 
-Description Test Case 36: 
+Description Test Case 37: 
 Actions : Click on the button "Hide Advanced" to hide the optionals research. 
 Expected Results : The optionals research fields is hide.
 
@@ -165,6 +169,7 @@ Expected Results : The optionals research fields is hide.
 <tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
 <tr><td><a href="FillOnlyChargeCodeTestCase.html">FillOnlyChargeCodeTestCase</a></td></tr>
 <tr><td><a href="FillOnlyAmountWithoutTaxTestCase.html">FillOnlyAmountWithoutTaxTestCase</a></td></tr>
+<tr><td><a href="FillOnlyAmountWithTaxTestCase.html">FillOnlyAmountWithTaxTestCase</a></td></tr>
 <tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
 <tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
 <tr><td><a href="SuccessPricePlansTestCase.html">SuccessPricePlansTestCase</a></td></tr>
