@@ -15,7 +15,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -46,8 +45,8 @@ public class CreditNote extends BusinessEntity {
 	@OneToMany(mappedBy = "creditNote", fetch = FetchType.LAZY)
 	private List<CreditNoteLine> creditNoteLines = new ArrayList<CreditNoteLine>();
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "INVOICE_ID")
+	@ManyToOne
+	@JoinColumn(name = "INVOICE_ID", nullable = false)
 	private Invoice invoice;
 
 	@Column(name = "CREDIT_NOTE_DATE")

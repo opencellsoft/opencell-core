@@ -496,6 +496,11 @@
 		</navigation-case>
 		<!-- Billing -->
 		<navigation-case>
+			<from-outcome>creditNote</from-outcome>
+			<to-view-id>/pages/billing/creditNotes/creditNoteDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>invoices</from-outcome>
 			<to-view-id>/pages/billing/invoices/invoices.xhtml</to-view-id>
 			<redirect />

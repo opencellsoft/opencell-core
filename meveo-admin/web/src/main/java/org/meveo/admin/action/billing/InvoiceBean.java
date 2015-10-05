@@ -49,7 +49,6 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceCategoryDTO;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -268,7 +267,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		ParamBean param = ParamBean.getInstance();
 		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo"); 
 		File billingRundir = new File(invoicesDir + File.separator + getCurrentProvider().getCode() + File.separator + "invoices" + File.separator + "xml"
-				 + File.separator + entity.getBillingRun().getId());
+				 + File.separator + getEntity().getBillingRun().getId());
 		return billingRundir;
 	}
 	

@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -21,15 +22,38 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel edit="#{creditNoteBean.edit}"
-			label="#{messages['creditNote.title']}"
-			backingBean="#{creditNoteBean}">
-			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"
-				validateUnique="true" required="true" />
-			<hf:formField label="#{messages['BusinessEntity.description']}"
-				id="description" field="description" useConverter="false" size="50"
-				maxlength="50" required="true" />
-		</hf:formPanel>
+		<p:panel id="creditNotePanel" header="#{messages['creditNote.title']}">
+			<p:tabView>
+				<p:tab title="#{messages['commons.information']}">
+					<hf:formPanel id="creditNoteForm" edit="#{creditNoteBean.edit}"
+						label="#{messages['creditNote.title']}"
+						backingBean="#{creditNoteBean}" showFormButtons="false">
+						<hf:formField label="#{messages['BusinessEntity.code']}"
+							field="code" validateUnique="true" required="true" />
+						<hf:formField label="#{messages['BusinessEntity.description']}"
+							id="description" field="description" useConverter="false"
+							size="50" maxlength="50" required="true" />
+
+						<h:panelGroup layout="block" styleClass="form-panel-actions">
+							<p:commandButton action="#{creditNoteBean.saveOrUpdate(false)}"
+								value="#{messages['action.save']}" ajax="false" />
+							<p:button id="backButton" value="#{messages['action.back']}"
+								outcome="invoiceDetail" includeViewParams="true">
+								<c:if test="#{javax.enterprise.context.conversation.id != null}">
+									<f:param name="objectId" value="#{creditNoteBean.invoiceId}" />
+									<f:param name="cid"
+										value="#{javax.enterprise.context.conversation.id}" />
+								</c:if>
+							</p:button>
+						</h:panelGroup>
+					</hf:formPanel>
+				</p:tab>
+
+				<p:tab title="#{messages['creditNoteLine.title']}"
+					rendered="#{creditNoteBean.entity.transient eq false}">
+				</p:tab>
+			</p:tabView>
+		</p:panel>
 
 	</ui:define>
 
