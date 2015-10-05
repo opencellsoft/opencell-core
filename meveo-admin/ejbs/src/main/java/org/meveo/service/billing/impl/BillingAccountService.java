@@ -268,6 +268,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			    if(queryResult[0]==null){
 			        return false;
 			    }
+			    if(billingRun.getBillingCycle() != null){
+			    	if(billingRun.getBillingCycle().getInvoicingThreshold() != null  && 
+			    			billingRun.getBillingCycle().getInvoicingThreshold().compareTo((BigDecimal) queryResult[0]) < 0 	){
+			    		log.debug("updateBillingAccountTotalAmounts  baCode:{}, mountWithoutTax:{} ,invoicingThreshold:{}",billingAccount.getCode(),billingRun.getBillingCycle().getInvoicingThreshold(),(BigDecimal) queryResult[0]);
+			    		return false;
+			    	}
+			    }
 				billingAccount.setBrAmountWithoutTax((BigDecimal) queryResult[0]);
 				billingAccount.setBrAmountWithTax((BigDecimal) queryResult[1]);
 				log.debug("set brAmount {} in BA {}", queryResult[0], billingAccount.getId());

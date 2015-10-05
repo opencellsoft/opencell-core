@@ -1,5 +1,7 @@
 package org.meveo.api.dto;
 
+import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -39,6 +41,9 @@ public class BillingCycleDto extends BaseDto {
 
 	@XmlElement(required = true)
 	private String calendar;
+	
+	@XmlElement(required = false)
+	private BigDecimal invoicingThreshold;
 
 	public BillingCycleDto() {
 
@@ -53,6 +58,7 @@ public class BillingCycleDto extends BaseDto {
 			dueDateDelay = billingCycleEntity.getDueDateDelay();
 			invoiceDateProductionDelay = billingCycleEntity.getInvoiceDateProductionDelay();
 			transactionDateDelay = billingCycleEntity.getTransactionDateDelay();
+			invoicingThreshold  = billingCycleEntity.getInvoicingThreshold(); 
 
 			if (billingCycleEntity.getCalendar() != null) {
 				calendar = billingCycleEntity.getCalendar().getCode();
@@ -123,13 +129,29 @@ public class BillingCycleDto extends BaseDto {
 	public void setCalendar(String calendar) {
 		this.calendar = calendar;
 	}
+	
+	
+
+	/**
+	 * @return the invoicingThreshold
+	 */
+	public BigDecimal getInvoicingThreshold() {
+		return invoicingThreshold;
+	}
+
+	/**
+	 * @param invoicingThreshold the invoicingThreshold to set
+	 */
+	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+		this.invoicingThreshold = invoicingThreshold;
+	}
 
 	@Override
 	public String toString() {
 		return "BillingCycleDto [code=" + code + ", description=" + description + ", billingTemplateName="
 				+ billingTemplateName + ", invoiceDateDelay=" + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay
 				+ ", invoiceDateProductionDelay=" + invoiceDateProductionDelay+ ", transactionDateDelay=" + transactionDateDelay
-				+ ", calendar=" + calendar + "]";
+				+ ", calendar=" + calendar + ",invoicingThreshold:"+invoicingThreshold+"]";
 	}
 
 }

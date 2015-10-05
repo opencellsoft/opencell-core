@@ -45,7 +45,7 @@ import org.meveo.model.rating.EDR;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_RATED_TRANSACTION_SEQ")
 @NamedQueries({
 		@NamedQuery(name = "RatedTransaction.listByWalletOperationId", query = "SELECT r FROM RatedTransaction r where r.walletOperationId=:walletOperationId"),
-		@NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and invoice is not null order by usageDate desc "),
+		@NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and invoice is not null order by usageDate desc "),	
 		@NamedQuery(name = "RatedTransaction.countNotInvoinced", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
 				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.usageDate<:lastTransactionDate "
@@ -103,7 +103,14 @@ import org.meveo.model.rating.EDR;
 		         + " where rt.walletOperationId IN :notBilledWalletIdList"),
 			
 	@NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", 
-	           query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory ")
+	           query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory "),
+	@NamedQuery(name = "RatedTransaction.updateInvoicedThreshold", 
+	           query = "UPDATE RatedTransaction r "
+					+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
+					+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
+					+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax>:invoicingThreshol"
+	                + " AND r.usageDate<:lastTransactionDate "
+					+ " and r.billingAccount=:billingAccount")        
 		})
 public class RatedTransaction extends BaseEntity {
 
