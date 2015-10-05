@@ -409,5 +409,10 @@
             update BILLING_INV_SUB_CAT_COUNTRY set FILTER_EL  =replace(FILTER_EL, 'getDoubleCustomValue(', 'getCFValue(') where FILTER_EL  is not null; 
            
         </sql>
-    </changeSet>    
+    </changeSet>
+
+	<changeSet id="#1110_20151002" author="EdwardLegaspi">
+		<sql>update billing_invoice set code=concat('ocb_id_', id);</sql>
+	</changeSet>
+		
 </databaseChangeLog>

@@ -1541,4 +1541,124 @@
 			referencedTableName="CRM_SELLER" baseColumnNames="seller_id"
 			baseTableName="CRM_CUSTOM_FIELD_INST" referencedColumnNames="id" />
     </changeSet>
+
+	<changeSet author="EdwardLegaspi" id="#1105_20150930">
+		<addColumn tableName="ar_account_operation">
+			<column name="credit_note_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+		</addColumn>
+
+		<createTable tableName="billing_credit_note">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="billing_account_id" type="BIGINT" />
+			<column name="recorded_invoice_id" type="BIGINT" />
+			<column name="invoice_id" type="BIGINT" />
+			<column name="credit_note_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="due_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="amount_without_tax" type="numeric(23, 12)"/>
+			<column name="amount_with_tax" type="numeric(23, 12)"/>
+			 <column name="net_to_pay" type="numeric(23, 12)"/>
+		</createTable>
+
+		<createSequence sequenceName="billing_credit_note_seq" startValue="1" />
+		<addPrimaryKey columnNames="id" constraintName="billing_credit_note_pkey"
+			tableName="billing_credit_note" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_adm_user_creator"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_adm_user_updater"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="billing_account_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_billing_account"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+		<addForeignKeyConstraint baseColumnNames="recorded_invoice_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_recorded_invoice"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+		<addForeignKeyConstraint baseColumnNames="invoice_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_invoice"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+
+		<createTable tableName="billing_credit_note_tax_amt">
+			<column name="creditnote_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="taxamounts_key" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="taxamounts" type="numeric(23, 12)" />
+		</createTable>
+
+		<addPrimaryKey columnNames="creditnote_id, taxamounts_key"
+			constraintName="billing_credit_note_tax_amt_pkey" tableName="billing_credit_note_tax_amt" />
+		<addForeignKeyConstraint baseColumnNames="creditnote_id"
+			baseTableName="billing_credit_note_tax_amt" constraintName="fk_billing_credit_note_tax_amt_credit_note"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_credit_note" />
+
+		<createTable tableName="billing_credit_note_line">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="description" type="VARCHAR(255)" />
+			<column name="credit_note_id" type="BIGINT" />
+			<column name="invoice_sub_category" type="BIGINT" />
+			<column name="amount_without_tax" type="numeric(23, 12)"/>
+			<column name="tax_amount" type="numeric(23, 12)"/>
+			<column name="amount_with_tax" type="numeric(23, 12)"/>
+		</createTable>
+			
+		<createSequence sequenceName="billing_credit_note_line_seq" startValue="1" />
+		<addPrimaryKey columnNames="id"
+			constraintName="billing_credit_note_line_pkey" tableName="billing_credit_note_line" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="billing_credit_note_line" constraintName="fk_billing_credit_note_line_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="credit_note_id"
+			baseTableName="billing_credit_note_line" constraintName="fk_billing_credit_note_line_credit_note"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_credit_note" />
+		<addForeignKeyConstraint baseColumnNames="invoice_sub_category"
+			baseTableName="billing_credit_note_line" constraintName="fk_billing_credit_note_line_invoice_sub_cat"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+	</changeSet>
+
+	<changeSet author="EdwardLegaspi" id="#1110_20151002">
+		<addColumn tableName="billing_invoice">
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

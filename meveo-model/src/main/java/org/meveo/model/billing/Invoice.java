@@ -30,10 +30,11 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
@@ -42,7 +43,7 @@ import org.meveo.model.payments.RecordedInvoice;
 @ObservableEntity
 @Table(name = "BILLING_INVOICE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
-public class Invoice extends AuditableEntity {
+public class Invoice extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -128,6 +129,9 @@ public class Invoice extends AuditableEntity {
 	@Column(name = "PDF")
 	@Basic(fetch = FetchType.LAZY)
 	private byte[] pdf;
+
+	@OneToOne(optional = false, mappedBy = "invoice", fetch = FetchType.LAZY)
+	public CreditNote creditNote;
 
 	public List<RatedTransaction> getRatedTransactions() {
 		return ratedTransactions;
@@ -271,7 +275,7 @@ public class Invoice extends AuditableEntity {
 			amountWithoutTax = BigDecimal.ZERO;
 		}
 		if (amountToAdd != null) {
-		amountWithoutTax = amountWithoutTax.add(amountToAdd);
+			amountWithoutTax = amountWithoutTax.add(amountToAdd);
 		}
 	}
 
@@ -280,7 +284,7 @@ public class Invoice extends AuditableEntity {
 			amountTax = BigDecimal.ZERO;
 		}
 		if (amountToAdd != null) {
-		amountTax = amountTax.add(amountToAdd);	
+			amountTax = amountTax.add(amountToAdd);
 		}
 	}
 
@@ -371,6 +375,14 @@ public class Invoice extends AuditableEntity {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public CreditNote getCreditNote() {
+		return creditNote;
+	}
+
+	public void setCreditNote(CreditNote creditNote) {
+		this.creditNote = creditNote;
 	}
 
 }
