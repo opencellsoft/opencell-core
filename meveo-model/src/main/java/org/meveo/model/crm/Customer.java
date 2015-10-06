@@ -151,6 +151,6 @@ public class Customer extends AccountEntity {
 
     @Override
     public ICustomFieldEntity getParentCFEntity() {
-        return null;
+        return seller;
 	}
 }

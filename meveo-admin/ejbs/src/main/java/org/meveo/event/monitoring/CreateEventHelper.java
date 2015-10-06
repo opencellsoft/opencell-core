@@ -19,6 +19,8 @@ public class CreateEventHelper {
 		bee.setException(e);
 		bee.setDateTime(new Date());
 		bee.setMeveoInstanceCode(ParamBean.getInstance().getProperty("monitoring.instanceCode",""));
-		event.fire(bee);
+		if("true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"))){
+			event.fire(bee);
+		}
 	}
 }

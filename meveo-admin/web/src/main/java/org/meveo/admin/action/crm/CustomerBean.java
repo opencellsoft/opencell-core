@@ -27,6 +27,7 @@ import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.Customer;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -47,6 +48,9 @@ public class CustomerBean extends AccountBean<Customer> {
 	/** Injected @{link Customer} service. Extends {@link PersistenceService}. */
 	@Inject
 	private CustomerService customerService;
+	
+    @Inject
+    private SellerService sellerService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -63,7 +67,9 @@ public class CustomerBean extends AccountBean<Customer> {
 	 */
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		super.saveOrUpdate(killConversation);
+		
+	    entity.setSeller(sellerService.attach(entity.getSeller()));
+	    super.saveOrUpdate(killConversation);
 
 		if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
 		    return null;

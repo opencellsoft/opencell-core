@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -31,6 +32,8 @@ public class SellerDto extends BaseDto {
 	private String provider;
 
 	private CustomersDto customers;
+	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public SellerDto() {
 	}
@@ -58,6 +61,12 @@ public class SellerDto extends BaseDto {
 
 		if (seller.getProvider() != null) {
 			provider = seller.getProvider().getCode();
+		}
+		
+		if (seller.getCustomFields() != null) {
+		    for (CustomFieldInstance cfi : seller.getCustomFields().values()) {
+		        customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+		    }
 		}
 	}
 
@@ -140,4 +149,11 @@ public class SellerDto extends BaseDto {
 		this.customers = customers;
 	}
 
+	public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+	
+	public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 }

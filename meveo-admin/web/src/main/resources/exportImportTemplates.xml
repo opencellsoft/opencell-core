@@ -20,7 +20,12 @@
                 </classesToIgnoreFKNotFound>
             </template>
             <template name="WalletTemplate" entityToExport="org.meveo.model.catalog.WalletTemplate" />
-            <template name="Seller" entityToExport="org.meveo.model.admin.Seller" />
+            <template name="Seller" entityToExport="org.meveo.model.admin.Seller" >
+                <classesToExportAsFull>
+                    <java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+                    <java-class>org.meveo.model.crm.CustomFieldPeriod</java-class>
+                </classesToExportAsFull>
+            </template>
             <template name="ProviderContact" entityToExport="org.meveo.model.crm.ProviderContact" />
             <template name="CustomerBrand" entityToExport="org.meveo.model.crm.CustomerBrand" />
             <template name="CustomerCategory" entityToExport="org.meveo.model.crm.CustomerCategory" />
@@ -222,7 +227,12 @@
                 </classesToIgnoreFKNotFound>
             </template>
             <template name="WalletTemplate" entityToExport="org.meveo.model.catalog.WalletTemplate" />
-            <template name="Seller" entityToExport="org.meveo.model.admin.Seller" />
+            <template name="Seller" entityToExport="org.meveo.model.admin.Seller" >
+                <classesToExportAsFull>
+                    <java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+                    <java-class>org.meveo.model.crm.CustomFieldPeriod</java-class>
+                </classesToExportAsFull>
+            </template>
             <template name="ProviderContact" entityToExport="org.meveo.model.crm.ProviderContact" />
             <template name="CustomerBrand" entityToExport="org.meveo.model.crm.CustomerBrand" />
             <template name="CustomerCategory" entityToExport="org.meveo.model.crm.CustomerCategory" />

@@ -155,7 +155,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	 */
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
-		try {
+		
+	    entity.setBillingAccount(billingAccountService.attach(entity.getBillingAccount()));
+	    
+	    try {
 			if (entity.getDefaultLevel()) {
 				if (userAccountService.isDuplicationExist(entity)) {
 					entity.setDefaultLevel(false);
