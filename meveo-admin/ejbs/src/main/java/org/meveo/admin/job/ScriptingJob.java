@@ -49,7 +49,7 @@ public class ScriptingJob extends Job {
     			if(variablesCFI!=null){
     				context = variablesCFI.getMapValue();
     			}
-    			scriptInterface.execute(context,currentUser.getProvider());	
+    			scriptInterface.execute(context,currentUser.getProvider(),currentUser);	
     		} catch(Exception e){
     			result.registerError("Error in "+scriptCode+" execution :"+e.getMessage());
     		}
