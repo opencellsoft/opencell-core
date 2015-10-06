@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
+	<td>id=searchPanel:searchForm:buttonNew</td>
 	<td>NewDunningPlan</td>
 </tr>
 <tr>
@@ -28,27 +28,27 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/div/div/div/form/div/div/div/div[2]/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'code_text')]</td>
 	<td>Code</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/div/div/div/form/div/div/div/div[2]/span[2]/div/div/input</td>
+	<td>//*[contains(@id, 'description_text')]</td>
 	<td>Description</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/div/div/div/form/div/div/div/div[2]/span[3]/div/div/div/div[3]/span</td>
+	<td>//*[contains(@id, 'creditCategory_entity_label')]</td>
 	<td>SelectCreditCategory</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/div/div/div/form/div/div/div/div[2]/span[4]/div/div/div/div[3]/span</td>
+	<td>//*[contains(@id, 'paymentMethod_enum_label')]</td>
 	<td>SelectPaymentMethod</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/div/div/div/form/div/div/div/div[2]/span[5]/div/div/div/div[3]/span</td>
+	<td>//*[contains(@id, 'status_enum_label')]</td>
 	<td>SelectStatus</td>
 </tr>
 <tr>
@@ -173,37 +173,42 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/div/div/div/form/div/div/div/div[3]/button[1]/span[2]</td>
+	<td>//*[contains(@id, 'saveButton')]</td>
 	<td>saveButtonWhenCreate</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/div/div/div[1]/form/div/div/div/div[3]/button[1]/span[2]</td>
+	<td>//*[contains(@id, 'saveButton')]</td>
 	<td>saveButtonWhenUpdate</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/div/div/div/form/div/div/div/div[3]/button[3]/span</td>
+	<td>//*[contains(@id, 'backButton')]</td>
 	<td>backButton</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/div/div/div/form/div/div/div/div[3]/button[2]/span</td>
+	<td>//*[contains(@id, 'resetButton')]</td>
 	<td>resetButton</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'backButton')]</td>
+	<td>backToListDunnigPlans</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'code_text')]</td>
 	<td>searchWithCode</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
+	<td>//*[contains(@id, 'description_text')]</td>
 	<td>SearchWithDescription</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>id=searchPanel:searchForm:buttonSearch</td>
 	<td>buttonSearch</td>
 </tr>
 <tr>
@@ -223,7 +228,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/tbody/tr[1]/td[4]/button/span[2]</td>
+	<td>//*[contains(@id, 'resultsdeletelink')]</td>
 	<td>IconDelete</td>
 </tr>
 <tr>
@@ -235,6 +240,31 @@
 	<td>store</td>
 	<td>id=datatable_results:0:deleteOk</td>
 	<td>deleteYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'deletelink')]</td>
+	<td>ClickDeleteButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'deleteOk')]</td>
+	<td>DeleteOk</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'deleteKo')]</td>
+	<td>DeleteKo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>Check</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>UnCheck</td>
 </tr>
 </tbody></table>
 </body>

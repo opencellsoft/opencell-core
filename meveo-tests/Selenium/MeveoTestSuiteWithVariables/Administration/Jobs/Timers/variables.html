@@ -18,87 +18,87 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
+	<td>//*[contains(@id, 'buttonNew')]</td>
 	<td>NewTimers</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'code_text')]</td>
 	<td>CodeText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
+	<td>//*[contains(@id, 'description_text')]</td>
 	<td>descriptionText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/fieldset/div/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'hour_text')]</td>
 	<td>Hour</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/fieldset/div/span[2]/div/div/input</td>
+	<td>//*[contains(@id, 'minute_text')]</td>
 	<td>Minute</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/fieldset/div/span[3]/div/div/input</td>
+	<td>//*[contains(@id, 'second_text')]</td>
 	<td>Second</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/fieldset/div/span[4]/div/div/input</td>
+	<td>//*[contains(@id, 'year_text')]</td>
 	<td>Year</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/fieldset/div/span[5]/div/div/input</td>
+	<td>//*[contains(@id, 'month_text')]</td>
 	<td>Month</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/fieldset/div/span[6]/div/div/input</td>
+	<td>//*[contains(@id, 'dayOfMonth_text')]</td>
 	<td>DayOfMonth</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/fieldset/div/span[7]/div/div/input</td>
+	<td>//*[contains(@id, 'dayOfWeek_text')]</td>
 	<td>DayOfWeek</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span[2]</td>
-	<td>saveWithObjectId</td>
+	<td>//*[contains(@id, 'saveButton')]</td>
+	<td>saveButtonWhenCreate</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/form/div/div/div/div[2]/div[2]/button[1]/span[2]</td>
-	<td>saveButton</td>
+	<td>//*[contains(@id, 'saveButton')]</td>
+	<td>saveButtonWhenUpdate</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
+	<td>//*[contains(@id, 'backButton')]</td>
 	<td>backButton</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
+	<td>//*[contains(@id, 'resetButton')]</td>
 	<td>resetButton</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'code_text')]</td>
 	<td>searchWithCode</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
+	<td>//*[contains(@id, 'description_text')]</td>
 	<td>SearchWithDescription</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>//*[contains(@id, 'buttonSearch')]</td>
 	<td>buttonSearch</td>
 </tr>
 <tr>
@@ -115,6 +115,36 @@
 	<td>store</td>
 	<td>id=results_formdeleteEntitieslink</td>
 	<td>DeleteMultiple</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=results_formexportToXml</td>
+	<td>ExportToXML</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'resultsdeletelink')]</td>
+	<td>IconDelete</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:deleteKo</td>
+	<td>deleteNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:deleteOk</td>
+	<td>deleteYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>Check</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>UnCheck</td>
 </tr>
 </tbody></table>
 </body>
