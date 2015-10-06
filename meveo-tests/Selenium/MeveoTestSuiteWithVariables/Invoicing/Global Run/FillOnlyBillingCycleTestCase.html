@@ -12,38 +12,18 @@
 <tr><td rowspan="1" colspan="3">FillNotRequiredFieldsTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>${SelectBillingCycle}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>5000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
-	<td>xpath=/html/body/div[1]/div/div[2]/form/div[1]/div[2]/span[1]/div/div/input</td>
-	<td>839_bc</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
+	<td>//*[contains(@id, 'code_text')]</td>
+	<td>CYC_INV_MT_1</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[1]/div/div[2]/form/div[1]/div[3]/button[1]/span</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
+	<td>id=billingCyclePopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
@@ -52,23 +32,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>${SelectType}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;&quot;)</td>
+	<td>css=li:contains(&quot;test&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -92,18 +62,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>${CreateBillingRun}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
 	<td></td>
 </tr>
 </tbody></table>
