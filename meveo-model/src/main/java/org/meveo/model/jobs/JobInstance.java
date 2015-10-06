@@ -17,7 +17,9 @@
 package org.meveo.model.jobs;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -74,9 +76,6 @@ public class JobInstance extends BusinessCFEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private TimerEntity timerEntity;
-
-    @Column(name = "USER_ID", nullable = false)
-    private Long userId;
 
     @Transient
     private boolean running;
@@ -183,20 +182,6 @@ public class JobInstance extends BusinessCFEntity {
         this.running = running;
     }
 
-    /**
-     * @return the userId
-     */
-    public Long getUserId() {
-        return userId;
-    }
-
-    /**
-     * @param userId the userId to set
-     */
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public List<JobExecutionResultImpl> getExecutionResults() {
         return executionResults;
     }
@@ -220,15 +205,25 @@ public class JobInstance extends BusinessCFEntity {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "JobInstance [jobTemplate=" + jobTemplate + ", parametres=" + parametres + ", active=" + active + ", jobCategoryEnum=" + jobCategoryEnum + ", customFields="
-                + "customFields" + ", timerEntity=" + "timerEntity" + ", running=" + running + ", followingJobs=" + "followingJobs" + "]";
+        final int maxLen = 10;
+        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, active=%s, jobCategoryEnum=%s, customFields=%s, timerEntity=%s, running=%s, followingJob=%s]",
+            super.toString(), jobTemplate, parametres, active, jobCategoryEnum, customFields != null ? toString(customFields.entrySet(), maxLen) : null, timerEntity, running,
+            followingJob);
+    }
+
+    private String toString(Collection<?> collection, int maxLen) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        int i = 0;
+        for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
+            if (i > 0)
+                builder.append(", ");
+            builder.append(iterator.next());
+        }
+        builder.append("]");
+        return builder.toString();
     }
 
     @Override
