@@ -12,11 +12,11 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.CustomerAccount;
@@ -53,7 +53,7 @@ public class AccountOperationsGenerationJobBean {
 		Provider currentProvider=currentUser.getProvider();
 		log.info("Running for user={}, parameter={}, provider={}", currentUser, parameter,currentProvider.getCode());
 		
-		ParamBean paramBean = ParamBean.getInstance();
+		//ParamBean paramBean = ParamBean.getInstance();
 		List<Invoice> invoices = invoiceService.getInvoicesWithNoAccountOperation(null,currentProvider);
 //		Provider providerForHistory = null;
 		
@@ -80,8 +80,10 @@ public class AccountOperationsGenerationJobBean {
 				}
 
 				try {
-					invoiceTemplate = oCCTemplateService.findByCode(paramBean.getProperty(
-							"accountOperationsGenerationJob.occCode", "FA_FACT"), customerAccount.getProvider()
+					
+					CustomFieldInstance cfInstance = (CustomFieldInstance)oCCTemplateService.getCFOrPropertyValue(
+							"accountOperationsGenerationJob.occCode", "FA_FACT",customerAccount.getProvider(),true);
+					invoiceTemplate = oCCTemplateService.findByCode(cfInstance.getValueAsString(), customerAccount.getProvider()
 							.getCode());
 				} catch (Exception e) {
 					log.error("error while getting occ template ", e);
@@ -171,5 +173,4 @@ public class AccountOperationsGenerationJobBean {
 			}
 		}
 	}
-
 }
