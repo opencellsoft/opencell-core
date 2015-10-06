@@ -10,6 +10,11 @@ import java.nio.charset.StandardCharsets;
 import com.blackbear.flatworm.ConfigurationReader;
 import com.blackbear.flatworm.FileFormat;
 import com.blackbear.flatworm.MatchedRecord;
+import com.blackbear.flatworm.errors.FlatwormConversionException;
+import com.blackbear.flatworm.errors.FlatwormCreatorException;
+import com.blackbear.flatworm.errors.FlatwormInputLineLengthException;
+import com.blackbear.flatworm.errors.FlatwormInvalidRecordException;
+import com.blackbear.flatworm.errors.FlatwormUnsetFieldValueException;
 
 public class FileParserFlatworm implements IFileParser {
 
@@ -47,8 +52,14 @@ public class FileParserFlatworm implements IFileParser {
 	}
 	
 	@Override
-	public Object getNextRecord() throws Exception {
-		record =   fileFormat.getNextRecord(bufferedReader);
+	public Object getNextRecord()  throws RecordRejectedException,Exception {		
+		try {
+			record =   fileFormat.getNextRecord(bufferedReader);
+		} catch (FlatwormInvalidRecordException  | FlatwormInputLineLengthException  | FlatwormConversionException   | FlatwormUnsetFieldValueException e) {
+		  throw new RecordRejectedException(e.getMessage());		
+		} catch ( Exception e) {
+			throw e;
+		}
 		if(record != null){
 	    	return record.getBean(recordName);		
 		}
