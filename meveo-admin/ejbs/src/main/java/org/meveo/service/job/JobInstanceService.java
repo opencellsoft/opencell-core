@@ -152,7 +152,6 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 				if (getCurrentUser() == null) {
 					throw new BusinessException("User must be logged in to perform this action.");
 				}
-				jobInstance.setUserId(getCurrentUser().getId());
 
 				super.create(jobInstance);
 				HashMap<String, String> jobs = jobEntries.get(jobInstance.getJobCategoryEnum());
@@ -238,7 +237,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 
 					Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
 
-					User currentUser = userService.findById(entity.getUserId());
+					User currentUser = userService.attach(entity.getAuditable().getUpdater()!=null?entity.getAuditable().getUpdater():entity.getAuditable().getCreator());
 					job.execute(entity, currentUser);
 				}
 			}
@@ -261,8 +260,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 				entity = (JobInstance) jobTimers.get(entity.getId()).getInfo();
 			}
 
-			InitialContext ic = new InitialContext();
-			User currentUser = userService.findById(entity.getUserId());
+            InitialContext ic = new InitialContext();
+            User currentUser = userService.attach(entity.getAuditable().getUpdater()!=null?entity.getAuditable().getUpdater():entity.getAuditable().getCreator());
 			if ( !currentUser.doesProviderMatch(getCurrentProvider())) {
 				throw new BusinessException("Not authorized to execute this job");
 			}

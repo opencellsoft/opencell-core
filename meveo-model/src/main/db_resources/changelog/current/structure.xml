@@ -1547,4 +1547,7 @@
 			<column name="INVOICING_THRESHOLD" type="numeric(23, 12)" />
 		</addColumn>
 </changeSet>		
+    <changeSet author="AndriusKarpavicius" id="#1123_20151006">
+        <dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="user_id"/>
+    </changeSet>
 </databaseChangeLog>

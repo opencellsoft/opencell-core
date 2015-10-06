@@ -10,8 +10,6 @@ import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -20,7 +18,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -92,7 +89,6 @@ public class JobInstanceApi extends BaseApi {
 		}
 		 
 		JobInstance jobInstance = new JobInstance();
-		jobInstance.setUserId(currentUser.getId());
 		jobInstance.setActive(postData.isActive());
 		jobInstance.setParametres(postData.getParameter());  
 		jobInstance.setJobCategoryEnum(jobCategory);
@@ -250,32 +246,7 @@ public class JobInstanceApi extends BaseApi {
 		if (!StringUtils.isBlank(code)) {
 			JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
 			if (jobInstance != null) {
-				JobInstanceDto jobInstanceDto = new JobInstanceDto();
-				
-				jobInstanceDto.setJobCategory(jobInstance.getJobCategoryEnum() == null ? null:jobInstance.getJobCategoryEnum().name()); 
-				jobInstanceDto.setJobTemplate(jobInstance.getJobTemplate());
-				jobInstanceDto.setCode(jobInstance.getCode());
-				jobInstanceDto.setDescription(jobInstance.getDescription());
-				
-				if (jobInstance.getFollowingJob() != null) {
-					jobInstanceDto.setFollowingJob(jobInstance.getFollowingJob().getCode());
-				}
-				
-				jobInstanceDto.setParameter(jobInstance.getParametres());
-				jobInstanceDto.setActive(jobInstance.isActive());
-				jobInstanceDto.setUserId(jobInstance.getUserId());
-				
-				Map<String, CustomFieldInstance> customFields = jobInstance.getCustomFields();
-				CustomFieldsDto customFieldsDto = new CustomFieldsDto();
-				if (customFields != null) {
-					for (CustomFieldInstance cfi : customFields.values()) {
-						customFieldsDto.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
-					}
-				}
-				
-				jobInstanceDto.setCustomFields(customFieldsDto);
-				jobInstanceDto.setTimerCode(jobInstance.getTimerEntity() == null ? null:jobInstance.getTimerEntity().toString());
-				
+				JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance);
 				return jobInstanceDto;
 			} 
 			
