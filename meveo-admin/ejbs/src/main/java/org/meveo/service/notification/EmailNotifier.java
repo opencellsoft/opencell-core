@@ -48,6 +48,7 @@ public class EmailNotifier {
 			HashMap<Object,Object> userMap = new HashMap<Object, Object>();
 			userMap.put("event", e);
 			userMap.put("context", context);
+			log.debug("event[{}], context[{}]",e,context);
 			msg.setSubject((String)ValueExpressionWrapper.evaluateExpression(notification.getSubject(), userMap, String.class));
 			if(!StringUtils.isBlank(notification.getHtmlBody())){
 				String htmlBody=(String)ValueExpressionWrapper.evaluateExpression(notification.getHtmlBody(), userMap, String.class);

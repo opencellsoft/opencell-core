@@ -28639,27 +28639,37 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BillingRunInfoScript extends Script {
 
+	 private static final Logger log = LoggerFactory.getLogger(BillingRunInfoScript.class);
+	
 	 String recordSeparator=",";
 	 String lineSeparator="\_r\n";
 	 
 	 public void execute(Map<String,Object> context,Provider provider,User user) throws BusinessException{
 		 BillingRun br = (BillingRun) context.get("billingRun");
-		 String emailTitle ="BillingRun["+br.getId()+"] "+br.getInvoiceNumber()+" invoice"+(br.getInvoiceNumber()>1?"s":"");
-		 context.put("emailTitle",emailTitle);
-		 String emailBody="BA code"+recordSeparator
-				 +" Invoice no"+recordSeparator
-				 +" Invoice amount without tax"+recordSeparator
-				 +" Invoice amount with tax"+lineSeparator;
-		 for(Invoice invoice:br.getInvoices()){
-			    emailBody=invoice.getBillingAccount().getCode()+recordSeparator
-					 +invoice.getInvoiceNumber()+recordSeparator
-					 +invoice.getAmountWithoutTax()+recordSeparator
-					 +invoice.getAmountWithTax()+lineSeparator;
+		 if(br!=null){
+		     String emailTitle ="BillingRun["+br.getId()+"] ";
+               String emailBody="No invoice";
+		     if(br.getInvoiceNumber()!=null && br.getInvoiceNumber()>0){
+				 emailTitle+=br.getInvoiceNumber()+" invoice"+(br.getInvoiceNumber()>1?"s":"");
+				 emailBody="BA code"+recordSeparator
+						 +" Invoice no"+recordSeparator
+						 +" Invoice amount without tax"+recordSeparator
+						 +" Invoice amount with tax"+lineSeparator;
+				 for(Invoice invoice:br.getInvoices()){
+					    emailBody+=invoice.getBillingAccount().getCode()+recordSeparator
+							 +invoice.getInvoiceNumber()+recordSeparator
+							 +invoice.getAmountWithoutTax()+recordSeparator
+							 +invoice.getAmountWithTax()+lineSeparator;
+				 }
+			}
+		     context.put("emailTitle",emailTitle);
+			context.put("emailBody",emailBody);  
 		 }
-		 context.put("emailBody",emailBody);
 	 }
 }
             ]]]]>><![CDATA[</script>\r
@@ -28674,7 +28684,7 @@ public class BillingRunInfoScript extends Script {
          <notification code="BR_NOTIF">
 			<classNameFilter>org.meveo.model.billing.BillingRun</classNameFilter>
 			<eventTypeFilter>UPDATED</eventTypeFilter>
-			<elFilter>#{event.status.equals(org.meveo.model.billing.BillingRunStatusEnum.VALIDATED)}</elFilter>
+			<elFilter>#{event.status eq 'VALIDATED'}</elFilter>
 			<emailFrom>billing@meveo.info</emailFrom>
 			<emailToEl>smichea@gmail.com</emailToEl>
 			<subject>#{context.get("emailTitle")}</subject>
@@ -28718,7 +28728,7 @@ public class BillingRunInfoScript extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:validateBillingRun>
-         <billingRunId>10</billingRunId>
+         <billingRunId>23</billingRunId>
       </ws:validateBillingRun>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1521f305-e617-4ab4-883c-c999cb1112ea"/><con:assertion type="Simple Contains" id="314dc598-f2f3-4668-b53a-86d57afab0b9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1127</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>meveoUsername</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoPassword</con:name><con:value>meveo.admin</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
