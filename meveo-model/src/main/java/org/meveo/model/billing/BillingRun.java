@@ -40,8 +40,10 @@ import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.ObservableEntity;
 
 @Entity
+@ObservableEntity
 @Table(name = "BILLING_BILLING_RUN")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_SEQ")
 public class BillingRun extends AuditableEntity {

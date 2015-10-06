@@ -38,11 +38,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ObservableEntity;
 
 /**
  * Account Transaction.
  */
 @Entity
+@ObservableEntity
 @Table(name = "AR_ACCOUNT_OPERATION")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TRANSACTION_TYPE")
