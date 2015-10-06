@@ -205,7 +205,11 @@ public class CustomFieldValue implements Serializable {
             break;
 
         case LONG:
-            longValue = (Long) value;
+            if (value instanceof BigDecimal) {
+                longValue = ((BigDecimal) value).longValue();
+            } else {
+                longValue = (Long) value;
+            }
             break;
 
         case STRING:
