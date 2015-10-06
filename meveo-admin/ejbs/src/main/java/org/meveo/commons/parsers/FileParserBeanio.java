@@ -5,7 +5,11 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 import org.beanio.BeanReader;
+import org.beanio.InvalidRecordException;
+import org.beanio.MalformedRecordException;
 import org.beanio.StreamFactory;
+import org.beanio.UnexpectedRecordException;
+import org.beanio.UnidentifiedRecordException;
 
 public class FileParserBeanio implements IFileParser {
 	
@@ -35,8 +39,14 @@ public class FileParserBeanio implements IFileParser {
 	}
 
 	@Override
-	public Object getNextRecord() throws Exception {
-		return beanReader.read();
+	public Object getNextRecord() throws RecordRejectedException,Exception{
+		try{
+			return beanReader.read();
+		}catch(MalformedRecordException | UnidentifiedRecordException | UnexpectedRecordException | InvalidRecordException e  ){
+			throw new RecordRejectedException(e.getMessage());
+		}catch(Exception e  ){
+			throw e;
+		}
 	}
 
 	@Override
