@@ -362,33 +362,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			log.debug("created aggregates tx status={}, em open={}", txReg.getTransactionStatus(), em.isOpen());
 			em.joinTransaction();
 			
-			if(billingCycle.getInvoicingThreshold() != null){
-				log.debug("createAgregatesAndInvoiceid use named query RatedTransaction.updateInvoicedThreshol for InvoicedThreshol {}",billingCycle.getInvoicingThreshold() );
-				em.createNamedQuery("RatedTransaction.updateInvoicedThreshold")
+			if (billingRun.getProvider().isDisplayFreeTransacInInvoice()) {
+				em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree")
+				.setParameter("billingAccount", billingAccount)
+				.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
+				.setParameter("billingRun", billingRun)
+				.setParameter("invoice", invoice).executeUpdate();
+			} else {
+				em.createNamedQuery("RatedTransaction.updateInvoiced")
 				.setParameter("billingAccount", billingAccount)
 				.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
 				.setParameter("billingRun", billingRun)
 				.setParameter("invoice", invoice)
-				.setParameter("updateInvoicedThreshold", billingCycle.getInvoicingThreshold())
 				.executeUpdate();
-			}else{
-				if (billingRun.getProvider().isDisplayFreeTransacInInvoice()) {					
-					em.createNamedQuery("RatedTransaction.updateInvoicedDisplayFree")
-					.setParameter("billingAccount", billingAccount)
-					.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-					.setParameter("billingRun", billingRun)
-					.setParameter("invoice", invoice).executeUpdate();
-				} else {
-					em.createNamedQuery("RatedTransaction.updateInvoiced")
-					.setParameter("billingAccount", billingAccount)
-					.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-					.setParameter("billingRun", billingRun)
-					.setParameter("invoice", invoice)
-					.executeUpdate();
-	
-				}
+
 			}
-			
+
 			StringBuffer num1 = new StringBuffer("000000000");
 			num1.append(invoice.getId() + "");
 			String invoiceNumber = num1.substring(num1.length() - 9);
