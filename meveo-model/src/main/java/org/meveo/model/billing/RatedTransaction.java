@@ -103,14 +103,7 @@ import org.meveo.model.rating.EDR;
 		         + " where rt.walletOperationId IN :notBilledWalletIdList"),
 			
 	@NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", 
-	           query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory "),
-	@NamedQuery(name = "RatedTransaction.updateInvoicedThreshold", 
-	           query = "UPDATE RatedTransaction r "
-					+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
-					+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-					+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax>:invoicingThreshold"
-	                + " AND r.usageDate<:lastTransactionDate "
-					+ " and r.billingAccount=:billingAccount")        
+	           query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory ")        
 		})
 public class RatedTransaction extends BaseEntity {
 
