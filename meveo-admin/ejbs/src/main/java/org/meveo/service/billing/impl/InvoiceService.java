@@ -369,7 +369,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
 				.setParameter("billingRun", billingRun)
 				.setParameter("invoice", invoice)
-				.setParameter("invoicingThreshol", billingCycle.getInvoicingThreshold())
+				.setParameter("updateInvoicedThreshold", billingCycle.getInvoicingThreshold())
 				.executeUpdate();
 			}else{
 				if (billingRun.getProvider().isDisplayFreeTransacInInvoice()) {					

@@ -108,7 +108,7 @@ import org.meveo.model.rating.EDR;
 	           query = "UPDATE RatedTransaction r "
 					+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
 					+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-					+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax>:invoicingThreshol"
+					+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax>:invoicingThreshold"
 	                + " AND r.usageDate<:lastTransactionDate "
 					+ " and r.billingAccount=:billingAccount")        
 		})
