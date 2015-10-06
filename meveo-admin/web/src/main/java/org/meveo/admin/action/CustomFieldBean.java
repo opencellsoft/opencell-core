@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
@@ -37,6 +38,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.CalendarService;
 
 /**
  * Backing bean for support custom field instances value data entry
@@ -62,6 +64,10 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     protected List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
 
+    @Inject 
+    private CalendarService calendarService; 
+    
+    
     public CustomFieldBean() {
     }
 
@@ -390,6 +396,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         // Create period if passed a period check or if user decided to create it anyway
         if (cft.getInstance().getCalendar() != null) {
+            cft.getInstance().setCalendar(calendarService.attach(cft.getInstance().getCalendar()));            
             period = cft.getInstance().addValuePeriod(periodStartDate);
 
         } else {
