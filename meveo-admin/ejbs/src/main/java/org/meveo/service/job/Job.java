@@ -67,7 +67,8 @@ public abstract class Job {
             try {
             	jobInstance.setRunning(true);
                 if (currentUser == null) {
-                    currentUser = userService.findByIdLoadProvider(jobInstance.getUserId());
+                    currentUser = userService.attach(jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable()
+                        .getCreator());
                 }
                 execute(result, jobInstance, currentUser);
                 result.close();
@@ -106,7 +107,8 @@ public abstract class Job {
             try {
             	jobInstance.setRunning(true);
                 if (currentUser == null) {
-                    currentUser = userService.findByIdLoadProvider(jobInstance.getUserId());
+                    currentUser = userService.attach(jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable()
+                        .getCreator());
                 }
                 execute(result, jobInstance, currentUser);
                 result.close();

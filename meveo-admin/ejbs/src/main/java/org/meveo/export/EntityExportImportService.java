@@ -92,6 +92,7 @@ import org.meveo.model.Auditable;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IVersionedEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
@@ -449,7 +450,7 @@ public class EntityExportImportService implements Serializable {
                 xstream.registerConverter(new HibernatePersistentMapConverter(xstream.getMapper()));
                 xstream.registerConverter(new HibernatePersistentSortedMapConverter(xstream.getMapper()));
                 xstream.registerConverter(new HibernatePersistentSortedSetConverter(xstream.getMapper()));
-                xstream.registerConverter(new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), true), XStream.PRIORITY_LOW);
+                xstream.registerConverter(new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), true, null), XStream.PRIORITY_LOW);
 
                 // Indicate XStream to omit certain attributes except ones matching the classes to be exported fully (except the root class)
                 applyAttributesToOmit(xstream, exportTemplate.getClassesToExportAsFull());
@@ -502,12 +503,14 @@ public class EntityExportImportService implements Serializable {
      * @param preserveId Should Ids of entities be preserved when importing instead of using sequence values for ID generation (DOES NOT WORK)
      * @param ignoreNotFoundFK Should import fail if any FK was not found
      * @param forceToProvider Ignore provider specified in an entity and force provider value to this value
+     * @param currentUser User performing the import
      * @return Import statistics
      */
     @Asynchronous
     @SuppressWarnings({ "deprecation" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Future<ExportImportStatistics> importEntities(File fileToImport, String filename, boolean preserveId, boolean ignoreNotFoundFK, Provider forceToProvider) {
+    public Future<ExportImportStatistics> importEntities(File fileToImport, String filename, boolean preserveId, boolean ignoreNotFoundFK, Provider forceToProvider,
+            User currentUser) {
 
         log.info("Importing file {} and forcing to provider {}", filename, forceToProvider);
         ExportImportStatistics importStatsTotal = new ExportImportStatistics();
@@ -545,7 +548,7 @@ public class EntityExportImportService implements Serializable {
                     reader.close();
                     inputStream.close();
                     File convertedFile = actualizeVersionOfExportFile(fileToImport, filename, version);
-                    return importEntities(convertedFile, convertedFile.getName(), preserveId, ignoreNotFoundFK, forceToProvider);
+                    return importEntities(convertedFile, convertedFile.getName(), preserveId, ignoreNotFoundFK, forceToProvider, currentUser);
                 }
 
                 if (forceToProvider != null) {
@@ -568,7 +571,8 @@ public class EntityExportImportService implements Serializable {
 
                     } else if (nodeName.equals("data")) {
                         try {
-                            ExportImportStatistics importStats = entityExportImportService.importEntities(importTemplate, reader, preserveId, ignoreNotFoundFK, forceToProvider);
+                            ExportImportStatistics importStats = entityExportImportService.importEntities(importTemplate, reader, preserveId, ignoreNotFoundFK, forceToProvider,
+                                currentUser);
                             importStatsTotal.mergeStatistics(importStats);
                         } catch (Exception e) {
                             importStatsTotal.setException(e);
@@ -598,7 +602,7 @@ public class EntityExportImportService implements Serializable {
                     reader.moveDown();
                     ExportInfo exportInfo = (ExportInfo) xstream.unmarshal(reader);
                     ExportImportStatistics importStats = entityExportImportService.importEntities403FileVersion(exportInfo.exportTemplate, exportInfo.serializedData, preserveId,
-                        ignoreNotFoundFK, forceToProvider);
+                        ignoreNotFoundFK, forceToProvider, currentUser);
                     importStatsTotal.mergeStatistics(importStats);
                     reader.moveUp();
                 }
@@ -613,7 +617,7 @@ public class EntityExportImportService implements Serializable {
             log.error("Failed to import a file {} ", filename, e);
             importStatsTotal.setException(e);
         }
-        
+
         return new AsyncResult<ExportImportStatistics>(importStatsTotal);
     }
 
@@ -625,12 +629,13 @@ public class EntityExportImportService implements Serializable {
      * @param preserveId Should Ids of entities be preserved when importing instead of using sequence values for ID generation (DOES NOT WORK)
      * @param ignoreNotFoundFK Should import fail if any FK was not found
      * @param forceToProvider Ignore provider specified in an entity and force provider value to this value
+     * @param currentUser User performing import
      * @return Import statistics
      */
     @SuppressWarnings({ "unchecked", "deprecation" })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public ExportImportStatistics importEntities403FileVersion(ExportTemplate exportTemplate, String serializedData, boolean preserveId, boolean ignoreNotFoundFK,
-            Provider forceToProvider) {
+            Provider forceToProvider, User currentUser) {
 
         if (serializedData == null) {
             log.info("No entities to import from {} export template ", exportTemplate.getName());
@@ -666,7 +671,7 @@ public class EntityExportImportService implements Serializable {
         };
 
         ExportImportConfig exportImportConfig = new ExportImportConfig(exportTemplate, exportIdMapping);
-        IEntityClassConverter iEntityClassConverter = new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), preserveId);
+        IEntityClassConverter iEntityClassConverter = new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), preserveId, currentUser);
         xstream.registerConverter(new IEntityExportIdentifierConverter(exportImportConfig, getEntityManagerForImport(), preserveId, ignoreNotFoundFK, forceToProvider,
             iEntityClassConverter), XStream.PRIORITY_NORMAL);
         xstream.registerConverter(iEntityClassConverter, XStream.PRIORITY_LOW);
@@ -704,12 +709,13 @@ public class EntityExportImportService implements Serializable {
      * @param preserveId Should Ids of entities be preserved when importing instead of using sequence values for ID generation (DOES NOT WORK)
      * @param ignoreNotFoundFK Should import fail if any FK was not found
      * @param forceToProvider Ignore provider specified in an entity and force provider value to this value
+     * @param currentUser User performing import
      * @return Import statistics
      */
     // This should not be here if want to deserialize each entity in its own transaction
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public ExportImportStatistics importEntities(ExportTemplate exportTemplate, HierarchicalStreamReader reader, boolean preserveId, boolean ignoreNotFoundFK,
-            Provider forceToProvider) {
+            Provider forceToProvider, User currentUser) {
 
         log.info("Importing entities from template {} ignore not found FK={}, forcing import to a provider {}", exportTemplate.getName(), ignoreNotFoundFK, forceToProvider);
 
@@ -740,10 +746,11 @@ public class EntityExportImportService implements Serializable {
         xstream.aliasSystemAttribute(REFERENCE_ID_ATTRIBUTE, "id");
 
         ExportImportConfig exportImportConfig = new ExportImportConfig(exportTemplate, exportIdMapping);
-        IEntityClassConverter iEntityClassConverter = new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), preserveId);
+        IEntityClassConverter iEntityClassConverter = new IEntityClassConverter(xstream.getMapper(), xstream.getReflectionProvider(), preserveId, currentUser);
+        IEntityExportIdentifierConverter entityExportIdentifierConverter = new IEntityExportIdentifierConverter(exportImportConfig, getEntityManagerForImport(), preserveId,
+            ignoreNotFoundFK, forceToProvider, iEntityClassConverter);
 
-        xstream.registerConverter(new IEntityExportIdentifierConverter(exportImportConfig, getEntityManagerForImport(), preserveId, ignoreNotFoundFK, forceToProvider,
-            iEntityClassConverter), XStream.PRIORITY_NORMAL);
+        xstream.registerConverter(entityExportIdentifierConverter, XStream.PRIORITY_NORMAL);
         xstream.registerConverter(iEntityClassConverter, XStream.PRIORITY_LOW);
 
         ExportImportStatistics importStats = new ExportImportStatistics();
@@ -935,7 +942,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Copy data from deserialized entity to an entity from DB
+     * Copy data from deserialized entity to an entity from DB field by field
      * 
      * @param entityFromDB Entity found in DB
      * @param entityDeserialized Entity deserialised
@@ -1104,7 +1111,8 @@ public class EntityExportImportService implements Serializable {
             }
         }
 
-        // Do not care about @oneToMany and @OneToOne fields that do not cascade they will be ignored anyway and their saving is handled in saveEntityToTarget()
+        // Do not care about @oneToMany and @OneToOne fields that do not cascade they will be ignored anyway and their saving is handled in saveEntityToTarget() (see
+        // extractNonCascadedEntities part)
         boolean isCascadedField = false;
         if (field.isAnnotationPresent(OneToMany.class)) {
             OneToMany oneToManyAnotation = field.getAnnotation(OneToMany.class);

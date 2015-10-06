@@ -1,5 +1,7 @@
 package org.meveo.api.dto.job;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -7,7 +9,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.jobs.JobInstance;
 
 @XmlRootElement(name = "JobInstance")
@@ -37,9 +41,6 @@ public class JobInstanceDto extends BaseDto {
     @XmlElement(required = true)
     private boolean active = false;
 
-    @XmlElement(required = true)
-    private long userId;
-
     @XmlElement(required = false)
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
@@ -57,13 +58,20 @@ public class JobInstanceDto extends BaseDto {
         if (jobInstance.getFollowingJob() != null) {
             this.followingJob = jobInstance.getFollowingJob().getCode();
         }
-        this.jobCategory = jobInstance.getJobCategoryEnum().name();
+        this.jobCategory = jobInstance.getJobCategoryEnum() == null ? null:jobInstance.getJobCategoryEnum().name(); 
         this.jobTemplate = jobInstance.getJobTemplate();
         this.parameter = jobInstance.getParametres();
-        if (jobInstance.getTimerEntity() != null) {
-            this.timerCode = jobInstance.getTimerEntity().getCode();
+        
+        Map<String, CustomFieldInstance> customFields = jobInstance.getCustomFields();
+        CustomFieldsDto customFieldsDto = new CustomFieldsDto();
+        if (customFields != null) {
+            for (CustomFieldInstance cfi : customFields.values()) {
+                customFieldsDto.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+            }
         }
-        this.userId = jobInstance.getUserId();
+        
+        this.setCustomFields(customFieldsDto);
+        this.setTimerCode(jobInstance.getTimerEntity() == null ? null:jobInstance.getTimerEntity().toString());
     }
 
     /**
@@ -163,20 +171,6 @@ public class JobInstanceDto extends BaseDto {
     }
 
     /**
-     * @return the userId
-     */
-    public long getUserId() {
-        return userId;
-    }
-
-    /**
-     * @param userId the userId to set
-     */
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    /**
      * @return the customFields
      */
     public CustomFieldsDto getCustomFields() {
@@ -207,7 +201,7 @@ public class JobInstanceDto extends BaseDto {
     @Override
     public String toString() {
         return "JobInstanceDto [jobCategory=" + jobCategory + ", jobTemplate=" + jobTemplate + ", code=" + code + ", description=" + description + ", followingJob=" + followingJob
-                + ", parameter=" + parameter + ", active=" + active + ", userId=" + userId + ", customFields=" + customFields + ", timerCode=" + timerCode + "]";
+                + ", parameter=" + parameter + ", active=" + active + ", customFields=" + customFields + ", timerCode=" + timerCode + "]";
     }
 
 }
