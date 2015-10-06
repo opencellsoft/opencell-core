@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -39,13 +40,14 @@ public class EmailNotifier {
     private Logger log;
 	
 	@Asynchronous
-	public void sendEmail(EmailNotification notification, IEntity e){
+	public void sendEmail(EmailNotification notification, IEntity e,Map<String,Object> context){
 		MimeMessage msg = new MimeMessage(mailSession);
 		try {
 			msg.setFrom(new InternetAddress(notification.getEmailFrom()));
 			msg.setSentDate(new Date());
 			HashMap<Object,Object> userMap = new HashMap<Object, Object>();
 			userMap.put("event", e);
+			userMap.put("context", context);
 			msg.setSubject((String)ValueExpressionWrapper.evaluateExpression(notification.getSubject(), userMap, String.class));
 			if(!StringUtils.isBlank(notification.getHtmlBody())){
 				String htmlBody=(String)ValueExpressionWrapper.evaluateExpression(notification.getHtmlBody(), userMap, String.class);

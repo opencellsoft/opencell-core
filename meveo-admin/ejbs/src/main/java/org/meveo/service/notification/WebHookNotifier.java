@@ -48,17 +48,18 @@ public class WebHookNotifier {
 	@Inject
 	ScriptInstanceService scriptInstanceService;
 
-	private String evaluate(String expression, IEntity e) throws BusinessException {
+	private String evaluate(String expression, IEntity e,Map<String, Object> context) throws BusinessException {
 		HashMap<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("event", e);
-
+		userMap.put("context", context);
 		return (String) ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
 	}
 
-	private Map<String, String> evaluateMap(Map<String, String> map, IEntity e) throws BusinessException {
+	private Map<String, String> evaluateMap(Map<String, String> map, IEntity e,Map<String, Object> context) throws BusinessException {
 		Map<String, String> result = new HashMap<String, String>();
 		HashMap<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("event", e);
+		userMap.put("context", context);
 
 		for (String key : map.keySet()) {
 			result.put(key, (String) ValueExpressionWrapper.evaluateExpression(map.get(key), userMap, String.class));
@@ -68,7 +69,7 @@ public class WebHookNotifier {
 	}
 
 	@Asynchronous
-	public void sendRequest(WebHook webHook, IEntity e) {
+	public void sendRequest(WebHook webHook, IEntity e,Map<String, Object> context) {
 		log.debug("webhook sendRequest");
 		String result = "";
 
@@ -79,9 +80,9 @@ public class WebHookNotifier {
 			}
 
 			if (!StringUtils.isBlank(webHook.getPage())) {
-				url += "/" + evaluate(webHook.getPage(), e);
+				url += "/" + evaluate(webHook.getPage(), e,context);
 			}
-			Map<String,String> params = evaluateMap(webHook.getWebhookParams(), e);
+			Map<String,String> params = evaluateMap(webHook.getWebhookParams(), e,context);
             String paramQuery="";
             String sep="";
             for(String paramKey:params.keySet()){
@@ -98,7 +99,7 @@ public class WebHookNotifier {
 
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
 
-            Map<String, String> headers = evaluateMap(webHook.getHeaders(), e);
+            Map<String, String> headers = evaluateMap(webHook.getHeaders(), e,context);
             if(!StringUtils.isBlank(webHook.getUsername()) && !headers.containsKey("Authorization")){
      			byte[] bytes = Base64.encodeBase64((webHook.getUsername() + ":" + webHook.getPassword()).getBytes());
      			headers.put("Authorization", "Basic "+new String(bytes));
@@ -162,8 +163,8 @@ public class WebHookNotifier {
 			        	for (@SuppressWarnings("rawtypes") Map.Entry entry : params.entrySet()) {
 			        	    paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression( (String)entry.getValue(), userMap, String.class));
 			        	}
-			        	
-				    	scriptInterface.execute(paramsEvaluated,webHook.getScriptInstance().getProvider());
+			        	paramsEvaluated.put("response",result);
+				    	scriptInterface.execute(paramsEvaluated,webHook.getScriptInstance().getProvider(),webHook.getScriptInstance().getAuditable().getCreator());
 			        } catch(Exception ee){
 			        	log.error("failed script execution",ee);
 			        }

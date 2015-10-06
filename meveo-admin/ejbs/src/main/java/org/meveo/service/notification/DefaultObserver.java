@@ -111,21 +111,20 @@ public class DefaultObserver {
         return result;
     }
 
-    private void executeScript(ScriptInstance scriptInstance, Object o, Map<String, String> params) throws BusinessException {
+    private void executeScript(ScriptInstance scriptInstance, Object o, Map<String, String> params,Map<String,Object> context) throws BusinessException {
         log.debug("execute notification script: {}", scriptInstance.getCode());
         Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(scriptInstance.getProvider(),scriptInstance.getCode());
         try{
         	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
-        	Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
-            Map<Object, Object> userMap = new HashMap<Object, Object>();
+        	Map<Object, Object> userMap = new HashMap<Object, Object>();
             userMap.put("event", o);
             userMap.put("manager", manager);
         	for (@SuppressWarnings("rawtypes") Map.Entry entry : params.entrySet()) {
-        	    paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression( (String)entry.getValue(), userMap, Object.class));
+        	    context.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression( (String)entry.getValue(), userMap, Object.class));
         	}        	
-        	scriptInterface.init(paramsEvaluated, scriptInstance.getProvider());
-	    	scriptInterface.execute(paramsEvaluated,scriptInstance.getProvider());
-	    	scriptInterface.finalize(paramsEvaluated, scriptInstance.getProvider());
+        	scriptInterface.init(context, scriptInstance.getProvider(), scriptInstance.getAuditable().getCreator());
+	    	scriptInterface.execute(context,scriptInstance.getProvider(), scriptInstance.getAuditable().getCreator());
+	    	scriptInterface.finalize(context, scriptInstance.getProvider(), scriptInstance.getAuditable().getCreator());
         } catch(Exception e){
         	log.error("failed script execution",e);
         }
@@ -138,10 +137,7 @@ public class DefaultObserver {
             	log.debug("Expression {} does not match", notif.getElFilter());
                 return;
             }
-            if (notif.getScriptInstance()!=null) {
-            	ScriptInstance script = (ScriptInstance) scriptInstanceService.attach(notif.getScriptInstance());
-                executeScript(script, e,notif.getParams());
-            }
+            
             
             boolean sendNotify = true;
             // Check if the counter associated to notification was not exhausted
@@ -158,11 +154,17 @@ public class DefaultObserver {
             if (!sendNotify) {
                 return;
             }
+            Map<String,Object> context = new HashMap<String,Object>();
+            if (notif.getScriptInstance()!=null) {
+            	ScriptInstance script = (ScriptInstance) scriptInstanceService.attach(notif.getScriptInstance());
+            	executeScript(script, e,notif.getParams(),context);
+            }
+            
             // then the notification itself
             if (notif instanceof EmailNotification) {
-                emailNotifier.sendEmail((EmailNotification) notif, e);
+                emailNotifier.sendEmail((EmailNotification) notif, e,context);
             } else if (notif instanceof WebHook) {
-                webHookNotifier.sendRequest((WebHook) notif, e);
+                webHookNotifier.sendRequest((WebHook) notif, e,context);
             } else if (notif instanceof InstantMessagingNotification) {
                 imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
             } else if (notif.getEventTypeFilter() != NotificationEventTypeEnum.INBOUND_REQ){
@@ -193,7 +195,7 @@ public class DefaultObserver {
         log.debug("Fire Cdr Notification for notif {} and  cdr {}", notif, cdr);
         try {
             if (!StringUtils.isBlank(notif.getScriptInstance()) && matchExpression(notif.getElFilter(), cdr)) {
-                executeScript(notif.getScriptInstance(), cdr,notif.getParams());
+                executeScript(notif.getScriptInstance(), cdr,notif.getParams(),new HashMap<String, Object>());
             }
         } catch (BusinessException e1) {
             log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
