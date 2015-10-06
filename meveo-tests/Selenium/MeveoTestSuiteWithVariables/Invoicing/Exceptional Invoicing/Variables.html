@@ -18,32 +18,37 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'buttonNew')]</td>
+	<td>NewExceptionalInvoicing</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'code_text')]</td>
 	<td>SearchWithCode</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/table/tbody/tr/td[2]/span/input</td>
+	<td>//*[contains(@id, 'subscriptionDate_date_fromRange_input')]</td>
 	<td>SearchWithInitialAgreementDateFrom</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/table/tbody/tr/td[4]/span/input</td>
+	<td>//*[contains(@id, 'subscriptionDate_date_toRange_input')]</td>
 	<td>SearchWithInitialAgreementDateTo</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/table/tbody/tr/td[2]/span/input</td>
+	<td>//*[contains(@id, 'nextInvoiceDate_date_fromRange_input')]</td>
 	<td>SearchWithNextInvoiceDateFrom</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/table/tbody/tr/td[4]/span/input</td>
+	<td>//*[contains(@id, 'nextInvoiceDate_date_toRange_input')]</td>
 	<td>SearchWithNextInvoiceDateTo</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/div/div[3]/span</td>
+	<td>//*[contains(@id, 'electronicBilling_boolean_label')]</td>
 	<td>SearchWithElectronicBilling</td>
 </tr>
 <tr>
@@ -58,7 +63,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>//*[contains(@id, 'buttonSearch')]</td>
 	<td>buttonSearch</td>
 </tr>
 <tr>
@@ -78,18 +83,33 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div/div[1]/form/div[3]/div/div[1]/div/span/input</td>
+	<td>id=results_formexportToXml</td>
+	<td>ExportToXML</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=invoiceDate_input</td>
 	<td>InvoiceDate</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/div/div[1]/form/div[3]/div/div[2]/div/span/input</td>
+	<td>id=lastTransactionDate_input</td>
 	<td>LastTransactionDate</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/div/div[1]/form/div[3]/div/div[3]/button/span</td>
 	<td>CreateBillingRun</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/thead/tr/th[1]/div/div[2]/span</td>
+	<td>Check</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div[1]/form/div[1]/div[2]/table/thead/tr/th[1]/div/div[2]/span</td>
+	<td>UnCheck</td>
 </tr>
 </tbody></table>
 </body>

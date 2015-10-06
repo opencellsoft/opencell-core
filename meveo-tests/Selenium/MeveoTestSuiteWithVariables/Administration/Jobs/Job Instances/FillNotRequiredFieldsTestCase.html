@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">FillNotRequiredFieldsTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>${ChooseJobCategory}</td>
 	<td></td>
@@ -43,7 +38,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[40]/div/ul/li[2]</td>
+	<td>css=li:contains(&quot;code_9&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -63,17 +58,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${Job1}</td>
+	<td>css=li:contains(&quot;Subs_Job&quot;)</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${saveWithObjectId}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>${saveButtonWhenCreate}</td>
 	<td></td>
 </tr>
 <tr>

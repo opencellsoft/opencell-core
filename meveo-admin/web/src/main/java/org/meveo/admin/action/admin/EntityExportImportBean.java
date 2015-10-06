@@ -34,6 +34,7 @@ import org.meveo.export.RemoteImportException;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
@@ -73,6 +74,10 @@ public class EntityExportImportBean implements Serializable {
     @Inject
     @CurrentProvider
     private Provider currentProvider;
+
+    @Inject
+    @CurrentUser
+    protected User currentUser;
 
     private ParamBean param = ParamBean.getInstance();
 
@@ -250,7 +255,7 @@ public class EntityExportImportBean implements Serializable {
                     exportTemplate.setParameters(params);
                 }
                 // Automatically export custom fields for CF related entities
-                if (ICustomFieldEntity.class.isAssignableFrom(clazz) ){
+                if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
                     exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
                     exportTemplate.getClassesToExportAsFull().add(CustomFieldPeriod.class);
                 }
@@ -313,7 +318,7 @@ public class EntityExportImportBean implements Serializable {
             exportTemplate.setParameters(params);
         }
         // Automatically export custom fields for CF related entities
-        if (ICustomFieldEntity.class.isAssignableFrom(clazz) ){
+        if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
             exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
             exportTemplate.getClassesToExportAsFull().add(CustomFieldPeriod.class);
         }
@@ -395,7 +400,8 @@ public class EntityExportImportBean implements Serializable {
                     "." + FilenameUtils.getExtension(event.getFile().getFileName()));
                 FileUtils.copyInputStreamToFile(event.getFile().getInputstream(), tempFile);
 
-                exportImportFuture = entityExportImportService.importEntities(tempFile, event.getFile().getFileName().replaceAll(" ", "_"), false, !requireFK, forceToProvider);
+                exportImportFuture = entityExportImportService.importEntities(tempFile, event.getFile().getFileName().replaceAll(" ", "_"), false, !requireFK, forceToProvider,
+                    currentUser);
                 messages.info(new BundleKey("messages", "export.import.inProgress"), event.getFile().getFileName());
 
             } catch (Exception e) {

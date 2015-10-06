@@ -79,4 +79,7 @@
 			referencedTableName="CRM_SELLER" baseColumnNames="seller_id"
 			baseTableName="CRM_CUSTOM_FIELD_INST" referencedColumnNames="id" />
     </changeSet>
+    <changeSet author="AndriusKarpavicius" id="#1123_20151006">
+        <dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="user_id"/>
+    </changeSet>
 </databaseChangeLog>

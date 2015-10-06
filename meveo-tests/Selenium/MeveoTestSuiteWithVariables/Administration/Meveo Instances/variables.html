@@ -18,97 +18,87 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
+	<td>//*[contains(@id, 'buttonNew')]</td>
 	<td>NewMeveoInstances</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'code_text')]</td>
 	<td>CodeText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
+	<td>//*[contains(@id, 'url_text')]</td>
 	<td>URL</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/input</td>
+	<td>//*[contains(@id, 'description_text')]</td>
 	<td>Description</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/button/span[2]</td>
+	<td>id=formPanel:meveoInstanceForm:userSelectedId:entityFieldSingle:selectLink</td>
 	<td>SelectUser</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[5]/div/div/button/span[2]</td>
+	<td>id=formPanel:meveoInstanceForm:customerSelectedId:entityFieldSingle:selectLink</td>
 	<td>SelectCustomer</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/input</td>
+	<td>//*[contains(@id, 'authUsername_text')]</td>
 	<td>UsernameForWSRestAccess</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[7]/div/div/input</td>
+	<td>//*[contains(@id, 'authPassword_text')]</td>
 	<td>PasswordForWSRestAccess</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span[2]</td>
-	<td>saveWithObjectId</td>
+	<td>//*[contains(@id, 'saveButton')]</td>
+	<td>saveButtonWhenCreate</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span[2]</td>
-	<td>saveButton</td>
+	<td>//*[contains(@id, 'saveButton')]</td>
+	<td>saveButtonWhenUpdate</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
+	<td>//*[contains(@id, 'backButton')]</td>
 	<td>backButton</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
+	<td>//*[contains(@id, 'resetButton')]</td>
 	<td>resetButton</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
-	<td>Disable</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
-	<td>Enable</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'code_text')]</td>
 	<td>searchWithCode</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
+	<td>//*[contains(@id, 'description_text')]</td>
 	<td>searchWithDescription</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/input</td>
+	<td>//*[contains(@id, 'productVersion_text')]</td>
 	<td>searchWithVersion</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/input</td>
+	<td>//*[contains(@id, 'owner_text')]</td>
 	<td>searchWithOwner</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>//*[contains(@id, 'buttonSearch')]</td>
 	<td>buttonSearch</td>
 </tr>
 <tr>
@@ -125,6 +115,36 @@
 	<td>store</td>
 	<td>id=results_formdeleteEntitieslink</td>
 	<td>DeleteMultiple</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=results_formexportToXml</td>
+	<td>ExportToXML</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'resultsdeletelink')]</td>
+	<td>IconDelete</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:deleteKo</td>
+	<td>deleteNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:deleteOk</td>
+	<td>deleteYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>Check</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>UnCheck</td>
 </tr>
 </tbody></table>
 </body>

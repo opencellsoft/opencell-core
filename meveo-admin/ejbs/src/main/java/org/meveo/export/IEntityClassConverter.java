@@ -4,7 +4,9 @@ import java.lang.reflect.Modifier;
 
 import javax.persistence.Inheritance;
 
+import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;
+import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +29,12 @@ public class IEntityClassConverter extends ReflectionConverter {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private boolean preserveId;
+    private User currentUser;
 
-    public IEntityClassConverter(Mapper mapper, ReflectionProvider reflectionProvider, boolean preserveId) {
+    public IEntityClassConverter(Mapper mapper, ReflectionProvider reflectionProvider, boolean preserveId, User currentUser) {
         super(mapper, reflectionProvider);
         this.preserveId = preserveId;
+        this.currentUser = currentUser;
     }
 
     @SuppressWarnings({ "rawtypes" })
@@ -58,7 +62,7 @@ public class IEntityClassConverter extends ReflectionConverter {
     }
 
     /**
-     * Remove entity id value if not explicitly told to do import by id
+     * Remove entity id value if not explicitly told to do import by id, update audit if entity is IAuditable
      */
     @Override
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
@@ -66,6 +70,10 @@ public class IEntityClassConverter extends ReflectionConverter {
         if (!preserveId) {
             entity.setId(null);
         }
+        if (entity instanceof IAuditable) {
+            ((IAuditable) entity).updateAudit(currentUser);
+        }
+
         return entity;
     }
 }
