@@ -545,6 +545,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void createAgregatesAndInvoice(Long billingRunId,Date lastTransactionDate, User currentUser,long nbRuns,long waitingMillis) throws BusinessException, Exception {
 		List<BillingAccount> billingAccounts = getEntityManager()
@@ -585,6 +586,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 		billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
 		billingRun.updateAudit(user);
+		update(billingRun);
 	}
 
 	public BillingRun launchExceptionalInvoicing(List<Long> billingAccountIds, Date invoiceDate,Date lastTransactionDate,BillingProcessTypesEnum processType,User currentUser) throws BusinessException{

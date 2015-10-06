@@ -157,7 +157,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
 		
 		E mergedEntity = getEntityManager().merge(e);
-        
+
+		if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+			entityUpdatedEventProducer.fire(e);
+		}
+		
 		// Add/Update custom fields in cache if applicable 
         if (e instanceof ICustomFieldEntity) {
             customFieldsCache.addUpdateCustomFieldsInCache((ICustomFieldEntity) mergedEntity);
