@@ -46,7 +46,7 @@ public class InvoicingApi extends BaseApi {
 	private ParamBean paramBean;
 
 
-	public void createBillingRun(CreateBillingRunDto createBillingRunDto,User currentUser) throws BusinessApiException, MissingParameterException, EntityDoesNotExistsException {
+	public long createBillingRun(CreateBillingRunDto createBillingRunDto,User currentUser) throws BusinessApiException, MissingParameterException, EntityDoesNotExistsException {
 
 		String allowManyInvoicing = paramBean.getProperty("billingRun.allowManyInvoicing", "true");
 		boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
@@ -94,6 +94,7 @@ public class InvoicingApi extends BaseApi {
 		billingRunEntity.setStatus(BillingRunStatusEnum.NEW);
 		billingRunEntity.setProvider(provider);
 		billingRunService.create(billingRunEntity, currentUser, provider);
+		return billingRunEntity.getId();
 	}
 	
 	

@@ -36,8 +36,8 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
 		log.info("createBillingRun request={}",createBillingRunDto);
 		try {
 			
-			invoicingApi.createBillingRun(createBillingRunDto, getCurrentUser());
-			
+			long billingRunId=invoicingApi.createBillingRun(createBillingRunDto, getCurrentUser());
+			result.setMessage(billingRunId+"");
 		}catch(MissingParameterException mpe){
 			result.setErrorCode(mpe.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
