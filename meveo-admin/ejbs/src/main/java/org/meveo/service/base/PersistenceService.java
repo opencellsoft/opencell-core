@@ -570,6 +570,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		}
 	}
 
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#refreshOrRetrieve(org.meveo.model.BaseEntity)
+     */
+    @Override
+    public E refreshOrRetrieve(E entity) {
+
+        if (getEntityManager().contains(entity)) {
+            getEntityManager().refresh(entity);
+            return entity;
+        } else {
+            return findById((Long) entity.getId());
+        }
+    }
+    
 	/**
 	 * Creates query to filter entities according data provided in pagination
 	 * configuration.
