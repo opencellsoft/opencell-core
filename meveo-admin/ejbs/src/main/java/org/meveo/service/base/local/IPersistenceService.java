@@ -256,6 +256,11 @@ public interface IPersistenceService<E extends IEntity> {
 	 */
 	public void refresh(E entity);
 	
+	/**
+     * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
+     */    
+	public E refreshOrRetrieve(E entity);
+	
 	public void commit();
 
 	public EntityManager getEntityManager();
