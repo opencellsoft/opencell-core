@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">FillOnlyHTTPMethodTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
 	<td>${CodeText}</td>
 	<td></td>
@@ -68,7 +63,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[41]/div/ul/li[4]</td>
+	<td>css=li:contains(&quot;Delete&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -93,12 +88,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${saveWithObjectId}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>${saveButtonWhenCreate}</td>
 	<td></td>
 </tr>
 <tr>
@@ -106,7 +96,6 @@
 	<td>${resetButton}</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

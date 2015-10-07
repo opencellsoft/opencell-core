@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">FillNotRequiredFieldsTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
 	<td>${CodeText}</td>
 	<td></td>
@@ -37,13 +32,23 @@
 	<td>Test Event</td>
 </tr>
 <tr>
-	<td>click</td>
+	<td>clickAndWait</td>
 	<td>${ScriptInstance}</td>
 	<td></td>
 </tr>
 <tr>
+	<td>type</td>
+	<td>//*[contains(@id, 'code_text')]</td>
+	<td>org.meveo.service.script.BillingRunInfoScript</td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[1]/a/span</td>
+	<td>id=scriptInstancePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>
@@ -77,18 +82,8 @@
 	<td>meveo.test</td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>${AddNewHeaders}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
 	<td></td>
 </tr>
 <tr>
@@ -104,11 +99,6 @@
 <tr>
 	<td>click</td>
 	<td>${AddNewParametrers}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
 	<td></td>
 </tr>
 <tr>
@@ -133,12 +123,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${saveWithObjectId}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>${saveButtonWhenCreate}</td>
 	<td></td>
 </tr>
 </tbody></table>

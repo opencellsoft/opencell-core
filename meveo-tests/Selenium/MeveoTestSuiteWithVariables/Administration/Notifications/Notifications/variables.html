@@ -18,37 +18,32 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
+	<td>//*[contains(@id, 'buttonNew')]</td>
 	<td>NewNotification</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'code_text')]</td>
 	<td>CodeText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/input[1]</td>
+	<td>//*[contains(@id, 'classNameFilter_text_ac_input')]</td>
 	<td>ClassnameFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/button/span[2]</td>
-	<td>SelectClassnameFilter</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/div/div[3]/span</td>
+	<td>//*[contains(@id, 'eventTypeFilter_enum_label')]</td>
 	<td>EventTypeFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/textarea</td>
+	<td>//*[contains(@id, 'elFilter_text_area')]</td>
 	<td>EventELFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[5]/div/div/button/span[2]</td>
+	<td>id=notificationFormPanel:notificationForm:scriptInstanceSelectId:entityFieldSingle:selectLink</td>
 	<td>ScriptInstance</td>
 </tr>
 <tr>
@@ -73,62 +68,67 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span[2]</td>
-	<td>saveWithObjectId</td>
+	<td>//*[contains(@id, 'saveButton')]</td>
+	<td>saveButtonWhenCreate</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span[2]</td>
-	<td>saveButton</td>
+	<td>//*[contains(@id, 'saveButton')]</td>
+	<td>saveButtonWhenUpdate</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
+	<td>//*[contains(@id, 'backButton')]</td>
 	<td>backButton</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
+	<td>//*[contains(@id, 'resetButton')]</td>
 	<td>resetButton</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>//*[contains(@id, 'notificationForm')]</td>
 	<td>Disable</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>//*[contains(@id, 'notificationForm')]</td>
 	<td>Enable</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'backButton')]</td>
+	<td>backToListNotifications</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'code_text')]</td>
 	<td>searchWithCode</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/button/span[2]</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[2]/span[2]/div/div/span/button/span[2]</td>
 	<td>searchWithClickClassnameFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/input</td>
+	<td>//*[contains(@id, 'classNameFilter_text_ac_input')]</td>
 	<td>searchWithClassnameFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/div/div[3]/span</td>
+	<td>//*[contains(@id, 'eventTypeFilter_enum_label')]</td>
 	<td>searchWithEventTypeFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>//*[contains(@id, 'buttonSearch')]</td>
 	<td>buttonSearch</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[2]/span</td>
 	<td>CleanFilters</td>
 </tr>
 <tr>
@@ -145,6 +145,36 @@
 	<td>store</td>
 	<td>id=notifications_formdeleteEntitieslink</td>
 	<td>DeleteMultiple</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=notifications_formexportToXml</td>
+	<td>ExportToXML</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'notificationsdeletelink')]</td>
+	<td>IconDelete</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_notifications:0:deleteKo</td>
+	<td>deleteNo</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_notifications:0:deleteOk</td>
+	<td>deleteYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>Check</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>UnCheck</td>
 </tr>
 </tbody></table>
 </body>
