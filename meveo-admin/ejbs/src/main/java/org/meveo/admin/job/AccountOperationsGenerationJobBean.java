@@ -200,7 +200,6 @@ public class AccountOperationsGenerationJobBean {
 				recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 				recordedInvoiceService.create(recordedInvoice, currentUser,
 						currentProvider);
-
 				invoice.setRecordedInvoice(recordedInvoice);
 				invoice.updateAudit(currentUser);
 				invoiceService.updateNoCheck(invoice);
