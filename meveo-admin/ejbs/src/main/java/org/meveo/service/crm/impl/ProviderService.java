@@ -27,13 +27,13 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.CustomFieldService;
 
 /**
  * Provider service implementation.
  */
 @Stateless
-public class ProviderService extends PersistenceService<Provider> {
+public class ProviderService extends CustomFieldService<Provider> {
 	@Inject
 	private UserService userService;
 
