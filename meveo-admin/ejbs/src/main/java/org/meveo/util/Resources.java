@@ -16,61 +16,50 @@
  */
 package org.meveo.util;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Disposes;
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
+import org.jboss.solder.core.ExtensionManaged;
+
 public class Resources {
 
-//    @ExtensionManaged
-//    @RequestScoped
-//    @Produces
+    @ExtensionManaged
+    @ConversationScoped
+    @Produces
     @PersistenceUnit(unitName = "MeveoAdmin")
-//    @MeveoJpa
+    @MeveoJpa
     private EntityManagerFactory emf;
 
-    @Produces
-    @MeveoJpa
-    @RequestScoped
-    public EntityManager create() {
-        return this.emf.createEntityManager();
-    }
-
-    public void dispose(@Disposes @MeveoJpa EntityManager entityManager) {
-        if (entityManager.isOpen()) {
-            entityManager.close();
-        }
-    }
-
-    // @ExtensionManaged
-    // @Produces
-    // @PersistenceUnit(unitName = "MeveoAdmin")
-    // @MeveoJpaForJobs
-    // private EntityManagerFactory emfForJobs;
+     //@ExtensionManaged
+     //@Produces
+     //@PersistenceUnit(unitName = "MeveoAdmin")
+     //@MeveoJpaForJobs
+     //private EntityManagerFactory emfForJobs;
     @Produces
     @PersistenceContext(unitName = "MeveoAdmin")
     @MeveoJpaForJobs
     private EntityManager emfForJobs;
 
+
     @Produces
-    // @PersistenceContext(unitName = "MeveoAdminTarget")
+//    @PersistenceContext(unitName = "MeveoAdminTarget")
     @PersistenceContext(unitName = "MeveoAdmin")
     @MeveoJpaForTarget
     static EntityManager emfForTarget;
 
     /*
      * @ExtensionManaged
-     * 
+     *
      * @ConversationScoped
-     * 
+     *
      * @Produces
-     * 
+     *
      * @PersistenceUnit(unitName = "MeveoDWH")
-     * 
+     *
      * @MeveoDWHJpa private EntityManagerFactory emfDwh;
      */
 

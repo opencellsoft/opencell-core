@@ -172,26 +172,17 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
-		
-	    entity.setCustomerAccount(customerAccountService.attach(entity.getCustomerAccount()));
-	    
-	    try {
+    public String saveOrUpdate(boolean killConversation) {
+        try {
 
-			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
-				if (billingAccountService.isDuplicationExist(entity)) {
-					entity.setDefaultLevel(false);
-					throw new DuplicateDefaultAccountException();
-				}
-			}
+            if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
+                if (billingAccountService.isDuplicationExist(entity)) {
+                    entity.setDefaultLevel(false);
+                    throw new DuplicateDefaultAccountException();
+                }
+            }
 
-			if (entity.isTransient()) {
-				billingAccountService.initBillingAccount(entity);
-			}
-
-			super.saveOrUpdate(killConversation);
-            
-			CustomerAccount customerAccount = entity.getCustomerAccount();
+            CustomerAccount customerAccount = entity.getCustomerAccount();
             if (customerAccount != null) {
                 List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
                 if (billingAccounts != null) {
@@ -200,21 +191,30 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                     }
                 }
             }
-			
-			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
-	            return null;
-	        } else {
-	            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
-	        }
-			
-		} catch (DuplicateDefaultAccountException e1) {
-			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
-		} catch (Exception e) {
-			log.error("failed to save or update billing account",e);
-			messages.error(new BundleKey("messages", "javax.el.ELException"));
-		}
-		return null;
-	}
+
+            if (entity.isTransient()) {
+                billingAccountService.initBillingAccount(entity);
+            }
+
+            super.saveOrUpdate(killConversation);
+
+            log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
+
+            if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
+                return null;
+            } else {
+                return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+            }
+
+        } catch (DuplicateDefaultAccountException e1) {
+            messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
+        } catch (Exception e) {
+            log.error("failed to save or update billing account",e);
+            messages.error(new BundleKey("messages", "javax.el.ELException"));
+        }
+        return null;
+    }
+
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

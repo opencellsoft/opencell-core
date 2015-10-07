@@ -167,7 +167,8 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 	public String saveOrUpdate(boolean killConversation)
 			throws BusinessException {
 		entity.setUnMatchingAmount(entity.getAmount());
-
+		entity.getCustomerAccount().getAccountOperations().add(entity);
+		
 		return super.saveOrUpdate(killConversation);
 	}
 
