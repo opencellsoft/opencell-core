@@ -41,7 +41,6 @@ import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.FilteredQueryBuilder;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
@@ -57,7 +56,6 @@ import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.security.MeveoUser;
@@ -114,9 +112,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 	@Inject
 	private CustomFieldsCacheContainerProvider customFieldsCache;
-
-	@Inject
-	private ParamBean paramBean;
 
 	/**
 	 * Constructor.
@@ -995,26 +990,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 	public void commit() {
 		getEntityManager().flush();
-	}
-
-	public Object getCFOrPropertyValue(String code,
-			String defaultParamBeanValue, ICustomFieldEntity entity,
-			boolean saveInCFIfNotExist) {
-		Object result = entity.getCustomFields().containsKey(code) ? entity
-				.getCustomFields().get(code) : null;
-
-		if (result == null) {
-			CustomFieldInstance cfInstance = new CustomFieldInstance();
-			cfInstance.setCode(code);
-			cfInstance.setStringValue(paramBean.getProperty(code,
-					defaultParamBeanValue));
-			if (saveInCFIfNotExist) {
-				entity.getCustomFields().put(code, cfInstance);
-			}
-			return cfInstance;
-		}
-
-		return result;
 	}
 
 }

@@ -16,6 +16,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -25,6 +26,7 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.slf4j.Logger;
@@ -42,6 +44,9 @@ public class AccountOperationsGenerationJobBean {
 	private OCCTemplateService oCCTemplateService;
 
 	@Inject
+	private ProviderService providerService;
+
+	@Inject
 	private InvoiceService invoiceService;
 
 	@Inject
@@ -49,14 +54,17 @@ public class AccountOperationsGenerationJobBean {
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser) {
-		Provider currentProvider=currentUser.getProvider();
-		log.info("Running for user={}, parameter={}, provider={}", currentUser, parameter,currentProvider.getCode());
-		
-		//ParamBean paramBean = ParamBean.getInstance();
-		List<Invoice> invoices = invoiceService.getInvoicesWithNoAccountOperation(null,currentProvider);
-//		Provider providerForHistory = null;
-		
+	public void execute(JobExecutionResultImpl result, String parameter,
+			User currentUser) {
+		Provider currentProvider = currentUser.getProvider();
+		log.info("Running for user={}, parameter={}, provider={}", currentUser,
+				parameter, currentProvider.getCode());
+
+		// ParamBean paramBean = ParamBean.getInstance();
+		List<Invoice> invoices = invoiceService
+				.getInvoicesWithNoAccountOperation(null, currentProvider);
+		// Provider providerForHistory = null;
+
 		log.info("processing {} invoice", invoices.size());
 
 		for (Invoice invoice : invoices) {
@@ -66,40 +74,55 @@ public class AccountOperationsGenerationJobBean {
 				RecordedInvoice recordedInvoice = new RecordedInvoice();
 				BillingAccount billingAccount = invoice.getBillingAccount();
 
-				if (recordedInvoiceService.isRecordedInvoiceExist(invoice.getInvoiceNumber(), invoice.getProvider())) {
-					throw new InvoiceExistException("Invoice id" + invoice.getId() + " already exist");
+				if (recordedInvoiceService.isRecordedInvoiceExist(
+						invoice.getInvoiceNumber(), invoice.getProvider())) {
+					throw new InvoiceExistException("Invoice id"
+							+ invoice.getId() + " already exist");
 				}
 
 				try {
-					customerAccount = invoice.getBillingAccount().getCustomerAccount();
+					customerAccount = invoice.getBillingAccount()
+							.getCustomerAccount();
 					recordedInvoice.setCustomerAccount(customerAccount);
 					recordedInvoice.setProvider(customerAccount.getProvider());
 				} catch (Exception e) {
 					log.error("error while getting customer account ", e);
-					throw new ImportInvoiceException("Cannot found customerAccount");
+					throw new ImportInvoiceException(
+							"Cannot found customerAccount");
 				}
 
 				try {
-					
-					CustomFieldInstance cfInstance = (CustomFieldInstance)oCCTemplateService.getCFOrPropertyValue(
-							"accountOperationsGenerationJob.occCode", "FA_FACT",customerAccount.getProvider(),true);
-					invoiceTemplate = oCCTemplateService.findByCode(cfInstance.getValueAsString(), customerAccount.getProvider()
+
+					CustomFieldInstance cfInstance = (CustomFieldInstance) providerService
+							.getCustomFieldOrProperty(
+									"accountOperationsGenerationJob.occCode",
+									"FA_FACT", customerAccount.getProvider(),
+									true, AccountLevelEnum.PROVIDER,
+									currentUser);
+					invoiceTemplate = oCCTemplateService.findByCode(cfInstance
+							.getValueAsString(), customerAccount.getProvider()
 							.getCode());
 				} catch (Exception e) {
 					log.error("error while getting occ template ", e);
-					throw new ImportInvoiceException("Cannot found OCC Template for invoice");
+					throw new ImportInvoiceException(
+							"Cannot found OCC Template for invoice");
 				}
 
 				recordedInvoice.setReference(invoice.getInvoiceNumber());
-				recordedInvoice.setAccountCode(invoiceTemplate.getAccountCode());
+				recordedInvoice
+						.setAccountCode(invoiceTemplate.getAccountCode());
 				recordedInvoice.setOccCode(invoiceTemplate.getCode());
-				recordedInvoice.setOccDescription(invoiceTemplate.getDescription());
-				recordedInvoice.setTransactionCategory(invoiceTemplate.getOccCategory());
-				recordedInvoice.setAccountCodeClientSide(invoiceTemplate.getAccountCodeClientSide());
+				recordedInvoice.setOccDescription(invoiceTemplate
+						.getDescription());
+				recordedInvoice.setTransactionCategory(invoiceTemplate
+						.getOccCategory());
+				recordedInvoice.setAccountCodeClientSide(invoiceTemplate
+						.getAccountCodeClientSide());
 
 				try {
 					recordedInvoice.setAmount(invoice.getAmountWithTax());
-					recordedInvoice.setUnMatchingAmount(invoice.getAmountWithTax());
+					recordedInvoice.setUnMatchingAmount(invoice
+							.getAmountWithTax());
 					recordedInvoice.setMatchingAmount(BigDecimal.ZERO);
 				} catch (Exception e) {
 					log.error("error with amount with tax", e);
@@ -107,10 +130,12 @@ public class AccountOperationsGenerationJobBean {
 				}
 
 				try {
-					recordedInvoice.setAmountWithoutTax(invoice.getAmountWithoutTax());
+					recordedInvoice.setAmountWithoutTax(invoice
+							.getAmountWithoutTax());
 				} catch (Exception e) {
 					log.error("error with amount without tax", e);
-					throw new ImportInvoiceException("Error on amountWithoutTax");
+					throw new ImportInvoiceException(
+							"Error on amountWithoutTax");
 				}
 
 				try {
@@ -121,22 +146,26 @@ public class AccountOperationsGenerationJobBean {
 				}
 
 				try {
-					recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
+					recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice
+							.getDueDate()));
 				} catch (Exception e) {
-					log.error("error with due date ",e);
+					log.error("error with due date ", e);
 					throw new ImportInvoiceException("Error on DueDate");
 				}
 
 				try {
-					recordedInvoice.setInvoiceDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
-					recordedInvoice.setTransactionDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
+					recordedInvoice.setInvoiceDate(DateUtils
+							.setTimeToZero(invoice.getInvoiceDate()));
+					recordedInvoice.setTransactionDate(DateUtils
+							.setTimeToZero(invoice.getInvoiceDate()));
 				} catch (Exception e) {
 					log.error("error with invoice date", e);
 					throw new ImportInvoiceException("Error on invoiceDate");
 				}
 
 				try {
-					recordedInvoice.setPaymentMethod(billingAccount.getPaymentMethod());
+					recordedInvoice.setPaymentMethod(billingAccount
+							.getPaymentMethod());
 				} catch (Exception e) {
 					log.error("erro with payment method", e);
 					throw new ImportInvoiceException("Error on paymentMethod");
@@ -150,18 +179,27 @@ public class AccountOperationsGenerationJobBean {
 				}
 
 				if (billingAccount.getBankCoordinates() != null) {
-					recordedInvoice.setPaymentInfo(billingAccount.getBankCoordinates().getIban());
-					recordedInvoice.setPaymentInfo1(billingAccount.getBankCoordinates().getBankCode());
-					recordedInvoice.setPaymentInfo2(billingAccount.getBankCoordinates().getBranchCode());
-					recordedInvoice.setPaymentInfo3(billingAccount.getBankCoordinates().getAccountNumber());
-					recordedInvoice.setPaymentInfo4(billingAccount.getBankCoordinates().getKey());
-					recordedInvoice.setPaymentInfo5(billingAccount.getBankCoordinates().getBankName());
-					recordedInvoice.setPaymentInfo6(billingAccount.getBankCoordinates().getBic());
-					recordedInvoice.setBillingAccountName(billingAccount.getBankCoordinates().getAccountOwner());
+					recordedInvoice.setPaymentInfo(billingAccount
+							.getBankCoordinates().getIban());
+					recordedInvoice.setPaymentInfo1(billingAccount
+							.getBankCoordinates().getBankCode());
+					recordedInvoice.setPaymentInfo2(billingAccount
+							.getBankCoordinates().getBranchCode());
+					recordedInvoice.setPaymentInfo3(billingAccount
+							.getBankCoordinates().getAccountNumber());
+					recordedInvoice.setPaymentInfo4(billingAccount
+							.getBankCoordinates().getKey());
+					recordedInvoice.setPaymentInfo5(billingAccount
+							.getBankCoordinates().getBankName());
+					recordedInvoice.setPaymentInfo6(billingAccount
+							.getBankCoordinates().getBic());
+					recordedInvoice.setBillingAccountName(billingAccount
+							.getBankCoordinates().getAccountOwner());
 				}
 
 				recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
-				recordedInvoiceService.create(recordedInvoice,currentUser,currentProvider);
+				recordedInvoiceService.create(recordedInvoice, currentUser,
+						currentProvider);
 
 				invoice.setRecordedInvoice(recordedInvoice);
 				invoice.updateAudit(currentUser);
