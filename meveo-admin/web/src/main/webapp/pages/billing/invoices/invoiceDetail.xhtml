@@ -216,9 +216,12 @@
 		</hf:formPanel>
 
 		<hftl:dataList label="#{messages['creditNote.title']}"
-			backingBean="#{creditNoteBean}"
+			backingBean="#{creditNoteListBean}"
 			dataModel="#{invoiceBean.entity.creditNotes}">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['creditNote.creditNoteDate']}" field="creditNoteDate" />
+			<hftl:column label="#{messages['creditNote.dueDate']}" field="dueDate" />
 		</hftl:dataList>
 
 		<hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false"
