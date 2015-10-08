@@ -169,33 +169,50 @@ public class CustomFieldTemplateApi extends BaseApi {
 		}
 	}
 
-	public void remove(String code, String al, Provider provider) throws MeveoApiException {
-		AccountLevelEnum accountLevel = null;
-		try {
-			accountLevel = AccountLevelEnum.valueOf(al);
-		} catch (IllegalArgumentException e) {
-			throw new InvalidEnumValue(AccountLevelEnum.class.getName(), al);
+	public void remove(String code, String al, Provider provider)  throws InvalidEnumValue, EntityDoesNotExistsException, MissingParameterException   {
+		if(StringUtils.isBlank(code)){
+			missingParameters.add("code");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
-		CustomFieldTemplate cf = customFieldTemplateService.findByCodeAndAccountLevel(code, accountLevel, provider);
-		if (cf != null) {
-			customFieldTemplateService.remove(cf);
+		AccountLevelEnum accountLevel = null;
+		CustomFieldTemplate cft =  null;
+		if(!StringUtils.isBlank(al)){
+			try {
+				accountLevel = AccountLevelEnum.valueOf(al);
+			} catch (IllegalArgumentException e) {
+				throw new InvalidEnumValue(AccountLevelEnum.class.getName(), al);
+			}
+			 cft = customFieldTemplateService.findByCodeAndAccountLevel(code, accountLevel, provider);
+		}else{
+			 cft = customFieldTemplateService.findByCodeAndAccountLevel(code, provider);
+		}
+		if (cft != null) {
+			customFieldTemplateService.remove(cft);
 		}
 	}
 
-	public CustomFieldTemplateDto find(String code, String al, Provider provider) throws MeveoApiException {
+	public CustomFieldTemplateDto find(String code, String al, Provider provider) throws InvalidEnumValue, EntityDoesNotExistsException, MissingParameterException   {
+		if(StringUtils.isBlank(code)){
+			missingParameters.add("code");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
 		AccountLevelEnum accountLevel = null;
-		try {
-			accountLevel = AccountLevelEnum.valueOf(al);
-		} catch (IllegalArgumentException e) {
-			throw new InvalidEnumValue(AccountLevelEnum.class.getName(), al);
+		CustomFieldTemplate cft =  null;
+		if(!StringUtils.isBlank(al)){
+			try {
+				accountLevel = AccountLevelEnum.valueOf(al);
+			} catch (IllegalArgumentException e) {
+				throw new InvalidEnumValue(AccountLevelEnum.class.getName(), al);
+			}
+			 cft = customFieldTemplateService.findByCodeAndAccountLevel(code, accountLevel, provider);
+		}else{
+			 cft = customFieldTemplateService.findByCodeAndAccountLevel(code, provider);
 		}
 
-		CustomFieldTemplate cf = customFieldTemplateService.findByCodeAndAccountLevel(code, accountLevel, provider);
-
-		if (cf == null) {
+		if (cft == null) {
 			throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
 		}
-		return new CustomFieldTemplateDto(cf);
+		return new CustomFieldTemplateDto(cft);
 	}
 	
 	public void createOrUpdate(CustomFieldTemplateDto postData, User currentUser) throws MeveoApiException {
