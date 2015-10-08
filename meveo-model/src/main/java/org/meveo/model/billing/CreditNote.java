@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -42,7 +43,7 @@ public class CreditNote extends BusinessEntity {
 	@JoinColumn(name = "RECORDED_INVOICE_ID")
 	private RecordedInvoice recordedInvoice;
 
-	@OneToMany(mappedBy = "creditNote", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "creditNote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<CreditNoteLine> creditNoteLines = new ArrayList<CreditNoteLine>();
 
 	@ManyToOne

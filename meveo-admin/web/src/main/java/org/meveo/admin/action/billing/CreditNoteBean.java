@@ -1,5 +1,7 @@
 package org.meveo.admin.action.billing;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.Instance;
@@ -47,25 +49,39 @@ public class CreditNoteBean extends BaseBean<CreditNote> {
 	public CreditNote initEntity() {
 		CreditNote obj = super.initEntity();
 
-		if (invoiceIdParam != null && invoiceIdParam.get() != null) {
-			obj.setInvoice(invoiceService.findById(invoiceIdParam.get()));
+		if (obj.isTransient() && invoiceIdParam != null && invoiceIdParam.get() != null) {
+			if (obj.getInvoice() == null) {
+				obj.setInvoice(invoiceService.findById(invoiceIdParam.get()));
+			}
 
-			// initialize credit note lines
-			for (InvoiceAgregate invoiceAgregate : obj.getInvoice().getInvoiceAgregates()) {
-				if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-					SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = (SubCategoryInvoiceAgregate) invoiceAgregate;
+			if (obj.getCreditNoteLines() == null || obj.getCreditNoteLines().size() == 0) {
+				obj.setCreditNoteLines(new ArrayList<CreditNoteLine>());
+				for (InvoiceAgregate invoiceAgregate : obj.getInvoice().getInvoiceAgregates()) {
+					if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+						((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory().getCode();
 
-					CreditNoteLine creditNoteLine = new CreditNoteLine();
-					creditNoteLine.setCreditNote(getEntity());
-					creditNoteLine.setInvoiceSubCategory(subCategoryInvoiceAgregate.getInvoiceSubCategory());
-					creditNoteLine.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
-					creditNoteLine.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax());
-					creditNoteLine.setTaxAmount(subCategoryInvoiceAgregate.getAmountTax());
+						SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = (SubCategoryInvoiceAgregate) invoiceAgregate;
+
+						CreditNoteLine creditNoteLine = new CreditNoteLine();
+						creditNoteLine.setCreditNote(obj);
+						creditNoteLine.setDescription(subCategoryInvoiceAgregate.getInvoiceSubCategory()
+								.getDescription());
+						creditNoteLine.setInvoiceSubCategory(subCategoryInvoiceAgregate.getInvoiceSubCategory());
+						creditNoteLine.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+						creditNoteLine.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax());
+						creditNoteLine.setTaxAmount(subCategoryInvoiceAgregate.getAmountTax());
+
+						obj.getCreditNoteLines().add(creditNoteLine);
+					}
 				}
 			}
 		}
 
 		return obj;
+	}
+
+	public void reCompute(CreditNoteLine line) {
+		line.computeWithTax();
 	}
 
 	@Override
@@ -107,6 +123,39 @@ public class CreditNoteBean extends BaseBean<CreditNote> {
 
 	public void setSubCategoryInvoiceAgregates(List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
 		this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
+	}
+
+	public BigDecimal totalCreditNoteAmountWithoutTax() {
+		BigDecimal total = new BigDecimal(0);
+		if (entity != null && entity.getCreditNoteLines() != null) {
+			for (CreditNoteLine line : entity.getCreditNoteLines()) {
+				total = total.add(line.getAmountWithoutTax());
+			}
+		}
+
+		return total;
+	}
+
+	public BigDecimal totalCreditNoteAmountTax() {
+		BigDecimal total = new BigDecimal(0);
+		if (entity != null && entity.getCreditNoteLines() != null) {
+			for (CreditNoteLine line : entity.getCreditNoteLines()) {
+				total = total.add(line.getTaxAmount());
+			}
+		}
+
+		return total;
+	}
+
+	public BigDecimal totalCreditNoteAmountWithTax() {
+		BigDecimal total = new BigDecimal(0);
+		if (entity != null && entity.getCreditNoteLines() != null) {
+			for (CreditNoteLine line : entity.getCreditNoteLines()) {
+				total = total.add(line.getAmountWithTax());
+			}
+		}
+
+		return total;
 	}
 
 }
