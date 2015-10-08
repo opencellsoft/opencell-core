@@ -91,7 +91,7 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			result.setMessage("" + walletApi.createReservation(postData, getCurrentUser().getProvider()));
+			result.setMessage("" + walletApi.createReservation(postData, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

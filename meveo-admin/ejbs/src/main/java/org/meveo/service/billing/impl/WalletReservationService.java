@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
@@ -231,6 +232,29 @@ public class WalletReservationService extends
 
 		BigDecimal ratedAmount = walletOperationService.getBalanceAmount(
 				provider, seller, null, null, null, userAccount, startDate,
+				endDate, false, 1);
+
+		return ratedAmount;
+	}
+	
+	public BigDecimal computeRatedAmount(User user, Seller seller,
+			UserAccount userAccount, Date subscriptionDate) {
+		Date startDate = null;
+		Date endDate = null;
+
+		CustomFieldInstance cfInstance = (CustomFieldInstance) providerService
+				.getCustomFieldOrProperty("default.calendar.monthly",
+						"MONTHLY", user.getProvider(), true, AccountLevelEnum.PROVIDER,
+						user);
+
+		Calendar cal = calendarService.findByCode(
+				cfInstance.getValueAsString(), user.getProvider());
+		cal.setInitDate(subscriptionDate);
+		startDate = cal.previousCalendarDate(subscriptionDate);
+		endDate = cal.nextCalendarDate(subscriptionDate);
+
+		BigDecimal ratedAmount = walletOperationService.getBalanceAmount(
+				user.getProvider(), seller, null, null, null, userAccount, startDate,
 				endDate, false, 1);
 
 		return ratedAmount;

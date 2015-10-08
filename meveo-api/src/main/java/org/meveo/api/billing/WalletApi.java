@@ -243,6 +243,54 @@ public class WalletApi extends BaseApi {
 			throw new MissingParameterException(sb.toString());
 		}
 	}
+	
+	public Long createReservation(WalletReservationDto walletReservation, User user) throws MeveoApiException {
+
+		if (!StringUtils.isBlank(walletReservation.getSellerCode())
+				&& !StringUtils.isBlank(walletReservation.getOfferCode())
+				&& !StringUtils.isBlank(walletReservation.getUserAccountCode())
+				&& walletReservation.getSubscriptionDate() != null && walletReservation.getCreditLimit() != null) {
+
+			try {
+				return reservationService.createReservation(user, walletReservation.getSellerCode(),
+						walletReservation.getOfferCode(), walletReservation.getUserAccountCode(),
+						walletReservation.getSubscriptionDate(), walletReservation.getExpirationDate(),
+						walletReservation.getCreditLimit(), walletReservation.getParam1(),
+						walletReservation.getParam2(), walletReservation.getParam3(),
+						walletReservation.isAmountWithTax());
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
+		} else {
+			StringBuilder sb = new StringBuilder("The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(walletReservation.getSellerCode())) {
+				missingFields.add("sellerCode");
+			}
+			if (StringUtils.isBlank(walletReservation.getOfferCode())) {
+				missingFields.add("offerCode");
+			}
+			if (StringUtils.isBlank(walletReservation.getUserAccountCode())) {
+				missingFields.add("userAccountCode");
+			}
+			if (walletReservation.getSubscriptionDate() == null) {
+				missingFields.add("subscriptionDate");
+			}
+			if (walletReservation.getCreditLimit() == null) {
+				missingFields.add("creditLimit");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MissingParameterException(sb.toString());
+		}
+	}
 
 	public void updateReservation(WalletReservationDto walletReservation, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(walletReservation.getSellerCode())
