@@ -55,6 +55,16 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             return null;
         }
     }
+    
+    public CustomFieldTemplate findByCodeAndAccountLevel(String code, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, provider);
+        qb.addCriterion("code", "=", code, true);
+        try {
+            return (CustomFieldTemplate) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }    
 
     @Override
     public void create(CustomFieldTemplate e, User creator, Provider provider) {
