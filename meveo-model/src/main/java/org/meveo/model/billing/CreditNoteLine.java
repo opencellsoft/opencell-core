@@ -93,4 +93,55 @@ public class CreditNoteLine extends BaseEntity {
 		this.amountWithTax = amountWithTax;
 	}
 
+	public BigDecimal computeWithTax() {
+		if (amountWithoutTax != null && taxAmount == null) {
+			amountWithTax = amountWithoutTax;
+		}
+		if (amountWithoutTax != null && taxAmount != null) {
+			amountWithTax = amountWithoutTax.add(taxAmount);
+		}
+
+		return amountWithTax;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((amountWithTax == null) ? 0 : amountWithTax.hashCode());
+		result = prime * result + ((amountWithoutTax == null) ? 0 : amountWithoutTax.hashCode());
+		result = prime * result + ((creditNote == null) ? 0 : creditNote.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((invoiceSubCategory == null) ? 0 : invoiceSubCategory.hashCode());
+		result = prime * result + ((taxAmount == null) ? 0 : taxAmount.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		CreditNoteLine other = (CreditNoteLine) obj;
+
+		if (amountWithoutTax == null) {
+			if (other.amountWithoutTax != null)
+				return false;
+		} else if (!amountWithoutTax.equals(other.amountWithoutTax))
+			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (invoiceSubCategory == null) {
+			if (other.invoiceSubCategory != null)
+				return false;
+		} else if (!invoiceSubCategory.equals(other.invoiceSubCategory))
+			return false;
+
+		return true;
+	}
+
 }
