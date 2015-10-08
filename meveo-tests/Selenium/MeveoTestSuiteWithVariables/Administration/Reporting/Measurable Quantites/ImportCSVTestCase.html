@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">ImportCSVWithoutPickLineTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>${ImportCSV}</td>
 	<td></td>
@@ -28,28 +23,13 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='results_form_strategy_panel']/div/ul/li[2]</td>
+	<td>css=li:contains(&quot;Update existing records&quot;)</td>
 	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>LOCATOR_DETECTION_FAILED</td>
-	<td>D:\MeasurableQuantity.csv</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=(//button[@type='button'])[3]</td>
+	<td>${ChooseFile}</td>
 	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>LOCATOR_DETECTION_FAILED</td>
-	<td>D:\MeasurableQuantity.csv</td>
 </tr>
 <tr>
 	<td>click</td>

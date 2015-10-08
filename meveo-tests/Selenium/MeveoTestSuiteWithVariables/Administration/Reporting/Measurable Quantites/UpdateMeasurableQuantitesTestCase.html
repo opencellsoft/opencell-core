@@ -12,29 +12,14 @@
 <tr><td rowspan="1" colspan="3">UpdateJobInstancesTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>10000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>id=datatable_results:0:code_id_message_link</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
 	<td>${CodeText}</td>
-	<td>Code_01</td>
+	<td>Code_02</td>
 </tr>
 <tr>
 	<td>type</td>
@@ -67,13 +52,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>3000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[37]/div/ul/li[2]</td>
+	<td>css=li:contains(&quot;Daily&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -89,11 +69,6 @@
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
 	<td></td>
 </tr>
 </tbody></table>
