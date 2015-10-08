@@ -18,6 +18,8 @@ public class FileParserBeanio implements IFileParser {
     private BeanReader beanReader = null;     
     private String mappingDescriptor = null;    
     private String streamName = null;
+    private Object recordObject = null;
+    private RecordRejectedException recordRejectedException=null;
     
 	public FileParserBeanio(){
 		this.factory = StreamFactory.newInstance();
@@ -37,23 +39,37 @@ public class FileParserBeanio implements IFileParser {
 	public void setDataName(String dataName) {
 		this.streamName = dataName;
 	}
-
-	@Override
-	public Object getNextRecord() throws RecordRejectedException,Exception{
-		try{
-			return beanReader.read();
-		}catch(MalformedRecordException | UnidentifiedRecordException | UnexpectedRecordException | InvalidRecordException e  ){
-			throw new RecordRejectedException(e.getMessage());
-		}catch(Exception e  ){
-			throw e;
-		}
-	}
-
+	
 	@Override
 	public void parsing() throws Exception {
 		factory.load( new ByteArrayInputStream(mappingDescriptor.getBytes(StandardCharsets.UTF_8)));
 		beanReader = factory.createReader(streamName, dataFile);		
 	}
+	
+	@Override
+	public boolean hasNext() throws Exception {
+		recordObject= null;
+		try{
+			recordObject =  beanReader.read();
+		}catch(Exception e  ){
+			recordRejectedException =  new RecordRejectedException(e.getMessage());
+			return true;
+		}
+		if(recordObject != null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	@Override
+	public Object getNextRecord() throws RecordRejectedException{
+		if(recordObject == null){
+			throw  recordRejectedException;
+		}
+		return recordObject; 
+	}
+
 
 	@Override
 	public void close() {
@@ -61,5 +77,7 @@ public class FileParserBeanio implements IFileParser {
 			beanReader.close();
 		}
 	}
+
+
 
 }
