@@ -79,4 +79,8 @@
 			referencedTableName="CRM_SELLER" baseColumnNames="seller_id"
 			baseTableName="CRM_CUSTOM_FIELD_INST" referencedColumnNames="id" />
     </changeSet>
+    
+	<changeSet author="anasseh" id="20151009_1149">
+     	<modifyDataType columnName="SELECTED_BILLING_ACCOUNTS" newDataType="text"   tableName="BILLING_BILLING_RUN"/>
+     </changeSet>    
 </databaseChangeLog>
