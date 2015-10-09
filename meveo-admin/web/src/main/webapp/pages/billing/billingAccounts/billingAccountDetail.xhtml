@@ -365,6 +365,7 @@
 													<p:selectOneMenu id="counterPeriod"
 														converter="omnifaces.SelectItemsConverter"
 														value="#{billingAccountBean.selectedCounterInstance}">
+                                                        <f:selectItem itemLabel="#{messages['commons.select']}" />
 														<f:selectItems
 															value="#{billingAccountBean.entity.counters}" />
 														<p:ajax event="valueChange"
@@ -381,11 +382,12 @@
 														<h:outputText id="counterCode"
 															value="#{billingAccountBean.selectedCounterInstance.counterTemplate.code}" />
 												</hftl:decorateFormField>
-												<hftl:dataList resultsId="datatable_counters"
-													backingBean="#{counterPeriodBean}"
-													dataModel="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
-													sortBy="periodStartDate"
-													sortOrder="DESCENDING" exportToXml="false">
+												
+                                                <p:dataTable id="datatable_counters" var="entity" lazy="true"
+                                                    paginator="true" resizableColumns="true" reflow="true"
+                                                    value="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
+                                                    rows="10" rowKey="#{entity.id}" styleClass="custom-grid" sortBy="#{entity.periodStartDate}" sortOrder="DESCENDING">											     
+
 													<hftl:column label="#{messages['businessEntity.code']}"
 														field="code" />
 													<hftl:column label="#{messages['businessEntity.description']}"
@@ -403,7 +405,7 @@
 														field="level" converterParam="4digits" wrapHeader="true" />
 													<hftl:column label="#{messages['counterPeriod.value']}"
 														field="value" converterParam="4digits" wrapHeader="true" />
-												</hftl:dataList>
+										      </p:dataTable>
 											</p:panel>
 										</p:tab>
 
