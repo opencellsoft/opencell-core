@@ -1682,4 +1682,29 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="#1105_20151009" author="EdwardLegaspi">
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_recorded_invoice" />
+		<dropColumn tableName="billing_credit_note" columnName="recorded_invoice_id" />
+
+		<addColumn tableName="billing_credit_note">
+			<column name="recorded_credit_note_id" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="recorded_credit_note_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_recorded_credit_note"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+	</changeSet>
+
+	<changeSet id="#1138_20151009" author="EdwardLegaspi">
+		<addColumn tableName="crm_provider">
+			<column name="credit_note_sequence_size" type="INT4" />
+		</addColumn>
+		<addColumn tableName="crm_seller">
+			<column name="credit_note_sequence_size" type="INT4" />
+		</addColumn>
+
+		<sql>UPDATE crm_provider SET credit_note_sequence_size=9;</sql>
+	</changeSet>
+
 </databaseChangeLog>

@@ -22,7 +22,6 @@ import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.payments.RecordedInvoice;
 
 /**
  * @author Edward P. Legaspi
@@ -40,8 +39,8 @@ public class CreditNote extends BusinessEntity {
 	private BillingAccount billingAccount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "RECORDED_INVOICE_ID")
-	private RecordedInvoice recordedInvoice;
+	@JoinColumn(name = "RECORDED_CREDIT_NOTE_ID")
+	private RecordedCreditNote recordedCreditNote;
 
 	@OneToMany(mappedBy = "creditNote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<CreditNoteLine> creditNoteLines = new ArrayList<CreditNoteLine>();
@@ -75,14 +74,6 @@ public class CreditNote extends BusinessEntity {
 
 	public void setBillingAccount(BillingAccount billingAccount) {
 		this.billingAccount = billingAccount;
-	}
-
-	public RecordedInvoice getRecordedInvoice() {
-		return recordedInvoice;
-	}
-
-	public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
-		this.recordedInvoice = recordedInvoice;
 	}
 
 	public List<CreditNoteLine> getCreditNoteLines() {
@@ -147,6 +138,14 @@ public class CreditNote extends BusinessEntity {
 
 	public void setNetToPay(BigDecimal netToPay) {
 		this.netToPay = netToPay;
+	}
+
+	public RecordedCreditNote getRecordedCreditNote() {
+		return recordedCreditNote;
+	}
+
+	public void setRecordedCreditNote(RecordedCreditNote recordedCreditNote) {
+		this.recordedCreditNote = recordedCreditNote;
 	}
 
 }

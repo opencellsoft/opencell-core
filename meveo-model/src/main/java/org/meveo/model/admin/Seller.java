@@ -78,6 +78,9 @@ public class Seller extends BusinessCFEntity {
 	@Column(name = "CURRENT_CREDIT_NOTE_NB")
 	private Long currentCreditNoteNb;
 
+	@Column(name = "CREDIT_NOTE_SEQUENCE_SIZE")
+	private Integer creditNoteSequenceSize = 9;
+
 	@Embedded
 	private Address address = new Address();
 
@@ -180,4 +183,13 @@ public class Seller extends BusinessCFEntity {
 	public void setCurrentCreditNoteNb(Long currentCreditNoteNb) {
 		this.currentCreditNoteNb = currentCreditNoteNb;
 	}
+
+	public Integer getCreditNoteSequenceSize() {
+		return creditNoteSequenceSize;
+	}
+
+	public void setCreditNoteSequenceSize(Integer creditNoteSequenceSize) {
+		this.creditNoteSequenceSize = creditNoteSequenceSize;
+	}
+
 }
