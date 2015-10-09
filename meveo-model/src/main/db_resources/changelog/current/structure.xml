@@ -1550,4 +1550,7 @@
     <changeSet author="AndriusKarpavicius" id="#1123_20151006">
         <dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="user_id"/>
     </changeSet>
+	<changeSet author="anasseh" id="20151009_1149">
+     	<modifyDataType columnName="SELECTED_BILLING_ACCOUNTS" newDataType="text"   tableName="BILLING_BILLING_RUN"/>
+     </changeSet>     
 </databaseChangeLog>
