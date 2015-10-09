@@ -50,6 +50,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
@@ -95,6 +96,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	@Inject
 	private Messages messages;
 
+	@Inject 
+	private CounterInstanceService counterInstanceService;
 	
 	private boolean returnToAgency;
 
@@ -476,7 +479,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	}
 
 	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
-		this.selectedCounterInstance = selectedCounterInstance;
+		this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
 	}
 
 	public Date getExceptionalInvoicingDate() {
