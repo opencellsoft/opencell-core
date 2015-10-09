@@ -175,6 +175,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     public String saveOrUpdate(boolean killConversation) {
         try {
 
+            entity.setCustomerAccount(customerAccountService.refreshOrRetrieve(entity.getCustomerAccount()));
+            
             if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
                 if (billingAccountService.isDuplicationExist(entity)) {
                     entity.setDefaultLevel(false);
@@ -182,29 +184,24 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                 }
             }
 
-            CustomerAccount customerAccount = entity.getCustomerAccount();
-            if (customerAccount != null) {
-                List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
-                if (billingAccounts != null) {
-                    if (!billingAccounts.contains(entity)) {
-                        customerAccount.getBillingAccounts().add(entity);
-                    }
-                }
-            }
+//            CustomerAccount customerAccount = entity.getCustomerAccount();
+//            if (customerAccount != null) {
+//                List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
+//                if (billingAccounts != null) {
+//                    if (!billingAccounts.contains(entity)) {
+//                        customerAccount.getBillingAccounts().add(entity);
+//                    }
+//                }
+//            }
 
             if (entity.isTransient()) {
                 billingAccountService.initBillingAccount(entity);
             }
 
             super.saveOrUpdate(killConversation);
-
-            log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
-
-            if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
-                return null;
-            } else {
-                return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
-            }
+            
+            customerAccountId = entity.getCustomerAccount().getId();            
+            return getEditViewName(); // "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
 
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));

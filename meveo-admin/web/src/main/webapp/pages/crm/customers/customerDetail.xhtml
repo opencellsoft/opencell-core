@@ -12,7 +12,8 @@
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{customerBean.preRenderView}" />
-			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
+			<f:viewParam name="customerId" value="#{customerBean.objectId}" />			
+            <f:viewParam name="tab" value="#{customerBean.activeTab}"/>
 		</f:metadata>
 	</ui:define>
 
@@ -51,7 +52,7 @@
 						label="#{messages['customer.customerPanel']}"
 						showFormButtons="false" backingBean="#{customerBean}"
 						useCustomIdParam="true">
-						<p:tabView id="tabView">
+						<p:tabView id="tabView" activeIndex="#{customerBean.activeTab}">
 							<p:tab title="#{messages['customer.tab.account']}" id="tab0">
 								
                             <hf:formField id="code" label="#{messages['businessEntity.code']}"

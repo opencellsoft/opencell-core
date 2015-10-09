@@ -169,6 +169,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private Filter listFilter;
     
     private boolean listFiltered = false;
+
+    /**
+     * Tracks active tabs in GUI
+     */        
+    private int activeTab; 
+
+    private int activeMainTab = 0;
     
     /**
      * Constructor
@@ -980,5 +987,27 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		} else {
 			filters.remove("$FILTER");
 		}
-	}    
+	}
+	
+	public int getActiveTab() {
+        return activeTab;
+    }
+	
+	public void setActiveTab(int activeTab) {
+        this.activeTab = activeTab;
+    }
+	
+    /**
+     * @param activeMainTab Main tab to select
+     */
+    public void setActiveMainTab(int activeMainTab) {
+        this.activeMainTab = activeMainTab;
+    }
+
+    /**
+     * @return the activeMainTab
+     */
+    public int getActiveMainTab() {
+        return activeMainTab;
+    }    
 }

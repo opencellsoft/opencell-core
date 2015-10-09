@@ -9,6 +9,7 @@
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{oneShotChargeTemplateBean.objectId}" />
+            <f:viewParam name="tab" value="#{oneShotChargeTemplateBean.activeTab}" />
         </f:metadata>
     </ui:define>
     
@@ -44,7 +45,7 @@
 			label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}"
 			backingBean="#{oneShotChargeTemplateBean}" columns="2" showEnableDisableButton="true" updateConfirmationMessage="#{oneShotChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
-			<p:tabView id="tabView">
+			<p:tabView id="tabView" activeIndex="#{oneShotChargeTemplateBean.activeTab}">
 
 				<p:tab title="#{messages['customer.tab.information']}">
 						<hf:formField label="#{messages['chargeTemplate.code']}"

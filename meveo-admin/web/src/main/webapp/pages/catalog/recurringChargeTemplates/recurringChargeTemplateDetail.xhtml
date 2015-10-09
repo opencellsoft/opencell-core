@@ -8,7 +8,8 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="objectId" value="#{recurringChargeTemplateBean.objectId}" />
+            <f:viewParam name="objectId" value="#{recurringChargeTemplateBean.objectId}" />	
+            <f:viewParam name="tab" value="#{recurringChargeTemplateBean.activeTab}" />
         </f:metadata>
     </ui:define>
     
@@ -45,7 +46,7 @@
 			label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}"
 			backingBean="#{recurringChargeTemplateBean}" showEnableDisableButton="true" updateConfirmationMessage="#{recurringChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
-			<p:tabView id="tabView">
+			<p:tabView id="tabView" activeIndex="#{recurringChargeTemplateBean.activeTab}">
 
 				<p:tab title="#{messages['customer.tab.information']}">
 

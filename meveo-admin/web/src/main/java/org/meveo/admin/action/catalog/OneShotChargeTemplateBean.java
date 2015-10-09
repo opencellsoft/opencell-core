@@ -137,8 +137,8 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 			return null;
 		}
 
-		String outcome = super.saveOrUpdate(killConversation);
-        return outcome;
+		super.saveOrUpdate(killConversation);
+        return getEditViewName();
 	}
 
 	/**

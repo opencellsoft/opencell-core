@@ -23,7 +23,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -194,9 +193,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 			initServiceInstances(entity.getServiceInstances());
 		}
 
-		
-		
-
 		return entity;
 	}
 
@@ -250,12 +246,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		}
 
 		super.saveOrUpdate(killConversation);
-
-        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
-            return null;
-        } else {
-            return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
-        }
+		
+		userAccountId = entity.getUserAccount().getId();
+        return getEditViewName(); //"/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
 	}
 
 	public void newOneShotChargeInstance() {
