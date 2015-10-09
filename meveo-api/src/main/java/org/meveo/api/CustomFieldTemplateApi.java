@@ -153,7 +153,11 @@ public class CustomFieldTemplateApi extends BaseApi {
 					cf.setCalendar(calendar);
 				}
 			}
-
+			
+			if(cf.getFieldType() == CustomFieldTypeEnum.LIST ){
+				cf.setListValues(postData.getListValues());
+			}
+			
 			customFieldTemplateService.update(cf, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getDescription())) {
@@ -227,6 +231,5 @@ public class CustomFieldTemplateApi extends BaseApi {
 			update(postData, currentUser);
 		}
 	}
-
 
 }
