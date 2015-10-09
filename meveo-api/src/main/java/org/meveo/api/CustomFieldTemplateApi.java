@@ -70,7 +70,11 @@ public class CustomFieldTemplateApi extends BaseApi {
 			cf.setVersionable(postData.isVersionable());
 			cf.setTriggerEndPeriodEvent(postData.isTriggerEndPeriodEvent());
 			cf.setEntityClazz(postData.getEntityClazz());
-
+			
+			if(cf.getFieldType() == CustomFieldTypeEnum.LIST ){
+				cf.setListValues(postData.getListValues());
+			}
+			
 			if (!StringUtils.isBlank(postData.getCalendar())) {
 				Calendar calendar = calendarService.findByCode(postData.getCalendar(), currentUser.getProvider());
 				if (calendar != null) {
@@ -148,6 +152,10 @@ public class CustomFieldTemplateApi extends BaseApi {
 				if (calendar != null) {
 					cf.setCalendar(calendar);
 				}
+			}
+			
+			if(cf.getFieldType() == CustomFieldTypeEnum.LIST ){
+				cf.setListValues(postData.getListValues());
 			}
 
 			customFieldTemplateService.update(cf, currentUser);

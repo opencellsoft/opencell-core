@@ -1707,4 +1707,8 @@
 		<sql>UPDATE crm_provider SET credit_note_sequence_size=9;</sql>
 	</changeSet>
 
+	<changeSet author="anasseh" id="20151009_1149">
+     	<modifyDataType columnName="SELECTED_BILLING_ACCOUNTS" newDataType="text"   tableName="BILLING_BILLING_RUN"/>
+     </changeSet>
+
 </databaseChangeLog>
