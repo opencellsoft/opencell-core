@@ -45,7 +45,6 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -106,7 +105,7 @@ public class BillingAccount extends AccountEntity {
 	@Enumerated(EnumType.STRING)
 	private PaymentTermEnum paymentTerm;
 
-	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	// TODO : Add orphanRemoval annotation.
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<UserAccount> usersAccounts = new ArrayList<UserAccount>();

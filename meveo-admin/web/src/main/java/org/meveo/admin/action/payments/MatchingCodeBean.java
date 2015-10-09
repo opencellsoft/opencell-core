@@ -68,7 +68,7 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 		returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ entity.getMatchingAmounts().get(0).getAccountOperation()
 						.getCustomerAccount().getId()
-				+ "&edit=false&tab=ops&faces-redirect=true";
+				+ "&edit=false&mainTab=1&faces-redirect=true";
 
 		return returnPage;
 	}
@@ -79,7 +79,7 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 			returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 					+ entity.getMatchingAmounts().get(0).getAccountOperation()
 							.getCustomerAccount().getId()
-					+ "&edit=false&tab=ops";
+					+ "&edit=false&mainTab=1";
 			matchingCodeService.unmatching(entity.getId(), getCurrentUser());
 			messages.info(new BundleKey("messages", "matchingCode.unmatchingOK"));
 		} catch (BusinessException e) {

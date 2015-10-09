@@ -60,7 +60,7 @@ public class Customer extends AccountEntity {
 	@JoinColumn(name = "CUSTOMER_BRAND_ID")
 	private CustomerBrand customerBrand;
 
-	@OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<CustomerAccount> customerAccounts = new ArrayList<CustomerAccount>();
 
 	@Embedded

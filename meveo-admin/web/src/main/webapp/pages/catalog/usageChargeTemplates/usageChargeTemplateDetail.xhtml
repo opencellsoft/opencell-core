@@ -9,6 +9,7 @@
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{usageChargeTemplateBean.objectId}" />
+            <f:viewParam name="tab" value="#{usageChargeTemplateBean.activeTab}" />
         </f:metadata>
     </ui:define>
     
@@ -45,7 +46,7 @@
 			label="#{messages['usageChargeTemplate.title']}"
 			backingBean="#{usageChargeTemplateBean}" showEnableDisableButton="true" updateConfirmationMessage="#{usageChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
-			<p:tabView id="tabView">
+			<p:tabView id="tabView" activeIndex="#{usageChargeTemplateBean.activeTab}">
 
 				<p:tab title="#{messages['customer.tab.information']}">
 

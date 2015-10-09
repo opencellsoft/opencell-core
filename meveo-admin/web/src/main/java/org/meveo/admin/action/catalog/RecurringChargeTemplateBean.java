@@ -106,8 +106,8 @@ public class RecurringChargeTemplateBean extends
 			return null;
 		}
 
-        String outcome = super.saveOrUpdate(killConversation);
-        return outcome;
+        super.saveOrUpdate(killConversation);
+        return getEditViewName();
 	}
 
 	/**

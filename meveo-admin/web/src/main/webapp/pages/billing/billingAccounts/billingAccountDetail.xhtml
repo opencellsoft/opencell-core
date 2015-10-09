@@ -16,7 +16,9 @@
             <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
             <f:viewParam name="customerAccountId" value="#{billingAccountBean.customerAccountId}" />
             <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />	
+            <f:viewParam name="mainTab" value="#{billingAccountBean.activeMainTab}" />	
+            <f:viewParam name="tab" value="#{billingAccountBean.activeTab}" />
         </f:metadata>
 	</ui:define>
 
@@ -99,12 +101,12 @@
 						entity="#{billingAccountBean.entity}" />
             </h:panelGroup>
 			<h:panelGroup styleClass="col2">
-					<p:tabView id="parentTab" styleClass="tab-parent">
+					<p:tabView id="parentTab" styleClass="tab-parent" activeIndex="#{billingAccountBean.activeMainTab}">
 						<p:tab title="#{messages['billingAccount.tab.account']}">
                         <hf:formPanel id="formBillingAccountPanel" ajaxSubmit="true" submitPartialProcess=":parentTab:formBillingAccountPanel:formId:childTab"
                             label="#{messages['billingAccount.billingAccountPanel']}" backingBean="#{billingAccountBean}" useCustomIdParam="true">
 
-                            <p:tabView id="childTab" styleClass="tab-child">
+                            <p:tabView id="childTab" styleClass="tab-child" activeIndex="#{billingAccountBean.activeTab}">
 
                                 <p:tab title="#{messages['billingAccount.tab.account']}" id="tab0">
 													<hf:formField id="customerSelectId"

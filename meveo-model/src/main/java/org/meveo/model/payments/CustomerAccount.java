@@ -39,7 +39,6 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -77,7 +76,7 @@ public class CustomerAccount extends AccountEntity {
 	@JoinColumn(name = "CREDIT_CATEGORY_ID")
 	private CreditCategory creditCategory;
 
-	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE)
 	// TODO : Add orphanRemoval annotation.
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();

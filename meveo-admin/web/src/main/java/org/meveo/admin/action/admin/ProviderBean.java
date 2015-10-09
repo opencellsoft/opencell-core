@@ -161,4 +161,11 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 
         return entity;
     }
+    
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        
+        super.saveOrUpdate(killConversation);
+        return getEditViewName();
+    }
 }
