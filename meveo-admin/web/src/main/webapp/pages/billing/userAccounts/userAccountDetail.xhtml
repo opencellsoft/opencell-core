@@ -350,25 +350,25 @@
 											value="#{userAccountBean.selectedCounterInstance}">
 											<f:selectItem itemLabel="#{messages['commons.select']}" />
 											<f:selectItems value="#{userAccountBean.entity.counters.keySet().toArray()}" var="c" itemLabel="#{c}" itemValue="#{userAccountBean.entity.counters.get(c)}"/>
-											<p:ajax event="valueChange"
+											<p:ajax event="valueChange" 
 												update=":userAccountFormPanel:formId:userAccountTab:counters" />
 										</p:selectOneMenu>
 									</hftl:decorateFormField>
 								<p:panel id="counters">
 									
-										<hftl:decorateFormField fieldId="uaDescription" label="#{messages['businessEntity.description']} :" >
-											<h:outputText id="uaDescription"
-												value="#{userAccountBean.selectedCounterInstance.description}" />
-                                        </hftl:decorateFormField>
-										<hftl:decorateFormField fieldId="uaCounterCode" label="#{messages['counterTemplate.title']} :" >
-											<h:outputText id="uaCounterCode"
-												value="#{userAccountBean.selectedCounterInstance.counterTemplate.code}" />
-									   </hftl:decorateFormField>
-									<hftl:dataList resultsId="datatable_counters"
-										backingBean="#{counterPeriodBean}"
-										dataModel="#{counterPeriodBean.getCounterPeriods(userAccountBean.selectedCounterInstance)}"
-									    sortBy="periodStartDate"
-										sortOrder="DESCENDING">
+									<hftl:decorateFormField fieldId="uaDescription" label="#{messages['businessEntity.description']} :" >
+										<h:outputText id="uaDescription"
+											value="#{userAccountBean.selectedCounterInstance.description}" />
+                                    </hftl:decorateFormField>
+									<hftl:decorateFormField fieldId="uaCounterCode" label="#{messages['counterTemplate.title']} :" >
+										<h:outputText id="uaCounterCode"
+											value="#{userAccountBean.selectedCounterInstance.counterTemplate.code}" />
+								   </hftl:decorateFormField>
+                                   <p:dataTable id="datatable_counters" var="entity" lazy="true"
+                                        paginator="true" resizableColumns="true" reflow="true"
+                                        value="#{counterPeriodBean.getCounterPeriods(userAccountBean.selectedCounterInstance)}"
+                                        rows="10" rowKey="#{entity.id}" styleClass="custom-grid" sortBy="#{entity.periodStartDate}" sortOrder="DESCENDING">											     
+
 										<hftl:column label="#{messages['businessEntity.code']}"
 											field="code" />
 										<hftl:column label="#{messages['businessEntity.description']}"
@@ -386,7 +386,7 @@
 											field="level" converterParam="4digits" wrapHeader="true" />
 										<hftl:column label="#{messages['counterPeriod.value']}"
 											field="value" converterParam="4digits" wrapHeader="true" />
-									</hftl:dataList>
+									</p:dataTable>
 								</p:panel>
 							</p:tab>
 						</p:tabView>
