@@ -1681,5 +1681,7 @@
 			<column name="current_credit_note_nb" type="BIGINT" />
 		</addColumn>
 	</changeSet>
-
+	<changeSet author="anasseh" id="20151009_1149">
+     	<modifyDataType columnName="SELECTED_BILLING_ACCOUNTS" newDataType="text"   tableName="BILLING_BILLING_RUN"/>
+     </changeSet>
 </databaseChangeLog>

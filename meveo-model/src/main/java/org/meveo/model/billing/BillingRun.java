@@ -143,7 +143,7 @@ public class BillingRun extends AuditableEntity {
 	@JoinColumn(name = "PR_LANGUAGE_ID")
 	private Language language;
 
-	@Column(name = "SELECTED_BILLING_ACCOUNTS")
+	@Column(name = "SELECTED_BILLING_ACCOUNTS", columnDefinition="TEXT")
 	private String selectedBillingAccounts;
 
 	@Column(name = "XML_INVOICE_GENERATED")
