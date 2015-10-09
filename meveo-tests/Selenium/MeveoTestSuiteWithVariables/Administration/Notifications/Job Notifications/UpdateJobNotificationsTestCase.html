@@ -12,29 +12,14 @@
 <tr><td rowspan="1" colspan="3">UpdateJobInstancesTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>5000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
-	<td>id=datatable_notifications:0:code_id_message_link</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>id=datatable_jobTriggers:0:code_id_message_link</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${CodeText}</td>
-	<td>Code_01</td>
+	<td>Job_01</td>
 </tr>
 <tr>
 	<td>type</td>
@@ -48,7 +33,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[39]/div/ul/li[2]</td>
+	<td>css=li:contains(&quot;Created&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -62,28 +47,23 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/form/div[1]/div[2]/span/div/div/input</td>
-	<td>01</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
+	<td>click</td>
+	<td>xpath=/html/body/div[1]/div[3]/div[1]/a/span</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=scriptInstancePopuppopupForm:buttonSearch</td>
+	<td>${JobInstance}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
+	<td>typeAndWait</td>
+	<td>//*[contains(@id, 'code_text')]</td>
+	<td>Rerate_Job</td>
+</tr>
+<tr>
+	<td>clickAtAndWait</td>
+	<td>id=jobInstancePopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
@@ -92,38 +72,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${AddNewParametrers}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Name}</td>
-	<td>Param1</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Value}</td>
-	<td>1111</td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
-	<td>${saveButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>${saveButtonWhenUpdate}</td>
 	<td></td>
 </tr>
 </tbody></table>

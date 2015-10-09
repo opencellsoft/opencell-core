@@ -4,23 +4,13 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>FillOnlyCodeTestCase</title>
+<title>FillNotRequiredFieldsTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">FillOnlyCodeTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">FillNotRequiredFieldsTestCase</td></tr>
 </thead><tbody>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>5000</td>
-	<td></td>
-</tr>
 <tr>
 	<td>type</td>
 	<td>${CodeText}</td>
@@ -39,7 +29,7 @@
 <tr>
 	<td>type</td>
 	<td>${EventELFilter}</td>
-	<td></td>
+	<td>Test Event</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -47,28 +37,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
+	<td>typeAndWait</td>
+	<td>//*[contains(@id, 'code_text')]</td>
+	<td>org.meveo.service.script.BillingRunInfoScript</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>xpath=/html/body/div[1]/div[2]/div[2]/form/div[1]/div[2]/span/div/div/input</td>
-	<td>01</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
+	<td>clickAtAndWait</td>
 	<td>id=scriptInstancePopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
 	<td></td>
 </tr>
 <tr>
@@ -77,58 +52,48 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${Host}</td>
+	<td>clickAtAndWait</td>
+	<td>${AddNewScriptParametrers}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${Port}</td>
-	<td></td>
+	<td>${Name}</td>
+	<td>Param1</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${Page}</td>
+	<td>${Value}</td>
+	<td>1111</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${JobInstance}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${HTTPMethod}</td>
+	<td>xpath=/html/body/div[1]/div[2]/div[1]/a/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAtAndWait</td>
+	<td>${AddNewJobCustomFields}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${Username}</td>
-	<td></td>
+	<td>${NameCustomFields}</td>
+	<td>Name1</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${Password}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectCounter}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>xpath=/html/body/div[1]/div[1]/div[1]/a/span</td>
-	<td></td>
+	<td>${ValueCustomFields}</td>
+	<td>11</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${saveWithObjectId}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${resetButton}</td>
+	<td>${saveButtonWhenCreate}</td>
 	<td></td>
 </tr>
 </tbody></table>

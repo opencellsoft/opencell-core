@@ -4,64 +4,73 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>ImportCSVWithoutPickLineTestCase</title>
+<title>FillOnlyCodeTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">ImportCSVWithoutPickLineTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">FillOnlyCodeTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ImportCSV}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectStrategyImportType}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[@id='results_form_strategy_panel']/div/ul/li[2]</td>
+	<td>type</td>
+	<td>${CodeText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>LOCATOR_DETECTION_FAILED</td>
-	<td>D:\InboundRequest.csv</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>xpath=(//button[@type='button'])[3]</td>
+	<td>${ClassnameFilter}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
+	<td>click</td>
+	<td>${EventTypeFilter}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>LOCATOR_DETECTION_FAILED</td>
-	<td>D:\InboundRequest.csv</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${UploadFile}</td>
+	<td>${EventELFilter}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=span.ui-icon.ui-icon-closethick</td>
+	<td>${ScriptInstance}</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>click</td>
+	<td>xpath=/html/body/div[1]/div[3]/div[1]/a/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${JobInstance}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>typeAndWait</td>
+	<td>//*[contains(@id, 'code_text')]</td>
+	<td>Rerate_Job</td>
+</tr>
+<tr>
+	<td>clickAtAndWait</td>
+	<td>id=jobInstancePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${resetButton}</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>

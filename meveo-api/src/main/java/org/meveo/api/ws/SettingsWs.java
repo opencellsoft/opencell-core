@@ -16,7 +16,6 @@ import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.ProviderDto;
-import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.UserDto;
@@ -34,7 +33,6 @@ import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
-import org.meveo.api.dto.response.GetScriptInstanceResponseDto;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
@@ -310,21 +308,5 @@ public interface SettingsWs extends IBaseWs {
 	
 	@WebMethod
 	ActionStatus createOrUpdateCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
-	
-	// scriptInstance
-	@WebMethod
-	ActionStatus createScriptInstance(@WebParam(name = "scriptInstance") ScriptInstanceDto postData);
-
-	@WebMethod
-	ActionStatus updateScriptInstance(@WebParam(name = "scriptInstance") ScriptInstanceDto postData);
-
-	@WebMethod
-	ActionStatus removeScriptInstance(@WebParam(name = "scriptInstanceCode") String scriptInstanceCode);
-
-	@WebMethod
-	GetScriptInstanceResponseDto findScriptInstance(@WebParam(name = "scriptInstanceCode") String scriptInstanceCode);
-	
-	@WebMethod
-	ActionStatus createOrUpdateScriptInstance(@WebParam(name = "scriptInstance") ScriptInstanceDto postData);
 
 }
