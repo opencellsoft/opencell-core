@@ -151,6 +151,12 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
     @Column(name = "CURRENT_INVOICE_NB")
     private Long currentInvoiceNb;
+    
+    @Column(name = "CREDIT_NOTE_PREFIX", length = 50)
+   	private String creditNotePrefix;
+    
+	@Column(name = "CURRENT_CREDIT_NOTE_NB")
+	private Long currentCreditNoteNb;
 
     @Column(name = "RATING_ROUNDING", columnDefinition = "int DEFAULT 2")
     private Integer rounding = 2;
@@ -620,4 +626,20 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         }
         return null;
     }
+
+	public String getCreditNotePrefix() {
+		return creditNotePrefix;
+	}
+
+	public void setCreditNotePrefix(String creditNotePrefix) {
+		this.creditNotePrefix = creditNotePrefix;
+	}
+
+	public Long getCurrentCreditNoteNb() {
+		return currentCreditNoteNb;
+	}
+
+	public void setCurrentCreditNoteNb(Long currentCreditNoteNb) {
+		this.currentCreditNoteNb = currentCreditNoteNb;
+	}
 }

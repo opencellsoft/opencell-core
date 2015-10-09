@@ -1671,4 +1671,15 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet author="EdwardLegaspi" id="#1147_20151009">
+		<addColumn tableName="crm_provider">
+			<column name="credit_note_prefix" type="VARCHAR(255)" />
+			<column name="current_credit_note_nb" type="BIGINT" />
+		</addColumn>
+		<addColumn tableName="crm_seller">
+			<column name="credit_note_prefix" type="VARCHAR(255)" />
+			<column name="current_credit_note_nb" type="BIGINT" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

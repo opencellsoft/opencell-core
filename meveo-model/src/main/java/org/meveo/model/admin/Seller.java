@@ -72,13 +72,19 @@ public class Seller extends BusinessCFEntity {
 	@Column(name = "CURRENT_INVOICE_NB")
 	private Long currentInvoiceNb;
 
+	@Column(name = "CREDIT_NOTE_PREFIX", length = 50)
+	private String creditNotePrefix;
+
+	@Column(name = "CURRENT_CREDIT_NOTE_NB")
+	private Long currentCreditNoteNb;
+
 	@Embedded
 	private Address address = new Address();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PARENT_SELLER_ID")
 	private Seller seller;
-	
+
 	@OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
@@ -157,5 +163,21 @@ public class Seller extends BusinessCFEntity {
 			return seller;
 		}
 		return getProvider();
+	}
+
+	public String getCreditNotePrefix() {
+		return creditNotePrefix;
+	}
+
+	public void setCreditNotePrefix(String creditNotePrefix) {
+		this.creditNotePrefix = creditNotePrefix;
+	}
+
+	public Long getCurrentCreditNoteNb() {
+		return currentCreditNoteNb;
+	}
+
+	public void setCurrentCreditNoteNb(Long currentCreditNoteNb) {
+		this.currentCreditNoteNb = currentCreditNoteNb;
 	}
 }
