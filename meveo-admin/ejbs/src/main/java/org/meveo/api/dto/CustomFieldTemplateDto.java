@@ -1,5 +1,8 @@
 package org.meveo.api.dto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -47,6 +50,9 @@ public class CustomFieldTemplateDto {
 	
 	@XmlElement
 	protected String entityClazz;
+	
+	@XmlElement
+	protected Map<String, String> listValues = new HashMap<String, String>();
 	
 	public CustomFieldTemplateDto() {
 		
@@ -162,6 +168,20 @@ public class CustomFieldTemplateDto {
 
 	public void setEntityClazz(String entityClazz) {
 		this.entityClazz = entityClazz;
+	}
+	
+	/**
+	 * @return the listValues
+	 */
+	public Map<String, String> getListValues() {
+		return listValues;
+	}
+
+	/**
+	 * @param listValues the listValues to set
+	 */
+	public void setListValues(Map<String, String> listValues) {
+		this.listValues = listValues;
 	}
 
 }
