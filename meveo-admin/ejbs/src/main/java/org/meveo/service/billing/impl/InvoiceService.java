@@ -354,7 +354,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			invoice.setPaymentMethod(paymentMethod);
 			invoice.setProvider(billingRun.getProvider());
+			invoice.setCode("ocb_id_" + new Date().toString());
+			
 			em.persist(invoice);
+			
+			invoice.setCode("ocb_id_" + invoice.getId());
+			
 			// create(invoice, currentUser, currentUser.getProvider());
 			log.debug("created invoice entity with id={},  tx status={}, em open={}", invoice.getId(),
 					txReg.getTransactionStatus(), em.isOpen());

@@ -1,166 +1,243 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui"
-    xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
 
-    <ui:define name="body">
+	<ui:define name="body">
 
 
-        <hf:formPanel label="#{messages['invoice.panel']}" backingBean="#{invoiceBean}" showFormButtons="false" id="headerForm" edit="false">
-            <h:panelGrid columns="2">
-			<p:fieldset legend="#{messages['invoice.header']}">
-				<h:panelGroup>
-                <hf:formField label="#{messages['invoice.billingAccount']}" field="billingAccount" valueLabelField="code" popup="false" popupId="searchBillingAccountPopup"
-                    clearButton="true" />
-                <hf:formField label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" validateUnique="true" />
-                <hf:formField label="#{messages['invoice.invoiceDate']}" field="invoiceDate" />
+		<hf:formPanel label="#{messages['invoice.panel']}"
+			backingBean="#{invoiceBean}" showFormButtons="false" id="headerForm"
+			edit="false">
+			<h:panelGrid columns="2">
+				<p:fieldset legend="#{messages['invoice.header']}">
+					<h:panelGroup>
+						<hf:formField label="#{messages['invoice.billingAccount']}"
+							field="billingAccount" valueLabelField="code" popup="false"
+							popupId="searchBillingAccountPopup" clearButton="true" />
+						<hf:formField label="#{messages['invoice.invoiceNumber']}"
+							field="invoiceNumber" validateUnique="true" />
+						<hf:formField label="#{messages['invoice.invoiceDate']}"
+							field="invoiceDate" />
 
-                <hf:formField label="#{messages['invoice.dueDate']}" field="dueDate" /> 
-                <hf:formField label="#{messages['invoice.iban']}" field="iban" />
-                <hf:formField label="#{messages['invoice.alias']}" field="alias" />
-                <hf:formField label="#{messages['invoice.comment']}" field="comment" textArea="true" />
-				<hf:formField label="#{messages['invoice.paymentMethod']}" field="paymentMethod" isMessage="true" />
-				</h:panelGroup>
-            </p:fieldset> 
-			<p:outputPanel rendered="#{invoiceBean.entity.pdf!=null or invoiceBean.isXmlInvoiceAlreadyGenerated}">	
-			<p:fieldset legend="#{messages['invoice.attachments']}" >
-				<p:panelGrid  columns="1">
-				<p:outputPanel rendered="#{invoiceBean.entity.pdf!=null}">				
-                <h:commandLink  action="#{billingAccountBean.generatePDF(invoiceBean.entity.id)}">
-                    <h:outputText value="#{invoiceBean.entity.invoiceNumber}.pdf" rendered="#{invoiceBean.entity.invoiceNumber!=null}" /> 
-					<h:outputText value="unvalidated-invoice.pdf" rendered="#{invoiceBean.entity.invoiceNumber==null}" /> 
-                </h:commandLink> 
-				<p:spacer width="10"/>
-				<p:commandButton   icon="ui-icon-close" rendered="#{invoiceBean.entity.invoiceNumber==null}"
-				action="#{invoiceBean.deleteInvoicePdf}" update="totalForm:formId:buttonGenerate,@form"/> 
+						<hf:formField label="#{messages['invoice.dueDate']}"
+							field="dueDate" />
+						<hf:formField label="#{messages['invoice.iban']}" field="iban" />
+						<hf:formField label="#{messages['invoice.alias']}" field="alias" />
+						<hf:formField label="#{messages['invoice.comment']}"
+							field="comment" textArea="true" />
+						<hf:formField label="#{messages['invoice.paymentMethod']}"
+							field="paymentMethod" isMessage="true" />
+					</h:panelGroup>
+				</p:fieldset>
+				<p:outputPanel
+					rendered="#{invoiceBean.entity.pdf!=null or invoiceBean.isXmlInvoiceAlreadyGenerated}">
+					<p:fieldset legend="#{messages['invoice.attachments']}">
+						<p:panelGrid columns="1">
+							<p:outputPanel rendered="#{invoiceBean.entity.pdf!=null}">
+								<h:commandLink
+									action="#{billingAccountBean.generatePDF(invoiceBean.entity.id)}">
+									<h:outputText value="#{invoiceBean.entity.invoiceNumber}.pdf"
+										rendered="#{invoiceBean.entity.invoiceNumber!=null}" />
+									<h:outputText value="unvalidated-invoice.pdf"
+										rendered="#{invoiceBean.entity.invoiceNumber==null}" />
+								</h:commandLink>
+								<p:spacer width="10" />
+								<p:commandButton icon="ui-icon-close"
+									rendered="#{invoiceBean.entity.invoiceNumber==null}"
+									action="#{invoiceBean.deleteInvoicePdf}"
+									update="totalForm:formId:buttonGenerate,@form" />
+							</p:outputPanel>
+							<p:outputPanel
+								rendered="#{invoiceBean.isXmlInvoiceAlreadyGenerated}">
+								<h:commandLink action="#{invoiceBean.downloadXMLInvoice()}">
+									<h:outputText value="#{invoiceBean.entity.invoiceNumber}.xml"
+										rendered="#{invoiceBean.entity.invoiceNumber!=null}" />
+									<h:outputText
+										value="#{invoiceBean.entity.temporaryInvoiceNumber}.xml"
+										rendered="#{invoiceBean.entity.invoiceNumber==null}" />
+								</h:commandLink>
+								<p:spacer width="10" />
+								<p:commandButton
+									rendered="#{invoiceBean.entity.invoiceNumber==null}"
+									icon="ui-icon-close" action="#{invoiceBean.deleteXmlInvoice}"
+									update="totalForm:formId:buttonGenerate,@form" />
+							</p:outputPanel>
+						</p:panelGrid>
+					</p:fieldset>
 				</p:outputPanel>
-				<p:outputPanel rendered="#{invoiceBean.isXmlInvoiceAlreadyGenerated}">
-					<h:commandLink  action="#{invoiceBean.downloadXMLInvoice()}"  >
-						<h:outputText value="#{invoiceBean.entity.invoiceNumber}.xml" rendered="#{invoiceBean.entity.invoiceNumber!=null}" /> 
-						<h:outputText value="#{invoiceBean.entity.temporaryInvoiceNumber}.xml" rendered="#{invoiceBean.entity.invoiceNumber==null}" /> 
-					</h:commandLink> 
-					<p:spacer width="10"/>
-					<p:commandButton rendered="#{invoiceBean.entity.invoiceNumber==null}"   icon="ui-icon-close"
-					action="#{invoiceBean.deleteXmlInvoice}" update="totalForm:formId:buttonGenerate,@form"/> 
-				</p:outputPanel>
-				</p:panelGrid>
-            </p:fieldset>
-			</p:outputPanel>	
-			</h:panelGrid>  
-			<p:fieldset legend="#{messages['invoice.discounts']}" style="width:60%" rendered="#{invoiceBean.getDiscountAggregates.size()>0}">
-				
-				<p:dataTable id="invoiceAgregats" var="agregate" value="#{invoiceBean.getDiscountAggregates}" resizableColumns="true">
-				<p:column headerText="#{messages['discountPlan.title']}">
-				<h:outputText value="#{agregate.discountPlanCode}"  />
-				</p:column>
-				<p:column headerText="#{messages['discountPlan.discountAmountWithoutTax']}">
-				<h:outputText value="#{agregate.amountWithoutTax}" converter="#{getConverter.forType(agregate.amountWithoutTax,'4digits')}" />
-				</p:column>
-				<p:column headerText="#{messages['discountPlanItem.percent']}">
-				<h:outputText value="#{agregate.discountPercent}" converter="#{getConverter.forType(agregate.discountPercent,'4digits')}" />
-				</p:column>
-				<p:column headerText="#{messages['discountPlanItem.title']}">
-				<h:outputText value="#{agregate.discountPlanItemCode}" />
-				</p:column>
-				<p:column headerText="#{messages['discountPlanItem.invoiceSubCategory']}">
-				<h:outputText value="#{agregate.invoiceSubCategory.code}" />
-				</p:column>
-				
+			</h:panelGrid>
+			<p:fieldset legend="#{messages['invoice.discounts']}"
+				style="width:60%"
+				rendered="#{invoiceBean.getDiscountAggregates.size()>0}">
+
+				<p:dataTable id="invoiceAgregats" var="agregate"
+					value="#{invoiceBean.getDiscountAggregates}"
+					resizableColumns="true">
+					<p:column headerText="#{messages['discountPlan.title']}">
+						<h:outputText value="#{agregate.discountPlanCode}" />
+					</p:column>
+					<p:column
+						headerText="#{messages['discountPlan.discountAmountWithoutTax']}">
+						<h:outputText value="#{agregate.amountWithoutTax}"
+							converter="#{getConverter.forType(agregate.amountWithoutTax,'4digits')}" />
+					</p:column>
+					<p:column headerText="#{messages['discountPlanItem.percent']}">
+						<h:outputText value="#{agregate.discountPercent}"
+							converter="#{getConverter.forType(agregate.discountPercent,'4digits')}" />
+					</p:column>
+					<p:column headerText="#{messages['discountPlanItem.title']}">
+						<h:outputText value="#{agregate.discountPlanItemCode}" />
+					</p:column>
+					<p:column
+						headerText="#{messages['discountPlanItem.invoiceSubCategory']}">
+						<h:outputText value="#{agregate.invoiceSubCategory.code}" />
+					</p:column>
+
 				</p:dataTable>
-			
-            </p:fieldset> 
-			</hf:formPanel>
-        <h:form id="form">
-            <p:fieldset legend="#{messages['invoice.details']}">
-                <p:dataTable id="catTable" var="cat" value="#{invoiceBean.invoiceCategories}" resizableColumns="true">
 
-                    <p:columnGroup type="header">
-                        <p:row>
-                            <p:column rowspan="2" headerText="#{messages['invoice.cat.subcat.ratedTransaction']}" />
-                        </p:row> 
-                    </p:columnGroup>
+			</p:fieldset>
+		</hf:formPanel>
+		<h:form id="form">
+			<p:fieldset legend="#{messages['invoice.details']}">
+				<p:dataTable id="catTable" var="cat"
+					value="#{invoiceBean.invoiceCategories}" resizableColumns="true">
 
-                    <p:subTable var="subCat" value="#{cat.invoiceSubCategoryDTOList}">
-                        <f:facet name="header">  
+					<p:columnGroup type="header">
+						<p:row>
+							<p:column rowspan="2"
+								headerText="#{messages['invoice.cat.subcat.ratedTransaction']}" />
+						</p:row>
+					</p:columnGroup>
+
+					<p:subTable var="subCat" value="#{cat.invoiceSubCategoryDTOList}">
+						<f:facet name="header">  
 							  #{cat.description}   
 							</f:facet>
-                        <p:column>
-                           <p:accordionPanel activeIndex="null">
-                                <p:tab>
-                                    <f:facet name="title">
-                                        <h:outputText value="#{subCat.description}" /> 
-                                    </f:facet> 
-                                    <p:dataTable var="rated"  resizableColumns="true"
-                                     value="#{subCat.ratedTransactions}"  paginator="true" rows="30"
-									 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"> 
-									<p:column headerText="#{messages['subscription.offer']}" >
-										<h:outputText value="#{rated.offerCode}" />
-									</p:column>
-									<p:column headerText="#{messages['discountPlan.eventCode']}" >
-										<h:outputText value="#{ratedTransactionBean.getWalletOperationCode(rated.getWalletOperationId())}" />
-									</p:column>
-									<p:column headerText="#{messages['billingRun.panel']}" >
-										<h:outputText value="#{rated.billingRun.id}" />
-									</p:column>
-									<p:column headerText="#{messages['pricePlan.panel']}" >
-										<h:outputText value="#{rated.priceplan.code}" />
-									</p:column>
-									<p:column headerText="#{messages['pricePlanMatrix.amountWithoutTax']}" >
-										<h:outputText value="#{rated.amountWithoutTax}" converter="bigDecimal4DigitsConverter" />
-									</p:column>
-									<p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}" >
-										<h:outputText value="#{rated.amountWithTax}" converter="bigDecimal4DigitsConverter" />
-									</p:column>
-									<p:column headerText="#{messages['walletOperation.amountTax']}" >
-										<h:outputText value="#{rated.amountTax}" converter="bigDecimal4DigitsConverter" />
-									</p:column>
-									<p:column headerText="#{messages['serviceInstance.quantity']}" >
-										<h:outputText value="#{rated.quantity}" converter="bigDecimal4DigitsConverter" />
-									</p:column>
-									<p:column headerText="#{messages['ratedTransaction.status']}" >
-										<h:outputText value="#{rated.status}" />
-									</p:column>
-									
-                                    </p:dataTable> 
-                                </p:tab>
-                            </p:accordionPanel>
-                        </p:column> 
-                    </p:subTable>
-                </p:dataTable>
-            </p:fieldset>
-        </h:form>
+						<p:column>
+							<p:accordionPanel activeIndex="null">
+								<p:tab>
+									<f:facet name="title">
+										<h:outputText value="#{subCat.description}" />
+									</f:facet>
+									<p:dataTable var="rated" resizableColumns="true"
+										value="#{subCat.ratedTransactions}" paginator="true" rows="30"
+										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+										<p:column headerText="#{messages['subscription.offer']}">
+											<h:outputText value="#{rated.offerCode}" />
+										</p:column>
+										<p:column headerText="#{messages['discountPlan.eventCode']}">
+											<h:outputText
+												value="#{ratedTransactionBean.getWalletOperationCode(rated.getWalletOperationId())}" />
+										</p:column>
+										<p:column headerText="#{messages['billingRun.panel']}">
+											<h:outputText value="#{rated.billingRun.id}" />
+										</p:column>
+										<p:column headerText="#{messages['pricePlan.panel']}">
+											<h:outputText value="#{rated.priceplan.code}" />
+										</p:column>
+										<p:column
+											headerText="#{messages['pricePlanMatrix.amountWithoutTax']}">
+											<h:outputText value="#{rated.amountWithoutTax}"
+												converter="bigDecimal4DigitsConverter" />
+										</p:column>
+										<p:column
+											headerText="#{messages['pricePlanMatrix.amountWithTax']}">
+											<h:outputText value="#{rated.amountWithTax}"
+												converter="bigDecimal4DigitsConverter" />
+										</p:column>
+										<p:column
+											headerText="#{messages['walletOperation.amountTax']}">
+											<h:outputText value="#{rated.amountTax}"
+												converter="bigDecimal4DigitsConverter" />
+										</p:column>
+										<p:column headerText="#{messages['serviceInstance.quantity']}">
+											<h:outputText value="#{rated.quantity}"
+												converter="bigDecimal4DigitsConverter" />
+										</p:column>
+										<p:column headerText="#{messages['ratedTransaction.status']}">
+											<h:outputText value="#{rated.status}" />
+										</p:column>
 
-       <hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false" id="totalForm" edit="false">
-	   
-          
-            <p:fieldset legend="#{messages['invoice.totals']}">
-                <hf:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax"  converter="bigDecimal4DigitsConverter" />
-                <hf:formField label="#{messages['invoice.amountTax']}" field="amountTax"  converter="bigDecimal4DigitsConverter" />
-                <hf:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax"  converter="bigDecimal4DigitsConverter" />
-                <hftl:decorateFormField fieldId="netTopayId" label="#{messages['invoice.netToPay']}">
-                    <h:outputText id="netTopayId" value="#{invoiceBean.netToPay}" styleClass="field-value" />
-                </hftl:decorateFormField>
-            </p:fieldset>
-			<br/>
+									</p:dataTable>
+								</p:tab>
+							</p:accordionPanel>
+						</p:column>
+					</p:subTable>
+				</p:dataTable>
+			</p:fieldset>
+		</h:form>
+
+		<hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false"
+			id="totalForm" edit="false">
+
+
+			<p:fieldset legend="#{messages['invoice.totals']}">
+				<hf:formField label="#{messages['invoice.amountWithoutTax']}"
+					field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
+				<hf:formField label="#{messages['invoice.amountTax']}"
+					field="amountTax" converter="bigDecimal4DigitsConverter" />
+				<hf:formField label="#{messages['invoice.amountWithTax']}"
+					field="amountWithTax" converter="bigDecimal4DigitsConverter" />
+				<hftl:decorateFormField fieldId="netTopayId"
+					label="#{messages['invoice.netToPay']}">
+					<h:outputText id="netTopayId" value="#{invoiceBean.netToPay}"
+						styleClass="field-value" />
+				</hftl:decorateFormField>
+			</p:fieldset>
+			<br />
 			<p:outputPanel column="2" id="buttonGenerate">
-                <p:button outcome="billingAccountDetail" value="#{messages['action.back']}">
-                    <f:param name="billingAccountId" value="#{invoiceBean.entity.getBillingAccount().getId}" />
-                    <f:param name="edit" value="false" />
-                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                </p:button> 
-			<p:commandButton value="#{messages['invoice.generatePdf']}" icon="ui-icon-refresh"
-				disabled="#{invoiceBean.entity.pdf!=null}"
-				action="#{invoiceBean.generatePdf()}" update="headerForm:formId,buttonGenerate" /> 
-				<p:commandButton value="#{messages['invoice.generateXml']}" icon="ui-icon-refresh"
-				disabled="#{invoiceBean.isXmlInvoiceAlreadyGenerated}"
-				action="#{invoiceBean.generateXMLInvoice}" update="headerForm:formId,buttonGenerate" /> 
-			</p:outputPanel> 			
-        </hf:formPanel> 
-		
-		
-    </ui:define>
+				<p:button outcome="billingAccountDetail"
+					value="#{messages['action.back']}">
+					<f:param name="billingAccountId"
+						value="#{invoiceBean.entity.getBillingAccount().getId}" />
+					<f:param name="edit" value="false" />
+					<f:param name="cid"
+						value="#{javax.enterprise.context.conversation.id}" />
+				</p:button>
+				<p:commandButton value="#{messages['invoice.generatePdf']}"
+					icon="ui-icon-refresh" disabled="#{invoiceBean.entity.pdf!=null}"
+					action="#{invoiceBean.generatePdf()}"
+					update="headerForm:formId,buttonGenerate" />
+				<p:commandButton value="#{messages['invoice.generateXml']}"
+					icon="ui-icon-refresh"
+					disabled="#{invoiceBean.isXmlInvoiceAlreadyGenerated}"
+					action="#{invoiceBean.generateXMLInvoice}"
+					update="headerForm:formId,buttonGenerate" />
+			</p:outputPanel>
+		</hf:formPanel>
+
+		<hftl:dataList label="#{messages['creditNote.title']}"
+			backingBean="#{creditNoteListBean}"
+			dataModel="#{invoiceBean.entity.creditNotes}">
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['creditNote.creditNoteDate']}" field="creditNoteDate" />
+			<hftl:column label="#{messages['creditNote.dueDate']}" field="dueDate" />
+		</hftl:dataList>
+
+		<hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false"
+			id="creditNoteForm" edit="false">
+			<p:outputPanel styleClass="action-buttons" column="2"
+				id="creditNoteActionPanel">
+				<p:button id="buttonNew" value="#{messages['commons.new']}"
+					outcome="#{creditNoteBean.editViewName}">
+					<f:param name="invoiceIdParam" value="#{invoiceBean.entity.id}" />
+					<f:param name="cid"
+						value="#{javax.enterprise.context.conversation.id}" />
+					<f:param name="edit" value="true" />
+				</p:button>
+			</p:outputPanel>
+		</hf:formPanel>
+
+	</ui:define>
 
 </ui:composition>

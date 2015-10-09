@@ -32,6 +32,8 @@ import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.User;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.Subscription;
@@ -178,6 +180,107 @@ public class ReservationService extends PersistenceService<Reservation> {
 		return reservation.getId();
 	}
 
+	public Long createReservation(User user, String sellerCode, String offerCode, String userAccountCode,
+			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1, String param2,
+			String param3, boolean amountWithTax) throws BusinessException {
+
+		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
+		// error if KO.
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, user.getProvider());
+
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode, user.getProvider());
+		if (userAccount == null) {
+			throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
+		}
+
+		Seller seller = sellerService.findByCode(sellerCode, user.getProvider());
+		if (seller == null) {
+			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
+		}
+
+		if (userAccount.getBillingAccount() == null) {
+			throw new BusinessException("UserAccount with code=" + userAccountCode
+					+ " does not have a billingAccount set.");
+		}
+
+		if (offerTemplate == null) {
+			throw new BusinessException("OfferTemplate with code=" + offerCode + " does not exists.");
+		}
+
+		if (offerTemplate.getServiceTemplates() == null || offerTemplate.getServiceTemplates().size() < 1) {
+			throw new BusinessException("OfferTemplate doesn't have linked serviceTemplate.");
+		}
+
+		if (expiryDate == null) {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, 30);
+			expiryDate = cal.getTime();
+		}
+
+		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
+				subscriptionDate, param1, param2, param3, new BigDecimal(1));
+
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(user, seller, userAccount,
+				subscriptionDate);
+
+		BigDecimal spentCredit = servicesSum.add(ratedAmount);
+
+		if (spentCredit.compareTo(creditLimit) > 0) {
+			log.debug("Credit limit exceeded for seller code={}", seller.getCode());
+			throw new BusinessException("Credit limit exception for seller with code=" + seller.getCode());
+		}
+
+		WalletInstance wallet = walletService.findByUserAccount(userAccount);
+
+		// #2 Create a reservation (store UA), status=OPEN.
+		Auditable auditable = new Auditable();
+		auditable.setCreated(new Date());
+		Reservation reservation = new Reservation();
+		reservation.setProvider(user.getProvider());
+		reservation.setAuditable(auditable);
+		reservation.setStatus(ReservationStatus.OPEN);
+		reservation.setUserAccount(userAccount);
+		reservation.setReservationDate(new Date());
+		reservation.setExpiryDate(expiryDate);
+		reservation.setWallet(wallet);
+		if (amountWithTax) {
+			reservation.setAmountWithTax(spentCredit);
+		} else {
+			reservation.setAmountWithoutTax(spentCredit);
+		}
+
+		// #3 Create the reserved wallet operation. Not associated to charge,
+		// status=RESERVED, associated to the reservation, amount=servicesSum.
+		TradingCurrency currency = userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency();
+		WalletReservation walletReservation = new WalletReservation();
+		walletReservation.setCode(sellerCode + "_" + userAccountCode + "_" + offerCode);
+		walletReservation.setReservation(reservation);
+		walletReservation.setStatus(WalletOperationStatusEnum.RESERVED);
+		walletReservation.setSubscriptionDate(null);
+		walletReservation.setOperationDate(new Date());
+		walletReservation.setParameter1(param1);
+		walletReservation.setParameter2(param2);
+		walletReservation.setParameter3(param3);
+		walletReservation.setChargeInstance(null);
+		walletReservation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+		walletReservation.setWallet(wallet);
+		walletReservation.setQuantity(new BigDecimal(1));
+		walletReservation.setStartDate(null);
+		walletReservation.setEndDate(null);
+		walletReservation.setCurrency(currency.getCurrency());
+		walletReservation.setProvider(user.getProvider());
+		if (amountWithTax) {
+			walletReservation.setAmountWithTax(servicesSum);
+		} else {
+			walletReservation.setAmountWithoutTax(servicesSum);
+		}
+
+		walletReservationService.create(walletReservation, null, user.getProvider());
+
+		// #4 Return the reservationId.
+		return reservation.getId();
+	}
+	
 	public void updateReservation(Long reservationId, Provider provider, String sellerCode, String offerCode,
 			String userAccountCode, Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1,
 			String param2, String param3, boolean amountWithTax) throws BusinessException {

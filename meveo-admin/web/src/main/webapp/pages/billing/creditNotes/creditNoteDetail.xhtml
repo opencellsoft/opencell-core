@@ -1,0 +1,160 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="creditNote"
+						value="#{messages['creditNote.title']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<p:panel id="creditNotePanel" header="#{messages['creditNote.title']}">
+
+			<hf:formPanel id="creditNoteForm" edit="#{creditNoteBean.edit}"
+				label="#{messages['creditNote.title']}"
+				backingBean="#{creditNoteBean}" showFormButtons="false">
+
+				<hftl:decorateFormField fieldId="invoiceCode"
+					label="#{messages['billingAccount.invoice']}">
+					<h:link id="invoiceCode" outcome="invoiceDetail"
+						styleClass="field-value"
+						value="#{creditNoteBean.entity.invoice.code}">
+						<f:param name="objectId" value="#{creditNoteBean.invoiceId}" />
+						<c:if test="#{javax.enterprise.context.conversation.id != null}">
+							<f:param name="cid"
+								value="#{javax.enterprise.context.conversation.id}" />
+						</c:if>
+					</h:link>
+				</hftl:decorateFormField>
+
+				<hf:formField label="#{messages['BusinessEntity.code']}"
+					field="code" validateUnique="true" required="true" />
+				<hf:formField label="#{messages['BusinessEntity.description']}"
+					id="description" field="description" useConverter="false" size="50"
+					maxlength="50" required="true" />
+				<hf:formField label="#{messages['creditNote.creditNoteDate']}"
+					id="creditNoteDate" field="creditNoteDate" />
+				<hf:formField label="#{messages['creditNote.dueDate']}" id="dueDate"
+					field="dueDate" />
+
+				<h:panelGroup layout="block" styleClass="form-panel-actions">
+					<p:commandButton action="#{creditNoteBean.saveOrUpdate(false)}"
+						value="#{messages['action.save']}" ajax="true"
+						update="creditNoteLinePanel messages" />
+					<p:button id="backButton" value="#{messages['action.back']}"
+						outcome="invoiceDetail" includeViewParams="true">
+						<f:param name="objectId" value="#{creditNoteBean.invoiceId}" />
+						<c:if test="#{javax.enterprise.context.conversation.id != null}">
+							<f:param name="cid"
+								value="#{javax.enterprise.context.conversation.id}" />
+						</c:if>
+					</p:button>
+				</h:panelGroup>
+			</hf:formPanel>
+
+			<p:panel id="creditNoteLinePanel"
+				header="#{messages['creditNoteLine.title']}">
+
+				<h:form id="creditNoteLinesForm">
+					<p:dataTable id="resultsId_creditNoteLines" var="entity"
+						value="#{creditNoteBean.entity.creditNoteLines}">
+						<p:columnGroup type="header">
+							<p:row>
+								<p:column headerText="#{messages['charge.subCategory']}" />
+								<p:column
+									headerText="#{messages['creditNoteLine.invoice.amountWithoutTax']}" />
+								<p:column
+									headerText="#{messages['creditNoteLine.creditNote.amountWithoutTax']}" />
+								<p:column headerText="#{messages['invoice.amountTax']}" />
+								<p:column headerText="#{messages['invoice.amountWithTax']}" />
+							</p:row>
+						</p:columnGroup>
+
+						<p:column>
+							<h:outputText value="#{entity.description}" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{entity.creditNote.invoice.amountWithoutTax}"
+								converter="#{getConverter.forType(entity.creditNote.invoice.amountWithoutTax,'4digits')}" />
+						</p:column>
+
+						<!-- // -->
+						<p:column>
+							<p:inputText value="#{entity.amountWithoutTax}">
+								<f:converter converterId="bigDecimal4DigitsConverter" />
+								<p:ajax event="change"
+									listener="#{creditNoteBean.reCompute(entity)}"
+									update="resultsId_creditNoteLines"></p:ajax>
+							</p:inputText>
+						</p:column>
+						<p:column>
+							<p:inputText value="#{entity.taxAmount}">
+								<f:converter converterId="bigDecimal4DigitsConverter" />
+								<p:ajax event="change"
+									listener="#{creditNoteBean.reCompute(entity)}"
+									update="resultsId_creditNoteLines"></p:ajax>
+							</p:inputText>
+						</p:column>
+						<p:column>
+							<h:outputText id="amountWithTax" value="#{entity.amountWithTax}"
+								converter="#{getConverter.forType(entity.amountWithoutTax,'4digits')}" />
+						</p:column>
+
+						<p:columnGroup type="footer">
+							<p:row>
+								<p:column footerText="#{messages['invoice.amount']}" colspan="2" />
+
+								<p:column>
+									<f:facet name="footer">
+										<h:outputText
+											value="#{creditNoteBean.totalCreditNoteAmountWithoutTax}"
+											converter="#{getConverter.forType(creditNoteBean.totalCreditNoteAmountWithoutTax,'4digits')}">
+										</h:outputText>
+									</f:facet>
+								</p:column>
+
+								<p:column>
+									<f:facet name="footer">
+										<h:outputText
+											value="#{creditNoteBean.totalCreditNoteAmountTax}"
+											converter="#{getConverter.forType(creditNoteBean.totalCreditNoteAmountTax,'4digits')}">
+										</h:outputText>
+									</f:facet>
+								</p:column>
+
+								<p:column>
+									<f:facet name="footer">
+										<h:outputText
+											value="#{creditNoteBean.totalCreditNoteAmountWithTax}"
+											converter="#{getConverter.forType(creditNoteBean.totalCreditNoteAmountWithTax,'4digits')}">
+										</h:outputText>
+									</f:facet>
+								</p:column>
+							</p:row>
+						</p:columnGroup>
+
+					</p:dataTable>
+				</h:form>
+
+			</p:panel>
+
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>
