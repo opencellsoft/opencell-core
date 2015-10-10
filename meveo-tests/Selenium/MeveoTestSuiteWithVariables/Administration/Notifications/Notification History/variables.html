@@ -18,12 +18,12 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
+	<td>//*[contains(@id, 'entityClassName_text')]</td>
 	<td>searchWithNotificationType</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/div/div[3]/span</td>
+	<td>//*[contains(@id, 'notification_list_label')]</td>
 	<td>searchWithNotification</td>
 </tr>
 <tr>
@@ -38,37 +38,37 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/div/div[3]/span</td>
+	<td>//*[contains(@id, 'status_enum_label')]</td>
 	<td>searchWithStatus</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[38]/div/ul/li[2]</td>
+	<td>css=li:contains(&quot;Canceled&quot;)</td>
 	<td>Canceled</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[38]/div/ul/li[3]</td>
+	<td>css=li:contains(&quot;Failed&quot;)</td>
 	<td>Failed</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[38]/div/ul/li[4]</td>
+	<td>css=li:contains(&quot;Sent&quot;)</td>
 	<td>Sent</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[38]/div/ul/li[5]</td>
+	<td>css=li:contains(&quot;To retry&quot;)</td>
 	<td>ToRetr</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
+	<td>//*[contains(@id, 'buttonSearch')]</td>
 	<td>buttonSearch</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[2]/span</td>
 	<td>CleanFilters</td>
 </tr>
 <tr>
@@ -80,6 +80,16 @@
 	<td>store</td>
 	<td>id=results_formdeleteEntitieslink</td>
 	<td>DeleteMultiple</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>Check</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>UnCheck</td>
 </tr>
 </tbody></table>
 </body>

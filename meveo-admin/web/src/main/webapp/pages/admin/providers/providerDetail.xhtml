@@ -5,6 +5,7 @@
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{providerBean.objectId}" /> 
+            <f:viewParam name="tab" value="#{providerBean.activeTab}" />
         </f:metadata>
     </ui:define>
     
@@ -34,7 +35,7 @@
 
         <hf:formPanel id="providerFormPanel" formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormPanel:providerFormId:tabView"
             label="#{messages['provider.title']}" backingBean="#{providerBean}">
-            <p:tabView id="tabView">
+            <p:tabView id="tabView" activeIndex="#{providerBean.activeTab}">
                 <p:tab title="#{messages['customer.tab.information']}">
 							<hf:formField label="#{messages['businessEntity.code']}"
 								field="code" maxlength="35" required="true" />
@@ -98,6 +99,9 @@
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayEdrs']}"
 								field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs"/>	
+								
+							<hf:formField label="#{messages['invoiceConfiguration.displayFreeTransacInInvoice']}"
+								field="displayFreeTransacInInvoice"  id="displayFreeTx"/>
                 </p:tab>
 
                 <p:tab title="#{messages['customFieldTemplate.cfValues']}">

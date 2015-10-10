@@ -50,6 +50,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
@@ -95,6 +96,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	@Inject
 	private Messages messages;
 
+	@Inject 
+	private CounterInstanceService counterInstanceService;
 	
 	private boolean returnToAgency;
 
@@ -178,6 +181,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	    
 	    try {
 
+            entity.setCustomerAccount(customerAccountService.refreshOrRetrieve(entity.getCustomerAccount()));
+            
 			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
 				if (billingAccountService.isDuplicationExist(entity)) {
 					entity.setDefaultLevel(false);
@@ -185,28 +190,26 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 				}
 			}
 
-			if (entity.isTransient()) {
-				billingAccountService.initBillingAccount(entity);
-			}
+//            CustomerAccount customerAccount = entity.getCustomerAccount();
+//            if (customerAccount != null) {
+//                List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
+//                if (billingAccounts != null) {
+//                    if (!billingAccounts.contains(entity)) {
+//                        customerAccount.getBillingAccounts().add(entity);
+//                    }
+//                }
+//            }
+			
 
-			super.saveOrUpdate(killConversation);
-            
-			CustomerAccount customerAccount = entity.getCustomerAccount();
-            if (customerAccount != null) {
-                List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
-                if (billingAccounts != null) {
-                    if (!billingAccounts.contains(entity)) {
-                        customerAccount.getBillingAccounts().add(entity);
-                    }
-                }
+            if (entity.isTransient()) {
+                billingAccountService.initBillingAccount(entity);
             }
-			
-			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
-	            return null;
-	        } else {
-	            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
-	        }
-			
+
+            super.saveOrUpdate(killConversation);
+            
+            customerAccountId = entity.getCustomerAccount().getId();            
+            return getEditViewName(); // "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
@@ -476,7 +479,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	}
 
 	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
-		this.selectedCounterInstance = selectedCounterInstance;
+		this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
 	}
 
 	public Date getExceptionalInvoicingDate() {

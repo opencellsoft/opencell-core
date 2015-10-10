@@ -9,6 +9,7 @@
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
+            <f:viewParam name="tab" value="#{offerTemplateBean.activeTab}"/>
         </f:metadata>
     </ui:define>
     
@@ -32,8 +33,7 @@
 			backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
 			updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
-			<p:tabView id="tabView">
-
+			<p:tabView id="tabView" activeIndex="#{offerTemplateBean.activeTab}">
 				<p:tab title="#{messages['customer.tab.information']}">
 					<hf:formField label="#{messages['offerTemplate.code']}"
 						field="code" required="true" validateUnique="true" />

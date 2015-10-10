@@ -17,6 +17,7 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.FileParserFlatworm;
 import org.meveo.commons.parsers.IFileParser;
+import org.meveo.commons.parsers.RecordRejectedException;
 import org.meveo.commons.utils.ExcelToCsv;
 import org.meveo.commons.utils.FileParsers;
 import org.meveo.commons.utils.FileUtils;
@@ -133,7 +134,11 @@ public class FlatFileProcessingJobBean {
 						log.warn("error on reject record ",e);
 						result.registerError("file=" + fileName + ", line=" + cpLines + ": " + e.getMessage());
 						rejectRecord(recordObject, e.getMessage());
-						if(!continueOnError){
+						if(e instanceof RecordRejectedException){
+							if(!continueOnError){
+								break;
+							}
+						}else{
 							break;
 						}
 					} 

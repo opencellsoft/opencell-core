@@ -229,7 +229,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 		}
 		boolean newEntity = (entity.getId() == null);
 		String back = super.saveOrUpdate(killConversation);
-		return newEntity ? null : back;
+		return newEntity ? getEditViewName() : back;
 	}
 
 	public void saveServiceChargeTemplateSubscription() {

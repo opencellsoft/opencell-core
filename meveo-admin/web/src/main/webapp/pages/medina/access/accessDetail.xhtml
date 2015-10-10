@@ -11,8 +11,8 @@
 	
     <ui:define name="metadata">
 		<f:metadata>
-		<f:viewParam name="accessId"
-				value="#{accessBean.objectId}" /> 
+			<f:viewParam name="accessId" value="#{accessBean.objectId}" />
+            <f:viewParam name="tab" value="#{accessBean.activeTab}" /> 
 		</f:metadata>
 	</ui:define>
 	
@@ -51,7 +51,7 @@
             </h:panelGroup>
 		<h:panelGroup styleClass="col2">
 			<hf:formPanel id="formPanel" backingBean="#{accessBean}" label="#{messages['access.accessPanel']}" showEnableDisableButton="true" ajaxSubmit="true" submitPartialProcess=":formPanel:formId:tabView">
-				<p:tabView id="tabView">
+				<p:tabView id="tabView" activeIndex="#{accessBean.activeTab}">
 					<p:tab title="#{messages['customer.tab.information']}">
 							<hf:formField label="#{messages['access.accessUserId']}"
 								field="accessUserId" required="true" />

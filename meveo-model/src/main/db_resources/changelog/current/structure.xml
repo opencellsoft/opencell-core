@@ -82,4 +82,12 @@
     <changeSet author="AndriusKarpavicius" id="#1123_20151006">
         <dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="user_id"/>
     </changeSet>
+	 <changeSet author="anasseh" id="#1117_20151005">
+		    <addColumn tableName="BILLING_CYCLE">
+	            <column name="INVOICING_THRESHOLD" type="numeric(23, 12)" />
+	        </addColumn>	
+	</changeSet>       
+    <changeSet author="anasseh" id="20151009_1149">
+        <modifyDataType columnName="SELECTED_BILLING_ACCOUNTS" newDataType="text"   tableName="BILLING_BILLING_RUN"/>
+     </changeSet>
 </databaseChangeLog>

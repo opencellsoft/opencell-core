@@ -16,7 +16,9 @@
 				value="#{customerAccountBean.objectId}" />
 			<f:viewParam name="customerId"
 				value="#{customerAccountBean.customerId}" />
-			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
+			<f:viewParam name="customerId" value="#{customerBean.objectId}" />		
+            <f:viewParam name="mainTab" value="#{customerAccountBean.activeMainTab}" />	
+            <f:viewParam name="tab" value="#{customerAccountBean.activeTab}" />
 		</f:metadata>
 	</ui:define>
 
@@ -78,7 +80,7 @@
 			<h:panelGroup styleClass="col2">
 
 					<p:tabView id="parentTab"
-						activeIndex="#{customerAccountBean.selectedTab}">
+						activeIndex="#{customerAccountBean.activeMainTab}">
 						<p:tab id="compte"
 							title="#{messages['customerAccount.tab.account']}">
 							<hf:formPanel id="formCustomerAccountPanel"
@@ -86,7 +88,7 @@
 								label="#{messages['customerAccount.form']}"
 								backingBean="#{customerAccountBean}" showFormButtons="false"
 								useCustomIdParam="true" >
-									<p:tabView id="childTab">
+									<p:tabView id="childTab" activeIndex="#{customerAccountBean.activeTab}">
 										<p:tab id="tab0"
 											title="#{messages['customerAccount.tab.account']}">
 

@@ -55,6 +55,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
@@ -105,6 +106,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     private FilterService filterService;
     
+    @Inject
+    private ProviderService providerService;
+    
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
 
@@ -113,6 +117,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     /** Class of backing bean. */
     private Class<T> clazz;
+    
 
     /**
      * Request parameter. Should form be displayed in create/edit or view mode
@@ -164,6 +169,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private Filter listFilter;
     
     private boolean listFiltered = false;
+
+    /**
+     * Tracks active tabs in GUI
+     */        
+    private int activeTab; 
+
+    private int activeMainTab = 0;
     
     /**
      * Constructor
@@ -229,7 +241,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             try {
                 entity = getInstance();
                 if (entity instanceof BaseEntity) {
-                    ((BaseEntity) entity).setProvider(getCurrentProvider());
+                    ((BaseEntity) entity).setProvider(providerService.refreshOrRetrieve(currentProvider));
                 }
                 // FIXME: If entity is Auditable, set here the creator and
                 // creation time
@@ -975,5 +987,27 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		} else {
 			filters.remove("$FILTER");
 		}
-	}    
+	}
+	
+	public int getActiveTab() {
+        return activeTab;
+    }
+	
+	public void setActiveTab(int activeTab) {
+        this.activeTab = activeTab;
+    }
+	
+    /**
+     * @param activeMainTab Main tab to select
+     */
+    public void setActiveMainTab(int activeMainTab) {
+        this.activeMainTab = activeMainTab;
+    }
+
+    /**
+     * @return the activeMainTab
+     */
+    public int getActiveMainTab() {
+        return activeMainTab;
+    }    
 }

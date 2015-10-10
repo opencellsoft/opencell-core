@@ -71,16 +71,20 @@
                         label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" backingBean="#{backingBean}" />
                 </hf:namingContainer>
 
-                <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
-                    action="#{backingBean.addValueToMap(field, cft)}" oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()"
-                    rendered="#{!empty(popupWidgetVar)}">
-                    <p:resetInput target="addNewFields" />
-                </p:commandButton>
-
-                <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
-                    action="#{backingBean.addValueToMap(field, cft)}" rendered="#{empty(popupWidgetVar)}">
-                    <p:resetInput target="addNewFields" />
-                </p:commandButton>
+				<c:if test="#{!empty(popupWidgetVar)}">
+	                <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
+	                    action="#{backingBean.addValueToMap(field, cft)}" oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()"
+	                    rendered="#{!empty(popupWidgetVar)}">
+	                    <p:resetInput target="addNewFields" />
+	                </p:commandButton>
+                </c:if>
+				
+				<c:if test="#{empty(popupWidgetVar)}">
+	                <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
+	                    action="#{backingBean.addValueToMap(field, cft)}">
+	                    <p:resetInput target="addNewFields" />
+	                </p:commandButton>
+                </c:if>
 
                 <p:commandButton value="#{messages['commons.close']}" immediate="true" rendered="#{!empty(popupWidgetVar)}"
                     update="@this #{updateOnAddEdit}" oncomplete="PF('#{popupWidgetVar}').hide()">

@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.enterprise.inject.Instance;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -125,7 +124,7 @@ public class AccessBean extends CustomFieldBean<Access> {
 	
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = "";
-		Subscription subscription = subscriptionService.findById(entity.getSubscription().getId());
+		Subscription subscription = subscriptionService.refreshOrRetrieve(entity.getSubscription());
 		entity.setSubscription(subscription);
 
 		if (entity.isTransient()) {
@@ -136,11 +135,7 @@ public class AccessBean extends CustomFieldBean<Access> {
 		}
 		super.saveOrUpdate(killConversation);
 		
-        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
-            return null;
-        } else {
-            return "/pages/medina/access/accessDetail.xhtml?edit=true&accessId=" + entity.getId() + "&faces-redirect=true";
-        }
+        return getEditViewName(); //"/pages/medina/access/accessDetail.xhtml?edit=true&accessId=" + entity.getId() + "&faces-redirect=true";
 	}
 	
 	public void resetEntity() {

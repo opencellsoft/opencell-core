@@ -21,14 +21,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.inject.Instance;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -67,7 +64,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	@Inject
 	private CustomerService customerService;
 
-	private int selectedTab = 0;
 
 	/**
 	 * Customer Id passed as a parameter. Used when creating new Customer
@@ -75,9 +71,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 * set on newly created customer Account.
 	 */
 	private Long customerId;
-
-	@RequestParam
-	private Instance<Integer> tab;
 
 	private CustomerAccount customerAccountTransfer = new CustomerAccount();
 
@@ -114,9 +107,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 				entity.setDefaultLevel(true);
 			}
 		}
-		if (getTab() != null) {
-			selectedTab = getTab();
-		}
 
 		return entity;
 	}
@@ -132,7 +122,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
 	    
-	    entity.setCustomer(customerService.attach(entity.getCustomer()));
+	    entity.setCustomer(customerService.refreshOrRetrieve(entity.getCustomer()));
 	    
 		try {
 			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
@@ -143,20 +133,16 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 			}
 
 			super.saveOrUpdate(killConversation);
-
-			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
-	            return null;
-	        } else {
-	            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&customerAccountId="
-	                    + entity.getId() + "&faces-redirect=true&includeViewParams=true";
-	        }
+			
+			customerId = entity.getCustomer().getId();			
+			return getEditViewName();// "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&customerAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+	        
 			
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
 			log.error("failed to save or update customer account",e);
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
-
 		}
 
 		return null;
@@ -183,13 +169,13 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 		}
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + entity.getId()
-				+ "&edit=true&tab=ops&faces-redirect=true";
+				+ "&edit=true&mainTab=1&faces-redirect=true";
 	}
 
 	public String backCA() {
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId=" + entity.getId()
-				+ "&edit=true&tab=ops&faces-redirect=true";
+				+ "&edit=true&mainTab=1&faces-redirect=true";
 	}
 
 	/**
@@ -285,22 +271,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	public BigDecimal getAmountToTransfer() {
 		return amountToTransfer;
 	}
-
-	/**
-	 * @param selectedTab
-	 *            the selectedTab to set
-	 */
-	public void setSelectedTab(int selectedTab) {
-		this.selectedTab = selectedTab;
-	}
-
-	/**
-	 * @return the selectedTab
-	 */
-	public int getSelectedTab() {
-		return selectedTab;
-	}
-
+	
 	public void populateAccounts(Customer customer) {
 		entity.setCustomer(customer);
 		if (customerAccountService.isDuplicationExist(entity)) {
@@ -333,13 +304,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 		this.customerId = customerId;
 	}
 
-	private Integer getTab() {
-		if (tab != null) {
-			return tab.get();
-		}
-		return null;
-	}
-
 	@Override
 	protected String getDefaultSort() {
 		return "code";
@@ -354,5 +318,4 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider", "customer");
 	}
-
 }

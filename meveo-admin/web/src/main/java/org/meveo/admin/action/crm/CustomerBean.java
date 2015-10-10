@@ -19,7 +19,6 @@ package org.meveo.admin.action.crm;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -68,14 +67,10 @@ public class CustomerBean extends AccountBean<Customer> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		
-	    entity.setSeller(sellerService.attach(entity.getSeller()));
+	    entity.setSeller(sellerService.refreshOrRetrieve(entity.getSeller()));
 	    super.saveOrUpdate(killConversation);
 
-		if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
-		    return null;
-		} else {
-		    return "/pages/crm/customers/customerDetail.xhtml?edit=true&customerId=" + entity.getId() + "&faces-redirect=true";
-		}
+        return getEditViewName(); // "/pages/crm/customers/customerDetail.xhtml?edit=true&customerId=" + entity.getId() + "&faces-redirect=true";
 	}
 	
 	/**

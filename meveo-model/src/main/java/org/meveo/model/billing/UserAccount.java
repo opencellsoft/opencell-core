@@ -76,7 +76,7 @@ public class UserAccount extends AccountEntity {
 	@JoinColumn(name = "BILLING_ACCOUNT_ID")
 	private BillingAccount billingAccount;
 
-	@OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "userAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	// TODO : Add orphanRemoval annotation.
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Subscription> subscriptions = new ArrayList<Subscription>();

@@ -16,7 +16,9 @@
             <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
             <f:viewParam name="customerAccountId" value="#{billingAccountBean.customerAccountId}" />
             <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />	
+            <f:viewParam name="mainTab" value="#{billingAccountBean.activeMainTab}" />	
+            <f:viewParam name="tab" value="#{billingAccountBean.activeTab}" />
         </f:metadata>
 	</ui:define>
 
@@ -99,12 +101,12 @@
 						entity="#{billingAccountBean.entity}" />
             </h:panelGroup>
 			<h:panelGroup styleClass="col2">
-					<p:tabView id="parentTab" styleClass="tab-parent">
+					<p:tabView id="parentTab" styleClass="tab-parent" activeIndex="#{billingAccountBean.activeMainTab}">
 						<p:tab title="#{messages['billingAccount.tab.account']}">
                         <hf:formPanel id="formBillingAccountPanel" ajaxSubmit="true" submitPartialProcess=":parentTab:formBillingAccountPanel:formId:childTab"
                             label="#{messages['billingAccount.billingAccountPanel']}" backingBean="#{billingAccountBean}" useCustomIdParam="true">
 
-                            <p:tabView id="childTab" styleClass="tab-child">
+                            <p:tabView id="childTab" styleClass="tab-child" activeIndex="#{billingAccountBean.activeTab}">
 
                                 <p:tab title="#{messages['billingAccount.tab.account']}" id="tab0">
 													<hf:formField id="customerSelectId"
@@ -365,6 +367,7 @@
 													<p:selectOneMenu id="counterPeriod"
 														converter="omnifaces.SelectItemsConverter"
 														value="#{billingAccountBean.selectedCounterInstance}">
+                                                        <f:selectItem itemLabel="#{messages['commons.select']}" />
 														<f:selectItems
 															value="#{billingAccountBean.entity.counters}" />
 														<p:ajax event="valueChange"
@@ -381,11 +384,12 @@
 														<h:outputText id="counterCode"
 															value="#{billingAccountBean.selectedCounterInstance.counterTemplate.code}" />
 												</hftl:decorateFormField>
-												<hftl:dataList resultsId="datatable_counters"
-													backingBean="#{counterPeriodBean}"
-													dataModel="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
-													sortBy="periodStartDate"
-													sortOrder="DESCENDING" exportToXml="false">
+												
+                                                <p:dataTable id="datatable_counters" var="entity" lazy="true"
+                                                    paginator="true" resizableColumns="true" reflow="true"
+                                                    value="#{counterPeriodBean.getCounterPeriods(billingAccountBean.selectedCounterInstance)}"
+                                                    rows="10" rowKey="#{entity.id}" styleClass="custom-grid" sortBy="#{entity.periodStartDate}" sortOrder="DESCENDING">											     
+
 													<hftl:column label="#{messages['businessEntity.code']}"
 														field="code" />
 													<hftl:column label="#{messages['businessEntity.description']}"
@@ -403,7 +407,7 @@
 														field="level" converterParam="4digits" wrapHeader="true" />
 													<hftl:column label="#{messages['counterPeriod.value']}"
 														field="value" converterParam="4digits" wrapHeader="true" />
-												</hftl:dataList>
+										      </p:dataTable>
 											</p:panel>
 										</p:tab>
 

@@ -170,7 +170,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			messages.error(e.getMessage());
 		}
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
+				+ customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
 	}
 
 	// called from page of selection partial operation
@@ -203,7 +203,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ partialMatchingOccSelected.getAccountOperation()
 						.getCustomerAccount().getId()
-				+ "&edit=true&tab=ops&faces-redirect=true";
+				+ "&edit=true&mainTab=1&faces-redirect=true";
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		}
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ customerAccountId + "&edit=true&tab=ops&faces-redirect=true";
+				+ customerAccountId + "&edit=true&mainTab=1&faces-redirect=true";
 	}
 	
 	public boolean isSelectedOperationIncluded(){
@@ -295,7 +295,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 					+ customerAccountId
-					+ "&edit=false&tab=ops&faces-redirect=true";
+					+ "&edit=false&mainTab=1&faces-redirect=true";
 		}
 		AccountOperation accountOperation = accountOperationService
 				.findById(operationIds.get(0));
@@ -306,7 +306,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 					+ customerAccountId
-					+ "&edit=false&tab=ops&faces-redirect=true";
+					+ "&edit=false&mainTab=1&faces-redirect=true";
 		}
 		matchingAmounts = accountOperation.getMatchingAmounts();
 		if (matchingAmounts.size() == 1) {
