@@ -121,7 +121,7 @@ public abstract class BaseApi {
 		// check if any templates are applicable
 		if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
 			if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
-				log.error("No custom field templates defined while Custom field values were passed");
+				log.error("No custom field templates defined while Custom field values were passed [{}]",customFieldDtos);
 				throw new MissingParameterException(
 						"No Custom field templates were found to match provided custom field values");
 			} else {

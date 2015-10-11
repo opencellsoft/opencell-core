@@ -85,7 +85,7 @@ public class AccountApiService extends BaseApi {
 		accountEntity.setName(name);
 
 		// populate customFields
-		if (postData.getCustomFields() != null) {
+		if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
 			try {
 				populateCustomFields(accountLevel, postData.getCustomFields().getCustomField(), accountEntity,
 						currentUser, checkCustomField);

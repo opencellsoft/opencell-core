@@ -61,5 +61,10 @@ public class CustomFieldsDto implements Serializable {
     public String toString() {
         return "CustomFieldsDto [customField=" + customField + "]";
     }
+    
+    public boolean isEmpty(){
+    	return customField==null || customField.isEmpty();
+    }
 
 }
+
