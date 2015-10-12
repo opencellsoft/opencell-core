@@ -71,6 +71,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -163,6 +164,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			customerAccountTag.setAttribute("externalRef2", customerAccount.getExternalRef2() != null ? customerAccount.getExternalRef2() : "");
 			customerAccountTag.setAttribute("currency", customerAccount.getTradingCurrency().getPrDescription() != null ? customerAccount.getTradingCurrency().getPrDescription() : "");
 			customerAccountTag.setAttribute("language", customerAccount.getTradingLanguage().getPrDescription() != null ? customerAccount.getTradingLanguage().getPrDescription() : "");
+			
+			if(PaymentMethodEnum.DIRECTDEBIT.equals(customerAccount.getPaymentMethod())){
+			customerAccountTag.setAttribute("ics",customerAccount.getProvider().getBankCoordinates().getIcs()!=null ? customerAccount.getProvider().getBankCoordinates().getIcs() : "");
+			customerAccountTag.setAttribute("mandateIdentification", customerAccount.getCustomer().getMandateIdentification()!=null ?  customerAccount.getCustomer().getMandateIdentification() :"");
+			}
+			if(PaymentMethodEnum.WIRETRANSFER.equals(customerAccount.getPaymentMethod())){
+			customerAccountTag.setAttribute("ics",customerAccount.getProvider().getBankCoordinates().getIcs()!=null ? customerAccount.getProvider().getBankCoordinates().getIcs() : "");
+			customerAccountTag.setAttribute("iban",customerAccount.getProvider().getBankCoordinates().getIban()!=null ? customerAccount.getProvider().getBankCoordinates().getIban() : "");
+		    }
 			json = customerAccount.getCustomFieldsAsJson();
 			if (json.length() > 0) {
 				customerAccountTag.setAttribute("customFields", customerAccount.getCustomFieldsAsJson());
