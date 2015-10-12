@@ -11,7 +11,6 @@ import com.blackbear.flatworm.ConfigurationReader;
 import com.blackbear.flatworm.FileFormat;
 import com.blackbear.flatworm.MatchedRecord;
 import com.blackbear.flatworm.errors.FlatwormConversionException;
-import com.blackbear.flatworm.errors.FlatwormCreatorException;
 import com.blackbear.flatworm.errors.FlatwormInputLineLengthException;
 import com.blackbear.flatworm.errors.FlatwormInvalidRecordException;
 import com.blackbear.flatworm.errors.FlatwormUnsetFieldValueException;
@@ -25,6 +24,9 @@ public class FileParserFlatworm implements IFileParser {
     private String mappingDescriptor = null;    
     private String recordName = null;
     private BufferedReader bufferedReader = null;
+    private Object recordObject = null;
+    private RecordRejectedException recordRejectedException=null;
+    
     
 	public FileParserFlatworm(){
 		this.parser = new ConfigurationReader();
@@ -52,18 +54,29 @@ public class FileParserFlatworm implements IFileParser {
 	}
 	
 	@Override
-	public Object getNextRecord()  throws RecordRejectedException,Exception {		
+	public boolean hasNext()throws Exception{
+		record = null;
+		recordObject= null;
 		try {
 			record =   fileFormat.getNextRecord(bufferedReader);
-		} catch (FlatwormInvalidRecordException  | FlatwormInputLineLengthException  | FlatwormConversionException   | FlatwormUnsetFieldValueException e) {
-		  throw new RecordRejectedException(e.getMessage());		
 		} catch ( Exception e) {
-			throw e;
+			recordRejectedException =  new RecordRejectedException(e.getMessage());	
+			return true;
 		}
 		if(record != null){
-	    	return record.getBean(recordName);		
+			recordObject =  record.getBean(recordName);		
+			return true;
+		}else{
+			return false;
 		}
-	    return null;	    
+	}
+	
+	@Override
+	public Object getNextRecord()  throws RecordRejectedException {	
+		if(recordObject == null){
+			throw  recordRejectedException;
+		}
+		return recordObject;   
 	}
 
 	
@@ -76,5 +89,4 @@ public class FileParserFlatworm implements IFileParser {
 			}
 		}
 	}
-
 }
