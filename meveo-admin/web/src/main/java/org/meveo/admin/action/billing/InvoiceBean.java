@@ -310,7 +310,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	public boolean isXmlInvoiceAlreadyGenerated() {
 		String fileDir = getXmlInvoiceDir().getAbsolutePath() + File.separator
-				+ (entity.getInvoiceNumber() != null ? entity.getInvoiceNumber() : entity.getTemporaryInvoiceNumber())
+				+ (getEntity().getInvoiceNumber() != null ? getEntity().getInvoiceNumber() : getEntity().getTemporaryInvoiceNumber())
 				+ ".xml";
 		File file = new File(fileDir);
 		return file.exists();

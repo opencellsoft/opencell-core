@@ -128,7 +128,8 @@ public class CreditNoteBean extends BaseBean<CreditNote> {
 
 		super.saveOrUpdate(killConversation);
 
-		return null;
+		return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getInvoice().getId() + "&cid="
+				+ conversation.getId() + "&faces-redirect=true&includeViewParams=true";
 	}
 
 	public Instance<Long> getInvoiceIdParam() {
@@ -140,8 +141,8 @@ public class CreditNoteBean extends BaseBean<CreditNote> {
 	}
 
 	public Long getInvoiceId() {
-		if (entity != null && entity.getInvoice() != null) {
-			return entity.getInvoice().getId();
+		if (getEntity() != null && getEntity().getInvoice() != null) {
+			return getEntity().getInvoice().getId();
 		}
 
 		return invoiceIdParam.get();

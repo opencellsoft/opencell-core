@@ -53,8 +53,7 @@
 
 				<h:panelGroup layout="block" styleClass="form-panel-actions">
 					<p:commandButton action="#{creditNoteBean.saveOrUpdate(false)}"
-						value="#{messages['action.save']}" ajax="true"
-						update="creditNoteLinePanel messages" />
+						value="#{messages['action.save']}" ajax="false" />
 					<p:button id="backButton" value="#{messages['action.back']}"
 						outcome="invoiceDetail" includeViewParams="true">
 						<f:param name="objectId" value="#{creditNoteBean.invoiceId}" />
