@@ -480,8 +480,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		  return selectedCounterInstance;
 		 }
 
-	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
-	    this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
-	}
-
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
+    }
 }
