@@ -27,19 +27,9 @@
 	<td>UsernameID</td>
 </tr>
 <tr>
-	<td>echo</td>
-	<td>UN id : ${UsernameID}</td>
-	<td></td>
-</tr>
-<tr>
 	<td>store</td>
 	<td>meveo.admin</td>
 	<td>userName</td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>This is the correct: ${userName}</td>
-	<td></td>
 </tr>
 <tr>
 	<td>store</td>
@@ -47,19 +37,9 @@
 	<td>PasswordID</td>
 </tr>
 <tr>
-	<td>echo</td>
-	<td>PW id : ${PasswordID}</td>
-	<td></td>
-</tr>
-<tr>
 	<td>store</td>
 	<td>meveo.admin</td>
 	<td>passWord</td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>This is the correct: ${passWord}</td>
-	<td></td>
 </tr>
 <tr>
 	<td>store</td>
@@ -95,6 +75,21 @@
 	<td>store</td>
 	<td>//*[contains(@id, 'description_text')]</td>
 	<td>SearchWithDescription</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'disabled_boolean_label')]</td>
+	<td>SearchDisabled</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>css=li:contains(&quot;Yes&quot;)</td>
+	<td>DisabledYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>css=li:contains(&quot;No&quot;)</td>
+	<td>DisabledNo</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -165,6 +160,21 @@
 	<td>store</td>
 	<td>id=datatable_results:0:disableOk</td>
 	<td>DisableYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'resultsduplicatelink')]</td>
+	<td>IconDuplicate</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:duplicateOk</td>
+	<td>duplicateYes</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=datatable_results:0:duplicateKo</td>
+	<td>duplicateNo</td>
 </tr>
 </tbody></table>
 </body>
