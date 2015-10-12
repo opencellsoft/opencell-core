@@ -461,7 +461,12 @@
 							<hftl:dataList
 								dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}"
 								resultsId="i_results"
-								backingBean="#{invoiceBean}" deleteManyButton="false" exportToXml="false">
+								backingBean="#{invoiceBean}" deleteManyButton="false" exportToXml="false" reflow="false">
+								
+								<p:column style="width:16px">
+									<p:rowToggler />
+								</p:column>
+								
 								<hftl:column label="#{messages['invoice.invoiceNumber']}"
 									field="invoiceNumber" />
 								<hftl:column label="#{messages['invoice.invoiceDate']}" isDate="true"
@@ -492,6 +497,27 @@
 								<hftl:actionsColumn renderViewLink="true"
 									editView="/pages/billing/invoices/invoiceDetail.xhtml"
 									renderEditLink="false" renderDeleteLink="false" />
+									
+								<p:rowExpansion>
+									<p:dataTable value="#{entity.creditNotes}" var="cn">
+										<p:column headerText="#{messages['BusinessEntity.code']}">
+											<h:link value="#{cn.code}" outcome="creditNoteDetail">
+												<f:param name="objectId" value="#{cn.id}" />
+												<f:param name="edit" value="true" />
+												<f:param name="cid"
+													value="#{javax.enterprise.context.conversation.id}" />
+											</h:link>
+										</p:column>
+										<p:column
+											headerText="#{messages['BusinessEntity.description']}">
+											<h:outputText value="#{cn.description}" />
+										</p:column>
+										<p:column headerText="#{messages['invoice.amountWithoutTax']}">
+											<h:outputText value="#{cn.amountWithoutTax}"
+												converter="#{getConverter.forType(cn.amountWithoutTax,'4digits')}" />
+										</p:column>
+									</p:dataTable>
+								</p:rowExpansion>
 							</hftl:dataList>
 						</p:tab>
 					</p:tabView>

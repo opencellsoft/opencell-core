@@ -25,6 +25,7 @@
         importCsv - show "import from Csv" button
         sortBy and sortOrder - a default field to sort by and a default sort order
         rowsPerPage - possible paging sizes separated by a comma
+        reflow - sets datatable reflow property
          
 -->
 
@@ -104,6 +105,9 @@
     <c:if test="${empty rowsPerPage}">
         <c:set var="rowsPerPage" value="10,15,20,50" />
     </c:if>
+    <c:if test="${empty reflow}">
+        <c:set var="reflow" value="true" />
+    </c:if>
 
     <p:panel id="#{resultsId}_panel" width="100">
 
@@ -113,7 +117,7 @@
                 editMode="#{editMode}" widgetVar="cellEntity_#{resultsId}" selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}"
                 sortOrder="#{sortOrder}" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                 rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true" binding="#{backingBean.dataTable}" styleClass="custom-grid" rowKey="#{entity.id}"
-                first="#{backingBean.dataTableFirstAttribute}" reflow="true">
+                first="#{backingBean.dataTableFirstAttribute}" reflow="#{reflow}">
                 <p:ajax event="page" listener="#{backingBean.onPageChange}" />
                 <p:ajax event="toggleSelect" update="@this" process="@this" />
                 <p:ajax event="rowSelectCheckbox" />

@@ -110,7 +110,7 @@ public class CreditNoteBean extends BaseBean<CreditNote> {
 
 	@Override
 	public String getEditViewName() {
-		return "creditNote";
+		return "creditNoteDetail";
 	}
 
 	@Override

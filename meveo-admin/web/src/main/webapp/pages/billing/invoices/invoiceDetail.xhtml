@@ -20,9 +20,35 @@
 			<h:panelGrid columns="2">
 				<p:fieldset legend="#{messages['invoice.header']}">
 					<h:panelGroup>
-						<hf:formField label="#{messages['invoice.billingAccount']}"
-							field="billingAccount" valueLabelField="code" popup="false"
-							popupId="searchBillingAccountPopup" clearButton="true" />
+						<h:panelGroup layout="block" styleClass="formFieldGroup"
+							style="width:25%;">
+							<p:outputLabel for="billingAccountDetailLnk" style="width:60%;"
+								value="#{messages['invoice.billingAccount']}" />
+							<h:panelGroup layout="block"
+								styleClass="#{displayOneLine?'formFieldItem':'formFieldItem2Lines'} #{inputStyleClass}"
+								style="width:#{inputWidth}%;  #{inputStyle}">
+								<h:link id="billingAccountDetailLnk"
+									value="#{invoiceBean.entity.billingAccount.code}"
+									outcome="billingAccountDetailFromInvoice"
+									styleClass="field-value" includeViewParams="true">
+									<f:param name="cid"
+										value="#{javax.enterprise.context.conversation.id}"></f:param>
+									<f:param name="billingAccountId"
+										value="#{invoiceBean.entity.billingAccount.id}"></f:param>
+									<f:param name="customerAccountId"
+										value="#{invoiceBean.entity.billingAccount.customerAccount.id}"></f:param>
+									<f:param name="customerId"
+										value="#{invoiceBean.entity.billingAccount.customerAccount.customer.id}"></f:param>
+									<f:param name="mainTab" value="1"></f:param>
+									<f:param name="tab" value="0"></f:param>
+								</h:link>
+							</h:panelGroup>
+						</h:panelGroup>
+
+						<!-- 						<hf:formField label="#{messages['invoice.billingAccount']}" -->
+<!-- 							field="billingAccount" valueLabelField="code" popup="false" -->
+<!-- 							popupId="searchBillingAccountPopup" clearButton="true" /> -->
+
 						<hf:formField label="#{messages['invoice.invoiceNumber']}"
 							field="invoiceNumber" validateUnique="true" />
 						<hf:formField label="#{messages['invoice.invoiceDate']}"
