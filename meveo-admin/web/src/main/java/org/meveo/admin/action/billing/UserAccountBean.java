@@ -50,6 +50,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -96,6 +97,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	
 	@Inject
 	private WalletCacheContainerProvider walletCacheContainerProvider;
+
+    @Inject 
+    private CounterInstanceService counterInstanceService;
 	   
 	private CounterInstance selectedCounterInstance;
 
@@ -477,7 +481,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		 }
 
 	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
-		this.selectedCounterInstance = selectedCounterInstance;
+	    this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
 	}
 
 }
