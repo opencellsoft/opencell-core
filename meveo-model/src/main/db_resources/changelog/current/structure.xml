@@ -1714,9 +1714,4 @@
      	<modifyDataType columnName="SELECTED_BILLING_ACCOUNTS" newDataType="text"   tableName="BILLING_BILLING_RUN"/>
      </changeSet>
 
-	<changeSet id="#1159_20151012" author="EdwardLegaspi">
-		<sql>DELETE FROM crm_custom_field_tmpl WHERE code='CRM_ACCOUNT_TYPE'</sql>
-		<sql>DELETE FROM crm_custom_field_tmpl WHERE code='CRM_ACCOUNT_PARENT'</sql>
-	</changeSet>
-
 </databaseChangeLog>
