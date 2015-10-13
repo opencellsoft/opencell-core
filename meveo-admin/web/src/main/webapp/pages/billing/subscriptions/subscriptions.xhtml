@@ -1,11 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<f:metadata>
@@ -19,14 +15,14 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel columns="3" label="#{messages['subscription.search']}"
+		<hftl:searchPanel columns="3" label="#{messages['subscription.search']}"
 			backingBean="#{subscriptionListBean}">
-			<hf:searchField label="#{messages['subscription.code']}" field="code" />
-			<hf:searchField label="#{messages['subscription.status']}"
+			<hftl:searchField label="#{messages['subscription.code']}" field="code" />
+			<hftl:searchField label="#{messages['subscription.status']}"
 				field="status" />
-			<hf:searchField label="#{messages['subscription.description']}"
+			<hftl:searchField label="#{messages['subscription.description']}"
 				field="description" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['subscription.title']}" sortBy="code"
 			backingBean="#{subscriptionListBean}">

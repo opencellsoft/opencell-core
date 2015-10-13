@@ -1,39 +1,36 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
-	 xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:e="http://jboss.com/products/seam/excel" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
 
-	<f:metadata>
-		<f:event type="preRenderView" listener="#{userAccountListBean.preRenderView}" />
-	</f:metadata>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{userAccountListBean.preRenderView}" />
+    </f:metadata>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
+    <ui:define name="body">
 
-	<ui:define name="body">
+        <hftl:searchPanel label="#{messages['userAccount.search']}" backingBean="#{userAccountListBean}">
+            <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['userAccount.name']}" field="name.lastName" />
+            <hftl:searchField label="#{messages['billingAccount.status']}" field="status" />
+            <hftl:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
+            <hftl:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+        </hftl:searchPanel>
 
-		<hf:searchPanel label="#{messages['userAccount.search']}" backingBean="#{userAccountListBean}">
-			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
-            <hf:searchField label="#{messages['userAccount.name']}" field="name.lastName" />
-			<hf:searchField label="#{messages['billingAccount.status']}" field="status" />
-			<hf:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
-			<hf:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
-		</hf:searchPanel>
+        <hftl:dataList label="#{messages['userAccount.title']}" backingBean="#{userAccountListBean}" sortBy="code">
+            <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
+            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['userAccount.name']}" field="name" />
+            <hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
+            <hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true" />
+            <hftl:column label="#{messages['billingAccount.terminationDate']}" field="terminationDate" isDate="true" />
+            <hftl:column label="#{messages['address.address1']}" field="address.address1" />
 
-		<hftl:dataList label="#{messages['userAccount.title']}" backingBean="#{userAccountListBean}" sortBy="code">
-			<hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true"/>
-			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:column label="#{messages['userAccount.name']}" field="name" />
-			<hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
-			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true"/>
-			<hftl:column label="#{messages['billingAccount.terminationDate']}" field="terminationDate" isDate="true"/>
-			<hftl:column label="#{messages['address.address1']}" field="address.address1" />
+            <hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('billing','billingManagement')}" />
+        </hftl:dataList>
 
-			<hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('billing','billingManagement')}" />
-		</hftl:dataList>
-
-	</ui:define>
+    </ui:define>
 
 </ui:composition>

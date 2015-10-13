@@ -28,7 +28,7 @@
         size - a size attribute of inputText control
         maxlength - a maxlength attribute of inputText control
         listValues - a map of value (key) and label (value) pairs for picklist   
-        isAutocomplete and autocompleteMethod - should autocomplete be used and a method to use       
+        isAutocomplete and autocompleteBean and autocompleteMethod - should autocomplete be used and a bean (el expresseion) and method (string name) to use      
         
      Additional attributes applicable to Number type fields
         rangeSearch - search by a range of values
@@ -86,19 +86,19 @@
             <c:set var="isAutocomplete" value="false" />
         </c:if>
 
-        <hf:searchTextFieldNoParent id="${empty(id)?fieldIdPrefix.concat('_txt'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}" disabled="${disabled}"
+        <hftl:searchTextField id="${empty(id)?fieldIdPrefix.concat('_txt'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
             componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
             labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
-            size="${size}" maxlength="${maxlength}" listValues="${listValues}" isAutocomplete="${isAutocomplete}" autocompleteMethod="${autocompleteMethod}" />
+            size="${size}" maxlength="${maxlength}" listValues="${listValues}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
+            autocompleteMethod="${autocompleteMethod}" />
     </c:if>
 
 
     <!--  If the value binding is a boolean, display a drop down with yes/no choices. -->
     <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Boolean}">
-        <hf:searchBooleanFieldNoParent id="${empty(id)?fieldIdPrefix.concat('_bool'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
-            disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}"
-            labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
-            inputWidth="${inputWidth}" />
+        <hftl:searchBooleanField id="${empty(id)?fieldIdPrefix.concat('_bool'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
+            componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" />
     </c:if>
 
     <!--  If the value binding is a date, display a p:calendar field. -->
@@ -110,10 +110,10 @@
             <c:set var="datePattern" value="${time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
         </c:if>
 
-        <hf:searchDateFieldNoParent id="${empty(id)?fieldIdPrefix.concat('_date'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
-            disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}"
-            labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
-            inputWidth="${inputWidth}" rangeSearch="${rangeSearch}" datePattern="${datePattern}" />
+        <hftl:searchDateField id="${empty(id)?fieldIdPrefix.concat('_date'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
+            componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
+            rangeSearch="${rangeSearch}" datePattern="${datePattern}" />
     </c:if>
 
     <!--  If the value binding is an enum, display a drop down. -->
@@ -121,18 +121,18 @@
         <c:if test="${empty(listValues)}">
             <c:set var="listValues" value="${fieldInfo.enumListValues}" />
         </c:if>
-        <hf:searchEnumFieldNoParent id="${empty(id)?fieldIdPrefix.concat('_enum'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
-            disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}"
-            labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
-            inputWidth="${inputWidth}" listValues="${listValues}" />
+        <hftl:searchEnumField id="${empty(id)?fieldIdPrefix.concat('_enum'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
+            componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
+            listValues="${listValues}" enumClassname="#{fieldInfo.enumClassname}" />
     </c:if>
 
     <!--  If the value binding is a number display number field. -->
     <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Number}">
-        <hf:searchNumberFieldNoParent id="${empty(id)?fieldIdPrefix.concat('_number'):id}" converterId="${fieldInfo.numberConverter}" backingBean="${backingBean}" field="${field}"
-            fieldIdPrefix="${fieldIdPrefix}" label="${label}" disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}"
-            styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}"
-            inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" rangeSearch="${rangeSearch}" />
+        <hftl:searchNumberField id="${empty(id)?fieldIdPrefix.concat('_number'):id}" converterId="${fieldInfo.numberConverter}" backingBean="${backingBean}" field="${field}"
+            label="${label}" disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}"
+            style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}"
+            labelWidth="${labelWidth}" inputWidth="${inputWidth}" rangeSearch="${rangeSearch}" />
     </c:if>
 
 
@@ -146,7 +146,7 @@
         <c:if test="${empty(popupId)}">
             <c:set var="popupId" value="popup" />
         </c:if>
-        <hf:searchEntityFieldNoParent id="${empty(id)?fieldIdPrefix.concat('_entity'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
+        <hftl:searchEntityField id="${empty(id)?fieldIdPrefix.concat('_entity'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
             disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}"
             labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
             inputWidth="${inputWidth}" popup="${popup}" popupId="${popupId}" listBean="${listBean}" listElements="${listElements}" valueLabelField="${valueLabelField}"

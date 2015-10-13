@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:hftl="http://hftl.org">
+
+<!-- <cc:interface> -->
+<!--     <cc:attribute name="autocompleteMethod" method-signature="java.util.List completeMethod(java.lang.String)" /> -->
+<!-- </cc:interface> -->
+
+<ui:composition>
+    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
+        style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
+        inputWidth="#{inputWidth}">
+
+        <!--  Regular text input field -->
+        <c:if test="#{listValues == null and !isAutocomplete}">
+            <p:inputText id="#{id}" value="#{backingBean.filters[field]}" size="#{size}" maxlength="#{maxlength}" disabled="#{disabled}" />
+        </c:if>
+
+        <!--  Autocomplete -->
+        <c:if test="#{listValues == null and isAutocomplete}">
+            <p:autoComplete id="#{id}" value="#{backingBean.filters[field]}" size="#{size}" disabled="#{disabled}" dropdown="true" completeMethod="#{autocompleteMethod}" />
+        </c:if>
+
+        <!--  Picklist -->
+        <c:if test="#{listValues != null}">
+            <p:selectOneMenu id="#{id}" value="#{backingBean.filters[field]}" disabled="#{disabled}">
+                <f:selectItem itemValue="#{null}" itemLabel="" />
+                <f:selectItems value="#{listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
+            </p:selectOneMenu>
+        </c:if>
+    </hftl:decorateFormField>
+</ui:composition>
+</html>

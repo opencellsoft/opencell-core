@@ -1,10 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<f:metadata>
@@ -18,27 +16,27 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['billingAccount.search']}"
+		<hftl:searchPanel label="#{messages['billingAccount.search']}"
 			backingBean="#{billingAccountListBean}">
-			<hf:searchField label="#{messages['businessEntity.code']}"
+			<hftl:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['billingAccount.status']}"
+			<hftl:searchField label="#{messages['billingAccount.status']}"
 				field="status" />
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['billingAccount.subscriptionDate']}"
 				field="subscriptionDate" />
-			<hf:searchField label="#{messages['billingAccount.nextInvoiceDate']}"
+			<hftl:searchField label="#{messages['billingAccount.nextInvoiceDate']}"
 				field="nextInvoiceDate" />
-			<hf:searchField label="#{messages['billingAccount.terminationDate']}"
+			<hftl:searchField label="#{messages['billingAccount.terminationDate']}"
 				field="terminationDate" />
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['billingAccount.electronicBilling']}"
 				field="electronicBilling" />
-			<hf:searchField label="#{messages['billingAccount.countryCode']}"
+			<hftl:searchField label="#{messages['billingAccount.countryCode']}"
 				field="tradingCountry.country.countryCode" />
-			<hf:searchField label="#{messages['billingAccount.languageCode']}"
+			<hftl:searchField label="#{messages['billingAccount.languageCode']}"
 				field="tradingLanguage.language.languageCode" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['billingAccount.title']}"
 			backingBean="#{billingAccountListBean}" sortBy="code">

@@ -20,7 +20,8 @@
             <f:viewParam name="billingAccountId" value="#{userAccountBean.billingAccountId}" />
             <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
             <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />                
+            <f:viewParam name="tab" value="#{customerAccountBean.activeTab}"/>
         </f:metadata>
 
 		<o:importConstants
@@ -47,7 +48,7 @@
 			searchField1Label="#{messages['billingAccount.code']}"
 			searchField1="code" column1Label="#{messages['billingAccount.code']}"
 			column1="code" selection="#{userAccountBean.entity.billingAccount}"
-			updateField=":userAccountFormPanel:formId:userAccountTab:billingAccountSelectId">
+			updateField=":userAccountFormId:userAccountTab:billingAccountSelectId">
 		</hftl:entityPopup>
 
 <!-- 		<hftl:entityPopup id="walletOperationPopup" -->
@@ -90,7 +91,7 @@
 			header="#{messages['dialog.reloadPopup.title']}"
 			widgetVar="dlg_reloadPopup" dynamic="false" width="400">
 			<p:outputPanel id="reloadPanel">
-				<hf:formPanel edit="true"
+				<hftl:formPanel edit="true"
 					label="#{messages['dialog.reloadPopup.title']}"
 					backingBean="#{userAccountBean}"
 					entity="#{userAccountBean.reloadOperation}" styleClass="formPanel"
@@ -109,15 +110,17 @@
 						<p:inputText id="amountWithTax"
 							value="#{userAccountBean.reloadOperation.amountWithTax}"></p:inputText>
 					</hftl:decorateFormField>
-					<f:facet name="buttons">
+					
+                    <ui:param name="buttons" value="true"/>
+                    <ui:define name="buttons">
 						<p:commandButton action="#{userAccountBean.reload()}"
 							value="#{messages['button.terminateButton']}"
 							onclick="PF('dlg_reloadPopup').hide()"
-							update=":#{p:component('userAccountFormPanel')}" />
+							update=":userAccountFormId" />
 						<p:commandButton immediate="true" onclick="PF('dlg_reloadPopup').hide()" type="button"
 							value="#{messages['management.close']}" />
-					</f:facet>
-				</hf:formPanel>
+					</ui:define>
+				</hftl:formPanel>
 			</p:outputPanel>
 		</p:dialog>
 
@@ -128,47 +131,47 @@
 						entity="#{userAccountBean.entity}" />
             </h:panelGroup>
 			<h:panelGroup styleClass="col2">
-					<hf:formPanel id="userAccountFormPanel" ajaxSubmit="true" submitPartialProcess=":userAccountFormPanel:formId:userAccountTab"
+					<hftl:formPanel formId="userAccountFormId" ajaxSubmit="true" submitPartialProcess=":userAccountFormId:userAccountTab"
 						label="#{messages['userAccount.userAccountPanel']}"
 						backingBean="#{userAccountBean}" useCustomIdParam="true">
-						<p:tabView id="userAccountTab">
+						<p:tabView id="userAccountTab" activeIndex="#{userAccountBean.activeTab}">
 							<p:tab title="#{messages['userAccount.userAccountPanel']}" id="tab0">
-									<hf:formField id="billingAccountSelectId"
+									<hftl:formField id="billingAccountSelectId"
 										label="#{messages['userAccount.billingAccount']}"
 										field="billingAccount" valueLabelField="code" required="true"
 										popup="true" popupId="billingAccountPopup"/>
 								<p:fieldset legend="#{messages['userAccount.userAccountPanel']}" styleClass="clearLeft" >
 										<!--Creation window fields-->
-										<hf:formField label="#{messages['businessEntity.code']}"
+										<hftl:formField label="#{messages['businessEntity.code']}"
 											field="code" maxlength="35" validateUnique="true" size="35"
 											required="true" />
-										<hf:formField
+										<hftl:formField
 											label="#{messages['accountEntity.primaryContact']}"
 											field="primaryContact" valueLabelField="code" 
 											listBean="#{providerContactBean}" />
-										<hf:formField
+										<hftl:formField
 											label="#{messages['businessEntity.description']}"
 											field="description" id="description"
 											useConverter="false" size="70" maxlength="100"
 											required="true" />
-										<hf:formField label="#{messages['accountEntity.externalRef1']}"
+										<hftl:formField label="#{messages['accountEntity.externalRef1']}"
 											field="externalRef1" validateUnique="false" newLine="true"/>
-										<hf:formField label="#{messages['accountEntity.externalRef2']}"
+										<hftl:formField label="#{messages['accountEntity.externalRef2']}"
 											field="externalRef2" />
 
-                                    <hf:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false"
-                                        listBean="#{titleBean}" listenerUpdate=":userAccountFormPanel:formId:userAccountTab:userNamePanel" styleClass="clearLeft"/>
+                                    <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false"
+                                        listBean="#{titleBean}" listenerUpdate=":userAccountFormId:userAccountTab:userNamePanel" styleClass="clearLeft"/>
 
                                     <h:panelGroup id="userNamePanel" layout="block">
-                                            <hf:formField label="#{messages['name.lastName']}"
+                                            <hftl:formField label="#{messages['name.lastName']}"
                                                 field="name" childField="lastName" 
                                                 maxlength="50" required="true" />
-                                            <hf:formField label="#{messages['name.firstName']}"
+                                            <hftl:formField label="#{messages['name.firstName']}"
                                                 field="name" childField="firstName" 
                                                 maxlength="50" rendered="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.isCompany}"/>
                                     </h:panelGroup>    
 
-										<hf:formField
+										<hftl:formField
 											label="#{messages['accountEntity.defaultLevel']}"
 											field="defaultLevel" isMessage="true" />
 								</p:fieldset>
@@ -176,22 +179,22 @@
 
 							<p:tab title="#{messages['billingAccount.tab.information']}" id="tab1">
 								<p:fieldset legend="#{messages['commons.contacts']}"> 
-										<hf:formField label="#{messages['address.address1']}"
+										<hftl:formField label="#{messages['address.address1']}"
 											field="address" childField="address1"  size="80"
 											maxlength="80" />
-										<hf:formField label="#{messages['address.address2']}"
+										<hftl:formField label="#{messages['address.address2']}"
 											field="address" childField="address2"  size="80"
 											maxlength="80" />
-										<hf:formField label="#{messages['address.address3']}"
+										<hftl:formField label="#{messages['address.address3']}"
 											field="address" childField="address3"  size="80"
 											maxlength="80" />
-										<hf:formField label="#{messages['address.zipCode']}"
+										<hftl:formField label="#{messages['address.zipCode']}"
 											field="address" childField="zipCode" 
 											maxlength="10" size="10" newLine="true"/>
-										<hf:formField label="#{messages['address.city']}"
+										<hftl:formField label="#{messages['address.city']}"
 											field="address" childField="city" 
 											maxlength="50" />
-										<hf:formField id="countryPanel"
+										<hftl:formField id="countryPanel"
 											label="#{messages['address.country']}" fkToEntity="true"
 											field="address" childField="country"
 											valueLabelField="descriptionEn" valueField="countryCode"
@@ -200,7 +203,7 @@
 							</p:tab>
 
 							<p:tab title="#{messages['customFieldTemplate.cfValues']}" id="tab2">
-								<hf:customFields id="customFields" backingBean="#{userAccountBean}" messagesId=":userAccountFormPanel:formId:messages"/>
+								<hf:customFields id="customFields" backingBean="#{userAccountBean}" messagesId=":userAccountFormId:messages"/>
 							</p:tab>
 
 							<c:forEach items="#{userAccountBean.entity.prepaidWallets}"
@@ -351,7 +354,7 @@
 											<f:selectItem itemLabel="#{messages['commons.select']}" />
 											<f:selectItems value="#{userAccountBean.entity.counters.keySet().toArray()}" var="c" itemLabel="#{c}" itemValue="#{userAccountBean.entity.counters.get(c)}"/>
 											<p:ajax event="valueChange" 
-												update=":userAccountFormPanel:formId:userAccountTab:counters" />
+												update=":userAccountFormId:userAccountTab:counters" />
 										</p:selectOneMenu>
 									</hftl:decorateFormField>
 								<p:panel id="counters">
@@ -391,7 +394,8 @@
 							</p:tab>
 						</p:tabView>
                         
-                        <f:facet name="buttons">
+                        <ui:param name="buttons" value="true"/>
+                        <ui:define name="buttons">
 
                             <h:panelGroup rendered="#{not empty userAccountBean.entity.id}">
                                 <div class="action-buttons">    
@@ -421,8 +425,8 @@
                                 </div>
                                 
                             </h:panelGroup>                    
-                        </f:facet>
-					</hf:formPanel>
+                        </ui:define>
+					</hftl:formPanel>
 
             </h:panelGroup>
         </h:panelGroup>
@@ -431,28 +435,30 @@
 			header="#{messages['userAccount.accountTermination']}"
 			widgetVar="dlg_userAccountTerminationPopup" modal="true" appendTo="@(body)" closeOnEscape="true"
 			width="400">
-			<hf:formPanel id="termPanel" edit="true" backingBean="#{userAccountBean}"
+			<hftl:formPanel id="termPanel" edit="true" backingBean="#{userAccountBean}"
 				styleClass="formPanel" formId="termFrm" showFormButtons="false"
 				useCustomIdParam="true">
-					<hf:formField label="#{messages['serviceInstance.code']}"
+					<hftl:formField label="#{messages['serviceInstance.code']}"
 						field="code" size="50" edit="false" />
-					<hf:formField
+					<hftl:formField
 						label="#{messages['serviceInstance.terminationDate']}"
 						field="terminationDate" required="true" edit="true" />
-					<hf:formField label="Motifs " field="terminationReason"
+					<hftl:formField label="Motifs " field="terminationReason"
 						valueLabelField="description" required="true"  edit="true"
 						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
-					<f:facet name="buttons">
+					
+                    <ui:param name="buttons" value="true"/>
+                    <ui:define name="buttons">
 						<p:commandButton action="#{userAccountBean.terminateAccount()}"
 							value="#{messages['button.terminateButton']}"
 							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_userAccountTerminationPopup').hide()"
-							update=":userAccountFormPanel:formId :termPanel:termFrm:messages">
+							update=":userAccountFormId :termFrm:messages">
 						</p:commandButton>
 						<p:commandButton immediate="true"
 							onclick="PF('dlg_userAccountTerminationPopup').hide()" type="button"
 							value="#{messages['management.close']}" />
-					</f:facet>
-			</hf:formPanel>
+					</ui:define>
+			</hftl:formPanel>
 		</p:dialog>
         
 	</ui:define>

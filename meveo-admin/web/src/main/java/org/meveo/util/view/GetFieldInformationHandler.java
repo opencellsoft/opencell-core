@@ -35,7 +35,6 @@ public class GetFieldInformationHandler extends TagHandler {
 
     private static Logger log = LoggerFactory.getLogger(GetFieldInformationHandler.class);
 
-    public static long time = 0;
     private String backingBean;
     private String entity;
     private String fieldName;
@@ -65,7 +64,6 @@ public class GetFieldInformationHandler extends TagHandler {
     @SuppressWarnings("rawtypes")
     @Override
     public void apply(FaceletContext context, UIComponent parent) throws IOException {
-time = time- (new Date()).getTime();
         Class entityClass = null;
         // Either entity or backing bean must be set. Resolve the values
         if (entity != null) {
@@ -91,14 +89,13 @@ time = time- (new Date()).getTime();
             }
         }
 
-//        log.error("AKK determining field type for {}", fullFieldName);
+        // log.error("AKK determining field type for {}", fullFieldName);
         Field field = null;
         try {
             field = getBeanFieldThrowException(entityClass, fullFieldName);
         } catch (SecurityException | NoSuchFieldException | IllegalStateException e) {
-            log.error("Not able to access field information for {} field of {} class backing bean {} entity {}", fullFieldName, entityClass.getName(), backingBean, entity);
+            //log.error("Not able to access field information for {} field of {} class backing bean {} entity {}", fullFieldName, entityClass.getName(), backingBean, entity);
             context.setAttribute(varName, new FieldInformation());
-            time = time+ (new Date()).getTime();
             return;
         }
         Class<?> fieldClassType = field.getType();
@@ -115,6 +112,7 @@ time = time- (new Date()).getTime();
 
         } else if (fieldClassType.isEnum()) {
             fieldInfo.fieldType = FieldTypeEnum.Enum;
+            fieldInfo.enumClassname = field.getType().getName();
 
             Object[] objArr = field.getType().getEnumConstants();
             Arrays.sort(objArr, new Comparator<Object>() {
@@ -175,8 +173,6 @@ time = time- (new Date()).getTime();
         }
 
         context.setAttribute(varName, fieldInfo);
-        
-        time = time+ (new Date()).getTime();
 
         // context.getVariableMapper().resolveVariable(name));
     }

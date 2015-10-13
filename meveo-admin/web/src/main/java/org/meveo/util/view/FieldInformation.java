@@ -17,6 +17,8 @@ public class FieldInformation {
     protected String numberConverter;
 
     protected Object[] enumListValues;
+    
+    protected String enumClassname;
 
     @SuppressWarnings("rawtypes")
     protected Class fieldGenericsType;
@@ -40,5 +42,9 @@ public class FieldInformation {
     @SuppressWarnings("rawtypes")
     public Class getFieldGenericsType() {
         return fieldGenericsType;
+    }
+    
+    public String getEnumClassname() {
+        return enumClassname;
     }
 }

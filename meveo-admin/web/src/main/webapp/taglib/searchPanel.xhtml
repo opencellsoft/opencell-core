@@ -29,18 +29,60 @@
     </c:if>
     <c:if test="${empty(ajax)}">
         <c:set var="ajax" value="true" />
-    </c:if>    
+    </c:if>
     <c:if test="${empty(ajaxUpdateIds)}">
         <c:set var="ajaxUpdateIds" value="results_panel" />
     </c:if>
     <c:if test="${empty(renderAdvancedLink)}">
         <c:set var="renderAdvancedLink" value="false" />
-    </c:if>     
+    </c:if>
+    <c:if test="${empty(newButtonView)}">
+        <c:set var="newButtonView" value="#{backingBean.newViewName}" />
+    </c:if>
 
-    <hf:searchPanel id="${id}" label="#{label}" backingBean="#{backingBean}" renderNewButton="#{renderNewButton}" newButtonView="#{newButtonView}" ajax="#{ajax}"
-        ajaxUpdateIds="#{ajaxUpdateIds}" renderAdvancedLink="#{renderAdvancedLink}" buttons="#{buttons}">
-        <c:set var="id" value="${null}" />
-        <ui:insert />
-    </hf:searchPanel>
+    <h:form id="${empty(id)?'searchForm':id}">
+        <p:panel header="#{label}">
+            <h:panelGroup layout="block" styleClass="search-panel">
+                <p:messages id="search_messages" />
+                <p:outputPanel styleClass="search-panel-fields">
+                    <c:set var="id" value="${null}" />
+                    <ui:insert />
+                </p:outputPanel>
+
+                <h:panelGroup layout="block" styleClass="search-panel-actions" rendered="#{backingBean.getListFilters() ne null and backingBean.getListFilters().size() > 0}">
+                    <hftl:decorateFormField label="#{messages['menu.filters']}" fieldId="filter">
+                        <p:selectOneMenu id="filter" value="#{backingBean.listFilter}" converter="omnifaces.SelectItemsConverter">
+                            <f:selectItem itemLabel="" itemValue="" />
+                            <f:selectItems value="#{backingBean.getListFilters()}" var="elem" itemLabel="#{elem.code}" itemValue="#{elem}" />
+                            <p:ajax listener="#{backingBean.runListFilter()}" update="#{ajaxUpdateIds}"></p:ajax>
+                        </p:selectOneMenu>
+                    </hftl:decorateFormField>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="search-panel-actions">
+                    <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="#{ajax}" action="#{backingBean.search}" update="#{ajaxUpdateIds}" />
+                    <p:commandButton id="buttonAdvanced" rendered="#{renderAdvancedLink and !backingBean.advanced}" value="#{messages['commons.advancedButton']}"
+                        actionListener="#{backingBean.advancedAction}" update="@form" />
+                    <p:commandButton id="buttonHideAdvanced" rendered="#{renderHideAdvancedLink and backingBean.advanced}" value="#{messages['commons.hideAdvancedButton']}"
+                        actionListener="#{backingBean.advancedAction}" update="@form" />
+                    <p:commandButton value="#{messages['commons.clean']}" process="@this" update="@form" action="#{backingBean.clean}">
+                        <f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+                    </p:commandButton>
+                    <p:button id="buttonNew" value="#{messages['commons.new']}" outcome="#{newButtonView}" rendered="#{renderNewButton}">
+                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                        <f:param name="edit" value="true" />
+                    </p:button>
+
+                    <ui:insert name="buttons" />
+                </h:panelGroup>
+            </h:panelGroup>
+        </p:panel>
+
+        <p:blockUI block="#{ajaxUpdateIds}" trigger="buttonSearch">
+            LOADING<br />
+            <p:graphicImage library="img" name="ajaxloadingbar.gif" />
+        </p:blockUI>
+    </h:form>
+
 </ui:composition>
 </html>

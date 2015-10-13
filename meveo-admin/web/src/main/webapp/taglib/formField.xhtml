@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui"
+    xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org">
+
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom component to display a label and a data entry control in edit mode or value output in a view mode
+    
+    Must be located inside a formPanel component or have the following attributes provided if used as standalone: entity, edit and backingBean for map and list type fields only
+    
+    An applicable input control or a value output format is determined automatically based on field's type. The following field types are supported:
+        Text - as regular text entry, html editor, textarea, list of values, autocomplete and selection via popup
+        Number -  as regular text entry, as a spinner of numbers and a list of values
+        Boolean - as a checkbox
+        Entity - as a list of values or selection via popup search
+        Map - as an editable list of key and value pairs
+        Date - as a calendar
+        Enum - as a list of enum values
+        List - as a dual picklist or list of values
+        
+        
+     Attributes applicable to ALL types of fields
+        entity - an entity containing a given field. If not provided and entity passed to a parent formPanel will be used.
+        backingBean - backing bean associated with data entry. Required for Map and List type fields only. If not provided a backing bean passed to a parent formPanel will be used.
+        label - a label
+        field and optional childField - a field.childField for data entry/view. E.g. address.email
+        required - is field mandatory
+        disabled - is data entry control disabled        
+
+        edit - should data entry or value output be displayed. If not provided, value is determined from a backing bean (either provided or from parent formPanel)
+        allowEdit - allow to edit a field when in edit mode       
+        showOnlyOnNew - show field only in new entity creation mode
+        showOnlyOnConsult - show field only in entity view mode
+        doNotShowOnNew - show field NOT in new entity creation mode
+        
+     Additional attributes applicable to Text type fields
+        size - a size attribute of inputText control
+        maxlength - a maxlength attribute of inputText control
+        isHtml - text entry as html editor
+        textArea - text entry as text area control
+        cols and rows - number of columns and rows in text are control 
+        isAutocomplete and autocompleteBean and autocompleteMethod - should autocomplete be used and a bean (el expresseion) and method (string name) to use
+        listValues - a map of value (key) and label (value) pairs for picklist 
+        popup and popupId - text entry via a popup and associated popup id 
+        useConverter - add string converter
+        converter - converter to apply (unrelated to useConverter attribute)
+        validateUnique - validate that field value is unique per entity class
+        validateRib - validate rib values
+        validateEmail - validate email value
+        validatorId - validator to apply
+          
+        
+     Additional attributes applicable to Number type fields
+        size - a size attribute of inputText control
+        maxlength - a maxlength attribute of inputText control
+        listValues - a map of value (key) and label (value) pairs for picklist 
+        minValue - a minimum value for a spinner
+        maxValue - a maximum value for a spinner
+        isMessage and messagePrefix - display a translatable message prefixed with messagePrefix and a field value
+        converter - converter to apply 
+        negativeValue - allow to enter negative values in a spinner
+        
+     Additional attributes applicable to Boolean type fields        
+        isMessage - display a translatable message commons.yes/no instead of a plain true/false value 
+        listenerUpdate - components (ids) to update when value changes 
+     
+     Additional attributes applicable to Date type fields
+        datePattern - date pattern to apply in calendar selection. If not provided, time attribute is consulted whether to add time part to a date 
+        time - should a date selection be time specific.  
+     
+     Additional attributes applicable to Enum type fields             
+        listValues - a map of value (key) and label (value) pairs for picklist 
+        listenerUpdate - components (ids) to update when value changes 
+        
+     Additional attributes applicable to Entity type fields    
+        size - a size attribute of inputText control
+        popup and popupId - entity search via a popup and associated popup id 
+        showPopupOnlyOnNew - should popup be show only on new entries
+        listBean - a backing bean to provide a list of entities via listAll method
+        listElements - a list of entities
+        fkToEntity - store a "sort of FK" to a selected entity without a formal FK JPA relationship - any value can be stored
+        valueLabelField - selected entity's attribute to display when entity is selected. In a list of entities used as a label attribute for list item.
+        valueField - used in along with fkToEntity="true". Specifies a name of a field in list item that represents FK value.
+        listenerUpdate - components (ids) to update when value changes (entity selection via picklist only)
+
+    Additional attributes applicable to List type fields 
+        listType - list type - "simpleList" or "pickUpList"
+        showFields - a list of fields to show for a "simpleList" list type. Format: messageKey,field;messageKey,field
+        dualListModel - dual list model for "pickUpList" list type.
+        deleteButton - should a delete button be displayed to manage "simpleList" list type values
+        showButtonAddNew - should a "add new value" button be displayed to manage "simpleList" list type values
+        valueLabelField and valueLabelField2 - selected entity's attribute(s) to display when entity is selected. In a list of entities used as a label attribute for list item.
+
+    Additional attributes applicable to Map type fields          
+        mapKeyLabel - header label for key  
+        mapValueLabel - header label for value
+
+ -->
+
+<ui:composition>
+    <o:importConstants type="org.meveo.util.view.FieldInformation.FieldTypeEnum" />
+    <o:importConstants type="org.meveo.util.view.FieldInformation.FieldNumberTypeEnum" />
+
+    <c:if test="${empty(required)}">
+        <c:set var="required" value="false" />
+    </c:if>
+    <c:if test="${empty(disabled)}">
+        <c:set var="disabled" value="false" />
+    </c:if>
+    <c:if test="${empty(size)}">
+        <c:set var="size" value="${field =='description'?80:20}" />
+    </c:if>
+    <c:if test="${empty(maxlength)}">
+        <c:set var="maxlength" value="${field =='description'?100:(size&lt;=40?40:size)}" />
+    </c:if>
+    <c:if test="${empty(popup)}">
+        <c:set var="popup" value="false" />
+    </c:if>
+    <c:if test="${empty(popupId)}">
+        <c:set var="popupId" value="popup" />
+    </c:if>
+    <c:if test="${empty(fkToEntity)}">
+        <c:set var="fkToEntity" value="false" />
+    </c:if>
+
+    <c:if test="${empty(showOnlyOnNew)}">
+        <c:set var="showOnlyOnNew" value="false" />
+    </c:if>
+    <c:if test="${empty(doNotShowOnNew)}">
+        <c:set var="doNotShowOnNew" value="false" />
+    </c:if>
+    <c:if test="${empty(showOnlyOnConsult)}">
+        <c:set var="showOnlyOnConsult" value="false" />
+    </c:if>
+    <c:if test="${empty(allowEdit)}">
+        <c:set var="allowEdit" value="true" />
+    </c:if>
+    <c:if test="${entity == null}">
+        <!--         <c:set var="fieldEntityIsNull" value="true"/> -->
+        <c:set var="entity" value="${formLevelEntity!=null?formLevelEntity:backingBean.entity}" />
+    </c:if>
+    <!-- <c:set var="formEntityIsNull" value="#{formLevelEntity==null}"/> -->
+
+    <c:if test="${empty(childField)}">
+        <c:set var="fieldItem" value="${entity[field]}" />
+    </c:if>
+    <c:if test="${!empty(childField)}">
+        <c:set var="fieldItem" value="${entity[field][childField]}" />
+    </c:if>
+    <c:if test="${empty(formLevelEdit)}">
+        <c:set var="formLevelEdit" value="${backingBean.edit}" />
+    </c:if>
+    <c:if test="${empty(edit)}">
+        <c:set var="edit" value="#{formLevelEdit and (entity.id==null or (entity.id!=null and allowEdit))}" />
+    </c:if>
+    <c:if test="${empty(rendered)}">
+        <c:set var="rendered" value="true" />
+    </c:if>
+    <c:set var="rendered"
+        value="${rendered and (((not doNotShowOnNew) or (doNotShowOnNew and entity.id!=null)) and ((not showOnlyOnNew) or (showOnlyOnNew and edit and entity.id==null)) and ((not showOnlyOnConsult) or (showOnlyOnConsult and edit== false)))}" />
+
+    <c:if test="${empty(componentWidth)}">
+        <c:set var="componentWidth" value="${size>40 or textArea?50:25}" />
+    </c:if>
+    <c:set var="fieldIdPrefix" value="${field.concat(childField!=null?'_'.concat(childField):'')}" />
+    <c:set var="newEntity" value="${entity.id==null}" />
+
+
+    <!-- <c:if test="#{field eq 'description'}"> -->
+    <!-- uuggggg -->
+    <!--         <h:outputText value=" formLevelEntity is "/> -->
+    <!--         <h:outputText value="#{formLevelEntity}"/> -->
+
+    <!--                 <h:outputText value=" entity is "/> -->
+    <!--         <h:outputText value="#{entity}"/> -->
+
+    <!--                 <h:outputText value=" fieldEntityIsNull is null "/> -->
+    <!--         <h:outputText value="#{fieldEntityIsNull}"/> -->
+
+    <!--                 <h:outputText value=" formEntityIsNull is null "/> -->
+    <!--         <h:outputText value="#{formEntityIsNull}"/> -->
+    <!-- </c:if> -->
+    <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" fieldName="${field}" childFieldName="${childField}" var="fieldInfo" />
+
+    <c:if test="#{rendered}">
+        <!--  Select and entity or a FK to an entity -->
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Entity or fkToEntity}">
+
+            <c:if test="${empty(showPopupOnlyOnNew)}">
+                <c:set var="showPopupOnlyOnNew" value="false" />
+            </c:if>
+
+            <hftl:formEntityField id="${empty(id)?fieldIdPrefix.concat('_entity'):id}" fieldItem="#{fieldItem}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
+                disabled="${disabled}" required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}"
+                style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}"
+                labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}" popup="${popup}" popupId="${popupId}" listBean="${listBean}" listElements="${listElements}"
+                fkToEntity="${fkToEntity}" valueLabelField="${valueLabelField}" valueField="${valueField}" listenerUpdate="${listenerUpdate}" newEntity="${newEntity}"
+                showPopupOnlyOnNew="${showPopupOnlyOnNew}" edit="#{edit}" />
+        </c:if>
+
+        <!--  Enter text -->
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Text and !fkToEntity}">
+
+            <c:if test="${empty(textArea)}">
+                <c:set var="textArea" value="false" />
+            </c:if>
+            <c:if test="${empty(cols)}">
+                <c:set var="cols" value="80" />
+            </c:if>
+            <c:if test="${empty(rows)}">
+                <c:set var="rows" value="5" />
+            </c:if>
+            <c:if test="${empty(isHtml)}">
+                <c:set var="isHtml" value="false" />
+            </c:if>
+            <c:if test="${empty(useConverter)}">
+                <c:set var="useConverter" value="false" />
+            </c:if>
+            <c:if test="${empty(validateUnique)}">
+                <c:set var="validateUnique" value="false" />
+            </c:if>
+            <c:if test="${empty(validateRib)}">
+                <c:set var="validateRib" value="false" />
+            </c:if>
+            <c:if test="${empty(validateEmail)}">
+                <c:set var="validateEmail" value="false" />
+            </c:if>
+            <c:if test="${empty(isAutocomplete)}">
+                <c:set var="isAutocomplete" value="false" />
+            </c:if>
+
+            <hftl:formTextField id="${empty(id)?fieldIdPrefix.concat('_txt'):id}" fieldItem="#{fieldItem}" entity="${entity}" field="${field}" childField="${childField}"
+                label="${label}" disabled="${disabled}" required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}"
+                styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}"
+                inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}" maxlength="${maxlength}" isHtml="${isHtml}"
+                textArea="${textArea}" cols="${cols}" rows="${rows}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
+                autocompleteMethod="#{autocompleteMethod}" listValues="${listValues}" popup="${popup}" popupId="${popupId}" useConverter="${useConverter}" converter="${converter}"
+                validateUnique="${validateUnique}" validateRib="${validateRib}" validateEmail="${validateEmail}" validatorId="${validatorId}" edit="#{edit}" />
+        </c:if>
+
+        <!--  Enter map values -->
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Map}">
+
+            <c:if test="${empty(mapKeyLabel)}">
+                <c:set var="mapKeyLabel" value="#{messages['commons.name']}" />
+            </c:if>
+            <c:if test="${empty(mapValueLabel)}">
+                <c:set var="mapValueLabel" value="#{messages['commons.value']}" />
+            </c:if>
+
+            <hftl:formMapField id="${empty(id)?fieldIdPrefix.concat('_map'):id}" backingBean="${backingBean}" fieldItem="#{backingBean.mapTypeFieldValues[field]}" field="${field}"
+                label="${label}" disabled="${disabled}" required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}"
+                styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}"
+                inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" mapKeyLabel="${mapKeyLabel}" mapValueLabel="${mapValueLabel}"
+                edit="#{edit}" />
+        </c:if>
+
+        <!--  If the value binding is a number, display an input number spinner. -->
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Number}">
+
+            <c:if test="${fieldInfo.numberType==FieldNumberType.Double or fieldInfo.numberType==FieldNumberType.Float}">
+                <c:set var="size" value="5" />
+            </c:if>
+            <c:if test="${empty(minValue)}">
+                <c:set var="minValue" value="0" />
+            </c:if>
+            <c:if test="${empty(negativeValue)}">
+                <c:set var="negativeValue" value="false" />
+            </c:if>
+
+            <hftl:formNumberField id="${empty(id)?fieldIdPrefix.concat('_number'):id}" fieldItem="#{fieldItem}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
+                disabled="${disabled}" required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}"
+                style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}"
+                labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}" maxlength="${maxlength}" listValues="${listValues}" minValue="${minValue}"
+                maxValue="${maxValue}" isMessage="${isMessage}" messagePrefix="${messagePrefix}" converter="${empty(converter)?fieldInfo.numberConverter:converter}"
+                negativeValue="${negativeValue}"
+                spinner="${fieldInfo.numberType!=FieldNumberType.BigDecimal and fieldInfo.numberType!=FieldNumberType.Double and fieldInfo.numberType!=FieldNumberType.Float}"
+                edit="#{edit}" />
+
+        </c:if>
+
+
+        <!--  If the value binding is a boolean, display a selectBooleanCheckbox field. -->
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Boolean}">
+            <hftl:formBooleanField id="${empty(id)?fieldIdPrefix.concat('_bool'):id}" fieldItem="#{fieldItem}" label="${label}" disabled="${disabled}" required="${required}"
+                componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+                labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
+                isMessage="${isMessage}" listenerUpdate="${listenerUpdate}" edit="#{edit}" />
+        </c:if>
+
+        <!-- If the value binding is a date, display a p:calendar field. -->
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Date}">
+
+            <c:if test="${empty(time)}">
+                <c:set var="time" value="false" />
+            </c:if>
+            <c:if test="${empty(datePattern)}">
+                <c:set var="datePattern" value="#{time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+            </c:if>
+
+            <hftl:formDateField id="${empty(id)?fieldIdPrefix.concat('_date'):id}" fieldItem="#{fieldItem}" label="${label}" disabled="${disabled}" required="${required}"
+                componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+                labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
+                datePattern="${datePattern}" edit="#{edit}" />
+        </c:if>
+
+        <!--  If the value binding is an enum, display a drop down. -->
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Enum}">
+
+            <hftl:formEnumField id="${empty(id)?fieldIdPrefix.concat('_enum'):id}" fieldItem="#{fieldItem}" fieldIdPrefix="${fieldIdPrefix}" label="${label}" disabled="${disabled}"
+                required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}"
+                labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
+                inputWidth="${inputWidth}" listValues="${empty(listValues)? fieldInfo.enumListValues:listValues}" enumClassname="#{fieldInfo.enumClassname}"
+                listenerUpdate="${listenerUpdate}" edit="#{edit}" />
+        </c:if>
+
+        <!--  If the value binding is a List, display a panel with list of entities. -->
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.List}">
+
+            <c:if test="${empty(listType)}">
+                <c:set var="listType" value="simpleList" />
+            </c:if>
+            <c:if test="${empty(deleteButton)}">
+                <c:set var="deleteButton" value="true" />
+            </c:if>
+            <c:if test="${empty(showButtonAddNew)}">
+                <c:set var="showButtonAddNew" value="true" />
+            </c:if>
+
+            <hftl:formListField id="${empty(id)?fieldIdPrefix.concat('_list'):id}" backingBean="${backingBean}" fieldItem="#{fieldItem}" label="${label}" disabled="${disabled}"
+                required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}"
+                labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
+                inputWidth="${inputWidth}" listType="${listType}" showFields="${showFields}" dualListModel="${dualListModel}" deleteButton="${deleteButton}"
+                showButtonAddNew="${showButtonAddNew}" valueLabelField="${valueLabelField}" valueLabelField2="${valueLabelField2}"
+                fieldGenericsType="${fieldInfo.fieldGenericsType}" newEntity="${newEntity}" edit="#{edit}" />
+        </c:if>
+    </c:if>
+</ui:composition>
+</html>
