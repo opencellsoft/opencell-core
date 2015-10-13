@@ -478,9 +478,13 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		return selectedCounterInstance;
 	}
 
-	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
-		this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
-	}
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
+    }
 
 	public Date getExceptionalInvoicingDate() {
 		return exceptionalInvoicingDate;
