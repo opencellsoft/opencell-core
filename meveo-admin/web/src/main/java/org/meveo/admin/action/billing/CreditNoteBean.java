@@ -22,6 +22,7 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.CreditNoteService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.XmlCreditNoteCreator;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -42,6 +43,9 @@ public class CreditNoteBean extends BaseBean<CreditNote> {
 	@Inject
 	@RequestParam()
 	private Instance<Long> invoiceIdParam;
+
+	@Inject
+	private XmlCreditNoteCreator xmlCreditNoteCreator;
 
 	private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates;
 
@@ -127,6 +131,9 @@ public class CreditNoteBean extends BaseBean<CreditNote> {
 		}
 
 		super.saveOrUpdate(killConversation);
+
+		// create xml credit note
+		xmlCreditNoteCreator.createXmlCreditNote(entity);
 
 		return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getInvoice().getId() + "&cid="
 				+ conversation.getId() + "&faces-redirect=true&includeViewParams=true";
