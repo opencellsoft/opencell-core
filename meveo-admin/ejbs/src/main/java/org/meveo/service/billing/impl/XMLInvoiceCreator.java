@@ -138,24 +138,22 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			
 			//log.debug("creating provider");
 			Provider provider=invoice.getProvider();
-			if(provider.getInvoiceConfiguration().getDisplayProvider()){
-			Element providerTag = doc.createElement("provider");
-			providerTag.setAttribute("code", provider.getCode() + "");
-			Element bankCoordinates = doc.createElement("bankCoordinates");
-			Element ics = doc.createElement("ics");
-			Element iban = doc.createElement("iban"); 
-			bankCoordinates.appendChild(ics);
-			bankCoordinates.appendChild(iban);
-			providerTag.appendChild(bankCoordinates);
-			header.appendChild(providerTag);
-		
-			if (provider.getBankCoordinates() != null && provider.getBankCoordinates().getIcs() != null) {
-				Text icsTxt = doc.createTextNode(provider.getBankCoordinates().getIcs() != null ? provider.getBankCoordinates().getIcs() : "");
-				ics.appendChild(icsTxt);
-				} 
-			if (provider.getBankCoordinates() != null && provider.getBankCoordinates().getIban() != null) {
-				Text ibanTxt = doc.createTextNode(provider.getBankCoordinates().getIban() != null ? provider.getBankCoordinates().getIban() : "");
-				iban.appendChild(ibanTxt);
+			if(provider.getInvoiceConfiguration() != null && provider.getInvoiceConfiguration().getDisplayProvider()){
+				Element providerTag = doc.createElement("provider");
+				providerTag.setAttribute("code", provider.getCode() + "");
+				Element bankCoordinates = doc.createElement("bankCoordinates");
+				Element ics = doc.createElement("ics");
+				Element iban = doc.createElement("iban"); 
+				bankCoordinates.appendChild(ics);
+				bankCoordinates.appendChild(iban);
+				providerTag.appendChild(bankCoordinates);
+				header.appendChild(providerTag);
+			
+				if (provider.getBankCoordinates() != null) {
+					Text icsTxt = doc.createTextNode( provider.getBankCoordinates().getIcs() != null ? provider.getBankCoordinates().getIcs() : "");
+					ics.appendChild(icsTxt);			
+					Text ibanTxt = doc.createTextNode(provider.getBankCoordinates().getIban() != null ? provider.getBankCoordinates().getIban() : "");
+					iban.appendChild(ibanTxt);
 				}
 			}
 			//log.debug("creating customer");
@@ -187,7 +185,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			customerAccountTag.setAttribute("currency", customerAccount.getTradingCurrency().getPrDescription() != null ? customerAccount.getTradingCurrency().getPrDescription() : "");
 			customerAccountTag.setAttribute("language", customerAccount.getTradingLanguage().getPrDescription() != null ? customerAccount.getTradingLanguage().getPrDescription() : "");
 			if(PaymentMethodEnum.DIRECTDEBIT.equals(customerAccount.getPaymentMethod())){ 
-			customerAccountTag.setAttribute("mandateIdentification", customerAccount.getCustomer().getMandateIdentification()!=null ?  customerAccount.getCustomer().getMandateIdentification() :"");
+				customerAccountTag.setAttribute("mandateIdentification", customerAccount.getCustomer() != null ?  customerAccount.getCustomer().getMandateIdentification() :"");
 			} 
 			json = customerAccount.getCustomFieldsAsJson();
 			if (json.length() > 0) {
