@@ -794,7 +794,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public Long getObjectId() {
-        if (objectIdFromParam != null && objectIdFromParam.get() != null) {
+        if (objectIdFromSet == null && objectIdFromParam != null && objectIdFromParam.get() != null) {
             objectIdFromSet = objectIdFromParam.get();
         }
 
@@ -805,6 +805,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         objectIdFromSet = objectId;
     }
 
+    public void setObjectIdFromSet(Long objectIdFromSet) {
+        this.objectIdFromSet = objectIdFromSet;
+    }
+    
+    public Long getObjectIdFromSet() {
+        return objectIdFromSet;
+    }
+    
     /**
      * true in edit mode
      * 
