@@ -1559,5 +1559,8 @@
 	<column name="display_provider" type="BOOL" defaultValueBoolean="false"></column>
 	</addColumn>
 	</changeSet>
-         
+	
+   	<changeSet author="anasseh" id="20151013_1165">
+     	<modifyDataType columnName="MESSAGE" newDataType="text"   tableName="MEVEO_SCRIPT_INSTANCE_ERROR"/>
+     </changeSet>       
 </databaseChangeLog>
