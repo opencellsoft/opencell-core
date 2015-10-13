@@ -71,6 +71,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -134,6 +135,26 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			invoiceTag.setAttribute("templateName", billingCycle != null && billingCycle.getBillingTemplateName() != null ? billingCycle.getBillingTemplateName() : "default");
 			doc.appendChild(invoiceTag);
 			invoiceTag.appendChild(header);
+			//log.debug("creating provider");
+			Provider provider=invoice.getProvider();
+			if(provider.getInvoiceConfiguration() != null && provider.getInvoiceConfiguration().getDisplayProvider()){
+				Element providerTag = doc.createElement("provider");
+				providerTag.setAttribute("code", provider.getCode() + "");
+				Element bankCoordinates = doc.createElement("bankCoordinates");
+				Element ics = doc.createElement("ics");
+				Element iban = doc.createElement("iban"); 
+				bankCoordinates.appendChild(ics);
+				bankCoordinates.appendChild(iban);
+				providerTag.appendChild(bankCoordinates);
+				header.appendChild(providerTag);
+			
+				if (provider.getBankCoordinates() != null) {
+					Text icsTxt = doc.createTextNode( provider.getBankCoordinates().getIcs() != null ? provider.getBankCoordinates().getIcs() : "");
+					ics.appendChild(icsTxt);			
+					Text ibanTxt = doc.createTextNode(provider.getBankCoordinates().getIban() != null ? provider.getBankCoordinates().getIban() : "");
+					iban.appendChild(ibanTxt);
+				}
+			}
 
 			//log.debug("creating customer");
 			Customer customer = invoice.getBillingAccount().getCustomerAccount().getCustomer();
@@ -163,6 +184,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			customerAccountTag.setAttribute("externalRef2", customerAccount.getExternalRef2() != null ? customerAccount.getExternalRef2() : "");
 			customerAccountTag.setAttribute("currency", customerAccount.getTradingCurrency().getPrDescription() != null ? customerAccount.getTradingCurrency().getPrDescription() : "");
 			customerAccountTag.setAttribute("language", customerAccount.getTradingLanguage().getPrDescription() != null ? customerAccount.getTradingLanguage().getPrDescription() : "");
+			if(PaymentMethodEnum.DIRECTDEBIT.equals(customerAccount.getPaymentMethod())){ 
+				customerAccountTag.setAttribute("mandateIdentification", customerAccount.getCustomer() != null ?  customerAccount.getCustomer().getMandateIdentification() :"");
+			}
 			json = customerAccount.getCustomFieldsAsJson();
 			if (json.length() > 0) {
 				customerAccountTag.setAttribute("customFields", customerAccount.getCustomFieldsAsJson());

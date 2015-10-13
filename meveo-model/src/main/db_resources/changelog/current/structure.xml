@@ -1713,5 +1713,11 @@
 	<changeSet author="anasseh" id="20151009_1149">
      	<modifyDataType columnName="SELECTED_BILLING_ACCOUNTS" newDataType="text"   tableName="BILLING_BILLING_RUN"/>
      </changeSet>
+     
+     <changeSet id="#1150_20151013" author="Mbarek">
+	<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+	<column name="display_provider" type="BOOL" defaultValueBoolean="false"></column>
+	</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
