@@ -5,6 +5,13 @@
     <ui:define name="navigation">
         <ui:include src="/layout/navigation.xhtml" />
     </ui:define>
+    
+     <ui:define name="metadata">
+        <f:metadata>  
+			<f:event type="preRenderView"
+				listener="#{providerBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
 
     <ui:define name="body">  
 
@@ -73,9 +80,13 @@
 								field="invoiceConfiguration" childField="displayOffers" id="displayOffers"/>
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayEdrs']}"
-								field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs"/>	
-								<hf:formField label="#{messages['invoiceConfiguration.displayFreeTransacInInvoice']}"
+								field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs"/>
+									
+						    <hf:formField label="#{messages['invoiceConfiguration.displayFreeTransacInInvoice']}"
 								field="displayFreeTransacInInvoice"  id="displayFreeTx"/>
+						     
+						     <hf:formField label="#{messages['invoiceConfiguration.displayProvider']}"
+								field="invoiceConfiguration" childField="displayProvider" id="displayProvider"/>		
                 </p:tab>
 
                 <p:tab title="#{messages['customFieldTemplate.cfValues']}">
