@@ -12,7 +12,7 @@
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{customerBean.preRenderView}" />
-			<f:viewParam name="customerId" value="#{customerBean.objectId}" />			
+			<f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />			
             <f:viewParam name="tab" value="#{customerBean.activeTab}"/>
 		</f:metadata>
 	</ui:define>

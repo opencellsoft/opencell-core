@@ -13,14 +13,13 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{userAccountBean.preRenderView}" />
-
-            <f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
+			<f:event type="preRenderView" listener="#{userAccountBean.preRenderView}" />
+            <f:viewParam name="userAccountId" value="#{userAccountBean.objectIdFromSet}" />
             <f:viewParam name="billingAccountId" value="#{userAccountBean.billingAccountId}" />
-            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
-            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectIdFromSet}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectIdFromSet}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />                
+            <f:viewParam name="tab" value="#{customerAccountBean.activeTab}"/>
         </f:metadata>
 
 		<o:importConstants

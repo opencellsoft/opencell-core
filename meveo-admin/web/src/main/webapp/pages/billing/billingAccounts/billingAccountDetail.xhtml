@@ -13,10 +13,10 @@
 			<f:event type="preRenderView"
 				listener="#{billingAccountBean.preRenderView}" />
 
-            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectIdFromSet}" />
             <f:viewParam name="customerAccountId" value="#{billingAccountBean.customerAccountId}" />
-            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectId}" />	
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectIdFromSet}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />	
             <f:viewParam name="mainTab" value="#{billingAccountBean.activeMainTab}" />	
             <f:viewParam name="tab" value="#{billingAccountBean.activeTab}" />
         </f:metadata>

@@ -9,18 +9,15 @@
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{customerAccountBean.preRenderView}" />
-			<f:viewParam name="customerAccountId"
-				value="#{customerAccountBean.objectId}" />
-			<f:viewParam name="customerId"
-				value="#{customerAccountBean.customerId}" />
-			<f:viewParam name="customerId" value="#{customerBean.objectId}" />		
-            <f:viewParam name="mainTab" value="#{customerAccountBean.activeMainTab}" />	
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{customerAccountBean.preRenderView}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectIdFromSet}" />
+            <f:viewParam name="customerId" value="#{customerAccountBean.customerId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />
+            <f:viewParam name="mainTab" value="#{customerAccountBean.activeMainTab}" />
             <f:viewParam name="tab" value="#{customerAccountBean.activeTab}" />
-		</f:metadata>
-	</ui:define>
+        </f:metadata>
+    </ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />

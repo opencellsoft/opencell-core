@@ -14,12 +14,12 @@
 			<f:event type="preRenderView"
 				listener="#{subscriptionBean.preRenderView}" />
 
-            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectId}" />
+            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectIdFromSet}" />
             <f:viewParam name="userAccountId" value="#{subscriptionBean.userAccountId}" />
-            <f:viewParam name="userAccountIdw" value="#{userAccountBean.objectId}" />
-            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
-            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+            <f:viewParam name="userAccountId" value="#{userAccountBean.objectIdFromSet}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectIdFromSet}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectIdFromSet}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />
             <f:viewParam name="mainTab" value="#{subscriptionBean.activeMainTab}" />	
             <f:viewParam name="tab" value="#{subscriptionBean.activeTab}" />
         </f:metadata>
