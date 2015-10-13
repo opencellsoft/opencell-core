@@ -178,10 +178,7 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus updateCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
-	
-	@WebMethod
-	ActionStatus createOrupdateCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
-	
+
 	@WebMethod
 	ActionStatus createOrUpdateAccountHierarchy(
 			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
