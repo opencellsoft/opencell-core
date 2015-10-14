@@ -166,7 +166,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			customerTag.setAttribute("sellerCode", customer.getSeller().getCode() != null ? customer.getSeller().getCode() : "");
 			customerTag.setAttribute("brand", customer.getCustomerBrand().getCode() != null ? customer.getCustomerBrand().getCode() : "");
 			customerTag.setAttribute("category", customer.getCustomerCategory().getCode() != null ? customer.getCustomerCategory().getCode() : "");
-
+			if(PaymentMethodEnum.DIRECTDEBIT.equals(invoice.getBillingAccount().getPaymentMethod())){ 
+			customerTag.setAttribute("mandateIdentification", customer.getMandateIdentification()!= null ?  customer.getMandateIdentification() :"");	
+			}
 			String json = customer.getCustomFieldsAsJson();
 			if (json.length() > 0) {
 				customerTag.setAttribute("customFields", customer.getCustomFieldsAsJson());
@@ -184,6 +186,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			customerAccountTag.setAttribute("externalRef2", customerAccount.getExternalRef2() != null ? customerAccount.getExternalRef2() : "");
 			customerAccountTag.setAttribute("currency", customerAccount.getTradingCurrency().getPrDescription() != null ? customerAccount.getTradingCurrency().getPrDescription() : "");
 			customerAccountTag.setAttribute("language", customerAccount.getTradingLanguage().getPrDescription() != null ? customerAccount.getTradingLanguage().getPrDescription() : ""); 
+            if(PaymentMethodEnum.DIRECTDEBIT.equals(invoice.getBillingAccount().getPaymentMethod())){ 
+            customerAccountTag.setAttribute("mandateIdentification", customerAccount.getMandateIdentification()!= null ?  customerAccount.getMandateIdentification() :"");	
+			}
 			json = customerAccount.getCustomFieldsAsJson();
 			if (json.length() > 0) {
 				customerAccountTag.setAttribute("customFields", customerAccount.getCustomFieldsAsJson());
@@ -225,9 +230,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			billingAccountTag.setAttribute("description", billingAccount.getDescription() + "");
 			billingAccountTag.setAttribute("externalRef1", billingAccount.getExternalRef1() != null ? billingAccount.getExternalRef1() : "");
 			billingAccountTag.setAttribute("externalRef2", billingAccount.getExternalRef2() != null ? billingAccount.getExternalRef2() : "");
-			if(PaymentMethodEnum.DIRECTDEBIT.equals(billingAccount.getPaymentMethod())){ 
-			billingAccountTag.setAttribute("mandateIdentification", billingAccount.getCustomerAccount().getCustomer()!= null ?  billingAccount.getCustomerAccount().getCustomer().getMandateIdentification() :"");
-			}
 			json = billingAccount.getCustomFieldsAsJson();
 			if (json.length() > 0) {
 				billingAccountTag.setAttribute("customFields", billingAccount.getCustomFieldsAsJson());
