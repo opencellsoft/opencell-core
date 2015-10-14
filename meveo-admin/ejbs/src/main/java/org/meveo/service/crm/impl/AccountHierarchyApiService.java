@@ -15,7 +15,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.account.AccountHierarchyTypeEnum;
-import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccessDto;
@@ -350,7 +349,8 @@ public class AccountHierarchyApiService extends BaseApi {
 
 				Title title = null;
 				if (!StringUtils.isBlank(postData.getTitleCode())) {
-					title = titleService.findByCode(provider, StringUtils.normalizeHierarchyCode(postData.getTitleCode()));
+					title = titleService.findByCode(provider,
+							StringUtils.normalizeHierarchyCode(postData.getTitleCode()));
 				}
 
 				String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId());
@@ -378,7 +378,8 @@ public class AccountHierarchyApiService extends BaseApi {
 				customerAccount.getName().setFirstName(postData.getFirstName());
 				customerAccount.getName().setLastName(postData.getLastName());
 				customerAccount.getName().setTitle(title);
-				customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+				customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX
+						+ StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
 				customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 				customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(caPaymentMethod));
 				if (!StringUtils.isBlank(creditCategory)) {
@@ -399,7 +400,8 @@ public class AccountHierarchyApiService extends BaseApi {
 				BillingAccount billingAccount = new BillingAccount();
 				billingAccount.setEmail(postData.getEmail());
 				billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(postData.getPaymentMethod()));
-				billingAccount.setCode(BILLING_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+				billingAccount.setCode(BILLING_ACCOUNT_PREFIX
+						+ StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
 				billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 				billingAccount.setCustomerAccount(customerAccount);
 				billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(baPaymentMethod));
@@ -411,7 +413,8 @@ public class AccountHierarchyApiService extends BaseApi {
 				billingAccount.setProvider(provider);
 				billingAccountService.createBillingAccount(billingAccount, currentUser, provider);
 
-				String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId());
+				String userAccountCode = USER_ACCOUNT_PREFIX
+						+ StringUtils.normalizeHierarchyCode(postData.getCustomerId());
 				UserAccount userAccount = new UserAccount();
 				userAccount.setStatus(AccountStatusEnum.ACTIVE);
 				userAccount.setBillingAccount(billingAccount);
@@ -645,7 +648,8 @@ public class AccountHierarchyApiService extends BaseApi {
 					CUSTOMER_ACCOUNT_PREFIX + postData.getCustomerId(), provider);
 			if (customerAccount == null) {
 				customerAccount = new CustomerAccount();
-				customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+				customerAccount.setCode(CUSTOMER_ACCOUNT_PREFIX
+						+ StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
 			}
 			customerAccount.setCustomer(customer);
 
@@ -681,7 +685,8 @@ public class AccountHierarchyApiService extends BaseApi {
 
 			if (billingAccount == null) {
 				billingAccount = new BillingAccount();
-				billingAccount.setCode(BILLING_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
+				billingAccount.setCode(BILLING_ACCOUNT_PREFIX
+						+ StringUtils.normalizeHierarchyCode(postData.getCustomerId()));
 			}
 
 			billingAccount.setEmail(postData.getEmail());
@@ -711,7 +716,8 @@ public class AccountHierarchyApiService extends BaseApi {
 			userAccount.setBillingAccount(billingAccount);
 
 			if (userAccount.isTransient()) {
-				String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(postData.getCustomerId());
+				String userAccountCode = USER_ACCOUNT_PREFIX
+						+ StringUtils.normalizeHierarchyCode(postData.getCustomerId());
 				try {
 					userAccount.setCode(userAccountCode);
 					userAccountService.createUserAccount(billingAccount, userAccount, currentUser);
@@ -908,17 +914,18 @@ public class AccountHierarchyApiService extends BaseApi {
 						}
 					}
 
-                    // populate customFields
-                    if (sellerDto.getCustomFields() != null) {
-                        try {
-                            populateCustomFields(AccountLevelEnum.SELLER, sellerDto.getCustomFields().getCustomField(), seller, currentUser);
+					// populate customFields
+					if (sellerDto.getCustomFields() != null) {
+						try {
+							populateCustomFields(AccountLevelEnum.SELLER, sellerDto.getCustomFields().getCustomField(),
+									seller, currentUser);
 
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            log.error("Failed to associate custom field instance to an entity", e);
-                            throw new MeveoApiException("Failed to associate custom field instance to an entity");
-                        }
-                    }
-					
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							log.error("Failed to associate custom field instance to an entity", e);
+							throw new MeveoApiException("Failed to associate custom field instance to an entity");
+						}
+					}
+
 					if (seller.isTransient()) {
 						sellerService.create(seller, currentUser, provider);
 					} else {
@@ -2576,50 +2583,60 @@ public class AccountHierarchyApiService extends BaseApi {
 			update(postData, currentUser);
 		}
 	}
-	
+
 	/**
-	 * Create or update CRM Account hierarchy based on the code. 
-	 * It checks the levels and finds corresponding dto. 
-	 * If dto exists, it calls the update else create CRMAccountHierarchy.
+	 * Create or update CRM Account hierarchy based on the code. It checks the
+	 * levels and finds corresponding dto. If dto exists, it calls the update
+	 * else create CRMAccountHierarchy.
 	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
 	 */
-	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser)
+			throws MeveoApiException {
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		try {
 			accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
 		} catch (IllegalArgumentException e) {
 			throw new InvalidEnumValue(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
 		}
-		
+
+		boolean accountExist = false;
+
 		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
-			SellerDto sellerDto = sellerApi.find(postData.getCode(), currentUser.getProvider());
-			createOrUpdateCRMAccountHierarchyBasedOnDto(sellerDto, postData, currentUser);
+			Seller seller = sellerService.findByCode(postData.getCode(), currentUser.getProvider());
+			if (seller != null) {
+				accountExist = true;
+			}
 		} else if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
-			CustomerDto customerDto = customerApi.find(postData.getCode(), currentUser.getProvider());
-			createOrUpdateCRMAccountHierarchyBasedOnDto(customerDto, postData, currentUser);
+			Customer customer = customerService.findByCode(postData.getCode(), currentUser.getProvider());
+			if (customer != null) {
+				accountExist = true;
+			}
 		} else if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
-			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(), currentUser.getProvider());
-			createOrUpdateCRMAccountHierarchyBasedOnDto(customerAccount, postData, currentUser);
+			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(),
+					currentUser.getProvider());
+			if (customerAccount != null) {
+				accountExist = true;
+			}
 		} else if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
-			BillingAccountDto billingAccountDto = billingAccountApi.find(postData.getCode(), currentUser.getProvider());
-			createOrUpdateCRMAccountHierarchyBasedOnDto(billingAccountDto, postData, currentUser);
+			BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode(),
+					currentUser.getProvider());
+			if (billingAccount != null) {
+				accountExist = true;
+			}
 		} else {
-			UserAccountDto userAccountDto = userAccountApi.find(postData.getCode(), currentUser.getProvider());
-			createOrUpdateCRMAccountHierarchyBasedOnDto(userAccountDto, postData, currentUser);
+			UserAccount userAccount = userAccountService.findByCode(postData.getCode(), currentUser.getProvider());
+			if (userAccount != null) {
+				accountExist = true;
+			}
 		}
-	}
-	
-	/**
-	 * Helper method for creating/updating CRMAccountHierarchy.
-	 */
-	private void createOrUpdateCRMAccountHierarchyBasedOnDto(Object baseDto, CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
-		if (baseDto == null) {
-			createCRMAccountHierarchy(postData, currentUser);
-		} else {
+
+		if (accountExist) {
 			updateCRMAccountHierarchy(postData, currentUser);
+		} else {
+			createCRMAccountHierarchy(postData, currentUser);
 		}
 	}
 }

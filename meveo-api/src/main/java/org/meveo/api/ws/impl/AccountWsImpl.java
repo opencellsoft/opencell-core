@@ -1224,7 +1224,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		return result;
 	}
 
-	public ActionStatus createOrupdateCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
+	public ActionStatus createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		
 		try {
@@ -1241,5 +1241,5 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-
+	
 }
