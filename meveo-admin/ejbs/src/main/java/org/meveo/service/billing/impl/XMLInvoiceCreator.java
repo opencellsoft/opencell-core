@@ -147,7 +147,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				bankCoordinates.appendChild(iban);
 				providerTag.appendChild(bankCoordinates);
 				header.appendChild(providerTag);
-			
+
 				if (provider.getBankCoordinates() != null) {
 					Text icsTxt = doc.createTextNode( provider.getBankCoordinates().getIcs() != null ? provider.getBankCoordinates().getIcs() : "");
 					ics.appendChild(icsTxt);			
@@ -166,7 +166,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			customerTag.setAttribute("sellerCode", customer.getSeller().getCode() != null ? customer.getSeller().getCode() : "");
 			customerTag.setAttribute("brand", customer.getCustomerBrand().getCode() != null ? customer.getCustomerBrand().getCode() : "");
 			customerTag.setAttribute("category", customer.getCustomerCategory().getCode() != null ? customer.getCustomerCategory().getCode() : "");
-
+			if(PaymentMethodEnum.DIRECTDEBIT.equals(invoice.getBillingAccount().getPaymentMethod())){ 
+				customerTag.setAttribute("mandateIdentification", customer.getMandateIdentification()!= null ?  customer.getMandateIdentification() :"");	
+			}
 			String json = customer.getCustomFieldsAsJson();
 			if (json.length() > 0) {
 				customerTag.setAttribute("customFields", customer.getCustomFieldsAsJson());
@@ -184,8 +186,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			customerAccountTag.setAttribute("externalRef2", customerAccount.getExternalRef2() != null ? customerAccount.getExternalRef2() : "");
 			customerAccountTag.setAttribute("currency", customerAccount.getTradingCurrency().getPrDescription() != null ? customerAccount.getTradingCurrency().getPrDescription() : "");
 			customerAccountTag.setAttribute("language", customerAccount.getTradingLanguage().getPrDescription() != null ? customerAccount.getTradingLanguage().getPrDescription() : "");
-			if(PaymentMethodEnum.DIRECTDEBIT.equals(customerAccount.getPaymentMethod())){ 
-				customerAccountTag.setAttribute("mandateIdentification", customerAccount.getCustomer() != null ?  customerAccount.getCustomer().getMandateIdentification() :"");
+			if(PaymentMethodEnum.DIRECTDEBIT.equals(invoice.getBillingAccount().getPaymentMethod())){ 
+				customerAccountTag.setAttribute("mandateIdentification", customerAccount.getMandateIdentification()!= null ?  customerAccount.getMandateIdentification() :"");	
 			}
 			json = customerAccount.getCustomFieldsAsJson();
 			if (json.length() > 0) {
