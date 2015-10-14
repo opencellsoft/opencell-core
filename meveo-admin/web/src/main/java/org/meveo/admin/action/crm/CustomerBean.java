@@ -66,12 +66,16 @@ public class CustomerBean extends AccountBean<Customer> {
 	 */
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		
-	    entity.setSeller(sellerService.refreshOrRetrieve(entity.getSeller()));
-	    super.saveOrUpdate(killConversation);
 
-        return getEditViewName(); // "/pages/crm/customers/customerDetail.xhtml?edit=true&customerId=" + entity.getId() + "&faces-redirect=true";
-	}
+        entity.setSeller(sellerService.refreshOrRetrieve(entity.getSeller()));
+
+        String outcome = super.saveOrUpdate(killConversation);
+
+        if (outcome != null) {
+            return getEditViewName(); // "/pages/crm/customers/customerDetail.xhtml?edit=true&customerId=" + entity.getId() + "&faces-redirect=true";
+        }
+        return null;
+    }
 	
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

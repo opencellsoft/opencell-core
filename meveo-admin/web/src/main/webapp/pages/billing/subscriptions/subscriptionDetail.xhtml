@@ -953,7 +953,7 @@
                 <ui:param name="buttons" value="true"/>
                 <ui:define name="buttons">    
                     <p:commandButton id="saveButton" value="#{messages['action.save']}" ajaxSubmit="true" process="@this :accessForm:accessTabView" partialSubmit="true"
-                        partialSubmitFilter=":not([name*='omitFromSubmit'])" update=":hierarchyGroup,:#{p:component('medinaAccessPanel')},:#{p:component('medinaAccessMessage')}"
+                        partialSubmitFilter=":not([name*='omitFromSubmit'])" update=":hierarchyGroup,:#{p:component('medinaAccessPanel')}, @form"
                         icon="ui-icon-check" action="#{accessBean.saveOrUpdate()}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('accessWidget').hide()">
                         <f:param name="subscriptionId" value="#{subscriptionBean.entity.id}"></f:param>
                     </p:commandButton>

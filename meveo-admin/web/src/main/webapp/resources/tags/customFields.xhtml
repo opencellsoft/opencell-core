@@ -34,6 +34,8 @@
     <!--     </c:if> -->
     <ui:fragment>
 
+        <f:event listener="#{cc.attrs.backingBean.validateCustomFields}" type="postValidate" />
+
         <span id="#{cc.clientId}" style="white-space: nowrap"> <c:forEach items="${cc.attrs.backingBean.customFieldTemplates}" var="cft">
                 <c:if test="#{(not cft.disabled) or (cft.disabled and not cft.instance.isValueEmptyForGui())}">
                     <hf:namingContainer>

@@ -132,10 +132,15 @@ public class AccessBean extends CustomFieldBean<Access> {
 				messages.error(new BundleKey("messages", "access.duplicate"));
 				return result;
 			}
-		}
-		super.saveOrUpdate(killConversation);
+        }
 		
-        return getEditViewName(); //"/pages/medina/access/accessDetail.xhtml?edit=true&accessId=" + entity.getId() + "&faces-redirect=true";
+        String outcome = super.saveOrUpdate(killConversation);
+
+        if (outcome != null) {
+            return getEditViewName(); // "/pages/medina/access/accessDetail.xhtml?edit=true&accessId=" + entity.getId() + "&faces-redirect=true";
+        }
+        
+        return null;
 	}
 	
 	public void resetEntity() {
