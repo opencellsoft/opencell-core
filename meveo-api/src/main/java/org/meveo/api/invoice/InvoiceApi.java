@@ -522,6 +522,9 @@ public class InvoiceApi extends BaseApi {
 		
 		List<Invoice> invoices = invoiceService.getInvoices(billingRun);
 		log.info((invoices==null)?"getInvoice is null" : "size="+ invoices.size());
+		if(invoices == null || invoices.isEmpty()){
+			throw new BusinessApiException("Cant found invoice");
+		}
 
 		GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto();
 		generateInvoiceResultDto.setInvoiceNumber(invoices.get(0).getInvoiceNumber());
