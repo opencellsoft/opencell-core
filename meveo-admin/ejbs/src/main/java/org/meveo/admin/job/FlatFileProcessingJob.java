@@ -35,6 +35,13 @@ public class FlatFileProcessingJob extends Job {
 
 	@Inject
 	private ResourceBundle resourceMessages;
+	
+	@Override
+	@Asynchronous
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public void execute(JobInstance jobInstance, User currentUser) {
+		super.execute(jobInstance, currentUser);
+	}
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
