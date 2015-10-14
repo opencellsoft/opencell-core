@@ -26,7 +26,7 @@
         <h:panelGroup id="resultsDatatable">
             <hftl:dataList backingBean="#{jobInstanceListBean}" resultsId="timersBean_results">
                 <p:column headerText="#{messages['timer.name']}">
-                    <h:link outcome="jobInstanceDetail" value="#{entity.code}">
+                    <h:link outcome="jobInstanceDetail" value="#{entity.code}" disabled="#{jobInstanceListBean.isTimerRunning(entity)}">
                         <f:param name="objectId" value="#{entity.id}" />
                         <f:param name="edit" value="true" />
                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />

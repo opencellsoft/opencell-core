@@ -3,6 +3,7 @@ package org.meveo.admin.job;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -31,8 +32,14 @@ public class ScriptingJob extends Job {
 	
 	@Inject
 	ScriptInstanceService scriptInstanceService;
+	
+	@Override
+	@Asynchronous
+	public void execute(JobInstance jobInstance, User currentUser) {
+		super.execute(jobInstance, currentUser);
+	}
 
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 
