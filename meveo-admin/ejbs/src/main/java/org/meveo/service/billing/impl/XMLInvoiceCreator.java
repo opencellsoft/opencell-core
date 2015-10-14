@@ -183,10 +183,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			customerAccountTag.setAttribute("externalRef1", customerAccount.getExternalRef1() != null ? customerAccount.getExternalRef1() : "");
 			customerAccountTag.setAttribute("externalRef2", customerAccount.getExternalRef2() != null ? customerAccount.getExternalRef2() : "");
 			customerAccountTag.setAttribute("currency", customerAccount.getTradingCurrency().getPrDescription() != null ? customerAccount.getTradingCurrency().getPrDescription() : "");
-			customerAccountTag.setAttribute("language", customerAccount.getTradingLanguage().getPrDescription() != null ? customerAccount.getTradingLanguage().getPrDescription() : "");
-			if(PaymentMethodEnum.DIRECTDEBIT.equals(customerAccount.getPaymentMethod())){ 
-				customerAccountTag.setAttribute("mandateIdentification", customerAccount.getCustomer() != null ?  customerAccount.getCustomer().getMandateIdentification() :"");
-			} 
+			customerAccountTag.setAttribute("language", customerAccount.getTradingLanguage().getPrDescription() != null ? customerAccount.getTradingLanguage().getPrDescription() : ""); 
 			json = customerAccount.getCustomFieldsAsJson();
 			if (json.length() > 0) {
 				customerAccountTag.setAttribute("customFields", customerAccount.getCustomFieldsAsJson());
@@ -228,6 +225,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			billingAccountTag.setAttribute("description", billingAccount.getDescription() + "");
 			billingAccountTag.setAttribute("externalRef1", billingAccount.getExternalRef1() != null ? billingAccount.getExternalRef1() : "");
 			billingAccountTag.setAttribute("externalRef2", billingAccount.getExternalRef2() != null ? billingAccount.getExternalRef2() : "");
+			if(PaymentMethodEnum.DIRECTDEBIT.equals(billingAccount.getPaymentMethod())){ 
+			billingAccountTag.setAttribute("mandateIdentification", billingAccount.getCustomerAccount().getCustomer()!= null ?  billingAccount.getCustomerAccount().getCustomer().getMandateIdentification() :"");
+			}
 			json = billingAccount.getCustomFieldsAsJson();
 			if (json.length() > 0) {
 				billingAccountTag.setAttribute("customFields", billingAccount.getCustomFieldsAsJson());
