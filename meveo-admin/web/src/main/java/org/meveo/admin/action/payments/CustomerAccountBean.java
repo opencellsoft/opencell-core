@@ -132,11 +132,12 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 				}
 			}
 
-			super.saveOrUpdate(killConversation);
-			
-			customerId = entity.getCustomer().getId();			
-			return getEditViewName();// "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&customerAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
-	        
+            String outcome = super.saveOrUpdate(killConversation);
+            
+            if (outcome != null) {
+                return getEditViewName();// "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&customerAccountId=" + entity.getId() +
+                                         // "&faces-redirect=true&includeViewParams=true";
+            }
 			
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));

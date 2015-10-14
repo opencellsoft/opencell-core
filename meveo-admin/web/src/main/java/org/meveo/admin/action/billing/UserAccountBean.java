@@ -168,12 +168,14 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 					throw new DuplicateDefaultAccountException();
 				}
 			}
-			
-			super.saveOrUpdate(killConversation);
 
-			return getEditViewName(); // "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=true&userAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
-	       
-			
+            String outcome = super.saveOrUpdate(killConversation);
+
+            if (outcome != null) {
+                return getEditViewName(); // "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=true&userAccountId=" + entity.getId() +
+                                          // "&faces-redirect=true&includeViewParams=true";
+            }
+
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
