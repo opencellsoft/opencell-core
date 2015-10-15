@@ -71,6 +71,12 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus createCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
 
 	@WebMethod
+	ActionStatus updateCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
+	
+	@WebMethod
+	ActionStatus createOrUpdateCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
+	
+	@WebMethod
 	ActionStatus removeCustomerBrand(@WebParam(name = "brandCode") String brandCode);
 
 	@WebMethod
@@ -98,6 +104,12 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
+	
+	@WebMethod
+	ActionStatus updateCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
+	
+	@WebMethod
+	ActionStatus createOrUpdateCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
 
 	@WebMethod
 	ActionStatus removeCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);

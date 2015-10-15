@@ -3,6 +3,7 @@ package org.meveo.api.account;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
@@ -16,7 +17,7 @@ import org.meveo.service.crm.impl.CustomerApiService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class CustomerApi{
+public class CustomerApi extends BaseApi {
 
 	@Inject
 	private CustomerApiService customerApiService;
@@ -132,6 +133,26 @@ public class CustomerApi{
      */
 	public void createCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
 		customerApiService.createCategory(postData, currentUser);
+	}
+	
+	/**
+     * 
+     * @param postData
+     * @param currentUser
+     * @throws MeveoApiException
+     */
+	public void updateCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
+		customerApiService.updateCategory(postData, currentUser);
+	}
+	
+	/**
+     * 
+     * @param postData
+     * @param currentUser
+     * @throws MeveoApiException
+     */
+	public void createOrUpdateCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
+		customerApiService.createOrUpdateCategory(postData, currentUser);
 	}
 	
     /**

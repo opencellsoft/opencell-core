@@ -350,6 +350,47 @@ public class CustomerApiService extends AccountApiService {
 		}
 	}
 
+	
+	public void updateCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+			
+			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
+			if (customerCategory == null) {
+				throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCode());
+			}
+			
+			customerCategory.setDescription(postData.getDescription());
+			customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+
+			customerCategoryService.update(customerCategory, currentUser);
+		} else {
+			if (StringUtils.isBlank(postData.getCode())) {
+				missingParameters.add("code");
+			}
+			if (StringUtils.isBlank(postData.getDescription())) {
+				missingParameters.add("description");
+			}
+
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+	
+	public void createOrUpdateCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
+		if (!StringUtils.isBlank(postData.getCode())) {
+			if (customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+				createCategory(postData, currentUser);
+			} else {
+				updateCategory(postData, currentUser);
+			}
+		} else {
+			if (StringUtils.isBlank(postData.getCode())) {
+				missingParameters.add("code");
+			}
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+	
+	
 	public void removeBrand(String code, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(code)) {
 			CustomerBrand customerBrand = customerBrandService.findByCode(code, provider);

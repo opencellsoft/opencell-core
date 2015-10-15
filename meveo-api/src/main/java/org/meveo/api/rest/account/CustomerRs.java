@@ -71,6 +71,14 @@ public interface CustomerRs extends IBaseRs {
 	@Path("/createCategory")
 	ActionStatus createCategory(CustomerCategoryDto postData);
 
+	@PUT
+	@Path("/updateCategory")
+	ActionStatus updateCategory(CustomerCategoryDto postData);
+	
+	@POST
+	@Path("/createOrUpdateCategory")
+	ActionStatus createOrUpdateCategory(CustomerCategoryDto postData);
+	
 	@DELETE
 	@Path("/removeBrand/{brandCode}")
 	ActionStatus removeBrand(@PathParam("brandCode") String brandCode);
