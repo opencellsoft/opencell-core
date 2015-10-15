@@ -7753,6 +7753,8 @@
             <column name="code" value="Rerate_Job" />
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
+            <column name="provider_id" valueNumeric="1" />
+            <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
 
@@ -7767,6 +7769,7 @@
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
+             <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
@@ -7780,6 +7783,7 @@
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
+             <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
@@ -7793,6 +7797,7 @@
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
+             <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
@@ -7806,6 +7811,7 @@
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
+             <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
@@ -7819,6 +7825,7 @@
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
+             <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
@@ -7832,6 +7839,7 @@
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
+             <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
@@ -7845,6 +7853,7 @@
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
+             <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
@@ -7858,6 +7867,7 @@
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
+             <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
@@ -7871,6 +7881,7 @@
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
+             <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
@@ -7884,6 +7895,7 @@
             <column name="active" valueBoolean="false" />
             <column name="user_id" valueNumeric="1" />
             <column name="provider_id" valueNumeric="1" />
+             <column name="creator_id" valueNumeric="1" />
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
     </changeSet>
