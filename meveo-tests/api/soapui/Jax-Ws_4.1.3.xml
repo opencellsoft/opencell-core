@@ -183,12 +183,30 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomerCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCustomerCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCustomerCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createCustomer">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createCustomer">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createCustomerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCreditCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCreditCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCreditCategoryResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -309,6 +327,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateCustomerCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCustomerCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCustomerCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateTitle">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateTitle">
@@ -354,21 +381,21 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createBillingAccount">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createBillingAccount">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createBillingAccountResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createAccountOperation">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createAccountOperation">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createAccountOperationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBillingAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createBillingAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createBillingAccountResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -441,6 +468,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="customerHierarchyUpdateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCreditCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCreditCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCreditCategoryResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -580,11 +616,15 @@
       <xs:element name="createOrUpdateBillingAccountResponse" type="tns:createOrUpdateBillingAccountResponse"/>
       <xs:element name="createOrUpdateCRMAccountHierarchy" type="tns:createOrUpdateCRMAccountHierarchy"/>
       <xs:element name="createOrUpdateCRMAccountHierarchyResponse" type="tns:createOrUpdateCRMAccountHierarchyResponse"/>
+      <xs:element name="createOrUpdateCreditCategory" type="tns:createOrUpdateCreditCategory"/>
+      <xs:element name="createOrUpdateCreditCategoryResponse" type="tns:createOrUpdateCreditCategoryResponse"/>
       <xs:element name="createOrUpdateCustomer" type="tns:createOrUpdateCustomer"/>
       <xs:element name="createOrUpdateCustomerAccount" type="tns:createOrUpdateCustomerAccount"/>
       <xs:element name="createOrUpdateCustomerAccountResponse" type="tns:createOrUpdateCustomerAccountResponse"/>
       <xs:element name="createOrUpdateCustomerBrand" type="tns:createOrUpdateCustomerBrand"/>
       <xs:element name="createOrUpdateCustomerBrandResponse" type="tns:createOrUpdateCustomerBrandResponse"/>
+      <xs:element name="createOrUpdateCustomerCategory" type="tns:createOrUpdateCustomerCategory"/>
+      <xs:element name="createOrUpdateCustomerCategoryResponse" type="tns:createOrUpdateCustomerCategoryResponse"/>
       <xs:element name="createOrUpdateCustomerResponse" type="tns:createOrUpdateCustomerResponse"/>
       <xs:element name="createOrUpdateTitle" type="tns:createOrUpdateTitle"/>
       <xs:element name="createOrUpdateTitleResponse" type="tns:createOrUpdateTitleResponse"/>
@@ -654,11 +694,15 @@
       <xs:element name="updateBillingAccountResponse" type="tns:updateBillingAccountResponse"/>
       <xs:element name="updateCRMAccountHierarchy" type="tns:updateCRMAccountHierarchy"/>
       <xs:element name="updateCRMAccountHierarchyResponse" type="tns:updateCRMAccountHierarchyResponse"/>
+      <xs:element name="updateCreditCategory" type="tns:updateCreditCategory"/>
+      <xs:element name="updateCreditCategoryResponse" type="tns:updateCreditCategoryResponse"/>
       <xs:element name="updateCustomer" type="tns:updateCustomer"/>
       <xs:element name="updateCustomerAccount" type="tns:updateCustomerAccount"/>
       <xs:element name="updateCustomerAccountResponse" type="tns:updateCustomerAccountResponse"/>
       <xs:element name="updateCustomerBrand" type="tns:updateCustomerBrand"/>
       <xs:element name="updateCustomerBrandResponse" type="tns:updateCustomerBrandResponse"/>
+      <xs:element name="updateCustomerCategory" type="tns:updateCustomerCategory"/>
+      <xs:element name="updateCustomerCategoryResponse" type="tns:updateCustomerCategoryResponse"/>
       <xs:element name="updateCustomerResponse" type="tns:updateCustomerResponse"/>
       <xs:element name="updateTitle" type="tns:updateTitle"/>
       <xs:element name="updateTitleResponse" type="tns:updateTitleResponse"/>
@@ -1273,6 +1317,23 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerCategory" type="tns:customerCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerCategoryDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element name="exoneratedFromTaxes" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createOrUpdateAccountHierarchy">
         <xs:sequence>
           <xs:element minOccurs="0" name="accountHierarchy" type="tns:accountHierarchyDto"/>
@@ -1289,6 +1350,16 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createCustomerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCreditCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="creditCategory" type="tns:creditCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCreditCategoryResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -1564,14 +1635,17 @@
           <xs:element minOccurs="0" name="customerCategory" type="tns:customerCategoryDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="customerCategoryDto">
+      <xs:complexType name="createCustomerCategoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="code" type="xs:string"/>
-          <xs:element minOccurs="0" name="description" type="xs:string"/>
-          <xs:element name="exoneratedFromTaxes" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createCustomerCategoryResponse">
+      <xs:complexType name="updateCustomerCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerCategory" type="tns:customerCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCustomerCategoryResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -1772,6 +1846,16 @@
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="customerHierarchyUpdateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCreditCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="creditCategory" type="tns:creditCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCreditCategoryResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -1994,6 +2078,9 @@
   <wsdl:message name="createCustomer">
     <wsdl:part element="ns1:createCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateCustomerCategoryResponse">
+    <wsdl:part element="ns1:updateCustomerCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="customerHierarchyUpdate">
     <wsdl:part element="ns1:customerHierarchyUpdate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -2036,8 +2123,14 @@
   <wsdl:message name="createOrUpdateCustomerAccountResponse">
     <wsdl:part element="ns1:createOrUpdateCustomerAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomerCategory">
+    <wsdl:part element="ns1:createOrUpdateCustomerCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeCustomerBrandResponse">
     <wsdl:part element="ns1:removeCustomerBrandResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCreditCategoryResponse">
+    <wsdl:part element="ns1:createOrUpdateCreditCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createBillingAccountResponse">
     <wsdl:part element="ns1:createBillingAccountResponse" name="parameters"></wsdl:part>
@@ -2051,11 +2144,11 @@
   <wsdl:message name="index">
     <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateCustomer">
-    <wsdl:part element="ns1:updateCustomer" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateUserAccount">
     <wsdl:part element="ns1:updateUserAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomer">
+    <wsdl:part element="ns1:updateCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="dunningInclusionExclusionResponse">
     <wsdl:part element="ns1:dunningInclusionExclusionResponse" name="parameters"></wsdl:part>
@@ -2066,11 +2159,11 @@
   <wsdl:message name="removeBillingAccount">
     <wsdl:part element="ns1:removeBillingAccount" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="listCustomerWithFilterResponse">
-    <wsdl:part element="ns1:listCustomerWithFilterResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateAccountHierarchyResponse">
     <wsdl:part element="ns1:updateAccountHierarchyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listCustomerWithFilterResponse">
+    <wsdl:part element="ns1:listCustomerWithFilterResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeTitle">
     <wsdl:part element="ns1:removeTitle" name="parameters"></wsdl:part>
@@ -2114,6 +2207,9 @@
   <wsdl:message name="listByCustomer">
     <wsdl:part element="ns1:listByCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCreditCategory">
+    <wsdl:part element="ns1:createOrUpdateCreditCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findUserAccount">
     <wsdl:part element="ns1:findUserAccount" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -2140,6 +2236,9 @@
   </wsdl:message>
   <wsdl:message name="findAccountHierarchy">
     <wsdl:part element="ns1:findAccountHierarchy" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomerCategoryResponse">
+    <wsdl:part element="ns1:createOrUpdateCustomerCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createBillingAccount">
     <wsdl:part element="ns1:createBillingAccount" name="parameters"></wsdl:part>
@@ -2189,8 +2288,17 @@
   <wsdl:message name="createOrUpdateCustomerAccount">
     <wsdl:part element="ns1:createOrUpdateCustomerAccount" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateCustomerCategory">
+    <wsdl:part element="ns1:updateCustomerCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="listAccess">
     <wsdl:part element="ns1:listAccess" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCreditCategoryResponse">
+    <wsdl:part element="ns1:updateCreditCategoryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateUserAccountResponse">
+    <wsdl:part element="ns1:updateUserAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeCustomerAccount">
     <wsdl:part element="ns1:removeCustomerAccount" name="parameters"></wsdl:part>
@@ -2198,14 +2306,14 @@
   <wsdl:message name="removeCustomerBrand">
     <wsdl:part element="ns1:removeCustomerBrand" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateUserAccountResponse">
-    <wsdl:part element="ns1:updateUserAccountResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createAccountOperation">
     <wsdl:part element="ns1:createAccountOperation" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCustomerBrandResponse">
     <wsdl:part element="ns1:updateCustomerBrandResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCreditCategory">
+    <wsdl:part element="ns1:updateCreditCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateTitle">
     <wsdl:part element="ns1:createOrUpdateTitle" name="parameters"></wsdl:part>
@@ -2305,6 +2413,10 @@
       <wsdl:input message="ns1:createOrUpdateCustomerAccount" name="createOrUpdateCustomerAccount"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateCustomerAccountResponse" name="createOrUpdateCustomerAccountResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomerCategory">
+      <wsdl:input message="ns1:createOrUpdateCustomerCategory" name="createOrUpdateCustomerCategory"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCustomerCategoryResponse" name="createOrUpdateCustomerCategoryResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateAccountHierarchy">
       <wsdl:input message="ns1:createOrUpdateAccountHierarchy" name="createOrUpdateAccountHierarchy"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateAccountHierarchyResponse" name="createOrUpdateAccountHierarchyResponse"></wsdl:output>
@@ -2312,6 +2424,10 @@
     <wsdl:operation name="createCustomer">
       <wsdl:input message="ns1:createCustomer" name="createCustomer"></wsdl:input>
       <wsdl:output message="ns1:createCustomerResponse" name="createCustomerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCreditCategory">
+      <wsdl:input message="ns1:createOrUpdateCreditCategory" name="createOrUpdateCreditCategory"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCreditCategoryResponse" name="createOrUpdateCreditCategoryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCustomerBrand">
       <wsdl:input message="ns1:createCustomerBrand" name="createCustomerBrand"></wsdl:input>
@@ -2364,6 +2480,10 @@
     <wsdl:operation name="createCustomerCategory">
       <wsdl:input message="ns1:createCustomerCategory" name="createCustomerCategory"></wsdl:input>
       <wsdl:output message="ns1:createCustomerCategoryResponse" name="createCustomerCategoryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomerCategory">
+      <wsdl:input message="ns1:updateCustomerCategory" name="updateCustomerCategory"></wsdl:input>
+      <wsdl:output message="ns1:updateCustomerCategoryResponse" name="updateCustomerCategoryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOrUpdateUserAccount">
       <wsdl:input message="ns1:createOrUpdateUserAccount" name="createOrUpdateUserAccount"></wsdl:input>
@@ -2424,6 +2544,10 @@
     <wsdl:operation name="customerHierarchyUpdate">
       <wsdl:input message="ns1:customerHierarchyUpdate" name="customerHierarchyUpdate"></wsdl:input>
       <wsdl:output message="ns1:customerHierarchyUpdateResponse" name="customerHierarchyUpdateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCreditCategory">
+      <wsdl:input message="ns1:updateCreditCategory" name="updateCreditCategory"></wsdl:input>
+      <wsdl:output message="ns1:updateCreditCategoryResponse" name="updateCreditCategoryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="listByCustomer">
       <wsdl:input message="ns1:listByCustomer" name="listByCustomer"></wsdl:input>
@@ -10877,7 +11001,61 @@
          </customerBrand>\r
       </ws:updateCustomerBrand>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomerBrand"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="bb6c0ef8-f2f7-4cde-b781-f1579f08c1ff" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomerBrand"/></con:call></con:operation><con:operation id="04b1ca0c-90a7-4ef1-a97e-d7e39bcc1f81" isOneWay="false" action="" name="createOrUpdateCustomerCategory" bindingOperationName="createOrUpdateCustomerCategory" type="Request-Response" outputName="createOrUpdateCustomerCategoryResponse" inputName="createOrUpdateCustomerCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="f0d89979-3183-49df-ac6c-04eb67a78891" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomerCategory>\r
+         <!--Optional:-->\r
+         <customerCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <exoneratedFromTaxes>?</exoneratedFromTaxes>\r
+         </customerCategory>\r
+      </ws:createOrUpdateCustomerCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomerCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="6acc39e3-4b62-47ca-b455-5cee46e30249" isOneWay="false" action="" name="createOrUpdateCreditCategory" bindingOperationName="createOrUpdateCreditCategory" type="Request-Response" outputName="createOrUpdateCreditCategoryResponse" inputName="createOrUpdateCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="571339b2-1853-4994-8e7d-53598e563a3a" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCreditCategory>\r
+         <!--Optional:-->\r
+         <creditCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+         </creditCategory>\r
+      </ws:createOrUpdateCreditCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCreditCategory"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="9361b41b-4166-4c86-9765-a918f617273e" isOneWay="false" action="" name="updateCustomerCategory" bindingOperationName="updateCustomerCategory" type="Request-Response" outputName="updateCustomerCategoryResponse" inputName="updateCustomerCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fa9f1e4b-2de6-4129-b674-cea92e79e178" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateCustomerCategory>\r
+         <!--Optional:-->\r
+         <customerCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <exoneratedFromTaxes>?</exoneratedFromTaxes>\r
+         </customerCategory>\r
+      </ws:updateCustomerCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomerCategory"/></con:call></con:operation><con:operation id="7b3e2336-50da-46d1-8bb6-3bbd3cdee349" isOneWay="false" action="" name="updateCreditCategory" bindingOperationName="updateCreditCategory" type="Request-Response" outputName="updateCreditCategoryResponse" inputName="updateCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="62082f2a-73c0-4dc7-9f79-7750f493a5dc" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateCreditCategory>\r
+         <!--Optional:-->\r
+         <creditCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+         </creditCategory>\r
+      </ws:updateCreditCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCreditCategory"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="bb6c0ef8-f2f7-4cde-b781-f1579f08c1ff" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SettingsWsSoapBinding" type="ns1:SettingsWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -22928,4 +23106,31 @@
          </customerBrand>
       </ws:createOrUpdateCustomerBrand>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="933d0a62-fe5d-4647-962b-9bb303c5d6dc"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1148</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="933d0a62-fe5d-4647-962b-9bb303c5d6dc"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="2de711dd-3a6b-4d4a-9d50-fff0c2e147d2" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createOrUpdateCreditCategory" searchProperties="true"><con:settings/><con:testStep type="request" name="createOrUpdate" id="9b4345f9-9936-4c95-84a2-52d8b173ae35"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCreditCategory</con:operation><con:request name="createOrUpdate" id="bd52039a-756f-425a-9839-d33d7dca51f6"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCreditCategory>
+         <!--Optional:-->
+         <creditCategory>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_CC</code>
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_CC_DESC</description>
+         </creditCategory>
+      </ws:createOrUpdateCreditCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b33e9f7e-a953-4726-895f-7560e44b290b"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="967214e2-b7a6-4d6b-9833-788e5d557668" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createOrUpdateCustomerCategory" searchProperties="true"><con:settings/><con:testStep type="request" name="createOrUpdate" id="a48bbe51-f442-49fe-a356-18748dffa2a4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createOrUpdateCustomerCategory</con:operation><con:request name="createOrUpdate" id="3f0fa230-1f01-43f0-b8cd-68f3a1bca7c3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCustomerCategory>
+         <!--Optional:-->
+         <customerCategory>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_Cust_Category</code>
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_Cust_Category</description>
+            <exoneratedFromTaxes>Test</exoneratedFromTaxes>
+         </customerCategory>
+      </ws:createOrUpdateCustomerCategory>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6c2789ef-e3bf-4c52-a16b-912b5cc8fb7c"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1148</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

@@ -114,6 +114,26 @@ public class CustomerAccountApi {
 
 	/**
 	 * 
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void updateCreditCategory(CreditCategoryDto postData, User currentUser) throws MeveoApiException {
+		customerAccountApiService.updateCreditCategory(postData, currentUser);
+	}
+	
+	/**
+	 * 
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdateCreditCategory(CreditCategoryDto postData, User currentUser) throws MeveoApiException {
+		customerAccountApiService.createOrUpdateCreditCategory(postData, currentUser);
+	}
+	
+	/**
+	 * 
 	 * @param code
 	 * @param provider
 	 * @throws MeveoApiException
