@@ -11,7 +11,7 @@
 			<column name="version" type="INT4" />
 			<column name="disabled" type="BOOL">
 				<constraints nullable="false" />
-				</column>
+			</column>
 			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
 				<constraints nullable="false" />
 			</column>
@@ -482,7 +482,7 @@
 			<column name="code" type="VARCHAR(200)">
 				<constraints nullable="false" />
 			</column>
-			<column name="description" type="VARCHAR(100)" />				
+			<column name="description" type="VARCHAR(100)" />
 			<column name="script" type="TEXT">
 				<constraints nullable="false" />
 			</column>
@@ -495,7 +495,7 @@
 			tableName="meveo_script_instance" />
 		<addUniqueConstraint columnNames="code, provider_id"
 			constraintName="uk_meveo_script_instance" deferrable="false"
-			disabled="false" initiallyDeferred="false" tableName="meveo_script_instance"/>
+			disabled="false" initiallyDeferred="false" tableName="meveo_script_instance" />
 		<addForeignKeyConstraint baseColumnNames="creator_id"
 			baseTableName="meveo_script_instance" constraintName="fk_meveoscript_creator"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -538,32 +538,31 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 	</changeSet>
-	
+
 	<changeSet author="anasseh (generated)" id="878_2015-06-11_1">
-			<dropUniqueConstraint tableName="meveo_script_instance"
+		<dropUniqueConstraint tableName="meveo_script_instance"
 			constraintName="uk_meveo_script_instance" />
-	
-			<addUniqueConstraint columnNames="code"
+
+		<addUniqueConstraint columnNames="code"
 			constraintName="uk_meveo_script_instance" deferrable="false"
-			disabled="false" initiallyDeferred="false" tableName="meveo_script_instance"/>
+			disabled="false" initiallyDeferred="false" tableName="meveo_script_instance" />
 	</changeSet>
-	
+
 	<changeSet author="anasseh (generated)" id="878_2015-06-11_2">
-			<addColumn tableName="meveo_script_instance">
+		<addColumn tableName="meveo_script_instance">
 			<column name="SRC_TYPE" type="VARCHAR(100)" />
 		</addColumn>
-		</changeSet>
-		
+	</changeSet>
+
 	<changeSet id="ticket794_20150616" author="Mbarek">
 		<addColumn tableName="CAT_COUNTER_TEMPLATE">
-			<column name="CEILING_EXPRESSION_EL" type="VARCHAR(1000)"/>
+			<column name="CEILING_EXPRESSION_EL" type="VARCHAR(1000)" />
 		</addColumn>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet author="anasseh (generated)" id="878_2015-06-11_3">
-		<dropTable cascadeConstraints="true"
-            tableName="MEVEO_SCRIPT_INSTANCE_PARAMS"/>
-            
+		<dropTable cascadeConstraints="true" tableName="MEVEO_SCRIPT_INSTANCE_PARAMS" />
+
 		<createTable tableName="MEVEO_SCRIPT_INSTANCE_PARAMS">
 			<column name="scriptinstance_id" type="BIGINT">
 				<constraints nullable="false" />
@@ -582,24 +581,25 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
-	</changeSet>       
-	
+	</changeSet>
+
 	<changeSet author="anasseh (generated)" id="887_2015-06-19">
-	
-	    <createTable tableName="ADM_NOTIF_JOB">
-            <column name="JOB_INSTANCE_ID" type="BIGINT"/>           
-            <column name="id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        
-        <addPrimaryKey columnNames="id" constraintName="ADM_NOTIF_JOB_pkey" tableName="ADM_NOTIF_JOB"/>
+
+		<createTable tableName="ADM_NOTIF_JOB">
+			<column name="JOB_INSTANCE_ID" type="BIGINT" />
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="id" constraintName="ADM_NOTIF_JOB_pkey"
+			tableName="ADM_NOTIF_JOB" />
 
 		<addForeignKeyConstraint baseColumnNames="JOB_INSTANCE_ID"
 			baseTableName="ADM_NOTIF_JOB" constraintName="fk_job_trigger_notif"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="MEVEO_JOB_INSTANCE" />
-            
+
 		<createTable tableName="ADM_NOTIF_JOB_PARAMS">
 			<column name="jobtrigger_id" type="BIGINT">
 				<constraints nullable="false" />
@@ -618,55 +618,56 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ADM_NOTIF_JOB" />
 
-	</changeSet>	
-    <changeSet id="684" author="AndriusKarpavicius">
-        <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_billing_invoice_configuration" deferrable="false" disabled="false"
-            initiallyDeferred="false" tableName="billing_invoice_configuration" />
-    </changeSet>
+	</changeSet>
+	<changeSet id="684" author="AndriusKarpavicius">
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_billing_invoice_configuration" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="billing_invoice_configuration" />
+	</changeSet>
 	<changeSet id="789-2015623-1" author="TyshanShi">
 		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
-            <column name="ENTITY_CLAZZ" type="varchar(255)"/>
-        </addColumn>
-        <addColumn tableName="CRM_CUSTOM_FIELD_INST">
-            <column name="ENTITY_VALUE" type="varchar(255)"/>
-        </addColumn>
+			<column name="ENTITY_CLAZZ" type="varchar(255)" />
+		</addColumn>
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="ENTITY_VALUE" type="varchar(255)" />
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ticket895_20150623" author="Mbarek">
 		<addColumn tableName="RATING_EDR">
-		<column name="PARAMETER_5" type="VARCHAR(255)"/>
-		<column name="PARAMETER_6" type="VARCHAR(255)"/>
-		<column name="PARAMETER_7" type="VARCHAR(255)"/>
-		<column name="PARAMETER_8" type="VARCHAR(255)"/>
-		<column name="PARAMETER_9" type="VARCHAR(255)"/>
-		<column name="DATE_PARAMETER_1" type="TIMESTAMP WITHOUT TIME ZONE"/>
-		<column name="DATE_PARAMETER_2" type="TIMESTAMP WITHOUT TIME ZONE"/>
-		<column name="DATE_PARAMETER_3" type="TIMESTAMP WITHOUT TIME ZONE"/>
-		<column name="DATE_PARAMETER_4" type="TIMESTAMP WITHOUT TIME ZONE"/>
-		<column name="DATE_PARAMETER_5" type="TIMESTAMP WITHOUT TIME ZONE"/>
-		<column name="DECIMAL_PARAMETER_1" type="numeric(23, 12)"/>
-		<column name="DECIMAL_PARAMETER_2" type="numeric(23, 12)"/>
-		<column name="DECIMAL_PARAMETER_3" type="numeric(23, 12)"/>
-		<column name="DECIMAL_PARAMETER_4" type="numeric(23, 12)"/>
-		<column name="DECIMAL_PARAMETER_5" type="numeric(23, 12)"/>
+			<column name="PARAMETER_5" type="VARCHAR(255)" />
+			<column name="PARAMETER_6" type="VARCHAR(255)" />
+			<column name="PARAMETER_7" type="VARCHAR(255)" />
+			<column name="PARAMETER_8" type="VARCHAR(255)" />
+			<column name="PARAMETER_9" type="VARCHAR(255)" />
+			<column name="DATE_PARAMETER_1" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="DATE_PARAMETER_2" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="DATE_PARAMETER_3" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="DATE_PARAMETER_4" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="DATE_PARAMETER_5" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="DECIMAL_PARAMETER_1" type="numeric(23, 12)" />
+			<column name="DECIMAL_PARAMETER_2" type="numeric(23, 12)" />
+			<column name="DECIMAL_PARAMETER_3" type="numeric(23, 12)" />
+			<column name="DECIMAL_PARAMETER_4" type="numeric(23, 12)" />
+			<column name="DECIMAL_PARAMETER_5" type="numeric(23, 12)" />
 		</addColumn>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="ticket903_20150625" author="Mbarek">
 		<addColumn tableName="RATING_EDR">
-		<column name="ACCESS_CODE" type="VARCHAR(255)"/>
+			<column name="ACCESS_CODE" type="VARCHAR(255)" />
 		</addColumn>
 	</changeSet>
 	<changeSet id="789_20150630_1" author="TyshanShi">
 		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
-			<column name="STORAGE_TYPE" type="varchar(255)"/>
+			<column name="STORAGE_TYPE" type="varchar(255)" />
 		</addColumn>
 		<!-- date -->
 		<createTable tableName="CRM_CUSTOM_FIELD_INST_DATE_LIST">
 			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="DATELIST" type="TIMESTAMP WITHOUT TIME ZONE"/>
+			<column name="DATELIST" type="TIMESTAMP WITHOUT TIME ZONE" />
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
 			baseTableName="CRM_CUSTOM_FIELD_INST_DATE_LIST" constraintName="fk_17rhtrdn4ejg92v2r0kqb1rn6"
@@ -676,8 +677,8 @@
 			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="DATEMAP_KEY" type="VARCHAR(255)"/>
-			<column name="DATEMAP" type="TIMESTAMP WITHOUT TIME ZONE"/>
+			<column name="DATEMAP_KEY" type="VARCHAR(255)" />
+			<column name="DATEMAP" type="TIMESTAMP WITHOUT TIME ZONE" />
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
 			baseTableName="CRM_CUSTOM_FIELD_INST_DATE_MAP" constraintName="fk_f4ng0tdoqvn52hpdr1lpedj5a"
@@ -688,7 +689,7 @@
 			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="LONGLIST" type="BIGINT"/>
+			<column name="LONGLIST" type="BIGINT" />
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
 			baseTableName="CRM_CUSTOM_FIELD_INST_LONG_LIST" constraintName="fk_1gvv6bnuh584j4fiq4jq5wjbj"
@@ -698,20 +699,20 @@
 			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="LONGMAP_KEY" type="VARCHAR(255)"/>
-			<column name="LONGMAP" type="BIGINT"/>
+			<column name="LONGMAP_KEY" type="VARCHAR(255)" />
+			<column name="LONGMAP" type="BIGINT" />
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
 			baseTableName="CRM_CUSTOM_FIELD_INST_LONG_MAP" constraintName="fk_14kjq164eqf0s0lf9hj9ph3yf"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CRM_CUSTOM_FIELD_INST" />
-		
+
 		<!-- double -->
 		<createTable tableName="CRM_CUSTOM_FIELD_INST_DOUB_LIST">
 			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="DOUBLELIST" type="float8"/>
+			<column name="DOUBLELIST" type="float8" />
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
 			baseTableName="CRM_CUSTOM_FIELD_INST_DOUB_LIST" constraintName="fk_t7qdueeagl42j4ol5jhe9347f"
@@ -721,8 +722,8 @@
 			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="DOUBLEMAP_KEY" type="VARCHAR(255)"/>
-			<column name="DOUBLEMAP" type="float8"/>
+			<column name="DOUBLEMAP_KEY" type="VARCHAR(255)" />
+			<column name="DOUBLEMAP" type="float8" />
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
 			baseTableName="CRM_CUSTOM_FIELD_INST_DOUB_MAP" constraintName="fk_m2ebwk97gh5mxvfmic66k0j0y"
@@ -733,7 +734,7 @@
 			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="STRINGLIST" type="varchar(255)"/>
+			<column name="STRINGLIST" type="varchar(255)" />
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
 			baseTableName="CRM_CUSTOM_FIELD_INST_STR_LIST" constraintName="fk_ivjnwp66uktesnuxjcs4xaewu"
@@ -743,8 +744,8 @@
 			<column name="CUSTOMFIELDINSTANCE_ID" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="STRINGMAP_KEY" type="VARCHAR(255)"/>
-			<column name="STRINGMAP" type="VARCHAR(255)"/>
+			<column name="STRINGMAP_KEY" type="VARCHAR(255)" />
+			<column name="STRINGMAP" type="VARCHAR(255)" />
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="CUSTOMFIELDINSTANCE_ID"
 			baseTableName="CRM_CUSTOM_FIELD_INST_STR_MAP" constraintName="fk_hqkd0t9i2xw7jvi2d5v36fc2q"
@@ -754,75 +755,87 @@
 			<column name="ENTITY_VALUE" type="varchar(255)"></column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet author="anasseh" id="#907_01072015_2">
-        <modifyDataType columnName="string_value" newDataType="text"   tableName="crm_custom_field_inst"/>
-    </changeSet>
-	
-    <changeSet id="805_20150701" author="AndriusKarpavicius">
-        <addColumn tableName="COM_MEVEO_INSTANCE">
-            <column name="URL" type="VARCHAR(60)" defaultValue="http://"/>            
-        </addColumn>
-        <addNotNullConstraint tableName="COM_MEVEO_INSTANCE" columnName="URL"/>    
-    </changeSet>
-    
-    <changeSet id="789_2015703_1" author="TyshanShi">
-        <dropAllForeignKeyConstraints baseTableName="CRM_CUSTOM_FIELD_INST_DATE_LIST"/>
-        <dropTable tableName="CRM_CUSTOM_FIELD_INST_DATE_LIST"/>
-        <dropAllForeignKeyConstraints baseTableName="CRM_CUSTOM_FIELD_INST_DATE_MAP"/>
-        <dropTable tableName="CRM_CUSTOM_FIELD_INST_DATE_MAP"/>
-        <dropAllForeignKeyConstraints baseTableName="CRM_CUSTOM_FIELD_INST_LONG_LIST"/>
-        <dropTable tableName="CRM_CUSTOM_FIELD_INST_LONG_LIST"/>
-        <dropAllForeignKeyConstraints baseTableName="CRM_CUSTOM_FIELD_INST_LONG_MAP"/>
-        <dropTable tableName="CRM_CUSTOM_FIELD_INST_LONG_MAP"/>
-        <dropAllForeignKeyConstraints baseTableName="CRM_CUSTOM_FIELD_INST_DOUB_LIST"/>
-        <dropTable tableName="CRM_CUSTOM_FIELD_INST_DOUB_LIST"/>
-        <dropAllForeignKeyConstraints baseTableName="CRM_CUSTOM_FIELD_INST_DOUB_MAP"/>
-        <dropTable tableName="CRM_CUSTOM_FIELD_INST_DOUB_MAP"/>
-        <dropAllForeignKeyConstraints baseTableName="CRM_CUSTOM_FIELD_INST_STR_LIST"/>
-        <dropTable tableName="CRM_CUSTOM_FIELD_INST_STR_LIST"/>
-        <dropAllForeignKeyConstraints baseTableName="CRM_CUSTOM_FIELD_INST_STR_MAP"/>
-        <dropTable tableName="CRM_CUSTOM_FIELD_INST_STR_MAP"/>
-        <modifyDataType columnName="entity_value" newDataType="text"   tableName="CRM_CUSTOM_FIELD_INST"/>
-        <modifyDataType columnName="entity_value" newDataType="text"   tableName="CRM_CUSTOM_FIELD_PERIOD"/>
-    </changeSet>
-    
-     <changeSet id="797_20150706" author="Mbarek"> 
-     <sql>update CRM_CUSTOM_FIELD_INST set PROVIDER_ID=null</sql> 
-    </changeSet>
-    
-    <changeSet id="#941_20150710" author="smichea">
+		<modifyDataType columnName="string_value" newDataType="text"
+			tableName="crm_custom_field_inst" />
+	</changeSet>
+
+	<changeSet id="805_20150701" author="AndriusKarpavicius">
+		<addColumn tableName="COM_MEVEO_INSTANCE">
+			<column name="URL" type="VARCHAR(60)" defaultValue="http://" />
+		</addColumn>
+		<addNotNullConstraint tableName="COM_MEVEO_INSTANCE"
+			columnName="URL" />
+	</changeSet>
+
+	<changeSet id="789_2015703_1" author="TyshanShi">
+		<dropAllForeignKeyConstraints
+			baseTableName="CRM_CUSTOM_FIELD_INST_DATE_LIST" />
+		<dropTable tableName="CRM_CUSTOM_FIELD_INST_DATE_LIST" />
+		<dropAllForeignKeyConstraints
+			baseTableName="CRM_CUSTOM_FIELD_INST_DATE_MAP" />
+		<dropTable tableName="CRM_CUSTOM_FIELD_INST_DATE_MAP" />
+		<dropAllForeignKeyConstraints
+			baseTableName="CRM_CUSTOM_FIELD_INST_LONG_LIST" />
+		<dropTable tableName="CRM_CUSTOM_FIELD_INST_LONG_LIST" />
+		<dropAllForeignKeyConstraints
+			baseTableName="CRM_CUSTOM_FIELD_INST_LONG_MAP" />
+		<dropTable tableName="CRM_CUSTOM_FIELD_INST_LONG_MAP" />
+		<dropAllForeignKeyConstraints
+			baseTableName="CRM_CUSTOM_FIELD_INST_DOUB_LIST" />
+		<dropTable tableName="CRM_CUSTOM_FIELD_INST_DOUB_LIST" />
+		<dropAllForeignKeyConstraints
+			baseTableName="CRM_CUSTOM_FIELD_INST_DOUB_MAP" />
+		<dropTable tableName="CRM_CUSTOM_FIELD_INST_DOUB_MAP" />
+		<dropAllForeignKeyConstraints
+			baseTableName="CRM_CUSTOM_FIELD_INST_STR_LIST" />
+		<dropTable tableName="CRM_CUSTOM_FIELD_INST_STR_LIST" />
+		<dropAllForeignKeyConstraints
+			baseTableName="CRM_CUSTOM_FIELD_INST_STR_MAP" />
+		<dropTable tableName="CRM_CUSTOM_FIELD_INST_STR_MAP" />
+		<modifyDataType columnName="entity_value" newDataType="text"
+			tableName="CRM_CUSTOM_FIELD_INST" />
+		<modifyDataType columnName="entity_value" newDataType="text"
+			tableName="CRM_CUSTOM_FIELD_PERIOD" />
+	</changeSet>
+
+	<changeSet id="797_20150706" author="Mbarek">
+		<sql>update CRM_CUSTOM_FIELD_INST set PROVIDER_ID=null</sql>
+	</changeSet>
+
+	<changeSet id="#941_20150710" author="smichea">
 		<addColumn tableName="RATING_EDR">
 			<column name="HEADER_EDR_ID" type="BIGINT">
 				<constraints nullable="true" />
 			</column>
-	    </addColumn>
+		</addColumn>
 		<addForeignKeyConstraint baseColumnNames="HEADER_EDR_ID"
 			baseTableName="RATING_EDR" constraintName="fk_headeredrid"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
-    </changeSet>
-    
-    <changeSet id="#950_20150717" author="smichea">
-        <addColumn tableName="BILLING_WALLET_OPERATION">
-            <column name="EDR_ID" type="BIGINT">
-                <constraints nullable="true" />
-            </column>
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="EDR_ID"
-            baseTableName="BILLING_WALLET_OPERATION" constraintName="fk_wopEdrId"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
-        <addColumn tableName="BILLING_RATED_TRANSACTION">
-            <column name="EDR_ID" type="BIGINT">
-                <constraints nullable="true" />
-            </column>
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="EDR_ID"
-            baseTableName="BILLING_RATED_TRANSACTION" constraintName="fk_ropEdrId"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
-    </changeSet>
+	</changeSet>
+
+	<changeSet id="#950_20150717" author="smichea">
+		<addColumn tableName="BILLING_WALLET_OPERATION">
+			<column name="EDR_ID" type="BIGINT">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="EDR_ID"
+			baseTableName="BILLING_WALLET_OPERATION" constraintName="fk_wopEdrId"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
+		<addColumn tableName="BILLING_RATED_TRANSACTION">
+			<column name="EDR_ID" type="BIGINT">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="EDR_ID"
+			baseTableName="BILLING_RATED_TRANSACTION" constraintName="fk_ropEdrId"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
+	</changeSet>
 
 	<changeSet id="#947_20150721" author="EdwardLegaspi">
 		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
@@ -834,171 +847,213 @@
 				defaultValueBoolean="false" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#948_20150723" author="smichea">
-        <addColumn tableName="CAT_PRICE_PLAN_MATRIX">
-            <column name="AMOUNT_WITHOUT_TAX_EL" type="VARCHAR(2000)">
-                <constraints nullable="true" />
-            </column>
-        </addColumn>
-        <addColumn tableName="CAT_PRICE_PLAN_MATRIX">
-            <column name="AMOUNT_WITH_TAX_EL" type="VARCHAR(2000)">
-                <constraints nullable="true" />
-            </column>
-        </addColumn>
-   	</changeSet>
-   	
-   	<changeSet id="#971_20150727" author="EdwardLegaspi">
-   		<createTable tableName="meveo_filter">
-   			<column name="id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="code" type="VARCHAR(60)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="VARCHAR(100)"/>
-            <column name="provider_id" type="BIGINT"/>
-            <column name="creator_id" type="BIGINT"/>
-            <column name="updater_id" type="BIGINT"/>
-             <column name="target_entity" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-   		</createTable>
-   		<addPrimaryKey columnNames="id" constraintName="meveo_filter_pkey" tableName="meveo_filter"/>
-   		<addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_filter_provider" deferrable="false" disabled="false" initiallyDeferred="false" tableName="meveo_filter"/>
-   		<addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="meveo_filter" constraintName="fk_meveo_filter_adm_user_updater" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
-   		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="meveo_filter" constraintName="fk_meveo_filter_crm_provider" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
-   		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="meveo_filter" constraintName="fk_meveo_filter_adm_user_creator" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
-   		<createSequence sequenceName="meveo_filter_seq"/>
-   		
-   		<createTable tableName="meveo_filter_condition">
-   			<column name="id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="filter_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="INT4"/>
-            <column name="provider_id" type="BIGINT"/>
-             <column name="field_name" type="VARCHAR(60)"/>
-             <column name="operand" type="VARCHAR(60)"/>
-             <column name="el" type="VARCHAR(2000)"/>
-             <column name="sql" type="VARCHAR(2000)"/>
-   		</createTable>
-   		<addForeignKeyConstraint baseColumnNames="filter_id" baseTableName="meveo_filter_condition" constraintName="fk_meveo_filter_condition_meveo_filter" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_filter"/>
-   		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="meveo_filter_condition" constraintName="fk_meveo_filter_condition_crm_provider" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
-   		<createSequence sequenceName="meveo_filter_condition_seq" startValue="1" />
-   		
-   		<createTable tableName="meveo_projector">
-   			<column name="id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="INT4"/>
-            <column name="disabled" type="BOOL">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE"/>
-            <column name="code" type="VARCHAR(60)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="VARCHAR(100)"/>
-            <column name="provider_id" type="BIGINT"/>
-            <column name="creator_id" type="BIGINT"/>
-            <column name="updater_id" type="BIGINT"/>
-             <column name="target_entity" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-   		</createTable>
-   		<addPrimaryKey columnNames="id" constraintName="meveo_projector_pkey" tableName="meveo_projector"/>
-   		<addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_projector_provider" deferrable="false" disabled="false" initiallyDeferred="false" tableName="meveo_projector"/>
-   		
-   		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="meveo_projector" constraintName="fk_meveo_projector_crm_provider" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider"/>
-   		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="meveo_projector" constraintName="fk_meveo_projector_adm_user_creator" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user"/>
-   		<createSequence sequenceName="meveo_projector_seq" startValue="1" />
-   		
-   		<createTable tableName="MEVEO_PROJECTOR_FIELD_NAME">
-   			<column name="projector_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="FIELD_NAME" type="VARCHAR(100)"></column>
-   		</createTable>
-   		<addForeignKeyConstraint baseColumnNames="projector_id" baseTableName="MEVEO_PROJECTOR_FIELD_NAME" constraintName="fk_MEVEO_PROJECTOR_FIELD_NAME_meveo_projector" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector"/>
-   		
-   		<createTable tableName="MEVEO_PROJECTOR_IGNORE_FIELD">
-   			<column name="projector_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="IGNORED_FIELD" type="VARCHAR(100)"></column>
-   		</createTable>
-   		<addForeignKeyConstraint baseColumnNames="projector_id" baseTableName="MEVEO_PROJECTOR_IGNORE_FIELD" constraintName="fk_MEVEO_PROJECTOR_IGNORE_FIELD_meveo_projector" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector"/>
-   	</changeSet>
-   	
-   	
-   	<changeSet id="#953_20150727" author="smichea">
-        <dropSequence sequenceName="billing_priceplan_inst_seq"/>
-   		<dropTable tableName="billing_priceplan_inst"/>
-        <dropSequence sequenceName="billing_serv_param_inst_seq"/>
-   		<dropTable cascadeConstraints="true" tableName="billing_serv_param_inst"/>
-        <dropSequence sequenceName="medina_cdr_file_seq"/>
-   		<dropTable cascadeConstraints="true" tableName="medina_cdr_file"/>
-        <dropSequence sequenceName="medina_cdr_seq"/>
-   		<dropTable cascadeConstraints="true" tableName="medina_cdr"/>
-        <dropSequence sequenceName="medina_number_plan_seq"/>
-   		<dropTable cascadeConstraints="true" tableName="medina_number_plan"/>
-        <dropSequence sequenceName="medina_rejected_cdr_seq"/>
-   		<dropTable cascadeConstraints="true" tableName="medina_rejected_cdr"/>
-        <dropSequence sequenceName="medina_time_plan_seq"/>
-   		<dropTable cascadeConstraints="true" tableName="medina_time_plan"/>
-        <dropSequence sequenceName="medina_zonning_plan_seq"/>
-   		<dropTable cascadeConstraints="true" tableName="medina_zonning_plan"/>
-        <dropSequence sequenceName="mediation_magic_numbers_seq"/>
-   		<dropTable cascadeConstraints="true" tableName="mediation_magic_numbers"/>
-   	</changeSet>
-    
-    <changeSet id="#910_20150729" author="AndriusKarpavicius">
-        <addColumn tableName="COM_MEVEO_INSTANCE">
-            <column name="AUTH_USERNAME" type="VARCHAR(60)"/>
-            <column name="AUTH_PASSWORD" type="VARCHAR(60)"/>
-        </addColumn>
-    
-    </changeSet>
-    
-    <changeSet id="#995_20150730" author="EdwardLegaspi">
-		<sql>update billing_billing_account set electronic_billing=false where electronic_billing is null</sql>
+		<addColumn tableName="CAT_PRICE_PLAN_MATRIX">
+			<column name="AMOUNT_WITHOUT_TAX_EL" type="VARCHAR(2000)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		<addColumn tableName="CAT_PRICE_PLAN_MATRIX">
+			<column name="AMOUNT_WITH_TAX_EL" type="VARCHAR(2000)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="#971_20150727" author="EdwardLegaspi">
+		<createTable tableName="meveo_filter">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="target_entity" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="id" constraintName="meveo_filter_pkey"
+			tableName="meveo_filter" />
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_meveo_filter_provider" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_filter" />
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="meveo_filter" constraintName="fk_meveo_filter_adm_user_updater"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_filter" constraintName="fk_meveo_filter_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="meveo_filter" constraintName="fk_meveo_filter_adm_user_creator"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<createSequence sequenceName="meveo_filter_seq" />
+
+		<createTable tableName="meveo_filter_condition">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="filter_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="field_name" type="VARCHAR(60)" />
+			<column name="operand" type="VARCHAR(60)" />
+			<column name="el" type="VARCHAR(2000)" />
+			<column name="sql" type="VARCHAR(2000)" />
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="filter_id"
+			baseTableName="meveo_filter_condition" constraintName="fk_meveo_filter_condition_meveo_filter"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_filter" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_filter_condition" constraintName="fk_meveo_filter_condition_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<createSequence sequenceName="meveo_filter_condition_seq"
+			startValue="1" />
+
+		<createTable tableName="meveo_projector">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="target_entity" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="id" constraintName="meveo_projector_pkey"
+			tableName="meveo_projector" />
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_meveo_projector_provider" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="meveo_projector" />
+
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_projector" constraintName="fk_meveo_projector_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="meveo_projector" constraintName="fk_meveo_projector_adm_user_creator"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<createSequence sequenceName="meveo_projector_seq"
+			startValue="1" />
+
+		<createTable tableName="MEVEO_PROJECTOR_FIELD_NAME">
+			<column name="projector_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="FIELD_NAME" type="VARCHAR(100)"></column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="projector_id"
+			baseTableName="MEVEO_PROJECTOR_FIELD_NAME" constraintName="fk_MEVEO_PROJECTOR_FIELD_NAME_meveo_projector"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector" />
+
+		<createTable tableName="MEVEO_PROJECTOR_IGNORE_FIELD">
+			<column name="projector_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="IGNORED_FIELD" type="VARCHAR(100)"></column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="projector_id"
+			baseTableName="MEVEO_PROJECTOR_IGNORE_FIELD" constraintName="fk_MEVEO_PROJECTOR_IGNORE_FIELD_meveo_projector"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_projector" />
+	</changeSet>
+
+
+	<changeSet id="#953_20150727" author="smichea">
+		<dropSequence sequenceName="billing_priceplan_inst_seq" />
+		<dropTable tableName="billing_priceplan_inst" />
+		<dropSequence sequenceName="billing_serv_param_inst_seq" />
+		<dropTable cascadeConstraints="true" tableName="billing_serv_param_inst" />
+		<dropSequence sequenceName="medina_cdr_file_seq" />
+		<dropTable cascadeConstraints="true" tableName="medina_cdr_file" />
+		<dropSequence sequenceName="medina_cdr_seq" />
+		<dropTable cascadeConstraints="true" tableName="medina_cdr" />
+		<dropSequence sequenceName="medina_number_plan_seq" />
+		<dropTable cascadeConstraints="true" tableName="medina_number_plan" />
+		<dropSequence sequenceName="medina_rejected_cdr_seq" />
+		<dropTable cascadeConstraints="true" tableName="medina_rejected_cdr" />
+		<dropSequence sequenceName="medina_time_plan_seq" />
+		<dropTable cascadeConstraints="true" tableName="medina_time_plan" />
+		<dropSequence sequenceName="medina_zonning_plan_seq" />
+		<dropTable cascadeConstraints="true" tableName="medina_zonning_plan" />
+		<dropSequence sequenceName="mediation_magic_numbers_seq" />
+		<dropTable cascadeConstraints="true" tableName="mediation_magic_numbers" />
+	</changeSet>
+
+	<changeSet id="#910_20150729" author="AndriusKarpavicius">
+		<addColumn tableName="COM_MEVEO_INSTANCE">
+			<column name="AUTH_USERNAME" type="VARCHAR(60)" />
+			<column name="AUTH_PASSWORD" type="VARCHAR(60)" />
+		</addColumn>
+
+	</changeSet>
+
+	<changeSet id="#995_20150730" author="EdwardLegaspi">
+		<sql>update billing_billing_account set electronic_billing=false where
+			electronic_billing is null
+		</sql>
 	</changeSet>
 	<changeSet id="#789_20150730" author="TyshanShi">
 		<addColumn tableName="CRM_CUSTOM_FIELD_PERIOD">
-			<column name="LABEL" type="VARCHAR(255)"/>
+			<column name="LABEL" type="VARCHAR(255)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#971_20150729" author="EdwardLegaspi">
 
-		<dropAllForeignKeyConstraints baseTableName="meveo_filter_condition" />
-		<dropAllForeignKeyConstraints baseTableName="meveo_filter" />
-		<dropAllForeignKeyConstraints baseTableName="meveo_projector_seq"/>
-		<dropAllForeignKeyConstraints baseTableName="MEVEO_PROJECTOR_FIELD_NAME"/>
-		<dropAllForeignKeyConstraints baseTableName="MEVEO_PROJECTOR_IGNORE_FIELD"/>
-		<dropSequence sequenceName="meveo_filter_condition_seq"/>
+		<dropAllForeignKeyConstraints
+			baseTableName="meveo_filter_condition" />
+		<dropAllForeignKeyConstraints
+			baseTableName="meveo_filter" />
+		<dropAllForeignKeyConstraints
+			baseTableName="meveo_projector_seq" />
+		<dropAllForeignKeyConstraints
+			baseTableName="MEVEO_PROJECTOR_FIELD_NAME" />
+		<dropAllForeignKeyConstraints
+			baseTableName="MEVEO_PROJECTOR_IGNORE_FIELD" />
+		<dropSequence sequenceName="meveo_filter_condition_seq" />
 		<dropSequence sequenceName="meveo_filter_seq" />
-		<dropSequence sequenceName="meveo_projector_seq"/>
-		<dropTable tableName="MEVEO_PROJECTOR_IGNORE_FIELD"/>
-		<dropTable tableName="MEVEO_PROJECTOR_FIELD_NAME"/>
-		<dropTable tableName="meveo_filter_condition"/>
+		<dropSequence sequenceName="meveo_projector_seq" />
+		<dropTable tableName="MEVEO_PROJECTOR_IGNORE_FIELD" />
+		<dropTable tableName="MEVEO_PROJECTOR_FIELD_NAME" />
+		<dropTable tableName="meveo_filter_condition" />
 		<dropTable tableName="meveo_filter" />
-		<dropTable tableName="meveo_projector"/>
-	
+		<dropTable tableName="meveo_projector" />
+
 		<createTable tableName="meveo_filter_condition">
 			<column name="id" type="BIGINT">
 				<constraints nullable="false" />
@@ -1007,9 +1062,9 @@
 			<column name="provider_id" type="BIGINT" />
 			<column name="composite_and_filter_condition_id" type="BIGINT" />
 			<column name="composite_or_filter_condition_id" type="BIGINT" />
-			 <column name="filter_condition_type" type="VARCHAR(50)">
-            	 <constraints nullable="false"/>
-             </column>
+			<column name="filter_condition_type" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 		<addPrimaryKey columnNames="id" constraintName="meveo_filter_condition_pkey"
 			tableName="meveo_filter_condition" />
@@ -1025,7 +1080,7 @@
 			<column name="field_name" type="VARCHAR(100)" />
 			<column name="order_condition_id" type="BIGINT" />
 		</createTable>
-		
+
 		<createTable tableName="meveo_filter_order_condition">
 			<column name="id" type="BIGINT">
 				<constraints nullable="false" />
@@ -1111,7 +1166,7 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-	
+
 		<addPrimaryKey columnNames="id" constraintName="meveo_projector_pkey"
 			tableName="meveo_projector" />
 		<addUniqueConstraint columnNames="code, provider_id"
@@ -1184,7 +1239,7 @@
 			<column name="provider_id" type="BIGINT" />
 			<column name="creator_id" type="BIGINT" />
 			<column name="updater_id" type="BIGINT" />
-			
+
 			<column name="filter_condition_id" type="BIGINT" />
 			<column name="order_condition_id" type="BIGINT" />
 			<column name="primary_selector_id" type="BIGINT" />
@@ -1294,22 +1349,23 @@
 			onUpdate="CASCADE" referencedColumnNames="id"
 			referencedTableName="meveo_and_composite_filter_condition" />
 	</changeSet>
-	
+
 	<changeSet id="#971_20150804" author="EdwardLegaspi">
 		<addColumn tableName="meveo_filter">
 			<column name="shared" type="BOOL" defaultValueBoolean="false"></column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#971_20150805" author="EdwardLegaspi">
-		<dropForeignKeyConstraint baseTableName="meveo_filter_selector" constraintName="fk_meveo_filter_selector_meveo_projector"/>
-		<dropColumn tableName="meveo_filter_selector" columnName="projector_id"/>
-		<dropTable tableName="meveo_projector_display_fields"/>
-		<dropTable tableName="meveo_projector_export_fields"/>
-		<dropTable tableName="meveo_projector_ignore_fields"/>
-		<dropSequence sequenceName="meveo_projector_seq"/>
-		<dropTable tableName="meveo_projector"/>
-		
+		<dropForeignKeyConstraint baseTableName="meveo_filter_selector"
+			constraintName="fk_meveo_filter_selector_meveo_projector" />
+		<dropColumn tableName="meveo_filter_selector" columnName="projector_id" />
+		<dropTable tableName="meveo_projector_display_fields" />
+		<dropTable tableName="meveo_projector_export_fields" />
+		<dropTable tableName="meveo_projector_ignore_fields" />
+		<dropSequence sequenceName="meveo_projector_seq" />
+		<dropTable tableName="meveo_projector" />
+
 		<createTable tableName="meveo_filter_selector_display_fields">
 			<column name="filter_selector_id" type="BIGINT">
 				<constraints nullable="false" />
@@ -1320,7 +1376,7 @@
 			baseTableName="meveo_filter_selector_display_fields" constraintName="fk_meveo_filter_selector_display_fields"
 			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
 			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter_selector" />
-			
+
 		<createTable tableName="meveo_filter_selector_export_fields">
 			<column name="filter_selector_id" type="BIGINT">
 				<constraints nullable="false" />
@@ -1331,7 +1387,7 @@
 			baseTableName="meveo_filter_selector_export_fields" constraintName="fk_meveo_filter_selector_export_fields"
 			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
 			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter_selector" />
-			
+
 		<createTable tableName="meveo_filter_selector_ignore_fields">
 			<column name="filter_selector_id" type="BIGINT">
 				<constraints nullable="false" />
@@ -1342,48 +1398,54 @@
 			baseTableName="meveo_filter_selector_ignore_fields" constraintName="fk_filter_selector_ignore_fields"
 			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
 			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter_selector" />
-			
+
 	</changeSet>
-	
-		<changeSet id="#981_20150805" author="Mbarek">
-			<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
-				<column name="display_edrs" type="BOOL" defaultValueBoolean="false"></column>
-			</addColumn>
-		</changeSet>
 
-    <changeSet id="#640_20150807" author="AndriusKarpavicius">
-        <addColumn tableName="JOB_EXECUTION">
-            <column name="JOB_INSTANCE_ID" type="BIGINT" />
-        </addColumn>
-        <sql>update job_execution set job_instance_id = (select min(MEVEO_JOB_INSTANCE.id) from MEVEO_JOB_INSTANCE where MEVEO_JOB_INSTANCE.code=job_execution.job_name or
-            MEVEO_JOB_INSTANCE.job_template=job_execution.job_name)</sql>
-        <sql>delete from job_execution where job_instance_id is null</sql>
-        <dropColumn tableName="JOB_EXECUTION" columnName="JOB_NAME" />
-        <addNotNullConstraint tableName="JOB_EXECUTION" columnName="JOB_INSTANCE_ID"/>
-        <addForeignKeyConstraint baseColumnNames="JOB_INSTANCE_ID" baseTableName="JOB_EXECUTION" constraintName="FK_JOB_EXECUTION_JOB_INSTANCE_ID"
-            deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="MEVEO_JOB_INSTANCE" />
-    </changeSet>
-    
-        <changeSet id="#981_20150813" author="Mbarek">
-		<addColumn tableName="AR_DDREQUEST_LOT">
-		<column name="REJECTED_CAUSE" type="VARCHAR(255)"></column>
-		<column name="REJECTED_INVOICES" type="INT4"></column>
+	<changeSet id="#981_20150805" author="Mbarek">
+		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+			<column name="display_edrs" type="BOOL" defaultValueBoolean="false"></column>
 		</addColumn>
-		</changeSet>
-	
-    <changeSet id="789-20150819-2" author="AndriusKarpavicius">
-        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="ENTITY_VALUE"/>
-        <addColumn tableName="CRM_CUSTOM_FIELD_INST">
-            <column name="SERIALIZED_VALUE" type="varchar(500)"/>
-        </addColumn>
+	</changeSet>
 
-        <dropColumn tableName="CRM_CUSTOM_FIELD_PERIOD" columnName="ENTITY_VALUE"/>
-        <addColumn tableName="CRM_CUSTOM_FIELD_PERIOD">
-            <column name="SERIALIZED_VALUE" type="varchar(500)"/>
-        </addColumn>
+	<changeSet id="#640_20150807" author="AndriusKarpavicius">
+		<addColumn tableName="JOB_EXECUTION">
+			<column name="JOB_INSTANCE_ID" type="BIGINT" />
+		</addColumn>
+		<sql>update job_execution set job_instance_id = (select
+			min(MEVEO_JOB_INSTANCE.id) from MEVEO_JOB_INSTANCE where
+			MEVEO_JOB_INSTANCE.code=job_execution.job_name or
+			MEVEO_JOB_INSTANCE.job_template=job_execution.job_name)
+		</sql>
+		<sql>delete from job_execution where job_instance_id is null</sql>
+		<dropColumn tableName="JOB_EXECUTION" columnName="JOB_NAME" />
+		<addNotNullConstraint tableName="JOB_EXECUTION"
+			columnName="JOB_INSTANCE_ID" />
+		<addForeignKeyConstraint baseColumnNames="JOB_INSTANCE_ID"
+			baseTableName="JOB_EXECUTION" constraintName="FK_JOB_EXECUTION_JOB_INSTANCE_ID"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="MEVEO_JOB_INSTANCE" />
+	</changeSet>
 
-        <dropColumn tableName="CRM_CUSTOM_FIELD_PERIOD" columnName="label"/>
-    </changeSet>
+	<changeSet id="#981_20150813" author="Mbarek">
+		<addColumn tableName="AR_DDREQUEST_LOT">
+			<column name="REJECTED_CAUSE" type="VARCHAR(255)"></column>
+			<column name="REJECTED_INVOICES" type="INT4"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="789-20150819-2" author="AndriusKarpavicius">
+		<dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="ENTITY_VALUE" />
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="SERIALIZED_VALUE" type="varchar(500)" />
+		</addColumn>
+
+		<dropColumn tableName="CRM_CUSTOM_FIELD_PERIOD" columnName="ENTITY_VALUE" />
+		<addColumn tableName="CRM_CUSTOM_FIELD_PERIOD">
+			<column name="SERIALIZED_VALUE" type="varchar(500)" />
+		</addColumn>
+
+		<dropColumn tableName="CRM_CUSTOM_FIELD_PERIOD" columnName="label" />
+	</changeSet>
 
 	<changeSet id="1034-20150828" author="anasseh">
 		<dropTable tableName="MEVEO_SCRIPT_INSTANCE_PARAMS" />
@@ -1406,17 +1468,17 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
 
-	</changeSet> 
-    
-    <changeSet id="1005-20150830" author="AndriusKarpavicius">
-        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
-            <column name="CACHE_VALUE_FOR" type="int"/>
-        </addColumn>
-    </changeSet>
+	</changeSet>
+
+	<changeSet id="1005-20150830" author="AndriusKarpavicius">
+		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="CACHE_VALUE_FOR" type="int" />
+		</addColumn>
+	</changeSet>
 	<changeSet id="1034-20150828-2" author="anasseh">
-	   <dropColumn columnName="ACTION_EXPRESSION" tableName="ADM_NOTIFICATION"/>
-	</changeSet>  
-	
+		<dropColumn columnName="ACTION_EXPRESSION" tableName="ADM_NOTIFICATION" />
+	</changeSet>
+
 	<changeSet id="1034-20150828-3" author="anasseh">
 		<dropTable tableName="ADM_NOTIF_JOB_PARAMS" />
 		<createTable tableName="ADM_NOTIF_JOB_PARAMS">
@@ -1437,32 +1499,34 @@
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ADM_NOTIF_JOB" />
 
-    </changeSet>  
-    <changeSet id="1034-20150828-4" author="anasseh">
-    <renameTable 
-            newTableName="adm_notif_webhook_param_old"
-            oldTableName="adm_notif_webhook_param"
-            />
-   
-            <createTable tableName="adm_notif_webhook_param">
-            <column name="webhook_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="webhookparams" type="VARCHAR(255)"/>
-            <column name="webhookparams_key" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        
-          <addPrimaryKey columnNames="webhook_id, webhookparams_key" constraintName="adm_notif_webhookparam_pkey" tableName="adm_notif_webhook_param"/>
-           <addForeignKeyConstraint baseColumnNames="webhook_id" baseTableName="adm_notif_webhook_param" constraintName="fk_17fe7mcjmmcgcntqmjm9hlaots" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notif_webhooks"/>
-               </changeSet>
-               
-         <changeSet id="1_20150831" author="Mbarek">
-        <addColumn tableName="CAT_PRICE_PLAN_MATRIX">
-            <column name="SEQUENCE" type="BIGINT"/>            
-        </addColumn>    
-    	</changeSet>
+	</changeSet>
+	<changeSet id="1034-20150828-4" author="anasseh">
+		<renameTable newTableName="adm_notif_webhook_param_old"
+			oldTableName="adm_notif_webhook_param" />
+
+		<createTable tableName="adm_notif_webhook_param">
+			<column name="webhook_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="webhookparams" type="VARCHAR(255)" />
+			<column name="webhookparams_key" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="webhook_id, webhookparams_key"
+			constraintName="adm_notif_webhookparam_pkey" tableName="adm_notif_webhook_param" />
+		<addForeignKeyConstraint baseColumnNames="webhook_id"
+			baseTableName="adm_notif_webhook_param" constraintName="fk_17fe7mcjmmcgcntqmjm9hlaots"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notif_webhooks" />
+	</changeSet>
+
+	<changeSet id="1_20150831" author="Mbarek">
+		<addColumn tableName="CAT_PRICE_PLAN_MATRIX">
+			<column name="SEQUENCE" type="BIGINT" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="#1028_20150902" author="anasseh">
 		<createTable tableName="MEVEO_SCRIPT_INSTANCE_ERROR">
@@ -1472,7 +1536,7 @@
 			<column name="version" type="INT4" />
 			<column name="disabled" type="BOOL">
 				<constraints nullable="false" />
-				</column>
+			</column>
 			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
 				<constraints nullable="false" />
 			</column>
@@ -1481,13 +1545,13 @@
 			<column name="line_number" type="BIGINT" />
 			<column name="column_number" type="BIGINT" />
 			<column name="source_file" type="VARCHAR(255)" />
-			<column name="script_instance_id" type="BIGINT" />			
+			<column name="script_instance_id" type="BIGINT" />
 			<column name="provider_id" type="BIGINT" />
 			<column name="creator_id" type="BIGINT" />
 			<column name="updater_id" type="BIGINT" />
 		</createTable>
-		<addPrimaryKey columnNames="id" constraintName="MEVEO_SCRIPT_INSTANCE_ERROR_pkey"
-			tableName="MEVEO_SCRIPT_INSTANCE_ERROR" />
+		<addPrimaryKey columnNames="id"
+			constraintName="MEVEO_SCRIPT_INSTANCE_ERROR_pkey" tableName="MEVEO_SCRIPT_INSTANCE_ERROR" />
 		<addUniqueConstraint columnNames="id"
 			tableName="MEVEO_SCRIPT_INSTANCE_ERROR" />
 		<addForeignKeyConstraint constraintName="fk_creator_MEVEO_SCRIPT_INSTANCE_ERROR"
@@ -1496,9 +1560,10 @@
 		<addForeignKeyConstraint constraintName="fk_updater_MEVEO_SCRIPT_INSTANCE_ERROR"
 			referencedTableName="adm_user" baseColumnNames="updater_id"
 			baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" referencedColumnNames="id" />
-		<addForeignKeyConstraint constraintName="fk_script-instance_MEVEO_SCRIPT_INSTANCE_ERROR"
+		<addForeignKeyConstraint
+			constraintName="fk_script-instance_MEVEO_SCRIPT_INSTANCE_ERROR"
 			referencedTableName="MEVEO_SCRIPT_INSTANCE" baseColumnNames="script_instance_id"
-			baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" referencedColumnNames="id" />			
+			baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" referencedColumnNames="id" />
 		<addForeignKeyConstraint baseColumnNames="provider_id"
 			baseTableName="MEVEO_SCRIPT_INSTANCE_ERROR" constraintName="fk_provider_MEVEO_SCRIPT_INSTANCE_ERROR"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -1506,16 +1571,19 @@
 		<createSequence sequenceName="MEVEO_SCRIPT_INSTANCE_ERROR_SEQ"
 			startValue="1" />
 	</changeSet>
-    <changeSet id="#1028_20150902-2" author="anasseh">
-            <addColumn tableName="MEVEO_SCRIPT_INSTANCE">
-           			 <column name="IS_ERROR" type="BOOL"/>            
-        	</addColumn>  
-    </changeSet>
-    
-        <changeSet author="anasseh" id="multiProvider_09092015">
-            <dropUniqueConstraint  constraintName="uk_meveo_script_instance"    tableName="MEVEO_SCRIPT_INSTANCE"/>
-            <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_script_instance" deferrable="false" disabled="false" initiallyDeferred="false" tableName="MEVEO_SCRIPT_INSTANCE"/>
-    </changeSet>
+	<changeSet id="#1028_20150902-2" author="anasseh">
+		<addColumn tableName="MEVEO_SCRIPT_INSTANCE">
+			<column name="IS_ERROR" type="BOOL" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="anasseh" id="multiProvider_09092015">
+		<dropUniqueConstraint constraintName="uk_meveo_script_instance"
+			tableName="MEVEO_SCRIPT_INSTANCE" />
+		<addUniqueConstraint columnNames="code, provider_id"
+			constraintName="uk_meveo_script_instance" deferrable="false"
+			disabled="false" initiallyDeferred="false" tableName="MEVEO_SCRIPT_INSTANCE" />
+	</changeSet>
 
 	<changeSet author="EdwardLegaspi" id="20150917">
 		<addColumn tableName="meveo_primitive_filter_condition">
@@ -1531,16 +1599,16 @@
 		<renameColumn tableName="meveo_primitive_filter_condition"
 			oldColumnName="operand2" newColumnName="operand" />
 	</changeSet>
-    
-    <changeSet author="AndriusKarpavicius" id="#1094_20150929">
+
+	<changeSet author="AndriusKarpavicius" id="#1094_20150929">
 		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
 			<column name="seller_id" type="BIGINT" />
-		</addColumn>    
-    
-    	<addForeignKeyConstraint constraintName="fk_seller_id_crm_custom_field_inst"
+		</addColumn>
+
+		<addForeignKeyConstraint constraintName="fk_seller_id_crm_custom_field_inst"
 			referencedTableName="CRM_SELLER" baseColumnNames="seller_id"
 			baseTableName="CRM_CUSTOM_FIELD_INST" referencedColumnNames="id" />
-    </changeSet>
+	</changeSet>
 
 	<changeSet author="anasseh" id="#1117_20151005">
 		<addColumn tableName="BILLING_CYCLE">
@@ -1581,12 +1649,13 @@
 			<column name="invoice_id" type="BIGINT" />
 			<column name="credit_note_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
 			<column name="due_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
-			<column name="amount_without_tax" type="numeric(23, 12)"/>
-			<column name="amount_with_tax" type="numeric(23, 12)"/>
-			 <column name="net_to_pay" type="numeric(23, 12)"/>
+			<column name="amount_without_tax" type="numeric(23, 12)" />
+			<column name="amount_with_tax" type="numeric(23, 12)" />
+			<column name="net_to_pay" type="numeric(23, 12)" />
 		</createTable>
 
-		<createSequence sequenceName="billing_credit_note_seq" startValue="1" />
+		<createSequence sequenceName="billing_credit_note_seq"
+			startValue="1" />
 		<addPrimaryKey columnNames="id" constraintName="billing_credit_note_pkey"
 			tableName="billing_credit_note" />
 		<addForeignKeyConstraint baseColumnNames="provider_id"
@@ -1640,12 +1709,13 @@
 			<column name="description" type="VARCHAR(255)" />
 			<column name="credit_note_id" type="BIGINT" />
 			<column name="invoice_sub_category" type="BIGINT" />
-			<column name="amount_without_tax" type="numeric(23, 12)"/>
-			<column name="tax_amount" type="numeric(23, 12)"/>
-			<column name="amount_with_tax" type="numeric(23, 12)"/>
+			<column name="amount_without_tax" type="numeric(23, 12)" />
+			<column name="tax_amount" type="numeric(23, 12)" />
+			<column name="amount_with_tax" type="numeric(23, 12)" />
 		</createTable>
-			
-		<createSequence sequenceName="billing_credit_note_line_seq" startValue="1" />
+
+		<createSequence sequenceName="billing_credit_note_line_seq"
+			startValue="1" />
 		<addPrimaryKey columnNames="id"
 			constraintName="billing_credit_note_line_pkey" tableName="billing_credit_note_line" />
 		<addForeignKeyConstraint baseColumnNames="provider_id"
@@ -1667,9 +1737,9 @@
 			<column name="code" type="VARCHAR(60)" />
 			<column name="description" type="VARCHAR(100)" />
 		</addColumn>
-		
+
 		<sql>UPDATE billing_invoice SET code=concat('ocb_id_', id)</sql>
-		
+
 		<addNotNullConstraint columnDataType="VARCHAR(60)"
 			columnName="code" tableName="billing_invoice" />
 	</changeSet>
@@ -1711,17 +1781,68 @@
 	</changeSet>
 
 	<changeSet author="anasseh" id="20151009_1149">
-     	<modifyDataType columnName="SELECTED_BILLING_ACCOUNTS" newDataType="text"   tableName="BILLING_BILLING_RUN"/>
-     </changeSet>
-     
-   	<changeSet author="anasseh" id="20151013_1165">
-     	<modifyDataType columnName="MESSAGE" newDataType="text"   tableName="MEVEO_SCRIPT_INSTANCE_ERROR"/>
-     </changeSet>      
-     
-     <changeSet id="#1150_20151013" author="Mbarek">
-	<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
-	<column name="display_provider" type="BOOL" defaultValueBoolean="false"></column>
-	</addColumn>
+		<modifyDataType columnName="SELECTED_BILLING_ACCOUNTS"
+			newDataType="text" tableName="BILLING_BILLING_RUN" />
+	</changeSet>
+
+	<changeSet author="anasseh" id="20151013_1165">
+		<modifyDataType columnName="MESSAGE" newDataType="text"
+			tableName="MEVEO_SCRIPT_INSTANCE_ERROR" />
+	</changeSet>
+
+	<changeSet id="#1150_20151013" author="Mbarek">
+		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+			<column name="display_provider" type="BOOL"
+				defaultValueBoolean="false"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="#REVERT_CREDIT_NOTE_20151014" author="EdwardLegaspi">
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_crm_provider" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_adm_user_creator" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_adm_user_updater" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_billing_account" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_invoice" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note_tax_amt"
+			constraintName="fk_billing_credit_note_tax_amt_credit_note" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note_line"
+			constraintName="fk_billing_credit_note_line_crm_provider" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note_line"
+			constraintName="fk_billing_credit_note_line_credit_note" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note_line"
+			constraintName="fk_billing_credit_note_line_invoice_sub_cat" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_recorded_credit_note" />
+
+		<dropPrimaryKey tableName="billing_credit_note"
+			constraintName="billing_credit_note_pkey" />
+		<dropPrimaryKey tableName="billing_credit_note_line"
+			constraintName="billing_credit_note_line_pkey" />
+		<dropPrimaryKey tableName="billing_credit_note_tax_amt"
+			constraintName="billing_credit_note_tax_amt_pkey" />
+
+		<dropSequence sequenceName="billing_credit_note_seq" />
+		<dropSequence sequenceName="billing_credit_note_line_seq" />
+
+		<dropColumn tableName="crm_provider" columnName="credit_note_prefix" />
+		<dropColumn tableName="crm_provider" columnName="current_credit_note_nb" />
+		<dropColumn tableName="crm_provider" columnName="credit_note_sequence_size" />
+
+		<dropColumn tableName="crm_seller" columnName="credit_note_prefix" />
+		<dropColumn tableName="crm_seller" columnName="current_credit_note_nb" />
+		<dropColumn tableName="crm_seller" columnName="credit_note_sequence_size" />
+
+		<dropColumn tableName="ar_account_operation" columnName="credit_note_date" />
+
+		<dropTable tableName="billing_credit_note_tax_amt" />
+		<dropTable tableName="billing_credit_note_line" />
+		<dropTable tableName="billing_credit_note" />
+
 	</changeSet>
 
 </databaseChangeLog>

@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -129,9 +128,6 @@ public class Invoice extends BusinessEntity {
 	@Column(name = "PDF")
 	@Basic(fetch = FetchType.LAZY)
 	private byte[] pdf;
-
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice", fetch = FetchType.LAZY)
-	public List<CreditNote> creditNotes;
 
 	public List<RatedTransaction> getRatedTransactions() {
 		return ratedTransactions;
@@ -375,14 +371,6 @@ public class Invoice extends BusinessEntity {
 
 	public void setComment(String comment) {
 		this.comment = comment;
-	}
-
-	public List<CreditNote> getCreditNotes() {
-		return creditNotes;
-	}
-
-	public void setCreditNotes(List<CreditNote> creditNotes) {
-		this.creditNotes = creditNotes;
 	}
 
 }
