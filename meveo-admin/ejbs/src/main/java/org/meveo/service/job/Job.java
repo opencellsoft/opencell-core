@@ -40,6 +40,9 @@ public abstract class Job {
 
     @Inject
     protected JobExecutionService jobExecutionService;
+    
+    @Inject
+    protected JobInstanceService jobInstanceService;
 
     @Inject
     protected UserService userService;
@@ -61,11 +64,11 @@ public abstract class Job {
     public void execute(JobInstance jobInstance, User currentUser) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
     
-        if (!jobInstance.isRunning() && (jobInstance.isActive() || currentUser != null)) {
+        if (!jobInstanceService.isJobRunning(jobInstance.getId()) && (jobInstance.isActive() || currentUser != null)) {
             log.debug("Job {} of type {} execution start, info={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobInstance, currentUser);
 
-            try {
-            	jobInstance.setRunning(true);
+            try {            	            	
+            	JobInstanceService.runningJobs.add(jobInstance.getId());
                 if (currentUser == null) {
                     currentUser = userService.attach(jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable()
                         .getCreator());
@@ -81,12 +84,12 @@ public abstract class Job {
             } catch (Exception e) {
                 log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
 
-            } finally {
-                jobInstance.setRunning(false);
+            } finally {            	
+                JobInstanceService.runningJobs.remove(jobInstance.getId());
             }
         } else {
             log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}, isActive={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(),
-            		jobInstance.isRunning(), jobInstance.isActive(), currentUser != null);
+            		jobInstanceService.isJobRunning(jobInstance.getId()), jobInstance.isActive(), currentUser != null);
         }
     }
 
@@ -101,11 +104,11 @@ public abstract class Job {
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobInstance jobInstance, JobExecutionResultImpl result, User currentUser) {    
-        if (!jobInstance.isRunning() && (jobInstance.isActive() || currentUser != null)) {
+        if (!jobInstanceService.isJobRunning(jobInstance.getId()) && (jobInstance.isActive() || currentUser != null)) {
             log.debug("Job {} of type {} execution start, info={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobInstance, currentUser);
 
             try {
-            	jobInstance.setRunning(true);
+            	JobInstanceService.runningJobs.add(jobInstance.getId());
                 if (currentUser == null) {
                     currentUser = userService.attach(jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable()
                         .getCreator());
@@ -122,11 +125,11 @@ public abstract class Job {
                 log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
 
             } finally {
-                jobInstance.setRunning(false);
+            	JobInstanceService.runningJobs.remove(jobInstance.getId());
             }
         } else {
             log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}, isActive={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(),
-            		jobInstance.isRunning(), jobInstance.isActive(), currentUser != null);
+            		jobInstanceService.isJobRunning(jobInstance.getId()), jobInstance.isActive(), currentUser != null);
         }
     }
 
