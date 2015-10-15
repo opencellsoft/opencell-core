@@ -13,28 +13,48 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${PricePlans}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${NewPricePlan}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${codeText}</td>
-	<td>pp_01</td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${SelectChargeCode}</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>//*[contains(@id, 'code_text')]</td>
-	<td>UCT_00</td>
+	<td>${codeText}</td>
+	<td>${RecCode}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPopUp</td>
+	<td>5000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div[@id='pricPlanMatChargePopup']/div</td>
+	<td>Charges</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=pricPlanMatChargePopuppopupForm:searchField1</td>
+	<td>REC1</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -42,14 +62,29 @@
 	<td></td>
 </tr>
 <tr>
+	<td>verifyText</td>
+	<td>css=td</td>
+	<td>REC1</td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>//tbody[@id='pricPlanMatChargePopuppopupForm:pricPlanMatChargePopupdatatable_data']/tr/td</td>
 	<td></td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>_description_for_pp_01</td>
+	<td>${RecDescription}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
