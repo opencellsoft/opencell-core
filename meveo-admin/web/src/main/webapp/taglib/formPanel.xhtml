@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:hftl="http://hftl.org" xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:cc="http://java.sun.com/jsf/composite">
+
+<!--
+    Makes part of "happy faces" component group.
+    A custom component to display a form data entry panel wrapping data entry fields and buttons implementing navigation functionality 
+ 
+    Attributes
+        backingBean - backing bean associated with data entry
+        entity - entity associated to data entry. One, associatated with a backing bean will be used, if not provided.
+        label - a panel header
+        edit - edit or view mode
+        formId - form id value
+        showFormButtons - should default form buttons be displayed
+        Attributes related to a default form buttons:
+            ajaxSubmit - should create/update form submit be done in ajax way
+            submitPartialProcess - items to process during ajax submit
+            submitPartialSubmitFilter - items to filter during ajax submit
+            submitUpdate - items to update after ajax submit
+            killConversationOnSave - should conversation be killed upon saving
+            killConversationOnBack - should conversation be killed upon navigating back
+            showBackButton - show a default "navigate back" button
+            showEditButton - show a default "edit" button
+            showEnableDisableButton - show a default "enable/disable" button
+            useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation
+            updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message 
+        
+    Facets
+        buttons - additional buttons to include    
+-->
+
+<ui:composition>
+
+    <c:if test="${empty(edit)}">
+        <c:set var="edit" value="#{backingBean.edit}" />
+    </c:if>
+    <c:set var="formLevelEdit" value="${edit}" />
+    <c:if test="${empty(formId)}">
+        <c:set var="formId" value="formId" />
+    </c:if>
+    <c:set var="formLevelEntity" value="${entity}" />
+    <c:if test="${empty(showFormButtons)}">
+        <c:set var="showFormButtons" value="true" />
+    </c:if>
+    <c:if test="${empty(ajaxSubmit)}">
+        <c:set var="ajaxSubmit" value="false" />
+    </c:if>
+    <c:if test="${empty(killConversationOnSave)}">
+        <c:set var="killConversationOnSave" value="false" />
+    </c:if>
+    <c:if test="${empty(killConversationOnBack)}">
+        <c:set var="killConversationOnBack" value="false" />
+    </c:if>
+    <c:if test="${empty(showBackButton)}">
+        <c:set var="showBackButton" value="true" />
+    </c:if>
+    <c:if test="${empty(showEditButton)}">
+        <c:set var="showEditButton" value="true" />
+    </c:if>
+    <c:if test="${empty(showEnableDisableButton)}">
+        <c:set var="showEnableDisableButton" value="false" />
+    </c:if>
+    <c:if test="${empty(showDeleteButton)}">
+        <c:set var="showDeleteButton" value="true" />
+    </c:if>
+    <c:if test="${empty(useCustomIdParam)}">
+        <c:set var="useCustomIdParam" value="false" />
+    </c:if>
+
+
+    <h:form id="#{formId}">
+        <p:panel>
+            <c:if test="#{not empty(label)}">
+                <f:facet name="header">
+                    <h:outputText value="#{label}" />
+                </f:facet>
+            </c:if>
+            <h:panelGroup layout="block" styleClass="form-panel">
+                <p:messages id="messages" />
+                <p:outputPanel styleClass="form-panel-fields #{edit ? '' : ' form-panel-fields-view'}">
+                    <c:set var="id" value="${null}" />
+                    <c:set var="edit" value="${null}" />
+                    <ui:insert />
+                </p:outputPanel>
+
+                <c:if test="#{showFormButtons}">
+                    <hf:formButtons backingBean="#{backingBean}" edit="#{formLevelEdit}" ajaxSubmit="#{ajaxSubmit}" submitPartialProcess="#{submitPartialProcess}"
+                        submitPartialSubmitFilter="#{submitPartialSubmitFilter}" submitUpdate="#{submitUpdate}" killConversationOnSave="#{killConversationOnSave}"
+                        killConversationOnBack="#{killConversationOnBack}" useCustomIdParam="#{useCustomIdParam}" objectIdParamName="#{objectIdParamName}"
+                        showBackButton="#{showBackButton}" showEditButton="#{showEditButton}" showEnableDisableButton="#{showEnableDisableButton}"
+                        showDeleteButton="#{showDeleteButton}" updateConfirmationMessage="#{updateConfirmationMessage}" />
+                </c:if>
+                <c:if test="#{buttons}">
+                    <h:panelGroup layout="block" styleClass="form-panel-actions">
+                        <ui:insert name="buttons" />
+                    </h:panelGroup>
+                </c:if>
+            </h:panelGroup>
+        </p:panel>
+    </h:form>
+
+</ui:composition>
+
+</html>

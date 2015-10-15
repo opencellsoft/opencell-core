@@ -15,7 +15,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.account.AccountHierarchyTypeEnum;
-import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccessDto;
@@ -2574,52 +2573,6 @@ public class AccountHierarchyApiService extends BaseApi {
 			create(postData, currentUser);
 		} else {
 			update(postData, currentUser);
-		}
-	}
-	
-	/**
-	 * Create or update CRM Account hierarchy based on the code. 
-	 * It checks the levels and finds corresponding dto. 
-	 * If dto exists, it calls the update else create CRMAccountHierarchy.
-	 * 
-	 * @param postData
-	 * @param currentUser
-	 * @throws MeveoApiException
-	 */
-	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
-		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
-		try {
-			accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
-		} catch (IllegalArgumentException e) {
-			throw new InvalidEnumValue(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
-		}
-		
-		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
-			SellerDto sellerDto = sellerApi.find(postData.getCode(), currentUser.getProvider());
-			createOrUpdateCRMAccountHierarchyBasedOnDto(sellerDto, postData, currentUser);
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
-			CustomerDto customerDto = customerApi.find(postData.getCode(), currentUser.getProvider());
-			createOrUpdateCRMAccountHierarchyBasedOnDto(customerDto, postData, currentUser);
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
-			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(), currentUser.getProvider());
-			createOrUpdateCRMAccountHierarchyBasedOnDto(customerAccount, postData, currentUser);
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
-			BillingAccountDto billingAccountDto = billingAccountApi.find(postData.getCode(), currentUser.getProvider());
-			createOrUpdateCRMAccountHierarchyBasedOnDto(billingAccountDto, postData, currentUser);
-		} else {
-			UserAccountDto userAccountDto = userAccountApi.find(postData.getCode(), currentUser.getProvider());
-			createOrUpdateCRMAccountHierarchyBasedOnDto(userAccountDto, postData, currentUser);
-		}
-	}
-	
-	/**
-	 * Helper method for creating/updating CRMAccountHierarchy.
-	 */
-	private void createOrUpdateCRMAccountHierarchyBasedOnDto(Object baseDto, CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
-		if (baseDto == null) {
-			createCRMAccountHierarchy(postData, currentUser);
-		} else {
-			updateCRMAccountHierarchy(postData, currentUser);
 		}
 	}
 }

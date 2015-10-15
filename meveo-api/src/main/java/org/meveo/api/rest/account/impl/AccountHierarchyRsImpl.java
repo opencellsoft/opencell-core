@@ -184,23 +184,4 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
-	@Override
-	public ActionStatus createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		try {
-			accountHierarchyApi.createOrUpdateCRMAccountHierarchy(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
 }

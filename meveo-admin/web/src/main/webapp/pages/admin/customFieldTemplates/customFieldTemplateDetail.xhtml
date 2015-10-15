@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml" xmlns:hftl="http://hftl.org">
 
     <ui:define name="navigation">
         <ui:include src="/layout/navigation.xhtml" />
@@ -14,41 +14,41 @@
                 </p:breadCrumb>
             </h:form>
         </p:panel>
-        <hf:formPanel id="formPanel" label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}" showEnableDisableButton="true">
-            <hf:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" />
-            <hf:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" maxlength="50" />
-            <hf:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="20"
-                listenerUpdate=":formPanel:formId:listValuesField :formPanel:formId:defaultValueField :formPanel:formId:entityClazzField" />
-            <hf:formField label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" required="true" listValues="#{customFieldTemplateBean.accountLevelsNoTimer}"
+        <hftl:formPanel label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}" showEnableDisableButton="true">
+            <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" />
+            <hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" maxlength="50" />
+            <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="20"
+                listenerUpdate=":formId:listValuesField :formId:defaultValueField :formId:entityClazzField" />
+            <hftl:formField label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" required="true" listValues="#{customFieldTemplateBean.accountLevelsNoTimer}"
                 componentWidth="20" newLine="true" />
             <h:panelGroup id="defaultValueField">
-                <hf:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
+                <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
                     rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE' and customFieldTemplateBean.entity.fieldType != 'ENTITY'}" />
             </h:panelGroup>
             <h:panelGroup id="storageTypeField">
-                <hf:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" />
+                <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" />
             </h:panelGroup>
             <h:panelGroup id="entityClazzField">
-                <hf:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="60" maxlength="255"
-                    autocompleteMethod="#{customFieldTemplateBean.autocompleteClassNames}" isAutocomplete="true" rendered="#{customFieldTemplateBean.entity.fieldType == 'ENTITY'}" />
+                <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="60" maxlength="255"
+                    autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" rendered="#{customFieldTemplateBean.entity.fieldType == 'ENTITY'}" />
             </h:panelGroup>
             <h:panelGroup id="valueRequiredField">
-                <hf:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="15" newLine="true" />
+                <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="15" newLine="true" />
             </h:panelGroup>
-            <hf:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15"
-                listenerUpdate=":formPanel:formId:versionableFields" />
+            <hftl:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15"
+                listenerUpdate=":formId:versionableFields" />
             <h:panelGroup id="versionableFields">
-                <hf:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}"
+                <hftl:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}"
                     rendered="#{customFieldTemplateBean.entity.versionable}" />
-                <hf:formField label="#{messages['customFieldTemplate.cacheTimeperiod']}" field="cacheValueTimeperiod" rendered="#{customFieldTemplateBean.entity.versionable}" />
+                <hftl:formField label="#{messages['customFieldTemplate.cacheTimeperiod']}" field="cacheValueTimeperiod" rendered="#{customFieldTemplateBean.entity.versionable}" />
             </h:panelGroup>
-            <hf:formField label="#{messages['customFieldTemplate.triggerEndPeriodEvent']}" field="triggerEndPeriodEvent" componentWidth="15" />
+            <hftl:formField label="#{messages['customFieldTemplate.triggerEndPeriodEvent']}" field="triggerEndPeriodEvent" componentWidth="15" />
             <h:panelGroup id="listValuesField">
-                <hf:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues" rendered="#{customFieldTemplateBean.entity.fieldType == 'LIST'}"
+                <hftl:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues" rendered="#{customFieldTemplateBean.entity.fieldType == 'LIST'}"
                     mapKeyLabel="#{messages['commons.value']}" mapValueLabel="#{messages['commons.label']}" componentWidth="75" newLine="true" />
             </h:panelGroup>
-            <hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
-        </hf:formPanel>
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
+        </hftl:formPanel>
 
     </ui:define>
 

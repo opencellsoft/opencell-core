@@ -6,61 +6,61 @@
 
 <facelet-taglib>
 
-	<namespace>http://hftl.org</namespace>
+    <namespace>http://hftl.org</namespace>
 
-	<tag>
-		<tag-name>dataList</tag-name>
-		<source>dataList.xhtml</source>
-	</tag>
-	<tag>
-		<tag-name>column</tag-name>
-		<source>column.xhtml</source>
-	</tag>
-	<tag>
-		<tag-name>actionsColumn</tag-name>
-		<source>actionsColumn.xhtml</source>
-	</tag>
+    <tag>
+        <tag-name>dataList</tag-name>
+        <source>dataList.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>column</tag-name>
+        <source>column.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>actionsColumn</tag-name>
+        <source>actionsColumn.xhtml</source>
+    </tag>
 
-	<tag>
-		<tag-name>entityPopup</tag-name>
-		<source>entityPopup.xhtml</source>
-	</tag>
+    <tag>
+        <tag-name>entityPopup</tag-name>
+        <source>entityPopup.xhtml</source>
+    </tag>
 
-	<tag>
-		<tag-name>panelGroup</tag-name>
-		<source>panelGroup.xhtml</source>
-	</tag>
+    <tag>
+        <tag-name>panelGroup</tag-name>
+        <source>panelGroup.xhtml</source>
+    </tag>
 
-	<tag>
-		<tag-name>decorateFormPanel</tag-name>
-		<source>decorateFormPanel.xhtml</source>
-	</tag>
+    <tag>
+        <tag-name>decorateFormPanel</tag-name>
+        <source>decorateFormPanel.xhtml</source>
+    </tag>
 
-	<tag>
-		<tag-name>decorateFormField</tag-name>
-		<source>decorateFormField.xhtml</source>
-	</tag>
+    <tag>
+        <tag-name>decorateFormField</tag-name>
+        <source>decorateFormField.xhtml</source>
+    </tag>
 
-	<tag>
-		<tag-name>customFieldValueField</tag-name>
-		<source>customFieldValueField.xhtml</source>
-	</tag>
-	<tag>
-	<tag-name>customFieldValueMuteField</tag-name>
-		<source>customFieldValueMuteField.xhtml</source>
-	</tag>
-	<tag>
-		<tag-name>customFieldListTable</tag-name>
-		<source>customFieldListTable.xhtml</source>
-	</tag>
+    <tag>
+        <tag-name>customFieldValueField</tag-name>
+        <source>customFieldValueField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>customFieldValueMuteField</tag-name>
+        <source>customFieldValueMuteField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>customFieldListTable</tag-name>
+        <source>customFieldListTable.xhtml</source>
+    </tag>
     <tag>
         <tag-name>exportToXmlDialogs</tag-name>
         <source>exportToXmlDialogs.xhtml</source>
     </tag>
-<!--     <tag> -->
-<!--         <tag-name>customFields</tag-name> -->
-<!--         <source>customFields.xhtml</source> -->
-<!--     </tag> -->
+    <!-- <tag> -->
+    <!-- <tag-name>customFields</tag-name> -->
+    <!-- <source>customFields.xhtml</source> -->
+    <!-- </tag> -->
     <tag>
         <tag-name>searchPanel</tag-name>
         <source>searchPanel.xhtml</source>
@@ -69,14 +69,78 @@
         <tag-name>searchField</tag-name>
         <source>searchField.xhtml</source>
     </tag>
-<!--     <tag> -->
-<!--         <tag-name>formPanel</tag-name> -->
-<!--         <source>formPanel.xhtml</source> -->
-<!--     </tag> -->
-<!--     <tag> -->
-<!--         <tag-name>formField</tag-name> -->
-<!--         <source>formField.xhtml</source> -->
-<!--     </tag> -->
+    <tag>
+        <tag-name>searchBooleanField</tag-name>
+        <source>searchBooleanField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchDateField</tag-name>
+        <source>searchDateField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchEntityField</tag-name>
+        <source>searchEntityField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchEnumField</tag-name>
+        <source>searchEnumField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchNumberField</tag-name>
+        <source>searchNumberField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchTextField</tag-name>
+        <source>searchTextField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchLikeCriteriasField</tag-name>
+        <source>searchLikeCriteriasField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchMinMaxField</tag-name>
+        <source>searchMinMaxField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formPanel</tag-name>
+        <source>formPanel.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formField</tag-name>
+        <source>formField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formTextField</tag-name>
+        <source>formTextField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formEntityField</tag-name>
+        <source>formEntityField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formEnumField</tag-name>
+        <source>formEnumField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formBooleanField</tag-name>
+        <source>formBooleanField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formNumberField</tag-name>
+        <source>formNumberField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formDateField</tag-name>
+        <source>formDateField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formMapField</tag-name>
+        <source>formMapField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formListField</tag-name>
+        <source>formListField.xhtml</source>
+    </tag>
     <tag>
         <tag-name>getFieldInformation</tag-name>
         <handler-class>org.meveo.util.view.GetFieldInformationHandler</handler-class>

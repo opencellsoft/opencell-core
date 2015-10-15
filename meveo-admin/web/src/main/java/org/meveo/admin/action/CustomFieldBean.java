@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ComponentSystemEvent;
 import javax.inject.Inject;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.MessagesUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.AccountEntity;
@@ -64,10 +67,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     protected List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
 
-    @Inject 
-    private CalendarService calendarService; 
-    
-    
+    @Inject
+    private CalendarService calendarService;
+
     public CustomFieldBean() {
     }
 
@@ -84,13 +86,13 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         return result;
     }
 
-	@Override
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		updateCustomFieldsInEntity();
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        updateCustomFieldsInEntity();
 
-		String outcome = super.saveOrUpdate(killConversation);
-		return outcome;
-	}
+        String outcome = super.saveOrUpdate(killConversation);
+        return outcome;
+    }
 
     /**
      * Load available custom fields (templates) and their values
@@ -124,7 +126,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             if (cfi.isValueEmptyForGui()) {
                 ((ICustomFieldEntity) entity).getCustomFields().remove(cfi.getCode());
                 log.trace("Remove empty cfi value {}", cfi.getCode());
-                
+
                 // Existing value update
             } else {
                 serializeForGUI(cft, cfi);
@@ -391,7 +393,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         // Create period if passed a period check or if user decided to create it anyway
         if (cft.getInstance().getCalendar() != null) {
-            cft.getInstance().setCalendar(calendarService.attach(cft.getInstance().getCalendar()));            
+            cft.getInstance().setCalendar(calendarService.attach(cft.getInstance().getCalendar()));
             period = cft.getInstance().addValuePeriod(periodStartDate);
 
         } else {
@@ -408,7 +410,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             }
             newValue.put("value", value);
             period.getCfValue().getMapValuesForGUI().add(newValue);
-        }   
+        }
 
         customFieldNewValue.clear();
         customFieldPeriodMatched = false;
@@ -461,7 +463,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
         return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode, this.currentProvider);
     }
-    
+
     /**
      * Get a list of custom field templates applicable to an entity.
      * 
@@ -469,8 +471,40 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
         AccountLevelEnum accountLevel = this.getClazz().getAnnotation(CustomFieldEntity.class).accountLevel();
-        List<CustomFieldTemplate> result= customFieldTemplateService.findByAccountLevel(accountLevel);
-        log.debug("Found {} custom field templates by fieldType={} for {}",result.size(),accountLevel,this.getClass());
+        List<CustomFieldTemplate> result = customFieldTemplateService.findByAccountLevel(accountLevel);
+        log.debug("Found {} custom field templates by fieldType={} for {}", result.size(), accountLevel, this.getClass());
         return result;
+    }
+
+    /**
+     * Validate complex custom fields
+     * 
+     * @param event
+     */
+    public void validateCustomFields(ComponentSystemEvent event) {
+
+        boolean valid = true;
+        FacesContext fc = FacesContext.getCurrentInstance();
+        for (CustomFieldTemplate cft : customFieldTemplates) {
+            if (cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
+
+                CustomFieldInstance cfi = cft.getInstance();
+                // Fail validation on non empty values
+                if (cfi.isValueEmptyForGui()) {
+                    
+                    FacesMessage msg = new FacesMessage(MessagesUtils.getMessage("javax.faces.component.UIInput.REQUIRED", FacesContext.getCurrentInstance().getViewRoot()
+                        .getLocale(), cft.getDescription()));
+                    msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    fc.addMessage(null, msg);
+                    valid = false;
+                }
+            }
+        }
+        
+        if (!valid) {
+
+            fc.validationFailed();
+            fc.renderResponse();
+        }
     }
 }

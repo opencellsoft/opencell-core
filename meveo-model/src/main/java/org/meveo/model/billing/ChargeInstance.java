@@ -198,10 +198,15 @@ public class ChargeInstance extends BusinessEntity {
 		return chargeTemplate;
 	}
 
-	public void setChargeTemplate(ChargeTemplate chargeTemplate) {
-		this.chargeTemplate = chargeTemplate;
-		this.code = chargeTemplate.getCode();
-		this.description = chargeTemplate.getDescription();
+    public void setChargeTemplate(ChargeTemplate chargeTemplate) {
+        this.chargeTemplate = chargeTemplate;
+        if (chargeTemplate == null) {
+            this.code = null;
+            this.description = null;
+        } else {
+            this.code = chargeTemplate.getCode();
+            this.description = chargeTemplate.getDescription();
+        }
 	}
 
 	public Date getChargeDate() {

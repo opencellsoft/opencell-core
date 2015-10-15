@@ -5,13 +5,11 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:e="http://primefaces.org/extension"
 	template="/layout/template.xhtml">
 	
     <ui:define name="metadata">
 		<f:metadata>
-			<f:viewParam name="accessId" value="#{accessBean.objectId}" />
+			<f:viewParam name="accessId" value="#{accessBean.objectIdFromSet}" />
             <f:viewParam name="tab" value="#{accessBean.activeTab}" /> 
 		</f:metadata>
 	</ui:define>
@@ -50,29 +48,29 @@
 						entity="#{accessBean.entity}" />
             </h:panelGroup>
 		<h:panelGroup styleClass="col2">
-			<hf:formPanel id="formPanel" backingBean="#{accessBean}" label="#{messages['access.accessPanel']}" showEnableDisableButton="true" ajaxSubmit="true" submitPartialProcess=":formPanel:formId:tabView">
+			<hftl:formPanel backingBean="#{accessBean}" label="#{messages['access.accessPanel']}" showEnableDisableButton="true" ajaxSubmit="true" submitPartialProcess=":formId:tabView">
 				<p:tabView id="tabView" activeIndex="#{accessBean.activeTab}">
 					<p:tab title="#{messages['customer.tab.information']}">
-							<hf:formField label="#{messages['access.accessUserId']}"
+							<hftl:formField label="#{messages['access.accessUserId']}"
 								field="accessUserId" required="true" />
-							<hf:formField id="subscriptionId"
+							<hftl:formField id="subscriptionId"
 								label="#{messages['access.subscription']}" field="subscription"
 								valueLabelField="code" popup="true" popupId="searchSubscriptionPopup"
 								required="true" />
-							<hf:formField label="#{messages['access.startDate']}"
+							<hftl:formField label="#{messages['access.startDate']}"
 								field="startDate" />
-							<hf:formField label="#{messages['access.endDate']}"
+							<hftl:formField label="#{messages['access.endDate']}"
 								field="endDate" />
-							<hf:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true"
+							<hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true"
 								field="disabled" isMessage="true"/>
 					     </p:tab>
 					<p:tab title="#{messages['customFieldTemplate.cfValues']}">
-						<hf:customFields id="customFields" backingBean="#{accessBean}" messagesId=":formPanel:formId:messages"/>
+						<hf:customFields id="customFields" backingBean="#{accessBean}" messagesId=":formId:messages"/>
 					</p:tab>
 				</p:tabView>
-			</hf:formPanel>
-			</h:panelGroup >
-              </h:panelGroup>
+			</hftl:formPanel>
+		</h:panelGroup >
+    </h:panelGroup>
 
 	</ui:define>
 

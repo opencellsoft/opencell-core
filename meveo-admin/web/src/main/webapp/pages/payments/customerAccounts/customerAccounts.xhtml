@@ -1,77 +1,46 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
 
-	<f:metadata>
-		<f:event type="preRenderView"
-			listener="#{customerAccountListBean.preRenderView}" />
-	</f:metadata>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{customerAccountListBean.preRenderView}" />
+    </f:metadata>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
-		<!-- Entity select popup. -->
-		<hftl:entityPopup id="searchCustomerPopup"
-			header="#{messages['customer.popup.header']}"
-			backingBean="#{customerBean}"
-			searchField1Label="#{messages['customer.code']}" searchField1="code"
-			column1Label="#{messages['customer.code']}" column1="code"
-			selection="#{customerAccountListBean.filters['customer']}"
-			updateField=":searchPanel:searchForm:customer">
-		</hftl:entityPopup>
+    <ui:define name="body">
+        <!-- Entity select popup. -->
+        <hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerBean}" searchField1Label="#{messages['customer.code']}"
+            searchField1="code" column1Label="#{messages['customer.code']}" column1="code" selection="#{customerAccountListBean.filters['customer']}"
+            updateField=":searchPanel:searchForm:customer">
+        </hftl:entityPopup>
 
-		<hf:searchPanel id="searchPanel"
-			label="#{messages['customerAccount.search']}"
-			backingBean="#{customerAccountListBean}">
-			<hf:searchField id="customer"
-				label="#{messages['customerAccount.customer']}" field="customer"
-				valueLabelField="code" popup="true" popupId="searchCustomerPopup" />
-			<hf:searchField label="#{messages['businessEntity.code']}"
-				field="code" />
-			<hf:searchField label="#{messages['businessEntity.description']}"
-				field="description" />
-			<hf:searchField label="#{messages['customerAccount.name']}"
-				field="name" />
-			<hf:searchField label="#{messages['customerAccount.status']}"
-				field="status" />
-			<hf:searchField label="#{messages['customerAccount.paymentMethod']}"
-				field="paymentMethod" />
-			<hf:searchField label="#{messages['customerAccount.creditCategory']}"
-				field="creditCategory.code" />
-		</hf:searchPanel>
+        <hftl:searchPanel id="searchPanel" label="#{messages['customerAccount.search']}" backingBean="#{customerAccountListBean}">
+            <hftl:searchField id="customer" label="#{messages['customerAccount.customer']}" field="customer" valueLabelField="code" popup="true" popupId="searchCustomerPopup" />
+            <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:searchField label="#{messages['customerAccount.name']}" field="name" />
+            <hftl:searchField label="#{messages['customerAccount.status']}" field="status" />
+            <hftl:searchField label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod" />
+            <hftl:searchField label="#{messages['customerAccount.creditCategory']}" field="creditCategory.code" />
+        </hftl:searchPanel>
 
-		<hftl:dataList backingBean="#{customerAccountListBean}" sortBy="code">
-			<hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true"/>
-			<hftl:column label="#{messages['businessEntity.description']}"
-				field="description" />
-			<hftl:column label="#{messages['customerAccount.name']}" field="name"
-				titleWithMessage="true" />
-			<hftl:column label="#{messages['customerAccount.paymentMethod']}"
-				field="paymentMethod.label" isMessage="true" />
-			<hftl:column label="#{messages['customerAccount.status']}"
-				field="status.label" isMessage="true" />
-			<hftl:column label="#{messages['customerAccount.creditCategory']}"
-				field="creditCategory.code" />
-			<hftl:column label="#{messages['customerAccount.customer']}" 
-				field="customer.code" valueIdField="customer.id" propagateConversation="false" 
-				entityView="customerDetail" objectIdParamName="customerId" />
-			<hftl:column label="#{messages['tradingCountry.languageCode']}"
-				field="tradingLanguage.languageCode" />	
-			<hftl:column label="#{messages['currency.codeCurrency']}"
-				field="tradingCurrency.currencyCode" />
+        <hftl:dataList backingBean="#{customerAccountListBean}" sortBy="code">
+            <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
+            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['customerAccount.name']}" field="name" titleWithMessage="true" />
+            <hftl:column label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod.label" isMessage="true" />
+            <hftl:column label="#{messages['customerAccount.status']}" field="status.label" isMessage="true" />
+            <hftl:column label="#{messages['customerAccount.creditCategory']}" field="creditCategory.code" />
+            <hftl:column label="#{messages['customerAccount.customer']}" field="customer.code" valueIdField="customer.id" propagateConversation="false" entityView="customerDetail"
+                objectIdParamName="customerId" />
+            <hftl:column label="#{messages['tradingCountry.languageCode']}" field="tradingLanguage.languageCode" />
+            <hftl:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency.currencyCode" />
 
-			<hftl:actionsColumn useCustomIdParam="true"
-				permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />
-		</hftl:dataList>
+            <hftl:actionsColumn useCustomIdParam="true" permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />
+        </hftl:dataList>
 
-	</ui:define>
+    </ui:define>
 
 </ui:composition>

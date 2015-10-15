@@ -2,8 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
+    xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
@@ -22,7 +21,7 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel id="formPanel" formId="counterTemplatId"
+		<hftl:formPanel id="formPanel" formId="counterTemplatId"
 			label="#{messages['menu.counterTemplates']}"
 			backingBean="#{counterTemplateBean}" showEnableDisableButton="true">
              
@@ -33,51 +32,31 @@
 			<p:tooltip  for="exprEl" value="#{messages['counterTemplate.elExpressionUsed']}" />
 			  </h:panelGrid>
              
-			<hf:formField label="#{messages['businessEntity.code']}" field="code"
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code"
 				required="true" validateUnique="true" />
-			<hf:formField label="#{messages['businessEntity.description']}"
+			<hftl:formField label="#{messages['businessEntity.description']}"
 				field="description" id="description" required="true"
 				validateUnique="true" />
-			<hf:formField
+			<hftl:formField
 				label="#{messages['usageChargeTemplate.unityDescription']}"
 				field="unityDescription" />
-			<hftl:decorateFormField fieldId="counterType"
-				label="#{messages['counterTemplate.counterType']}">
-				<p:selectOneMenu id="counterType" required="true"
-					value="#{counterTemplateBean.entity.counterType}"
-					rendered="#{counterTemplateBean.edit}">
-					<f:selectItems value="#{cc.getEnumConstants('counterType')}"
-						var="enumElement" itemValue="#{enumElement}"
-						itemLabel="#{messages[enumElement.label]}" />
-				</p:selectOneMenu>
-				<h:outputText rendered="#{!counterTemplateBean.edit}"
-					value="#{counterTemplateBean.entity.counterType}"
-					styleClass="field-value"></h:outputText>
-			</hftl:decorateFormField>
-			<hftl:decorateFormField fieldId="counterLevel"
-				label="#{messages['counterTemplate.counterLevel']}">
-				<p:selectOneMenu id="counterLevel" required="true"
-					value="#{counterTemplateBean.entity.counterLevel}"
-					rendered="#{counterTemplateBean.edit}">
-					<f:selectItems value="#{cc.getEnumConstants('counterLevel')}"
-						var="enumElement" itemValue="#{enumElement}"
-						itemLabel="#{messages[enumElement.label]}" />
-				</p:selectOneMenu>
-				<h:outputText rendered="#{!counterTemplateBean.edit}"
-					value="#{counterTemplateBean.entity.counterLevel}"
-					styleClass="field-value"></h:outputText>
-			</hftl:decorateFormField>
-			<hf:formField label="#{messages['counterTemplate.level']}"
+            <hftl:formField
+                label="#{messages['counterTemplate.counterType']}"
+                field="counterType" required="true"/>
+            <hftl:formField
+                label="#{messages['counterTemplate.counterLevel']}"
+                field="counterLevel" required="true"/>
+			<hftl:formField label="#{messages['counterTemplate.level']}"
 				field="ceiling" converter="bigDecimal4DigitsConverter"  />
-			<hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+			<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
 				field="disabled" isMessage="true" />
-			<hf:formField label="#{messages['billingCycle.calendar']}"
+			<hftl:formField label="#{messages['billingCycle.calendar']}"
 				field="calendar" valueLabelField="code" required="true" 
 				listBean="#{calendarBean}" />
-			<hf:formField label="#{messages['counterTemplate.ceilingExpressionEl']}"
+			<hftl:formField label="#{messages['counterTemplate.ceilingExpressionEl']}"
 			   field="ceilingExpressionEl"  textArea="true" maxlength="1000"/>	
 
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 </ui:composition>

@@ -16,7 +16,6 @@
  */
 package org.meveo.model.scripts;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,7 +34,7 @@ import org.meveo.model.ExportIdentifier;
 public class ScriptInstanceError extends AuditableEntity  {
 
 	private static final long serialVersionUID = -5517252645289726288L;
-	@Column(name = "MESSAGE")
+	@Column(name = "MESSAGE",columnDefinition="TEXT")
 	private String message;
 
 	@Column(name = "LINE_NUMBER")

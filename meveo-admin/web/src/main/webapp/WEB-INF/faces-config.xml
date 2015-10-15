@@ -1050,7 +1050,7 @@
 			<from-outcome>userAccountDetail</from-outcome>
 			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml
 			</to-view-id>
-			<redirect />
+			<redirect include-view-params="true"/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>access</from-outcome>

@@ -245,11 +245,14 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 			}
 		}
 
-		super.saveOrUpdate(killConversation);
-		
-		userAccountId = entity.getUserAccount().getId();
-        return getEditViewName(); //"/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
-	}
+        String outcome = super.saveOrUpdate(killConversation);
+
+        if (outcome != null) {
+            return getEditViewName(); // "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() +
+                                      // "&faces-redirect=true&includeViewParams=true";
+        }
+        return null;
+    }
 
 	public void newOneShotChargeInstance() {
 

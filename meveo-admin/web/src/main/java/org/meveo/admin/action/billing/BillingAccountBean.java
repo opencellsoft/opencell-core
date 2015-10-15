@@ -205,11 +205,13 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                 billingAccountService.initBillingAccount(entity);
             }
 
-            super.saveOrUpdate(killConversation);
-            
-            customerAccountId = entity.getCustomerAccount().getId();            
-            return getEditViewName(); // "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+            String outcome = super.saveOrUpdate(killConversation);
 
+            if (outcome != null) {
+                return getEditViewName(); // "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() +
+                                          // "&faces-redirect=true&includeViewParams=true";
+            }
+            
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {

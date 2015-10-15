@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+
+    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
+        style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
+        inputWidth="#{inputWidth}">
+
+        <c:if test="#{not isHtml and not textArea and listValues == null and !isAutocomplete and not popup and edit}">
+
+            <p:inputText id="#{id}" value="#{fieldItem}" disabled="#{disabled}" required="#{required}" size="#{size}" maxlength="#{maxlength}">
+
+                <c:if test="#{not empty converter}">
+                    <f:converter converterId="#{converter}" />
+                </c:if>
+                <c:if test="#{useConverter}">
+                    <f:converter converterId="stringConverter" />
+                </c:if>
+                <c:if test="#{validateEmail}">
+                    <!-- <f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"></f:validateRegex> -->
+                    <o:validator validatorId="javax.faces.RegularExpression" pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" message="#{messages['validator.email.invalid']}" />
+                </c:if>
+                <c:if test="#{not empty validatorId}">
+                    <f:validator validatorId="#{validatorId}" />
+                </c:if>
+                <c:if test="#{validateUnique}">
+                    <f:validator validatorId="uniqueConstraintValidator" />
+                    <f:attribute name="className" value="#{entity.getClass().getSimpleName()}" />
+                    <f:attribute name="fieldName" value="#{field}" />
+                    <f:attribute name="idValue" value="#{entity.getId()}" />
+                </c:if>
+                <!--  commented out as validateRib is not used anywhere and need to find an equivalent solution for rich:clientId replacement -->
+                <!--                 <c:if test="#{validateRib}"> -->
+                <!--                     <f:validator validatorId="ribValidator" /> -->
+                <!--                     <f:attribute name="bankCodeId" value="#{rich:clientId('bankCode')}" /> -->
+                <!--                     <f:attribute name="branchCodeId" value="#{rich:clientId('branchCode')}" /> -->
+                <!--                     <f:attribute name="accountNumberId" value="#{rich:clientId('accountNumber')}" /> -->
+                <!--                     <f:attribute name="keyId" value="#{rich:clientId('key')}" /> -->
+                <!--                 </c:if> -->
+            </p:inputText>
+        </c:if>
+        <c:if test="#{isAutocomplete and  edit}">
+        complete method 
+            <p:autoComplete id="#{id}" value="#{fieldItem}" disabled="#{disabled}" required="#{required}" size="#{size}" maxlength="#{maxlength}" dropdown="true"
+                completeMethod="#{autocompleteBean[autocompleteMethod]}" var="e" itemLabel="#{e}" itemValue="#{e}">
+            </p:autoComplete>
+        </c:if>
+        <c:if test="#{textArea and edit}">
+            <p:inputTextarea id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" />
+        </c:if>
+        <c:if test="#{isHtml and edit}">
+            <p:editor id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}"></p:editor>
+        </c:if>
+        <c:if test="#{listValues != null and edit}">
+            <p:selectOneMenu id="#{id}" value="#{fieldItem}" required="#{required}" disabled="#{disabled}">
+                <f:selectItem itemValue="#{null}" itemLabel="" />
+                <f:selectItems value="#{listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
+            </p:selectOneMenu>
+        </c:if>
+
+        <c:if test="#{popup and edit}">
+            <p:inputText id="#{id}" value="#{fieldItem}" required="#{required}" size="#{size}" disabled="true" />
+            <p:commandButton id="selectLink" onclick="PF('dlg_#{popupId}').show()" type="button" icon="ui-icon-search" />
+            <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
+        </c:if>
+
+        <c:if test="#{!edit}">
+            <h:outputText id="#{id}" value="#{fieldItem}" styleClass="field-value" />
+        </c:if>
+    </hftl:decorateFormField>
+</ui:composition>
+
+</html>
