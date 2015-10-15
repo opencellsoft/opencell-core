@@ -153,14 +153,14 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	@Column(name = "CURRENT_INVOICE_NB")
 	private Long currentInvoiceNb;
 
-	@Column(name = "CREDIT_NOTE_PREFIX", length = 50)
-	private String creditNotePrefix;
+	@Column(name = "INVOICE_ADJUSTMENT_PREFIX", length = 50)
+	private String invoiceAdjustmentPrefix;
 
-	@Column(name = "CURRENT_CREDIT_NOTE_NB")
-	private Long currentCreditNoteNb;
+	@Column(name = "CURRENT_INVOICE_ADJUSTMENT_NB")
+	private Long currentInvoiceAdjustmentNb;
 
-	@Column(name = "CREDIT_NOTE_SEQUENCE_SIZE")
-	private Integer creditNoteSequenceSize = 9;
+	@Column(name = "INVOICE_ADJUSTMENT_SEQUENCE_SIZE")
+	private Integer invoiceAdjustmentSequenceSize = 9;
 
 	@Column(name = "RATING_ROUNDING", columnDefinition = "int DEFAULT 2")
 	private Integer rounding = 2;
@@ -633,28 +633,28 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 		return null;
 	}
 
-	public String getCreditNotePrefix() {
-		return creditNotePrefix;
+	public String getInvoiceAdjustmentPrefix() {
+		return invoiceAdjustmentPrefix;
 	}
 
-	public void setCreditNotePrefix(String creditNotePrefix) {
-		this.creditNotePrefix = creditNotePrefix;
+	public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
+		this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
 	}
 
-	public Long getCurrentCreditNoteNb() {
-		return currentCreditNoteNb;
+	public Integer getInvoiceAdjustmentSequenceSize() {
+		return invoiceAdjustmentSequenceSize;
 	}
 
-	public void setCurrentCreditNoteNb(Long currentCreditNoteNb) {
-		this.currentCreditNoteNb = currentCreditNoteNb;
+	public void setInvoiceAdjustmentSequenceSize(Integer invoiceAdjustmentSequenceSize) {
+		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
 	}
 
-	public Integer getCreditNoteSequenceSize() {
-		return creditNoteSequenceSize;
+	public Long getCurrentInvoiceAdjustmentNb() {
+		return currentInvoiceAdjustmentNb;
 	}
 
-	public void setCreditNoteSequenceSize(Integer creditNoteSequenceSize) {
-		this.creditNoteSequenceSize = creditNoteSequenceSize;
+	public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
+		this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
 	}
 
 }

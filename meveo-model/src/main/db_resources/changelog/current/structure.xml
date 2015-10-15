@@ -1845,4 +1845,17 @@
 
 	</changeSet>
 
+	<changeSet id="#1167_20151015" author="EdwardLegaspi">
+		<addColumn tableName="crm_provider">
+			<column name="invoice_adjustment_prefix" type="VARCHAR(255)" />
+			<column name="current_invoice_adjustment_nb" type="BIGINT" />
+			<column name="invoice_adjustment_sequence_size" type="INT4" />
+		</addColumn>
+		<addColumn tableName="crm_seller">
+			<column name="invoice_adjustment_prefix" type="VARCHAR(255)" />
+			<column name="current_invoice_adjustment_nb" type="BIGINT" />
+			<column name="invoice_adjustment_sequence_size" type="INT4" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
