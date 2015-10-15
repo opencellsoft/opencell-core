@@ -105,6 +105,25 @@ public class CustomerApi{
 		customerApiService.createBrand(postData, currentUser);
 	}
 	
+	 /**
+     * 
+     * @param postData
+     * @param currentUser
+     * @throws MeveoApiException
+     */
+	public void updateBrand(CustomerBrandDto postData, User currentUser) throws MeveoApiException {
+		customerApiService.updateBrand(postData, currentUser);
+	}
+	
+	 /**
+     * 
+     * @param postData
+     * @param currentUser
+     * @throws MeveoApiException
+     */
+	public void createOrUpdateBrand(CustomerBrandDto postData, User currentUser) throws MeveoApiException {
+		customerApiService.createOrUpdateBrand(postData, currentUser);
+	}
     /**
      * 
      * @param postData

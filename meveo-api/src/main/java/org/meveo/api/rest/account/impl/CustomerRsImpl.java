@@ -227,4 +227,44 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+	
+	@Override
+	public ActionStatus updateBrand(CustomerBrandDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			customerApi.updateBrand(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateBrand(CustomerBrandDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			customerApi.createOrUpdateBrand(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 }

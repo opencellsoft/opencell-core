@@ -60,6 +60,12 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
+	
+	@WebMethod
+	ActionStatus updateCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
+	
+	@WebMethod
+	ActionStatus createOrUpdateCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
 
 	@WebMethod
 	ActionStatus createCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
