@@ -13,23 +13,38 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${CatalogueServices}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>01</td>
+	<td>${Code}</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>some description for this service</td>
+	<td>${Description}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DateCalendarBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -38,7 +53,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;CAL_INV_MONTHLY&quot;)</td>
+	<td>css=li:contains(&quot;${DateCalendarValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -47,8 +67,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${ConfirmSave}</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=div.ui-messages-info.ui-corner-all</td>
+	<td>Sauvegarde effectuée !</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>
