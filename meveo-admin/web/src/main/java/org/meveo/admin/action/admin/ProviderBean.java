@@ -153,6 +153,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 	   		invoiceConfiguration.setDisplayServices(entity.getInvoiceConfiguration().getDisplayServices());
 	   		invoiceConfiguration.setDisplaySubscriptions(entity.getInvoiceConfiguration().getDisplaySubscriptions());
 	   		invoiceConfiguration.setDisplayEdrs(entity.getInvoiceConfiguration().getDisplayEdrs());
+	   		invoiceConfiguration.setDisplayProvider(entity.getInvoiceConfiguration().getDisplayProvider());
 	   		invoiceConfigurationService.create(invoiceConfiguration);
 			entity.setInvoiceConfiguration(invoiceConfiguration); 
 	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
