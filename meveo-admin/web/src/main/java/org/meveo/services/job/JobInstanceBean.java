@@ -120,18 +120,13 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     /**
-     * Check if a timer is running.
+     * Check if a job is running.
      * 
-     * @param timerEntity Timer entity
+     * @param jobInstance JobInstance entity
      * @return True if running
      */
-    public boolean isTimerRunning(JobInstance jobInstance) {
-        // Check a timerEntityservice's job cache only when timerEntity itself does not have that info - cases when executing an inactive job manually.
-        if (!jobInstance.isRunning()) {
-            return jobInstanceService.isTimerRunning(jobInstance.getId());
-        } else {
-            return true;
-        }
+    public boolean isTimerRunning(JobInstance jobInstance) {     
+            return jobInstanceService.isJobRunning(jobInstance.getId());
     }
 
 }
