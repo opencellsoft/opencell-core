@@ -842,7 +842,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public String getProviderLanguageCode() {
-        if (getCurrentProvider() != null) {
+        if (getCurrentProvider() != null && getCurrentProvider().getLanguage() != null) {
             return getCurrentProvider().getLanguage().getLanguageCode();
         }
         return "";
