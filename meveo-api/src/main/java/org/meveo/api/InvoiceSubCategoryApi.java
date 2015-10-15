@@ -260,5 +260,20 @@ public class InvoiceSubCategoryApi extends BaseApi {
 					getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	/**
+	 * Create or update invoice subcategory based on code.
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(InvoiceSubCategoryDto postData, User currentUser)
+			throws MeveoApiException {
+		if (invoiceSubCategoryService.findByCode(postData.getCode(),
+				currentUser.getProvider()) != null) {
+			update(postData, currentUser);
+		} else {
+			create(postData, currentUser);
+		}
+	}
 }

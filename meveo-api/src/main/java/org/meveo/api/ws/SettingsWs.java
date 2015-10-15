@@ -192,6 +192,9 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateInvoiceSubCategory(@WebParam(name = "invoiceSubCategory") InvoiceSubCategoryDto postData);
+	
+	@WebMethod
+	ActionStatus createOrUpdateInvoiceSubCategory(@WebParam(name = "invoiceSubCategory") InvoiceSubCategoryDto postData);
 
 	@WebMethod
 	public GetInvoiceSubCategoryResponse findInvoiceSubCategory(
