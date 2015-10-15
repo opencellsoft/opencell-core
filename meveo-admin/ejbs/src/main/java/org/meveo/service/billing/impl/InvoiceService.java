@@ -71,6 +71,8 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -579,8 +581,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_PATERN);
 		return dateFormat.format(invoiceDate);
 	}
-
 	
+	@SuppressWarnings("unchecked")
+	public void deleteInvoice(Invoice invoice) {
+		Query queryTrans = getEntityManager()
+				.createQuery(
+						"update "
+								+ RatedTransaction.class.getName()
+								+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where invoice=:invoice");
+		queryTrans.setParameter("invoice", invoice);
+		queryTrans.executeUpdate(); 
+
+		Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
+		queryAgregate.setParameter("invoice", invoice);
+		List<InvoiceAgregate> invoiceAgregates=(List<InvoiceAgregate>)queryAgregate.getResultList();
+		for(InvoiceAgregate invoiceAgregate:invoiceAgregates){
+			getEntityManager().remove(invoiceAgregate);
+		}
+		getEntityManager().flush();
+		Query queryInvoices = getEntityManager().createQuery(
+				"delete from " + Invoice.class.getName() + " where id=:invoiceId");
+		queryInvoices.setParameter("invoiceId", invoice.getId());
+		queryInvoices.executeUpdate();   
+	}
 	
 	
 }

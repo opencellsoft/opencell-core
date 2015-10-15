@@ -14,7 +14,7 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+        <p:messages id="messages" />
 		<hf:formPanel formId="form3" edit="false"
 			label="#{messages['postInvoicingReport.title']}"
 			backingBean="#{billingRunBean}" showFormButtons="false">
@@ -131,7 +131,7 @@
 
 		<h:outputText value="#{messages['postInvoicingReport.billableBA']}"
 			style="font-weight: bold;font-size=14;" />
-		<hftl:dataList id="chargedBA" dataModel="#{billingRunBean.entity.invoices}"
+		<hftl:dataList dataModel="#{billingRunBean.entity.invoices}"
 			backingBean="#{invoiceBean}">
 
 			<hftl:column label="#{messages['businessEntity.code']}"
@@ -143,20 +143,39 @@
 				<e:cell>
 					<h:outputText
 						rendered="#{entity.billingAccount.name.title != null}"
-						value="#{entity.billingAccount.name.title.description}" />
+						value="#{entity.billingAccount.name.title.description}" /> 
 				</e:cell>
 			</p:column>
 
 			<hftl:column label="#{messages['billingAccount.name']}"
 				field="billingAccount.name" />
-			<hftl:column label="#{messages['invoice.amountWithoutTax']}"
+			<hftl:column label="#{messages['invoice.amountWithoutTax']}"   
 				field="amountWithoutTax" />
 			<hftl:column label="#{messages['invoice.amountTax']}"
 				field="amountTax" />
 			<hftl:column label="#{messages['invoice.amountWithTax']}"
 				field="amountWithTax" />
-
+ 
 		</hftl:dataList>
+	 
+		 <p:panel styleClass="action-buttons" >
+			<p:tooltip for="excludeBa"
+				showEffect="slide" hideEffect="slide" />
+			<p:commandButton id="excludeBa" style="left:10px; top:-26px" 
+				value="#{messages['postInvoicingReport.excludeBillingAccounts']}"
+				update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}" rendered="#{billingRunBean.entity.getInvoices().size()>0}">
+				<p:confirm header="#{messages['message.confirmation']}"
+					message="#{messages['commons.excludeBillingAccounts']}"
+					icon="ui-icon-alert" />
+			</p:commandButton>
+		</p:panel>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+			<p:commandButton value="#{messages['commons.yes']}" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="#{messages['commons.no']}" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
 
 
 		<h:outputText
@@ -207,13 +226,6 @@
 			<p:selectBooleanCheckbox
 				value="#{billingRunBean.launchInvoicingRejectedBA}" />
 		</hftl:decorateFormField>
-
-		<h:form id="operationsForm2"
-			rendered="#{billingRun.getInvoices().size()>0}">
-			<h:commandButton action="#{billingRunBean.excludeBillingAccounts}"
-				value="Exclude" />
-		</h:form>
-
 
 		<h:form id="operationsForm" rendered="#{!edit}">
 			<div class="action-buttons">
