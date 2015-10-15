@@ -72,6 +72,15 @@ public class Seller extends BusinessCFEntity {
 	@Column(name = "CURRENT_INVOICE_NB")
 	private Long currentInvoiceNb;
 
+	@Column(name = "INVOICE_ADJUSTMENT_PREFIX", length = 50)
+	private String invoiceAdjustmentPrefix;
+
+	@Column(name = "CURRENT_INVOICE_ADJUSTMENT_NB")
+	private Long currentInvoiceAdjustmentNb;
+
+	@Column(name = "INVOICE_ADJUSTMENT_SEQUENCE_SIZE")
+	private Integer invoiceAdjustmentSequenceSize = 9;
+	
 	@Embedded
 	private Address address = new Address();
 
@@ -158,4 +167,29 @@ public class Seller extends BusinessCFEntity {
 		}
 		return getProvider();
 	}
+
+	public String getInvoiceAdjustmentPrefix() {
+		return invoiceAdjustmentPrefix;
+	}
+
+	public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
+		this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
+	}
+
+	public Integer getInvoiceAdjustmentSequenceSize() {
+		return invoiceAdjustmentSequenceSize;
+	}
+
+	public void setInvoiceAdjustmentSequenceSize(Integer invoiceAdjustmentSequenceSize) {
+		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
+	}
+
+	public Long getCurrentInvoiceAdjustmentNb() {
+		return currentInvoiceAdjustmentNb;
+	}
+
+	public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
+		this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
+	}
+
 }
