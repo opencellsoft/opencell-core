@@ -34,7 +34,7 @@
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>${RecCode}</td>
+	<td>${UsageCode}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -43,7 +43,7 @@
 </tr>
 <tr>
 	<td>waitForPopUp</td>
-	<td>10000</td>
+	<td>8000</td>
 	<td></td>
 </tr>
 <tr>
@@ -54,7 +54,7 @@
 <tr>
 	<td>type</td>
 	<td>id=pricPlanMatChargePopuppopupForm:searchField1</td>
-	<td>REC1</td>
+	<td>USG1</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -64,7 +64,7 @@
 <tr>
 	<td>verifyText</td>
 	<td>css=td</td>
-	<td>REC1</td>
+	<td>USG1</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -79,7 +79,7 @@
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>${RecDescription}</td>
+	<td>${UsageDescription}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -353,13 +353,13 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${AmountWithoutTaxBool}==true</td>
+	<td>${AmountWithoutTaxUSBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AmountWithoutTax}</td>
-	<td>${AmountWithoutTaxValue}</td>
+	<td>${AmountWithoutTaxUSValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -368,13 +368,13 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${AmountWithoutTaxELBool}==true</td>
+	<td>${AmountWithoutTaxELUSBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AmountWithoutTaxEL}</td>
-	<td>${AmountWithoutTaxELValue}</td>
+	<td>${AmountWithoutTaxELUSValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -383,13 +383,13 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${AmountWithTaxBool}==true</td>
+	<td>${AmountWithTaxUSBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AmountWithTax}</td>
-	<td>${AmountWithTaxValue}</td>
+	<td>${AmountWithTaxUSValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -398,13 +398,13 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${AmountWithTaxELBool}==true</td>
+	<td>${AmountWithTaxELUSBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AmountWithTaxEL}</td>
-	<td>${AmountWithTaxELValue}</td>
+	<td>${AmountWithTaxELUSValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
