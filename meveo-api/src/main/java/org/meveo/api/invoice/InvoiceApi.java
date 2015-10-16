@@ -24,6 +24,7 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidEnumValue;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
@@ -37,6 +38,7 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
@@ -147,6 +149,21 @@ public class InvoiceApi extends BaseApi {
 			invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
 			invoice.setDiscount(invoiceDTO.getDiscount());
 			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
+			
+			InvoiceTypeEnum invoiceTypeEnum = null;
+			
+			if (invoiceDTO.getType() == null) {
+				invoiceTypeEnum = InvoiceTypeEnum.COMMERCIAL;
+			} else {
+				try {
+					invoiceTypeEnum = InvoiceTypeEnum.valueOf(invoiceDTO.getType());
+				} catch (IllegalArgumentException e) {
+					log.error("enum: {}", e);
+					throw new InvalidEnumValue(InvoiceTypeEnum.class.getName(), invoiceDTO.getType());
+				}
+			}
+			invoice.setInvoiceTypeEnum(invoiceTypeEnum);
+			
 			invoiceService.create(invoice, currentUser, provider);
 			UserAccount userAccount = billingAccount.getDefaultUserAccount();
 
@@ -369,6 +386,7 @@ public class InvoiceApi extends BaseApi {
 							.getInvoiceNumber());
 					customerInvoiceDto.setPaymentMathod(invoice
 							.getPaymentMethod().toString());
+					customerInvoiceDto.setType(invoice.getInvoiceTypeEnum().name());
 					customerInvoiceDto.setPDFpresent(invoice.getPdf() != null);
 					SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
 

@@ -37,7 +37,9 @@ public class InvoiceDto extends BaseDto {
 	private BigDecimal amountWithTax;
 	private String paymentMathod;
 	private boolean PDFpresent;
-
+	private String type;
+	
+	
 	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
 
 	public String getInvoiceNumber() {
@@ -128,12 +130,24 @@ public class InvoiceDto extends BaseDto {
 		this.paymentMathod = paymentMathod;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	@Override
 	public String toString() {
-		return "InvoiceDto [billingAccountCode=" + billingAccountCode + ", dueDate=" + dueDate + ", invoiceNumber="
-				+ invoiceNumber + ", invoiceDate=" + invoiceDate + ", discount=" + discount + ", amountWithoutTax="
-				+ amountWithoutTax + ", amountTax=" + amountTax + ", amountWithTax=" + amountWithTax
-				+ ", paymentMathod=" + paymentMathod + ", PDFpresent=" + PDFpresent + ", subCategoryInvoiceAgregates="
+		return "InvoiceDto [billingAccountCode=" + billingAccountCode
+				+ ", dueDate=" + dueDate + ", invoiceNumber=" + invoiceNumber
+				+ ", invoiceDate=" + invoiceDate + ", discount=" + discount
+				+ ", amountWithoutTax=" + amountWithoutTax + ", amountTax="
+				+ amountTax + ", amountWithTax=" + amountWithTax
+				+ ", paymentMathod=" + paymentMathod + ", PDFpresent="
+				+ PDFpresent + ", type=" + type
+				+ ", subCategoryInvoiceAgregates="
 				+ subCategoryInvoiceAgregates + "]";
 	}
 }
