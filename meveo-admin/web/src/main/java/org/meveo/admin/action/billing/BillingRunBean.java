@@ -23,9 +23,6 @@ import java.util.List;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -34,7 +31,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingProcessTypesEnum;
@@ -50,7 +46,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -84,14 +79,10 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
-	private ListItemsSelector<Invoice> itemSelector;
-
 	private boolean launchInvoicingRejectedBA = false;
 
 	@Inject
 	private Messages messages;
-
-	private DataModel<Invoice> invoicesModel;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -125,8 +116,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 				PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(billingRun);
 				billingRun.setPostInvoicingReports(postInvoicingReportsDTO);
 			}
-
-			invoicesModel = new ListDataModel<Invoice>(billingRun.getInvoices());
 		} catch (BusinessException e) {
 			log.error("Failed to initialize an object", e);
 		}
@@ -338,75 +327,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             messages.error(new BundleKey("messages", "error.execution"));
 		}
 		return null;
-	}
-
-	public String excludeBillingAccounts() {
-		try {
-			log.debug("excludeBillingAccounts itemSelector.size()=#0", itemSelector.getSize());
-			for (Invoice invoice : itemSelector.getList()) {
-				billingRunService.deleteInvoice(invoice);
-			}
-			messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
-
-		} catch (Exception e) {
-			log.error("Failed to exclude BillingAccounts!", e);
-            messages.error(new BundleKey("messages", "error.execution"));
-		}
-
-		return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=" + entity.getId();
-	}
-
-	/**
-	 * Item selector getter. Item selector keeps a state of multiselect
-	 * checkboxes.
-	 */
-	@Produces
-	@Named("itemSelector")
-	@ConversationScoped
-	public ListItemsSelector<Invoice> getItemSelector() {
-		if (itemSelector == null) {
-			itemSelector = new ListItemsSelector<Invoice>(false);
-		}
-		return itemSelector;
-	}
-
-	/**
-	 * Check/uncheck all select boxes.
-	 */
-	public void checkUncheckAll(ValueChangeEvent event) {
-		itemSelector.switchMode();
-	}
-
-	/**
-	 * Listener of select changed event.
-	 */
-	public void selectChanged(ValueChangeEvent event) {
-
-		Invoice entity = (Invoice) invoicesModel.getRowData();
-		log.debug("selectChanged=#0", entity != null ? entity.getId() : null);
-		if (entity != null) {
-			itemSelector.check(entity);
-		}
-		log.debug("selectChanged itemSelector.size()=#0", itemSelector.getSize());
-	}
-
-	/**
-	 * Resets item selector.
-	 */
-	public void resetSelection() {
-		if (itemSelector == null) {
-			itemSelector = new ListItemsSelector<Invoice>(false);
-		} else {
-			itemSelector.reset();
-		}
-	}
-
-	public DataModel<Invoice> getInvoicesModel() {
-		return invoicesModel;
-	}
-
-	public void setInvoicesModel(DataModel<Invoice> invoicesModel) {
-		this.invoicesModel = invoicesModel;
 	}
 
 	@Override

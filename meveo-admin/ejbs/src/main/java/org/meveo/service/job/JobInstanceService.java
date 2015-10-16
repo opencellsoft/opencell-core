@@ -16,6 +16,7 @@
  */
 package org.meveo.service.job;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +57,8 @@ import org.slf4j.LoggerFactory;
 public class JobInstanceService extends PersistenceService<JobInstance> {
 	public static Map<JobCategoryEnum, HashMap<String, String>> jobEntries = new HashMap<JobCategoryEnum, HashMap<String, String>>();
 	public static Map<Long, Timer> jobTimers = new HashMap<Long, Timer>();
+	public static List<Long> runningJobs = new ArrayList<Long>();
+	
 
 	@Resource
 	private TimerService timerService;
@@ -368,17 +371,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	 * @param timerEntityId Timer entity id
 	 * @return True if running
 	 */
-	public boolean isTimerRunning(Long timerEntityId) {
-		Timer timer = jobTimers.get(timerEntityId);
-
-		if (timer != null) {
-			try {
-				return ((JobInstance) timer.getInfo()).isRunning();
-			} catch (Exception e) {
-				log.error("Failed to access timer status {}", e);
-			}
-		}
-		return false;
+	public boolean isJobRunning(Long timerEntityId) {
+		return runningJobs.contains(timerEntityId);		
 	}
 
 	public JobInstance findByCode(String code,Provider provider) {

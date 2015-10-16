@@ -429,6 +429,71 @@ public class CustomerAccountApiService extends AccountApiService {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
+	
+	/**
+	 * 
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void updateCreditCategory(CreditCategoryDto postData, User currentUser)
+			throws MeveoApiException {
+
+		if (!StringUtils.isBlank(postData.getCode())
+				&& !StringUtils.isBlank(postData.getDescription())) {
+
+			CreditCategory creditCategory = creditCategoryService.findByCode(
+					postData.getCode(), currentUser.getProvider());
+
+			if (creditCategory == null) {
+				throw new EntityDoesNotExistsException(CreditCategory.class,
+						postData.getCode());
+			}
+
+			creditCategory.setCode(postData.getCode());
+			creditCategory.setDescription(postData.getDescription());
+
+			creditCategoryService.update(creditCategory, currentUser);
+		} else {
+			if (StringUtils.isBlank(postData.getCode())) {
+				missingParameters.add("code");
+			}
+			if (StringUtils.isBlank(postData.getDescription())) {
+				missingParameters.add("description");
+			}
+
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
+		}
+
+	}
+	
+	/**
+	 * 
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdateCreditCategory(CreditCategoryDto postData, User currentUser)
+			throws MeveoApiException {
+
+		if (!StringUtils.isBlank(postData.getCode())) {
+			if (creditCategoryService.findByCode(postData.getCode(),
+					currentUser.getProvider()) == null) {
+				createCreditCategory(postData, currentUser);
+			} else {
+				updateCreditCategory(postData, currentUser);
+			}
+		} else {
+			if (StringUtils.isBlank(postData.getCode())) {
+				missingParameters.add("code");
+			}
+
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
+		}
+
+	}
 
 	public void removeCreditCategory(String code, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(code)) {

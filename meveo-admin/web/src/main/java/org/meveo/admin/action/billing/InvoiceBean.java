@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.EJB;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +45,7 @@ import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -53,6 +57,7 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -97,8 +102,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	XMLInvoiceCreator xmlInvoiceCreator;
 
 	@Inject
-	private PDFParametersConstruction pDFParametersConstruction;
-
+	private PDFParametersConstruction pDFParametersConstruction; 
+	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -314,6 +319,25 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				+ ".xml";
 		File file = new File(fileDir);
 		return file.exists();
+	}
+	
+	public void excludeBillingAccounts(BillingRun billingrun) {
+		try {
+			log.debug("excludeBillingAccounts getSelectedEntities="+getSelectedEntities().size());
+			if(getSelectedEntities()!=null && getSelectedEntities().size()>0){
+				for (Invoice invoice :getSelectedEntities()) {
+					invoiceService.deleteInvoice(invoice);
+					billingrun.getInvoices().remove(invoice);
+				}  
+				messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
+			}else{
+				messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));	
+			}
+
+		} catch (Exception e) {
+			log.error("Failed to exclude BillingAccounts!", e);
+			messages.error(new BundleKey("messages", "error.execution"));
+		}  
 	}
 
 }

@@ -77,9 +77,6 @@ public class JobInstance extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private TimerEntity timerEntity;
 
-    @Transient
-    private boolean running;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FOLLOWING_JOB_ID")
     private JobInstance followingJob;
@@ -174,14 +171,7 @@ public class JobInstance extends BusinessCFEntity {
         this.customFields = customFields;
     }
 
-     public boolean isRunning() {
-        return running;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
+   
     public List<JobExecutionResultImpl> getExecutionResults() {
         return executionResults;
     }
@@ -208,8 +198,8 @@ public class JobInstance extends BusinessCFEntity {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, active=%s, jobCategoryEnum=%s, customFields=%s, timerEntity=%s, running=%s, followingJob=%s]",
-            super.toString(), jobTemplate, parametres, active, jobCategoryEnum, customFields != null ? toString(customFields.entrySet(), maxLen) : null, timerEntity, running,
+        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, active=%s, jobCategoryEnum=%s, customFields=%s, timerEntity=%s,  followingJob=%s]",
+            super.toString(), jobTemplate, parametres, active, jobCategoryEnum, customFields != null ? toString(customFields.entrySet(), maxLen) : null, timerEntity,
             followingJob);
     }
 
