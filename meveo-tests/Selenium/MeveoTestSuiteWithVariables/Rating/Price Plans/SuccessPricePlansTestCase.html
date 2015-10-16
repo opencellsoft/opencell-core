@@ -43,7 +43,7 @@
 </tr>
 <tr>
 	<td>waitForPopUp</td>
-	<td>5000</td>
+	<td>10000</td>
 	<td></td>
 </tr>
 <tr>
@@ -87,13 +87,28 @@
 	<td></td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${SellersBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectSeller}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Contrat OCfB&quot;)</td>
+	<td>css=li:contains(&quot;${SellersValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CountryBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -103,7 +118,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;FR&quot;)</td>
+	<td>css=li:contains(&quot;${CountryValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${OfferCodeBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -113,7 +138,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;FCA_V1&quot;)</td>
+	<td>css=li:contains(&quot;${OfferCodeValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CurrencyBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -123,7 +158,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;USD&quot;)</td>
+	<td>css=li:contains(&quot;${CurrencyValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ValidityCalendarBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -133,87 +178,287 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;CAL_INV_MONTHLY&quot;)</td>
+	<td>css=li:contains(&quot;${ValidityCalendarValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PriorityBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Priority}</td>
-	<td>1</td>
+	<td>${PriorityValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MinQuantityBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${MinQuantity}</td>
-	<td>2</td>
+	<td>${MinQuantityValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MaxQuantityBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${MaxQuantity}</td>
-	<td>1000</td>
+	<td>${MaxQuantityValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${StartDateSubscriptionBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${StartDateSubscription}</td>
-	<td>16/09/2015</td>
+	<td>${StartDateSubscriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EndDateSubscriptionBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${EndSubscriptionDate}</td>
-	<td>30/09/2015</td>
+	<td>${EndDateSubscriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${StartDateEventBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${StartDateEvent}</td>
-	<td>17/09/2015</td>
+	<td>${StartDateEventValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EndDateEventBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${EndDateEvent}</td>
-	<td>31/10/2015</td>
+	<td>${EndDateEventValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Criteria1Bool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Criteria1}</td>
-	<td>criteria1</td>
+	<td>${Criteria1Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Criteria2Bool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Criteria2}</td>
-	<td>criteria2</td>
+	<td>${Criteria2Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Criteria3Bool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Criteria3}</td>
-	<td>criteria3</td>
+	<td>${Criteria3Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ELExpressionBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ELExpression}</td>
-	<td>-</td>
+	<td>${ELExpressionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AmountWithoutTaxBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AmountWithoutTax}</td>
-	<td>15</td>
+	<td>${AmountWithoutTaxValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AmountWithoutTaxELBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AmountWithoutTaxEL}</td>
-	<td>5</td>
+	<td>${AmountWithoutTaxELValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AmountWithTaxBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${AmountWithTax}</td>
+	<td>${AmountWithTaxValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AmountWithTaxELBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${AmountWithTaxEL}</td>
+	<td>${AmountWithTaxELValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MinSubscrAgeBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${MinSubscrAge}</td>
-	<td>0</td>
+	<td>${MinSubscrAgeValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MaxSubscrAgeBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${MaxSubscrAge}</td>
-	<td>9999</td>
+	<td>${MaxSubscrAgeValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td>Sauvegarde effectuée !</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

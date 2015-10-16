@@ -81,6 +81,206 @@
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Recurring charges</td>
+	<td>Recurring charges</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=Recurring charges</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${RecurringCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPopUp</td>
+	<td>8000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>id=searchRecurringChargeTemplatePopup_title</td>
+	<td>Recurring charges</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:searchField1</td>
+	<td>REC1</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=td</td>
+	<td>REC1</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PrepaidWalletBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ChoosePrepaidWallet}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddOne}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddSaveRecurringCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td>Sauvegarde effectuée !</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Usage charges</td>
+	<td>Usage charges</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=Usage charges</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${UsageCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPopUp</td>
+	<td>8000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>id=searchUsageChargeTemplatePopup_title</td>
+	<td>Usage</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:searchField1</td>
+	<td>USG1</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td>USG1</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PrepaidWalletBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ChoosePrepaidWallet}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddOne}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CounterBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectCounter}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddSaveUsageCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td>Sauvegarde effectuée !</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>

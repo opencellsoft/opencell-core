@@ -28,6 +28,16 @@
 </tr>
 <tr>
 	<td>store</td>
+	<td>link=Recurring charges</td>
+	<td>RecurringCharges</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>link=Usage charges</td>
+	<td>UsageCharges</td>
+</tr>
+<tr>
+	<td>store</td>
 	<td>//*[contains(@id, 'description_text')]</td>
 	<td>UpdateDescription</td>
 </tr>
@@ -40,6 +50,51 @@
 	<td>store</td>
 	<td>//*[contains(@id, 'invoicingCalendar_entity_label')]</td>
 	<td>SelectCalendar2</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=tabView:formPanelUsageCharge:formUsageCharge:usageChargeTemplateSelectedId:entityFieldSingle:selectLink</td>
+	<td>SelectChargeCode</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div[7]/div[2]/div/div/div[2]/div[3]/div/form/div/div/div/div[2]/span[2]/div/div/div/div[1]/ul</td>
+	<td>ChoosePrepaidWallet</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div[7]/div[2]/div/div/div[2]/div[3]/div/form/div/div/div/div[2]/span[2]/div/div/div/div[2]/div/button[1]/span[2]</td>
+	<td>AddOne</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div[7]/div[2]/div/div/div[2]/div[3]/div/form/div/div/div/div[2]/span[2]/div/div/div/div[2]/div/button[2]/span[2]</td>
+	<td>AddAll</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div[7]/div[2]/div/div/div[2]/div[3]/div/form/div/div/div/div[2]/span[2]/div/div/div/div[2]/div/button[3]/span[2]</td>
+	<td>RemoveOne</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div[7]/div[2]/div/div/div[2]/div[3]/div/form/div/div/div/div[2]/span[2]/div/div/div/div[2]/div/button[4]/span[2]</td>
+	<td>RemoveAll</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=tabView:formPanelUsageCharge:formUsageCharge:counterTemplateSelectedId:entityFieldSingle:selectLink</td>
+	<td>SelectCounter</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'formPanelRecurringCharge')]</td>
+	<td>AddSaveRecurringCharge</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'formPanelUsageCharge')]</td>
+	<td>AddSaveUsageCharge</td>
 </tr>
 <tr>
 	<td>store</td>
