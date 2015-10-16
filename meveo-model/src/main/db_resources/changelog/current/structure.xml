@@ -1842,7 +1842,6 @@
 		<dropTable tableName="billing_credit_note_tax_amt" />
 		<dropTable tableName="billing_credit_note_line" />
 		<dropTable tableName="billing_credit_note" />
-
 	</changeSet>
 
 	<changeSet id="#1167_20151015" author="EdwardLegaspi">
@@ -1856,6 +1855,17 @@
 			<column name="current_invoice_adjustment_nb" type="BIGINT" />
 			<column name="invoice_adjustment_sequence_size" type="INT4" />
 		</addColumn>
-	</changeSet>
 
+		<addColumn tableName="billing_invoice">
+			<column name="detailed_invoice" type="boolean" defaultValue="true" />
+			<column name="invoice_id" type="BIGINT" />
+		</addColumn>
+
+		<addForeignKeyConstraint constraintName="fk_billing_invoice_adjusted_invoice"
+			referencedTableName="billing_invoice" baseColumnNames="invoice_id"
+			baseTableName="billing_invoice" referencedColumnNames="id" />
+
+		<sql>UPDATE billing_invoice SET invoice_type='COMMERCIAL'</sql>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -58,7 +59,7 @@ public class Invoice extends BusinessEntity {
 	@JoinColumn(name = "RECORDED_INVOICE_ID")
 	private RecordedInvoice recordedInvoice;
 
-	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
 	@Column(name = "INVOICE_NUMBER", length = 20)
@@ -116,9 +117,6 @@ public class Invoice extends BusinessEntity {
 	@JoinColumn(name = "TRADING_LANGUAGE_ID")
 	private TradingLanguage tradingLanguage;
 
-	@Column(name = "INVOICE_TYPE", length = 20)
-	private String invoiceType;
-
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
 
@@ -128,6 +126,20 @@ public class Invoice extends BusinessEntity {
 	@Column(name = "PDF")
 	@Basic(fetch = FetchType.LAZY)
 	private byte[] pdf;
+
+	@Column(name = "DETAILED_INVOICE")
+	private boolean isDetailedInvoice = true;
+
+	@ManyToOne
+	@JoinColumn(name = "INVOICE_ID")
+	private Invoice adjustedInvoice;
+
+	@OneToMany(mappedBy = "adjustedInvoice", fetch = FetchType.LAZY)
+	private List<Invoice> invoiceAdjustments;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "INVOICE_TYPE")
+	private InvoiceTypeEnum invoiceTypeEnum;
 
 	public List<RatedTransaction> getRatedTransactions() {
 		return ratedTransactions;
@@ -317,14 +329,6 @@ public class Invoice extends BusinessEntity {
 		this.temporaryInvoiceNumber = temporaryInvoiceNumber;
 	}
 
-	public String getInvoiceType() {
-		return invoiceType;
-	}
-
-	public void setInvoiceType(String invoiceType) {
-		this.invoiceType = invoiceType;
-	}
-
 	public TradingCurrency getTradingCurrency() {
 		return tradingCurrency;
 	}
@@ -371,6 +375,38 @@ public class Invoice extends BusinessEntity {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public boolean isDetailedInvoice() {
+		return isDetailedInvoice;
+	}
+
+	public void setDetailedInvoice(boolean isDetailedInvoice) {
+		this.isDetailedInvoice = isDetailedInvoice;
+	}
+
+	public Invoice getAdjustedInvoice() {
+		return adjustedInvoice;
+	}
+
+	public void setAdjustedInvoice(Invoice adjustedInvoice) {
+		this.adjustedInvoice = adjustedInvoice;
+	}
+
+	public InvoiceTypeEnum getInvoiceTypeEnum() {
+		return invoiceTypeEnum;
+	}
+
+	public void setInvoiceTypeEnum(InvoiceTypeEnum invoiceTypeEnum) {
+		this.invoiceTypeEnum = invoiceTypeEnum;
+	}
+
+	public List<Invoice> getInvoiceAdjustments() {
+		return invoiceAdjustments;
+	}
+
+	public void setInvoiceAdjustments(List<Invoice> invoiceAdjustments) {
+		this.invoiceAdjustments = invoiceAdjustments;
 	}
 
 }

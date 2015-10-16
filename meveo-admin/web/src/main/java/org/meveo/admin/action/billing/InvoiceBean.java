@@ -25,25 +25,26 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ejb.EJB;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.Auditable;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -53,11 +54,12 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceCategoryDTO;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
+import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -102,8 +104,14 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	XMLInvoiceCreator xmlInvoiceCreator;
 
 	@Inject
-	private PDFParametersConstruction pDFParametersConstruction; 
-	
+	private PDFParametersConstruction pDFParametersConstruction;
+
+	@Inject
+	@RequestParam()
+	private Instance<Long> adjustedInvoiceIdParam;
+
+	private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates;
+
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -116,7 +124,61 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	public Invoice initEntity() {
 		Invoice invoice = super.initEntity();
 
-		getPersistenceService().refresh(invoice);
+		if (invoice.isTransient() && adjustedInvoiceIdParam != null && adjustedInvoiceIdParam.get() != null) {
+			if (invoice.getAdjustedInvoice() == null) {
+				Invoice adjustedInvoice = invoiceService.findById(adjustedInvoiceIdParam.get());
+				invoice.setAdjustedInvoice(adjustedInvoice);
+				invoice.setBillingAccount(adjustedInvoice.getBillingAccount());
+				invoice.setAmountWithoutTax(adjustedInvoice.getAmountWithoutTax());
+				invoice.setAmountWithTax(adjustedInvoice.getAmountWithTax());
+				invoice.setNetToPay(adjustedInvoice.getNetToPay());
+				invoice.setCode(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));
+				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
+
+				List<InvoiceAgregate> taxAmountsAggregate = new ArrayList<>();
+				subCategoryInvoiceAgregates = new ArrayList<>();
+
+				Auditable auditable = new Auditable();
+				auditable.setCreator(getCurrentUser());
+				auditable.setCreated(new Date());
+				for (InvoiceAgregate invoiceAgregate : adjustedInvoice.getInvoiceAgregates()) {
+					if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+						TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
+						TaxInvoiceAgregate newTaxInvoiceAggregate = new TaxInvoiceAgregate();
+
+						newTaxInvoiceAggregate.setTax(taxInvoiceAgregate.getTax());
+						newTaxInvoiceAggregate.setAmountWithoutTax(taxInvoiceAgregate.getAmountWithoutTax());
+						newTaxInvoiceAggregate.setAmountWithTax(taxInvoiceAgregate.getAmountWithTax());
+						newTaxInvoiceAggregate.setAmountTax(taxInvoiceAgregate.getAmountTax());
+						newTaxInvoiceAggregate.setInvoice(invoice);
+						newTaxInvoiceAggregate.setAuditable(auditable);
+
+						taxAmountsAggregate.add(newTaxInvoiceAggregate);
+					}
+
+					if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+						SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = (SubCategoryInvoiceAgregate) invoiceAgregate;
+						SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
+
+						newSubCategoryInvoiceAgregate.setInvoiceSubCategory(subCategoryInvoiceAgregate
+								.getInvoiceSubCategory());
+						newSubCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate
+								.getAmountWithoutTax());
+						newSubCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax());
+						newSubCategoryInvoiceAgregate.setAmountTax(subCategoryInvoiceAgregate.getAmountTax());
+						newSubCategoryInvoiceAgregate.setInvoice(invoice);
+						newSubCategoryInvoiceAgregate.setAuditable(auditable);
+
+						subCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);
+					}
+				}
+
+				invoice.setInvoiceAgregates(taxAmountsAggregate);
+				invoice.getInvoiceAgregates().addAll(subCategoryInvoiceAgregates);
+			}
+		} else {
+			getPersistenceService().refresh(invoice);
+		}
 
 		return invoice;
 	}
@@ -131,6 +193,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			log.warn("No billingAccount code");
 		} else {
 			filters.put("billingAccount", ba);
+			filters.put("invoiceTypeEnum", InvoiceTypeEnum.COMMERCIAL);
 			return getLazyDataModel();
 		}
 
@@ -314,30 +377,106 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	}
 
 	public boolean isXmlInvoiceAlreadyGenerated() {
-		String fileDir = getXmlInvoiceDir().getAbsolutePath() + File.separator
-				+ (getEntity().getInvoiceNumber() != null ? getEntity().getInvoiceNumber() : getEntity().getTemporaryInvoiceNumber())
-				+ ".xml";
+		String fileDir = getXmlInvoiceDir().getAbsolutePath()
+				+ File.separator
+				+ (getEntity().getInvoiceNumber() != null ? getEntity().getInvoiceNumber() : getEntity()
+						.getTemporaryInvoiceNumber()) + ".xml";
 		File file = new File(fileDir);
 		return file.exists();
 	}
-	
+
 	public void excludeBillingAccounts(BillingRun billingrun) {
 		try {
-			log.debug("excludeBillingAccounts getSelectedEntities="+getSelectedEntities().size());
-			if(getSelectedEntities()!=null && getSelectedEntities().size()>0){
-				for (Invoice invoice :getSelectedEntities()) {
+			log.debug("excludeBillingAccounts getSelectedEntities=" + getSelectedEntities().size());
+			if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
+				for (Invoice invoice : getSelectedEntities()) {
 					invoiceService.deleteInvoice(invoice);
 					billingrun.getInvoices().remove(invoice);
-				}  
+				}
 				messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
-			}else{
-				messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));	
+			} else {
+				messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
 			}
 
 		} catch (Exception e) {
 			log.error("Failed to exclude BillingAccounts!", e);
 			messages.error(new BundleKey("messages", "error.execution"));
-		}  
+		}
+	}
+
+	public BigDecimal totalInvoiceAdjustmentAmountWithoutTax() {
+		BigDecimal total = new BigDecimal(0);
+		if (entity != null && subCategoryInvoiceAgregates != null) {
+			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
+				total = total.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
+			}
+		}
+
+		return total;
+	}
+
+	public BigDecimal totalInvoiceAdjustmentAmountTax() {
+		BigDecimal total = new BigDecimal(0);
+		if (entity != null && subCategoryInvoiceAgregates != null) {
+			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
+				total = total.add(subCategoryInvoiceAgregate.getAmountTax());
+			}
+		}
+
+		return total;
+	}
+
+	public BigDecimal totalInvoiceAdjustmentAmountWithTax() {
+		BigDecimal total = new BigDecimal(0);
+		if (entity != null && subCategoryInvoiceAgregates != null) {
+			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
+				total = total.add(subCategoryInvoiceAgregate.getAmountWithTax());
+			}
+		}
+
+		return total;
+	}
+
+	public void reCompute(SubCategoryInvoiceAgregate line) {
+		line.computeWithTax();
+	}
+
+	public Instance<Long> getAdjustedInvoiceIdParam() {
+		return adjustedInvoiceIdParam;
+	}
+
+	public void setAdjustedInvoiceIdParam(Instance<Long> adjustedInvoiceIdParam) {
+		this.adjustedInvoiceIdParam = adjustedInvoiceIdParam;
+	}
+
+	public Long getAdjustedInvoiceId() {
+		if (getEntity() != null && getEntity().getAdjustedInvoice() != null) {
+			return getEntity().getAdjustedInvoice().getId();
+		}
+
+		return adjustedInvoiceIdParam.get();
+	}
+
+	public List<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
+		return subCategoryInvoiceAgregates;
+	}
+
+	public void setSubCategoryInvoiceAgregates(List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
+		this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
+	}
+
+	public String saveOrUpdateInvoiceAdjustment() throws BusinessException {
+		if (entity.isTransient()) {
+			Long creditNoteNo = Long.parseLong(entity.getCode());
+			invoiceService.updateCreditNoteNb(entity, creditNoteNo);
+		}
+
+		super.saveOrUpdate(false);
+
+		// create xml credit note
+
+		return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid="
+				+ conversation.getId() + "&faces-redirect=true&includeViewParams=true";
 	}
 
 }

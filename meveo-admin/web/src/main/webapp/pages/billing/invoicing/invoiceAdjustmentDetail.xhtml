@@ -1,0 +1,159 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="invoiceAdjustmentDetail"
+						value="#{messages['invoice.adjustment']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<p:panel id="invoiceAdjustmentPanel"
+			header="#{messages['invoice.adjustment']}">
+
+			<hf:formPanel id="invoiceAdjustmentForm" edit="#{invoiceBean.edit}"
+				label="#{messages['invoice.adjustment']}"
+				backingBean="#{invoiceBean}" showFormButtons="false">
+
+				<hftl:decorateFormField fieldId="invoiceCode"
+					label="#{messages['billingAccount.invoice']}">
+					<h:link id="invoiceCode" outcome="invoiceDetail"
+						styleClass="field-value"
+						value="#{invoiceBean.entity.adjustedInvoice.code}">
+						<f:param name="objectId" value="#{invoiceBean.adjustedInvoiceId}" />
+						<c:if test="#{javax.enterprise.context.conversation.id != null}">
+							<f:param name="cid"
+								value="#{javax.enterprise.context.conversation.id}" />
+						</c:if>
+					</h:link>
+				</hftl:decorateFormField>
+
+				<hf:formField label="#{messages['BusinessEntity.code']}"
+					disabled="true" field="code" validateUnique="true" required="true" />
+				<hf:formField label="#{messages['BusinessEntity.description']}"
+					id="description" field="description" useConverter="false" size="50"
+					maxlength="50" required="true" />
+				<hf:formField label="#{messages['invoice.invoiceDate']}"
+					id="invoiceDate" field="invoiceDate" />
+				<hf:formField label="#{messages['invoice.dueDate']}" id="dueDate"
+					field="dueDate" />
+
+				<h:panelGroup layout="block" styleClass="form-panel-actions">
+					<p:commandButton
+						action="#{invoiceBean.saveOrUpdateInvoiceAdjustment()}"
+						value="#{messages['action.save']}" ajax="false" />
+					<p:button id="backButton" value="#{messages['action.back']}"
+						outcome="invoiceDetail" includeViewParams="true">
+						<f:param name="objectId" value="#{invoiceBean.adjustedInvoiceId}" />
+						<c:if test="#{javax.enterprise.context.conversation.id != null}">
+							<f:param name="cid"
+								value="#{javax.enterprise.context.conversation.id}" />
+						</c:if>
+					</p:button>
+				</h:panelGroup>
+			</hf:formPanel>
+
+			<p:panel id="invoiceAdjustmentLinePanel"
+				header="#{messages['invoice.adjustment.line']}">
+
+				<h:form id="invoiceAdjustmentLinesForm">
+					<p:dataTable id="resultsId_invoiceAdjustmentLines" var="entity"
+						value="#{invoiceBean.subCategoryInvoiceAgregates}">
+						<p:columnGroup type="header">
+							<p:row>
+								<p:column headerText="#{messages['charge.subCategory']}" />
+								<p:column headerText="#{messages['invoice.amountWithoutTax']}" />
+								<p:column headerText="#{messages['invoice.amountWithoutTax']}" />
+								<p:column headerText="#{messages['invoice.amountTax']}" />
+								<p:column headerText="#{messages['invoice.amountWithTax']}" />
+							</p:row>
+						</p:columnGroup>
+
+						<p:column>
+							<h:outputText value="#{entity.invoiceSubCategory.code}" />
+						</p:column>
+						<p:column>
+							<h:outputText
+								value="#{entity.invoice.adjustedInvoice.amountWithoutTax}"
+								converter="#{getConverter.forType(entity.invoice.adjustedInvoice.amountWithoutTax,'4digits')}" />
+						</p:column>
+
+						<!-- // -->
+						<p:column>
+							<p:inputText value="#{entity.amountWithoutTax}">
+								<f:converter converterId="bigDecimal4DigitsConverter" />
+								<p:ajax event="change"
+									listener="#{invoiceBean.reCompute(entity)}"
+									update="resultsId_invoiceAdjustmentLines"></p:ajax>
+							</p:inputText>
+						</p:column>
+						<p:column>
+							<p:inputText value="#{entity.amountTax}">
+								<f:converter converterId="bigDecimal4DigitsConverter" />
+								<p:ajax event="change"
+									listener="#{invoiceBean.reCompute(entity)}"
+									update="resultsId_invoiceAdjustmentLines"></p:ajax>
+							</p:inputText>
+						</p:column>
+						<p:column>
+							<h:outputText id="amountWithTax" value="#{entity.amountWithTax}"
+								converter="#{getConverter.forType(entity.amountWithoutTax,'4digits')}" />
+						</p:column>
+
+						<p:columnGroup type="footer">
+							<p:row>
+								<p:column footerText="#{messages['invoice.amount']}" colspan="2" />
+
+								<p:column>
+									<f:facet name="footer">
+										<h:outputText
+											value="#{invoiceBean.totalInvoiceAdjustmentAmountWithoutTax}"
+											converter="#{getConverter.forType(invoiceBean.totalInvoiceAdjustmentAmountWithoutTax,'4digits')}">
+										</h:outputText>
+									</f:facet>
+								</p:column>
+
+								<p:column>
+									<f:facet name="footer">
+										<h:outputText
+											value="#{invoiceBean.totalInvoiceAdjustmentAmountTax}"
+											converter="#{getConverter.forType(invoiceBean.totalInvoiceAdjustmentAmountTax,'4digits')}">
+										</h:outputText>
+									</f:facet>
+								</p:column>
+
+								<p:column>
+									<f:facet name="footer">
+										<h:outputText
+											value="#{invoiceBean.totalInvoiceAdjustmentAmountWithTax}"
+											converter="#{getConverter.forType(invoiceBean.totalInvoiceAdjustmentAmountWithTax,'4digits')}">
+										</h:outputText>
+									</f:facet>
+								</p:column>
+							</p:row>
+						</p:columnGroup>
+
+					</p:dataTable>
+				</h:form>
+
+			</p:panel>
+
+		</p:panel>
+
+	</ui:define>
+
+</ui:composition>

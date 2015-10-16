@@ -43,34 +43,30 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	@JoinColumn(name = "invoiceSubCategory")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "BILLING_INVOICE_AGREGATE_TAXES", joinColumns = @JoinColumn(name = "SUB_CAT_INVOICE_AGGREGAT_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_ID"))
 	private Set<Tax> subCategoryTaxes = new HashSet<Tax>();
 
-
-	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "CATEGORY_INVOICE_AGREGATE")
 	private CategoryInvoiceAgregate categoryInvoiceAgregate;
 
 	@OneToMany(mappedBy = "subCategoryInvoiceAggregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<TaxInvoiceAgregate> taxInvoiceAggregates = new HashSet<TaxInvoiceAgregate>();
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "WALLET_ID")
 	private WalletInstance wallet;
 
 	@OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedtransactions = new ArrayList<RatedTransaction>();
-	
+
 	@Column(name = "DISCOUNT_PLAN_CODE", length = 50)
 	private String discountPlanCode;
-	
+
 	@Column(name = "DISCOUNT_PLAN_ITEM_CODE", length = 50)
 	private String discountPlanItemCode;
-	
-	
-	
+
 	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal discountPercent;
 
@@ -81,8 +77,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
 		this.invoiceSubCategory = invoiceSubCategory;
 	}
-
-
 
 	public CategoryInvoiceAgregate getCategoryInvoiceAgregate() {
 		return categoryInvoiceAgregate;
@@ -95,7 +89,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		}
 	}
 
-	
 	public Set<TaxInvoiceAgregate> getTaxInvoiceAggregates() {
 		return taxInvoiceAggregates;
 	}
@@ -103,12 +96,12 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	public void setTaxInvoiceAggregates(Set<TaxInvoiceAgregate> taxInvoiceAggregates) {
 		this.taxInvoiceAggregates = taxInvoiceAggregates;
 	}
-	
+
 	public void addTaxInvoiceAggregate(TaxInvoiceAgregate taxInvoiceAggregate) {
-		if(taxInvoiceAggregates==null){
-			taxInvoiceAggregates=new HashSet<TaxInvoiceAgregate>();
+		if (taxInvoiceAggregates == null) {
+			taxInvoiceAggregates = new HashSet<TaxInvoiceAgregate>();
 		}
-		if(taxInvoiceAggregate!=null){
+		if (taxInvoiceAggregate != null) {
 			taxInvoiceAggregates.add(taxInvoiceAggregate);
 		}
 	}
@@ -129,8 +122,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		this.wallet = wallet;
 	}
 
-	
-	
 	public Set<Tax> getSubCategoryTaxes() {
 		return subCategoryTaxes;
 	}
@@ -140,10 +131,10 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	}
 
 	public void addSubCategoryTax(Tax subCategoryTax) {
-		if(subCategoryTaxes==null){
-			subCategoryTaxes=new HashSet<Tax>();
+		if (subCategoryTaxes == null) {
+			subCategoryTaxes = new HashSet<Tax>();
 		}
-		if(subCategoryTax!=null){
+		if (subCategoryTax != null) {
 			subCategoryTaxes.add(subCategoryTax);
 		}
 	}
@@ -164,8 +155,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		this.discountPlanItemCode = discountPlanItemCode;
 	}
 
-
-
 	public BigDecimal getDiscountPercent() {
 		return discountPercent;
 	}
@@ -173,8 +162,16 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	public void setDiscountPercent(BigDecimal discountPercent) {
 		this.discountPercent = discountPercent;
 	}
-	
-	
-	
+
+	public BigDecimal computeWithTax() {
+		if (getAmountWithoutTax() != null && getAmountTax() == null) {
+			setAmountWithTax(getAmountWithoutTax());
+		}
+		if (getAmountWithoutTax() != null && getAmountTax() != null) {
+			setAmountWithTax(getAmountWithoutTax().add(getAmountTax()));
+		}
+
+		return getAmountWithTax();
+	}
 
 }
