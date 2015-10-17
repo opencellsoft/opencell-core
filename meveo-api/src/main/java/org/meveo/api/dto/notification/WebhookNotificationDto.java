@@ -53,7 +53,7 @@ public class WebhookNotificationDto extends NotificationDto {
 			headers.putAll(e.getHeaders());
 		}
 		if (e.getParams() != null) {
-			params.putAll(e.getParams());
+			params.putAll(e.getWebhookParams());
 		}
 	}
 

@@ -139,12 +139,12 @@ public class WebHook extends Notification {
 		this.webhookParams = webhookParams;
 	}
 
-	@Override
-    public String toString() {
-        final int maxLen = 10;
-        return String.format("WebHook [host=%s, port=%s, page=%s, httpMethod=%s, username=%s, password=%s, headers=%s, webhookParams=%s, notification=%s]", host, port, page, httpMethod,
-            username, password, headers != null ? toString(headers.entrySet(), maxLen) : null, webhookParams != null ? toString(webhookParams.entrySet(), maxLen) : null, super.toString());
-    }
+//	@Override
+//    public String toString() {
+//        final int maxLen = 10;
+//        return String.format("WebHook [host=%s, port=%s, page=%s, httpMethod=%s, username=%s, password=%s, headers=%s, webhookParams=%s, notification=%s]", host, port, page, httpMethod,
+//            username, password, headers != null ? toString(headers.entrySet(), maxLen) : null, webhookParams != null ? toString(webhookParams.entrySet(), maxLen) : null, super.toString());
+//    }
 
     private String toString(Collection<?> collection, int maxLen) {
         StringBuilder builder = new StringBuilder();
@@ -183,5 +183,14 @@ public class WebHook extends Notification {
 				}	
 			}
 		return params;
+	}
+
+	@Override
+	public String toString() {
+		return "WebHook [host=" + host + ", port=" + port + ", page=" + page
+				+ ", httpMethod=" + httpMethod + ", username=" + username
+				+ ", password=" + password + ", headers=" + headers
+				+ ", webhookParams=" + webhookParams + ", encodedHeaders="
+				+ encodedHeaders + ", encodedParams=" + encodedParams + "]";
 	}
 }
