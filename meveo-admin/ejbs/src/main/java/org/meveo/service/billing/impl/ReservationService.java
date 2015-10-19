@@ -32,7 +32,6 @@ import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.Subscription;
@@ -78,11 +77,9 @@ public class ReservationService extends PersistenceService<Reservation> {
     private RatingCacheContainerProvider ratingCacheContainerProvider;
 
 	// FIXME: rethink this service in term of prepaid wallets
-	public Long createReservation(User currentUser, String sellerCode, String offerCode, String userAccountCode,
+	public Long createReservation(Provider provider, String sellerCode, String offerCode, String userAccountCode,
 			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1, String param2,
 			String param3, boolean amountWithTax) throws BusinessException {
-		
-		Provider provider = currentUser.getProvider();
 
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
@@ -120,7 +117,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
 				subscriptionDate, param1, param2, param3, new BigDecimal(1));
 
-		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(currentUser, seller, userAccount,
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(provider, seller, userAccount,
 				subscriptionDate);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
@@ -181,18 +178,17 @@ public class ReservationService extends PersistenceService<Reservation> {
 		return reservation.getId();
 	}
 
-	public void updateReservation(Long reservationId, User currentUser, String sellerCode, String offerCode,
+	public void updateReservation(Long reservationId, Provider provider, String sellerCode, String offerCode,
 			String userAccountCode, Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1,
 			String param2, String param3, boolean amountWithTax) throws BusinessException {
-		updateReservation(getEntityManager(), reservationId, currentUser, sellerCode, offerCode, userAccountCode,
+		updateReservation(getEntityManager(), reservationId, provider, sellerCode, offerCode, userAccountCode,
 				subscriptionDate, expiryDate, creditLimit, param1, param2, param3, amountWithTax);
 	}
 
-	public void updateReservation(EntityManager em, Long reservationId, User currentUser, String sellerCode,
+	public void updateReservation(EntityManager em, Long reservationId, Provider provider, String sellerCode,
 			String offerCode, String userAccountCode, Date subscriptionDate, Date expiryDate, BigDecimal creditLimit,
 			String param1, String param2, String param3, boolean amountWithTax) throws BusinessException {
-		Provider provider = currentUser.getProvider();
-		
+
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, provider);
@@ -229,7 +225,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
 				subscriptionDate, param1, param2, param3, new BigDecimal(1));
 
-		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(currentUser, seller, userAccount,
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(provider, seller, userAccount,
 				subscriptionDate);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
@@ -322,17 +318,16 @@ public class ReservationService extends PersistenceService<Reservation> {
 		reservation.setStatus(ReservationStatus.CONFIRMED);
 	}
 
-	public BigDecimal confirmReservation(Long reservationId, User currentUser, String sellerCode, String offerCode,
+	public BigDecimal confirmReservation(Long reservationId, Provider provider, String sellerCode, String offerCode,
 			Date subscriptionDate, Date terminationDate, String param1, String param2, String param3)
 			throws BusinessException {
-		return confirmReservation(getEntityManager(), reservationId, currentUser, sellerCode, offerCode, subscriptionDate,
+		return confirmReservation(getEntityManager(), reservationId, provider, sellerCode, offerCode, subscriptionDate,
 				terminationDate, param1, param2, param3);
 	}
 
-	public BigDecimal confirmReservation(EntityManager em, Long reservationId, User currentUser, String sellerCode,
+	public BigDecimal confirmReservation(EntityManager em, Long reservationId, Provider provider, String sellerCode,
 			String offerCode, Date subscriptionDate, Date terminationDate, String param1, String param2, String param3)
 			throws BusinessException {
-		Provider provider = currentUser.getProvider();
 		Reservation reservation = findById(reservationId);
 		if (reservation == null) {
 			throw new BusinessException("Reservation with id=" + reservationId + " does not exists.");
@@ -381,7 +376,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate,
 				reservation.getUserAccount(), subscriptionDate, param1, param2, param3, new BigDecimal(1));
 
-		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(currentUser, seller,
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(provider, seller,
 				reservation.getUserAccount(), subscriptionDate);
 
 		if (servicesSum != null && ratedAmount != null) {

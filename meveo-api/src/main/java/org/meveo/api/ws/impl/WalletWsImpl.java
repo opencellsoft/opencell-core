@@ -91,7 +91,7 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			result.setMessage("" + walletApi.createReservation(postData, getCurrentUser()));
+			result.setMessage("" + walletApi.createReservation(postData, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -110,7 +110,7 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			walletApi.updateReservation(postData, getCurrentUser());
+			walletApi.updateReservation(postData, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -148,7 +148,7 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			result.setMessage("" + walletApi.confirmReservation(postData, getCurrentUser()));
+			result.setMessage("" + walletApi.confirmReservation(postData, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
