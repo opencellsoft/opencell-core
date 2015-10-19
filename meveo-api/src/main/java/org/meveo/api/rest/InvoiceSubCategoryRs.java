@@ -48,6 +48,16 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
 	public ActionStatus update(InvoiceSubCategoryDto postData);
 
 	/**
+	 * Create or update invoice sub category.
+	 * 
+	 * @param postData
+	 * @return
+	 */
+	@Path("/")
+	@POST
+	public ActionStatus createOrUpdate(InvoiceSubCategoryDto postData);
+	
+	/**
 	 * Search for invoice sub category with a given code.
 	 * 
 	 * @param invoiceSubCategoryCode
