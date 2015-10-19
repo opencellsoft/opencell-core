@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
@@ -34,7 +35,7 @@ import org.meveo.api.dto.account.NameDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.response.account.FindAccountHierarchyResponseDto;
+import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidEnumValue;
@@ -1895,9 +1896,9 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 	}
 
-	public FindAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData,
+	public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData,
 			User currentUser) throws MeveoApiException {
-		FindAccountHierarchyResponseDto result = new FindAccountHierarchyResponseDto();
+		GetAccountHierarchyResponseDto result = new GetAccountHierarchyResponseDto();
 		Name name = null;
 
 		if (postData.getName() == null && postData.getAddress() == null) {
@@ -1973,7 +1974,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		return result;
 	}
 
-	private void addUserAccount(FindAccountHierarchyResponseDto result, UserAccount userAccount) {
+	private void addUserAccount(GetAccountHierarchyResponseDto result, UserAccount userAccount) {
 		BillingAccount billingAccount = userAccount.getBillingAccount();
 
 		addBillingAccount(result, billingAccount);
@@ -1997,7 +1998,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 	}
 
-	private void addBillingAccount(FindAccountHierarchyResponseDto result, BillingAccount billingAccount) {
+	private void addBillingAccount(GetAccountHierarchyResponseDto result, BillingAccount billingAccount) {
 		CustomerAccount customerAccount = billingAccount.getCustomerAccount();
 		Customer customer = customerAccount.getCustomer();
 
@@ -2022,7 +2023,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 	}
 
-	private void addCustomerAccount(FindAccountHierarchyResponseDto result, CustomerAccount customerAccount) {
+	private void addCustomerAccount(GetAccountHierarchyResponseDto result, CustomerAccount customerAccount) {
 		Customer customer = customerAccount.getCustomer();
 		CustomerAccountDto customerAccountDto = new CustomerAccountDto(customerAccount);
 
@@ -2041,7 +2042,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 	}
 
-	private void addCustomer(FindAccountHierarchyResponseDto result, Customer customer) {
+	private void addCustomer(GetAccountHierarchyResponseDto result, Customer customer) {
 		if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
 			result.getCustomers().getCustomer().add(new CustomerDto(customer));
 		} else {
@@ -2063,7 +2064,9 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 	}
 
-	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData,
+			User currentUser) throws MeveoApiException,
+			DuplicateDefaultAccountException {
 		NameDto name = new NameDto();
 		name.setFirstName(postData.getName().getFirstName());
 		name.setLastName(postData.getName().getLastName());
@@ -2310,7 +2313,9 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 	}
 
-	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData,
+			User currentUser) throws MeveoApiException,
+			DuplicateDefaultAccountException {
 		NameDto name = new NameDto();
 		name.setFirstName(postData.getName().getFirstName());
 		name.setLastName(postData.getName().getLastName());
@@ -2593,41 +2598,51 @@ public class AccountHierarchyApiService extends BaseApi {
 	 * @param currentUser
 	 * @throws MeveoApiException
 	 */
-	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser)
-			throws MeveoApiException {
+	public void createOrUpdateCRMAccountHierarchy(
+			CRMAccountHierarchyDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		try {
-			accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
+			accountHierarchyTypeEnum = AccountHierarchyTypeEnum
+					.valueOf(postData.getCrmAccountType());
 		} catch (IllegalArgumentException e) {
-			throw new InvalidEnumValue(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
+			throw new InvalidEnumValue(
+					AccountHierarchyTypeEnum.class.getName(),
+					postData.getCrmAccountType());
 		}
 
 		boolean accountExist = false;
 
 		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
-			Seller seller = sellerService.findByCode(postData.getCode(), currentUser.getProvider());
+			Seller seller = sellerService.findByCode(postData.getCode(),
+					currentUser.getProvider());
 			if (seller != null) {
 				accountExist = true;
 			}
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
-			Customer customer = customerService.findByCode(postData.getCode(), currentUser.getProvider());
+		} else if (accountHierarchyTypeEnum.getHighLevel() >= 3
+				&& accountHierarchyTypeEnum.getLowLevel() <= 3) {
+			Customer customer = customerService.findByCode(postData.getCode(),
+					currentUser.getProvider());
 			if (customer != null) {
 				accountExist = true;
 			}
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
-			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(),
-					currentUser.getProvider());
+		} else if (accountHierarchyTypeEnum.getHighLevel() >= 2
+				&& accountHierarchyTypeEnum.getLowLevel() <= 2) {
+			CustomerAccount customerAccount = customerAccountService
+					.findByCode(postData.getCode(), currentUser.getProvider());
 			if (customerAccount != null) {
 				accountExist = true;
 			}
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
-			BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode(),
-					currentUser.getProvider());
+		} else if (accountHierarchyTypeEnum.getHighLevel() >= 1
+				&& accountHierarchyTypeEnum.getLowLevel() <= 1) {
+			BillingAccount billingAccount = billingAccountService.findByCode(
+					postData.getCode(), currentUser.getProvider());
 			if (billingAccount != null) {
 				accountExist = true;
 			}
 		} else {
-			UserAccount userAccount = userAccountService.findByCode(postData.getCode(), currentUser.getProvider());
+			UserAccount userAccount = userAccountService.findByCode(
+					postData.getCode(), currentUser.getProvider());
 			if (userAccount != null) {
 				accountExist = true;
 			}

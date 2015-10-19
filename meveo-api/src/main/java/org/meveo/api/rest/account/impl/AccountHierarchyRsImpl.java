@@ -13,7 +13,7 @@ import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
-import org.meveo.api.dto.response.account.FindAccountHierarchyResponseDto;
+import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.AccountHierarchyRs;
@@ -115,8 +115,8 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 	}
 
 	@Override
-	public FindAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData) {
-		FindAccountHierarchyResponseDto result = new FindAccountHierarchyResponseDto();
+	public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData) {
+		GetAccountHierarchyResponseDto result = new GetAccountHierarchyResponseDto();
 		try {
 			result = accountHierarchyApi.findAccountHierarchy2(postData, getCurrentUser());
 		} catch (MeveoApiException e) {

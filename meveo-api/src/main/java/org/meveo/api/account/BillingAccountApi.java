@@ -3,6 +3,7 @@ package org.meveo.api.account;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -18,26 +19,32 @@ public class BillingAccountApi {
 
 	@Inject
 	private BillingAccountApiService billingAccountApiService;
-    
+
 	/**
 	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException
 	 */
-	public void create(BillingAccountDto postData, User currentUser) throws MeveoApiException {
+	public void create(BillingAccountDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		billingAccountApiService.create(postData, currentUser);
 	}
-    
+
 	/**
 	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @param checkCustomFields
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException
 	 */
-	public void create(BillingAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException {
-		billingAccountApiService.create(postData, currentUser, checkCustomFields);
+	public void create(BillingAccountDto postData, User currentUser,
+			boolean checkCustomFields) throws MeveoApiException,
+			DuplicateDefaultAccountException {
+		billingAccountApiService.create(postData, currentUser,
+				checkCustomFields);
 	}
 
 	/**
@@ -45,8 +52,10 @@ public class BillingAccountApi {
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException
 	 */
-	public void update(BillingAccountDto postData, User currentUser) throws MeveoApiException {
+	public void update(BillingAccountDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		billingAccountApiService.update(postData, currentUser);
 	}
 
@@ -56,9 +65,13 @@ public class BillingAccountApi {
 	 * @param currentUser
 	 * @param checkCustomFields
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException
 	 */
-	public void update(BillingAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException {
-		billingAccountApiService.update(postData, currentUser, checkCustomFields);
+	public void update(BillingAccountDto postData, User currentUser,
+			boolean checkCustomFields) throws MeveoApiException,
+			DuplicateDefaultAccountException {
+		billingAccountApiService.update(postData, currentUser,
+				checkCustomFields);
 	}
 
 	/**
@@ -68,7 +81,8 @@ public class BillingAccountApi {
 	 * @return
 	 * @throws MeveoApiException
 	 */
-	public BillingAccountDto find(String billingAccountCode, Provider provider) throws MeveoApiException {
+	public BillingAccountDto find(String billingAccountCode, Provider provider)
+			throws MeveoApiException {
 		return billingAccountApiService.find(billingAccountCode, provider);
 	}
 
@@ -78,7 +92,8 @@ public class BillingAccountApi {
 	 * @param provider
 	 * @throws MeveoApiException
 	 */
-	public void remove(String billingAccountCode, Provider provider) throws MeveoApiException {
+	public void remove(String billingAccountCode, Provider provider)
+			throws MeveoApiException {
 		billingAccountApiService.remove(billingAccountCode, provider);
 	}
 
@@ -89,8 +104,10 @@ public class BillingAccountApi {
 	 * @return
 	 * @throws MeveoApiException
 	 */
-	public BillingAccountsDto listByCustomerAccount(String customerAccountCode, Provider provider) throws MeveoApiException {
-		return billingAccountApiService.listByCustomerAccount(customerAccountCode, provider);
+	public BillingAccountsDto listByCustomerAccount(String customerAccountCode,
+			Provider provider) throws MeveoApiException {
+		return billingAccountApiService.listByCustomerAccount(
+				customerAccountCode, provider);
 	}
 
 	/**
@@ -100,7 +117,8 @@ public class BillingAccountApi {
 	 * @param currentUser
 	 * @throws MeveoApiException
 	 */
-	public void createOrUpdate(BillingAccountDto postData, User currentUser) throws MeveoApiException {
+	public void createOrUpdate(BillingAccountDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		billingAccountApiService.createOrUpdate(postData, currentUser);
 	}
 }
