@@ -79,6 +79,7 @@
 			referencedTableName="CRM_SELLER" baseColumnNames="seller_id"
 			baseTableName="CRM_CUSTOM_FIELD_INST" referencedColumnNames="id" />
     </changeSet>
+
     <changeSet author="AndriusKarpavicius" id="#1123_20151006">
         <dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="user_id"/>
     </changeSet>
@@ -92,8 +93,21 @@
      </changeSet>
    	<changeSet author="anasseh" id="20151013_1165">
      	<modifyDataType columnName="MESSAGE" newDataType="text"   tableName="MEVEO_SCRIPT_INSTANCE_ERROR"/>
-     </changeSet>   
-     <changeSet id="#1150_20151013" author="Mbarek">
+     </changeSet>      
+	<changeSet author="EdwardLegaspi" id="#1110_20151002">
+		<addColumn tableName="billing_invoice">
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="true" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+		</addColumn>
+
+		<sql>UPDATE billing_invoice SET code=concat('ocb_id_', id)</sql>
+
+		<addNotNullConstraint columnDataType="VARCHAR(60)"
+			columnName="code" tableName="billing_invoice" />
+	</changeSet>  
+    <changeSet id="#1150_20151013" author="Mbarek">
 	<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
 	<column name="display_provider" type="BOOL" defaultValueBoolean="false"></column>
 	</addColumn>
