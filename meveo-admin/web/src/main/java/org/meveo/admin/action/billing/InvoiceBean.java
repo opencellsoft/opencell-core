@@ -42,6 +42,7 @@ import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -49,7 +50,6 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceCategoryDTO;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -332,5 +332,25 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		 File file=new File(fileDir); 
 		 return file.exists();	
 	  }
+	
+	public void excludeBillingAccounts(BillingRun billingrun) {
+		try {
+			log.debug("excludeBillingAccounts getSelectedEntities="+getSelectedEntities().size());
+			if(getSelectedEntities()!=null && getSelectedEntities().size()>0){
+				for (Invoice invoice :getSelectedEntities()) {
+					invoiceService.deleteInvoice(invoice);
+					billingrun.getInvoices().remove(invoice);
+				}  
+				messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
+			}else{
+				messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));	
+			}
+
+		} catch (Exception e) {
+			log.error("Failed to exclude BillingAccounts!", e);
+			messages.error(new BundleKey("messages", "error.execution"));
+		}  
+	}
+
 	
 }

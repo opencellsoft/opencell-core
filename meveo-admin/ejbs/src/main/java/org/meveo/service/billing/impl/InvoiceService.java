@@ -25,10 +25,8 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +72,8 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -357,7 +357,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			invoice.setPaymentMethod(paymentMethod);
 			invoice.setProvider(billingRun.getProvider());
+			invoice.setCode("ocb_id_" + new Date().toString());
+			
 			em.persist(invoice);
+			
+			invoice.setCode("ocb_id_" + invoice.getId());
+			
 			// create(invoice, currentUser, currentUser.getProvider());
 			log.debug("created invoice entity with id={},  tx status={}, em open={}", invoice.getId(),
 					txReg.getTransactionStatus(), em.isOpen());
@@ -584,4 +589,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	   
      }
 	
+	@SuppressWarnings("unchecked")
+	public void deleteInvoice(Invoice invoice) {
+		Query queryTrans = getEntityManager()
+				.createQuery(
+						"update "
+								+ RatedTransaction.class.getName()
+								+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where invoice=:invoice");
+		queryTrans.setParameter("invoice", invoice);
+		queryTrans.executeUpdate(); 
+
+		Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
+		queryAgregate.setParameter("invoice", invoice);
+		List<InvoiceAgregate> invoiceAgregates=(List<InvoiceAgregate>)queryAgregate.getResultList();
+		for(InvoiceAgregate invoiceAgregate:invoiceAgregates){
+			getEntityManager().remove(invoiceAgregate);
+		}
+		getEntityManager().flush();
+		Query queryInvoices = getEntityManager().createQuery(
+				"delete from " + Invoice.class.getName() + " where id=:invoiceId");
+		queryInvoices.setParameter("invoiceId", invoice.getId());
+		queryInvoices.executeUpdate();   
+	}
 }
