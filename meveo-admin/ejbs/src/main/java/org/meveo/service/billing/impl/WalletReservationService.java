@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
@@ -160,22 +161,23 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 		}
 	}
 
-	public BigDecimal getSpentCredit(Provider provider, Seller seller, OfferTemplate offerTemplate,
+	public BigDecimal getSpentCredit(User currentUser, Seller seller, OfferTemplate offerTemplate,
 			UserAccount userAccount, Date subscriptionDate, String param1, String param2, String param3,
 			BigDecimal quantity) throws BusinessException {
 
 		BigDecimal servicesSum = computeServicesSum(offerTemplate, userAccount, subscriptionDate, param1, param2,
 				param3, quantity);
 
-		BigDecimal ratedAmount = computeRatedAmount(provider, seller, userAccount, subscriptionDate);
+		BigDecimal ratedAmount = computeRatedAmount(currentUser, seller, userAccount, subscriptionDate);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
 
 		return spentCredit;
 	}
 
-	public BigDecimal computeRatedAmount(Provider provider, Seller seller, UserAccount userAccount,
+	public BigDecimal computeRatedAmount(User currentUser, Seller seller, UserAccount userAccount,
 			Date subscriptionDate) {
+		Provider provider = currentUser.getProvider();
 		Date startDate = null;
 		Date endDate = null;
 
