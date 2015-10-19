@@ -591,14 +591,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	
 	@SuppressWarnings("unchecked")
 	public void deleteInvoice(Invoice invoice) {
-		Query queryTrans = getEntityManager()
-				.createQuery(
-						"update "
-								+ RatedTransaction.class.getName()
-								+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where invoice=:invoice");
-		queryTrans.setParameter("invoice", invoice);
-		queryTrans.executeUpdate(); 
-
+		getEntityManager().createNamedQuery("RatedTransaction.deleteInvoice")
+		.setParameter("invoice", invoice)
+		.executeUpdate();
 		Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
 		queryAgregate.setParameter("invoice", invoice);
 		List<InvoiceAgregate> invoiceAgregates=(List<InvoiceAgregate>)queryAgregate.getResultList();
