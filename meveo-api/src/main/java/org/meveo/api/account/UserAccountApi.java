@@ -3,6 +3,7 @@ package org.meveo.api.account;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -14,39 +15,46 @@ import org.meveo.service.crm.impl.UserAccountApiService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class UserAccountApi{
+public class UserAccountApi {
 
 	@Inject
 	private UserAccountApiService userAccountApiService;
-    
+
 	/**
 	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException
 	 */
-	public void create(UserAccountDto postData, User currentUser) throws MeveoApiException {
+	public void create(UserAccountDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		userAccountApiService.create(postData, currentUser);
 	}
-    
+
 	/**
 	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @param checkCustomFields
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException
 	 */
-	public void create(UserAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException {
+	public void create(UserAccountDto postData, User currentUser,
+			boolean checkCustomFields) throws MeveoApiException,
+			DuplicateDefaultAccountException {
 		userAccountApiService.create(postData, currentUser, checkCustomFields);
 	}
-   
+
 	/**
 	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException
 	 */
-	public void update(UserAccountDto postData, User currentUser) throws MeveoApiException {
+	public void update(UserAccountDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		userAccountApiService.update(postData, currentUser);
 	}
 
@@ -56,11 +64,14 @@ public class UserAccountApi{
 	 * @param currentUser
 	 * @param checkCustomFields
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException
 	 */
-	public void update(UserAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException {
+	public void update(UserAccountDto postData, User currentUser,
+			boolean checkCustomFields) throws MeveoApiException,
+			DuplicateDefaultAccountException {
 		userAccountApiService.update(postData, currentUser, checkCustomFields);
 	}
-    
+
 	/**
 	 * 
 	 * @param userAccountCode
@@ -68,20 +79,22 @@ public class UserAccountApi{
 	 * @return
 	 * @throws MeveoApiException
 	 */
-	public UserAccountDto find(String userAccountCode, Provider provider) throws MeveoApiException {
+	public UserAccountDto find(String userAccountCode, Provider provider)
+			throws MeveoApiException {
 		return userAccountApiService.find(userAccountCode, provider);
 	}
-    
+
 	/**
 	 * 
 	 * @param userAccountCode
 	 * @param provider
 	 * @throws MeveoApiException
 	 */
-	public void remove(String userAccountCode, Provider provider) throws MeveoApiException {
+	public void remove(String userAccountCode, Provider provider)
+			throws MeveoApiException {
 		userAccountApiService.remove(userAccountCode, provider);
 	}
-    
+
 	/**
 	 * 
 	 * @param billingAccountCode
@@ -89,8 +102,10 @@ public class UserAccountApi{
 	 * @return
 	 * @throws MeveoApiException
 	 */
-	public UserAccountsDto listByBillingAccount(String billingAccountCode, Provider provider) throws MeveoApiException {
-		return userAccountApiService.listByBillingAccount(billingAccountCode, provider);
+	public UserAccountsDto listByBillingAccount(String billingAccountCode,
+			Provider provider) throws MeveoApiException {
+		return userAccountApiService.listByBillingAccount(billingAccountCode,
+				provider);
 	}
 
 	/**
@@ -100,7 +115,8 @@ public class UserAccountApi{
 	 * @param currentUser
 	 * @throws MeveoApiException
 	 */
-	public void createOrUpdate(UserAccountDto postData, User currentUser) throws MeveoApiException {
+	public void createOrUpdate(UserAccountDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		userAccountApiService.createOrUpdate(postData, currentUser);
 	}
 }
