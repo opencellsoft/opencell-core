@@ -327,6 +327,11 @@ public class SubscriptionApi extends BaseApi {
 				if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
 					throw new MeveoApiException("Service "+serviceInstance.getCode()+" is already Active");
 				}
+				
+				OfferTemplate offer=serviceInstance.getSubscription().getOffer(); 
+				if (offer!=null &&!offer.getServiceTemplates().contains(serviceInstance.getServiceTemplate())) {
+					throw new MeveoApiException("Service "+serviceInstance.getCode()+" is not associated with Offer");
+				}
 
 				try {
 					serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);

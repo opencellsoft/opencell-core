@@ -114,4 +114,14 @@ public class AccountHierarchyApi{
 	public void createOrUpdate(AccountHierarchyDto postData, User currentUser) throws MeveoApiException {
 		accountHierarchyApiService.createOrUpdate(postData, currentUser);
 	}
+	
+	/**
+	 * 
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+		accountHierarchyApiService.createOrUpdateCRMAccountHierarchy(postData, currentUser);
+	}
 }

@@ -31,6 +31,9 @@ public class InvoiceConfiguration extends BusinessEntity {
     
     @Column(name = "DISPLAY_EDRS")
     private Boolean displayEdrs = false;
+    
+    @Column(name = "DISPLAY_PROVIDER")
+    private Boolean displayProvider = false;
 
     public Boolean getDisplaySubscriptions() {
         return displaySubscriptions;
@@ -63,6 +66,16 @@ public class InvoiceConfiguration extends BusinessEntity {
 	public void setDisplayEdrs(Boolean displayEdrs) {
 		this.displayEdrs = displayEdrs;
 	}
+
+	public Boolean getDisplayProvider() {
+		return displayProvider;
+	}
+
+	public void setDisplayProvider(Boolean displayProvider) {
+		this.displayProvider = displayProvider;
+	}
+	
+	
     
     
 
