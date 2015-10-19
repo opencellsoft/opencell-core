@@ -43,13 +43,18 @@
 </tr>
 <tr>
 	<td>waitForPopUp</td>
-	<td>8000</td>
-	<td></td>
+	<td>id=pricPlanMatChargePopup</td>
+	<td>10000</td>
 </tr>
 <tr>
 	<td>verifyText</td>
 	<td>//div[@id='pricPlanMatChargePopup']/div</td>
 	<td>Charges</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Charges</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
@@ -62,13 +67,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>verifyText</td>
 	<td>css=td</td>
 	<td>USG1</td>
 </tr>
 <tr>
+	<td>waitForTextPresent</td>
+	<td>USG1</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>//tbody[@id='pricPlanMatChargePopuppopupForm:pricPlanMatChargePopupdatatable_data']/tr/td</td>
+	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>
@@ -457,8 +472,18 @@
 	<td>Sauvegarde effectuée !</td>
 </tr>
 <tr>
+	<td>waitForTextPresent</td>
+	<td>Sauvegarde effectuée !</td>
+	<td></td>
+</tr>
+<tr>
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
 	<td></td>
 </tr>
 </tbody></table>

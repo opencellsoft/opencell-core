@@ -13,38 +13,98 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${CustomersAccounts}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${NewCustomersAccounts}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>verifyText</td>
+	<td>xpath=(//a[contains(text(),'Customer account')])[2]</td>
+	<td>Customer account</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Customer account</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//a[contains(text(),'Customer account')])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
 	<td>${SelectCustomer}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[2]/span/div/div/input</td>
-	<td>323277418</td>
+	<td>waitForPopUp</td>
+	<td>id=searchCustomerPopup</td>
+	<td>10000</td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[3]/button[1]/span</td>
+	<td>verifyText</td>
+	<td>id=searchCustomerPopup_title</td>
+	<td>Customer search</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Customer search</td>
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>type</td>
+	<td>id=searchCustomerPopuppopupForm:searchField1</td>
+	<td>CUST</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchCustomerPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=td</td>
+	<td>CUST</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>CUST</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
 	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${codeText}</td>
-	<td>01_cust</td>
+	<td>${CodeText}</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PrimaryContactBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -53,23 +113,48 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;DEMO_ADMIN&quot;)</td>
+	<td>css=li:contains(&quot;${PrimaryContactValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionText}</td>
-	<td>_Customer_01</td>
+	<td>${DescriptionText}</td>
+	<td>${Description}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${RefExt1Bool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${RefExt1}</td>
-	<td>Ref ext1</td>
+	<td>${RefExt1Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${RefExt2Bool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${RefExt2}</td>
-	<td>Ref ext2</td>
+	<td>${RefExt2Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -78,7 +163,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;USD&quot;)</td>
+	<td>css=li:contains(&quot;${CurrencyValue}&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -88,7 +173,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;FRA&quot;)</td>
+	<td>css=li:contains(&quot;${LanguageValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${TitleBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -98,13 +188,38 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Agency&quot;)</td>
+	<td>css=li:contains(&quot;${TitleValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${LastName}</td>
-	<td>Tunisie</td>
+	<td>${LastnameValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${FirstnameBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${FirtName}</td>
+	<td>${FirstnameValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PaymentMethodBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -113,7 +228,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Credt/Debit card&quot;)</td>
+	<td>css=li:contains(&quot;${PaymentMethodValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CreditCategoryBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -123,7 +248,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;NEWCUSTOMER&quot;)</td>
+	<td>css=li:contains(&quot;${CreditCategoryValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DefaultBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -132,49 +267,154 @@
 	<td></td>
 </tr>
 <tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Informations</td>
+	<td>Informations</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Informations</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=Informations</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${Informations}</td>
 	<td></td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${EmailBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${Email}</td>
-	<td>01@gmail.com</td>
+	<td>${EmailValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PhoneBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Phone}</td>
-	<td>012345678</td>
+	<td>${PhoneValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MobileBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Mobile}</td>
-	<td>002125549</td>
+	<td>${MobileValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Address1Bool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Address1}</td>
-	<td>address1</td>
+	<td>${Address1Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Address2Bool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Address2}</td>
-	<td>address2</td>
+	<td>${Address2Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Address3Bool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Address3}</td>
-	<td>address3</td>
+	<td>${Address3Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ZipCodeBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ZipCode}</td>
-	<td>1000</td>
+	<td>${ZipCodeValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CityBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${City}</td>
-	<td>Tunis</td>
+	<td>${CityValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CountryBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -183,18 +423,58 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Tunisia&quot;)</td>
+	<td>css=li:contains(&quot;${CountryValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MandateIdentificationBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${MandateIdentification}</td>
+	<td>${MandateIdentificationValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${SignatureDateBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${SignatureDate}</td>
-	<td>04/09/2015</td>
+	<td>${SignatureDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
+	<td>Custom fields</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Custom fields</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -202,18 +482,58 @@
 	<td></td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${CRMAccountTypeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${CRMAccountType}</td>
-	<td>Account Type</td>
+	<td>${CRMAccountTypeValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CRMParentAccountCodeBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${CRMParentAccountCode}</td>
-	<td>Account Code</td>
+	<td>${CRMParentAccountCodeValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td>Sauvegarde effectuée !</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Sauvegarde effectuée !</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

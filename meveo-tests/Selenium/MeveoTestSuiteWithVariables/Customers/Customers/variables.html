@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=searchPanel:searchForm:buttonNew</td>
+	<td>id=searchPanel:buttonNew</td>
 	<td>NewCustomers</td>
 </tr>
 <tr>
@@ -28,12 +28,12 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=formCustomerPanel:formCustomer:tabView:code:txtFieldSingle:code_text</td>
+	<td>id=formCustomer:tabView:code</td>
 	<td>CodeText</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=formCustomerPanel:formCustomer:tabView:description:txtFieldSingle:description_text</td>
+	<td>id=formCustomer:tabView:description</td>
 	<td>descriptionText</td>
 </tr>
 <tr>
@@ -53,12 +53,12 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'name_lastName_text')]</td>
+	<td>id=formCustomer:tabView:name_lastName_txt</td>
 	<td>LastName</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'name_firstName_text')]</td>
+	<td>id=formCustomer:tabView:name_firstName_txt</td>
 	<td>FirtName</td>
 </tr>
 <tr>
@@ -73,7 +73,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=formCustomerPanel:formCustomer:tabView:parentSelectId:entityFieldSingle:seller_entity_label</td>
+	<td>id=formCustomer:tabView:parentSelectId_label</td>
 	<td>SelectParentSeller</td>
 </tr>
 <tr>
@@ -130,6 +130,16 @@
 	<td>store</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td>CustomFields</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/span/span[2]/form/div/div[2]/div/div[2]/div[1]/div/div[2]/span/span[1]/div/div/input</td>
+	<td>CRMAccountType</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/span/span[2]/form/div/div[2]/div/div[2]/div[1]/div/div[2]/span/span[2]/div/div/input</td>
+	<td>CRMParentAccountCode</td>
 </tr>
 <tr>
 	<td>store</td>
