@@ -105,8 +105,11 @@ import org.meveo.model.rating.EDR;
 		         + " where rt.walletOperationId IN :notBilledWalletIdList"),
 			
 	@NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", 
-	           query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory ")        
-		})
+	           query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory "),
+	           
+   @NamedQuery(name = "RatedTransaction.deleteInvoice", query = "UPDATE RatedTransaction r "
+			+ "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null where r.invoice=:invoice"),           
+    })
 public class RatedTransaction extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
