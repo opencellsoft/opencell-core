@@ -33,9 +33,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
@@ -205,6 +207,9 @@ public class RatedTransaction extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "EDR_ID")
 	private EDR edr;
+	
+	@Transient
+	private OfferTemplate offerTemplate;
 	
 	public RatedTransaction() {
 		super();
@@ -461,6 +466,14 @@ public class RatedTransaction extends BaseEntity {
 
 	public void setEdr(EDR edr) {
 		this.edr = edr;
+	}
+
+	public OfferTemplate getOfferTemplate() {
+		return offerTemplate;
+	}
+
+	public void setOfferTemplate(OfferTemplate offerTemplate) {
+		this.offerTemplate = offerTemplate;
 	}
 
 
