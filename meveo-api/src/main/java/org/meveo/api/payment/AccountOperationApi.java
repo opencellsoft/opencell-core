@@ -52,6 +52,7 @@ public class AccountOperationApi extends BaseApi {
 	private MatchingAmountService matchingAmountService;
 
 	public void create(AccountOperationDto postData, User currentUser) throws MeveoApiException {
+		if(!StringUtils.isBlank(postData.getType())){
 		AccountOperation accountOperation = null;
 
 		CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount(), currentUser.getProvider());
@@ -198,6 +199,12 @@ public class AccountOperationApi extends BaseApi {
 
 				accountOperation.getMatchingAmounts().add(matchingAmount);
 			}
+		}
+		}else {
+			if (StringUtils.isBlank(postData.getType())) {
+				missingParameters.add("Type");
+			}
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
