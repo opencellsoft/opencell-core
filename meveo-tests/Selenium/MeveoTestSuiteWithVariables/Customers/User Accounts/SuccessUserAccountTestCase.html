@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessJobInstancesTestCase</title>
+<title>SuccessUserAccountTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessJobInstancesTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">SuccessUserAccountTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${CustomersAccounts}</td>
+	<td>${UserAccounts}</td>
 	<td></td>
 </tr>
 <tr>
@@ -23,7 +23,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${NewCustomersAccounts}</td>
+	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
@@ -33,43 +33,48 @@
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>xpath=(//a[contains(text(),'Customer account')])[2]</td>
-	<td>Customer account</td>
+	<td>link=User account</td>
+	<td>User account</td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>Customer account</td>
+	<td>waitForText</td>
+	<td>link=User account</td>
+	<td>User account</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${UserAccount}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=(//a[contains(text(),'Customer account')])[2]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectCustomer}</td>
+	<td>${SelectBillingAccount}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>id=searchCustomerPopup_title</td>
-	<td>Customer search</td>
+	<td>id=billingAccountPopup_title</td>
+	<td>Billing account search</td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>id=searchCustomerPopup_title</td>
-	<td>Customer search</td>
+	<td>id=billingAccountPopup_title</td>
+	<td>Billing account search</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='billingAccountPopup']/div</td>
+	<td></td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>id=searchCustomerPopup_title</td>
+	<td>id=billingAccountPopup_title</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
 	<td>css=td</td>
-	<td>CUST</td>
+	<td>BA</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -83,7 +88,7 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>${CodeText}</td>
+	<td>${codeText}</td>
 	<td>${Code}</td>
 </tr>
 <tr>
@@ -108,7 +113,7 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>${DescriptionText}</td>
+	<td>${descriptionText}</td>
 	<td>${Description}</td>
 </tr>
 <tr>
@@ -118,7 +123,7 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>${RefExt1}</td>
+	<td>${ExternalRef1}</td>
 	<td>${RefExt1Value}</td>
 </tr>
 <tr>
@@ -133,32 +138,12 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>${RefExt2}</td>
+	<td>${ExternalRef2}</td>
 	<td>${RefExt2Value}</td>
 </tr>
 <tr>
 	<td>endIf</td>
 	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectCurrency}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${CurrencyValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectLanguage}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${LanguageValue}&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -203,46 +188,6 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${PaymentMethodBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectPaymentMethod}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${PaymentMethodValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CreditCategoryBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectCreditCategory}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${CreditCategoryValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
 	<td>${DefaultBool}==true</td>
 	<td></td>
 </tr>
@@ -274,51 +219,6 @@
 <tr>
 	<td>click</td>
 	<td>${Informations}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${EmailBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Email}</td>
-	<td>${EmailValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${PhoneBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Phone}</td>
-	<td>${PhoneValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MobileBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Mobile}</td>
-	<td>${MobileValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -410,36 +310,6 @@
 	<td>click</td>
 	<td>css=li:contains(&quot;${CountryValue}&quot;)</td>
 	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MandateIdentificationBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${MandateIdentification}</td>
-	<td>${MandateIdentificationValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${SignatureDateBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${SignatureDate}</td>
-	<td>${SignatureDateValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
