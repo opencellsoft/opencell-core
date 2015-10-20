@@ -35,7 +35,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class AccountApiService extends BaseApi {
+public abstract class AccountApiService extends BaseApi {
 
 	@Inject
 	private CountryService countryService;
@@ -45,13 +45,13 @@ public class AccountApiService extends BaseApi {
 
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
-
+	
 	@Inject
 	private CustomerAccountService customerAccountService;
-
+	
 	@Inject
 	private BillingAccountService billingAccountService;
-
+	
 	@Inject
 	private UserAccountService userAccountService;
 

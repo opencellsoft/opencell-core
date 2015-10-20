@@ -36,9 +36,10 @@ public class AccountHierarchyApi {
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException 
 	 */
 	public void create(AccountHierarchyDto postData, User currentUser)
-			throws MeveoApiException {
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		accountHierarchyApiService.create(postData, currentUser);
 	}
 
@@ -47,9 +48,10 @@ public class AccountHierarchyApi {
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException 
 	 */
 	public void update(AccountHierarchyDto postData, User currentUser)
-			throws MeveoApiException {
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		accountHierarchyApiService.update(postData, currentUser);
 	}
 
@@ -126,7 +128,7 @@ public class AccountHierarchyApi {
 	 * @throws MeveoApiException
 	 */
 	public void createOrUpdate(AccountHierarchyDto postData, User currentUser)
-			throws MeveoApiException {
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		accountHierarchyApiService.createOrUpdate(postData, currentUser);
 	}
 

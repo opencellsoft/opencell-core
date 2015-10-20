@@ -185,7 +185,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 	@Inject
 	private TerminationReasonService terminationReasonService;
-
+	
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
@@ -212,9 +212,10 @@ public class AccountHierarchyApiService extends BaseApi {
 	 * Required Parameters :customerId, customerBrandCode,customerCategoryCode,
 	 * sellerCode
 	 * ,currencyCode,countryCode,lastName,languageCode,billingCycleCode
+	 * @throws DuplicateDefaultAccountException 
 	 */
-
-	public void create(AccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+	public void create(AccountHierarchyDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
 
 		Provider provider = currentUser.getProvider();
 
@@ -426,6 +427,7 @@ public class AccountHierarchyApiService extends BaseApi {
 				} catch (AccountAlreadyExistsException e) {
 					throw new EntityAlreadyExistsException(UserAccount.class, userAccountCode);
 				}
+				
 			} else {
 				if (StringUtils.isBlank(postData.getCustomerId())) {
 					missingParameters.add("customerId");
@@ -463,7 +465,8 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 	}
 
-	public void update(AccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+	public void update(AccountHierarchyDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
 
 		Provider provider = currentUser.getProvider();
 
@@ -728,6 +731,7 @@ public class AccountHierarchyApiService extends BaseApi {
 			} else {
 				userAccountService.update(userAccount, currentUser);
 			}
+			
 		} else {
 			if (StringUtils.isBlank(postData.getCustomerId())) {
 				missingParameters.add("customerId");
@@ -2580,9 +2584,12 @@ public class AccountHierarchyApiService extends BaseApi {
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
+	 * @throws DuplicateDefaultAccountException 
 	 */
-	public void createOrUpdate(AccountHierarchyDto postData, User currentUser) throws MeveoApiException {
-		if (customerService.findByCode(postData.getCustomerId(), currentUser.getProvider()) == null) {
+	public void createOrUpdate(AccountHierarchyDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
+		if (customerService.findByCode(postData.getCustomerId(),
+				currentUser.getProvider()) == null) {
 			create(postData, currentUser);
 		} else {
 			update(postData, currentUser);
