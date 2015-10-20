@@ -17,7 +17,9 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class XMLInvoiceHeaderCategoryDTO {
@@ -26,6 +28,8 @@ public class XMLInvoiceHeaderCategoryDTO {
 	private String code;
 	private BigDecimal amountWithoutTax = BigDecimal.ZERO;
 	private BigDecimal amountWithTax = BigDecimal.ZERO;
+
+	private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
 
 	private Map<Long, RatedTransaction> ratedtransactions = new HashMap<Long, RatedTransaction>();
 
@@ -70,7 +74,7 @@ public class XMLInvoiceHeaderCategoryDTO {
 	}
 
 	public void addAmountWithTax(BigDecimal amountToAdd) {
-		if(amountToAdd!=null){
+		if (amountToAdd != null) {
 			if (amountWithTax == null) {
 				amountWithTax = new BigDecimal("0");
 			}
@@ -83,6 +87,14 @@ public class XMLInvoiceHeaderCategoryDTO {
 			amountWithoutTax = new BigDecimal("0");
 		}
 		amountWithoutTax = amountWithoutTax.add(amountToAdd);
+	}
+
+	public List<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
+		return subCategoryInvoiceAgregates;
+	}
+
+	public void setSubCategoryInvoiceAgregates(List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
+		this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
 	}
 
 }
