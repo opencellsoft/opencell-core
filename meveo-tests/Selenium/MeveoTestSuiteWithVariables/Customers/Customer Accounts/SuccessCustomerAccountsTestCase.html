@@ -52,43 +52,28 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>id=searchCustomerPopup</td>
-	<td>10000</td>
-</tr>
-<tr>
 	<td>verifyText</td>
 	<td>id=searchCustomerPopup_title</td>
 	<td>Customer search</td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
+	<td>waitForText</td>
+	<td>id=searchCustomerPopup_title</td>
 	<td>Customer search</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>id=searchCustomerPopup_title</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>id=searchCustomerPopuppopupForm:searchField1</td>
-	<td>CUST</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=searchCustomerPopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>css=td</td>
 	<td>CUST</td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>CUST</td>
+	<td>verifyElementPresent</td>
+	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>

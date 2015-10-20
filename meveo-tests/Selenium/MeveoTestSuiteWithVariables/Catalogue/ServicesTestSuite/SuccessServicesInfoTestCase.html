@@ -112,14 +112,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>id=searchRecurringChargeTemplatePopup</td>
-	<td>10000</td>
-</tr>
-<tr>
 	<td>verifyText</td>
 	<td>id=searchRecurringChargeTemplatePopup_title</td>
 	<td>Recurring charges</td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=searchRecurringChargeTemplatePopup_title</td>
+	<td>Recurring charges</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>id=searchRecurringChargeTemplatePopup_title</td>
+	<td></td>
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
@@ -127,24 +132,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>id=searchRecurringChargeTemplatePopuppopupForm:searchField1</td>
-	<td>REC1</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=searchRecurringChargeTemplatePopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>css=td</td>
 	<td>REC1</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>REC1</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -222,14 +222,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>id=searchUsageChargeTemplatePopup</td>
-	<td>10000</td>
-</tr>
-<tr>
 	<td>verifyText</td>
 	<td>id=searchUsageChargeTemplatePopup_title</td>
 	<td>Usage</td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=searchUsageChargeTemplatePopup_title</td>
+	<td>Usage</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>id=searchUsageChargeTemplatePopup_title</td>
+	<td></td>
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
@@ -237,24 +242,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>id=searchRecurringChargeTemplatePopuppopupForm:searchField1</td>
-	<td>USG1</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=searchRecurringChargeTemplatePopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
 	<td>USG1</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>USG1</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
