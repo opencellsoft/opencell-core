@@ -14,12 +14,14 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -48,6 +50,9 @@ public class BillingAccountApiService extends AccountApiService {
 
 	@Inject
 	private CustomerAccountService customerAccountService;
+
+	@Inject
+	private UserAccountService userAccountService;
 
 	public void create(BillingAccountDto postData, User currentUser)
 			throws MeveoApiException, DuplicateDefaultAccountException {
@@ -497,6 +502,29 @@ public class BillingAccountApiService extends AccountApiService {
 			create(postData, currentUser);
 		} else {
 			update(postData, currentUser);
+		}
+	}
+
+	@Override
+	public void checkEntityDefaultLevel(AccountEntity entity)
+			throws DuplicateDefaultAccountException {
+		// TODO Auto-generated method stub
+		BillingAccount billingAccount = (BillingAccount) entity;
+		if (billingAccount != null) {
+			if (billingAccountService.isDuplicationExist(billingAccount)) {
+				billingAccount.setDefaultLevel(false);
+				throw new DuplicateDefaultAccountException();
+			}
+
+			if (billingAccount.getUsersAccounts() != null
+					&& billingAccount.getUsersAccounts().size() > 0) {
+				for (UserAccount ua : billingAccount.getUsersAccounts()) {
+					if (userAccountService.isDuplicationExist(ua)) {
+						ua.setDefaultLevel(false);
+						throw new DuplicateDefaultAccountException();
+					}
+				}
+			}
 		}
 	}
 }

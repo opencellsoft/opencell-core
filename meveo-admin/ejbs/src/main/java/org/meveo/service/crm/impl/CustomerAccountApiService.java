@@ -21,9 +21,12 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
@@ -37,7 +40,9 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingLanguageService;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CreditCategoryService;
@@ -63,6 +68,12 @@ public class CustomerAccountApiService extends AccountApiService {
 
 	@Inject
 	private TradingLanguageService tradingLanguageService;
+	
+	@Inject
+	private BillingAccountService billingAccountService;
+	
+	@Inject
+	private UserAccountService userAccountService;
 
 	public void create(CustomerAccountDto postData, User currentUser)
 			throws MeveoApiException, DuplicateDefaultAccountException {
@@ -590,6 +601,45 @@ public class CustomerAccountApiService extends AccountApiService {
 			create(postData, currentUser);
 		} else {
 			update(postData, currentUser);
+		}
+	}
+
+	@Override
+	public void checkEntityDefaultLevel(AccountEntity entity)
+			throws DuplicateDefaultAccountException {
+		// TODO Auto-generated method stub
+		CustomerAccount customerAccount = (CustomerAccount) entity;
+		if (customerAccount != null) {
+			if (customerAccountService.isDuplicationExist(customerAccount)) {
+				customerAccount.setDefaultLevel(false);
+				throw new DuplicateDefaultAccountException();
+			}
+			
+			if (customerAccount.getBillingAccounts() != null && customerAccount.getBillingAccounts().size() > 0) {
+				for (BillingAccount ba : customerAccount.getBillingAccounts()) {
+					checkBillingAccountDefaultLevel(ba);
+				}
+			}
+		}
+	}
+	
+	private void checkBillingAccountDefaultLevel(BillingAccount billingAccount)
+			throws DuplicateDefaultAccountException {
+		if (billingAccount != null) {
+			if (billingAccountService.isDuplicationExist(billingAccount)) {
+				billingAccount.setDefaultLevel(false);
+				throw new DuplicateDefaultAccountException();
+			}
+
+			if (billingAccount.getUsersAccounts() != null
+					&& billingAccount.getUsersAccounts().size() > 0) {
+				for (UserAccount ua : billingAccount.getUsersAccounts()) {
+					if (userAccountService.isDuplicationExist(ua)) {
+						ua.setDefaultLevel(false);
+						throw new DuplicateDefaultAccountException();
+					}
+				}
+			}
 		}
 	}
 }

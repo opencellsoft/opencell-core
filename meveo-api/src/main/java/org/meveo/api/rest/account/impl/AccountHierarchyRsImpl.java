@@ -4,6 +4,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.dto.ActionStatus;
@@ -76,6 +77,9 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		} catch (DuplicateDefaultAccountException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -90,6 +94,9 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 			accountHierarchyApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (DuplicateDefaultAccountException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
