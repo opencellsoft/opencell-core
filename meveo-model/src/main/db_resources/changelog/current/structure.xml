@@ -1867,5 +1867,11 @@
 
 		<sql>UPDATE billing_invoice SET invoice_type='COMMERCIAL'</sql>
 	</changeSet>
+
+	<changeSet id="#1170_20151020" author="EdwardLegaspi">
+		<addColumn tableName="billing_invoice_configuration">
+			<column name="display_detail" type="BOOL" defaultValueBoolean="true"></column>
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>
