@@ -444,6 +444,7 @@
 										field="terminationDate" />
 							</hftl:formPanel>
 
+							<span class="note">#{messages['message.billing.expandBillingForInvoiceAdjustment']}</span>
 							<hftl:dataList
 								dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}"
 								resultsId="i_results"
@@ -487,7 +488,8 @@
 								<p:rowExpansion>
 									<p:dataTable value="#{entity.invoiceAdjustments}" var="obj">
 										<p:column headerText="#{messages['BusinessEntity.code']}">
-											<h:link value="#{obj.code}" outcome="creditNoteDetail">
+											<h:link value="#{obj.code}" outcome="invoiceAdjustmentDetail">
+												<f:param name="adjustedInvoiceIdParam" value="#{entity.id}" />
 												<f:param name="objectId" value="#{obj.id}" />
 												<f:param name="edit" value="true" />
 												<f:param name="cid"
