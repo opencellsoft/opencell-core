@@ -268,37 +268,24 @@ public class CustomerAccountApiService extends AccountApiService {
 			}
 
 			if (customerAccount.getStatus() != null) {
-				customerAccountDto.setStatus(customerAccount.getStatus().toString() != null ? customerAccount
-						.getStatus().toString() : null);
+				customerAccountDto.setStatus(customerAccount.getStatus().toString());
 			}
 			if (customerAccount.getPaymentMethod() != null) {
-				customerAccountDto
-						.setPaymentMethod(customerAccount.getPaymentMethod().toString() != null ? customerAccount
-								.getPaymentMethod().toString() : null);
+				customerAccountDto.setPaymentMethod(customerAccount.getPaymentMethod().toString());
 			}
 
 			if (customerAccount.getCreditCategory() != null) {
-				customerAccountDto
-						.setCreditCategory(customerAccount.getCreditCategory().toString() != null ? customerAccount
-								.getCreditCategory().toString() : null);
+				customerAccountDto.setCreditCategory(customerAccount.getCreditCategory().getCode());
 			}
 
 			customerAccountDto.setDateStatus(customerAccount.getDateStatus());
 			customerAccountDto.setDateDunningLevel(customerAccount.getDateDunningLevel());
 
 			if (customerAccount.getContactInformation() != null) {
-				customerAccountDto.getContactInformation().setEmail(
-						customerAccount.getContactInformation().getEmail() != null ? customerAccount
-								.getContactInformation().getEmail() : null);
-				customerAccountDto.getContactInformation().setPhone(
-						customerAccount.getContactInformation().getPhone() != null ? customerAccount
-								.getContactInformation().getPhone() : null);
-				customerAccountDto.getContactInformation().setMobile(
-						customerAccount.getContactInformation().getMobile() != null ? customerAccount
-								.getContactInformation().getMobile() : null);
-				customerAccountDto.getContactInformation().setFax(
-						customerAccount.getContactInformation().getFax() != null ? customerAccount
-								.getContactInformation().getFax() : null);
+				customerAccountDto.getContactInformation().setEmail(customerAccount.getContactInformation().getEmail());
+				customerAccountDto.getContactInformation().setPhone(customerAccount.getContactInformation().getPhone());
+				customerAccountDto.getContactInformation().setMobile(customerAccount.getContactInformation().getMobile()) ;
+				customerAccountDto.getContactInformation().setFax(customerAccount.getContactInformation().getFax());
 			}
 
 			if (customerAccount.getCustomer() != null) {
@@ -313,8 +300,7 @@ public class CustomerAccountApiService extends AccountApiService {
 
 			if (customerAccount.getDunningLevel() != null) {
 				customerAccountDto
-						.setDunningLevel(customerAccount.getDunningLevel().toString() != null ? customerAccount
-								.getDunningLevel().toString() : null);
+						.setDunningLevel(customerAccount.getDunningLevel().toString());
 			}
 			customerAccountDto.setMandateIdentification(customerAccount.getMandateIdentification());
 			customerAccountDto.setMandateDate(customerAccount.getMandateDate());
@@ -428,71 +414,6 @@ public class CustomerAccountApiService extends AccountApiService {
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
-	}
-	
-	/**
-	 * 
-	 * @param postData
-	 * @param currentUser
-	 * @throws MeveoApiException
-	 */
-	public void updateCreditCategory(CreditCategoryDto postData, User currentUser)
-			throws MeveoApiException {
-
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())) {
-
-			CreditCategory creditCategory = creditCategoryService.findByCode(
-					postData.getCode(), currentUser.getProvider());
-
-			if (creditCategory == null) {
-				throw new EntityDoesNotExistsException(CreditCategory.class,
-						postData.getCode());
-			}
-
-			creditCategory.setCode(postData.getCode());
-			creditCategory.setDescription(postData.getDescription());
-
-			creditCategoryService.update(creditCategory, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
-
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-
-	}
-	
-	/**
-	 * 
-	 * @param postData
-	 * @param currentUser
-	 * @throws MeveoApiException
-	 */
-	public void createOrUpdateCreditCategory(CreditCategoryDto postData, User currentUser)
-			throws MeveoApiException {
-
-		if (!StringUtils.isBlank(postData.getCode())) {
-			if (creditCategoryService.findByCode(postData.getCode(),
-					currentUser.getProvider()) == null) {
-				createCreditCategory(postData, currentUser);
-			} else {
-				updateCreditCategory(postData, currentUser);
-			}
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-
 	}
 
 	public void removeCreditCategory(String code, Provider provider) throws MeveoApiException {
