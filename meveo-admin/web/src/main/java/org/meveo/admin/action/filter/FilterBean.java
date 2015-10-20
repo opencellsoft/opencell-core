@@ -29,7 +29,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.filter.FilterSelectorService;
 import org.meveo.service.filter.FilterService;
 import org.omnifaces.cdi.ViewScoped;
-
+import org.meveo.commons.utils.StringUtils;
 /**
  * @author Edward P. Legaspi
  **/
@@ -59,13 +59,14 @@ public class FilterBean extends BaseBean<Filter> {
 
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		if(entity.getInputXml()!=null && !StringUtils.isBlank(entity.getInputXml())){
 		if (!XmlUtil.validate(entity.getInputXml())) {
 			messages.error(new BundleKey("messages", "message.filter.invalidXml"));
 			return "";
 		}
 
 		Filter filter = filterService.parse(entity.getInputXml());
-
+		 if(filter!=null){
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
 		auditable.setCreator(getCurrentUser());
@@ -95,13 +96,14 @@ public class FilterBean extends BaseBean<Filter> {
 		if (filter.getFilterCondition() != null) {
 			entity.setFilterCondition(setProviderToFilterCondition(filter.getFilterCondition()));
 		}
-
+		 }
 		try {
 			validate(entity);
 		} catch (ConstraintViolationException e) {
 			messages.error(new BundleKey("messages", "message.filter.invalidXml"));
 			return "";
 		}
+		 }
 
 		return super.saveOrUpdate(killConversation);
 	}
