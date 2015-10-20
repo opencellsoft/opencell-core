@@ -34,6 +34,7 @@ import java.util.Set;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.DiscriminatorValue;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -120,6 +121,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		super(Invoice.class);
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public Invoice initEntity() {
 		Invoice invoice = super.initEntity();
@@ -176,6 +178,11 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoice.setInvoiceAgregates(taxAmountsAggregate);
 				invoice.getInvoiceAgregates().addAll(subCategoryInvoiceAgregates);
 			}
+		} else if (adjustedInvoiceIdParam != null && adjustedInvoiceIdParam.get() != null) {
+			// load subCategoryInvoiceAggregates
+			subCategoryInvoiceAgregates = (List<SubCategoryInvoiceAgregate>) invoiceAgregateService
+					.listByInvoiceAndType(invoice,
+							SubCategoryInvoiceAgregate.class.getAnnotation(DiscriminatorValue.class).value());
 		} else {
 			getPersistenceService().refresh(invoice);
 		}
