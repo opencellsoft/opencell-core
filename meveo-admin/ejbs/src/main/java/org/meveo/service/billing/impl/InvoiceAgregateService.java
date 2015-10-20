@@ -27,11 +27,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -39,9 +35,8 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> {
 
-	
-	public BigDecimal findTotalAmountByWalletSubCat(WalletInstance wallet,
-			InvoiceSubCategory invoiceSubCategory, Provider provider,Invoice invoice) {
+	public BigDecimal findTotalAmountByWalletSubCat(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory,
+			Provider provider, Invoice invoice) {
 		QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax) from "
 				+ SubCategoryInvoiceAgregate.class.getSimpleName());
 		qb.addCriterionEntity("provider", provider);
@@ -50,16 +45,14 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		qb.addCriterionEntity("invoice", invoice);
 		qb.addBooleanCriterion("discountAggregate", false);
 		try {
-			BigDecimal result = (BigDecimal) qb.getQuery(getEntityManager())
-					.getSingleResult();
+			BigDecimal result = (BigDecimal) qb.getQuery(getEntityManager()).getSingleResult();
 			return result;
 		} catch (NoResultException e) {
 			return BigDecimal.ZERO;
 		}
 
 	}
-	
-	
+
 	public Object[] findTotalAmountsForDiscountAggregates(Invoice invoice) {
 		QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax),sum(amountTax),sum(amountWithTax) from "
 				+ SubCategoryInvoiceAgregate.class.getSimpleName());
@@ -67,27 +60,39 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		qb.addBooleanCriterion("discountAggregate", true);
 		qb.addCriterionEntity("invoice", invoice);
 		try {
-			Object[] result = (Object[]) qb.getQuery(getEntityManager())
-					.getSingleResult();
+			Object[] result = (Object[]) qb.getQuery(getEntityManager()).getSingleResult();
 			return result;
 		} catch (NoResultException e) {
 			return null;
 		}
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<SubCategoryInvoiceAgregate> findDiscountAggregates(Invoice invoice) {
-		QueryBuilder qb = new QueryBuilder("from "
-				+ SubCategoryInvoiceAgregate.class.getSimpleName());
+		QueryBuilder qb = new QueryBuilder("from " + SubCategoryInvoiceAgregate.class.getSimpleName());
 		qb.addCriterionEntity("provider", invoice.getProvider());
 		qb.addBooleanCriterion("discountAggregate", true);
 		qb.addCriterionEntity("invoice", invoice);
 		List<SubCategoryInvoiceAgregate> result = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager())
-					.getResultList();
+				.getResultList();
 		return result;
 
 	}
 
+	@SuppressWarnings({ "unchecked" })
+	public List<? extends InvoiceAgregate> listByInvoiceAndType(Invoice invoice, String type) {
+		QueryBuilder qb = new QueryBuilder("from " + InvoiceAgregate.class.getSimpleName()
+				+ " i WHERE i.invoice=:invoice AND i.class=:clazz");
 
+		Query query = qb.getQuery(getEntityManager());
+		query.setParameter("invoice", invoice);
+		query.setParameter("clazz", type);
+
+		try {
+			return (List<InvoiceAgregate>) query.getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 }

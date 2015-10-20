@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.apache.bcel.generic.ACONST_NULL;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
@@ -2698,7 +2699,8 @@ public class AccountHierarchyApiService extends BaseApi {
 	}
 
 	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData,
-			User currentUser) throws MeveoApiException {
+			User currentUser) throws MeveoApiException,
+			DuplicateDefaultAccountException {
 		NameDto name = new NameDto();
 		name.setFirstName(postData.getName().getFirstName());
 		name.setLastName(postData.getName().getLastName());
@@ -2994,7 +2996,8 @@ public class AccountHierarchyApiService extends BaseApi {
 	}
 
 	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData,
-			User currentUser) throws MeveoApiException {
+			User currentUser) throws MeveoApiException,
+			DuplicateDefaultAccountException {
 		NameDto name = new NameDto();
 		name.setFirstName(postData.getName().getFirstName());
 		name.setLastName(postData.getName().getLastName());
@@ -3304,53 +3307,66 @@ public class AccountHierarchyApiService extends BaseApi {
 			update(postData, currentUser);
 		}
 	}
-	
+
 	/**
-	 * Create or update CRM Account hierarchy based on the code. 
-	 * It checks the levels and finds corresponding dto. 
-	 * If dto exists, it calls the update else create CRMAccountHierarchy.
+	 * Create or update CRM Account hierarchy based on the code. It checks the
+	 * levels and finds corresponding dto. If dto exists, it calls the update
+	 * else create CRMAccountHierarchy.
 	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
 	 */
-	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException {
+	public void createOrUpdateCRMAccountHierarchy(
+			CRMAccountHierarchyDto postData, User currentUser)
+			throws MeveoApiException, DuplicateDefaultAccountException {
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		try {
-			accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
+			accountHierarchyTypeEnum = AccountHierarchyTypeEnum
+					.valueOf(postData.getCrmAccountType());
 		} catch (IllegalArgumentException e) {
-			throw new InvalidEnumValue(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
+			throw new InvalidEnumValue(
+					AccountHierarchyTypeEnum.class.getName(),
+					postData.getCrmAccountType());
 		}
-		
+
 		boolean accountExist = false;
-		
+
 		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
-			Seller seller = sellerService.findByCode(postData.getCode(), currentUser.getProvider());
+			Seller seller = sellerService.findByCode(postData.getCode(),
+					currentUser.getProvider());
 			if (seller != null) {
 				accountExist = true;
 			}
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
-			Customer customer = customerService.findByCode(postData.getCode(), currentUser.getProvider());
+		} else if (accountHierarchyTypeEnum.getHighLevel() >= 3
+				&& accountHierarchyTypeEnum.getLowLevel() <= 3) {
+			Customer customer = customerService.findByCode(postData.getCode(),
+					currentUser.getProvider());
 			if (customer != null) {
 				accountExist = true;
 			}
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
-			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(), currentUser.getProvider());
+		} else if (accountHierarchyTypeEnum.getHighLevel() >= 2
+				&& accountHierarchyTypeEnum.getLowLevel() <= 2) {
+			CustomerAccount customerAccount = customerAccountService
+					.findByCode(postData.getCode(), currentUser.getProvider());
 			if (customerAccount != null) {
 				accountExist = true;
 			}
-		} else if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
-			BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode(), currentUser.getProvider());
+		} else if (accountHierarchyTypeEnum.getHighLevel() >= 1
+				&& accountHierarchyTypeEnum.getLowLevel() <= 1) {
+			BillingAccount billingAccount = billingAccountService.findByCode(
+					postData.getCode(), currentUser.getProvider());
 			if (billingAccount != null) {
 				accountExist = true;
 			}
 		} else {
-			UserAccount userAccount = userAccountService.findByCode(postData.getCode(), currentUser.getProvider());
+			UserAccount userAccount = userAccountService.findByCode(
+					postData.getCode(), currentUser.getProvider());
 			if (userAccount != null) {
 				accountExist = true;
 			}
 		}
-		
+
 		if (accountExist) {
 			updateCRMAccountHierarchy(postData, currentUser);
 		} else {

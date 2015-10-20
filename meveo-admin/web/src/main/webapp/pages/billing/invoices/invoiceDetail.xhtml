@@ -250,7 +250,7 @@
 						<p:column headerText="#{messages['BusinessEntity.code']}">
 							<h:link value="#{entity.code}" outcome="invoiceAdjustmentDetail">
 								<f:param name="objectId" value="#{entity.id}" />
-								<f:param name="adjustedInvoiceId" value="#{entity.adjustedInvoice.id}" />
+								<f:param name="adjustedInvoiceIdParam" value="#{entity.adjustedInvoice.id}" />
 								<f:param name="edit" value="true" />
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
