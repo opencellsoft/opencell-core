@@ -13,13 +13,33 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${Subscriptions}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Informations</td>
+	<td>Informations</td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>link=Informations</td>
+	<td>Informations</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -27,18 +47,43 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>click</td>
 	<td>${SelectUserAccount}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>xpath=/html/body/div[1]/div[1]/div[2]/form/div[1]/div[2]/span[1]/div/div/input</td>
-	<td>FCA_ACN-AT</td>
+	<td>verifyText</td>
+	<td>id=userAccountPopup_title</td>
+	<td>User account</td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>id=userAccountPopuppopupForm:buttonSearch</td>
+	<td>waitForText</td>
+	<td>id=userAccountPopup_title</td>
+	<td>User account</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=userAccountPopup_title</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>id=userAccountPopup_title</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=td</td>
+	<td>UA</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>
@@ -53,28 +98,43 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;FCA_V1&quot;)</td>
+	<td>css=li:contains(&quot;${OfferValue}&quot;)</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>01</td>
+	<td>${Code}</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>Description for this Subscription</td>
+	<td>${Description}</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${InitialAgreementDate}</td>
-	<td>03/09/2015</td>
+	<td>${InitialAgreementDateValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EndAgreementDateBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${EndAgreementDate}</td>
-	<td>30/09/2015</td>
+	<td>${EndAgreementDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DefaultBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -82,8 +142,33 @@
 	<td></td>
 </tr>
 <tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td>Sauvegarde effectuée !</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>Sauvegarde effectuée !</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>
