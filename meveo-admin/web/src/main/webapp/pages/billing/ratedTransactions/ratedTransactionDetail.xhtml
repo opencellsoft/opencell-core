@@ -97,7 +97,6 @@
 
         <hf:formPanel id="formPanel" label="#{messages['ratedTransaction.panel']}" backingBean="#{ratedTransactionBean}" showDeleteButton="false" showBackButton="true"
 		 showFormButtons="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null ? false : true}" >
-
             <hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
             <hf:formField label="#{messages['BusinessEntity.description']}" field="description" />   
 			 <hf:formField id="priceplanSelectId" label="#{messages['ratedTransaction.pricePlan']}" field="priceplan" valueLabelField="code"  popup="true" popupId="searchPricePlanPopup" disabled="true" />
@@ -121,11 +120,13 @@
 			<hf:formField label="#{messages['ratedTransaction.usageDate']}" field="usageDate"/>
 			<hf:formField label="#{messages['ratedTransaction.unityDescription']}" field="unityDescription" />
 			<hf:formField label="#{messages['ratedTransaction.doNotTriggerInvoicing']}" field="doNotTriggerInvoicing" /> 			
-             
         </hf:formPanel>
 		<p:outputPanel layout="block">
                <p:button id="backButton" value="#{messages['action.back']}" style="left:35px;" 
-				outcome="ratedTransactions" rendered="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null}"/>
+				outcome="#{ratedTransactionBean.back()}" rendered="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null}">
+				<f:param name="cid"
+					value="#{javax.enterprise.context.conversation.id}" />
+			   </p:button>
 			</p:outputPanel>
     </ui:define>
 
