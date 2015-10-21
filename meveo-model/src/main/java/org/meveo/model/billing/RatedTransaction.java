@@ -106,7 +106,7 @@ import org.meveo.model.rating.EDR;
 	           query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory "),
 	 
 	@NamedQuery(name = "RatedTransaction.deleteInvoice", query = "UPDATE RatedTransaction r "
-					+ "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null where r.invoice=:invoice"),           
+			+ "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null,r.billingRun=null,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN where r.invoice=:invoice")           
 		})
 public class RatedTransaction extends BaseEntity {
 
