@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessJobInstancesTestCase</title>
+<title>AccessPointTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessJobInstancesTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">AccessPointTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${Subscriptions}</td>
+	<td>${AccessPoints}</td>
 	<td></td>
 </tr>
 <tr>
@@ -23,7 +23,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${buttonNew}</td>
+	<td>${NewAccessPoints}</td>
 	<td></td>
 </tr>
 <tr>
@@ -47,57 +47,67 @@
 	<td></td>
 </tr>
 <tr>
+	<td>type</td>
+	<td>${AccessPointCode}</td>
+	<td>${AccCode}</td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>${SelectUserAccount}</td>
+	<td>${SelectSubscription}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>id=userAccountPopup_title</td>
-	<td>User account</td>
+	<td>id=searchSubscriptionPopup_title</td>
+	<td>Subscription</td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>id=userAccountPopup_title</td>
-	<td>User account</td>
+	<td>id=searchSubscriptionPopup_title</td>
+	<td>Subscription</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>id=searchSubscriptionPopup_title</td>
+	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>id=userAccountPopup_title</td>
+	<td>id=searchSubscriptionPopup_title</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=searchSubscriptionPopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForConfirmation</td>
+	<td>id=searchSubscriptionPopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=searchSubscriptionPopuppopupForm:searchField1</td>
+	<td>SUB</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchSubscriptionPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=td</td>
+	<td>SUB</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>id=userAccountPopup_title</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>id=userAccountPopuppopupForm:searchField1</td>
-	<td>UA</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=userAccountPopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>css=td</td>
-	<td>UA</td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
 	<td>css=td</td>
 	<td></td>
 </tr>
@@ -105,41 +115,16 @@
 	<td>click</td>
 	<td>css=td</td>
 	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectOffer}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${OfferValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${codeText}</td>
-	<td>${Code}</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${descriptionText}</td>
-	<td>${Description}</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${InitialAgreementDate}</td>
-	<td>${InitialAgreementDateValue}</td>
 </tr>
 <tr>
 	<td>if</td>
-	<td>${EndAgreementDateBool}==true</td>
+	<td>${StartDateBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${EndAgreementDate}</td>
-	<td>${EndAgreementDateValue}</td>
+	<td>${StartDate}</td>
+	<td>${StartDateValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -148,17 +133,37 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${DefaultBool}==true</td>
+	<td>${EndDateBool}==true</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${Default}</td>
-	<td></td>
+	<td>type</td>
+	<td>${EndDate}</td>
+	<td>${EndDateValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
 	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
+	<td>Custom fields</td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
+	<td>Custom fields</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -186,6 +191,7 @@
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
+
 </tbody></table>
 </body>
 </html>
