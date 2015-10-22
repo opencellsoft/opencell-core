@@ -238,12 +238,5 @@ public class CustomerAccountDto extends AccountDto {
 		this.contactInformation = contactInformation;
 	}
 
-//	public Boolean getDefaultLevel() {
-//		return defaultLevel;
-//	}
-//
-//	public void setDefaultLevel(Boolean defaultLevel) {
-//		this.defaultLevel = defaultLevel;
-//	}
 
 }
