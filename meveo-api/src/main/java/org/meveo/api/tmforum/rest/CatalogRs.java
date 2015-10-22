@@ -32,7 +32,7 @@ public interface CatalogRs {
 	@POST
 	@Path("/productOffering")
 	Response createProductOffering(OfferTemplate offer);
-
+	
 	@GET
 	@Path("/productOffering/{id}")
 	Response findProductOfferingById(@PathParam("id") String id);
