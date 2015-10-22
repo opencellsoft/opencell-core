@@ -598,7 +598,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	public boolean isDuplicationExist(CustomerAccount customerAccount) {
-		if (customerAccount == null || !customerAccount.getDefaultLevel()) {
+		if (customerAccount == null || (customerAccount.getDefaultLevel() != null && !customerAccount.getDefaultLevel())) {
 			return false;
 		}
 		Customer customer = customerAccount.getCustomer();

@@ -185,7 +185,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 	@Inject
 	private TerminationReasonService terminationReasonService;
-	
+			
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
@@ -390,7 +390,10 @@ public class AccountHierarchyApiService extends BaseApi {
 				customerAccount.setTradingCurrency(tradingCurrency);
 				customerAccount.setTradingLanguage(tradingLanguage);
 				customerAccount.setDateDunningLevel(new Date());
-				customerAccountService.create(customerAccount, currentUser, provider);
+				customerAccount.setDefaultLevel(true);
+				
+				customerAccountService.create(customerAccount, currentUser,
+						provider);
 
 				String billingCycleCode = StringUtils.normalizeHierarchyCode(postData.getBillingCycleCode());
 				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser,
@@ -413,7 +416,9 @@ public class AccountHierarchyApiService extends BaseApi {
 				billingAccount.setTradingLanguage(tradingLanguage);
 				billingAccount.setBillingCycle(billingCycle);
 				billingAccount.setProvider(provider);
-				billingAccountService.createBillingAccount(billingAccount, currentUser, provider);
+				billingAccount.setDefaultLevel(true);
+				billingAccountService.createBillingAccount(billingAccount,
+						currentUser, provider);
 
 				String userAccountCode = USER_ACCOUNT_PREFIX
 						+ StringUtils.normalizeHierarchyCode(postData.getCustomerId());
@@ -421,7 +426,7 @@ public class AccountHierarchyApiService extends BaseApi {
 				userAccount.setStatus(AccountStatusEnum.ACTIVE);
 				userAccount.setBillingAccount(billingAccount);
 				userAccount.setCode(userAccountCode);
-
+				userAccount.setDefaultLevel(true);
 				try {
 					userAccountService.createUserAccount(billingAccount, userAccount, currentUser);
 				} catch (AccountAlreadyExistsException e) {
@@ -2378,7 +2383,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
 			// update customer
-			log.debug("update");
+			log.debug("update c");
 
 			CustomerDto customerDto = new CustomerDto();
 			customerDto.setCode(postData.getCode());
