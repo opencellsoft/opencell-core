@@ -11,6 +11,7 @@
 
 	<modules>
 		<module>meveo-model</module>
+		<module>meveo-tmforum</module>
 		<module>meveo-admin</module>
 		<module>meveo-api</module>
 	</modules>
@@ -135,6 +136,11 @@
 			<dependency>
 				<groupId>org.manaty</groupId>
 				<artifactId>meveo-model</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-tmforum</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
