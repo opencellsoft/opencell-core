@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.bcel.generic.ACONST_NULL;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
@@ -190,8 +189,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 	@Inject
 	private ProviderService providerService;
-	
-	
+			
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
@@ -451,6 +449,7 @@ public class AccountHierarchyApiService extends BaseApi {
 				customerAccount.setTradingCurrency(tradingCurrency);
 				customerAccount.setTradingLanguage(tradingLanguage);
 				customerAccount.setDateDunningLevel(new Date());
+				customerAccount.setDefaultLevel(true);
 				customerAccountService.create(customerAccount, currentUser,
 						provider);
 
@@ -488,6 +487,7 @@ public class AccountHierarchyApiService extends BaseApi {
 				billingAccount.setTradingLanguage(tradingLanguage);
 				billingAccount.setBillingCycle(billingCycle);
 				billingAccount.setProvider(provider);
+				billingAccount.setDefaultLevel(true);
 				billingAccountService.createBillingAccount(billingAccount,
 						currentUser, provider);
 
@@ -498,7 +498,7 @@ public class AccountHierarchyApiService extends BaseApi {
 				userAccount.setStatus(AccountStatusEnum.ACTIVE);
 				userAccount.setBillingAccount(billingAccount);
 				userAccount.setCode(userAccountCode);
-
+				userAccount.setDefaultLevel(true);
 				try {
 					userAccountService.createUserAccount(billingAccount,
 							userAccount, currentUser);
@@ -3070,7 +3070,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		if (accountHierarchyTypeEnum.getHighLevel() >= 3
 				&& accountHierarchyTypeEnum.getLowLevel() <= 3) {
 			// update customer
-			log.debug("update");
+			log.debug("update c");
 
 			CustomerDto customerDto = new CustomerDto();
 			customerDto.setCode(postData.getCode());

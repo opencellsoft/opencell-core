@@ -61,9 +61,13 @@ public class UserAccountApiService extends AccountApiService {
 
 			userAccount.setBillingAccount(billingAccount);
 			userAccount.setProvider(currentUser.getProvider());
-
+			
+			userAccount.setDefaultLevel(postData.isDefaultLevel());
+			
+			checkEntityDefaultLevel(userAccount);
+			
 			try {
-				checkEntityDefaultLevel(userAccount);
+				
 				userAccountService.createUserAccount(billingAccount,
 						userAccount, currentUser);
 			} catch (AccountAlreadyExistsException e) {
@@ -114,6 +118,9 @@ public class UserAccountApiService extends AccountApiService {
 				}
 				userAccount.setBillingAccount(billingAccount);
 			}
+			
+			userAccount.setDefaultLevel(postData.isDefaultLevel());
+			
 			checkEntityDefaultLevel(userAccount);
 			updateAccount(userAccount, postData, currentUser,
 					AccountLevelEnum.UA, checkCustomFields);
