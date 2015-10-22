@@ -174,7 +174,7 @@ public class WebHook extends Notification {
     
     public StringBuffer getEncodedParams() {
 		StringBuffer params=new StringBuffer();
-		if(getHeaders()!=null){
+		if(getWebhookParams()!=null){
 			String sep="";
 			for(String key:getWebhookParams().keySet()){
 				String valueParams=getWebhookParams().get(key);

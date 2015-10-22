@@ -91,11 +91,11 @@ public class WebhookNotificationApi extends BaseApi {
 			}
 			webHook.setUsername(postData.getUsername());
 			webHook.setPassword(postData.getPassword());
-			if (postData.getHeaders() != null) {
-				webHook.getHeaders().putAll(postData.getHeaders());
+			if(postData.getHeaders()!=null){
+				webHook.setHeaders(postData.getHeaders());
 			}
-			if (postData.getParams() != null) {
-				webHook.getWebhookParams().putAll(postData.getParams());
+			if(postData.getParams()!=null){
+				webHook.setWebhookParams(postData.getParams());
 			}
 
 			webHookService.create(webHook, currentUser, currentUser.getProvider());
@@ -197,13 +197,12 @@ public class WebhookNotificationApi extends BaseApi {
 			}
 			webHook.setUsername(postData.getUsername());
 			webHook.setPassword(postData.getPassword());
-			if (postData.getHeaders() != null) {
-				webHook.getHeaders().putAll(postData.getHeaders());
+			if(postData.getHeaders()!=null){
+				webHook.setHeaders(postData.getHeaders());
 			}
-			if (postData.getParams() != null) {
-				webHook.getParams().putAll(postData.getParams());
+			if(postData.getParams()!=null){
+				webHook.setWebhookParams(postData.getParams());
 			}
-
 			webHookService.update(webHook, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
