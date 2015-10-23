@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>ExecuteJobInstanceTestCase</title>
+<title>RunInvoicingJobTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">ExecuteJobInstanceTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">RunInvoicingJobTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
@@ -22,28 +22,68 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>link=RR_Job</td>
-	<td>${TimerName}</td>
+	<td>if</td>
+	<td>${JobCategoryBool}==true</td>
+	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>link=RR_Job</td>
-	<td>${TimerName}</td>
+	<td>click</td>
+	<td>${searchJobCategory}</td>
+	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
-	<td>link=RR_Job</td>
+	<td>click</td>
+	<td>//div[37]/div/ul/li[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${buttonSearch}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>link=RR_Job</td>
+	<td>id=datatable_timersBean_results</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>id=datatable_timersBean_results</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Inv_Job</td>
+	<td>${InvoicingJob}</td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>link=Inv_Job</td>
+	<td>${InvoicingJob}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=Inv_Job</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>link=Inv_Job</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=RR_Job</td>
+	<td>link=Inv_Job</td>
 	<td></td>
 </tr>
 <tr>

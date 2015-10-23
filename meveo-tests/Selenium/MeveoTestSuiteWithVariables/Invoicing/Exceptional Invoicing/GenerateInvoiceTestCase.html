@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>ExecuteJobInstanceTestCase</title>
+<title>GenerateInvoicingTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">ExecuteJobInstanceTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">GenerateInvoicingTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${JobInstances}</td>
+	<td>${ExceptionalInvoicing}</td>
 	<td></td>
 </tr>
 <tr>
@@ -23,72 +23,67 @@
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>link=RR_Job</td>
-	<td>${TimerName}</td>
+	<td>link=BA</td>
+	<td>${BillingAccountCode}</td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>link=RR_Job</td>
-	<td>${TimerName}</td>
+	<td>link=BA</td>
+	<td>${BillingAccountCode}</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>link=RR_Job</td>
+	<td>link=BA</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>link=RR_Job</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>link=RR_Job</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>link=BA</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${ExecuteJob}</td>
+	<td>//tbody[@id='datatable_results_data']/tr[3]/td/div/div[2]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${InvoicingDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${InvoiceDate}</td>
+	<td>${InvoicingDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${LastTransactionDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${LastTransactionDate}</td>
+	<td>${LastTransactionDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${CreateBillingRun}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForPageToLoad</td>
 	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td>Exécution effectuée !</td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td>Exécution effectuée !</td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
-	<td>css=span.ui-icon.ui-icon-circle-check</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementNotPresent</td>
-	<td>css=span.ui-icon.ui-icon-circle-check</td>
 	<td></td>
 </tr>
 </tbody></table>
