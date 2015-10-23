@@ -35,18 +35,18 @@ public class ScriptInstanceApi extends BaseApi {
 	public List<ScriptInstanceErrorDto> create(ScriptInstanceDto scriptInstanceDto, User currentUser) throws MissingParameterException, EntityAlreadyExistsException, InvalidEnumValue,MeveoApiException {
 		List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
 		checkDto(scriptInstanceDto);
+		
 		String packageName = scriptInstanceService.getPackageName(scriptInstanceDto.getScript());
 		String className = scriptInstanceService.getClassName(scriptInstanceDto.getScript());
-		if(packageName!=null && className!=null){
-			if(!scriptInstanceDto.getCode().equals(packageName + "." + className)){ 
-				throw new MeveoApiException("the code and 'package name + class name' must be unique");
-			}
+		String scriptCode=packageName + "." + className;
+		if(!StringUtils.isBlank(scriptInstanceDto.getCode()) && !scriptInstanceDto.getCode().equals(scriptCode)){ 
+			throw new MeveoApiException("The code and the canonical script class name must be identical"); 
 		}
-		if (scriptInstanceService.findByCode(scriptInstanceDto.getCode(), currentUser.getProvider()) != null) {
+		
+		if (scriptInstanceService.findByCode(StringUtils.isBlank(scriptInstanceDto.getCode())?scriptCode:scriptInstanceDto.getCode(), currentUser.getProvider()) != null) {
 			throw new EntityAlreadyExistsException(ScriptInstance.class, scriptInstanceDto.getCode());
 		}
 		ScriptInstance scriptInstance = new ScriptInstance();
-		scriptInstance.setCode(scriptInstanceDto.getCode());
 		scriptInstance.setDescription(scriptInstanceDto.getDescription());
 		scriptInstance.setScript(scriptInstanceDto.getScript());
 
@@ -78,13 +78,12 @@ public class ScriptInstanceApi extends BaseApi {
 		List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
 		checkDto(scriptInstanceDto);
 		String packageName = scriptInstanceService.getPackageName(scriptInstanceDto.getScript());
-		String className = scriptInstanceService.getClassName(scriptInstanceDto.getScript());
-		if(packageName!=null && className!=null){
-			if(!scriptInstanceDto.getCode().equals(packageName + "." + className)){ 
-				throw new MeveoApiException("the code and 'package name + class name' must be unique");
-			}
+		String className = scriptInstanceService.getClassName(scriptInstanceDto.getScript()); 
+		String scriptCode=packageName + "." + className;
+		if(!StringUtils.isBlank(scriptInstanceDto.getCode()) && !scriptInstanceDto.getCode().equals(scriptCode)){ 
+			throw new MeveoApiException("The code and the canonical script class name must be identical"); 
 		}
-		ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceDto.getCode(), currentUser.getProvider());
+		ScriptInstance scriptInstance = scriptInstanceService.findByCode(StringUtils.isBlank(scriptInstanceDto.getCode())?scriptCode:scriptInstanceDto.getCode(), currentUser.getProvider());
 		if (scriptInstance == null) {
 			throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceDto.getCode());
 		}		
@@ -102,7 +101,6 @@ public class ScriptInstanceApi extends BaseApi {
 		} catch (Exception e) {
               throw new MeveoApiException(e.getMessage());
 		}
-		scriptInstance = scriptInstanceService.findByCode(scriptInstanceDto.getCode(), currentUser.getProvider());
 		if (scriptInstance.getError().booleanValue()) {
 			for (ScriptInstanceError error : scriptInstance.getScriptInstanceErrors()) {
 				ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
@@ -139,7 +137,9 @@ public class ScriptInstanceApi extends BaseApi {
 	public  List<ScriptInstanceErrorDto> createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MissingParameterException, EntityAlreadyExistsException, InvalidEnumValue, EntityDoesNotExistsException,MeveoApiException{
 		List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
 		checkDto(postData);
-		ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCode(), currentUser.getProvider());
+		String packageName = scriptInstanceService.getPackageName(postData.getScript());
+		String className = scriptInstanceService.getClassName(postData.getScript());
+		ScriptInstance scriptInstance = scriptInstanceService.findByCode(StringUtils.isBlank(postData.getCode())?(packageName + "." + className):postData.getCode(), currentUser.getProvider());
 		if (scriptInstance == null) {
 			result = create(postData, currentUser);
 		} else {
@@ -152,9 +152,6 @@ public class ScriptInstanceApi extends BaseApi {
 		if (scriptInstanceDto == null) {
 			missingParameters.add("scriptInstanceDto");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-		if (StringUtils.isBlank(scriptInstanceDto.getCode()) ) {
-			missingParameters.add("code");
 		}
 		if (StringUtils.isBlank(scriptInstanceDto.getScript())) {
 			missingParameters.add("script");
