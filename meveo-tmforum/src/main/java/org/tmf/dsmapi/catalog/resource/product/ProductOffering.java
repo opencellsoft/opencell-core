@@ -14,10 +14,12 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.meveo.model.catalog.OfferTemplate;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
@@ -616,5 +618,59 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 
         return productOffering;
     }
+    public static ProductOffering parseFromOfferTemplate(OfferTemplate offer,UriInfo uriInfo,Category category){
+    	ProductOffering productOffering = new ProductOffering();
+		productOffering.setId(offer.getCode());
+		productOffering.setVersion(String.format("%d.0", offer.getVersion() == null ? 0 : offer.getVersion()));
+		productOffering.setHref(String.format("%s%s%s", uriInfo.getAbsolutePath(), "/catalogManager/productOffering/",
+				offer.getCode()));
+		productOffering.setName(offer.getCode());
+		productOffering.setDescription(offer.getDescription());
+		productOffering.setLastUpdate(offer.getAuditable() != null ? offer.getAuditable().getLastModified() : null);
+		productOffering.setLifecycleStatus(offer.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
+		productOffering.setValidFor(new TimeRange());
+		productOffering.getValidFor()
+				.setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
+		if (!offer.isActive()) {
+			productOffering.getValidFor()
+					.setEndDateTime(offer.getAuditable() != null ? offer.getAuditable().getUpdated() : null);
+		}
+
+		productOffering.setIsBundle(Boolean.FALSE);
+
+		productOffering.setCategory(new ArrayList<CatalogReference>());
+		productOffering.getCategory().add(category.getCatalogReference());
+
+		productOffering.setChannel(new ArrayList<Channel>()); // leave empty
+
+		productOffering.setPlace(new ArrayList<Place>()); // leave empty
+
+		productOffering.setBundledProductOffering(new ArrayList<BundledProductReference>());// leave
+																							// empty
+
+		productOffering.setServiceLevelAgreement(null);
+		productOffering.setProductSpecification(null);// Product
+														// Specification
+														// created from the
+														// offer (see below)
+		productOffering.setServiceCandidate(null);
+		productOffering.setResourceCandidate(null);
+		productOffering.setProductOfferingTerm(new ArrayList<ProductOfferingTerm>()); // empty
+		productOffering.setProductOfferingPrice(new ArrayList<ProductOfferingPrice>());// empty
+		return productOffering;
+    }
+
+	public static List<ProductOffering> parseFromOfferTemplates(List<OfferTemplate> offerTemplates, UriInfo uriInfo,
+			Category category) {
+		if(offerTemplates!=null){
+			List<ProductOffering> productOfferings=new ArrayList<ProductOffering>();
+			for(OfferTemplate offerTemplate:offerTemplates){
+				ProductOffering productOffering=parseFromOfferTemplate(offerTemplate, uriInfo, category);
+				productOfferings.add(productOffering);
+			}
+			return productOfferings;
+		}
+		return null;
+	}
 
 }

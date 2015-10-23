@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.poi.hssf.record.chart.CategorySeriesAxisRecord;
@@ -174,6 +175,23 @@ public class Category extends AbstractCatalogEntity implements Serializable {
 
         category.parentId = "parent id";
         category.isRoot = false;
+
+        return category;
+    }
+    public static Category createProto(UriInfo uriInfo) {
+        Category category = new Category();
+
+        category.setId("1");
+        category.setVersion("1.0");
+        category.setHref(String.format("%s/%s", uriInfo.getAbsolutePath(), category.getId()));
+        category.setName("Default");
+        category.setDescription("Default category");
+        category.setLastUpdate(new Date ());
+        category.setLifecycleStatus(LifecycleStatus.ACTIVE);
+        category.setValidFor(TimeRange.createProto ());
+
+        category.parentId = null;
+        category.isRoot = Boolean.TRUE;
 
         return category;
     }

@@ -6,16 +6,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
@@ -24,6 +29,9 @@ import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.resource.ResourceSpecification;
 import org.tmf.dsmapi.catalog.resource.service.ServiceSpecification;
+import org.tmf.dsmapi.catalog.resource.specification.CharacteristicValueType;
+import org.tmf.dsmapi.catalog.resource.specification.SpecificationCharacteristicRelationship;
+import org.tmf.dsmapi.catalog.resource.specification.SpecificationCharacteristicValue;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationRelationship;
 import org.tmf.dsmapi.commons.Utilities;
 import org.tmf.dsmapi.commons.annotation.EntityReferenceProperty;
@@ -616,6 +624,97 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
         productSpecification.productSpecCharacteristic.add(ProductSpecCharacteristic.createProto());
 
         return productSpecification;
+    }
+    
+    public static ProductSpecification parseFromOfferTemplate(OfferTemplate offer,UriInfo uriInfo){
+    	ProductSpecification productSpecification=new ProductSpecification();
+    	try{
+    	productSpecification.setId(offer.getCode());
+		productSpecification.setVersion(String.format("%d.0", offer.getVersion() == null ? 0 : offer.getVersion()));
+		productSpecification.setHref(String.format("%s%s%s", uriInfo.getAbsolutePath().toString(),
+				"/catalogManager/productSpecification/", offer.getCode()));
+		productSpecification.setName(offer.getCode());
+		productSpecification.setDescription(offer.getDescription());
+		productSpecification
+				.setLastUpdate(offer.getAuditable() != null ? offer.getAuditable().getLastModified() : null);
+		productSpecification
+				.setLifecycleStatus(offer.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
+		productSpecification.setValidFor(new TimeRange());
+		productSpecification.getValidFor()
+				.setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
+		if (!offer.isActive()) {
+			productSpecification.getValidFor()
+					.setEndDateTime(offer.getAuditable() != null ? offer.getAuditable().getUpdated() : null);
+		}
+
+		productSpecification.setProductNumber(offer.getCode());
+		productSpecification.setIsBundle(false);
+		productSpecification.setBrand("");
+
+		productSpecification.setAttachment(new ArrayList<Attachment>());// leave
+																		// empty
+
+		productSpecification.setRelatedParty(new ArrayList<RelatedParty>());// leave
+																			// empty
+
+		productSpecification.setBundledProductSpecification(new ArrayList<BundledProductReference>());// leave
+																										// empty
+
+		productSpecification.setProductSpecificationRelationship(new ArrayList<SpecificationRelationship>());// leave
+																												// empty
+		productSpecification.setServiceSpecification(new ArrayList<CatalogReference>());// leave
+																						// empty
+
+		productSpecification.setResourceSpecification(new ArrayList<CatalogReference>());// leave
+																							// empty
+
+		productSpecification.setProductSpecCharacteristic(new ArrayList<ProductSpecCharacteristic>());
+
+		ProductSpecCharacteristic productSpecCharacteristic = new ProductSpecCharacteristic();
+
+		productSpecCharacteristic.setId(offer.getCode());
+		productSpecCharacteristic.setName("service");
+		productSpecCharacteristic.setDescription("offer's service");
+		productSpecCharacteristic.setValueType(CharacteristicValueType.STRING);
+		productSpecCharacteristic.setConfigurable(Boolean.TRUE);
+		productSpecCharacteristic.setValidFor(new TimeRange());
+		productSpecCharacteristic.getValidFor()
+				.setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
+		productSpecCharacteristic
+				.setProductSpecCharRelationship(new ArrayList<SpecificationCharacteristicRelationship>());// leav
+		productSpecCharacteristic
+				.setProductSpecCharacteristicValue(new ArrayList<SpecificationCharacteristicValue>());
+
+		if (offer.getServiceTemplates() != null){
+			for (ServiceTemplate service : offer.getServiceTemplates()) {
+				SpecificationCharacteristicValue specCharacteristicValue = new SpecificationCharacteristicValue();
+				specCharacteristicValue.setValueType(CharacteristicValueType.STRING);
+				specCharacteristicValue.setDefaultValue(Boolean.FALSE);
+				specCharacteristicValue.setValue(service.getCode());
+				specCharacteristicValue.setUnitOfMeasure("unit");
+				specCharacteristicValue
+						.setValueFrom(offer.getAuditable() != null ? "" + offer.getAuditable().getCreated() : null);
+				specCharacteristicValue.setValueTo("");
+				specCharacteristicValue.setValidFor(new TimeRange());
+				specCharacteristicValue.getValidFor()
+						.setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
+				productSpecCharacteristic.getProductSpecCharacteristicValue().add(specCharacteristicValue);
+			}
+		}
+		productSpecification.getProductSpecCharacteristic().add(productSpecCharacteristic);
+    	}catch(Exception e){}
+		
+		return productSpecification;
+    }
+    public static List<ProductSpecification> parseFromOfferTemplates(List<OfferTemplate> offers,UriInfo uriInfo){
+    	if(offers!=null){
+    		List<ProductSpecification> productSpecifications=new ArrayList<ProductSpecification>();
+    		for(OfferTemplate offer:offers){
+    			productSpecifications.add(parseFromOfferTemplate(offer,uriInfo));
+    		}
+    		return productSpecifications;
+    	}
+    	return null;
     }
 
 }

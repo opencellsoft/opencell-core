@@ -12,8 +12,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.rest.security.RSSecured;
-import org.meveo.model.catalog.OfferTemplate;
 import org.tmf.dsmapi.catalog.resource.category.Category;
+import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
+import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
 
 @Path("/catalogManagement")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -29,17 +30,17 @@ public interface CatalogRs {
 	@Path("/category/{id}")
 	Response findCategoryById(@PathParam("id") String id);
 
-	@POST
+	@GET
 	@Path("/productOffering")
-	Response createProductOffering(OfferTemplate offer);
+	List<ProductOffering> findProductOfferings();
 	
 	@GET
 	@Path("/productOffering/{id}")
 	Response findProductOfferingById(@PathParam("id") String id);
 
-	@POST
+	@GET
 	@Path("/productSpecification")
-	Response createProductSpecification(OfferTemplate offer);
+	List<ProductSpecification> findProductSpecifications();
 
 	@GET
 	@Path("/productSpecification/{id}")
