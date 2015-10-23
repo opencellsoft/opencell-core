@@ -23,30 +23,59 @@
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>//tbody[@id='datatable_results_data']/tr[5]/td[2]</td>
-	<td>Id19</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[2]</td>
+	<td>Id35</td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='datatable_results_data']/tr[5]/td[2]</td>
-	<td>Id19</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[2]</td>
+	<td>Id35</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>//tbody[@id='datatable_results_data']/tr[5]/td[2]</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[3]</td>
+	<td>StatusTerminated</td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[3]</td>
+	<td>StatusTerminated</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[3]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//tbody[@id='datatable_results_data']/tr[5]/td[2]</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[3]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${PreInvoicingReportBillingRuns}</td>
+	<td>${PostInvoicingReportBillingRun}</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTitle</td>
+	<td>MEVEO | Open Source Billing Platform</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTitle</td>
+	<td>MEVEO | Open Source Billing Platform</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>
