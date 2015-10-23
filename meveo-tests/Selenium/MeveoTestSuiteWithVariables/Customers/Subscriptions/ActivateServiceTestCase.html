@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">ActivateServiceTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
 	<td>verifyText</td>
 	<td>//a[contains(text(),'Services')]</td>
 	<td>Services</td>
@@ -84,6 +79,26 @@
 <tr>
 	<td>waitForPageToLoad</td>
 	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//td[2]</td>
+	<td>SERVICE1</td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//td[2]</td>
+	<td>SERVICE1</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//td[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -184,6 +199,11 @@
 <tr>
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//td/div/div[2]/span</td>
 	<td></td>
 </tr>
 <tr>
