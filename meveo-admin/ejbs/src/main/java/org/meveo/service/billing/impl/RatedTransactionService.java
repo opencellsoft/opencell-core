@@ -331,7 +331,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 							invoiceAgregateTax.setBillingRun(billingAccount.getBillingRun());
 							invoiceAgregateTax.setTax(tax);
 							invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
-
+							
 							taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
 						}
 
@@ -351,6 +351,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						if (invoiceAgregateTax.getId() == null) {
 							invoiceAgregateService.create(invoiceAgregateTax, currentUser, currentUser.getProvider());
 						}
+						
+						invoiceAgregateTax.setSubCategoryInvoiceAggregate(invoiceAgregateSubcat);
 						invoiceAgregateSubcat.addSubCategoryTax(tax);
 						invoiceAgregateSubcat.addTaxInvoiceAggregate(invoiceAgregateTax);
 					}
@@ -794,6 +796,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			createRatedTransaction(walletOp.getId(),currentUser);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RatedTransaction> listByInvoice(Invoice invoice) {
+		QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "r", null, invoice.getProvider());
+		qb.addCriterionEntity("invoice", invoice);
+
+		try {
+			return (List<RatedTransaction>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 
 }
-

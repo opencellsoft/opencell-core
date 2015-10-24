@@ -250,8 +250,11 @@
 						<p:column headerText="#{messages['BusinessEntity.code']}">
 							<h:link value="#{entity.code}" outcome="invoiceAdjustmentDetail">
 								<f:param name="objectId" value="#{entity.id}" />
-								<f:param name="adjustedInvoiceIdParam" value="#{entity.adjustedInvoice.id}" />
-								<f:param name="edit" value="true" />
+								<f:param name="adjustedInvoiceIdParam"
+									value="#{entity.adjustedInvoice.id}" />
+								<f:param name="detailedParam"
+									value="#{entity.isDetailedInvoice}" />
+								<f:param name="edit" value="false" />
 								<f:param name="cid"
 									value="#{javax.enterprise.context.conversation.id}" />
 							</h:link>
@@ -259,20 +262,34 @@
 						<hftl:column label="#{messages['BusinessEntity.description']}"
 							field="description" />
 						<hftl:column label="#{messages['invoice.invoiceDate']}"
-							field="invoiceDate" />
+							field="invoiceDate" isDate="true" />
 						<hftl:column label="#{messages['invoice.dueDate']}"
-							field="dueDate" />
+							field="dueDate" isDate="true" />
 					</hftl:dataList>
 				</p:fieldset>
 
 				<hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false"
 					id="invoiceAdjustmentForm" edit="false">
 					<p:outputPanel styleClass="action-buttons" column="2"
-						id="invoiceAdjustmentActionPanel">
-						<p:button id="buttonNew" value="#{messages['commons.new']}"
+						id="invoiceAdjustmentActionPanel"
+						rendered="#{not empty invoiceBean.entity.invoiceNumber}">
+						<p:button id="btnNewIAAggregated"
+							value="#{messages['invoice.adjustment.action.new.aggregated']}"
 							outcome="invoiceAdjustmentDetail">
 							<f:param name="adjustedInvoiceIdParam"
 								value="#{invoiceBean.entity.id}" />
+							<f:param name="detailedParam" value="false" />
+							<f:param name="cid"
+								value="#{javax.enterprise.context.conversation.id}" />
+							<f:param name="edit" value="true" />
+						</p:button>
+
+						<p:button id="btnNewIADetailed"
+							value="#{messages['invoice.adjustment.action.new.detailed']}"
+							outcome="invoiceAdjustmentDetail">
+							<f:param name="adjustedInvoiceIdParam"
+								value="#{invoiceBean.entity.id}" />
+							<f:param name="detailedParam" value="true" />
 							<f:param name="cid"
 								value="#{javax.enterprise.context.conversation.id}" />
 							<f:param name="edit" value="true" />
