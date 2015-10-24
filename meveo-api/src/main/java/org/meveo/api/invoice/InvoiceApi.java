@@ -371,63 +371,7 @@ public class InvoiceApi extends BaseApi {
 				List<Invoice> invoiceList = billingAccount.getInvoices();
 
 				for (Invoice invoice : invoiceList) {
-					InvoiceDto customerInvoiceDto = new InvoiceDto();
-					customerInvoiceDto.setBillingAccountCode(billingAccount
-							.getCode());
-					customerInvoiceDto.setInvoiceDate(invoice.getInvoiceDate());
-					customerInvoiceDto.setDueDate(invoice.getDueDate());
-
-					customerInvoiceDto.setAmountWithoutTax(invoice
-							.getAmountWithoutTax());
-					customerInvoiceDto.setAmountTax(invoice.getAmountTax());
-					customerInvoiceDto.setAmountWithTax(invoice
-							.getAmountWithTax());
-					customerInvoiceDto.setInvoiceNumber(invoice
-							.getInvoiceNumber());
-					customerInvoiceDto.setPaymentMathod(invoice
-							.getPaymentMethod().toString());
-					customerInvoiceDto.setType(invoice.getInvoiceTypeEnum().name());
-					customerInvoiceDto.setPDFpresent(invoice.getPdf() != null);
-					SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
-
-					for (InvoiceAgregate invoiceAgregate : invoice
-							.getInvoiceAgregates()) {
-
-						subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
-
-						if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-							subCategoryInvoiceAgregateDto.setType("R");
-						} else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-							subCategoryInvoiceAgregateDto.setType("F");
-						} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-							subCategoryInvoiceAgregateDto.setType("T");
-						}
-
-						subCategoryInvoiceAgregateDto
-						.setItemNumber(invoiceAgregate.getItemNumber());
-						subCategoryInvoiceAgregateDto
-						.setAccountingCode(invoiceAgregate
-								.getAccountingCode());
-						subCategoryInvoiceAgregateDto
-						.setDescription(invoiceAgregate
-								.getDescription());
-						subCategoryInvoiceAgregateDto
-						.setQuantity(invoiceAgregate.getQuantity());
-						subCategoryInvoiceAgregateDto
-						.setDiscount(invoiceAgregate.getDiscount());
-						subCategoryInvoiceAgregateDto
-						.setAmountWithoutTax(invoiceAgregate
-								.getAmountWithoutTax());
-						subCategoryInvoiceAgregateDto
-						.setAmountTax(invoiceAgregate.getAmountTax());
-						subCategoryInvoiceAgregateDto
-						.setAmountWithTax(invoiceAgregate
-								.getAmountWithTax());
-						customerInvoiceDto.getSubCategoryInvoiceAgregates()
-						.add(subCategoryInvoiceAgregateDto);
-					}
-
-					customerInvoiceDtos.add(customerInvoiceDto);
+					customerInvoiceDtos.add(new InvoiceDto(invoice, billingAccount.getCode()));
 				}
 			}
 
