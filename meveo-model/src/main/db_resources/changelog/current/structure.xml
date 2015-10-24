@@ -244,5 +244,16 @@
 			<column name="display_detail" type="BOOL" defaultValueBoolean="true"></column>
 		</addColumn>
 	</changeSet>
-	
+
+	<changeSet id="#1184_20151022" author="EdwardLegaspi">
+		<addColumn tableName="billing_rated_transaction">
+			<column name="adjusted_rated_tx" type="BIGINT" />
+		</addColumn>
+
+		<addForeignKeyConstraint
+			constraintName="fk_billing_rated_transaction_rated_transaction"
+			referencedTableName="billing_rated_transaction" baseColumnNames="adjusted_rated_tx"
+			baseTableName="billing_rated_transaction" referencedColumnNames="id" />		
+	</changeSet>
+
 </databaseChangeLog>

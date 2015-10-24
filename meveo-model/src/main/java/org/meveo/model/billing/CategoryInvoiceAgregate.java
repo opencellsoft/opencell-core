@@ -1,6 +1,6 @@
 /*
-* (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
-*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.meveo.model.billing;
 
 import java.util.HashSet;
@@ -31,29 +31,55 @@ import javax.persistence.OneToMany;
 @DiscriminatorValue("R")
 public class CategoryInvoiceAgregate extends InvoiceAgregate {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invoiceCategory")
-    private InvoiceCategory invoiceCategory;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "invoiceCategory")
+	private InvoiceCategory invoiceCategory;
 
-    @OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
+	@OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
 
-    public InvoiceCategory getInvoiceCategory() {
-        return invoiceCategory;
-    }
+	public CategoryInvoiceAgregate() {
 
-    public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
-        this.invoiceCategory = invoiceCategory;
-    }
+	}
 
-    public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
-        return subCategoryInvoiceAgregates;
-    }
+	public CategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
+		this.setInvoiceCategory(categoryInvoiceAgregate.getInvoiceCategory());
+		this.setItemNumber(categoryInvoiceAgregate.getItemNumber());
+		this.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
+		this.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+		this.setAmountTax(categoryInvoiceAgregate.getAmountTax());
+		this.setBillingAccount(categoryInvoiceAgregate.getBillingAccount());
+		this.setBillingRun(categoryInvoiceAgregate.getBillingRun());
+		this.setUserAccount(categoryInvoiceAgregate.getUserAccount());
+		this.setProvider(categoryInvoiceAgregate.getProvider());
+	}
 
-    public void setSubCategoryInvoiceAgregates(Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
-        this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
-    }
+	public InvoiceCategory getInvoiceCategory() {
+		return invoiceCategory;
+	}
+
+	public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
+		this.invoiceCategory = invoiceCategory;
+	}
+
+	public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
+		return subCategoryInvoiceAgregates;
+	}
+
+	public void setSubCategoryInvoiceAgregates(Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
+		this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
+	}
+
+	public void addSubCategoryInvoiceAggregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
+		if (subCategoryInvoiceAgregates == null) {
+			subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
+		}
+
+		if (subCategoryInvoiceAgregate != null) {
+			subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
+		}
+	}
 
 }

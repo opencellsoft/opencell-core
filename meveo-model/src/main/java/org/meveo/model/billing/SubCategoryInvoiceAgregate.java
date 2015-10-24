@@ -58,7 +58,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	@JoinColumn(name = "WALLET_ID")
 	private WalletInstance wallet;
 
-	@OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<RatedTransaction> ratedtransactions = new ArrayList<RatedTransaction>();
 
 	@Column(name = "DISCOUNT_PLAN_CODE", length = 50)
@@ -69,6 +69,25 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
 	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal discountPercent;
+
+	public SubCategoryInvoiceAgregate() {
+
+	}
+
+	public SubCategoryInvoiceAgregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
+		this.setAccountingCode(subCategoryInvoiceAgregate.getAccountingCode());
+		this.setInvoiceSubCategory(subCategoryInvoiceAgregate.getInvoiceSubCategory());
+		this.setWallet(subCategoryInvoiceAgregate.getWallet());
+		this.setItemNumber(subCategoryInvoiceAgregate.getItemNumber());
+		this.setQuantity(subCategoryInvoiceAgregate.getQuantity());
+		this.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+		this.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax());
+		this.setAmountTax(subCategoryInvoiceAgregate.getAmountTax());
+		this.setBillingAccount(subCategoryInvoiceAgregate.getBillingAccount());
+		this.setBillingRun(subCategoryInvoiceAgregate.getBillingRun());
+		this.setUserAccount(subCategoryInvoiceAgregate.getUserAccount());
+		this.setProvider(subCategoryInvoiceAgregate.getProvider());
+	}
 
 	public InvoiceSubCategory getInvoiceSubCategory() {
 		return invoiceSubCategory;
@@ -84,7 +103,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
 	public void setCategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
 		this.categoryInvoiceAgregate = categoryInvoiceAgregate;
-		if (categoryInvoiceAgregate != null) {
+		if (categoryInvoiceAgregate != null && categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
 			categoryInvoiceAgregate.getSubCategoryInvoiceAgregates().add(this);
 		}
 	}
