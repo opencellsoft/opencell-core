@@ -56,6 +56,7 @@ public class SellerApiService extends BaseApi {
 			seller.setCode(postData.getCode());
 			seller.setDescription(postData.getDescription());
 			seller.setInvoicePrefix(postData.getInvoicePrefix());
+			seller.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
 			seller.setProvider(provider);
 
 			// check trading entities
@@ -120,6 +121,7 @@ public class SellerApiService extends BaseApi {
 
 			seller.setDescription(postData.getDescription());
 			seller.setInvoicePrefix(postData.getInvoicePrefix());
+			seller.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
 
 			// check trading entities
 			if (!StringUtils.isBlank(postData.getCurrencyCode())) {

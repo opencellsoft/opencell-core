@@ -81,6 +81,9 @@ public class Seller extends BusinessCFEntity {
 	@Column(name = "INVOICE_ADJUSTMENT_SEQUENCE_SIZE")
 	private Integer invoiceAdjustmentSequenceSize = 9;
 
+	@Column(name = "INVOICE_SEQUENCE_SIZE")
+	private Integer invoiceSequenceSize;
+
 	@Embedded
 	private Address address = new Address();
 
@@ -191,5 +194,17 @@ public class Seller extends BusinessCFEntity {
 	public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
 		this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
 	}
+
+	public Integer getInvoiceSequenceSize() {
+		return invoiceSequenceSize;
+	}
+
+	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
+		this.invoiceSequenceSize = invoiceSequenceSize;
+	}
+
+	
+	
+	
 
 }

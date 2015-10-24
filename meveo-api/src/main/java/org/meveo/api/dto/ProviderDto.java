@@ -29,6 +29,7 @@ public class ProviderDto extends BaseDto {
 	private boolean multiCountry;
 	private boolean multiLanguage;
 	private String userAccount;
+	private Integer invoiceSequenceSize;
 	
 	@XmlElement(required = false)
     private CustomFieldsDto customFields = new CustomFieldsDto();
@@ -40,6 +41,7 @@ public class ProviderDto extends BaseDto {
 	public ProviderDto(Provider e) {
 		code = e.getCode();
 		description = e.getDescription();
+		invoiceSequenceSize=e.getInvoiceSequenceSize();
 		if (e.getCurrency() != null) {
 			currency = e.getCurrency().getCurrencyCode();
 		}
@@ -136,7 +138,7 @@ public class ProviderDto extends BaseDto {
 	public String toString() {
 		return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country="
 				+ country + ", language=" + language + ", multiCurrency=" + multiCurrency + ", multiCountry="
-				+ multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount
+				+ multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount+"invoiceSequenceSize=" + invoiceSequenceSize
 				+ ", customFields=" + customFields + "]";
 	}
 
@@ -147,5 +149,15 @@ public class ProviderDto extends BaseDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+	public Integer getInvoiceSequenceSize() {
+		return invoiceSequenceSize;
+	}
+
+	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
+		this.invoiceSequenceSize = invoiceSequenceSize;
+	}
+	
+	
 
 }

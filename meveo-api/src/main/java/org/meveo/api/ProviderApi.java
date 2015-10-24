@@ -139,6 +139,7 @@ public class ProviderApi extends BaseApi {
 			Provider provider = new Provider();
 			provider.setCode(postData.getCode().toUpperCase());
 			provider.setDescription(postData.getDescription());
+			provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
 
 			provider.setMulticountryFlag(postData.isMultiCountry());
 			provider.setMulticurrencyFlag(postData.isMultiCurrency());
@@ -248,6 +249,7 @@ public class ProviderApi extends BaseApi {
 			provider.setMulticountryFlag(postData.isMultiCountry());
 			provider.setMulticurrencyFlag(postData.isMultiCurrency());
 			provider.setMultilanguageFlag(postData.isMultiLanguage());
+			provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
 
 			// search for country
 			if (!StringUtils.isBlank(postData.getCountry())) {

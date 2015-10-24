@@ -240,14 +240,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 		long nextInvoiceNb = getNextValue(seller, currentUser);
 
-		StringBuffer num1 = new StringBuffer("000000000");
+		int sequenceSize = getSequenceSize(seller, currentUser);
+
+		StringBuffer num1 = new StringBuffer(org.apache.commons.lang3.StringUtils.leftPad("", sequenceSize, "0"));
 		num1.append(nextInvoiceNb + "");
 
-		String invoiceNumber = num1.substring(num1.length() - 9);
+		String invoiceNumber = num1.substring(num1.length() - sequenceSize);
 		// request to store invoiceNo in alias field
 		invoice.setAlias(invoiceNumber);
 
 		return (prefix + invoiceNumber);
+			
 	}
 
 	public synchronized long getNextValue(Seller seller, User currentUser) {
@@ -743,6 +746,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 			providerService.update(provider, getCurrentUser());
 		}
+	}
+	
+	public synchronized Integer getSequenceSize(Seller seller, User currentUser) {
+		int result=0;
+		if (seller != null) {
+			if (seller.getInvoiceSequenceSize() != null) {
+				result = seller.getInvoiceSequenceSize();
+			} else {
+				if (seller.getProvider().getInvoiceSequenceSize() != null) {
+					result = seller.getProvider().getInvoiceSequenceSize();
+				}
+			}
+		}
+		return result;
 	}
 
 }
