@@ -100,7 +100,8 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 
         extractMapTypeFieldFromEntity(webhook.getHeaders(), "headers");
         extractMapTypeFieldFromEntity(webhook.getParams(), "params");
-
+        extractMapTypeFieldFromEntity(webhook.getWebhookParams(), "webhookParams");
+        
         return webhook;
     }
 
@@ -109,6 +110,7 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 
         updateMapTypeFieldInEntity(entity.getHeaders(), "headers");
         updateMapTypeFieldInEntity(entity.getParams(), "params");
+        updateMapTypeFieldInEntity(entity.getWebhookParams(), "webhookParams");
 
         return super.saveOrUpdate(killConversation);
     }

@@ -1,5 +1,6 @@
 package org.meveo.service.billing.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -9,6 +10,7 @@ import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
+import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -19,6 +21,8 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.AccountLevelEnum;
@@ -477,7 +481,25 @@ public class BillingAccountApiService extends AccountApiService {
 					.listByCustomerAccount(customerAccount);
 			if (billingAccounts != null) {
 				for (BillingAccount ba : billingAccounts) {
-					result.getBillingAccount().add(new BillingAccountDto(ba));
+					BillingAccountDto billingAccountDto = new BillingAccountDto(ba);
+					
+					List<Invoice> invoices = ba.getInvoices();
+					if (invoices != null && invoices.size() > 0) {
+						List<InvoiceDto> invoicesDto = new ArrayList<InvoiceDto>();
+						String billingAccountCode = ba.getCode();
+						if (invoices != null && invoices.size() > 0) {
+							for (Invoice i: invoices) {
+								if (i.getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
+									InvoiceDto invoiceDto = new InvoiceDto(i, billingAccountCode);
+									invoicesDto.add(invoiceDto);
+								}
+							}
+							billingAccountDto.setInvoices(invoicesDto);
+						}
+					}
+					
+					
+					result.getBillingAccount().add(billingAccountDto);
 				}
 			}
 

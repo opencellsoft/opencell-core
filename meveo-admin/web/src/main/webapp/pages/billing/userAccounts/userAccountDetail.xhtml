@@ -130,7 +130,7 @@
 					<hf:formPanel id="userAccountFormPanel" ajaxSubmit="true" submitPartialProcess=":userAccountFormPanel:formId:userAccountTab"
 						label="#{messages['userAccount.userAccountPanel']}"
 						backingBean="#{userAccountBean}" useCustomIdParam="true">
-						<p:tabView id="userAccountTab">
+						<p:tabView id="userAccountTab" activeIndex="#{userAccountBean.activeTab}">
 							<p:tab title="#{messages['userAccount.userAccountPanel']}" id="tab0">
 									<hf:formField id="billingAccountSelectId"
 										label="#{messages['userAccount.billingAccount']}"

@@ -12,6 +12,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceTypeEnum;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 
 /**
  * @author R.AITYAAZZA
@@ -41,6 +47,73 @@ public class InvoiceDto extends BaseDto {
 	
 	
 	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
+	
+	public InvoiceDto() {}
+	
+	public InvoiceDto(Invoice invoice, String billingAccountCode) {
+		super();
+		this.setBillingAccountCode(billingAccountCode);
+		this.setInvoiceDate(invoice.getInvoiceDate());
+		this.setDueDate(invoice.getDueDate());
+
+		this.setAmountWithoutTax(invoice
+				.getAmountWithoutTax());
+		this.setAmountTax(invoice.getAmountTax());
+		this.setAmountWithTax(invoice
+				.getAmountWithTax());
+		this.setInvoiceNumber(invoice
+				.getInvoiceNumber());
+		this.setPaymentMathod(invoice
+				.getPaymentMethod().toString());
+		this.setType(invoice.getInvoiceTypeEnum().name());
+		this.setPDFpresent(invoice.getPdf() != null);
+				
+		InvoiceTypeEnum type = invoice.getInvoiceTypeEnum();
+		if (type != null) {
+			this.setType(invoice.getInvoiceTypeEnum().name());
+		} else {
+			this.setType(InvoiceTypeEnum.COMMERCIAL.name());
+		}
+		
+		SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
+
+		for (InvoiceAgregate invoiceAgregate : invoice
+				.getInvoiceAgregates()) {
+
+			subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+
+			if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+				subCategoryInvoiceAgregateDto.setType("R");
+			} else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+				subCategoryInvoiceAgregateDto.setType("F");
+			} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+				subCategoryInvoiceAgregateDto.setType("T");
+			}
+
+			subCategoryInvoiceAgregateDto
+			.setItemNumber(invoiceAgregate.getItemNumber());
+			subCategoryInvoiceAgregateDto
+			.setAccountingCode(invoiceAgregate
+					.getAccountingCode());
+			subCategoryInvoiceAgregateDto
+			.setDescription(invoiceAgregate
+					.getDescription());
+			subCategoryInvoiceAgregateDto
+			.setQuantity(invoiceAgregate.getQuantity());
+			subCategoryInvoiceAgregateDto
+			.setDiscount(invoiceAgregate.getDiscount());
+			subCategoryInvoiceAgregateDto
+			.setAmountWithoutTax(invoiceAgregate
+					.getAmountWithoutTax());
+			subCategoryInvoiceAgregateDto
+			.setAmountTax(invoiceAgregate.getAmountTax());
+			subCategoryInvoiceAgregateDto
+			.setAmountWithTax(invoiceAgregate
+					.getAmountWithTax());
+			this.getSubCategoryInvoiceAgregates()
+			.add(subCategoryInvoiceAgregateDto);
+		}
+	}
 
 	public String getInvoiceNumber() {
 		return invoiceNumber;
