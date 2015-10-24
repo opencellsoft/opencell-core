@@ -1,12 +1,15 @@
 package org.meveo.api.dto.account;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
 
@@ -43,7 +46,7 @@ public class BillingAccountDto extends AccountDto {
 	private String terminationReason;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-
+	private List<InvoiceDto> invoices = new ArrayList<InvoiceDto>();
 	/**
 	 * Use for GET / LIST only.
 	 */
@@ -229,6 +232,14 @@ public class BillingAccountDto extends AccountDto {
 
 	public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
 		this.bankCoordinates = bankCoordinates;
+	}
+
+	public List<InvoiceDto> getInvoices() {
+		return invoices;
+	}
+
+	public void setInvoices(List<InvoiceDto> invoices) {
+		this.invoices = invoices;
 	}
 
 }
