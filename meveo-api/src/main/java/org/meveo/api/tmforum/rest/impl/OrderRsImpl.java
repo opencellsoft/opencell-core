@@ -1,9 +1,5 @@
 package org.meveo.api.tmforum.rest.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -17,12 +13,7 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.tmforum.rest.OrderRs;
 import org.slf4j.Logger;
-import org.tmf.dsmapi.catalog.resource.order.BillingAccount;
-import org.tmf.dsmapi.catalog.resource.order.OrderItem;
-import org.tmf.dsmapi.catalog.resource.order.Product;
-import org.tmf.dsmapi.catalog.resource.order.ProductCharacteristic;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
-import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
