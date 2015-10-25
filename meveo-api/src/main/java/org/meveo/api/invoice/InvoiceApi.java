@@ -109,7 +109,7 @@ public class InvoiceApi extends BaseApi {
 	private ParamBean paramBean;
 
 	public String create(InvoiceDto invoiceDTO, User currentUser)
-			throws MeveoApiException {
+			throws MeveoApiException, BusinessException {
 		Provider provider = currentUser.getProvider();
 
 		if (invoiceDTO.getSubCategoryInvoiceAgregates().size() > 0
@@ -440,7 +440,7 @@ public class InvoiceApi extends BaseApi {
 		return billingRunService.update(billingRun);
 	}
 
-	public void validateBR(BillingRun billingRun, User user) {
+	public void validateBR(BillingRun billingRun, User user) throws BusinessException {
 		billingRunService.validate(billingRun, user);
 	}
 

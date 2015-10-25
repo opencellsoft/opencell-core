@@ -26,6 +26,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +85,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.ProviderService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -198,19 +200,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 
-	public void setInvoiceNumber(Invoice invoice) {
+	public void setInvoiceNumber(Invoice invoice) throws BusinessException {
 		invoice.setInvoiceNumber(getInvoiceNumber(invoice, null));
 	}
 
-	public void setInvoiceNumber(Invoice invoice, User currentUser) {
+	public void setInvoiceNumber(Invoice invoice, User currentUser) throws BusinessException {
 		invoice.setInvoiceNumber(getInvoiceNumber(invoice, currentUser));
 	}
 
-	public String getInvoiceNumber(Invoice invoice) {
+	public String getInvoiceNumber(Invoice invoice) throws BusinessException {
 		return getInvoiceNumber(invoice, null);
 	}
 
-	public String getInvoiceNumber(Invoice invoice, User currentUser) {
+	public String getInvoiceNumber(Invoice invoice, User currentUser) throws BusinessException {
 		Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
 		String prefix = seller.getInvoicePrefix();
 
@@ -231,7 +233,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					prefix = prefix.replace("%" + datePattern + "%", invioceDate);
 				}
 			}
-		}
+			prefix=evaluatePrefixElExpression(prefix, invoice, DateUtils.getDayFromDate(invoice.getInvoiceDate()),
+					DateUtils.getMonthFromDate(invoice.getInvoiceDate()), DateUtils.getYearFromDate(invoice.getInvoiceDate()));
+			}
 		if (currentUser != null) {
 			seller.updateAudit(currentUser);
 		} else {
@@ -758,6 +762,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					result = seller.getProvider().getInvoiceSequenceSize();
 				}
 			}
+		}
+		return result;
+	}
+	
+	public String evaluatePrefixElExpression(String prefix,Invoice invoice, int day, int month,int year)
+			throws BusinessException {
+		String result = null;
+		Date invoiceDate=invoice.getInvoiceDate();
+		if (StringUtils.isBlank(prefix)) {
+			return result;
+		}
+		Map<Object, Object> userMap = new HashMap<Object, Object>(); 
+		if(prefix.indexOf("invoice.") >= 0){
+			userMap.put("invoice",invoice); 
+		}
+			if(prefix.indexOf("day") >= 0){ 
+				userMap.put("day",DateUtils.getDayFromDate(invoiceDate)); 
+			} 
+			if(prefix.indexOf("month") >= 0){ 
+				userMap.put("month",DateUtils.getMonthFromDate(invoiceDate)+1); ;
+			}
+			if(prefix.indexOf("year") >= 0){ 
+				userMap.put("year",DateUtils.getYearFromDate(invoiceDate)); ;
+			}
+		Object res = ValueExpressionWrapper.evaluateExpression(prefix, userMap, String.class);
+		try {
+			result = (String) res;
+		} catch (Exception e) {
+			throw new BusinessException("Expression " + prefix + " do not evaluate to String but " + res);
 		}
 		return result;
 	}

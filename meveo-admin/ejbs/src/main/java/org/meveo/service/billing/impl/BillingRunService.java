@@ -548,7 +548,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void validate(BillingRun billingRun, User user) {
+	public void validate(BillingRun billingRun, User user) throws BusinessException {
 		billingRun = findById(billingRun.getId(), true);
 		user = getEntityManager().find(User.class, user.getId());
 		for (Invoice invoice : billingRun.getInvoices()) {
