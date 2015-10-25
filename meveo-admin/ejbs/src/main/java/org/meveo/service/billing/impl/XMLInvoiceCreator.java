@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -108,6 +109,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	// private static Logger log =
 	// LoggerFactory.getLogger(XMLInvoiceCreator.class);
 
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createXMLInvoiceAdjustment(Long invoiceId, File billingRundir) throws BusinessException {
 		createXMLInvoice(invoiceId, billingRundir, true);
 	}
@@ -122,7 +124,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		// log.debug("creating xml invoice...");
 
 		try {
-			Invoice invoice = findById(invoiceId);
+			Invoice invoice = findById(invoiceId, Arrays.asList("billingAccount", "billingAccount.tradingLanguage"));
+			getEntityManager().refresh(invoice);
 			String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage()
 					.getLanguageCode();
 
