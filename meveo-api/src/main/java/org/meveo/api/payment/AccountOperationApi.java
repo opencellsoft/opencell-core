@@ -63,12 +63,12 @@ public class AccountOperationApi extends BaseApi {
 				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
 			}
 
-			if (postData.getType().equals("OCC") && postData.getOtherCreditAndCharge() != null) {
+			if ("OCC".equals(postData.getType()) && postData.getOtherCreditAndCharge() != null) {
 				// otherCreditAndCharge
 				OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
 				otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
 				accountOperation = (AccountOperation) otherCreditAndCharge;
-			} else if (postData.getType().equals("I") && postData.getRecordedInvoice() != null) {
+			} else if ("I".equals(postData.getType()) && postData.getRecordedInvoice() != null) {
 				// recordedInvoice
 				RecordedInvoice recordedInvoice = new RecordedInvoice();
 				recordedInvoice.setProductionDate(postData.getRecordedInvoice().getProductionDate());
@@ -98,7 +98,7 @@ public class AccountOperationApi extends BaseApi {
 				recordedInvoice.setBillingAccountName(postData.getRecordedInvoice().getBillingAccountName());
 
 				accountOperation = (AccountOperation) recordedInvoice;
-			} else if (postData.getType().equals("R") && postData.getRejectedPayment() != null) {
+			} else if ("R".equals(postData.getType()) && postData.getRejectedPayment() != null) {
 				// rejectedPayment
 				RejectedPayment rejectedPayment = new RejectedPayment();
 
@@ -221,14 +221,14 @@ public class AccountOperationApi extends BaseApi {
 				accountOperationDto.setDueDate(accountOp.getDueDate());
 				accountOperationDto.setType(accountOp.getType());
 				accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
-				accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory().toString() != null ? accountOp.getTransactionCategory().toString() : null);
+				accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory() != null ? accountOp.getTransactionCategory().toString() : null);
 				accountOperationDto.setReference(accountOp.getReference());
 				accountOperationDto.setAccountCode(accountOp.getAccountCode());
 				accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
 				accountOperationDto.setAmount(accountOp.getAmount());
 				accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
 				accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
-				accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus().toString() != null ? accountOp.getMatchingStatus().toString() : null);
+				accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus() != null ? accountOp.getMatchingStatus().toString() : null);
 				accountOperationDto.setOccCode(accountOp.getOccCode());
 				accountOperationDto.setOccDescription(accountOp.getOccDescription());
 
