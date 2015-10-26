@@ -1,6 +1,7 @@
 package org.tmf.dsmapi.catalog.resource.order;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -20,7 +21,7 @@ public class OrderItem implements Serializable {
 	private String action;
 	private String state;
 	private String appointment;
-	private BillingAccount billingAccount;
+	private List<BillingAccount> billingAccount;
 	private ProductOffering productOffering;
 	private Product product;
 	public String getId() {
@@ -47,10 +48,10 @@ public class OrderItem implements Serializable {
 	public void setAppointment(String appointment) {
 		this.appointment = appointment;
 	}
-	public BillingAccount getBillingAccount() {
+	public List<BillingAccount> getBillingAccount() {
 		return billingAccount;
 	}
-	public void setBillingAccount(BillingAccount billingAccount) {
+	public void setBillingAccount(List<BillingAccount> billingAccount) {
 		this.billingAccount = billingAccount;
 	}
 	public ProductOffering getProductOffering() {

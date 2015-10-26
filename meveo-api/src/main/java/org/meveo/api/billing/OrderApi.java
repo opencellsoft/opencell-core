@@ -11,7 +11,10 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -56,19 +59,21 @@ public class OrderApi {
 		if (orders != null) {
 			Provider provider = currentUser.getProvider();
 			for (OrderItem orderItem : orders) {
-				if (!StringUtils.isBlank(orderItem.getId()) && !StringUtils.isBlank(orderItem.getBillingAccount())
-						&& orderItem.getBillingAccount() != null
-						&& !StringUtils.isBlank(orderItem.getBillingAccount().getId())
+				if (!StringUtils.isBlank(orderItem.getId()) && orderItem.getBillingAccount() != null
+						&& orderItem.getBillingAccount().size() == 1
 						&& !StringUtils.isBlank(orderItem.getProductOffering())
 						&& !StringUtils.isBlank(orderItem.getProductOffering().getId())
 						&& !StringUtils.isBlank(productOrder.getOrderDate())
 						&& !StringUtils.isBlank(productOrder.getDescription())) {
-					UserAccount userAccount = userAccountService.findByCode(orderItem.getBillingAccount().getId(),
-							provider);
+					String billingAccountId = orderItem.getBillingAccount().get(0).getId();
+					if (billingAccountId == null) {
+						throw new MeveoApiException("orderitem's billingAccount is null");
+					}
+					UserAccount userAccount = userAccountService.findByCode(billingAccountId, provider);
 					if (userAccount == null) {
 						throw new EntityDoesNotExistsException(UserAccount.class, "userAccount");
 					}
-					log.debug("find userAccount by {}", orderItem.getBillingAccount().getId());
+					log.debug("find userAccount by {}", billingAccountId);
 
 					OfferTemplate offerTemplate = offerTemplateService
 							.findByCode(orderItem.getProductOffering().getId(), provider);
@@ -97,26 +102,30 @@ public class OrderApi {
 						subscriptionService.create(subscription, currentUser, provider);
 						// instantiate
 						// activate
+						instanciationAndActiveService(subscription, orderItem, currentUser);
+					} else {
 
-					}
-					instanciationAndActiveService(subscription, orderItem, currentUser);
-					if (subscription.getUserAccount().getCode().equalsIgnoreCase(orderItem.getBillingAccount().getId())
-							&& subscription.getOffer().getCode()
-									.equalsIgnoreCase(orderItem.getProductOffering().getId())) {
+						if (!subscription.getUserAccount().getCode()
+								.equalsIgnoreCase(orderItem.getBillingAccount().get(0).getId())) {
+							throw new MeveoApiException(
+									"Sub's userAccount doesn't match with orderitem's billingAccount");
+						}
+						if (!subscription.getOffer().getCode()
+								.equalsIgnoreCase(orderItem.getProductOffering().getId())) {
+							throw new MeveoApiException("Sub's offer doesn't match with orderitem's productOffer");
+						}
 						List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
 						if (serviceInstances != null) {
 							for (ServiceInstance serviceInstance : serviceInstances) {
-								if (validateServiceInstance(serviceInstance, orderItem)) {
-									activateService(serviceInstance, currentUser);
-								} else {
-									terminateService(serviceInstance, orderItem, currentUser);
+								if (!validateServiceInstance(serviceInstance, orderItem)) {
+									terminateService(serviceInstance, productOrder.getOrderDate(), orderItem,
+											currentUser);
 								}
-
 							}
 						}
+						instanciationAndActiveService(subscription, orderItem, currentUser);
 					}
 				}
-				continue;
 			}
 		}
 	}
@@ -149,18 +158,43 @@ public class OrderApi {
 		return productCharacteristic != null && "service".equalsIgnoreCase(productCharacteristic.getName());
 	}
 
-	private void terminateService(ServiceInstance selectedServiceInstance, OrderItem orderItem, User currentUser)
-			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, Exception {
-
-		if (selectedServiceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-			SubscriptionTerminationReason subscriptionTerminationReason = subscriptionTerminationReasonService
-					.findByCodeReason("TERM_REASON_1", currentUser.getProvider());
-			if (subscriptionTerminationReason != null) {
-				serviceInstanceService.terminateService(selectedServiceInstance, new Date(),
-						subscriptionTerminationReason, currentUser);
+	private String getTerminationReason(OrderItem orderItem) {
+		String result = null;
+		Product product = orderItem.getProduct();
+		if (product != null) {
+			List<ProductCharacteristic> productCharacteristic = orderItem.getProduct().getProductCharacteristic();
+			if (productCharacteristic != null) {
+				for (ProductCharacteristic c : productCharacteristic) {
+					if (!StringUtils.isBlank(c.getName()) && c.getName().equalsIgnoreCase("terminationReason")) {
+						result = c.getValue();
+						break;
+					}
+				}
 			}
 		}
+		return result;
+	}
 
+	private void terminateService(ServiceInstance selectedServiceInstance, Date terminationDate, OrderItem orderItem,
+			User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+					BusinessException, Exception {
+
+		if (selectedServiceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+			String terminationReason = getTerminationReason(orderItem);
+			if (StringUtils.isBlank(terminationReason)) {
+				throw new MeveoApiException("terminationReasion is null");
+			}
+			if (StringUtils.isBlank(terminationDate)) {
+				throw new MeveoApiException("terminationDate is null");
+			}
+			SubscriptionTerminationReason subscriptionTerminationReason = subscriptionTerminationReasonService
+					.findByCodeReason(terminationReason, currentUser.getProvider());
+			if (subscriptionTerminationReason == null) {
+				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, terminationReason);
+			}
+			serviceInstanceService.terminateService(selectedServiceInstance, terminationDate,
+					subscriptionTerminationReason, currentUser);
+		}
 	}
 
 	private void activateService(ServiceInstance selectedServiceInstance, User currentUser)
