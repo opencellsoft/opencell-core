@@ -111,5 +111,29 @@
 	<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
 	<column name="display_provider" type="BOOL" defaultValueBoolean="false"></column>
 	</addColumn>
-	</changeSet>   
+	</changeSet>
+	<changeSet author="TyshanShi" id="#1188_20151026_1">
+        <createSequence sequenceName="medina_importedfile_seq" startValue="1" />
+    </changeSet>
+	<changeSet author="TyshanShi" id="#1188_20151026_2">
+		<createTable tableName="medina_importedfile">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="uri" type="VARCHAR(2000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="size" type="BIGINT"/>
+			<column name="last_modified" type="date"/>
+		</createTable>
+		<addPrimaryKey columnNames="id" constraintName="medina_importedfile_pkey"
+			tableName="medina_importedfile" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="medina_importedfile" constraintName="fk_medina_importedfile_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		
+	</changeSet>
 </databaseChangeLog>

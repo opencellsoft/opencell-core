@@ -1062,6 +1062,16 @@
 			<to-view-id>/pages/medina/access/accessDetail.xhtml</to-view-id>
             <redirect include-view-params="true" />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>importedFiles</from-outcome>
+			<to-view-id>/pages/medina/importedFile/importedFiles.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>importedFileDetail</from-outcome>
+			<to-view-id>/pages/medina/importedFile/importedFileDetail.xhtml</to-view-id>
+            <redirect include-view-params="true" />
+		</navigation-case>
 
 		<navigation-case>
 			<from-outcome>addNewSubscription</from-outcome>

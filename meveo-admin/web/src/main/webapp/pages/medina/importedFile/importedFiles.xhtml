@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{importedFileListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:searchPanel id="searchPanel" columns="2"
+			label="#{messages['importedFile.search']}"
+			backingBean="#{importedFileListBean}">
+
+			<hftl:searchField label="#{messages['importedFile.uri']}" field="uri" />
+			<hftl:searchField label="#{messages['importedFile.lastModified']}"
+				field="lastModified" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['importedFile.title']}"
+			backingBean="#{importedFileListBean}" sortBy="lastModified" sortOrder="DESCENDING">
+			<hftl:column label="#{messages['importedFile.uri']}"
+				valueIdField="id" propagateConversation="true" field="uri"
+				entityView="importedFileDetail" />
+			<hftl:column label="#{messages['importedFile.size']}" field="size" />
+			<hftl:column label="#{messages['importedFile.lastModified']}"
+				field="lastModified" isDate="true" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('billing','billingManagement')}" />
+		</hftl:dataList>
+	</ui:define>
+</ui:composition>
