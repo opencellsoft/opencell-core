@@ -168,8 +168,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				Element bankCoordinates = doc.createElement("bankCoordinates");
 				Element ics = doc.createElement("ics");
 				Element iban = doc.createElement("iban");
+				Element bic = doc.createElement("bic");
 				bankCoordinates.appendChild(ics);
 				bankCoordinates.appendChild(iban);
+				bankCoordinates.appendChild(bic);
 				providerTag.appendChild(bankCoordinates);
 				header.appendChild(providerTag);
 
@@ -180,6 +182,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					Text ibanTxt = doc.createTextNode(provider.getBankCoordinates().getIban() != null ? provider
 							.getBankCoordinates().getIban() : "");
 					iban.appendChild(ibanTxt);
+					Text bicTxt = doc.createTextNode(provider.getBankCoordinates().getBic() != null ? provider.getBankCoordinates().getBic() : "");
+					iban.appendChild(bicTxt);					
 				}
 			}
 
