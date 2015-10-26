@@ -1885,12 +1885,14 @@
 			baseTableName="billing_rated_transaction" referencedColumnNames="id" />		
 	</changeSet>
 	
-	<changeSet id="#1134_20151024" author="Mbarek">
+	<changeSet id="#1134_20151026" author="Mbarek">
+		<dropColumn columnName="INVOICE_SEQUENCE_SIZE" tableName="crm_seller" />
+		<dropColumn columnName="INVOICE_SEQUENCE_SIZE" tableName="crm_provider" />
 		<addColumn tableName="crm_provider"> 
-			<column name="INVOICE_SEQUENCE_SIZE" type="INT4" />
+			<column name="INVOICE_SEQUENCE_SIZE" type="INT4" defaultValue="9" />
 		</addColumn>
 		<addColumn tableName="crm_seller"> 
-			<column name="INVOICE_SEQUENCE_SIZE" type="INT4" />
+			<column name="INVOICE_SEQUENCE_SIZE" type="INT4" defaultValue="9" />
 		</addColumn>
 	</changeSet>
 

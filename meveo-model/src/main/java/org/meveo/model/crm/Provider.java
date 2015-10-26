@@ -211,7 +211,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 	
 	@Column(name = "INVOICE_SEQUENCE_SIZE")
-	private Integer invoiceSequenceSize;
+	private Integer invoiceSequenceSize=9;
 
 	public String getCode() {
 		return code;

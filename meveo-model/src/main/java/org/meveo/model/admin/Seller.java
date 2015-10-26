@@ -82,7 +82,7 @@ public class Seller extends BusinessCFEntity {
 	private Integer invoiceAdjustmentSequenceSize = 9;
 
 	@Column(name = "INVOICE_SEQUENCE_SIZE")
-	private Integer invoiceSequenceSize;
+	private Integer invoiceSequenceSize=9;
 
 	@Embedded
 	private Address address = new Address();
