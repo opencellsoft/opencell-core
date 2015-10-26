@@ -22,22 +22,22 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>link=U_Job</td>
-	<td>${UsageRatingJob}</td>
-</tr>
-<tr>
 	<td>waitForText</td>
 	<td>link=U_Job</td>
 	<td>${UsageRatingJob}</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertText</td>
+	<td>link=U_Job</td>
+	<td>${UsageRatingJob}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
 	<td>link=U_Job</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
+	<td>verifyElementPresent</td>
 	<td>link=U_Job</td>
 	<td></td>
 </tr>
@@ -62,32 +62,22 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td>Exécution effectuée !</td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td>Exécution effectuée !</td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
-</tr>
-<tr>
 	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>css=span.ui-icon.ui-icon-circle-check</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementNotPresent</td>
+	<td>css=span.ui-icon.ui-icon-circle-check</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
 	<td>css=span.ui-icon.ui-icon-circle-check</td>
 	<td></td>
 </tr>

@@ -32,12 +32,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>link=User account</td>
 	<td>User account</td>
 </tr>
 <tr>
-	<td>waitForText</td>
+	<td>verifyText</td>
 	<td>link=User account</td>
 	<td>User account</td>
 </tr>
@@ -52,12 +52,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>id=billingAccountPopup_title</td>
 	<td>Billing account search</td>
 </tr>
 <tr>
-	<td>waitForText</td>
+	<td>verifyText</td>
 	<td>id=billingAccountPopup_title</td>
 	<td>Billing account search</td>
 </tr>
@@ -79,7 +79,7 @@
 <tr>
 	<td>type</td>
 	<td>id=billingAccountPopuppopupForm:searchField1</td>
-	<td>BA</td>
+	<td>${BillingAccount}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -89,7 +89,7 @@
 <tr>
 	<td>waitForText</td>
 	<td>css=td</td>
-	<td>BA</td>
+	<td>${BillingAccount}</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -217,14 +217,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>link=Informations</td>
-	<td>Informations</td>
-</tr>
-<tr>
 	<td>waitForTextPresent</td>
 	<td>Informations</td>
 	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Informations</td>
+	<td>Informations</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -332,14 +332,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//a[contains(text(),'Custom fields')]</td>
-	<td>Custom fields</td>
-</tr>
-<tr>
 	<td>waitForTextPresent</td>
 	<td>Custom fields</td>
 	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
+	<td>Custom fields</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -392,13 +392,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td>Sauvegarde effectuée !</td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>Sauvegarde effectuée !</td>
 	<td></td>
 </tr>
 <tr>

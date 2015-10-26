@@ -32,14 +32,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>xpath=(//a[contains(text(),'Billing account')])[2]</td>
-	<td>Billing account</td>
-</tr>
-<tr>
 	<td>waitForTextPresent</td>
 	<td>Billing account</td>
 	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>xpath=(//a[contains(text(),'Billing account')])[2]</td>
+	<td>Billing account</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -52,12 +52,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>id=customerAccountPopup_title</td>
 	<td>Customer account search</td>
 </tr>
 <tr>
-	<td>waitForText</td>
+	<td>verifyText</td>
 	<td>id=customerAccountPopup_title</td>
 	<td>Customer account search</td>
 </tr>
@@ -79,7 +79,7 @@
 <tr>
 	<td>type</td>
 	<td>id=customerAccountPopuppopupForm:searchField1</td>
-	<td>CA</td>
+	<td>${CustomerAccount}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -89,7 +89,7 @@
 <tr>
 	<td>waitForText</td>
 	<td>css=td</td>
-	<td>CA</td>
+	<td>${CustomerAccount}</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -312,14 +312,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>link=Informations</td>
-	<td>Informations</td>
-</tr>
-<tr>
 	<td>waitForTextPresent</td>
 	<td>Informations</td>
 	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Informations</td>
+	<td>Informations</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -507,8 +507,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>waitForTextPresent</td>
+	<td>Custom fields</td>
 	<td></td>
 </tr>
 <tr>
@@ -517,8 +517,8 @@
 	<td>Custom fields</td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>Custom fields</td>
+	<td>waitForElementPresent</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -572,13 +572,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td>Sauvegarde effectuée !</td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>Sauvegarde effectuée !</td>
 	<td></td>
 </tr>
 <tr>

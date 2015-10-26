@@ -32,14 +32,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>xpath=(//a[contains(text(),'Customer account')])[2]</td>
-	<td>Customer account</td>
-</tr>
-<tr>
 	<td>waitForTextPresent</td>
 	<td>Customer account</td>
 	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>xpath=(//a[contains(text(),'Customer account')])[2]</td>
+	<td>Customer account</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -52,22 +52,22 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>id=searchCustomerPopup_title</td>
-	<td>Customer search</td>
-</tr>
-<tr>
 	<td>waitForText</td>
 	<td>id=searchCustomerPopup_title</td>
 	<td>Customer search</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>verifyText</td>
+	<td>id=searchCustomerPopup_title</td>
+	<td>Customer search</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
 	<td>id=searchCustomerPopup_title</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
+	<td>verifyElementPresent</td>
 	<td>id=searchCustomerPopup_title</td>
 	<td></td>
 </tr>
@@ -79,7 +79,7 @@
 <tr>
 	<td>type</td>
 	<td>id=searchCustomerPopuppopupForm:searchField1</td>
-	<td>CUST</td>
+	<td>${Customer}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -89,7 +89,7 @@
 <tr>
 	<td>waitForText</td>
 	<td>css=td</td>
-	<td>CUST</td>
+	<td>${Customer}</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -277,14 +277,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>link=Informations</td>
-	<td>Informations</td>
-</tr>
-<tr>
 	<td>waitForTextPresent</td>
 	<td>Informations</td>
 	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Informations</td>
+	<td>Informations</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -467,14 +467,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//a[contains(text(),'Custom fields')]</td>
-	<td>Custom fields</td>
-</tr>
-<tr>
 	<td>waitForTextPresent</td>
 	<td>Custom fields</td>
 	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
+	<td>Custom fields</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -527,13 +527,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td>Sauvegarde effectuée !</td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>Sauvegarde effectuée !</td>
 	<td></td>
 </tr>
 <tr>
