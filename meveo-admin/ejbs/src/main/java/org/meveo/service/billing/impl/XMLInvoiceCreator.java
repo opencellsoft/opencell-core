@@ -377,6 +377,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			Transformer trans = transfac.newTransformer();
 			// trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			trans.setOutputProperty(OutputKeys.INDENT, "yes");
+			trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
 			// create string from xml tree
 			DOMSource source = new DOMSource(doc);
