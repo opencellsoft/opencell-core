@@ -248,7 +248,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
-            return getEditViewName(); // "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() +
+            return "subscriptionDetailSubscriptionTab"; //getEditViewName(); // "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() +
                                       // "&faces-redirect=true&includeViewParams=true";
         }
         return null;
