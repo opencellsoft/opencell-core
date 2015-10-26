@@ -183,7 +183,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							.getBankCoordinates().getIban() : "");
 					iban.appendChild(ibanTxt);
 					Text bicTxt = doc.createTextNode(provider.getBankCoordinates().getBic() != null ? provider.getBankCoordinates().getBic() : "");
-					iban.appendChild(bicTxt);					
+					bic.appendChild(bicTxt);					
 				}
 			}
 
