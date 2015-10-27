@@ -1893,5 +1893,24 @@
 			<column name="INVOICE_SEQUENCE_SIZE" type="INT4" defaultValue="9" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#1187_20151027" author="Mbarek">
+		<addColumn tableName="adm_notification">
+			<column name="script_notification" type="BOOL" defaultValue="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<sql>
+		update adm_notification set script_notification='true' where id not in(
+		SELECT id FROM adm_notif_webhooks
+		UNION
+		SELECT id FROM adm_notif_email
+		UNION
+		SELECT id FROM adm_notif_job
+		UNION
+		SELECT id FROM adm_notif_im
+		)
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

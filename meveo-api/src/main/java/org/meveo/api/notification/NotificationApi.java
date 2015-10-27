@@ -95,6 +95,7 @@ public class NotificationApi extends BaseApi {
 			notif.setParams(postData.getScriptParams());
 			notif.setElFilter(postData.getElFilter());
 			notif.setCounterTemplate(counterTemplate);
+			notif.setScriptNotification(true);
 			
 
 			notificationService.create(notif, currentUser, currentUser.getProvider());

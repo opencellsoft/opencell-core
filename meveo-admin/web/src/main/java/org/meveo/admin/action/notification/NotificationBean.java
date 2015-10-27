@@ -38,6 +38,7 @@ import org.meveo.service.notification.NotificationService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.UploadedFile;
 
 @Named
@@ -89,12 +90,19 @@ public class NotificationBean extends UpdateMapTypeFieldBean<Notification> {
 
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
-    
-       updateMapTypeFieldInEntity(entity.getParams(), "params");
-
-        return super.saveOrUpdate(killConversation);
+    	updateMapTypeFieldInEntity(entity.getParams(), "params");
+    	entity.setScriptNotification(true);
+    	return super.saveOrUpdate(killConversation);
     }
+    
+    @Override
+	public LazyDataModel<Notification> getLazyDataModel() {
+		getFilters();
+		filters.put("scriptNotification",true); 
+		return super.getLazyDataModel();
+	}
+	
+    
     
 	@Override
 	protected List<String> getFormFieldsToFetch() {

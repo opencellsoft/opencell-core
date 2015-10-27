@@ -69,7 +69,10 @@ public class Notification extends BusinessEntity {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "ADM_NOTIFICATION_PARAMS") 
 	private Map<String, String> params = new HashMap<String, String>();
-
+ 
+	@Column(name = "SCRIPT_NOTIFICATION")
+	private boolean scriptNotification=false;
+	
     public String getClassNameFilter() {
         return classNameFilter;
     }
@@ -138,6 +141,15 @@ public class Notification extends BusinessEntity {
 	 */
 	public void setParams(Map<String, String> params) {
 		this.params = params;
+	}
+
+	
+	public boolean isScriptNotification() {
+		return scriptNotification;
+	}
+
+	public void setScriptNotification(boolean scriptNotification) {
+		this.scriptNotification = scriptNotification;
 	}
 
 	@Override
