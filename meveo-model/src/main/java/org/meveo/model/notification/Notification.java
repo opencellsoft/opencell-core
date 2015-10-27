@@ -149,7 +149,7 @@ public class Notification extends BusinessEntity {
 	@Override
     public String toString() {
         return String.format("Notification [%s, classNameFilter=%s, eventTypeFilter=%s, elFilter=%s, scriptInstance=%s, counterTemplate=%s, counterInstance=%s]", super.toString(),
-            classNameFilter, eventTypeFilter, elFilter, scriptInstance, counterTemplate != null ? counterTemplate.getId() : null, counterInstance != null ? counterInstance.getId()
+            classNameFilter, eventTypeFilter, elFilter, scriptInstance != null ? scriptInstance.getId() : null , counterTemplate != null ? counterTemplate.getId() : null, counterInstance != null ? counterInstance.getId()
                     : null);
     }
 
