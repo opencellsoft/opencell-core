@@ -37,7 +37,7 @@
 	<td>Informations</td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>assertText</td>
 	<td>link=Informations</td>
 	<td>Informations</td>
 </tr>
@@ -57,22 +57,22 @@
 	<td>User account</td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>assertText</td>
 	<td>id=userAccountPopup_title</td>
 	<td>User account</td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>css=div.ui-dialog-content.ui-widget-content</td>
+	<td></td>
+</tr>
+<tr>
 	<td>waitForElementPresent</td>
-	<td>id=userAccountPopup_title</td>
+	<td>id=userAccountPopup</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
-	<td>id=userAccountPopup_title</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForVisible</td>
+	<td>assertElementPresent</td>
 	<td>id=userAccountPopup</td>
 	<td></td>
 </tr>
@@ -92,12 +92,17 @@
 	<td>${UserAccount}</td>
 </tr>
 <tr>
+	<td>waitForTextPresent</td>
+	<td>${UserAccount}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>waitForElementPresent</td>
 	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertElementPresent</td>
 	<td>css=td</td>
 	<td></td>
 </tr>
