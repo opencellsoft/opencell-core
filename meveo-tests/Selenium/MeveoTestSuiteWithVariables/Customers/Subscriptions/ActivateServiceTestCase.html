@@ -12,22 +12,22 @@
 <tr><td rowspan="1" colspan="3">ActivateServiceTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>verifyText</td>
-	<td>//a[contains(text(),'Services')]</td>
-	<td>Services</td>
-</tr>
-<tr>
 	<td>waitForText</td>
 	<td>//a[contains(text(),'Services')]</td>
 	<td>Services</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>verifyText</td>
+	<td>//a[contains(text(),'Services')]</td>
+	<td>Services</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
 	<td>//a[contains(text(),'Services')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
+	<td>verifyElementPresent</td>
 	<td>//a[contains(text(),'Services')]</td>
 	<td></td>
 </tr>
@@ -42,14 +42,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//td[2]</td>
-	<td>SERVICE1</td>
-</tr>
-<tr>
 	<td>waitForText</td>
 	<td>//td[2]</td>
-	<td>SERVICE1</td>
+	<td>${CodeService}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//td[2]</td>
+	<td>${CodeService}</td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -82,22 +82,22 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//td[2]</td>
-	<td>SERVICE1</td>
-</tr>
-<tr>
 	<td>waitForText</td>
 	<td>//td[2]</td>
-	<td>SERVICE1</td>
+	<td>${CodeService}</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertText</td>
+	<td>//td[2]</td>
+	<td>${CodeService}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
 	<td>//td[2]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
+	<td>verifyElementPresent</td>
 	<td>//td[2]</td>
 	<td></td>
 </tr>
@@ -112,22 +112,22 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>assertText</td>
 	<td>id=formPanel:formId:serviceSelectedId:entityFieldSingle:serviceTemplate_entity_view</td>
-	<td>SERVICE1</td>
+	<td>${CodeService}</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>waitForElementPresent</td>
 	<td>id=formPanel:formId:serviceSelectedId:entityFieldSingle:serviceTemplate_entity_view</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>assertText</td>
 	<td>id=formPanel:formId:subscriptionSelectedId:entityFieldSingle:subscription_entity_view</td>
-	<td>SUB</td>
+	<td>${SubscriptionValue}</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>waitForElementPresent</td>
 	<td>id=formPanel:formId:subscriptionSelectedId:entityFieldSingle:subscription_entity_view</td>
 	<td></td>
 </tr>
@@ -187,14 +187,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td>Mise à jour effectuée !</td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td>Mise à jour effectuée !</td>
+	<td></td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
@@ -222,14 +217,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td>Activation effectuée</td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td>Activation effectuée</td>
+	<td></td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>

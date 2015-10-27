@@ -32,12 +32,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForText</td>
 	<td>link=Informations</td>
 	<td>Informations</td>
 </tr>
 <tr>
-	<td>waitForText</td>
+	<td>assertText</td>
 	<td>link=Informations</td>
 	<td>Informations</td>
 </tr>
@@ -57,23 +57,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>id=searchSubscriptionPopup_title</td>
-	<td>Subscription</td>
-</tr>
-<tr>
 	<td>waitForText</td>
 	<td>id=searchSubscriptionPopup_title</td>
 	<td>Subscription</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertText</td>
 	<td>id=searchSubscriptionPopup_title</td>
-	<td></td>
+	<td>Subscription</td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>id=searchSubscriptionPopup_title</td>
+	<td>assertElementPresent</td>
+	<td>css=div.ui-dialog-content.ui-widget-content</td>
 	<td></td>
 </tr>
 <tr>
@@ -82,14 +77,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForConfirmation</td>
+	<td>assertElementPresent</td>
 	<td>id=searchSubscriptionPopup</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>id=searchSubscriptionPopuppopupForm:searchField1</td>
-	<td>SUB</td>
+	<td>${SubscriptionValue}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -99,7 +94,12 @@
 <tr>
 	<td>waitForText</td>
 	<td>css=td</td>
-	<td>SUB</td>
+	<td>${SubscriptionValue}</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${SubscriptionValue}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -107,7 +107,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertElementPresent</td>
 	<td>css=td</td>
 	<td></td>
 </tr>
@@ -147,17 +147,17 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//a[contains(text(),'Custom fields')]</td>
-	<td>Custom fields</td>
-</tr>
-<tr>
 	<td>waitForText</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td>Custom fields</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
+	<td>Custom fields</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td></td>
 </tr>
@@ -177,13 +177,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td>Sauvegarde effectuée !</td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>Sauvegarde effectuée !</td>
 	<td></td>
 </tr>
 <tr>
@@ -191,7 +186,6 @@
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

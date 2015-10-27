@@ -37,17 +37,17 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>link=Account</td>
-	<td>Account</td>
-</tr>
-<tr>
 	<td>waitForTextPresent</td>
 	<td>Account</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertText</td>
+	<td>link=Account</td>
+	<td>Account</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
 	<td>link=Account</td>
 	<td></td>
 </tr>
@@ -162,17 +162,17 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//a[contains(text(),'Custom fields')]</td>
-	<td>Custom fields</td>
-</tr>
-<tr>
 	<td>waitForTextPresent</td>
 	<td>Custom fields</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
+	<td>Custom fields</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td></td>
 </tr>
@@ -222,13 +222,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td>Sauvegarde effectuée !</td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>Sauvegarde effectuée !</td>
 	<td></td>
 </tr>
 <tr>

@@ -72,13 +72,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>css=div.ui-messages-info.ui-corner-all</td>
-	<td>Sauvegarde effectuée !</td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>Sauvegarde effectuée !</td>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 <tr>
@@ -87,17 +82,17 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>link=Recurring charges</td>
-	<td>Recurring charges</td>
-</tr>
-<tr>
 	<td>waitForTextPresent</td>
 	<td>Recurring charges</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertText</td>
+	<td>link=Recurring charges</td>
+	<td>Recurring charges</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
 	<td>link=Recurring charges</td>
 	<td></td>
 </tr>
@@ -108,13 +103,8 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectChargeCode}</td>
+	<td>${SelectRecurringCharge}</td>
 	<td></td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>id=searchRecurringChargeTemplatePopup_title</td>
-	<td>Recurring charges</td>
 </tr>
 <tr>
 	<td>waitForText</td>
@@ -122,13 +112,13 @@
 	<td>Recurring charges</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertText</td>
 	<td>id=searchRecurringChargeTemplatePopup_title</td>
-	<td></td>
+	<td>Recurring charges</td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>Recurring charges</td>
+	<td>assertElementPresent</td>
+	<td>css=div.ui-dialog-content.ui-widget-content</td>
 	<td></td>
 </tr>
 <tr>
@@ -142,14 +132,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForVisible</td>
-	<td>id=searchRecurringChargeTemplatePopup</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
 	<td>id=searchRecurringChargeTemplatePopuppopupForm:searchField1</td>
-	<td>REC1</td>
+	<td>${RecurringChargeCode}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -159,16 +144,21 @@
 <tr>
 	<td>waitForText</td>
 	<td>css=td</td>
-	<td>REC1</td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
-	<td>css=td</td>
-	<td></td>
+	<td>${RecurringChargeCode}</td>
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
 	<td>REC1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>
@@ -207,13 +197,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td>Sauvegarde effectuée !</td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>Sauvegarde effectuée !</td>
 	<td></td>
 </tr>
 <tr>
@@ -222,17 +207,17 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForTextPresent</td>
+	<td>Usage charges</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
 	<td>link=Usage charges</td>
 	<td>Usage charges</td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>Usage charges</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
+	<td>waitForElementPresent</td>
 	<td>link=Usage charges</td>
 	<td></td>
 </tr>
@@ -243,13 +228,8 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectChargeCode}</td>
+	<td>${SelectUsageCharge}</td>
 	<td></td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>id=searchUsageChargeTemplatePopup_title</td>
-	<td>Usage</td>
 </tr>
 <tr>
 	<td>waitForText</td>
@@ -257,13 +237,13 @@
 	<td>Usage</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertText</td>
 	<td>id=searchUsageChargeTemplatePopup_title</td>
-	<td></td>
+	<td>Usage</td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>Usage</td>
+	<td>assertElementPresent</td>
+	<td>css=div.ui-dialog-content.ui-widget-content</td>
 	<td></td>
 </tr>
 <tr>
@@ -277,14 +257,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForVisible</td>
-	<td>id=searchUsageChargeTemplatePopup</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
 	<td>id=searchUsageChargeTemplatePopuppopupForm:searchField1</td>
-	<td>USG1</td>
+	<td>${UsageChargeCode}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -294,16 +269,21 @@
 <tr>
 	<td>waitForText</td>
 	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
-	<td>USG1</td>
+	<td>${UsageChargeCode}</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>waitForTextPresent</td>
+	<td>${UsageChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
 	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>USG1</td>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
 	<td></td>
 </tr>
 <tr>
@@ -357,13 +337,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td>Sauvegarde effectuée !</td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>Sauvegarde effectuée !</td>
 	<td></td>
 </tr>
 <tr>

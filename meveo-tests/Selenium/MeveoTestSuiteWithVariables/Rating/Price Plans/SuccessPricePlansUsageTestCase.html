@@ -42,18 +42,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//div[@id='pricPlanMatChargePopup']/div</td>
-	<td>Charges</td>
-</tr>
-<tr>
 	<td>waitForText</td>
 	<td>//div[@id='pricPlanMatChargePopup']/div</td>
 	<td>Charges</td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertText</td>
 	<td>//div[@id='pricPlanMatChargePopup']/div</td>
+	<td>Charges</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=div.ui-dialog-content.ui-widget-content</td>
 	<td></td>
 </tr>
 <tr>
@@ -62,14 +62,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>verifyElementPresent</td>
+	<td>//div[@id='pricPlanMatChargePopup']/div</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>id=pricPlanMatChargePopuppopupForm:searchField1</td>
-	<td>USG1</td>
+	<td>${ChargeCodeUSG}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -79,16 +79,16 @@
 <tr>
 	<td>waitForText</td>
 	<td>css=td</td>
-	<td>USG1</td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
-	<td>css=td</td>
-	<td></td>
+	<td>${ChargeCodeUSG}</td>
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
-	<td>USG1</td>
+	<td>${ChargeCodeUSG}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>
@@ -477,23 +477,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
+	<td>waitForElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td>Sauvegarde effectuée !</td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>Sauvegarde effectuée !</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
-</tr>
-<tr>
-	<td></td>
-	<td></td>
 	<td></td>
 </tr>
 </tbody></table>
