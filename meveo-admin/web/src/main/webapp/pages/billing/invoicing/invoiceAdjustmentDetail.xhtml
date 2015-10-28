@@ -63,7 +63,7 @@
 							<p:commandButton
 								action="#{invoiceBean.saveOrUpdateInvoiceAdjustment()}"
 								value="#{messages['action.save']}" ajax="false"
-								rendered="#{true or invoiceBean.entity.transient}" />
+								rendered="#{invoiceBean.entity.transient}" />
 							<p:button id="backButton" value="#{messages['action.back']}"
 								outcome="invoiceDetail" includeViewParams="true">
 								<f:param name="objectId"
@@ -84,7 +84,7 @@
 									<h:commandLink
 										action="#{billingAccountBean.generatePDF(invoiceBean.entity.id)}">
 										<h:outputText value="#{invoiceBean.entity.invoiceNumber}.pdf"
-											rendered="#{invoiceBean.entity.invoiceNumber!=null}" />
+											rendered="#{invoiceBean.entity.transient==false}" />
 										<h:outputText value="unvalidated-invoice.pdf"
 											rendered="#{invoiceBean.entity.invoiceNumber==null}" />
 									</h:commandLink>
@@ -96,9 +96,9 @@
 								</p:outputPanel>
 								<p:outputPanel
 									rendered="#{invoiceBean.isXmlInvoiceAdjustmentAlreadyGenerated}">
-									<h:commandLink action="#{invoiceBean.downloadXMLInvoiceAdjustment()}">
+									<h:commandLink action="#{invoiceBean.downloadXMLInvoiceAdjustment()}" immediate="true">
 										<h:outputText value="#{invoiceBean.entity.invoiceNumber}.xml"
-											rendered="#{invoiceBean.entity.invoiceNumber!=null}" />
+											rendered="#{invoiceBean.entity.transient==false}" />
 									</h:commandLink>
 									<p:spacer width="10" />
 									<p:commandButton

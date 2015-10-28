@@ -638,7 +638,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			// detailed
 			if (entity.isTransient()) {
 				ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),
-						getCurrentUser());
+						getCurrentUser(), true);
 			}
 		} else {
 			// aggregated

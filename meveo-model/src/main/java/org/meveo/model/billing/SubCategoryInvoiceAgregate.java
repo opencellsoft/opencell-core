@@ -87,6 +87,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		this.setBillingRun(subCategoryInvoiceAgregate.getBillingRun());
 		this.setUserAccount(subCategoryInvoiceAgregate.getUserAccount());
 		this.setProvider(subCategoryInvoiceAgregate.getProvider());
+		this.setDiscountAggregate(false);
 	}
 
 	public InvoiceSubCategory getInvoiceSubCategory() {
