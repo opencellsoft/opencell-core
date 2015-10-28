@@ -228,8 +228,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 	public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice,Date lastTransactionDate, User currentUser)
+			throws BusinessException {
+		createInvoiceAndAgregates(billingAccount, invoice, lastTransactionDate, currentUser, false);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+	public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice,Date lastTransactionDate, User currentUser, boolean isInvoiceAdjustment)
 			throws BusinessException {
 		boolean entreprise = billingAccount.getProvider().isEntreprise();
 		int rounding = billingAccount.getProvider().getRounding()==null?2:billingAccount.getProvider().getRounding();
@@ -263,7 +268,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			}
 			Predicate pOldTransaction = cb.lessThan(from.get("usageDate"),lastTransactionDate);
 			Predicate pdoNotTriggerInvoicing = cb.isFalse(from.get("doNotTriggerInvoicing"));
+			
 			Predicate pInvoice = cb.isNull(from.get("invoice"));
+			if (isInvoiceAdjustment) {
+				pInvoice = cb.equal(from.get("invoice"), invoice);
+			}
+			
 			if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
 				cq.where(pStatus, pWallet, pAmoutWithoutTax,pOldTransaction, pdoNotTriggerInvoicing, pInvoice);
 			} else {
