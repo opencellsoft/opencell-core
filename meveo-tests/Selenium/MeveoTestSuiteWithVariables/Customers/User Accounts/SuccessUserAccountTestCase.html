@@ -68,12 +68,12 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//div[@id='billingAccountPopup']/div</td>
+	<td>id=billingAccountPopuppopupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>id=billingAccountPopup_title</td>
+	<td>id=billingAccountPopuppopupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
@@ -92,11 +92,6 @@
 	<td>${BillingAccount}</td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>${BillingAccount}</td>
-	<td></td>
-</tr>
-<tr>
 	<td>waitForElementPresent</td>
 	<td>css=td</td>
 	<td></td>
@@ -104,6 +99,11 @@
 <tr>
 	<td>assertElementPresent</td>
 	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${BillingAccount}</td>
 	<td></td>
 </tr>
 <tr>

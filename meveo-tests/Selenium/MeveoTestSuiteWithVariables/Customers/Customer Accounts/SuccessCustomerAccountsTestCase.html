@@ -68,12 +68,12 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>id=searchCustomerPopup</td>
+	<td>id=searchCustomerPopuppopupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>id=searchCustomerPopup</td>
+	<td>id=searchCustomerPopuppopupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
@@ -92,13 +92,18 @@
 	<td>${Customer}</td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
 	<td>waitForTextPresent</td>
 	<td>${Customer}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>css=td</td>
+	<td>verifyTextPresent</td>
+	<td>${Customer}</td>
 	<td></td>
 </tr>
 <tr>

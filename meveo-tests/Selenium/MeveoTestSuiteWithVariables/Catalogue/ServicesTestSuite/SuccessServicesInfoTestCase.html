@@ -127,8 +127,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
-	<td>id=searchRecurringChargeTemplatePopup</td>
+	<td>assertElementPresent</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
@@ -147,11 +147,6 @@
 	<td>${RecurringChargeCode}</td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>REC1</td>
-	<td></td>
-</tr>
-<tr>
 	<td>waitForElementPresent</td>
 	<td>css=td</td>
 	<td></td>
@@ -159,6 +154,21 @@
 <tr>
 	<td>assertElementPresent</td>
 	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${RecurringChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${RecurringChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
 	<td></td>
 </tr>
 <tr>
@@ -247,8 +257,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
-	<td>id=searchUsageChargeTemplatePopup</td>
+	<td>assertElementPresent</td>
+	<td>id=searchUsageChargeTemplatePopuppopupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
@@ -267,11 +277,6 @@
 	<td>${UsageChargeCode}</td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>${UsageChargeCode}</td>
-	<td></td>
-</tr>
-<tr>
 	<td>waitForElementPresent</td>
 	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
 	<td></td>
@@ -279,6 +284,21 @@
 <tr>
 	<td>assertElementPresent</td>
 	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${UsageChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${UsageChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
 	<td></td>
 </tr>
 <tr>
@@ -324,11 +344,6 @@
 <tr>
 	<td>click</td>
 	<td>${AddSaveUsageCharge}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
 	<td></td>
 </tr>
 <tr>
