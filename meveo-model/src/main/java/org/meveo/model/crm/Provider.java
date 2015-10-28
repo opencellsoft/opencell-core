@@ -209,6 +209,9 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	@OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@MapKeyColumn(name = "code")
 	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
+	
+	@Column(name = "INVOICE_SEQUENCE_SIZE")
+	private Integer invoiceSequenceSize=9;
 
 	public String getCode() {
 		return code;
@@ -654,5 +657,15 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 		
 		return null;
 	}
+
+	public Integer getInvoiceSequenceSize() {
+		return invoiceSequenceSize;
+	}
+
+	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
+		this.invoiceSequenceSize = invoiceSequenceSize;
+	}
+	
+	
 
 }

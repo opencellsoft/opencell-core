@@ -350,5 +350,14 @@
 			referencedTableName="billing_rated_transaction" baseColumnNames="adjusted_rated_tx"
 			baseTableName="billing_rated_transaction" referencedColumnNames="id" />		
 	</changeSet>
+	
+	<changeSet id="#1134-20151026" author="Mbarek">
+		<addColumn tableName="crm_provider"> 
+			<column name="INVOICE_SEQUENCE_SIZE" type="INT4" defaultValue="9" />
+		</addColumn>
+		<addColumn tableName="crm_seller"> 
+			<column name="INVOICE_SEQUENCE_SIZE" type="INT4" defaultValue="9" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

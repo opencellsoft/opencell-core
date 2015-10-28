@@ -44,6 +44,9 @@
 						<p:inputText id="currentInvoiceNb"
 							value="#{sellerBean.entity.currentInvoiceNb}" />
 					</hftl:decorateFormField>
+					
+					<hf:formField label="#{messages['provider.invoiceSequenceSize']}"
+						       field="invoiceSequenceSize" id="invoiceSequenceSize"/>
 
 					<hftl:formField id="trCurrencySelectId"
 						label="#{messages['currency.codeCurrency']}"

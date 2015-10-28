@@ -30,6 +30,7 @@ public class SellerDto extends BaseDto {
 	private String languageCode;
 	private String parentSeller;
 	private String provider;
+	private Integer invoiceSequenceSize;
 
 	private CustomersDto customers;
 	
@@ -42,6 +43,7 @@ public class SellerDto extends BaseDto {
 		code = seller.getCode();
 		description = seller.getDescription();
 		invoicePrefix = seller.getInvoicePrefix();
+		invoiceSequenceSize=seller.getInvoiceSequenceSize();
 
 		if (seller.getTradingCountry() != null) {
 			countryCode = seller.getTradingCountry().getCountryCode();
@@ -128,7 +130,7 @@ public class SellerDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "SellerDto [code=" + code + ", description=" + description + ", invoicePrefix=" + invoicePrefix
+		return "SellerDto [code=" + code + ", description=" + description + ", invoicePrefix=" + invoicePrefix +" invoiceSequenceSize=" + invoiceSequenceSize
 				+ ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode
 				+ ", parentSeller=" + parentSeller + ", provider=" + provider + ", customers=" + customers + "]";
 	}
@@ -156,4 +158,14 @@ public class SellerDto extends BaseDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
+	
+
+	public Integer getInvoiceSequenceSize() {
+		return invoiceSequenceSize;
+	}
+
+	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
+		this.invoiceSequenceSize = invoiceSequenceSize;
+	}
+	
 }
