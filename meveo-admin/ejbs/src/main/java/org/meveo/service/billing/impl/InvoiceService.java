@@ -345,19 +345,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Invoice> getInvoicesWithNoAccountOperation(BillingRun br, Provider currentProvider) {
+	public List<Long> getInvoiceIdsWithNoAccountOperation(BillingRun br,Provider currentProvider) {
 		try {
-			QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, currentProvider);
-			qb.addCriterionEntity("i.billingRun.status", BillingRunStatusEnum.VALIDATED);
+			QueryBuilder qb = new QueryBuilder("SELECT i.id FROM "+Invoice.class.getName()+" i");
+			qb.addCriterionEntity("i.provider", currentProvider);			
+			qb.addCriterion("i.billingRun.status", "=", BillingRunStatusEnum.VALIDATED, true);
 			qb.addSql("i.recordedInvoice is null");
 			if (br != null) {
 				qb.addCriterionEntity("i.billingRun", br);
-			}
-			// break lazy
-			qb.addSql("i.billingAccount.customerAccount.code is not null");
-			return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
+			}			
+			return (List<Long>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (Exception ex) {
-			log.error("failed to get invoices with no account operation", ex);
+			log.error("failed to get invoices with no account operation",ex);
 		}
 		return null;
 	}
