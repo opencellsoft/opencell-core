@@ -410,10 +410,6 @@
            
         </sql>
     </changeSet>
-
-	<changeSet id="#1110_20151002" author="EdwardLegaspi">
-		<sql>update billing_invoice set code=concat('ocb_id_', id);</sql>
-	</changeSet>
 	
 	<changeSet id="#1159_20151012" author="EdwardLegaspi">
 		<validCheckSum>7:ed151da9ff22d1081107b1dbe0c2e155</validCheckSum>

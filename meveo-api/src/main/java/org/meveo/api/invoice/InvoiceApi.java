@@ -36,7 +36,6 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
@@ -146,7 +145,6 @@ public class InvoiceApi extends BaseApi {
 			invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
 			invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
 			invoice.setDiscount(invoiceDTO.getDiscount());
-			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
 
 			InvoiceTypeEnum invoiceTypeEnum = null;
 
@@ -165,18 +163,12 @@ public class InvoiceApi extends BaseApi {
 			invoice.setInvoiceTypeEnum(invoiceTypeEnum);
 
 			if (invoiceTypeEnum.equals(InvoiceTypeEnum.CREDIT_NOTE_ADJUST)) {
-				// generate
-				invoice.setCode(invoiceService.getInvoiceAdjustmentNumber(
-						invoice, currentUser));
-				invoiceService.create(invoice, currentUser, provider);
+				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, currentUser));
 			} else {
-				// ocb+id
-				invoice.setCode(paramBean.getProperty("invoice.prefix",
-						"ocb_id_") + new Date().toString());
-				invoiceService.create(invoice, currentUser, provider);
-				invoice.setCode(paramBean.getProperty("invoice.prefix",
-						"ocb_id_") + invoice.getId());
+				invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
 			}
+			
+			invoiceService.create(invoice, currentUser, provider);
 
 			UserAccount userAccount = billingAccount.getDefaultUserAccount();
 

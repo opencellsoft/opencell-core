@@ -247,8 +247,8 @@
 					<hftl:dataList label="#{messages['invoice.adjustment']}"
 						backingBean="#{invoiceListBean}"
 						dataModel="#{invoiceBean.entity.invoiceAdjustments}">
-						<p:column headerText="#{messages['BusinessEntity.code']}">
-							<h:link value="#{entity.code}" outcome="invoiceAdjustmentDetail">
+						<p:column headerText="#{messages['invoice.invoiceNumber']}">
+							<h:link value="#{entity.invoiceNumber}" outcome="invoiceAdjustmentDetail">
 								<f:param name="objectId" value="#{entity.id}" />
 								<f:param name="adjustedInvoiceIdParam"
 									value="#{entity.adjustedInvoice.id}" />
@@ -259,8 +259,6 @@
 									value="#{javax.enterprise.context.conversation.id}" />
 							</h:link>
 						</p:column>
-						<hftl:column label="#{messages['BusinessEntity.description']}"
-							field="description" />
 						<hftl:column label="#{messages['invoice.invoiceDate']}"
 							field="invoiceDate" isDate="true" />
 						<hftl:column label="#{messages['invoice.dueDate']}"

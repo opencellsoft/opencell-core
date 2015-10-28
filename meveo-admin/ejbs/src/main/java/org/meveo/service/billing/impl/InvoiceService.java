@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -82,6 +83,7 @@ import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -101,6 +103,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public final static String INVOICE_ADJUSTMENT_SEQUENCE = "INVOICE_ADJUSTMENT_SEQUENCE";
 
 	public final static String INVOICE_SEQUENCE = "INVOICE_SEQUENCE";
+
+	@Inject
+	private InvoiceAgregateService invoiceAgregateService;
 
 	@Inject
 	private ProviderService providerService;
@@ -405,11 +410,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			invoice.setPaymentMethod(paymentMethod);
 			invoice.setProvider(billingRun.getProvider());
-			invoice.setCode(paramBean.getProperty("invoice.prefix", "ocb_id_") + new Date().toString());
 
 			em.persist(invoice);
-
-			invoice.setCode(paramBean.getProperty("invoice.prefix", "ocb_id_") + invoice.getId());
 
 			// create(invoice, currentUser, currentUser.getProvider());
 			log.debug("created invoice entity with id={},  tx status={}, em open={}", invoice.getId(),
@@ -733,6 +735,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 		String invoiceAdjustmentNumber = num1.substring(num1.length() - padSize);
 
+		invoiceAdjustment.setAlias(invoiceAdjustmentNumber);
+
 		return (prefix + invoiceAdjustmentNumber);
 	}
 
@@ -867,13 +871,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public void recomputeAggregates(Invoice entity, List<SubCategoryInvoiceAgregate> uiSubCategoryInvoiceAgregates,
 			boolean isDetailed) throws BusinessException {
 		if (isDetailed) {
-			// detailed
-			if (entity.isTransient()) {
-				ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),
-						getCurrentUser(), true);
-			}
+			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),
+					getCurrentUser(), true);
 		} else {
-			// aggregated
+			// aggregated subcat
 			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
 				if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
 					SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = (SubCategoryInvoiceAgregate) invoiceAgregate;
@@ -889,28 +890,61 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				}
 			}
 
-			// recompute category
+			// aggregated cat
 			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
 				if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
 					CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
-					BigDecimal amountWithTax = new BigDecimal(0);
 					BigDecimal amountWithoutTax = new BigDecimal(0);
-					BigDecimal amountTax = new BigDecimal(0);
 
 					if (categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
 						for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : categoryInvoiceAgregate
 								.getSubCategoryInvoiceAgregates()) {
 							amountWithoutTax = amountWithoutTax.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
-							amountWithTax = amountWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
-							amountTax = amountTax.add(subCategoryInvoiceAgregate.getAmountTax());
 						}
 
 						categoryInvoiceAgregate.setAmountWithoutTax(amountWithoutTax);
-						categoryInvoiceAgregate.setAmountWithTax(amountWithTax);
-						categoryInvoiceAgregate.setAmountTax(amountTax);
 					}
 				}
 			}
+
+			// recompute aggregates for invoice
+			int rounding = entity.getBillingAccount().getProvider().getRounding() == null ? 2 : entity
+					.getBillingAccount().getProvider().getRounding();
+
+			entity.setAmountWithoutTax(new BigDecimal(0));
+			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
+				if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+					CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
+					entity.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding,
+							RoundingMode.HALF_UP));
+				}
+
+				if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+					TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
+					taxInvoiceAgregate.setAmountWithoutTax(taxInvoiceAgregate.getSubCategoryInvoiceAggregate()
+							.getAmountWithoutTax());
+					entity.addAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
+				}
+			}
+
+			if (entity.getAmountWithoutTax() != null) {
+				entity.setAmountWithTax(entity.getAmountWithoutTax().add(entity.getAmountTax()));
+			}
+
+			Object[] object = invoiceAgregateService.findTotalAmountsForDiscountAggregates(entity.getAdjustedInvoice());
+
+			BigDecimal discountAmountWithoutTax = (BigDecimal) object[0];
+			BigDecimal discountAmountTax = (BigDecimal) object[1];
+			BigDecimal discountAmountWithTax = (BigDecimal) object[2];
+
+			log.info("discountAmountWithoutTax= {},discountAmountTax={},discountAmountWithTax={}", object[0],
+					object[1], object[2]);
+
+			entity.addAmountWithoutTax(discountAmountWithoutTax);
+			entity.addAmountTax(discountAmountTax);
+			entity.addAmountWithTax(discountAmountWithTax);
+
+			entity.setNetToPay(entity.getAmountWithTax());
 		}
 
 		// update seller or provider current invoice sequence value
@@ -926,5 +960,4 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			providerService.update(provider, getCurrentUser());
 		}
 	}
-
 }
