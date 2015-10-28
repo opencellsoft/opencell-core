@@ -33,6 +33,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
@@ -140,6 +141,12 @@ public class Invoice extends BusinessEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "INVOICE_TYPE")
 	private InvoiceTypeEnum invoiceTypeEnum;
+
+	@Transient
+	private Long invoiceAdjustmentCurrentSellerNb;
+
+	@Transient
+	private Long invoiceAdjustmentCurrentProviderNb;
 
 	public List<RatedTransaction> getRatedTransactions() {
 		return ratedTransactions;
@@ -407,6 +414,22 @@ public class Invoice extends BusinessEntity {
 
 	public void setInvoiceAdjustments(List<Invoice> invoiceAdjustments) {
 		this.invoiceAdjustments = invoiceAdjustments;
+	}
+
+	public Long getInvoiceAdjustmentCurrentSellerNb() {
+		return invoiceAdjustmentCurrentSellerNb;
+	}
+
+	public void setInvoiceAdjustmentCurrentSellerNb(Long invoiceAdjustmentCurrentSellerNb) {
+		this.invoiceAdjustmentCurrentSellerNb = invoiceAdjustmentCurrentSellerNb;
+	}
+
+	public Long getInvoiceAdjustmentCurrentProviderNb() {
+		return invoiceAdjustmentCurrentProviderNb;
+	}
+
+	public void setInvoiceAdjustmentCurrentProviderNb(Long invoiceAdjustmentCurrentProviderNb) {
+		this.invoiceAdjustmentCurrentProviderNb = invoiceAdjustmentCurrentProviderNb;
 	}
 
 }

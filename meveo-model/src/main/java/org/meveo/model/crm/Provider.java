@@ -43,6 +43,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
@@ -62,6 +63,8 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.InterBankTitle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @ObservableEntity
@@ -665,7 +668,67 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
 		this.invoiceSequenceSize = invoiceSequenceSize;
 	}
+
+	public void setCFValue(String cfCode, Object value) {
+        setCFValue(cfCode, value, null);
+    }
 	
+	public void setCFValue(String cfCode, Object value, CustomFieldTemplate cft) {
+
+        CustomFieldInstance cfi = getCustomFields().get(cfCode);
+        if (cfi == null) {
+            if (value == null) {
+                return;
+            }
+            if (cft != null) {
+                cfi = CustomFieldInstance.fromTemplate(cft);
+            } else {
+                cfi = new CustomFieldInstance();
+                cfi.setCode(cfCode);
+            }
+
+            String relationshipFieldname = this.getClass().getAnnotation(CustomFieldEntity.class).accountLevel().getRelationFieldname();
+            try {
+                FieldUtils.getField(CustomFieldInstance.class, relationshipFieldname, true).set(cfi, this);
+
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                Logger log = LoggerFactory.getLogger(this.getClass());
+                log.error("Failed to access CFI to entity relationship field CustomFieldInstance.{}", relationshipFieldname);
+                return;
+            }
+            this.getCustomFields().put(cfCode, cfi);
+        }
+        cfi.setValue(value);
+    }
 	
+	public void setCFValue(String cfCode, Object value, Date valueDate, CustomFieldTemplate cft) {
+
+        CustomFieldInstance cfi = getCustomFields().get(cfCode);
+        if (cfi == null) {
+            if (value == null) {
+                return;
+            }
+            if (cft != null) {
+                cfi = CustomFieldInstance.fromTemplate(cft);
+            } else {
+                // cfi = new CustomFieldInstance();
+                // cfi.setCode(cfCode);
+                // cfi.setVersionable(true);
+                throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
+            }
+
+            String relationshipFieldname = this.getClass().getAnnotation(CustomFieldEntity.class).accountLevel().getRelationFieldname();
+            try {
+                FieldUtils.getField(CustomFieldInstance.class, relationshipFieldname, true).set(cfi, this);
+
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                Logger log = LoggerFactory.getLogger(this.getClass());
+                log.error("Failed to access CFI to entity relationship field CustomFieldInstance.{}", relationshipFieldname);
+                return;
+            }
+            this.getCustomFields().put(cfCode, cfi);
+        }
+        cfi.setValue(value, valueDate);
+    }
 
 }
