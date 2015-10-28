@@ -30696,79 +30696,7 @@ public class BRInfoTest extends Script {
       	<customerAccountCode>${#TestSuite#ticket}_CA_01</customerAccountCode>
       </ws:findInvoice>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="eb6721d2-0bf7-4ca1-8d05-b15cc38b54f1"/><con:assertion type="Simple Contains" id="ef2752e2-5164-4a71-a5ef-bcdb01875ef1" name="Type is COMMERCIAL"><con:configuration><token>&lt;type>COMMERCIAL&lt;/type></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_credit_note_invoice" id="37b18803-a88b-49ef-9b24-9505574132dd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create_credit_note_invoice" id="8553a431-e30d-4d14-86a0-3ecc8da57cb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createInvoice>
-         <!--Optional:-->
-         <invoice>
-            <billingAccountCode>${#TestSuite#ticket}_BA</billingAccountCode>
-            <type>CREDIT_NOTE</type>
-            <dueDate>2015-12-12</dueDate>
-             <amountWithoutTax>10</amountWithoutTax>
-                  <!--Optional:-->
-                  <amountWithTax>10</amountWithTax>
-                  <!--Optional:-->
-                  <amountTax>10</amountTax>
-            <PDFpresent>No</PDFpresent>
-            <!--Zero or more repetitions:-->
-            <subCategoryInvoiceAgregates>
-               <!--Optional:-->
-               <type>CONSUMPTION</type>
-               <itemNumber>1</itemNumber>
-               <!--Optional:-->
-               <accountingCode>120.121.21.2</accountingCode>
-               <!--Optional:-->
-               <taxPercent>10</taxPercent>
-               <!--Optional:-->
-               <quantity>1</quantity>
-               <!--Optional:-->
-               <discount>10</discount>
-               <!--Optional:-->
-               <amountWithoutTax>10</amountWithoutTax>
-               <!--Optional:-->
-               <amountTax>10</amountTax>
-               <!--Optional:-->
-               <amountWithTax>10</amountWithTax>
-               <!--Optional:-->
-               <invoiceSubCategoryCode>CMP_DATA</invoiceSubCategoryCode>
-               
-               <!--Zero or more repetitions:-->
-               <ratedTransactions>
-                  <!--Optional:-->
-                  <usageDate>2015-12-12</usageDate>
-                  <!--Optional:-->
-                  <unitAmountWithoutTax>10</unitAmountWithoutTax>
-                  <!--Optional:-->
-                  <unitAmountWithTax>10</unitAmountWithTax>
-                  <!--Optional:-->
-                  <unitAmountTax>10</unitAmountTax>
-                  <!--Optional:-->
-                  <quantity>10</quantity>
-                  <!--Optional:-->
-                  <amountWithoutTax>10</amountWithoutTax>
-                  <!--Optional:-->
-                  <amountWithTax>10</amountWithTax>
-                  <!--Optional:-->
-                  <amountTax>10</amountTax>
-                  <!--Optional:-->
-                  <code>${#TestSuite#ticket}_RT</code>
-                  <!--Optional:-->
-                  <priceplanCode>${#TestSuite#ticket}_REC1</priceplanCode>
-                  <doNotTriggerInvoicing>Yes</doNotTriggerInvoicing>
-               </ratedTransactions>
-            </subCategoryInvoiceAgregates>
-         </invoice>
-      </ws:createInvoice>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ab8657f6-646c-4c73-b56e-abaaea51a3da"/><con:assertion type="Simple Contains" id="2e223f04-aef1-4edf-8034-797382aab5b0" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_credit_note_invoice" id="ba6bcda5-c1a1-462e-9e01-dcf42059141e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>find</con:operation><con:request name="find_credit_note_invoice" id="ca9c254d-078b-4e6d-b94b-f930ea40de89"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:findInvoice>
-      	<customerAccountCode>${#TestSuite#ticket}_CA_01</customerAccountCode>
-      </ws:findInvoice>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="eb6721d2-0bf7-4ca1-8d05-b15cc38b54f1"/><con:assertion type="Simple Contains" id="ef2752e2-5164-4a71-a5ef-bcdb01875ef1" name="Type is credit note"><con:configuration><token>&lt;type>CREDIT_NOTE&lt;/type></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_credit_note_adjust_invoice" id="0eea6d5e-d636-47ef-aa9c-3e39c0b41b2f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create_credit_note_adjust_invoice" id="8553a431-e30d-4d14-86a0-3ecc8da57cb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="eb6721d2-0bf7-4ca1-8d05-b15cc38b54f1"/><con:assertion type="Simple Contains" id="ef2752e2-5164-4a71-a5ef-bcdb01875ef1" name="Type is COMMERCIAL"><con:configuration><token>&lt;type>COMMERCIAL&lt;/type></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_credit_note_adjust_invoice" id="0eea6d5e-d636-47ef-aa9c-3e39c0b41b2f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>InvoiceWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create_credit_note_adjust_invoice" id="8553a431-e30d-4d14-86a0-3ecc8da57cb4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/InvoiceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createInvoice>
@@ -30776,6 +30704,7 @@ public class BRInfoTest extends Script {
          <invoice>
             <billingAccountCode>${#TestSuite#ticket}_BA</billingAccountCode>
             <type>CREDIT_NOTE_ADJUST</type>
+            <invoiceNumber>000000001</invoiceNumber>
             <dueDate>2015-12-12</dueDate>
              <amountWithoutTax>10</amountWithoutTax>
                   <!--Optional:-->
