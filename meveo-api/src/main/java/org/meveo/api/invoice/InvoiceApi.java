@@ -166,6 +166,19 @@ public class InvoiceApi extends BaseApi {
 
 			if (invoiceTypeEnum.equals(InvoiceTypeEnum.CREDIT_NOTE_ADJUST)) {
 				// generate
+				String invoiceNumber = invoiceDTO.getInvoiceNumber();
+				if (invoiceNumber == null) {
+					missingParameters.add("invoiceNumber");
+					throw new MissingParameterException(
+							getMissingParametersExceptionMessage());
+				}
+				Invoice commercialInvoice = invoiceService
+						.getInvoiceByNumber(invoiceNumber);
+				if (commercialInvoice == null) {
+					throw new EntityDoesNotExistsException(Invoice.class,
+							invoiceNumber);
+				}
+				invoice.setAdjustedInvoice(commercialInvoice);
 				invoice.setCode(invoiceService.getInvoiceAdjustmentNumber(
 						invoice, currentUser));
 				invoiceService.create(invoice, currentUser, provider);
@@ -440,7 +453,8 @@ public class InvoiceApi extends BaseApi {
 		return billingRunService.update(billingRun);
 	}
 
-	public void validateBR(BillingRun billingRun, User user) throws BusinessException {
+	public void validateBR(BillingRun billingRun, User user)
+			throws BusinessException {
 		billingRunService.validate(billingRun, user);
 	}
 
@@ -598,5 +612,5 @@ public class InvoiceApi extends BaseApi {
 		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);
 		return invoice.getPdf();
 	}
-
+	
 }
