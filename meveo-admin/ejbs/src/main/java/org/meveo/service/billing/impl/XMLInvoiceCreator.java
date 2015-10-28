@@ -90,7 +90,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private ParamBean paramBean = ParamBean.getInstance();
 
-	private String dateFormat = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+	private String dueDateFormat = "yyyy-MM-dd";
 
 	@Inject
 	private InvoiceService invoiceService;
@@ -305,7 +305,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			if (invoice.getInvoiceDate() != null) {
 				Element invoiceDate = doc.createElement("invoiceDate");
 				Text invoiceDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoice.getInvoiceDate(),
-						dateFormat));
+						"dd/MM/yyyy"));
 				invoiceDate.appendChild(invoiceDateTxt);
 				header.appendChild(invoiceDate);
 			}
@@ -313,7 +313,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			if (invoice.getDueDate() != null) {
 				Element dueDate = doc.createElement("dueDate");
 				Text dueDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoice.getDueDate(),
-						dateFormat));
+						dueDateFormat));
 				dueDate.appendChild(dueDateTxt);
 				header.appendChild(dueDate);
 			}
@@ -949,7 +949,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 						Element usageDate = doc.createElement("usageDate");
 						Text usageDateTxt = doc.createTextNode(ratedTransaction.getUsageDate() != null ? DateUtils
-								.formatDateWithPattern(ratedTransaction.getUsageDate(), dateFormat) + "" : "");
+								.formatDateWithPattern(ratedTransaction.getUsageDate(), "dd/MM/yyyy") + "" : "");
 						usageDate.appendChild(usageDateTxt);
 						line.appendChild(usageDate);
 						EDR edr = ratedTransaction.getEdr();
@@ -970,7 +970,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							edrInfo.setAttribute(
 									"eventDate",
 									edr.getEventDate() != null ? DateUtils.formatDateWithPattern(edr.getEventDate(),
-											dateFormat) + "" : "");
+											"dd/MM/yyyy") + "" : "");
 							edrInfo.setAttribute("accessCode", edr.getAccessCode() != null ? edr.getAccessCode() : "");
 							edrInfo.setAttribute("parameter1", edr.getParameter1() != null ? edr.getParameter1() : "");
 							edrInfo.setAttribute("parameter2", edr.getParameter2() != null ? edr.getParameter2() : "");
@@ -984,23 +984,23 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							edrInfo.setAttribute(
 									"dateParam1",
 									edr.getDateParam1() != null ? DateUtils.formatDateWithPattern(edr.getDateParam1(),
-											dateFormat) + "" : "");
+											"dd/MM/yyyy") + "" : "");
 							edrInfo.setAttribute(
 									"dateParam2",
 									edr.getDateParam2() != null ? DateUtils.formatDateWithPattern(edr.getDateParam2(),
-											dateFormat) + "" : "");
+											"dd/MM/yyyy") + "" : "");
 							edrInfo.setAttribute(
 									"dateParam3",
 									edr.getDateParam3() != null ? DateUtils.formatDateWithPattern(edr.getDateParam3(),
-											dateFormat) + "" : "");
+											"dd/MM/yyyy") + "" : "");
 							edrInfo.setAttribute(
 									"dateParam4",
 									edr.getDateParam4() != null ? DateUtils.formatDateWithPattern(edr.getDateParam4(),
-											dateFormat) + "" : "");
+											"dd/MM/yyyy") + "" : "");
 							edrInfo.setAttribute(
 									"dateParam5",
 									edr.getDateParam5() != null ? DateUtils.formatDateWithPattern(edr.getDateParam5(),
-											dateFormat) + "" : "");
+											"dd/MM/yyyy") + "" : "");
 							edrInfo.setAttribute("decimalParam1", edr.getDecimalParam1() != null ? edr
 									.getDecimalParam1().toPlainString() : "");
 							edrInfo.setAttribute("decimalParam2", edr.getDecimalParam2() != null ? edr
