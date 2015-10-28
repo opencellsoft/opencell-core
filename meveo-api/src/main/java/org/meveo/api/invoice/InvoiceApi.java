@@ -165,7 +165,6 @@ public class InvoiceApi extends BaseApi {
 			invoice.setInvoiceTypeEnum(invoiceTypeEnum);
 
 			if (invoiceTypeEnum.equals(InvoiceTypeEnum.CREDIT_NOTE_ADJUST)) {
-				// generate
 				String invoiceNumber = invoiceDTO.getInvoiceNumber();
 				if (invoiceNumber == null) {
 					missingParameters.add("invoiceNumber");
@@ -179,18 +178,10 @@ public class InvoiceApi extends BaseApi {
 							invoiceNumber);
 				}
 				invoice.setAdjustedInvoice(commercialInvoice);
-				invoice.setCode(invoiceService.getInvoiceAdjustmentNumber(
-						invoice, currentUser));
-				invoiceService.create(invoice, currentUser, provider);
-			} else {
-				// ocb+id
-				invoice.setCode(paramBean.getProperty("invoice.prefix",
-						"ocb_id_") + new Date().toString());
-				invoiceService.create(invoice, currentUser, provider);
-				invoice.setCode(paramBean.getProperty("invoice.prefix",
-						"ocb_id_") + invoice.getId());
-			}
+			} 
 
+			invoiceService.create(invoice, currentUser, provider);
+			
 			UserAccount userAccount = billingAccount.getDefaultUserAccount();
 
 			for (SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDTO : invoiceDTO
@@ -453,8 +444,7 @@ public class InvoiceApi extends BaseApi {
 		return billingRunService.update(billingRun);
 	}
 
-	public void validateBR(BillingRun billingRun, User user)
-			throws BusinessException {
+	public void validateBR(BillingRun billingRun, User user) throws BusinessException {
 		billingRunService.validate(billingRun, user);
 	}
 
@@ -612,5 +602,5 @@ public class InvoiceApi extends BaseApi {
 		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);
 		return invoice.getPdf();
 	}
-	
+
 }

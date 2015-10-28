@@ -150,7 +150,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					invoice.getBillingAccount().getCustomerAccount().getCode() != null ? invoice.getBillingAccount()
 							.getCustomerAccount().getCode() : "");
 			if (invoice.getAdjustedInvoice() != null) {
-				invoiceTag.setAttribute("adjustedInvoiceNumber", invoice.getAdjustedInvoice().getCode());
+				invoiceTag.setAttribute("adjustedInvoiceNumber", invoice.getAdjustedInvoice().getInvoiceNumber());
 			}
 
 			BillingCycle billingCycle = isInvoiceAdjustment ? invoice.getAdjustedInvoice().getBillingRun()

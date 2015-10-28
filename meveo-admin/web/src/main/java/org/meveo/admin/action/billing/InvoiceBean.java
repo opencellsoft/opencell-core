@@ -161,81 +161,78 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoice.setAmountWithoutTax(adjustedInvoice.getAmountWithoutTax());
 				invoice.setAmountWithTax(adjustedInvoice.getAmountWithTax());
 				invoice.setNetToPay(adjustedInvoice.getNetToPay());
-				invoice.setCode(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));
-				invoice.setInvoiceNumber(invoice.getCode());
+				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));
 				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
 
-				Auditable auditable = new Auditable();
-				auditable.setCreator(getCurrentUser());
-				auditable.setCreated(new Date());
-				for (InvoiceAgregate invoiceAgregate : adjustedInvoice.getInvoiceAgregates()) {
-					if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-						CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
-						CategoryInvoiceAgregate newCategoryInvoiceAgregate = new CategoryInvoiceAgregate(
-								categoryInvoiceAgregate);
+				// duplicate rated transaction for detailed
+				// invoice adjustment
+				if (isDetailed()) {
+					uiRatedTransactions = new ArrayList<>();
 
-						newCategoryInvoiceAgregate.setSubCategoryInvoiceAgregates(null);
-						newCategoryInvoiceAgregate.setInvoice(invoice);
-						newCategoryInvoiceAgregate.setAuditable(auditable);
+					for (RatedTransaction ratedTransaction : ratedTransactionService.listByInvoice(adjustedInvoice)) {
+						RatedTransaction newRatedTransaction = new RatedTransaction(ratedTransaction);
 
-						if (categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
-							uiSubCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
+						newRatedTransaction.setInvoiceSubCategory(ratedTransaction.getInvoiceSubCategory());
+						newRatedTransaction.setInvoice(invoice);
+						newRatedTransaction.setAdjustedRatedTx(ratedTransaction);
 
-							for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : categoryInvoiceAgregate
-									.getSubCategoryInvoiceAgregates()) {
-								SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate(
-										subCategoryInvoiceAgregate);
+						uiRatedTransactions.add(newRatedTransaction);
+					}
+				} else {
+					Auditable auditable = new Auditable();
+					auditable.setCreator(getCurrentUser());
+					auditable.setCreated(new Date());
+					for (InvoiceAgregate invoiceAgregate : adjustedInvoice.getInvoiceAgregates()) {
+						if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+							CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
+							CategoryInvoiceAgregate newCategoryInvoiceAgregate = new CategoryInvoiceAgregate(
+									categoryInvoiceAgregate);
 
-								newSubCategoryInvoiceAgregate.setTaxInvoiceAggregates(null);
-								newSubCategoryInvoiceAgregate.setInvoice(invoice);
-								newSubCategoryInvoiceAgregate.setAuditable(auditable);
-								newSubCategoryInvoiceAgregate.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
+							newCategoryInvoiceAgregate.setSubCategoryInvoiceAgregates(null);
+							newCategoryInvoiceAgregate.setInvoice(invoice);
+							newCategoryInvoiceAgregate.setAuditable(auditable);
 
-								newCategoryInvoiceAgregate
-										.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
+							if (categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
+								uiSubCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
 
-								uiSubCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);
+								for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : categoryInvoiceAgregate
+										.getSubCategoryInvoiceAgregates()) {
+									SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate(
+											subCategoryInvoiceAgregate);
 
-								// duplicate taxes
-								if (subCategoryInvoiceAgregate.getTaxInvoiceAggregates() != null) {
-									for (TaxInvoiceAgregate taxInvoiceAgregate : subCategoryInvoiceAgregate
-											.getTaxInvoiceAggregates()) {
-										TaxInvoiceAgregate newTaxInvoiceAgregate = new TaxInvoiceAgregate(
-												taxInvoiceAgregate);
+									newSubCategoryInvoiceAgregate.setTaxInvoiceAggregates(null);
+									newSubCategoryInvoiceAgregate.setInvoice(invoice);
+									newSubCategoryInvoiceAgregate.setAuditable(auditable);
+									newSubCategoryInvoiceAgregate
+											.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
 
-										newTaxInvoiceAgregate.setInvoice(invoice);
-										newTaxInvoiceAgregate.setAuditable(auditable);
-										newTaxInvoiceAgregate.setTax(taxInvoiceAgregate.getTax());
-										newTaxInvoiceAgregate
-												.setSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
+									newCategoryInvoiceAgregate
+											.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
 
-										newSubCategoryInvoiceAgregate.addTaxInvoiceAggregate(newTaxInvoiceAgregate);
+									uiSubCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);
+
+									// duplicate taxes
+									if (subCategoryInvoiceAgregate.getTaxInvoiceAggregates() != null) {
+										for (TaxInvoiceAgregate taxInvoiceAgregate : subCategoryInvoiceAgregate
+												.getTaxInvoiceAggregates()) {
+											TaxInvoiceAgregate newTaxInvoiceAgregate = new TaxInvoiceAgregate(
+													taxInvoiceAgregate);
+
+											newTaxInvoiceAgregate.setInvoice(invoice);
+											newTaxInvoiceAgregate.setAuditable(auditable);
+											newTaxInvoiceAgregate.setTax(taxInvoiceAgregate.getTax());
+											newTaxInvoiceAgregate
+													.setSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
+
+											newSubCategoryInvoiceAgregate.addTaxInvoiceAggregate(newTaxInvoiceAgregate);
+										}
 									}
-								}
 
-								if (subCategoryInvoiceAgregate.getSubCategoryTaxes() != null) {
-									newSubCategoryInvoiceAgregate.setSubCategoryTaxes(new HashSet<Tax>());
-									for (Tax tax : subCategoryInvoiceAgregate.getSubCategoryTaxes()) {
-										newSubCategoryInvoiceAgregate.addSubCategoryTax(tax);
-									}
-								}
-
-								// duplicate rated transaction for detailed
-								// invoice adjustment
-								if (isDetailed() && subCategoryInvoiceAgregate.getRatedtransactions() != null) {
-									uiRatedTransactions = new ArrayList<>();
-
-									for (RatedTransaction ratedTransaction : ratedTransactionService
-											.listByInvoice(adjustedInvoice)) {
-										RatedTransaction newRatedTransaction = new RatedTransaction(ratedTransaction);
-
-										newRatedTransaction.setInvoiceSubCategory(ratedTransaction
-												.getInvoiceSubCategory());
-										newRatedTransaction.setInvoice(invoice);
-										newRatedTransaction.setAdjustedRatedTx(ratedTransaction);
-
-										newSubCategoryInvoiceAgregate.getRatedtransactions().add(newRatedTransaction);
-										uiRatedTransactions.add(newRatedTransaction);
+									if (subCategoryInvoiceAgregate.getSubCategoryTaxes() != null) {
+										newSubCategoryInvoiceAgregate.setSubCategoryTaxes(new HashSet<Tax>());
+										for (Tax tax : subCategoryInvoiceAgregate.getSubCategoryTaxes()) {
+											newSubCategoryInvoiceAgregate.addSubCategoryTax(tax);
+										}
 									}
 								}
 							}
@@ -628,8 +625,12 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	public String saveOrUpdateInvoiceAdjustment() throws Exception {
 		if (entity.isTransient()) {
-			Long creditNoteNo = Long.parseLong(entity.getCode());
-			invoiceService.updateCreditNoteNb(entity, creditNoteNo);
+			if (isDetailed()) {
+				for (RatedTransaction rt : uiRatedTransactions) {
+					ratedTransactionService.create(rt, getCurrentUser());
+				}
+			}
+			invoiceService.updateCreditNoteNb(entity, Long.parseLong(entity.getAlias()));
 		}
 
 		super.saveOrUpdate(false);

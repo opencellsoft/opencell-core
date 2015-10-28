@@ -1912,5 +1912,10 @@
 		)
 		</sql>
 	</changeSet>
+	
+	<changeSet id="#1200-20151028" author="EdwardLegaspi">
+		<dropColumn tableName="billing_invoice" columnName="code"/>
+		<dropColumn tableName="billing_invoice" columnName="description"/>
+	</changeSet>
 
 </databaseChangeLog>

@@ -261,6 +261,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			cq.groupBy(invoiceSubCategoryPath);
 			// Restrictions (I don't really understand what you're querying)
 			Predicate pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.OPEN);
+			if (isInvoiceAdjustment) {
+				pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.BILLED);
+			}
+			
 			Predicate pWallet = cb.equal(from.get("wallet"), wallet);
 			Predicate pAmoutWithoutTax = null;
 			if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
