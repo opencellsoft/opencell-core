@@ -634,52 +634,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 		super.saveOrUpdate(false);
 
-		if (isDetailed()) {
-			// detailed
-			if (entity.isTransient()) {
-				ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),
-						getCurrentUser(), true);
-			}
-		} else {
-			// aggregated
-			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
-				if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-					SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = (SubCategoryInvoiceAgregate) invoiceAgregate;
-					for (SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
-						if (subCategoryInvoiceAgregate.getId().equals(newSubCategoryInvoiceAgregate.getId())) {
-							subCategoryInvoiceAgregate.setAmountWithoutTax(newSubCategoryInvoiceAgregate
-									.getAmountWithoutTax());
-							subCategoryInvoiceAgregate.setAmountWithTax(newSubCategoryInvoiceAgregate
-									.getAmountWithTax());
-							subCategoryInvoiceAgregate.setAmountTax(newSubCategoryInvoiceAgregate.getAmountTax());
-						}
-					}
-				}
-			}
-
-			// recompute category
-			for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
-				if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-					CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
-					BigDecimal amountWithTax = new BigDecimal(0);
-					BigDecimal amountWithoutTax = new BigDecimal(0);
-					BigDecimal amountTax = new BigDecimal(0);
-
-					if (categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
-						for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : categoryInvoiceAgregate
-								.getSubCategoryInvoiceAgregates()) {
-							amountWithoutTax = amountWithoutTax.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
-							amountWithTax = amountWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
-							amountTax = amountTax.add(subCategoryInvoiceAgregate.getAmountTax());
-						}
-
-						categoryInvoiceAgregate.setAmountWithoutTax(amountWithoutTax);
-						categoryInvoiceAgregate.setAmountWithTax(amountWithTax);
-						categoryInvoiceAgregate.setAmountTax(amountTax);
-					}
-				}
-			}
-		}
+		invoiceService.recomputeAggregates(entity, uiSubCategoryInvoiceAgregates, isDetailed());
 
 		// create xml invoice adjustment
 		String invoicesDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");
