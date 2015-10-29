@@ -187,24 +187,24 @@
 			//]]>
 		</script>	
 		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.deleteInlist}"
-			 name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"
+			 name="#{resultsId}doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"
 			 rendered="#{renderDeleteLink}"/>
 		<p:tooltip for="#{resultsId}deletelink" rendered="#{renderDeleteLink}"
 			value="#{messages['commons.delete']}" showEffect="slide"
 			hideEffect="slide"  />
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
-			oncomplete="PF('confirmDeleteWidget').show()" rendered="#{renderDeleteLink}">
+			oncomplete="PF('#{resultsId}confirmDeleteWidget').show()" rendered="#{renderDeleteLink}">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>
 		<p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDelete']}" header="" rendered="#{renderDeleteLink}"
-			severity="alert" widgetVar="confirmDeleteWidget" appendTo="@(body)">
+			severity="alert" widgetVar="#{resultsId}confirmDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-					oncomplete="doDelete()" onclick="PF('confirmDeleteWidget').hide()"/>
+					oncomplete="#{resultsId}doDelete()" onclick="PF('#{resultsId}confirmDeleteWidget').hide()"/>
 				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
-					onclick="PF('confirmDeleteWidget').hide()" type="button" />
+					onclick="PF('#{resultsId}confirmDeleteWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
 		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
