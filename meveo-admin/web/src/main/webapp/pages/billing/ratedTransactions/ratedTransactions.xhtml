@@ -113,7 +113,6 @@
 			<hftl:column label="#{messages['ratedTransaction.amount1WithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['ratedTransaction.amount1WithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['ratedTransaction.usageDate']}" field="usageDate" isDate="true" />
-			<hftl:column label="#{messages['ratedTransaction.invoice']}" field="invoice.code"  />
 			<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoice.invoiceNumber"  /> 
 			<hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="35"
 				permission="#{identity.hasPermission('billing','billingVisualization')}"/>
