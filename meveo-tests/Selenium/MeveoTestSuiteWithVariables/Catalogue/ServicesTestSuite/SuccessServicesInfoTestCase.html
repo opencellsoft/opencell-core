@@ -102,6 +102,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForVisible</td>
+	<td>id=tabView:serviceRecurringChargediv</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectRecurringCharge}</td>
 	<td></td>
@@ -173,13 +178,18 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=table.1.0</td>
+	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>css=td</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=tabView:formPanelRecurringCharge:formRecurringCharge:recurringChargeTemplateSelectedId:entityFieldSingle:chargeTemplate_entity</td>
+	<td>${RecurringChargeCode}</td>
 </tr>
 <tr>
 	<td>if</td>
@@ -234,6 +244,11 @@
 <tr>
 	<td>click</td>
 	<td>${UsageCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>id=tabView:serviceUsageChargediv_content</td>
 	<td></td>
 </tr>
 <tr>
@@ -308,13 +323,23 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//div[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable']/div[2]/table.1.0</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=searchUsageChargeTemplatePopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=tabView:formPanelUsageCharge:formUsageCharge:usageChargeTemplateSelectedId:entityFieldSingle:chargeTemplate_entity</td>
+	<td>${UsageChargeCode}</td>
 </tr>
 <tr>
 	<td>if</td>
@@ -365,6 +390,16 @@
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=div.ui-messages-info.ui-corner-all</td>
+	<td>Entity was updated successfully!</td>
 </tr>
 </tbody></table>
 </body>
