@@ -1917,5 +1917,10 @@
 		<dropColumn tableName="billing_invoice" columnName="code"/>
 		<dropColumn tableName="billing_invoice" columnName="description"/>
 	</changeSet>
+	
+	<changeSet id="1209_20151029" author="EdwardLegaspi">
+		<sql>update BILLING_INVOICE_AGREGATE set DISCOUNT_AGGREGATE=false where DISCOUNT_AGGREGATE is null;</sql>
+		<addDefaultValue columnName="discount_aggregate" tableName="billing_invoice_agregate" defaultValueBoolean="false" />
+	</changeSet>
 
 </databaseChangeLog>

@@ -36,7 +36,6 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.RatedTransaction;
@@ -132,6 +131,7 @@ public class InvoiceApi extends BaseApi {
 
 			Invoice invoice = new Invoice();
 			invoice.setBillingAccount(billingAccount);
+			invoice.setBillingRun(billingAccount.getBillingRun());
 			invoice.setProvider(provider);
 			Date invoiceDate = new Date();
 			invoice.setInvoiceDate(invoiceDate);

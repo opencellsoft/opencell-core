@@ -103,7 +103,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 
 
 	@Column(name = "DISCOUNT_AGGREGATE", nullable = false)
-	private boolean discountAggregate;
+	private boolean discountAggregate = false;
 	
 	
 	
