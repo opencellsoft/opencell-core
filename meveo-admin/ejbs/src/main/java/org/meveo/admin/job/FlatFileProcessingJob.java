@@ -433,6 +433,7 @@ public class FlatFileProcessingJob extends Job {
 			String ftpPassword, long distantPort,String ftpInputDirectory,final String ftpFileExtension) {
 		final String ftpAddress=String.format("%s://%s:%s@%s:%s/%s", fileAccess.toLowerCase(),ftpUsername,ftpPassword,distantServer,distantPort,ftpInputDirectory);
 		String ftpUri=String.format("%s://%s:%s%s", fileAccess.toLowerCase(),distantServer,distantPort,ftpInputDirectory);
+		log.debug("ftp address {}",ftpAddress);
 		StandardFileSystemManager manager = null;
 		try{
 			manager = new StandardFileSystemManager();
@@ -453,16 +454,20 @@ public class FlatFileProcessingJob extends Job {
 			}else{
 				fileObjects=fileObject.getChildren();
 			}
+			log.debug("found files {}",fileObjects!=null?fileObjects.length:0);
 			if(fileObjects!=null){
 				for (FileObject o : fileObjects) {
+					log.debug("found {}",o.getName().getBaseName());
 					if (o.getType() == FileType.FILE) {
 						String fileName=o.getName().getBaseName();
 						log.debug("found ftp file {}",fileName);
 						FileContent c = o.getContent();
 						long lastModified = c.getLastModifiedTime();
 						long size = c.getSize();
-						importedFile=new ImportedFile((ftpUri.endsWith("/")?ftpUri:ftpUri+"/"+fileName),size,lastModified);
-						String code=Sha1Encrypt.encodePassword(importedFile.getOriginHash(), Sha1Encrypt.SHA224);
+						String originHash=String.format("%s:%d:%d",ftpUri.endsWith("/")?ftpUri+fileName:ftpUri+"/"+fileName,size,lastModified );
+						log.debug("imported origin {}",importedFile.getOriginHash());
+						String code=Sha1Encrypt.encodePassword(originHash, Sha1Encrypt.SHA224);
+						log.debug("count code {}",code);
 						if(code.equals(importedFile.getCode())){
 							log.debug("found equal code");
 							boolean result=o.delete();
