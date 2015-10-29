@@ -309,6 +309,19 @@
 			<artifactId>xstream-hibernate</artifactId>
 			<version>1.4.8</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+		</dependency>
+		
 
 		<!-- For testing -->
 		<dependency>
