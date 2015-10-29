@@ -922,8 +922,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							line.appendChild(lineUnit);
 						}
 						Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-						Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(round(
-								ratedTransaction.getUnitAmountWithoutTax(), rounding));
+						Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
 						lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
 						line.appendChild(lineUnitAmountWithoutTax);
 
