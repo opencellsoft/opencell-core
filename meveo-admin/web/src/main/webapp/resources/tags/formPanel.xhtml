@@ -92,7 +92,7 @@
     				showEditButton="#{cc.attrs.showEditButton}" 
                     showEnableDisableButton="#{cc.attrs.showEnableDisableButton}"
                     showDeleteButton="#{cc.attrs.showDeleteButton}"
-                    updateConfirmationMessage="#{cc.attrs.updateConfirmationMessage}" formId=#{cc.attrs.formId} />
+                    updateConfirmationMessage="#{cc.attrs.updateConfirmationMessage}" formId="#{cc.attrs.formId}" />
     
                 <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{not empty cc.facets.buttons}">
                     <cc:renderFacet name="buttons"/>
