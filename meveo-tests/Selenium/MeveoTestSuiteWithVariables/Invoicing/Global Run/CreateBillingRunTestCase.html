@@ -52,16 +52,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>id=billingCyclePopuppopupForm:searchField1</td>
-	<td>${BillingCycleCode}</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=billingCyclePopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
 	<td>waitForText</td>
 	<td>css=td</td>
 	<td>${BillingCycleCode}</td>
@@ -78,6 +68,11 @@
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
+	<td>${BillingCycleCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
 	<td>${BillingCycleCode}</td>
 	<td></td>
 </tr>

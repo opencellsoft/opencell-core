@@ -102,6 +102,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>verifyTextPresent</td>
+	<td>${CustomerAccount}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>css=td</td>
 	<td></td>
@@ -239,6 +244,11 @@
 <tr>
 	<td>click</td>
 	<td>${SelectTitle}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=parentTab:formId:childTab:email_select</td>
 	<td></td>
 </tr>
 <tr>
@@ -447,18 +457,33 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForVisible</td>
-	<td>id=parentTab:formId:childTab:bankCode</td>
-	<td></td>
-</tr>
-<tr>
 	<td>endIf</td>
 	<td></td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>waitForText</td>
+	<td>id=parentTab:formId:childTab:paymentMethod_enum_label</td>
+	<td>${PaymentMethodValue}</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${PaymentMethodValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>${PaymentMethodValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=parentTab:formId:childTab:bankCode</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=parentTab:formId:childTab:bankCode</td>
 	<td></td>
 </tr>
 <tr>
@@ -494,6 +519,26 @@
 <tr>
 	<td>endIf</td>
 	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=parentTab:formId:childTab:email_select</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=parentTab:formId:childTab:email_select</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>id=parentTab:formId:childTab:email_select</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
 	<td></td>
 </tr>
 <tr>
