@@ -121,12 +121,25 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
 			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
 			<column name="uri" type="VARCHAR(2000)">
 				<constraints nullable="false" />
 			</column>
 			<column name="size" type="BIGINT"/>
-			<column name="last_modified" type="date"/>
+			<column name="last_modified" type="TIMESTAMP WITHOUT TIME ZONE"/>
 		</createTable>
 		<addPrimaryKey columnNames="id" constraintName="medina_importedfile_pkey"
 			tableName="medina_importedfile" />
@@ -134,6 +147,17 @@
 			baseTableName="medina_importedfile" constraintName="fk_medina_importedfile_crm_provider"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="medina_importedfile" constraintName="fk_creator_medina_importedfile_adm_user"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
 		
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="medina_importedfile" constraintName="fk_updater_medina_importedfile_adm_user"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
 	</changeSet>
+<!-- 	<changeSet id="#1188_20151028" author="TyshanShi"> -->
+		
+<!-- 	</changeSet> -->
 </databaseChangeLog>

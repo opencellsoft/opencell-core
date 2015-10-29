@@ -20,7 +20,7 @@
 		<hftl:searchPanel id="searchPanel" columns="2"
 			label="#{messages['importedFile.search']}"
 			backingBean="#{importedFileListBean}">
-
+			<hftl:searchField label="#{messages['importedFile.description']}" field="description" />
 			<hftl:searchField label="#{messages['importedFile.uri']}" field="uri" />
 			<hftl:searchField label="#{messages['importedFile.lastModified']}"
 				field="lastModified" />
@@ -28,9 +28,9 @@
 
 		<hftl:dataList label="#{messages['importedFile.title']}"
 			backingBean="#{importedFileListBean}" sortBy="lastModified" sortOrder="DESCENDING">
-			<hftl:column label="#{messages['importedFile.uri']}"
-				valueIdField="id" propagateConversation="true" field="uri"
-				entityView="importedFileDetail" />
+			<hftl:column label="#{messages['importedFile.code']}" field="code"/>
+			<hftl:column label="#{messages['importedFile.description']}" field="description"/>
+			<hftl:column label="#{messages['importedFile.uri']}" field="uri"/>
 			<hftl:column label="#{messages['importedFile.size']}" field="size" />
 			<hftl:column label="#{messages['importedFile.lastModified']}"
 				field="lastModified" isDate="true" />

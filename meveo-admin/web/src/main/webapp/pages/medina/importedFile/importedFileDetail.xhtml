@@ -22,14 +22,16 @@
 			</h:form>
 		</p:panel>
 		<hftl:formPanel id="formPanel" formId="importedFilesFormId"
-			label="#{messages['menu.importedFiles']}"
+			label="#{messages['menu.importedFiles']}" edit="false" showEditButton="false"
 			backingBean="#{importedFileBean}">
+			<hftl:formField label="#{messages['importedFile.code']}" field="code" edit="false" />
+			<hftl:formField label="#{messages['importedFile.description']}" field="description" edit="false" />
 			<hftl:formField label="#{messages['importedFile.uri']}" field="uri"
-				required="true" textArea="true" maxlength="2000" cols="120" />
+				required="true" textArea="true" maxlength="2000" cols="120" edit="false"/>
 			<hftl:formField label="#{messages['importedFile.size']}" field="size"
-				newLine="true" />
+				newLine="true" edit="false"/>
 			<hftl:formField label="#{messages['importedFile.lastModified']}"
-				field="lastModified" isDate="true" />
+				field="lastModified" isDate="true" edit="false"/>
 		</hftl:formPanel>
 	</ui:define>
 
