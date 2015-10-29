@@ -148,23 +148,8 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[1]</td>
 	<td>${RecurringChargeCode}</td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>${RecurringChargeCode}</td>
-	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
@@ -172,18 +157,38 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForTable</td>
-	<td>css=table.1.0</td>
+	<td>click</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[1]</td>
 	<td>${RecurringChargeCode}</td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>css=td</td>
+	<td>click</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=searchRecurringChargeTemplatePopup</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>${SelectRecurringCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -218,28 +223,13 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>Usage charges</td>
+	<td>id=tabView:datatable_serviceRecurringCharges_results:0:chargeTemplate_code_chargeTemplate_id_message_link</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>link=Usage charges</td>
-	<td>Usage charges</td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>link=Usage charges</td>
-	<td></td>
+	<td>id=tabView:datatable_serviceRecurringCharges_results:0:chargeTemplate_code_chargeTemplate_id_message_link</td>
+	<td>${RecurringChargeCode}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -337,6 +327,21 @@
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>${SelectUsageCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
 	<td>waitForValue</td>
 	<td>id=tabView:formPanelUsageCharge:formUsageCharge:usageChargeTemplateSelectedId:entityFieldSingle:chargeTemplate_entity</td>
 	<td>${UsageChargeCode}</td>
@@ -383,23 +388,13 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
+	<td>id=tabView:datatable_serviceUsageCharges_results:0:chargeTemplate_code_chargeTemplate_id_message_link</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${saveButtonWhenCreate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>css=div.ui-messages-info.ui-corner-all</td>
-	<td>Entity was updated successfully!</td>
+	<td>assertText</td>
+	<td>id=tabView:datatable_serviceUsageCharges_results:0:chargeTemplate_code_chargeTemplate_id_message_link</td>
+	<td>${UsageChargeCode}</td>
 </tr>
 </tbody></table>
 </body>
