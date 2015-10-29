@@ -41,7 +41,7 @@ public abstract class ProviderlessEntity implements Serializable, IEntity, IAudi
     @GeneratedValue(generator = "ID_GENERATOR")
     @Column(name = "ID")
     @Access(AccessType.PROPERTY)
-    private Long id;
+    protected Long id;
 
     @Version
     @Column(name = "VERSION")

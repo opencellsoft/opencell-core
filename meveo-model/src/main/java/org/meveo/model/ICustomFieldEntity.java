@@ -1,9 +1,8 @@
 package org.meveo.model;
 
 import java.util.Date;
-import java.util.Map;
 
-import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldFields;
 
 /**
  * An entity that contains custom fields
@@ -13,9 +12,17 @@ import org.meveo.model.crm.CustomFieldInstance;
  */
 public interface ICustomFieldEntity {
 
-    public Map<String, CustomFieldInstance> getCustomFields();
+    /**
+     * Get an custom fields
+     * 
+     * @return Custom fields
+     */
+    public CustomFieldFields getCfFields();
 
-    public void setCustomFields(Map<String, CustomFieldInstance> customFields);
+    /**
+     * Initialize custom fields
+     */
+    public void initCustomFields();
 
     /**
      * Get custom field value (non-versioned fields only) from a current entity

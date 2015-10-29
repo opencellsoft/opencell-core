@@ -17,8 +17,6 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
@@ -44,7 +42,8 @@ public class FlatFileProcessingJob extends Job {
 		super.execute(jobInstance, currentUser);
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 		try {
@@ -55,14 +54,14 @@ public class FlatFileProcessingJob extends Job {
 			String recordVariableName = null;
 			String originFilename = null;
 			String formatTransfo= null;
-			Map<String, Object> initContext = new HashMap<String, Object>();
+			Map<String, Object> initContext = null;
 			try {
 				recordVariableName = (String) jobInstance.getCFValue("FlatFileProcessingJob_recordVariableName");
 				originFilename = (String) jobInstance.getCFValue("FlatFileProcessingJob_originFilename");			
-				CustomFieldInstance variablesCFI = jobInstance.getCustomFields().get("FlatFileProcessingJob_variables");
-				if (variablesCFI != null) {
-					initContext = variablesCFI.getMapValue();
-				}
+                initContext = (Map<String, Object>) jobInstance.getCFValue("FlatFileProcessingJob_variables");
+                if (initContext == null) {
+                    initContext = new HashMap<String, Object>();
+                }
 				mappingConf = (String) jobInstance.getCFValue("FlatFileProcessingJob_mappingConf");
 				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + currentUser.getProvider().getCode() + ((String)jobInstance.getCFValue("FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
 				fileNameExtension = (String) jobInstance.getCFValue("FlatFileProcessingJob_fileNameExtension");
@@ -108,7 +107,7 @@ public class FlatFileProcessingJob extends Job {
 
 		CustomFieldTemplate inputDirectoryCF = new CustomFieldTemplate();
 		inputDirectoryCF.setCode("FlatFileProcessingJob_inputDir");
-		inputDirectoryCF.setAccountLevel(AccountLevelEnum.TIMER);
+		inputDirectoryCF.setAppliesTo("JOB_FlatFileProcessingJob");
 		inputDirectoryCF.setActive(true);
 		inputDirectoryCF.setDescription(resourceMessages.getString("flatFile.inputDir"));
 		inputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
@@ -118,7 +117,7 @@ public class FlatFileProcessingJob extends Job {
 
 		CustomFieldTemplate fileNameExtensionCF = new CustomFieldTemplate();
 		fileNameExtensionCF.setCode("FlatFileProcessingJob_fileNameExtension");
-		fileNameExtensionCF.setAccountLevel(AccountLevelEnum.TIMER);
+		fileNameExtensionCF.setAppliesTo("JOB_FlatFileProcessingJob");
 		fileNameExtensionCF.setActive(true);
 		fileNameExtensionCF.setDescription(resourceMessages.getString("flatFile.fileNameExtension"));
 		fileNameExtensionCF.setFieldType(CustomFieldTypeEnum.STRING);
@@ -128,7 +127,7 @@ public class FlatFileProcessingJob extends Job {
 
 		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
 		mappingConf.setCode("FlatFileProcessingJob_mappingConf");
-		mappingConf.setAccountLevel(AccountLevelEnum.TIMER);
+		mappingConf.setAppliesTo("JOB_FlatFileProcessingJob");
 		mappingConf.setActive(true);
 		mappingConf.setDescription(resourceMessages.getString("flatFile.mappingConf"));
 		mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
@@ -138,7 +137,7 @@ public class FlatFileProcessingJob extends Job {
 
 		CustomFieldTemplate ss = new CustomFieldTemplate();
 		ss.setCode("FlatFileProcessingJob_scriptsFlow");
-		ss.setAccountLevel(AccountLevelEnum.TIMER);
+		ss.setAppliesTo("JOB_FlatFileProcessingJob");
 		ss.setActive(true);
 		ss.setDescription(resourceMessages.getString("flatFile.scriptsFlow"));
 		ss.setFieldType(CustomFieldTypeEnum.STRING);
@@ -148,7 +147,7 @@ public class FlatFileProcessingJob extends Job {
 
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
 		variablesCF.setCode("FlatFileProcessingJob_variables");
-		variablesCF.setAccountLevel(AccountLevelEnum.TIMER);
+		variablesCF.setAppliesTo("JOB_FlatFileProcessingJob");
 		variablesCF.setActive(true);
 		variablesCF.setDescription("Init and finalize variables");
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
@@ -158,7 +157,7 @@ public class FlatFileProcessingJob extends Job {
 
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
 		recordVariableName.setCode("FlatFileProcessingJob_recordVariableName");
-		recordVariableName.setAccountLevel(AccountLevelEnum.TIMER);
+		recordVariableName.setAppliesTo("JOB_FlatFileProcessingJob");
 		recordVariableName.setActive(true);
 		recordVariableName.setDefaultValue("record");
 		recordVariableName.setDescription("Record variable name");
@@ -168,7 +167,7 @@ public class FlatFileProcessingJob extends Job {
 
 		CustomFieldTemplate originFilename = new CustomFieldTemplate();
 		originFilename.setCode("FlatFileProcessingJob_originFilename");
-		originFilename.setAccountLevel(AccountLevelEnum.TIMER);
+		originFilename.setAppliesTo("JOB_FlatFileProcessingJob");
 		originFilename.setActive(true);
 		originFilename.setDefaultValue("origin_filename");
 		originFilename.setDescription("Filename variable name");
@@ -178,7 +177,7 @@ public class FlatFileProcessingJob extends Job {
 
 		CustomFieldTemplate formatTransfo = new CustomFieldTemplate();
 		formatTransfo.setCode("FlatFileProcessingJob_formatTransfo");
-		formatTransfo.setAccountLevel(AccountLevelEnum.TIMER);
+		formatTransfo.setAppliesTo("JOB_FlatFileProcessingJob");
 		formatTransfo.setActive(true);
 		formatTransfo.setDefaultValue("None");
 		formatTransfo.setDescription("Format transformation");

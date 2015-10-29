@@ -491,9 +491,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					endAgreementTag.appendChild(endAgreementText);
 					subscriptionTag.appendChild(endAgreementTag);
 
-					if (subscription.getCustomFields() != null && subscription.getCustomFields().size() > 0) {
-						addCustomFields(subscription, invoice, doc, subscriptionTag);
-					}
+					addCustomFields(subscription, invoice, doc, subscriptionTag);
 
 					subscriptionsTag.appendChild(subscriptionTag);
 				}
@@ -569,14 +567,19 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	}
 
 	private void addCustomFields(Subscription subscription, Invoice invoice, Document doc, Element parent) {
-		Iterator<String> keys = subscription.getCustomFields().keySet().iterator();
+		
+	    if (subscription.getCfFields() == null || subscription.getCfFields().getCustomFields().isEmpty()) {
+	        return;
+	    }
+	    
+	    Iterator<String> keys = subscription.getCfFields().getCustomFields().keySet().iterator();
 
 		Element customFieldsTag = doc.createElement("customFields");
 		parent.appendChild(customFieldsTag);
 
 		while (keys.hasNext()) {
 			String key = keys.next();
-			CustomFieldInstance cfi = subscription.getCustomFields().get(key);
+			CustomFieldInstance cfi = subscription.getCfFields().getCustomFields().get(key);
 
 			if (!StringUtils.isBlank(cfi.getValueAsString())) {
 				Element customFieldTag = doc.createElement("customField");

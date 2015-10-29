@@ -18,11 +18,8 @@ package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,7 +29,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -48,12 +44,10 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 
 @Entity
 @ObservableEntity
-@CustomFieldEntity(accountLevel = AccountLevelEnum.CHARGE)
+@CustomFieldEntity(cftCodePrefix = "CHARGE")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_CHARGE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CHARGE_TEMPLATE_SEQ")
@@ -80,10 +74,6 @@ public class ChargeTemplate extends BusinessCFEntity {
 	@JoinTable(name = "CAT_CHRG_EDR", joinColumns = @JoinColumn(name = "CHARGE_TMPL_ID"), inverseJoinColumns = @JoinColumn(name = "TRIGG_EDR_ID"))
 	private List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
-	@OneToMany(mappedBy = "chargeTemplate", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@MapKeyColumn(name = "code")
-	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
-	
 	@Column(name = "INPUT_UNIT_DESCRIPTION", length = 20)
 	private String inputUnitDescription;
 	
@@ -134,14 +124,6 @@ public class ChargeTemplate extends BusinessCFEntity {
 
 	public void setEdrTemplates(List<TriggeredEDRTemplate> edrTemplates) {
 		this.edrTemplates = edrTemplates;
-	}
-
-	public Map<String, CustomFieldInstance> getCustomFields() {
-		return customFields;
-	}
-
-	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-		this.customFields = customFields;
 	}
 
 	public String getInputUnitDescription() {

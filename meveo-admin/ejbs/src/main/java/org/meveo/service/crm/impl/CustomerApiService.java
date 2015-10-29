@@ -18,7 +18,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -88,8 +87,7 @@ public class CustomerApiService extends AccountApiService {
 			}
 
 			Customer customer = new Customer();
-			populate(postData, customer, currentUser, AccountLevelEnum.CUST,
-					checkCustomField);
+			populate(postData, customer, currentUser, checkCustomField);
 
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
@@ -192,8 +190,7 @@ public class CustomerApiService extends AccountApiService {
 				customer.setSeller(seller);
 			}
 			checkEntityDefaultLevel(customer);
-			updateAccount(customer, postData, currentUser,
-					AccountLevelEnum.CUST, checkCustomFields);
+			updateAccount(customer, postData, currentUser, checkCustomFields);
 			if (!StringUtils.isBlank(postData.getMandateDate())) {
 				customer.setMandateDate(postData.getMandateDate());
 			}

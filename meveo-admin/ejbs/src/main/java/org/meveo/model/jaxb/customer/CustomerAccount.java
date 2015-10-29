@@ -131,7 +131,7 @@ public class CustomerAccount {
 	        address = new Address(ca.getAddress());
 	        tradingCurrencyCode=ca.getTradingCurrency()==null?null:ca.getTradingCurrency().getCurrencyCode();
 	        tradingLanguageCode=ca.getTradingLanguage()==null?null:ca.getTradingLanguage().getLanguageCode();
-	        customFields=new CustomFields(ca.getCustomFields());
+            customFields = CustomFields.toDTO(ca.getCfFields());
 	        paymentMethod=ca.getPaymentMethod()==null?null:ca.getPaymentMethod().name();
 			creditCategory = ca.getCreditCategory() == null ? null : ca.getCreditCategory().getCode();
 	        if(ca.getContactInformation()!=null){

@@ -1,6 +1,7 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -29,6 +31,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 
 /**
@@ -82,7 +85,7 @@ public class CustomFieldsCacheContainerProvider {
 
         log.debug("Start to populate custom field value caching time");
 
-        // Calculate cache storage cuttoff time
+        // Calculate cache storage cuttoff time for each CFT
         Map<String, Date> cfValueCacheTimeAsDate = new HashMap<String, Date>();
 
         cfValueCacheTime.clear();
@@ -101,30 +104,38 @@ public class CustomFieldsCacheContainerProvider {
 
         customFieldValueCache.clear();
 
-        List<CustomFieldInstance> activeCustomFieldInstances = customFieldInstanceService.getCFIForCache();
-        for (CustomFieldInstance cfi : activeCustomFieldInstances) {
+        // Find custom field instances for each ICustomFieldEntity entity
+        Reflections reflections = new Reflections("org.meveo.model");
+        Set<Class<? extends ICustomFieldEntity>> classes = reflections.getSubTypesOf(ICustomFieldEntity.class);
 
-            IEntity entity = cfi.getRelatedEntity();
-            String cacheKey = getCacheKey(entity);
-
-            Long providerId = null;
-            if (entity instanceof Provider) {
-                providerId = ((Provider) entity).getId();
-
-            } else {
-                providerId = ((IProvider) entity).getProvider().getId();
+        int cfiCount = 0;
+        for (Class<? extends ICustomFieldEntity> cfEntityClass : classes) {
+            if (Modifier.isAbstract(cfEntityClass.getModifiers())) {
+                continue;
             }
 
-            log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
+            // Get a list of entity id and CFI instances for a given entity class
+            List<Object[]> entityIdAndActiveCFIs = customFieldInstanceService.getCFIForCache(cfEntityClass);
 
-            List<CachedCFPeriodValue> cfvValues = convertFromCFI(cfi, cfValueCacheTimeAsDate.get(providerId + "_" + cfi.getCode()));
-            if (!cfvValues.isEmpty()) {
-                customFieldValueCache.putIfAbsent(cacheKey, new HashMap<String, List<CachedCFPeriodValue>>());
-                customFieldValueCache.get(cacheKey).put(cfi.getCode(), cfvValues);
+            for (Object[] entityIdAndActiveCFI : entityIdAndActiveCFIs) {
+
+                Long entityId = (Long) entityIdAndActiveCFI[0];
+                Long providerId = (Long) entityIdAndActiveCFI[1];
+                CustomFieldInstance cfi = (CustomFieldInstance) entityIdAndActiveCFI[2];
+
+                String cacheKey = getCacheKey(cfEntityClass, entityId);
+
+                log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
+
+                List<CachedCFPeriodValue> cfvValues = convertFromCFI(cfi, cfValueCacheTimeAsDate.get(providerId + "_" + cfi.getCode()));
+                if (!cfvValues.isEmpty()) {
+                    customFieldValueCache.putIfAbsent(cacheKey, new HashMap<String, List<CachedCFPeriodValue>>());
+                    customFieldValueCache.get(cacheKey).put(cfi.getCode(), cfvValues);
+                    cfiCount++;
+                }
             }
         }
-
-        log.info("Custom field value populated with {} values", activeCustomFieldInstances.size());
+        log.info("Custom field value populated with {} values", cfiCount);
     }
 
     /**
@@ -139,14 +150,16 @@ public class CustomFieldsCacheContainerProvider {
 
         Map<String, List<CachedCFPeriodValue>> values = new HashMap<String, List<CachedCFPeriodValue>>();
 
-        for (CustomFieldInstance cfi : entity.getCustomFields().values()) {
-            List<CachedCFPeriodValue> cfvValues = convertFromCFI(cfi, calculateCutoffDate(cfi.getCode(), entity));
-            if (!cfvValues.isEmpty()) {
-                values.put(cfi.getCode(), cfvValues);
+        if (entity.getCfFields() != null) {
+            for (CustomFieldInstance cfi : entity.getCfFields().getCustomFields().values()) {
+                List<CachedCFPeriodValue> cfvValues = convertFromCFI(cfi, calculateCutoffDate(cfi.getCode(), entity));
+                if (!cfvValues.isEmpty()) {
+                    values.put(cfi.getCode(), cfvValues);
+                }
+                log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
             }
-            log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
         }
-
+        
         if (!values.isEmpty()) {
             customFieldValueCache.put(cacheKey, values);
         } else {
@@ -470,7 +483,7 @@ public class CustomFieldsCacheContainerProvider {
 
     private List<CachedCFPeriodValue> convertFromCFI(CustomFieldInstance cfi, Date cutoffDate) {
         List<CachedCFPeriodValue> values = new ArrayList<CachedCFPeriodValue>();
-        
+
         if (!cfi.isVersionable()) {
             cfi.deserializeValue();
             CachedCFPeriodValue value = new CachedCFPeriodValue(cfi.getCfValue().getValue());

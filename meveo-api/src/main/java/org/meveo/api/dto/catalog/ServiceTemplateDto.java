@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -15,7 +14,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -122,12 +120,7 @@ public class ServiceTemplateDto implements Serializable {
 			}
 		}
 		
-		if (serviceTemplate.getCustomFields() != null) {
-			for (CustomFieldInstance cfi : serviceTemplate.getCustomFields().values()) {
-				customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
-			}
-		}
-
+		customFields = CustomFieldsDto.toDTO(serviceTemplate.getCfFields());
 	}
 
 	public ServiceTemplateDto(String code) {

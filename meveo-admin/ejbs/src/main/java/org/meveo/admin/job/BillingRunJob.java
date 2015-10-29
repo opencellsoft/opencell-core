@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -45,7 +44,7 @@ public class BillingRunJob extends Job {
         
         CustomFieldTemplate lastTransactionDate = new CustomFieldTemplate();
         lastTransactionDate.setCode("BillingRunJob_lastTransactionDate");
-        lastTransactionDate.setAccountLevel(AccountLevelEnum.TIMER);
+        lastTransactionDate.setAppliesTo("JOB_BillingRunJob");
         lastTransactionDate.setActive(true);
         lastTransactionDate.setDescription("last transaction date");
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
@@ -54,7 +53,7 @@ public class BillingRunJob extends Job {
 
         CustomFieldTemplate invoiceDate = new CustomFieldTemplate();
         invoiceDate.setCode("BillingRunJob_invoiceDate");
-        invoiceDate.setAccountLevel(AccountLevelEnum.TIMER);
+        invoiceDate.setAppliesTo("JOB_BillingRunJob");
         invoiceDate.setActive(true);
         invoiceDate.setDescription("invoice date");
         invoiceDate.setFieldType(CustomFieldTypeEnum.DATE);
@@ -63,7 +62,7 @@ public class BillingRunJob extends Job {
 
         CustomFieldTemplate billingCycle = new CustomFieldTemplate();
         billingCycle.setCode("BillingRunJob_billingCycle");
-        billingCycle.setAccountLevel(AccountLevelEnum.TIMER);
+        billingCycle.setAppliesTo("JOB_BillingRunJob");
         billingCycle.setActive(true);
         billingCycle.setDescription("billing cycle");
         billingCycle.setFieldType(CustomFieldTypeEnum.STRING);

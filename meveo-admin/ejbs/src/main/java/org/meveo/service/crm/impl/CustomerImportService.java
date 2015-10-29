@@ -11,7 +11,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -80,7 +79,7 @@ public class CustomerImportService extends ImportService {
             customer.setName(name);
 
             if (cust.getCustomFields() != null) {
-                populateCustomFields(AccountLevelEnum.CUST, cust.getCustomFields().getCustomField(), customer, "account", currentUser);
+                populateCustomFields(cust.getCustomFields().getCustomField(), customer, currentUser);
             }
             customerService.create(customer, currentUser, provider);
         }
@@ -141,7 +140,7 @@ public class CustomerImportService extends ImportService {
         }
 
         if (custAcc.getCustomFields() != null) {
-            populateCustomFields(AccountLevelEnum.CA, custAcc.getCustomFields().getCustomField(), customerAccount, "account", currentUser);
+            populateCustomFields(custAcc.getCustomFields().getCustomField(), customerAccount, currentUser);
         }
 
         customerAccount.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode(), provider));
@@ -169,7 +168,7 @@ public class CustomerImportService extends ImportService {
         customer.setName(name);
 
         if (cust.getCustomFields() != null) {
-            populateCustomFields(AccountLevelEnum.CUST, cust.getCustomFields().getCustomField(), customer, "account", currentUser);
+            populateCustomFields(cust.getCustomFields().getCustomField(), customer, currentUser);
         }
 
         customer.updateAudit(currentUser);
@@ -234,7 +233,7 @@ public class CustomerImportService extends ImportService {
         }
 
         if (custAcc.getCustomFields() != null) {
-            populateCustomFields(AccountLevelEnum.CA, custAcc.getCustomFields().getCustomField(), customerAccount, "account", currentUser);
+            populateCustomFields(custAcc.getCustomFields().getCustomField(), customerAccount, currentUser);
         }
 
         customerAccount.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode(), provider));

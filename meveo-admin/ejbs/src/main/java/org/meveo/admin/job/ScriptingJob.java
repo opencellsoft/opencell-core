@@ -13,11 +13,10 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -39,23 +38,22 @@ public class ScriptingJob extends Job {
 		super.execute(jobInstance, currentUser);
 	}
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@SuppressWarnings("unchecked")
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 
-        CustomFieldInstance scriptCFI = jobInstance.getCustomFields().get("ScriptingJob_script");
-        String scriptCode = scriptCFI.getEntityReferenceValue().getCode();
+	    String scriptCode = ((EntityReferenceWrapper)jobInstance.getCFValue("ScriptingJob_script")).getCode();
         Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(),scriptCode);
     	if(scriptInterfaceClass==null){
     		result.registerError("cannot find script with code "+scriptCode);
     	} else {
     		try{
     			ScriptInterface scriptInterface=scriptInterfaceClass.newInstance();
-    			Map<String,Object> context = new HashMap<String,Object>();
-    			CustomFieldInstance variablesCFI = jobInstance.getCustomFields().get("ScriptingJob_variables");
-    			if(variablesCFI!=null){
-    				context = variablesCFI.getMapValue();
-    			}
+                Map<String, Object> context = (Map<String, Object>) jobInstance.getCFValue("ScriptingJob_variables");
+                if (context == null) {
+                    context = new HashMap<String, Object>();
+                }
     			scriptInterface.execute(context,currentUser.getProvider(),currentUser);	
     		} catch(Exception e){
     			result.registerError("Error in "+scriptCode+" execution :"+e.getMessage());
@@ -74,7 +72,7 @@ public class ScriptingJob extends Job {
 
 		CustomFieldTemplate scriptCF = new CustomFieldTemplate();
 		scriptCF.setCode("ScriptingJob_script");
-		scriptCF.setAccountLevel(AccountLevelEnum.TIMER);
+		scriptCF.setAppliesTo("JOB_ScriptingJob");
 		scriptCF.setActive(true);
 		scriptCF.setDescription("Script to run");
 		scriptCF.setFieldType(CustomFieldTypeEnum.ENTITY);
@@ -84,7 +82,7 @@ public class ScriptingJob extends Job {
 		
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
 		variablesCF.setCode("ScriptingJob_variables");
-		variablesCF.setAccountLevel(AccountLevelEnum.TIMER);
+		variablesCF.setAppliesTo("JOB_ScriptingJob");
 		variablesCF.setActive(true);
 		variablesCF.setDescription("Script variables");
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);

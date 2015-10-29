@@ -11,7 +11,7 @@ import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
@@ -25,8 +25,6 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
@@ -109,8 +107,7 @@ public class CustomerAccountApiService extends AccountApiService {
 			}
 
 			CustomerAccount customerAccount = new CustomerAccount();
-			populate(postData, customerAccount, currentUser,
-					AccountLevelEnum.CA, checkCustomFields);
+			populate(postData, customerAccount, currentUser, checkCustomFields);
 			customerAccount.setDateDunningLevel(new Date());
 			customerAccount.setCustomer(customer);
 			customerAccount.setTradingCurrency(tradingCurrency);
@@ -255,10 +252,9 @@ public class CustomerAccountApiService extends AccountApiService {
 			}
 			
 			customerAccount.setDefaultLevel(postData.isDefaultLevel());
-			
 			checkEntityDefaultLevel(customerAccount);
-			updateAccount(customerAccount, postData, currentUser,
-					AccountLevelEnum.CA, checkCustomFields);
+
+			updateAccount(customerAccount, postData, currentUser, checkCustomFields);
 
 			if (!StringUtils.isBlank(postData.getPaymentMethod())) {
 				try {
@@ -282,6 +278,8 @@ public class CustomerAccountApiService extends AccountApiService {
 			}
 
 			customerAccountService.updateAudit(customerAccount, currentUser);
+			
+			
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -369,14 +367,7 @@ public class CustomerAccountApiService extends AccountApiService {
 						.getCode());
 			}
 
-			if (customerAccount.getCustomFields() != null
-					&& customerAccount.getCustomFields().size() > 0) {
-				for (CustomFieldInstance cfi : customerAccount
-						.getCustomFields().values()) {
-					customerAccountDto.getCustomFields().getCustomField()
-							.addAll(CustomFieldDto.toDTO(cfi));
-				}
-			}
+			customerAccountDto.setCustomFields(CustomFieldsDto.toDTO(customerAccount.getCfFields()));
 
 			if (customerAccount.getDunningLevel() != null) {
 				customerAccountDto

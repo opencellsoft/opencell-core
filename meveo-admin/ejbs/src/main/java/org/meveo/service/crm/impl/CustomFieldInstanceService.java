@@ -1,38 +1,42 @@
 package org.meveo.service.crm.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class CustomFieldInstanceService extends PersistenceService<CustomFieldInstance> {
 
+    @Inject
+    CustomFieldTemplateService cfTemplateService;
+
     /**
      * Get a list of custom field instances to populate a cache
      * 
      * @return A list of custom field instances
      */
-    public List<CustomFieldInstance> getCFIForCache() {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public List<Object[]> getCFIForCache(Class iCFEntityClass) {
 
-        List<CustomFieldInstance> results = new ArrayList<CustomFieldInstance>();
-        String[] queryNames = { "CustomFieldInstance.getCFIForCacheAccount", "CustomFieldInstance.getCFIForCacheProvider", "CustomFieldInstance.getCFIForCacheSubscription",
-                "CustomFieldInstance.getCFIForCacheCharge", "CustomFieldInstance.getCFIForCacheService", "CustomFieldInstance.getCFIForCacheOffer",
-                "CustomFieldInstance.getCFIForCacheAccess", "CustomFieldInstance.getCFIForCacheJobInstance", "CustomFieldInstance.getCFIForCacheSeller" };
-
-        for (String queryName : queryNames) {
-            results.addAll(getEntityManager().createNamedQuery(queryName, CustomFieldInstance.class).getResultList());
-        }
-        return results;
+        Query query = getEntityManager().createQuery(
+            "select e.id, cff.provider.id, cfi from " + iCFEntityClass.getSimpleName() + " e join e.cfFields cff join cff.customFields cfi where cfi.disabled=false");
+        return query.getResultList();
     }
 
     // /**
@@ -76,5 +80,47 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public Object getOrCreateCFValueFromParamValue(String code, String defaultParamBeanValue, ICustomFieldEntity entity, PersistenceService pService, boolean saveInCFIfNotExist,
+            User user) {
+
+        Object value = null;
+        if (entity.getCfFields() != null) {
+            value = entity.getCFValue(code);
+        }
+
+        if (value == null) {
+
+            CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity, user.getProvider());
+
+            if (cft == null) {
+                cft = new CustomFieldTemplate();
+                cft.setCode(code);
+                cft.setAppliesTo(cfTemplateService.calculateAppliesToValue(entity));
+                cft.setActive(true);
+                cft.setDescription(code);
+                cft.setFieldType(CustomFieldTypeEnum.STRING);
+                cft.setDefaultValue(defaultParamBeanValue);
+                cft.setValueRequired(false);
+                cfTemplateService.create(cft, user, user.getProvider());
+            }
+
+            CustomFieldInstance cfi = new CustomFieldInstance();
+            cfi.setCode(code);
+            cfi.setStringValue(ParamBean.getInstance().getProperty(code, defaultParamBeanValue));
+
+            if (saveInCFIfNotExist) {
+                if (entity.getCfFields() == null) {
+                    entity.initCustomFields();
+                }
+                entity.getCfFields().addUpdateCFI(cfi);
+                pService.update((IEntity) entity, user);
+            }
+            return cfi.getCfValue();
+        }
+
+        return value;
     }
 }

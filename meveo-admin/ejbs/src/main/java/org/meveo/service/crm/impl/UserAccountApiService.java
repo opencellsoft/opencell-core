@@ -18,7 +18,6 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -56,8 +55,7 @@ public class UserAccountApiService extends AccountApiService {
 			}
 
 			UserAccount userAccount = new UserAccount();
-			populate(postData, userAccount, currentUser, AccountLevelEnum.UA,
-					checkCustomFields);
+			populate(postData, userAccount, currentUser, checkCustomFields);
 
 			userAccount.setBillingAccount(billingAccount);
 			userAccount.setProvider(currentUser.getProvider());
@@ -122,8 +120,7 @@ public class UserAccountApiService extends AccountApiService {
 			userAccount.setDefaultLevel(postData.isDefaultLevel());
 			
 			checkEntityDefaultLevel(userAccount);
-			updateAccount(userAccount, postData, currentUser,
-					AccountLevelEnum.UA, checkCustomFields);
+			updateAccount(userAccount, postData, currentUser, checkCustomFields);
 
 			userAccountService.updateAudit(userAccount, currentUser);
 		} else {

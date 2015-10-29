@@ -225,7 +225,176 @@
 	<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
 	<column name="display_provider" type="BOOL" defaultValueBoolean="false"></column>
 	</addColumn>
-	</changeSet>   
+	</changeSet>
+
+    <changeSet id="#1101_20151021" author="AndriusKarpavicius">
+        <createSequence sequenceName="CRM_CUSTOM_FIELD_FIELDS_SEQ"/>
+        <createTable tableName="CRM_CUSTOM_FIELD_FIELDS">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"  />
+            </column>
+            <column name="version" type="INT4" />        
+            <column name="provider_id" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)" >
+                <constraints nullable="false"/>
+            </column> 
+        </createTable>
+        
+        <addColumn tableName="CRM_CUSTOM_FIELD_INST">
+            <column name="CFF_ID" type="BIGINT"/>
+        </addColumn>
+        
+        <addPrimaryKey columnNames="id" constraintName="crm_custom_field_fields_pkey"
+            tableName="CRM_CUSTOM_FIELD_FIELDS" />
+            
+        <addForeignKeyConstraint constraintName="fk_crm_custom_field_inst_cff_id"
+            referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
+            baseTableName="CRM_CUSTOM_FIELD_INST" referencedColumnNames="id" />
+        
+        <addColumn tableName="MEDINA_ACCESS">
+            <column name="CFF_ID" type="BIGINT"/>
+        </addColumn>        
+        <addColumn tableName="CRM_PROVIDER">
+            <column name="CFF_ID" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="ACCOUNT_ENTITY">
+            <column name="CFF_ID" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="CAT_CHARGE_TEMPLATE">
+            <column name="CFF_ID" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="MEVEO_JOB_INSTANCE">
+            <column name="CFF_ID" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="CAT_OFFER_TEMPLATE">
+            <column name="CFF_ID" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="CRM_SELLER">
+            <column name="CFF_ID" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="CAT_SERVICE_TEMPLATE">
+            <column name="CFF_ID" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="BILLING_SUBSCRIPTION">
+            <column name="CFF_ID" type="BIGINT"/>
+        </addColumn>
+        
+        <addForeignKeyConstraint constraintName="fk_medina_access_cff_id"
+            referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
+            baseTableName="MEDINA_ACCESS" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="fk_crm_provider_cff_id"
+            referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
+            baseTableName="CRM_PROVIDER" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="fk_account_entity_cff_id"
+            referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
+            baseTableName="ACCOUNT_ENTITY" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="fk_cat_charge_template_cff_id"
+            referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
+            baseTableName="CAT_CHARGE_TEMPLATE" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="fk_meveo_job_instance_cff_id"
+            referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
+            baseTableName="MEVEO_JOB_INSTANCE" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="fk_cat_offer_template_cff_id"
+            referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
+            baseTableName="CAT_OFFER_TEMPLATE" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="fk_crm_seller_cff_id"
+            referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
+            baseTableName="CRM_SELLER" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="fk_cat_service_template_cff_id"
+            referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
+            baseTableName="CAT_SERVICE_TEMPLATE" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="fk_billing_subscription_cff_id"
+            referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
+            baseTableName="BILLING_SUBSCRIPTION" referencedColumnNames="id" />
+        
+        <sql>
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'provider_'||cfi_ent_id, cfi_ent_id from (select distinct provider_id as cfi_ent_id from crm_custom_field_inst where provider_id is not null) as sql_one;
+            update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='provider_'||crm_custom_field_inst.provider_id) where provider_id is not null;
+            update crm_provider set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='provider_'||crm_provider.id);
+        </sql>        
+        <sql>
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'access_'||cfi_ent_id, cfi_ent_provider_id from 
+              (select distinct medina_access.id as cfi_ent_id, medina_access.provider_id as cfi_ent_provider_id from crm_custom_field_inst join medina_access on crm_custom_field_inst.access_id =medina_access.id and crm_custom_field_inst.access_id is not null) as sql_one;
+            update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='access_'||crm_custom_field_inst.access_id) where access_id is not null;
+            update medina_access set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='access_'||medina_access.id);
+        </sql>
+        <sql>
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'charge_'||cfi_ent_id, cfi_ent_provider_id from 
+              (select distinct CAT_CHARGE_TEMPLATE.id as cfi_ent_id, CAT_CHARGE_TEMPLATE.provider_id as cfi_ent_provider_id from crm_custom_field_inst join CAT_CHARGE_TEMPLATE on crm_custom_field_inst.charge_template_id =CAT_CHARGE_TEMPLATE.id and crm_custom_field_inst.charge_template_id is not null) as sql_one;
+            update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='charge_'||crm_custom_field_inst.charge_template_id) where charge_template_id is not null;
+            update CAT_CHARGE_TEMPLATE set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='charge_'||CAT_CHARGE_TEMPLATE.id);
+        </sql>
+        <sql>
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'offer_'||cfi_ent_id, cfi_ent_provider_id from 
+              (select distinct CAT_OFFER_TEMPLATE.id as cfi_ent_id, CAT_OFFER_TEMPLATE.provider_id as cfi_ent_provider_id from crm_custom_field_inst join CAT_OFFER_TEMPLATE on crm_custom_field_inst.offer_template_id =CAT_OFFER_TEMPLATE.id and crm_custom_field_inst.offer_template_id is not null) as sql_one;
+            update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='offer_'||crm_custom_field_inst.offer_template_id) where offer_template_id is not null;
+            update CAT_OFFER_TEMPLATE set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='offer_'||CAT_OFFER_TEMPLATE.id);
+        </sql>
+        <sql>
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'service_'||cfi_ent_id, cfi_ent_provider_id from 
+              (select distinct CAT_SERVICE_TEMPLATE.id as cfi_ent_id, CAT_SERVICE_TEMPLATE.provider_id as cfi_ent_provider_id from crm_custom_field_inst join CAT_SERVICE_TEMPLATE on crm_custom_field_inst.service_template_id =CAT_SERVICE_TEMPLATE.id and crm_custom_field_inst.service_template_id is not null) as sql_one;
+            update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='service_'||crm_custom_field_inst.service_template_id) where service_template_id is not null;
+            update CAT_SERVICE_TEMPLATE set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='service_'||CAT_SERVICE_TEMPLATE.id);
+        </sql>
+        <sql>
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'subs_'||cfi_ent_id, cfi_ent_provider_id from 
+              (select distinct BILLING_SUBSCRIPTION.id as cfi_ent_id, BILLING_SUBSCRIPTION.provider_id as cfi_ent_provider_id from crm_custom_field_inst join BILLING_SUBSCRIPTION on crm_custom_field_inst.subscription_id =BILLING_SUBSCRIPTION.id and crm_custom_field_inst.subscription_id is not null) as sql_one;
+            update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='subs_'||crm_custom_field_inst.subscription_id) where subscription_id is not null;
+            update BILLING_SUBSCRIPTION set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='subs_'||BILLING_SUBSCRIPTION.id);
+        </sql>
+        <sql>
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'job_'||cfi_ent_id, cfi_ent_provider_id from 
+              (select distinct MEVEO_JOB_INSTANCE.id as cfi_ent_id, MEVEO_JOB_INSTANCE.provider_id as cfi_ent_provider_id from crm_custom_field_inst join MEVEO_JOB_INSTANCE on crm_custom_field_inst.job_instance_id =MEVEO_JOB_INSTANCE.id and crm_custom_field_inst.job_instance_id is not null) as sql_one;
+            update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='job_'||crm_custom_field_inst.job_instance_id) where job_instance_id is not null;
+            update MEVEO_JOB_INSTANCE set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='job_'||MEVEO_JOB_INSTANCE.id);
+        </sql>
+        <sql>
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'seller_'||cfi_ent_id, cfi_ent_provider_id from 
+              (select distinct CRM_SELLER.id as cfi_ent_id, CRM_SELLER.provider_id as cfi_ent_provider_id from crm_custom_field_inst join CRM_SELLER on crm_custom_field_inst.seller_id =CRM_SELLER.id and crm_custom_field_inst.seller_id is not null) as sql_one;
+            update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='seller_'||crm_custom_field_inst.seller_id) where seller_id is not null;
+            update CRM_SELLER set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='seller_'||CRM_SELLER.id);        
+        </sql>
+        <sql>
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'account_'||cfi_ent_id, cfi_ent_provider_id from 
+              (select distinct ACCOUNT_ENTITY.id as cfi_ent_id, ACCOUNT_ENTITY.provider_id as cfi_ent_provider_id from crm_custom_field_inst join ACCOUNT_ENTITY on crm_custom_field_inst.account_id =ACCOUNT_ENTITY.id and crm_custom_field_inst.account_id is not null) as sql_one;
+            update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='account_'||crm_custom_field_inst.account_id) where account_id is not null;
+            update ACCOUNT_ENTITY set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='account_'||ACCOUNT_ENTITY.id);
+        </sql>
+        
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_INST" columnName="CFF_ID"/>
+        
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="provider_id"/>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="access_id"/>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="charge_template_id"/>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="offer_template_id"/>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="service_template_id"/>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="subscription_id"/>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="job_instance_id"/>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="seller_id"/>
+        <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="account_id"/>
+                
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="APPLIES_TO" type="VARCHAR(100)"/>
+        </addColumn>
+        
+        <sql>
+            update CRM_CUSTOM_FIELD_TMPL set applies_to = account_type where account_type&lt;&gt; 'TIMER';
+            update CRM_CUSTOM_FIELD_TMPL set applies_to = 'JOB_'|| SUBSTR(code, 0, strpos(code, '_')) where account_type= 'TIMER';
+            update CRM_CUSTOM_FIELD_TMPL set code = 'nbRuns' where right(code,7)='_nbRuns' and account_type= 'TIMER';
+            update CRM_CUSTOM_FIELD_TMPL set code = 'waitingMillis' where right(code,14)='_waitingMillis' and account_type= 'TIMER';        
+        </sql>
+        
+        <sql>
+            update CRM_CUSTOM_FIELD_TMPL set storage_type='SINGLE' where storage_type is null;
+        </sql>
+        
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL" columnName="APPLIES_TO"/>
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL" columnName="field_type"/>
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL" columnName="storage_type"/>
+        
+        <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="account_type"/>
+        
+    </changeSet>         
 
 	<changeSet author="EdwardLegaspi" id="#1147_20151009">
 		<addColumn tableName="crm_provider">

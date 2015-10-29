@@ -11,13 +11,11 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -67,158 +65,164 @@ public abstract class BaseApi {
 		return sb.toString();
 	}
 
-	protected void populateCustomFields(AccountLevelEnum cfType, List<CustomFieldDto> customFieldDtos,
-			ICustomFieldEntity entity, User currentUser) throws IllegalArgumentException, IllegalAccessException,
-			MissingParameterException {
-		populateCustomFields(cfType, customFieldDtos, entity, currentUser, true);
-	}
+    /**
+     * Populate custom field values from DTO
+     * 
+     * @param customFieldDtos Custom field values
+     * @param entity Entity
+     * @param currentUser User that authenticated for API
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws MissingParameterException
+     */
+    protected void populateCustomFields(List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, User currentUser) throws IllegalArgumentException, IllegalAccessException,
+            MissingParameterException {
+        populateCustomFields(customFieldDtos, entity, currentUser, true);
+    }
 
-	/**
-	 * Populate custom field values from DTO
-	 * 
-	 * @param cfType
-	 *            An entity type that custom field template applies to
-	 * @param customFieldDtos
-	 *            Custom field values
-	 * @param entity
-	 *            Entity
-	 * @param cfiFieldName
-	 *            Custom field name in an entity
-	 * @param currentUser
-	 *            User that authenticated for API
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws MissingParameterException
-	 */
-	protected void populateCustomFields(AccountLevelEnum cfType, List<CustomFieldDto> customFieldDtos,
-			ICustomFieldEntity entity, User currentUser, boolean checkCustomField) throws IllegalArgumentException,
-			IllegalAccessException, MissingParameterException {
+    /**
+     * Populate custom field values from DTO
+     * 
+     * @param customFieldDtos Custom field values
+     * @param entity Entity
+     * @param currentUser User that authenticated for API
+     * @param checkCustomField Should a check be made if CF field is required 
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws MissingParameterException
+     */
+    protected void populateCustomFields(List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, User currentUser, boolean checkCustomField)
+            throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
 
-		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(cfType,
-				currentUser.getProvider());
+        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentUser.getProvider());
 
-		populateCustomFields(customFieldTemplates, customFieldDtos, entity, cfType, currentUser, checkCustomField);
-	}
+        populateCustomFields(customFieldTemplates, customFieldDtos, entity, currentUser, checkCustomField);
+    }
 
-	protected void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates,
-			List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, AccountLevelEnum cfType, User currentUser)
-			throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
-		populateCustomFields(customFieldTemplates, customFieldDtos, entity, cfType, currentUser, true);
-	}
+    /**
+     * Populate custom field values from DTO
+     * 
+     * @param customFieldTemplates Custom field templates
+     * @param customFieldDtos Custom field values
+     * @param entity Entity
+     * @param currentUser User that authenticated for API
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws MissingParameterException
+     */
+    protected void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, User currentUser)
+            throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
+        populateCustomFields(customFieldTemplates, customFieldDtos, entity, currentUser, true);
+    }
 
-	/**
-	 * Populate custom field values from DTO
-	 * 
-	 * @param customFieldTemplates
-	 *            Custom field templates
-	 * @param customFieldDtos
-	 *            Custom field values
-	 * @param entity
-	 *            Entity
-	 * @param cfType
-	 *            An entity type that custom field template applies to
-	 * @param currentUser
-	 *            User that authenticated for API
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws MissingParameterException
-	 */
-	protected void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates,
-			List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, AccountLevelEnum cfType, User currentUser,
-			boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException,
-			MissingParameterException {
+    /**
+     * Populate custom field values from DTO
+     * 
+     * @param customFieldTemplates Custom field templates
+     * @param customFieldDtos Custom field values
+     * @param entity Entity
+     * @param currentUser User that authenticated for API
+     * @param checkCustomField Should a check be made if CF field is required
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws MissingParameterException
+     */
+    protected void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, User currentUser,
+            boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
 
-		// check if any templates are applicable
-		if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
-			if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
-				log.error("No custom field templates defined while Custom field values were passed");
-				throw new MissingParameterException(
-						"No Custom field templates were found to match provided custom field values");
-			} else {
-				return;
-			}
-		}
+        // check if any templates are applicable
+        if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
+            if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
+                log.error("No custom field templates defined while Custom field values were passed");
+                throw new MissingParameterException("No Custom field templates were found to match provided custom field values");
+            } else {
+                return;
+            }
+        }
 
-		for (CustomFieldDto cfDto : customFieldDtos) {
-			boolean found = false;
-			for (CustomFieldTemplate cft : customFieldTemplates) {
-				if (cfDto.getCode().equals(cft.getCode())) {
-					found = true;
+        if (entity.getCfFields() == null && customFieldDtos != null && !customFieldDtos.isEmpty()) {
+            entity.initCustomFields();
+        }
 
-					// Validate if value is not empty when field is mandatory
-					if (cft.isValueRequired()) {
-						if (cfDto.isEmpty(cft.getFieldType(), cft.getStorageType())) {
-							missingParameters.add(cft.getCode());
-							break;
-						}
-					}
+        if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
+            for (CustomFieldDto cfDto : customFieldDtos) {
+                boolean found = false;
+                for (CustomFieldTemplate cft : customFieldTemplates) {
+                    if (cfDto.getCode().equals(cft.getCode())) {
+                        found = true;
 
-					// Validate parameters
-					if (cft.isVersionable()) {
-						if ((cfDto.getValueDate() == null && cft.getCalendar() != null)) {
-							throw new MissingParameterException(
-									"Custom field is versionable by calendar. Missing valueDate parameter.");
+                        // Validate if value is not empty when field is mandatory
+                        if (cft.isValueRequired()) {
+                            if (cfDto.isEmpty(cft.getFieldType(), cft.getStorageType())) {
+                                missingParameters.add(cft.getCode());
+                                break;
+                            }
+                        }
 
-						} else if (cft.getCalendar() == null
-								&& (cfDto.getValuePeriodStartDate() == null || cfDto.getValuePeriodEndDate() == null)) {
-							throw new MissingParameterException(
-									"Custom field is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
-						}
-					}
+                        // Validate parameters
+                        if (cft.isVersionable()) {
+                            if ((cfDto.getValueDate() == null && cft.getCalendar() != null)) {
+                                throw new MissingParameterException("Custom field is versionable by calendar. Missing valueDate parameter.");
 
-					CustomFieldInstance cfi = entity.getCustomFields().get(cfDto.getCode());
-					// Create an instance if does not exist yet
-					if (cfi == null) {
-						cfi = CustomFieldInstance.fromTemplate(cft);
-						FieldUtils.getField(CustomFieldInstance.class, cfType.getRelationFieldname(), true).set(cfi,
-								entity);
-						entity.getCustomFields().put(cfi.getCode(), cfi);
-					}
+                            } else if (cft.getCalendar() == null && (cfDto.getValuePeriodStartDate() == null || cfDto.getValuePeriodEndDate() == null)) {
+                                throw new MissingParameterException("Custom field is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
+                            }
+                        }
 
-					// Update TODO
-					cfi.setActive(true);
-					cfi.updateAudit(currentUser);
+                        CustomFieldInstance cfi = entity.getCfFields().getCFI(cfDto.getCode());
 
-					if (cfi.isVersionable()) {
+                        // Create an instance if does not exist yet
+                        if (cfi == null) {
+                            cfi = CustomFieldInstance.fromTemplate(cft);
+                        }
 
-						if (cfi.getCalendar() != null) {
-							cfi.setValue(cfDto.getValueConverted(), cfDto.getValueDate());
+                        // Update
+                        cfi.setActive(true);
+                        cfi.updateAudit(currentUser);
 
-						} else {
-							cfi.setValue(cfDto.getValueConverted(), cfDto.getValuePeriodStartDate(),
-									cfDto.getValuePeriodEndDate());
-						}
+                        if (cfi.isVersionable()) {
+                            if (cfi.getCalendar() != null) {
+                                cfi.setValue(cfDto.getValueConverted(), cfDto.getValueDate());
 
-					} else {
-						cfi.setValue(cfDto.getValueConverted());
-					}
+                            } else {
+                                cfi.setValue(cfDto.getValueConverted(), cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate());
+                            }
 
-					break;
-				}
-			}
-			if (checkCustomFields && !found) {
-				log.error("No custom field template found with code={} for entity {}. Value will be ignored.",
-						cfDto.getCode(), entity.getClass());
-				throw new MissingParameterException("Custom field template with code " + cfDto.getCode()
-						+ " and provider " + currentUser.getProvider() + " not found.");
-			}
-		}
+                        } else {
+                            cfi.setValue(cfDto.getValueConverted());
+                        }
 
-		// Validate that CustomField value is not empty when field is mandatory
-		for (CustomFieldTemplate cft : customFieldTemplates) {
-			if (cft.isDisabled() || !cft.isValueRequired()) {
-				continue;
-			}
-			CustomFieldInstance cfi = entity.getCustomFields().get(cft.getCode());
-			if (cfi == null || cfi.isValueEmpty()) {
-				missingParameters.add(cft.getCode());
-			}
-		}
+                        entity.getCfFields().addUpdateCFI(cfi);
 
-		if (missingParameters.size() > 0) {
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+                        break;
+                    }
+                }
+                if (checkCustomFields && !found) {
+                    log.error("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
+                    throw new MissingParameterException("Custom field template with code " + cfDto.getCode() + " and provider " + currentUser.getProvider() + " not found.");
+                }
+            }
+        }
+
+        // Validate that CustomField value is not empty when field is mandatory
+        for (CustomFieldTemplate cft : customFieldTemplates) {
+            if (cft.isDisabled() || !cft.isValueRequired()) {
+                continue;
+            }
+            if (entity.getCfFields() == null) {
+                missingParameters.add(cft.getCode());
+            } else {
+                CustomFieldInstance cfi = entity.getCfFields().getCFI(cft.getCode());
+                if (cfi == null || cfi.isValueEmpty()) {
+                    missingParameters.add(cft.getCode());
+                }
+            }
+        }
+
+        if (missingParameters.size() > 0) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
 	
 	/**
 	 * Validates the DTO based on its constraint annotations 
@@ -232,8 +236,6 @@ public abstract class BaseApi {
     	
     	if (!violations.isEmpty()) {
     		throw new ConstraintViolationException(new HashSet<ConstraintViolation<BaseDto>>(violations));
-    	}
-    	
+    	}    	
     }
-
 }

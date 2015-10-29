@@ -17,11 +17,7 @@
 package org.meveo.model.jobs;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,22 +27,18 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 
 @Entity
-@CustomFieldEntity(accountLevel = AccountLevelEnum.TIMER)
+@CustomFieldEntity(cftCodePrefix="JOB", cftCodeFields="jobTemplate")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_JOB_INSTANCE_SEQ")
@@ -66,10 +58,6 @@ public class JobInstance extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "JOB_CATEGORY")
     JobCategoryEnum jobCategoryEnum;
-
-    @OneToMany(mappedBy = "jobInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @MapKeyColumn(name = "code")
-    private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
     @OneToMany(mappedBy = "jobInstance", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<JobExecutionResultImpl> executionResults = new ArrayList<JobExecutionResultImpl>();
@@ -162,15 +150,6 @@ public class JobInstance extends BusinessCFEntity {
     public void setJobCategoryEnum(JobCategoryEnum jobCategoryEnum) {
         this.jobCategoryEnum = jobCategoryEnum;
     }
-
-    public Map<String, CustomFieldInstance> getCustomFields() {
-        return customFields;
-    }
-
-    public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-        this.customFields = customFields;
-    }
-
    
     public List<JobExecutionResultImpl> getExecutionResults() {
         return executionResults;
@@ -197,23 +176,9 @@ public class JobInstance extends BusinessCFEntity {
 
     @Override
     public String toString() {
-        final int maxLen = 10;
         return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, active=%s, jobCategoryEnum=%s, customFields=%s, timerEntity=%s,  followingJob=%s]",
-            super.toString(), jobTemplate, parametres, active, jobCategoryEnum, customFields != null ? toString(customFields.entrySet(), maxLen) : null, timerEntity,
+            super.toString(), jobTemplate, parametres, active, jobCategoryEnum, getCfFields(), timerEntity,
             followingJob);
-    }
-
-    private String toString(Collection<?> collection, int maxLen) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        int i = 0;
-        for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
-            if (i > 0)
-                builder.append(", ");
-            builder.append(iterator.next());
-        }
-        builder.append("]");
-        return builder.toString();
     }
 
     @Override

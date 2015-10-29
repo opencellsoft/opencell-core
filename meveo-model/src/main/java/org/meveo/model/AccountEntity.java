@@ -16,31 +16,20 @@
  */
 package org.meveo.model;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.listeners.AccountCodeGenerationListener;
 import org.meveo.model.shared.Address;
@@ -80,10 +69,6 @@ public abstract class AccountEntity extends BusinessCFEntity {
 	@ManyToOne
 	@JoinColumn(name = "PRIMARY_CONTACT")
 	private ProviderContact primaryContact;
-
-	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@MapKeyColumn(name = "code")
-	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
     @Column(name = "ACCOUNT_TYPE", insertable = true, updatable = false)
     protected String accountType;
@@ -155,44 +140,17 @@ public abstract class AccountEntity extends BusinessCFEntity {
         return accountType;
     }
 
-	public Map<String, CustomFieldInstance> getCustomFields() {
-		return customFields;
-	}
+    public String getCustomFieldsAsJson() {
+        if (getCfFields() != null) {
+            return getCfFields().asJson();
+        }
 
-	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-		this.customFields = customFields;
-	}
-
-	public String getCustomFieldsAsJson() {
-		String result = "";
-		String sep = "";
-
-		for (Entry<String, CustomFieldInstance> cf : customFields.entrySet()) {
-			result += sep + cf.getValue().toJson();
-			sep = ";";
-		}
-
-		return result;
-	}
-	
-
+        return null;
+    }
 
     @Override
     public String toString() {
-        final int maxLen = 10;
-        return String.format("AccountEntity [customFields=%s, code=%s, id=%s]", customFields != null ? toString(customFields.entrySet(), maxLen) : null, code, id);
+        return String.format("AccountEntity [customFields=%s, code=%s, id=%s]", getCfFields(), code, id);
     }
 
-    private String toString(Collection<?> collection, int maxLen) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        int i = 0;
-        for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
-            if (i > 0)
-                builder.append(", ");
-            builder.append(iterator.next());
-        }
-        builder.append("]");
-        return builder.toString();
-    }
 }

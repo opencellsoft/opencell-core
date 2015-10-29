@@ -37,7 +37,6 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -112,7 +111,7 @@ public class SubscriptionApi extends BaseApi {
             // populate customFields
             if (postData.getCustomFields() != null) {
                 try {
-                    populateCustomFields(AccountLevelEnum.SUB, postData.getCustomFields().getCustomField(), subscription, currentUser);
+                    populateCustomFields(postData.getCustomFields().getCustomField(), subscription, currentUser);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     log.error("Failed to associate custom field instance to an entity", e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -177,7 +176,7 @@ public class SubscriptionApi extends BaseApi {
             // populate customFields
             if (postData.getCustomFields() != null) {
                 try {
-                    populateCustomFields(AccountLevelEnum.SUB, postData.getCustomFields().getCustomField(), subscription, currentUser);
+                    populateCustomFields(postData.getCustomFields().getCustomField(), subscription, currentUser);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     log.error("Failed to associate custom field instance to an entity", e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity");

@@ -13,8 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.SequenceGenerator;
@@ -23,39 +21,18 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AccountEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IEntity;
 import org.meveo.model.ProviderlessEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.mediation.Access;
 
 @Entity
-@ExportIdentifier({ "code", "subscription.code", "subscription.provider", "account.code", "account.provider", "chargeTemplate.code", "chargeTemplate.provider",
-        "serviceTemplate.code", "serviceTemplate.provider", "offerTemplate.code", "offerTemplate.provider", "access.accessUserId", "access.subscription.code", "access.provider",
-        "seller.code", "seller.provider", "jobInstance.code", "jobInstance.provider", "provider" })
-@Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID", "ACCOUNT_ID", "CHARGE_TEMPLATE_ID", "SERVICE_TEMPLATE_ID",
-        "OFFER_TEMPLATE_ID", "ACCESS_ID", "JOB_INSTANCE_ID", "PROVIDER_ID", "SELLER_ID" }))
+@ExportIdentifier({ "code", "cfFields.uuid", "cfFields.provider" })
+@Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "CFF_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
-@NamedQueries({
-        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheAccount", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.account where cfi.account is not null and cfi.disabled=false "),
-        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheProvider", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.provider where cfi.provider is not null and cfi.disabled=false "),
-        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheSubscription", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.subscription where cfi.subscription is not null and cfi.disabled=false "),
-        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheCharge", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.chargeTemplate where cfi.chargeTemplate is not null and cfi.disabled=false "),
-        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheService", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.serviceTemplate where cfi.serviceTemplate is not null and cfi.disabled=false "),
-        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheOffer", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.offerTemplate where cfi.offerTemplate is not null and cfi.disabled=false "),
-        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheAccess", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.access where cfi.access is not null and cfi.disabled=false "),
-        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheJobInstance", query = " SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.jobInstance where cfi.jobInstance is not null and cfi.disabled=false "),
-        @NamedQuery(name = "CustomFieldInstance.getCFIForCacheSeller", query = "SELECT cfi from CustomFieldInstance cfi JOIN FETCH cfi.seller where cfi.seller is not null and cfi.disabled=false "), })
 public class CustomFieldInstance extends ProviderlessEntity {
 
     private static final long serialVersionUID = 8691447585410651639L;
+
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Column(name = "CODE", nullable = false, length = 60)
@@ -67,41 +44,9 @@ public class CustomFieldInstance extends ProviderlessEntity {
     @Size(max = 100)
     private String description;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "PROVIDER_ID")
-    private Provider provider;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCOUNT_ID")
-    private AccountEntity account;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUBSCRIPTION_ID")
-    private Subscription subscription;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CHARGE_TEMPLATE_ID")
-    private ChargeTemplate chargeTemplate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SERVICE_TEMPLATE_ID")
-    private ServiceTemplate serviceTemplate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OFFER_TEMPLATE_ID")
-    private OfferTemplate offerTemplate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCESS_ID")
-    private Access access;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "JOB_INSTANCE_ID")
-    private JobInstance jobInstance;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SELLER_ID")
-    private Seller seller;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CFF_ID")
+    private CustomFieldFields cfFields;
 
     @Column(name = "VERSIONABLE")
     private boolean versionable;
@@ -174,76 +119,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
 
     public void setDoubleValue(Double doubleValue) {
         getCfValue().setDoubleValue(doubleValue);
-    }
-
-    public AccountEntity getAccount() {
-        return account;
-    }
-
-    public void setAccount(AccountEntity account) {
-        this.account = account;
-    }
-
-    public Subscription getSubscription() {
-        return subscription;
-    }
-
-    public void setSubscription(Subscription subscription) {
-        this.subscription = subscription;
-    }
-
-    public Access getAccess() {
-        return access;
-    }
-
-    public void setAccess(Access access) {
-        this.access = access;
-    }
-
-    public Seller getSeller() {
-        return seller;
-    }
-
-    public void setSeller(Seller seller) {
-        this.seller = seller;
-    }
-
-    public ChargeTemplate getChargeTemplate() {
-        return chargeTemplate;
-    }
-
-    public void setChargeTemplate(ChargeTemplate chargeTemplate) {
-        this.chargeTemplate = chargeTemplate;
-    }
-
-    public ServiceTemplate getServiceTemplate() {
-        return serviceTemplate;
-    }
-
-    public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-        this.serviceTemplate = serviceTemplate;
-    }
-
-    public OfferTemplate getOfferTemplate() {
-        return offerTemplate;
-    }
-
-    public void setOfferTemplate(OfferTemplate offerTemplate) {
-        this.offerTemplate = offerTemplate;
-    }
-
-    /**
-     * @return the jobInstance
-     */
-    public JobInstance getJobInstance() {
-        return jobInstance;
-    }
-
-    /**
-     * @param jobInstance the jobInstance to set
-     */
-    public void setJobInstance(JobInstance jobInstance) {
-        this.jobInstance = jobInstance;
     }
 
     public List<CustomFieldPeriod> getValuePeriods() {
@@ -980,13 +855,8 @@ public class CustomFieldInstance extends ProviderlessEntity {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String
-            .format(
-                "CustomFieldInstance [%s, account=%s, subscription=%s, chargeTemplate=%s, serviceTemplate=%s, offerTemplate=%s, access=%s, jobInstance=%s, versionable=%s, calendar=%s, valuePeriods=%s, value=%s]",
-                super.toString(), account != null ? account.getId() : null, subscription != null ? subscription.getId() : null, chargeTemplate != null ? chargeTemplate.getId()
-                        : null, serviceTemplate != null ? serviceTemplate.getId() : null, offerTemplate != null ? offerTemplate.getId() : null, access != null ? access.getId()
-                        : null, jobInstance != null ? jobInstance.getId() : null, versionable, calendar != null ? calendar.getCode() : null,
-                valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null, cfValue);
+        return String.format("CustomFieldInstance [%s, cfFields=%s, versionable=%s, calendar=%s, valuePeriods=%s, value=%s]", super.toString(), cfFields.getId(), versionable,
+            calendar != null ? calendar.getCode() : null, valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null, cfValue);
     }
 
     public String getCode() {
@@ -1003,14 +873,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Provider getProvider() {
-        return provider;
-    }
-
-    public void setProvider(Provider provider) {
-        this.provider = provider;
     }
 
     public boolean isTriggerEndPeriodEvent() {
@@ -1032,37 +894,12 @@ public class CustomFieldInstance extends ProviderlessEntity {
         this.cfValue = cfValue;
     }
 
-    public IEntity getRelatedEntity() {
+    public CustomFieldFields getCfFields() {
+        return cfFields;
+    }
 
-        if (provider != null) {
-            return provider;
-
-        } else if (account != null) {
-            return account;
-
-        } else if (subscription != null) {
-            return subscription;
-
-        } else if (chargeTemplate != null) {
-            return chargeTemplate;
-
-        } else if (serviceTemplate != null) {
-            return serviceTemplate;
-
-        } else if (offerTemplate != null) {
-            return offerTemplate;
-
-        } else if (access != null) {
-            return access;
-
-        } else if (jobInstance != null) {
-            return jobInstance;
-            
-        } else if (seller != null) {
-            return seller;
-        }
-
-        return null;
+    public void setCfFields(CustomFieldFields cfFields) {
+        this.cfFields = cfFields;
     }
 
     // /**
@@ -1085,6 +922,21 @@ public class CustomFieldInstance extends ProviderlessEntity {
     public void deserializeValue() {
         if (cfValue != null) {
             getCfValue().deserializeValue();
+        }
+    }
+
+    /**
+     * Remove ids from entity and child entities, reconstruct new persistent collections
+     */
+    protected void clearForDuplication() {
+        id = null;
+        if (valuePeriods != null) {
+            List<CustomFieldPeriod> cfps = new ArrayList<CustomFieldPeriod>();
+            for (CustomFieldPeriod cfp : valuePeriods) {
+                cfp.setId(null);
+                cfps.add(cfp);
+            }
+            valuePeriods = cfps;
         }
     }
 }

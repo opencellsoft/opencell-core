@@ -36,6 +36,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.crm.CustomFieldFields;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.Provider;
@@ -256,6 +257,7 @@ public class EntityExportImportBean implements Serializable {
                 }
                 // Automatically export custom fields for CF related entities
                 if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
+                    exportTemplate.getClassesToExportAsFull().add(CustomFieldFields.class);
                     exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
                     exportTemplate.getClassesToExportAsFull().add(CustomFieldPeriod.class);
                 }
@@ -319,6 +321,7 @@ public class EntityExportImportBean implements Serializable {
         }
         // Automatically export custom fields for CF related entities
         if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
+            exportTemplate.getClassesToExportAsFull().add(CustomFieldFields.class);
             exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
             exportTemplate.getClassesToExportAsFull().add(CustomFieldPeriod.class);
         }

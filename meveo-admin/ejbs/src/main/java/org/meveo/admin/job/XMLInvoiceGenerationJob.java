@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -55,24 +54,24 @@ public class XMLInvoiceGenerationJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
 		CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
-		customFieldNbRuns.setCode("XMLInvoiceGenerationJob_nbRuns");
-		customFieldNbRuns.setAccountLevel(AccountLevelEnum.TIMER);
+		customFieldNbRuns.setCode("nbRuns");
+		customFieldNbRuns.setAppliesTo("JOB_XMLInvoiceGenerationJob");
 		customFieldNbRuns.setActive(true);
 		customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
 		customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
 		customFieldNbRuns.setValueRequired(false);
 		customFieldNbRuns.setDefaultValue("1");
-		result.put("XMLInvoiceGenerationJob_nbRuns", customFieldNbRuns);
+		result.put("nbRuns", customFieldNbRuns);
 
 		CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
-		customFieldNbWaiting.setCode("XMLInvoiceGenerationJob_waitingMillis");
-		customFieldNbWaiting.setAccountLevel(AccountLevelEnum.TIMER);
+		customFieldNbWaiting.setCode("waitingMillis");
+		customFieldNbWaiting.setAppliesTo("JOB_XMLInvoiceGenerationJob");
 		customFieldNbWaiting.setActive(true);
 		customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
 		customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
 		customFieldNbWaiting.setValueRequired(false);
 		customFieldNbWaiting.setDefaultValue("0");
-		result.put("XMLInvoiceGenerationJob_waitingMillis", customFieldNbWaiting);
+		result.put("waitingMillis", customFieldNbWaiting);
 
 		return result;
 	}

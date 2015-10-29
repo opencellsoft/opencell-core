@@ -90,7 +90,7 @@ public class Subscription {
 			subscriptionDate = sub.getSubscriptionDate() == null ? null : DateUtils.formatDateWithPattern(sub.getSubscriptionDate(), dateFormat);
 			endAgreementDate = sub.getEndAgrementDate() == null ? null : DateUtils.formatDateWithPattern(sub.getEndAgrementDate(), dateFormat);
 			description = sub.getDescription();
-			customFields = new CustomFields(sub.getCustomFields());
+			customFields = CustomFields.toDTO(sub.getCfFields());
 			code = sub.getCode();
 			userAccountId = sub.getUserAccount() == null ? null : sub.getUserAccount().getCode();
 			offerCode = sub.getOffer() == null ? null : sub.getOffer().getCode();

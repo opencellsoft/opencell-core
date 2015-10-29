@@ -32,7 +32,6 @@ import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.ProviderDto;
-import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.UserDto;
@@ -50,7 +49,6 @@ import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
-import org.meveo.api.dto.response.GetScriptInstanceResponseDto;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
@@ -1317,11 +1315,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public ActionStatus removeCustomFieldTemplate(String customFieldTemplateCode, String accountLevel) {
+	public ActionStatus removeCustomFieldTemplate(String customFieldTemplateCode, String appliesTo) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customFieldTemplateApi.remove(customFieldTemplateCode, accountLevel, getCurrentUser().getProvider());
+			customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1337,11 +1335,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetCustomFieldTemplateReponseDto findCustomFieldTemplate(String customFieldTemplateCode, String accountLevel) {
+	public GetCustomFieldTemplateReponseDto findCustomFieldTemplate(String customFieldTemplateCode, String appliesTo) {
 		GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
 		try {
-			result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, accountLevel,
+			result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo,
 					getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());

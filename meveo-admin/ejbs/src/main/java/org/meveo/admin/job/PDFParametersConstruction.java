@@ -38,8 +38,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.TIP;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -184,7 +182,7 @@ public class PDFParametersConstruction {
 	
 	private Map<String, String> getBACustomFields(
 			BillingAccount billingAccount) {
-        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(AccountLevelEnum.BA, billingAccount.getProvider());
+        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(billingAccount, billingAccount.getProvider());
 		Map<String, String>  customFields = new HashMap<String, String> ();
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (CustomFieldTemplate cf : customFieldTemplates) {

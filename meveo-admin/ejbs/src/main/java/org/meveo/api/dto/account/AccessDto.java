@@ -1,7 +1,6 @@
 package org.meveo.api.dto.account;
 
 import java.util.Date;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,9 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
 
 /**
@@ -34,7 +31,7 @@ public class AccessDto extends BaseDto {
     private Date endDate;
 
     @XmlElement(required = false)
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     public AccessDto() {
 
@@ -48,11 +45,8 @@ public class AccessDto extends BaseDto {
         if (e.getSubscription() != null) {
             subscription = e.getSubscription().getCode();
         }
-        if (e.getCustomFields() != null) {
-            for (CustomFieldInstance cfi : e.getCustomFields().values()) {
-                customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
-            }
-        }
+
+        customFields = CustomFieldsDto.toDTO(e.getCfFields());
     }
 
     public Date getStartDate() {

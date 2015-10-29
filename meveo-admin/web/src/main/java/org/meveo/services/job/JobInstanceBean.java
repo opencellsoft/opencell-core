@@ -11,6 +11,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -102,7 +103,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
             return null;
         }
         // Get templates matching a job template name
-        List<CustomFieldTemplate> jobTemplates = customFieldTemplateService.findByJobName(entity.getJobTemplate());
+        List<CustomFieldTemplate> jobTemplates = customFieldTemplateService.findByAppliesTo((ICustomFieldEntity) entity, getCurrentProvider());
 
         // In case when job template has new custom fields defined in code, create them.
         Job job = jobInstanceService.getJobByName(entity.getJobTemplate());

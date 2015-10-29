@@ -40,12 +40,11 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 
 @Entity
 @ObservableEntity
-@CustomFieldEntity(accountLevel = AccountLevelEnum.SERVICE)
+@CustomFieldEntity(cftCodePrefix = "SERVICE")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CAT_SERVICE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
@@ -78,10 +77,6 @@ public class ServiceTemplate extends BusinessCFEntity {
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.PERSIST)
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
-
-	@OneToMany(mappedBy = "serviceTemplate", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@MapKeyColumn(name = "code")
-	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
 	@ManyToOne
 	@JoinColumn(name = "INVOICING_CALENDAR_ID")
@@ -176,14 +171,6 @@ public class ServiceTemplate extends BusinessCFEntity {
 		} else if (!code.equals(other.getCode()))
 			return false;
 		return true;
-	}
-
-	public Map<String, CustomFieldInstance> getCustomFields() {
-		return customFields;
-	}
-
-	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-		this.customFields = customFields;
 	}
 
 	public Calendar getInvoicingCalendar() {

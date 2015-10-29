@@ -16,18 +16,12 @@
  */
 package org.meveo.model.admin;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -40,13 +34,11 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.shared.Address;
 
 @Entity
 @ObservableEntity
-@CustomFieldEntity(accountLevel = AccountLevelEnum.SELLER)
+@CustomFieldEntity(cftCodePrefix = "SELLER")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CRM_SELLER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_SELLER_SEQ")
@@ -88,13 +80,8 @@ public class Seller extends BusinessCFEntity {
 	@JoinColumn(name = "PARENT_SELLER_ID")
 	private Seller seller;
 	
-	@OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@MapKeyColumn(name = "code")
-	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
-	
 	@Column(name = "INVOICE_SEQUENCE_SIZE")
 	private Integer invoiceSequenceSize=9;
-
 	public Seller() {
 		super();
 	}
@@ -153,14 +140,6 @@ public class Seller extends BusinessCFEntity {
 
 	public void setSeller(Seller seller) {
 		this.seller = seller;
-	}
-
-	public Map<String, CustomFieldInstance> getCustomFields() {
-		return customFields;
-	}
-
-	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-		this.customFields = customFields;
 	}
 
 	@Override

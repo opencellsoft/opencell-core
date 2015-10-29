@@ -11,12 +11,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
-import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -69,11 +67,7 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
 			}
 		}
 		
-		if (e.getCustomFields() != null) {
-			for (CustomFieldInstance cfi : e.getCustomFields().values()) {
-				customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
-			}
-		}
+		customFields = CustomFieldsDto.toDTO(e.getCfFields());
 	}
 
 	public String getCode() {

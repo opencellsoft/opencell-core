@@ -40,9 +40,9 @@ import org.meveo.admin.action.admin.CurrentUser;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.IProvider;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
@@ -240,8 +240,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         } else {
             try {
                 entity = getInstance();
-                if (entity instanceof BaseEntity) {
-                    ((BaseEntity) entity).setProvider(providerService.refreshOrRetrieve(currentProvider));
+                if (entity instanceof IProvider) {
+                    ((IProvider) entity).setProvider(providerService.refreshOrRetrieve(currentProvider));
                 }
                 // FIXME: If entity is Auditable, set here the creator and
                 // creation time

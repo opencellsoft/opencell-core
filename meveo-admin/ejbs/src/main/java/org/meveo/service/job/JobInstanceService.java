@@ -42,7 +42,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -306,11 +305,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 			throw new JobDoesNotExistsException(jobInstanceCode);
 		}		
 		// lazy loading
-		if (entity.getCustomFields() != null) {
-			Map<String, CustomFieldInstance> map = entity.getCustomFields();
-			for (Map.Entry<String, CustomFieldInstance> entry : map.entrySet()) {
-				entry.getKey();
-			}
+		if (entity.getCfFields() != null) {
+		    entity.getCfFields().getUuid();
 		}
 	
 		JobExecutionResultImpl result = new JobExecutionResultImpl();

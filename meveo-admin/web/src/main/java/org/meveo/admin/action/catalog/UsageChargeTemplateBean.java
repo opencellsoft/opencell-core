@@ -18,9 +18,7 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,12 +29,12 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.meveo.util.PersistenceUtils;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
@@ -143,20 +141,26 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 	private TriggeredEDRTemplateService edrTemplateService;
 	
 	public void duplicate() {
-		
-		if(entity!=null&&entity.getId()!=null){
-			entity.getCustomFields().size();
+        
+        if (entity != null && entity.getId() != null) {
+                        
+            entity = usageChargeTemplateService.refreshOrRetrieve(entity);
+            
+            // Lazy load related values first 
+            if (entity.getCfFields() != null) {
+                entity.getCfFields().getUuid();
+                entity.setCfFields(PersistenceUtils.initializeAndUnproxy(entity.getCfFields()));
+            }
 			entity.getEdrTemplates().size();
+
+            // Detach and clear ids of entity and related entities
 			usageChargeTemplateService.detach(entity);
 			entity.setId(null);
-			Map<String,CustomFieldInstance> customFields= entity.getCustomFields();
-			entity.setCustomFields(new HashMap<String,CustomFieldInstance>());
-			for(String code:customFields.keySet()){
-				CustomFieldInstance instance=customFields.get(code);
-				customFieldInstanceService.detach(instance);
-				instance.setId(null);
-				entity.getCustomFields().put(code, instance);
-			}
+
+            if (entity.getCfFields() != null) {
+                entity.getCfFields().clearForDuplication();
+            }
+            
 			List<TriggeredEDRTemplate> edrTemplates=entity.getEdrTemplates();
 			entity.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
 			if(edrTemplates!=null&edrTemplates.size()!=0){
@@ -167,6 +171,7 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 			}
 			entity.setChargeInstances(null);
 			entity.setCode(entity.getCode()+"_copy");
+			
 			try{
 				usageChargeTemplateService.create(entity);
 			}catch(Exception e){

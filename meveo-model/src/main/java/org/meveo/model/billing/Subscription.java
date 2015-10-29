@@ -18,11 +18,8 @@ package org.meveo.model.billing;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,7 +27,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -45,8 +41,6 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
 
 /**
@@ -54,7 +48,7 @@ import org.meveo.model.mediation.Access;
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(accountLevel=AccountLevelEnum.SUB)
+@CustomFieldEntity(cftCodePrefix = "SUB")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_SUBSCRIPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUBSCRIPTION_SEQ")
@@ -105,10 +99,6 @@ public class Subscription extends BusinessCFEntity{
 
 	@Column(name = "DEFAULT_LEVEL")
 	private Boolean defaultLevel = true;
-
-	@OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@MapKeyColumn(name = "code")
-	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
 
 	public Date getEndAgrementDate() {
 		return endAgrementDate;
@@ -197,14 +187,6 @@ public class Subscription extends BusinessCFEntity{
 
 	public void setDefaultLevel(Boolean defaultLevel) {
 		this.defaultLevel = defaultLevel;
-	}
-
-	public Map<String, CustomFieldInstance> getCustomFields() {
-		return customFields;
-	}
-
-	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-		this.customFields = customFields;
 	}
 
     @Override

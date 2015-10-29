@@ -34,7 +34,6 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -144,7 +143,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			// populate customFields
 			if (postData.getCustomFields() != null) {
                 try {
-                    populateCustomFields(AccountLevelEnum.CHARGE, postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
+                    populateCustomFields(postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -257,7 +256,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			// populate customFields
 			if (postData.getCustomFields() != null) {
 				try {
-                    populateCustomFields(AccountLevelEnum.CHARGE, postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
+                    populateCustomFields(postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");

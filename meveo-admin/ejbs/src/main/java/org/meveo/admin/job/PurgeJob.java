@@ -12,7 +12,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -46,7 +45,7 @@ public class PurgeJob extends Job {
 
         CustomFieldTemplate cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_jobExecHistory_jobName");
-        cft.setAccountLevel(AccountLevelEnum.TIMER);
+        cft.setAppliesTo("JOB_PurgeJob");
         cft.setActive(true);
         cft.setDescription("Purge job execution history: job name");
         cft.setFieldType(CustomFieldTypeEnum.STRING);
@@ -55,7 +54,7 @@ public class PurgeJob extends Job {
 
         cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_jobExecHistory_nbDays");
-        cft.setAccountLevel(AccountLevelEnum.TIMER);
+        cft.setAppliesTo("JOB_PurgeJob");
         cft.setActive(true);
         cft.setDescription("Purge job execution history: older then (in days)");
         cft.setFieldType(CustomFieldTypeEnum.LONG);
@@ -64,7 +63,7 @@ public class PurgeJob extends Job {
 
         cft = new CustomFieldTemplate();
         cft.setCode("PurgeJob_counterPeriod_nbDays");
-        cft.setAccountLevel(AccountLevelEnum.TIMER);
+        cft.setAppliesTo("JOB_PurgeJob");
         cft.setActive(true);
         cft.setDescription("Purge counter periods: period end date older then (in days)");
         cft.setFieldType(CustomFieldTypeEnum.LONG);

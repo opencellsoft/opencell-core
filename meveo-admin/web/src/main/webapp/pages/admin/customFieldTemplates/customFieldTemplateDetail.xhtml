@@ -19,8 +19,7 @@
             <hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" maxlength="50" />
             <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="20"
                 listenerUpdate=":formId:listValuesField :formId:defaultValueField :formId:entityClazzField" />
-            <hftl:formField label="#{messages['customFieldTemplate.accountType']}" field="accountLevel" required="true" listValues="#{customFieldTemplateBean.accountLevelsNoTimer}"
-                componentWidth="20" newLine="true" />
+            <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" required="true" componentWidth="20" newLine="true" />
             <h:panelGroup id="defaultValueField">
                 <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
                     rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE' and customFieldTemplateBean.entity.fieldType != 'ENTITY'}" />

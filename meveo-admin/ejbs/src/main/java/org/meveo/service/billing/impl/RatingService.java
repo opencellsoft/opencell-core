@@ -645,12 +645,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 		}
 		if(expression.indexOf("charge") >= 0){
 			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
-			userMap.put("charge",charge);
-			charge.getCustomFields();
+            if (charge.getCfFields() != null) {
+                charge.getCfFields().getUuid();
+            }
+            userMap.put("charge", charge);
 		}
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
-			offer.getCustomFields();
+			if (offer.getCfFields() != null) {
+			    offer.getCfFields().getUuid();
+            }			
 			userMap.put("offer",offer);
 		}
 		if (expression.indexOf("ua.") >= 0) {
@@ -702,12 +706,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 		userMap.put("op", bareOperation);
 		if(expression.indexOf("charge") >= 0){
 			ChargeTemplate charge=bareOperation.getChargeInstance().getChargeTemplate();
-			userMap.put("charge",charge);
-			charge.getCustomFields();
+			if (charge.getCfFields() != null) {
+                charge.getCfFields().getUuid();
+            }
+            userMap.put("charge", charge);
 		}
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
-			offer.getCustomFields();
+			if (offer.getCfFields() != null) {
+                offer.getCfFields().getUuid();
+            }
 			userMap.put("offer",offer);
 		}
 		if (expression.indexOf("ua.") >= 0) {
@@ -744,12 +752,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 		userMap.put("op", walletOperation);
 		if(expression.indexOf("charge") >= 0){
 			ChargeTemplate charge=walletOperation.getChargeInstance().getChargeTemplate();
-			userMap.put("charge",charge);
-			charge.getCustomFields();
+			if (charge.getCfFields() != null) {
+                charge.getCfFields().getUuid();
+            }
+            userMap.put("charge", charge);
 		}
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=walletOperation.getChargeInstance().getSubscription().getOffer();
-			offer.getCustomFields();
+			if (offer.getCfFields() != null) {
+                offer.getCfFields().getUuid();
+            }
 			userMap.put("offer",offer);
 		}
 		if (expression.indexOf("ua.") >= 0) {
@@ -786,13 +798,17 @@ public class RatingService extends BusinessService<WalletOperation>{
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", walletOperation);
 		if(expression.indexOf("charge") >= 0){
-			ChargeTemplate charge=walletOperation.getChargeInstance().getChargeTemplate();
-			userMap.put("charge",charge);
-			charge.getCustomFields();
+			ChargeTemplate charge=walletOperation.getChargeInstance().getChargeTemplate();			
+			if (charge.getCfFields() != null) {
+                charge.getCfFields().getUuid();
+            }
+            userMap.put("charge", charge);
 		}
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=walletOperation.getChargeInstance().getSubscription().getOffer();
-			offer.getCustomFields();
+			if (offer.getCfFields() != null) {
+                offer.getCfFields().getUuid();
+            }
 			userMap.put("offer",offer);
 		}
 		/*if(expression.indexOf("service") >= 0){

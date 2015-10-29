@@ -20,7 +20,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -101,7 +100,7 @@ public class SellerApiService extends BaseApi {
             // populate customFields
             if (postData.getCustomFields() != null) {
                 try {
-                    populateCustomFields(AccountLevelEnum.SELLER, postData.getCustomFields().getCustomField(), seller, currentUser);
+                    populateCustomFields(postData.getCustomFields().getCustomField(), seller, currentUser);
 
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     log.error("Failed to associate custom field instance to an entity", e);
@@ -176,7 +175,7 @@ public class SellerApiService extends BaseApi {
             // populate customFields
             if (postData.getCustomFields() != null) {
                 try {
-                    populateCustomFields(AccountLevelEnum.SELLER, postData.getCustomFields().getCustomField(), seller, currentUser);
+                    populateCustomFields(postData.getCustomFields().getCustomField(), seller, currentUser);
 
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     log.error("Failed to associate custom field instance to an entity", e);

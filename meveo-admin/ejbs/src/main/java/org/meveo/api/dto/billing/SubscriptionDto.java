@@ -9,13 +9,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.mediation.Access;
 
 /**
@@ -81,11 +79,7 @@ public class SubscriptionDto extends BaseDto {
             }
         }
 
-        if (e.getCustomFields() != null) {
-            for (CustomFieldInstance cfi : e.getCustomFields().values()) {
-                customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
-            }
-        }
+        customFields = CustomFieldsDto.toDTO(e.getCfFields());
 
         if (e.getServiceInstances() != null) {
             for (ServiceInstance serviceInstance : e.getServiceInstances()) {

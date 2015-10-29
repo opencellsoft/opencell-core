@@ -9,9 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Customer;
 
 @XmlRootElement(name = "AccountHierarchy")
@@ -86,13 +84,7 @@ public class AccountHierarchyDto implements Serializable {
             this.setFirstName(customer.getName().getFirstName());
         }
 
-        if (customer.getCustomFields() != null) {
-            customFields = new CustomFieldsDto();
-
-            for (CustomFieldInstance cfi : customer.getCustomFields().values()) {
-                customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
-            }
-        }
+        customFields = CustomFieldsDto.toDTO(customer.getCfFields());
     }
 
     public String getCustomerId() {

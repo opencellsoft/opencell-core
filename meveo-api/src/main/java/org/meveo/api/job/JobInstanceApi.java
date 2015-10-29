@@ -1,7 +1,6 @@
 package org.meveo.api.job;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -57,65 +55,56 @@ public class JobInstanceApi extends BaseApi {
 		if (jobInstanceService.findByCode(postData.getCode(), provider) != null) {
 			throw new EntityAlreadyExistsException(JobInstance.class, postData.getCode());
 		}
-		
-		List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
-		JobCategoryEnum jobCategory = null;
-		for (Map.Entry<JobCategoryEnum, HashMap<String, String>> jobCategoryEnum : JobInstanceService.jobEntries
-				.entrySet()) {
-			HashMap<String, String> jobs = new HashMap<String, String>();
-			jobs = JobInstanceService.jobEntries.get(jobCategoryEnum.getKey());
-			// Create or add missing custom field templates for a job
-			if (jobs.containsKey(postData.getJobTemplate())) {
-				jobCategory = jobCategoryEnum.getKey();
-				customFieldTemplates.clear();
-				Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
-				Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
-				if (jobCustomFields != null) {
-					customFieldTemplates = customFieldTemplateService.findByJobName(postData.getJobTemplate());
-					if (customFieldTemplates != null && customFieldTemplates.size() != jobCustomFields.size()) {
-						for (CustomFieldTemplate cf : jobCustomFields.values()) {
-							if (!customFieldTemplates.contains(cf)) {
-								try {
-									customFieldTemplateService.create(cf, currentUser);
-									customFieldTemplates.add(cf);
-								} catch (Exception e) {
-									log.error("Failed  to init custom fields", e);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		 
-		JobInstance jobInstance = new JobInstance();
-		jobInstance.setActive(postData.isActive());
-		jobInstance.setParametres(postData.getParameter());  
-		jobInstance.setJobCategoryEnum(jobCategory);
-		jobInstance.setJobTemplate(postData.getJobTemplate());
-		jobInstance.setCode(postData.getCode());
-		jobInstance.setDescription(postData.getDescription());
-		
-		 if (!StringUtils.isBlank(postData.getTimerCode())) {
-			 TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode(),provider); 
-			 jobInstance.setTimerEntity(timerEntity);
-			  if(timerEntity==null ){
-			 throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + postData.getTimerCode());
-			 }}
-		
-		 if (!StringUtils.isBlank(postData.getFollowingJob())) {
-			JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJob(),provider);
-			jobInstance.setFollowingJob(nextJob);
-			if(nextJob==null ){
-			  throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
-			}
-		} 
-		 
-		 
-		// populate customFields
+				
+        Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
+        JobCategoryEnum jobCategory = job.getJobCategory();
+        
+        JobInstance jobInstance = new JobInstance();
+        jobInstance.setActive(postData.isActive());
+        jobInstance.setParametres(postData.getParameter());  
+        jobInstance.setJobCategoryEnum(jobCategory);
+        jobInstance.setJobTemplate(postData.getJobTemplate());
+        jobInstance.setCode(postData.getCode());
+        jobInstance.setDescription(postData.getDescription());
+        
+         if (!StringUtils.isBlank(postData.getTimerCode())) {
+             TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode(),provider); 
+             jobInstance.setTimerEntity(timerEntity);
+              if(timerEntity==null ){
+             throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + postData.getTimerCode());
+             }}
+        
+         if (!StringUtils.isBlank(postData.getFollowingJob())) {
+            JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJob(),provider);
+            jobInstance.setFollowingJob(nextJob);
+            if(nextJob==null ){
+              throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
+            }
+        }         
+
+        // Create any missing CFT for a given provider and job
+        List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
+        Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+        if (jobCustomFields != null) {
+            customFieldTemplates = customFieldTemplateService.findByAppliesTo(jobInstance, provider);
+            if (customFieldTemplates != null && customFieldTemplates.size() != jobCustomFields.size()) {
+                for (CustomFieldTemplate cf : jobCustomFields.values()) {
+                    if (!customFieldTemplates.contains(cf)) {
+                        try {
+                            customFieldTemplateService.create(cf, currentUser);
+                            customFieldTemplates.add(cf);
+                        } catch (Exception e) {
+                            log.error("Failed  to init custom fields", e);
+                        }
+                    }
+                }
+            }
+        }
+
+		// Populate customFields
 		if (postData.getCustomFields() != null) {
 			try {
-				populateCustomFields(customFieldTemplates, postData.getCustomFields().getCustomField(), jobInstance, AccountLevelEnum.TIMER, currentUser);
+				populateCustomFields(customFieldTemplates, postData.getCustomFields().getCustomField(), jobInstance, currentUser);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				log.error("Failed to associate custom field instance to an entity", e);
 				throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -146,75 +135,63 @@ public class JobInstanceApi extends BaseApi {
 			
 			if (jobInstance == null ) {
 				throw new EntityDoesNotExistsException(JobInstance.class, jobInstanceCode);
-			}
+            }
 			
-			List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
-			JobCategoryEnum jobCategory = null;
-			for (Map.Entry<JobCategoryEnum, HashMap<String, String>> jobCategoryEnum : JobInstanceService.jobEntries
-					.entrySet()) {
-				HashMap<String, String> jobs = new HashMap<String, String>();
-				jobs = JobInstanceService.jobEntries.get(jobCategoryEnum.getKey());
-				// Create or add missing custom field templates for a job
-				if (jobs.containsKey(postData.getJobTemplate())) {
-					jobCategory = jobCategoryEnum.getKey();
-					customFieldTemplates.clear();
-					Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
-					Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
-					if (jobCustomFields != null) {
-						customFieldTemplates = customFieldTemplateService.findByJobName(postData.getJobTemplate());
-						if (customFieldTemplates != null && customFieldTemplates.size() != jobCustomFields.size()) {
-							for (CustomFieldTemplate cf : jobCustomFields.values()) {
-								if (!customFieldTemplates.contains(cf)) {
-									try {
-										customFieldTemplateService.create(cf, currentUser);
-										customFieldTemplates.add(cf);
-									} catch (Exception e) {
-										log.error("Failed  to init custom fields", e);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+	        Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
+	        JobCategoryEnum jobCategory = job.getJobCategory();
+
+            jobInstance.setJobTemplate(postData.getJobTemplate());
+            jobInstance.setParametres(postData.getParameter()); // TODO setParametres should be renamed
+            jobInstance.setActive(postData.isActive());
+            jobInstance.setJobCategoryEnum(jobCategory);
+            jobInstance.setDescription(postData.getDescription());
+
+            if (!StringUtils.isBlank(postData.getTimerCode())) {
+                TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode(), provider);
+                jobInstance.setTimerEntity(timerEntity);
+                if (timerEntity == null) {
+                    throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + postData.getTimerCode());
+                }
+            }
+
+            if (!StringUtils.isBlank(postData.getFollowingJob())) {
+                JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJob(), provider);
+                jobInstance.setFollowingJob(nextJob);
+                if (nextJob == null) {
+                    throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
+                }
+            }
 			
-			// populate customFields
+            // Create any missing CFT for a given provider and job
+            List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
+            Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+            if (jobCustomFields != null) {
+                customFieldTemplates = customFieldTemplateService.findByAppliesTo(jobInstance, provider);
+                if (customFieldTemplates != null && customFieldTemplates.size() != jobCustomFields.size()) {
+                    for (CustomFieldTemplate cf : jobCustomFields.values()) {
+                        if (!customFieldTemplates.contains(cf)) {
+                            try {
+                                customFieldTemplateService.create(cf, currentUser);
+                                customFieldTemplates.add(cf);
+                            } catch (Exception e) {
+                                log.error("Failed  to init custom fields", e);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Populate customFields
 			if (postData.getCustomFields() != null) {
 				try {
-					populateCustomFields(customFieldTemplates, postData.getCustomFields().getCustomField(), jobInstance, AccountLevelEnum.TIMER, currentUser);
+					populateCustomFields(customFieldTemplates, postData.getCustomFields().getCustomField(), jobInstance, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");
 				}
 			}
 			
-			jobInstance.setJobTemplate(postData.getJobTemplate());
-			jobInstance.setParametres(postData.getParameter()); //TODO setParametres should be renamed
-			jobInstance.setActive(postData.isActive());
-			jobInstance.setJobCategoryEnum(jobCategory);
-			jobInstance.setDescription(postData.getDescription());
-			
-			if (!StringUtils.isBlank(postData.getTimerCode())) {
-				TimerEntity timerEntity = timerEntityService.findByCode(
-						postData.getTimerCode(), provider);
-				jobInstance.setTimerEntity(timerEntity);
-				if (timerEntity == null) {
-					throw new MeveoApiException(
-							MeveoApiErrorCode.BUSINESS_API_EXCEPTION,
-							"Invalid timer entity=" + postData.getTimerCode());
-				}
-			}
 
-			if (!StringUtils.isBlank(postData.getFollowingJob())) {
-				JobInstance nextJob = jobInstanceService.findByCode(
-						postData.getFollowingJob(), provider);
-				jobInstance.setFollowingJob(nextJob);
-				if (nextJob == null) {
-					throw new MeveoApiException(
-							MeveoApiErrorCode.BUSINESS_API_EXCEPTION,
-							"Invalid next job=" + postData.getFollowingJob());
-				}
-			}
 			
 			jobInstanceService.update(jobInstance, currentUser);
 		}

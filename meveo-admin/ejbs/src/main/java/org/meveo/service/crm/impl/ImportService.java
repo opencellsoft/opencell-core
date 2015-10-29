@@ -5,10 +5,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jaxb.customer.CustomField;
@@ -32,12 +31,12 @@ public abstract class ImportService {
      * @param currentUser User that authenticated for API
      * @throws MissingParameterException
      */
-    protected void populateCustomFields(AccountLevelEnum cfType, List<CustomField> customFieldDtos, ICustomFieldEntity entity, String cfiFieldName, User currentUser) {
+    protected void populateCustomFields(List<CustomField> customFieldDtos, ICustomFieldEntity entity, User currentUser) {
         // throws MissingParameterException {
 
-        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(cfType, currentUser.getProvider());
+        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentUser.getProvider());
 
-        populateCustomFields(customFieldTemplates, customFieldDtos, entity, cfiFieldName, currentUser);
+        populateCustomFields(customFieldTemplates, customFieldDtos, entity,  currentUser);
     }
 
     /**
@@ -50,8 +49,7 @@ public abstract class ImportService {
      * @param currentUser User that authenticated for API
      * @throws MissingParameterException
      */
-    private void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomField> customFieldDtos, ICustomFieldEntity entity, String cfiFieldName,
-            User currentUser) {
+    private void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomField> customFieldDtos, ICustomFieldEntity entity, User currentUser) {
         // throws MissingParameterException {
 
         List<String> missingParameters = new ArrayList<String>();
@@ -61,7 +59,12 @@ public abstract class ImportService {
             log.warn("No custom field templates defined. Custom field values will be ignored");
             return;
         }
-        if (customFieldDtos != null) {
+        
+        if (entity.getCfFields() == null && customFieldDtos != null && !customFieldDtos.isEmpty()) {
+            entity.initCustomFields();
+        }
+        
+        if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
             for (CustomField cfDto : customFieldDtos) {
                 boolean found = false;
                 for (CustomFieldTemplate cft : customFieldTemplates) {
@@ -86,17 +89,11 @@ public abstract class ImportService {
                             // }
                         }
 
-                        CustomFieldInstance cfi = entity.getCustomFields().get(cfDto.getCode());
+                        CustomFieldInstance cfi = entity.getCfFields().getCFI(cfDto.getCode());
+
                         // Create an instance if does not exist yet
                         if (cfi == null) {
                             cfi = CustomFieldInstance.fromTemplate(cft);
-                            try {
-                                FieldUtils.getField(CustomFieldInstance.class, cfiFieldName, true).set(cfi, entity);
-                            } catch (IllegalArgumentException | IllegalAccessException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                            entity.getCustomFields().put(cfi.getCode(), cfi);
                         }
 
                         // Update TODO
@@ -115,6 +112,8 @@ public abstract class ImportService {
                         } else {
                             cfi.setValue(cfDto.getValueConverted());
                         }
+                        
+                        entity.getCfFields().addUpdateCFI(cfi);
 
                         break;
                     }
@@ -130,9 +129,13 @@ public abstract class ImportService {
             if (cft.isDisabled() || !cft.isValueRequired()) {
                 continue;
             }
-            CustomFieldInstance cfi = entity.getCustomFields().get(cft.getCode());
-            if (cfi == null || cfi.isValueEmpty()) {
+            if (entity.getCfFields() == null) {
                 missingParameters.add(cft.getCode());
+            } else {
+                CustomFieldInstance cfi = entity.getCfFields().getCFI(cft.getCode());
+                if (cfi == null || cfi.isValueEmpty()) {
+                    missingParameters.add(cft.getCode());
+                }
             }
         }
 

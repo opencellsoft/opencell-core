@@ -17,8 +17,6 @@
 package org.meveo.model.mediation;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,10 +24,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -43,15 +40,16 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldFields;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Access linked to Subscription and Zone.
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(accountLevel = AccountLevelEnum.ACC)
+@CustomFieldEntity(cftCodePrefix = "ACC")
 @ExportIdentifier({ "accessUserId", "subscription.code", "provider" })
 @Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = { "ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_ACCESS_SEQ")
@@ -76,9 +74,9 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "SUBSCRIPTION_ID")
     private Subscription subscription;
 
-    @OneToMany(mappedBy = "access", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @MapKeyColumn(name = "code")
-    private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
+    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "CFF_ID")
+    private CustomFieldFields cfFields;
 
     public Date getStartDate() {
         return startDate;
@@ -116,13 +114,15 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
         return getProvider().getCode() + "_" + accessUserId;
     }
 
-    public Map<String, CustomFieldInstance> getCustomFields() {
-        return customFields;
+    @Override
+    public CustomFieldFields getCfFields() {
+        return cfFields;
     }
-
-    public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-        this.customFields = customFields;
-    }
+    
+    @Override
+    public void initCustomFields() {
+        cfFields = new CustomFieldFields();
+    } 
 
     @Override
     public boolean equals(Object obj) {
@@ -155,16 +155,16 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
 
     @Override
     public Object getCFValue(String cfCode) {
-        if (getCustomFields().containsKey(cfCode)) {
-            return getCustomFields().get(cfCode);
+        if (cfFields != null) {
+            return cfFields.getCFValue(cfCode);
         }
         return null;
     }
 
     @Override
     public Object getCFValue(String cfCode, Date date) {
-        if (getCustomFields().containsKey(cfCode)) {
-            return getCustomFields().get(cfCode).getValue(date);
+        if (cfFields != null) {
+            return cfFields.getCFValue(cfCode, date);
         }
         return null;
     }
@@ -172,7 +172,7 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @Override
     public Object getInheritedOnlyCFValue(String cfCode) {
         if (getParentCFEntity() != null) {
-            return getParentCFEntity().getInheritedOnlyCFValue(cfCode);
+            return getParentCFEntity().getInheritedCFValue(cfCode);
         }
         return null;
     }
@@ -181,7 +181,7 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     public Object getInheritedOnlyCFValue(String cfCode, Date date) {
 
         if (getParentCFEntity() != null) {
-            return getParentCFEntity().getInheritedOnlyCFValue(cfCode, date);
+            return getParentCFEntity().getInheritedCFValue(cfCode, date);
         }
         return null;
     }
@@ -189,12 +189,18 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @Override
     public Object getInheritedCFValue(String cfCode) {
 
-        if (getCustomFields().containsKey(cfCode)) {
-            return getCustomFields().get(cfCode).getValue();
+        try {
+            if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
+                return cfFields.getCustomFields().get(cfCode).getValue();
 
-        } else if (getParentCFEntity() != null) {
-            return getParentCFEntity().getInheritedCFValue(cfCode);
+            } else if (getParentCFEntity() != null) {
+                return getParentCFEntity().getInheritedCFValue(cfCode);
+            }
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(getClass());
+            log.error("Failed to access inherited CF values", e);
         }
+
         return null;
     }
 
@@ -203,8 +209,8 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
 
         Object value = null;
 
-        if (getCustomFields().containsKey(cfCode)) {
-            value = getCustomFields().get(cfCode).getValue(date);
+        if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
+            value = cfFields.getCustomFields().get(cfCode).getValue(date);
         }
         if (value == null && getParentCFEntity() != null) {
             return getParentCFEntity().getInheritedCFValue(cfCode, date);

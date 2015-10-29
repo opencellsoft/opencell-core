@@ -3,12 +3,12 @@ package org.meveo.api.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.crm.CustomFieldFields;
 import org.meveo.model.crm.CustomFieldInstance;
 
 /**
@@ -26,13 +26,15 @@ public class CustomFieldsDto implements Serializable {
 
     }
 
-    public CustomFieldsDto(Map<String, CustomFieldInstance> cfis) {
-        customField = new ArrayList<CustomFieldDto>();
-        if (cfis != null && !cfis.isEmpty()) {
-            for (CustomFieldInstance cfi : cfis.values()) {
-                customField.addAll(CustomFieldDto.toDTO(cfi));
-            }
+    public static CustomFieldsDto toDTO(CustomFieldFields cff) {
+        if (cff == null || cff.getCustomFields() == null || cff.getCustomFields().isEmpty()) {
+            return null;
         }
+        CustomFieldsDto dto = new CustomFieldsDto();
+        for (CustomFieldInstance cfi : cff.getCustomFields().values()) {
+            dto.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+        }
+        return dto;
     }
 
     public List<CustomFieldDto> getCustomField() {
@@ -47,21 +49,19 @@ public class CustomFieldsDto implements Serializable {
         this.customField = customField;
     }
 
-    
-    public CustomFieldDto getCF(String code){
-	    for(CustomFieldDto cf : getCustomField()){
-	    	if(cf.getCode().equals(code)){
-	    		return cf;
-	    	}
-	    }
-	    return null;
+    public CustomFieldDto getCF(String code) {
+        for (CustomFieldDto cf : getCustomField()) {
+            if (cf.getCode().equals(code)) {
+                return cf;
+            }
+        }
+        return null;
     }
-    
+
     @Override
     public String toString() {
         return "CustomFieldsDto [customField=" + customField + "]";
     }
-
 	public boolean isEmpty() {
 		return customField == null || customField.isEmpty();
 	}

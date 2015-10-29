@@ -23,7 +23,6 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
@@ -58,8 +57,8 @@ public class MediationJob extends Job {
 			Long nbRuns = new Long(1);
 			Long waitingMillis = new Long(0);
             try {
-                nbRuns = (Long) jobInstance.getCFValue("MediationJob_nbRuns");
-                waitingMillis = (Long) jobInstance.getCFValue("MediationJob_waitingMillis");
+                nbRuns = (Long) jobInstance.getCFValue("nbRuns");
+                waitingMillis = (Long) jobInstance.getCFValue("waitingMillis");
 				if (nbRuns == -1) {
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
@@ -132,24 +131,24 @@ public class MediationJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
 		CustomFieldTemplate nbRuns = new CustomFieldTemplate();
-		nbRuns.setCode("MediationJob_nbRuns");
-		nbRuns.setAccountLevel(AccountLevelEnum.TIMER);
+		nbRuns.setCode("nbRuns");
+		nbRuns.setAppliesTo("JOB_MediationJob");
 		nbRuns.setActive(true);
 		nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
 		nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
 		nbRuns.setDefaultValue("1");
 		nbRuns.setValueRequired(false);
-		result.put("MediationJob_nbRuns", nbRuns);
+		result.put("nbRuns", nbRuns);
 
 		CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
-		waitingMillis.setCode("MediationJob_waitingMillis");
-		waitingMillis.setAccountLevel(AccountLevelEnum.TIMER);
+		waitingMillis.setCode("waitingMillis");
+		waitingMillis.setAppliesTo("JOB_MediationJob");
 		waitingMillis.setActive(true);
 		waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
 		waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
 		waitingMillis.setDefaultValue("0");
 		waitingMillis.setValueRequired(false);
-		result.put("MediationJob_waitingMillis", waitingMillis);
+		result.put("waitingMillis", waitingMillis);
 
 		return result;
 	}

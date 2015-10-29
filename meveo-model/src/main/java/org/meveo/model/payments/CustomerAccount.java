@@ -42,7 +42,6 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.shared.ContactInformation;
 
@@ -50,7 +49,7 @@ import org.meveo.model.shared.ContactInformation;
  * Customer Account entity.
  */
 @Entity
-@CustomFieldEntity(accountLevel=AccountLevelEnum.CA)
+@CustomFieldEntity(cftCodePrefix = "CA")
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "AR_CUSTOMER_ACCOUNT")

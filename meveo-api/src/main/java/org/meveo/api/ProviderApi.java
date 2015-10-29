@@ -44,7 +44,6 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
@@ -200,7 +199,7 @@ public class ProviderApi extends BaseApi {
 			// populate customFields
 			if (postData.getCustomFields() != null) {
 				try {
-                    populateCustomFields(AccountLevelEnum.PROVIDER, postData.getCustomFields().getCustomField(), provider, currentUser);
+                    populateCustomFields(postData.getCustomFields().getCustomField(), provider, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -288,7 +287,7 @@ public class ProviderApi extends BaseApi {
 			// populate customFields
 			if (postData.getCustomFields() != null) {
 				try {
-                    populateCustomFields(AccountLevelEnum.PROVIDER, postData.getCustomFields().getCustomField(), provider, currentUser);
+                    populateCustomFields(postData.getCustomFields().getCustomField(), provider, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");

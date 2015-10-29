@@ -18,7 +18,6 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -157,7 +156,7 @@ public class AccountImportService extends ImportService{
 		}
 		
         if (billAccount.getCustomFields() != null){
-            populateCustomFields(AccountLevelEnum.BA, billAccount.getCustomFields().getCustomField(), billingAccount, "account", userJob);
+            populateCustomFields(billAccount.getCustomFields().getCustomField(), billingAccount, userJob);
         } 
 		
 		billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(
@@ -267,7 +266,7 @@ public class AccountImportService extends ImportService{
 		}
 		
         if (billingAccountDto.getCustomFields() != null){
-            populateCustomFields(AccountLevelEnum.BA, billingAccountDto.getCustomFields().getCustomField(), billingAccount, "account", userJob);
+            populateCustomFields(billingAccountDto.getCustomFields().getCustomField(), billingAccount, userJob);
         } 
 
 		billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(
@@ -315,7 +314,7 @@ public class AccountImportService extends ImportService{
 		}
 
         if (uAccount.getCustomFields() != null){
-            populateCustomFields(AccountLevelEnum.UA, uAccount.getCustomFields().getCustomField(), userAccount, "account", userJob);
+            populateCustomFields(uAccount.getCustomFields().getCustomField(), userAccount, userJob);
         } 
 
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -374,7 +373,7 @@ public class AccountImportService extends ImportService{
 		}
 
         if (userAccountDto.getCustomFields() != null) {
-            populateCustomFields(AccountLevelEnum.UA, userAccountDto.getCustomFields().getCustomField(), userAccount, "account", userJob);
+            populateCustomFields(userAccountDto.getCustomFields().getCustomField(), userAccount, userJob);
         }
 
 		// userAccount.setStatus(AccountStatusEnum.ACTIVE);

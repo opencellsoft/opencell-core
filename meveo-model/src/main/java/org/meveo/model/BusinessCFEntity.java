@@ -18,10 +18,13 @@ package org.meveo.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldFields;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +34,36 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
 
     private static final long serialVersionUID = -6054446440106807337L;
 
+    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "CFF_ID")
+    private CustomFieldFields cfFields;
+
+    @Override
+    public CustomFieldFields getCfFields() {
+        return cfFields;
+    }
+
+    public void setCfFields(CustomFieldFields cfFields) {
+        this.cfFields = cfFields;
+    }
+
+    @Override
+    public void initCustomFields() {
+        cfFields = new CustomFieldFields();
+    }
+
     @Override
     public Object getCFValue(String cfCode) {
-        if (getCustomFields().containsKey(cfCode)) {
-            return getCustomFields().get(cfCode).getValue();
+        if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
+            return cfFields.getCustomFields().get(cfCode).getValue();
         }
         return null;
     }
 
     @Override
     public Object getCFValue(String cfCode, Date date) {
-        if (getCustomFields().containsKey(cfCode)) {
-            return getCustomFields().get(cfCode).getValue(date);
+        if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
+            return cfFields.getCustomFields().get(cfCode).getValue(date);
         }
         return null;
     }
@@ -53,89 +74,29 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
 
     public void setCFValue(String cfCode, Object value, CustomFieldTemplate cft) {
 
-        CustomFieldInstance cfi = getCustomFields().get(cfCode);
-        if (cfi == null) {
-            if (value == null) {
-                return;
-            }
-            if (cft != null) {
-                cfi = CustomFieldInstance.fromTemplate(cft);
-            } else {
-                cfi = new CustomFieldInstance();
-                cfi.setCode(cfCode);
-            }
-
-            String relationshipFieldname = this.getClass().getAnnotation(CustomFieldEntity.class).accountLevel().getRelationFieldname();
-            try {
-                FieldUtils.getField(CustomFieldInstance.class, relationshipFieldname, true).set(cfi, this);
-
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                Logger log = LoggerFactory.getLogger(this.getClass());
-                log.error("Failed to access CFI to entity relationship field CustomFieldInstance.{}", relationshipFieldname);
-                return;
-            }
-            this.getCustomFields().put(cfCode, cfi);
+        if (cfFields == null) {
+            initCustomFields();
         }
-        cfi.setValue(value);
+
+        cfFields.setCFValue(cfCode, value, cft);
     }
 
     public void setCFValue(String cfCode, Object value, Date valueDate, CustomFieldTemplate cft) {
 
-        CustomFieldInstance cfi = getCustomFields().get(cfCode);
-        if (cfi == null) {
-            if (value == null) {
-                return;
-            }
-            if (cft != null) {
-                cfi = CustomFieldInstance.fromTemplate(cft);
-            } else {
-                // cfi = new CustomFieldInstance();
-                // cfi.setCode(cfCode);
-                // cfi.setVersionable(true);
-                throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
-            }
-
-            String relationshipFieldname = this.getClass().getAnnotation(CustomFieldEntity.class).accountLevel().getRelationFieldname();
-            try {
-                FieldUtils.getField(CustomFieldInstance.class, relationshipFieldname, true).set(cfi, this);
-
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                Logger log = LoggerFactory.getLogger(this.getClass());
-                log.error("Failed to access CFI to entity relationship field CustomFieldInstance.{}", relationshipFieldname);
-                return;
-            }
-            this.getCustomFields().put(cfCode, cfi);
+        if (cfFields == null) {
+            initCustomFields();
         }
-        cfi.setValue(value, valueDate);
+
+        cfFields.setCFValue(cfCode, value, valueDate, cft);
     }
 
     public void setCFValue(String cfCode, Object value, Date valueDateFrom, Date valueDateTo, CustomFieldTemplate cft) {
 
-        CustomFieldInstance cfi = getCustomFields().get(cfCode);
-        if (cfi == null) {
-            if (value == null) {
-                return;
-            }
-            if (cft != null) {
-                cfi = CustomFieldInstance.fromTemplate(cft);
-            } else {
-                cfi = new CustomFieldInstance();
-                cfi.setCode(cfCode);
-                cfi.setVersionable(true);
-            }
-
-            String relationshipFieldname = this.getClass().getAnnotation(CustomFieldEntity.class).accountLevel().getRelationFieldname();
-            try {
-                FieldUtils.getField(CustomFieldInstance.class, relationshipFieldname, true).set(cfi, this);
-
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                Logger log = LoggerFactory.getLogger(this.getClass());
-                log.error("Failed to access CFI to entity relationship field CustomFieldInstance.{}", relationshipFieldname);
-                return;
-            }
-            this.getCustomFields().put(cfCode, cfi);
+        if (cfFields == null) {
+            initCustomFields();
         }
-        cfi.setValue(value, valueDateFrom, valueDateTo);
+
+        cfFields.setCFValue(cfCode, value, valueDateFrom, valueDateTo, cft);
     }
 
     @Override
@@ -159,8 +120,8 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     public Object getInheritedCFValue(String cfCode) {
 
         try {
-            if (getCustomFields().containsKey(cfCode)) {
-                return getCustomFields().get(cfCode).getValue();
+            if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
+                return cfFields.getCustomFields().get(cfCode).getValue();
 
             } else if (getParentCFEntity() != null) {
                 return getParentCFEntity().getInheritedCFValue(cfCode);
@@ -178,8 +139,8 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
 
         Object value = null;
 
-        if (getCustomFields().containsKey(cfCode)) {
-            value = getCustomFields().get(cfCode).getValue(date);
+        if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
+            value = cfFields.getCustomFields().get(cfCode).getValue(date);
         }
         if (value == null && getParentCFEntity() != null) {
             return getParentCFEntity().getInheritedCFValue(cfCode, date);

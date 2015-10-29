@@ -49,7 +49,7 @@ public abstract class AccountDto implements Serializable {
 		setName(new NameDto(e.getName()));
 		setAddress(new AddressDto(e.getAddress()));
 
-		customFields = new CustomFieldsDto(e.getCustomFields());
+        customFields = CustomFieldsDto.toDTO(e.getCfFields());
 
 		loaded = true;
 	}

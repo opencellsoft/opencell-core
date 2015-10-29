@@ -149,7 +149,7 @@ public class BillingAccount {
 	        bankCoordinates = new BankCoordinates(ba.getBankCoordinates());
 	        tradingCountryCode=ba.getTradingCountry()==null?null:ba.getTradingCountry().getCountryCode();
 	        tradingLanguageCode=ba.getTradingLanguage()==null?null:ba.getTradingLanguage().getLanguageCode();
-	        customFields=new CustomFields(ba.getCustomFields());
+            customFields = CustomFields.toDTO(ba.getCfFields());
 	        userAccounts=new UserAccounts(ba.getUsersAccounts(),dateFormat);
 	        code=ba.getCode()==null?null:ba.getCode();
 	        customerAccountId=ba.getCustomerAccount().getCode();

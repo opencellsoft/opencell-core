@@ -52,6 +52,7 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.IProvider;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
@@ -400,6 +401,21 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			}
 		}
 		checkProvider(e);
+		
+        // Set CFEntity.cfFields.provider value if not set yet
+        if (e instanceof ICustomFieldEntity) {
+            if (((ICustomFieldEntity) e).getCfFields() != null && ((ICustomFieldEntity) e).getCfFields().getProvider() == null) {
+                if (e instanceof IProvider) {
+                    ((ICustomFieldEntity) e).getCfFields().setProvider(((IProvider) e).getProvider());
+                } else if (e instanceof Provider) {
+                    ((ICustomFieldEntity) e).getCfFields().setProvider((Provider) e);
+                } else if (updater != null) {
+                    ((ICustomFieldEntity) e).getCfFields().setProvider(updater.getProvider());
+                }
+            }
+        }
+		
+		
 		e = getEntityManager().merge(e);
 		if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
 			entityUpdatedEventProducer.fire(e);
@@ -436,10 +452,23 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			}
 		}
 
-		if (e instanceof BaseEntity && (((BaseEntity) e).getProvider() == null)) {
+		if (e instanceof IProvider && (((IProvider) e).getProvider() == null)) {
 			((BaseEntity) e).setProvider(provider);
 		}
 
+        // Set CFEntity.cfFields.provider value if not set yet
+        if (e instanceof ICustomFieldEntity) {
+            if (((ICustomFieldEntity) e).getCfFields() != null && ((ICustomFieldEntity) e).getCfFields().getProvider() == null) {
+                if (e instanceof IProvider) {
+                    ((ICustomFieldEntity) e).getCfFields().setProvider(((IProvider) e).getProvider());
+                } else if (e instanceof Provider) {
+                    ((ICustomFieldEntity) e).getCfFields().setProvider((Provider) e);
+                } else {
+                    ((ICustomFieldEntity) e).getCfFields().setProvider(provider);
+                }
+            }
+        }
+		
 		getEntityManager().persist(e);
 		if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
 			entityCreatedEventProducer.fire(e);

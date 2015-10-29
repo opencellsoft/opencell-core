@@ -105,7 +105,7 @@ public class UserAccount {
 	    	externalRef2=ua.getExternalRef2();
 	    	name=new Name(ua.getName());
 	    	address=new Address(ua.getAddress());
-	    	customFields=new CustomFields(ua.getCustomFields());
+            customFields = CustomFields.toDTO(ua.getCfFields());
 	    	code=ua.getCode();
     	}
 	}

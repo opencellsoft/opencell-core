@@ -25,7 +25,6 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -117,8 +116,7 @@ public class BillingAccountApiService extends AccountApiService {
 			}
 
 			BillingAccount billingAccount = new BillingAccount();
-			populate(postData, billingAccount, currentUser,
-					AccountLevelEnum.BA, checkCustomFields);
+			populate(postData, billingAccount, currentUser,  checkCustomFields);
 
 			billingAccount.setCustomerAccount(customerAccount);
 			billingAccount.setBillingCycle(billingCycle);
@@ -311,9 +309,9 @@ public class BillingAccountApiService extends AccountApiService {
 			billingAccount.setDefaultLevel(postData.isDefaultLevel());
 			
 			checkEntityDefaultLevel(billingAccount);
-			
-			updateAccount(billingAccount, postData, currentUser,
-					AccountLevelEnum.BA, checkCustomFields);
+	
+
+			updateAccount(billingAccount, postData, currentUser, checkCustomFields);
 
 			if (!StringUtils.isBlank(postData.getNextInvoiceDate())) {
 				billingAccount

@@ -65,11 +65,11 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
 	}
 
 	@Override
-	public ActionStatus remove(String customFieldTemplateCode, String accountLevel) {
+	public ActionStatus remove(String customFieldTemplateCode, String appliesTo) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customFieldTemplateApi.remove(customFieldTemplateCode, accountLevel, getCurrentUser().getProvider());
+			customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -85,11 +85,11 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
 	}
 
 	@Override
-	public GetCustomFieldTemplateReponseDto find(String customFieldTemplateCode, String accountLevel) {
+	public GetCustomFieldTemplateReponseDto find(String customFieldTemplateCode, String appliesTo) {
 		GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
 		try {
-			result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, accountLevel,
+			result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo,
 					getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());

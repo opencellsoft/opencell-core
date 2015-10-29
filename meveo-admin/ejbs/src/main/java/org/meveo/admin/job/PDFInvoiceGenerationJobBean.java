@@ -66,8 +66,8 @@ public class PDFInvoiceGenerationJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = (Long) jobInstance.getCFValue("PDFInvoiceGenerationJob_nbRuns");  			
-				waitingMillis = (Long) jobInstance.getCFValue("PDFInvoiceGenerationJob_waitingMillis");
+				nbRuns = (Long) jobInstance.getCFValue("nbRuns");  			
+				waitingMillis = (Long) jobInstance.getCFValue("waitingMillis");
 				if(nbRuns == -1){
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}

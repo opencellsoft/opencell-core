@@ -24301,11 +24301,10 @@
    <soapenv:Body>
       <ws:create>
          <!--Optional:-->
-         <jobInstance jobTemplate="PurgeJob" code="${#TestSuite#ticket}_${#TestSuite#index}_JobInstance" description="${#TestSuite#ticket}_${#TestSuite#index}_JobInstance" timerCode="code_1">
+         <jobInstance jobTemplate="PurgeJob" code="${#TestSuite#ticket}_${#TestSuite#index}_JobInstance" description="${#TestSuite#ticket}_${#TestSuite#index}_JobInstance" timerCode="Hourly">
             <jobCategory>UTILS</jobCategory>
             <parameter>ONE</parameter>
             <active>false</active>
-            <userId>1</userId>
             <customFields>
                <customField code="PurgeJob_jobExecHistory_jobName">
                   <stringValue>KUKU</stringValue>
@@ -24777,11 +24776,10 @@
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:update>\r
-         <jobInstance jobTemplate="PurgeJob" code="${#TestSuite#ticket}_${#TestSuite#index}_JobInstance" description="${#TestSuite#ticket}_${#TestSuite#index}_JobInstance" timerCode="code_1">\r
+         <jobInstance jobTemplate="PurgeJob" code="${#TestSuite#ticket}_${#TestSuite#index}_JobInstance" description="${#TestSuite#ticket}_${#TestSuite#index}_JobInstance" timerCode="Hourly">\r
             <jobCategory>UTILS</jobCategory>\r
             <parameter>ONE</parameter>\r
             <active>false</active>\r
-            <userId>1</userId>\r
             <customFields>\r
                <customField code="PurgeJob_jobExecHistory_jobName">\r
                   <stringValue>MUMU</stringValue>\r
@@ -24796,7 +24794,7 @@
          </jobInstance>\r
       </ws:update>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4dd586dc-06e9-47af-9859-22bd762301f4"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find recurring 2" id="a17891e3-4be3-418d-8217-10c663527990"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findRecurringChargeTemplate</con:operation><con:request name="Find recurring 2" id="8acbd119-b4a2-4ad2-bc7d-2f1afaf302ac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4dd586dc-06e9-47af-9859-22bd762301f4"/><con:assertion type="Simple Contains" id="2bfce4eb-fc71-430f-850a-d818c3eaa3e0" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find recurring 2" id="a17891e3-4be3-418d-8217-10c663527990"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findRecurringChargeTemplate</con:operation><con:request name="Find recurring 2" id="8acbd119-b4a2-4ad2-bc7d-2f1afaf302ac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findRecurringChargeTemplate>
@@ -25464,10 +25462,9 @@
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:createCustomFieldTemplate> 
-         <!--Optional:--> 
          <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_SINGLE_NV" description="${#TestCase#cfType}_${#TestCase#fieldType}_SINGLE_NV field"> 
             <fieldType>${#TestCase#fieldType}</fieldType>
-            <accountLevel>${#TestCase#cfType}</accountLevel>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
             <entityClazz>${#TestCase#entityClazz}</entityClazz>
             <storageType>SINGLE</storageType>
          </customField>
@@ -25477,10 +25474,9 @@
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:createCustomFieldTemplate> 
-         <!--Optional:--> 
          <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_SINGLE_V" description="${#TestCase#cfType}_${#TestCase#fieldType}_SINGLE_V field"> 
             <fieldType>${#TestCase#fieldType}</fieldType>
-            <accountLevel>${#TestCase#cfType}</accountLevel>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
             <entityClazz>${#TestCase#entityClazz}</entityClazz>
             <storageType>SINGLE</storageType>
             <versionable>true</versionable>
@@ -25491,10 +25487,9 @@
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:createCustomFieldTemplate> 
-         <!--Optional:--> 
          <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_SINGLE_VC" description="${#TestCase#cfType}_${#TestCase#fieldType}_SINGLE_VC field"> 
             <fieldType>${#TestCase#fieldType}</fieldType>
-            <accountLevel>${#TestCase#cfType}</accountLevel>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
             <entityClazz>${#TestCase#entityClazz}</entityClazz>
             <storageType>SINGLE</storageType>
             <versionable>true</versionable>
@@ -25506,10 +25501,9 @@
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:createCustomFieldTemplate> 
-         <!--Optional:--> 
          <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_LIST_NV" description="${#TestCase#cfType}_${#TestCase#fieldType}_LIST_NV field"> 
             <fieldType>${#TestCase#fieldType}</fieldType>
-            <accountLevel>${#TestCase#cfType}</accountLevel>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
             <entityClazz>${#TestCase#entityClazz}</entityClazz>
             <storageType>LIST</storageType>
          </customField>
@@ -25519,10 +25513,9 @@
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:createCustomFieldTemplate> 
-         <!--Optional:--> 
          <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_LIST_V" description="${#TestCase#cfType}_${#TestCase#fieldType}_LIST_V field"> 
             <fieldType>${#TestCase#fieldType}</fieldType>
-            <accountLevel>${#TestCase#cfType}</accountLevel>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
             <entityClazz>${#TestCase#entityClazz}</entityClazz>
             <storageType>LIST</storageType>
             <versionable>true</versionable>
@@ -25533,10 +25526,9 @@
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:createCustomFieldTemplate> 
-         <!--Optional:--> 
          <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_LIST_VC" description="${#TestCase#cfType}_${#TestCase#fieldType}_LIST_VC field"> 
             <fieldType>${#TestCase#fieldType}</fieldType>
-            <accountLevel>${#TestCase#cfType}</accountLevel>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
             <entityClazz>${#TestCase#entityClazz}</entityClazz>
             <storageType>LIST</storageType>
             <versionable>true</versionable>
@@ -25548,10 +25540,9 @@
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:createCustomFieldTemplate> 
-         <!--Optional:--> 
          <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_MAP_NV" description="${#TestCase#cfType}_${#TestCase#fieldType}_MAP_NV field"> 
             <fieldType>${#TestCase#fieldType}</fieldType>
-            <accountLevel>${#TestCase#cfType}</accountLevel>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
             <entityClazz>${#TestCase#entityClazz}</entityClazz>
             <storageType>MAP</storageType>
          </customField>
@@ -25561,10 +25552,9 @@
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:createCustomFieldTemplate> 
-         <!--Optional:--> 
          <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_MAP_V" description="${#TestCase#cfType}_${#TestCase#fieldType}_MAP_V field"> 
             <fieldType>${#TestCase#fieldType}</fieldType>
-            <accountLevel>${#TestCase#cfType}</accountLevel>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
             <storageType>MAP</storageType>
             <versionable>true</versionable>
          </customField>
@@ -25574,10 +25564,9 @@
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:createCustomFieldTemplate> 
-         <!--Optional:--> 
          <customField code="${#TestSuite#ticket}_${#TestSuite#index}_${#TestCase#cfType}_${#TestCase#fieldType}_MAP_VC" description="${#TestCase#cfType}_${#TestCase#fieldType}_MAP_VC field"> 
             <fieldType>${#TestCase#fieldType}</fieldType>
-            <accountLevel>${#TestCase#cfType}</accountLevel>
+            <appliesTo>${#TestCase#cfType}</appliesTo>
             <entityClazz>${#TestCase#entityClazz}</entityClazz>
             <storageType>MAP</storageType>
             <versionable>true</versionable>
@@ -25585,5 +25574,5 @@
          </customField>
       </ws:createCustomFieldTemplate>
    </soapenv:Body> 
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="112602db-0cd7-4c28-a357-e28f18bf2c7c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property><con:property><con:name>fieldType</con:name><con:value/></con:property><con:property><con:name>entityClazz</con:name><con:value/></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT by entity" searchProperties="true" id="b8c4b3e5-8b23-46fb-b102-34234cef0663" disabled="true"><con:settings/><con:testStep type="calltestcase" name="Create String CFT" id="2dba14c5-b8a5-4310-ac0d-88f597b82de4"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>STRING</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Long CFT" id="5001883f-fd13-4c1d-8b62-485d96397ff3"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>LONG</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Date CFT" id="a31db638-5c62-4446-8dc7-c6a537784e52"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DATE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Double CFT" id="afd5d3cd-b8c4-4d57-824a-3d300154661b"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DOUBLE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Entity CFT" id="6d9f0cad-3bd5-48b0-914f-31163603d365"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>ENTITY</con:value></con:property><con:property><con:name>entityClazz</con:name><con:value>org.meveo.model.catalog.Calendar</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>48</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="112602db-0cd7-4c28-a357-e28f18bf2c7c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property><con:property><con:name>fieldType</con:name><con:value/></con:property><con:property><con:name>entityClazz</con:name><con:value/></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT by entity" searchProperties="true" id="b8c4b3e5-8b23-46fb-b102-34234cef0663" disabled="true"><con:settings/><con:testStep type="calltestcase" name="Create String CFT" id="2dba14c5-b8a5-4310-ac0d-88f597b82de4"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>STRING</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Long CFT" id="5001883f-fd13-4c1d-8b62-485d96397ff3"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>LONG</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Date CFT" id="a31db638-5c62-4446-8dc7-c6a537784e52"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DATE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Double CFT" id="afd5d3cd-b8c4-4d57-824a-3d300154661b"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DOUBLE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Entity CFT" id="6d9f0cad-3bd5-48b0-914f-31163603d365"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>ENTITY</con:value></con:property><con:property><con:name>entityClazz</con:name><con:value>org.meveo.model.catalog.Calendar</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>55</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE">${#Project#meveoEndpoint}/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

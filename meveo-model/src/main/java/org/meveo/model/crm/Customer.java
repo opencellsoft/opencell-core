@@ -42,7 +42,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
 @Entity
-@CustomFieldEntity(accountLevel=AccountLevelEnum.CUST)
+@CustomFieldEntity(cftCodePrefix = "CUST")
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "CRM_CUSTOMER")

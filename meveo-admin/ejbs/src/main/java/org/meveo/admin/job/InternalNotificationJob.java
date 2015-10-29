@@ -25,7 +25,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -58,7 +57,7 @@ public class InternalNotificationJob extends Job {
 
         CustomFieldTemplate filterCode = new CustomFieldTemplate();
         filterCode.setCode("InternalNotificationJob_filterCode");
-        filterCode.setAccountLevel(AccountLevelEnum.TIMER);
+        filterCode.setAppliesTo("JOB_InternalNotificationJob");
         filterCode.setActive(true);
         filterCode.setDescription("Filter (sql query)");
         filterCode.setFieldType(CustomFieldTypeEnum.STRING);
@@ -67,7 +66,7 @@ public class InternalNotificationJob extends Job {
 
         CustomFieldTemplate notificationCode = new CustomFieldTemplate();
         notificationCode.setCode("InternalNotificationJob_notificationCode");
-        notificationCode.setAccountLevel(AccountLevelEnum.TIMER);
+        notificationCode.setAppliesTo("JOB_InternalNotificationJob");
         notificationCode.setActive(true);
         notificationCode.setDescription("Notification code");
         notificationCode.setFieldType(CustomFieldTypeEnum.STRING);

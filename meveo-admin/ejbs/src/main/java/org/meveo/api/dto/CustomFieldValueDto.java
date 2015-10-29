@@ -50,7 +50,7 @@ public class CustomFieldValueDto implements Serializable {
         }
     }
 
-    protected static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
+    public static List<CustomFieldValueDto> toDTO(List<Object> listValue) {
 
         if (listValue == null) {
             return null;
@@ -69,7 +69,7 @@ public class CustomFieldValueDto implements Serializable {
         return dtos;
     }
 
-    protected static List<Object> fromDTO(List<CustomFieldValueDto> listValue) {
+    public static List<Object> fromDTO(List<CustomFieldValueDto> listValue) {
         List<Object> values = new ArrayList<Object>();
         for (CustomFieldValueDto valueDto : listValue) {
             values.add(valueDto.fromDTO());
@@ -77,7 +77,7 @@ public class CustomFieldValueDto implements Serializable {
         return values;
     }
 
-    protected static Map<String, Object> fromDTO(Map<String, CustomFieldValueDto> mapValue) {
+    public static Map<String, Object> fromDTO(Map<String, CustomFieldValueDto> mapValue) {
         Map<String, Object> values = new HashMap<String, Object>();
         for (Map.Entry<String, CustomFieldValueDto> valueDto : mapValue.entrySet()) {
             values.put(valueDto.getKey(), valueDto.getValue().fromDTO());
@@ -85,7 +85,7 @@ public class CustomFieldValueDto implements Serializable {
         return values;
     }
 
-    protected static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
+    public static Map<String, CustomFieldValueDto> toDTO(Map<String, Object> mapValue) {
         if (mapValue == null || mapValue.entrySet().size() == 0) {
             return null;
         }

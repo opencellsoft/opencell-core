@@ -102,7 +102,7 @@ public class Customer {
 	    	code=cust.getCode();
 	    	customerCategory=cust.getCustomerCategory()==null?"":cust.getCustomerCategory().getCode();
 	    	customerBrand=cust.getCustomerBrand()==null?"":cust.getCustomerBrand().getCode();
-	    	customFields=new CustomFields(cust.getCustomFields());
+            customFields = CustomFields.toDTO(cust.getCfFields());
 	    	address=new Address(cust.getAddress());
 	    	name=new Name(cust.getName());
 	    	mandateDate=cust.getMandateDate();

@@ -24,21 +24,20 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.catalog.Calendar;
 
 @Entity
-@ExportIdentifier({ "code", "accountLevel", "provider" })
-@Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "ACCOUNT_TYPE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code", "appliesTo", "provider" })
+@Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
 @NamedQueries({ @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft  where cft.disabled=false and cft.versionable=true and cacheValueTimeperiod is not null") })
 public class CustomFieldTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = -1403961759495272885L;
 
-    @Column(name = "FIELD_TYPE")
+    @Column(name = "FIELD_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
     private CustomFieldTypeEnum fieldType;
 
-    @Column(name = "ACCOUNT_TYPE")
-    @Enumerated(EnumType.STRING)
-    private AccountLevelEnum accountLevel;
+    @Column(name = "APPLIES_TO", nullable = false)
+    private String appliesTo;
 
     @Column(name = "VALUE_REQUIRED")
     private boolean valueRequired;
@@ -63,7 +62,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Column(name = "ENTITY_CLAZZ")
     private String entityClazz;
 
-    @Column(name = "STORAGE_TYPE")
+    @Column(name = "STORAGE_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
     private CustomFieldStorageTypeEnum storageType = CustomFieldStorageTypeEnum.SINGLE;
 
@@ -81,12 +80,12 @@ public class CustomFieldTemplate extends BusinessEntity {
         this.fieldType = fieldType;
     }
 
-    public AccountLevelEnum getAccountLevel() {
-        return accountLevel;
+    public String getAppliesTo() {
+        return appliesTo;
     }
 
-    public void setAccountLevel(AccountLevelEnum accountLevel) {
-        this.accountLevel = accountLevel;
+    public void setAppliesTo(String appliesTo) {
+        this.appliesTo = appliesTo;
     }
 
     public boolean isValueRequired() {

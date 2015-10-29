@@ -15,8 +15,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -24,6 +22,7 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -47,6 +46,9 @@ public class UnitAccountOperationsGenerationJobBean {
 	@Inject
 	private RecordedInvoiceService recordedInvoiceService;
 	
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
+    
 	@Inject
 	private ProviderService providerService;
 
@@ -81,15 +83,9 @@ public class UnitAccountOperationsGenerationJobBean {
 
 			try {
 
-				CustomFieldInstance cfInstance = (CustomFieldInstance) providerService
-						.getCustomFieldOrProperty(
-								"accountOperationsGenerationJob.occCode",
-								"FA_FACT", customerAccount.getProvider(),
-								true, AccountLevelEnum.PROVIDER,
-								currentUser);
-				invoiceTemplate = oCCTemplateService.findByCode(cfInstance
-						.getValueAsString(), customerAccount.getProvider()
-						.getCode());
+			    String value = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue("accountOperationsGenerationJob.occCode", "FA_FACT", customerAccount.getProvider(), providerService, true, currentUser);
+                invoiceTemplate = oCCTemplateService.findByCode(value, customerAccount.getProvider().getCode());
+            
 			} catch (Exception e) {
 				log.error("error while getting occ template ", e);
 				throw new ImportInvoiceException(

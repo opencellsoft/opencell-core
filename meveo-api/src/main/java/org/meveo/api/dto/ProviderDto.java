@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 
 /**
@@ -32,7 +31,7 @@ public class ProviderDto extends BaseDto {
 	private Integer invoiceSequenceSize;
 	
 	@XmlElement(required = false)
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
 	public ProviderDto() {
 
@@ -55,11 +54,7 @@ public class ProviderDto extends BaseDto {
 		multiCountry = e.getMulticountryFlag();
 		multiLanguage = e.getMultilanguageFlag();
 		
-		if (e.getCustomFields() != null) {
-			for (CustomFieldInstance cfi : e.getCustomFields().values()) {
-				customFields.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
-			}
-		}
+		customFields = CustomFieldsDto.toDTO(e.getCfFields());
 	}
 
 	public String getCode() {

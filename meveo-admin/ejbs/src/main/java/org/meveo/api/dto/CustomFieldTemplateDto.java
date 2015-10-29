@@ -27,8 +27,12 @@ public class CustomFieldTemplateDto {
 	@XmlElement(required = true)
 	protected String fieldType;
 
-	@XmlElement(required = true)
+	@XmlElement(required = false)
+	@Deprecated
 	protected String accountLevel;
+	
+    @XmlElement(required = false)
+    protected String appliesTo;
 
 	@XmlElement
 	protected String defaultValue;
@@ -62,7 +66,8 @@ public class CustomFieldTemplateDto {
 		code = cf.getCode();
 		description = cf.getDescription();
 		fieldType = cf.getFieldType().name();
-		accountLevel = cf.getAccountLevel().name();
+		accountLevel = cf.getAppliesTo();
+		appliesTo = cf.getAppliesTo();
 		defaultValue = cf.getDefaultValue();
 		storageType = cf.getStorageType().name();
 		valueRequired = cf.isValueRequired();
@@ -106,6 +111,14 @@ public class CustomFieldTemplateDto {
 		this.accountLevel = accountLevel;
 	}
 
+	public String getAppliesTo() {
+        return appliesTo;
+    }
+	
+	public void setAppliesTo(String appliesTo) {
+        this.appliesTo = appliesTo;
+    }
+	
 	public String getDefaultValue() {
 		return defaultValue;
 	}
@@ -157,7 +170,7 @@ public class CustomFieldTemplateDto {
 	@Override
 	public String toString() {
 		return "CustomFieldTemplateDto [code=" + code + ", description=" + description + ", fieldType=" + fieldType
-				+ ", accountLevel=" + accountLevel + ", defaultValue=" + defaultValue + ", storageType=" + storageType
+				+ ", accountLevel=" + accountLevel + ", appliesTo=" + appliesTo + ", defaultValue=" + defaultValue + ", storageType=" + storageType
 				+ ", valueRequired=" + valueRequired + ", versionable=" + versionable + ", triggerEndPeriodEvent="
 				+ triggerEndPeriodEvent + ", calendar=" + calendar + ", entityClazz=" + entityClazz + "]";
 	}
@@ -183,5 +196,4 @@ public class CustomFieldTemplateDto {
 	public void setListValues(Map<String, String> listValues) {
 		this.listValues = listValues;
 	}
-
 }

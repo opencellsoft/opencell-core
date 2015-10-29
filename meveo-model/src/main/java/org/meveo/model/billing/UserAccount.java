@@ -42,10 +42,9 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.crm.AccountLevelEnum;
 
 @Entity
-@CustomFieldEntity(accountLevel=AccountLevelEnum.UA)
+@CustomFieldEntity(cftCodePrefix = "UA")
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "BILLING_USER_ACCOUNT")

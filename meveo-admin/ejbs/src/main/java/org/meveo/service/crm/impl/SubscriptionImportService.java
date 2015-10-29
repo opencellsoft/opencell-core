@@ -21,7 +21,6 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.subscription.Access;
 import org.meveo.model.jaxb.subscription.Charge;
@@ -128,7 +127,7 @@ public class SubscriptionImportService extends ImportService{
 		subscription.setDescription(jaxbSubscription.getDescription());
 		
         if (jaxbSubscription.getCustomFields() != null) {
-            populateCustomFields(AccountLevelEnum.SUB, jaxbSubscription.getCustomFields().getCustomField(), subscription, "subscription", currentUser);
+            populateCustomFields(jaxbSubscription.getCustomFields().getCustomField(), subscription, currentUser);
         }		
 		
 		subscription.setSubscriptionDate(DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),

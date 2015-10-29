@@ -1,7 +1,5 @@
 package org.meveo.api.dto.job;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -9,9 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.jobs.JobInstance;
 
 @XmlRootElement(name = "JobInstance")
@@ -53,7 +49,7 @@ public class JobInstanceDto extends BaseDto {
     public JobInstanceDto(JobInstance jobInstance) {
         this.code = jobInstance.getCode();
         this.active = jobInstance.isActive();
-        this.customFields = new CustomFieldsDto(jobInstance.getCustomFields());
+        this.customFields = CustomFieldsDto.toDTO(jobInstance.getCfFields());
         this.description = jobInstance.getDescription();
         if (jobInstance.getFollowingJob() != null) {
             this.followingJob = jobInstance.getFollowingJob().getCode();
@@ -62,15 +58,6 @@ public class JobInstanceDto extends BaseDto {
         this.jobTemplate = jobInstance.getJobTemplate();
         this.parameter = jobInstance.getParametres();
         
-        Map<String, CustomFieldInstance> customFields = jobInstance.getCustomFields();
-        CustomFieldsDto customFieldsDto = new CustomFieldsDto();
-        if (customFields != null) {
-            for (CustomFieldInstance cfi : customFields.values()) {
-                customFieldsDto.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
-            }
-        }
-        
-        this.setCustomFields(customFieldsDto);
         this.setTimerCode(jobInstance.getTimerEntity() == null ? null:jobInstance.getTimerEntity().toString());
     }
 
