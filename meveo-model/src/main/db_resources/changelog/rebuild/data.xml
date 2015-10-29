@@ -7744,7 +7744,7 @@
         </insert>
 
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -7759,7 +7759,7 @@
         </insert>
 
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -7773,7 +7773,7 @@
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -7787,7 +7787,7 @@
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -7801,7 +7801,7 @@
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -7815,7 +7815,7 @@
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -7829,7 +7829,7 @@
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -7843,7 +7843,7 @@
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -7857,7 +7857,7 @@
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -7871,7 +7871,7 @@
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
@@ -7885,7 +7885,7 @@
             <column name="timerentity_id" valueNumeric="1" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_timer_seq" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueBoolean="false" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
