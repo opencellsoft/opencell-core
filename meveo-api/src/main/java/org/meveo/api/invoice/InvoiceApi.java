@@ -131,6 +131,10 @@ public class InvoiceApi extends BaseApi {
 
 			Invoice invoice = new Invoice();
 			invoice.setBillingAccount(billingAccount);
+			if (billingAccount.getBillingRun() == null) {
+				throw new MeveoApiException("BillingAccount with code=" + billingAccount.getCode()
+						+ " is not assigned a billingRun.");
+			}
 			invoice.setBillingRun(billingAccount.getBillingRun());
 			invoice.setProvider(provider);
 			Date invoiceDate = new Date();
