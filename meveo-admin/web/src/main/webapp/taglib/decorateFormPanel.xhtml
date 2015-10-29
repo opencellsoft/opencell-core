@@ -21,7 +21,7 @@
         buttons - buttons to include. Can be specified via <ui:define ..> tag
         
 -->
-        
+
 <ui:composition>
 
     <c:if test="${empty formId}">
@@ -37,21 +37,23 @@
     </c:if>
 
     <h:form id="#{formId}">
-        <p:panel styleClass="form-panel">
+        <p:panel>
             <c:if test="#{not empty header}">
                 <f:facet name="header">
                     <h:outputText value="#{label}" />
                 </f:facet>
             </c:if>
-            <c:if test="#{showMessages}">
-                <p:messages id="messages" autoUpdate="true" />
-            </c:if>
-            <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
-                <ui:insert name="fields" />
-            </p:outputPanel>
-            <h:panelGroup layout="block" styleClass="form-panel-actions">
-                <ui:insert name="buttons" />
-            </h:panelGroup>
+            <p:panel layout="block" styleClass="form-panel">
+                <c:if test="#{showMessages}">
+                    <p:messages id="messages" autoUpdate="true" />
+                </c:if>
+                <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
+                    <ui:insert name="fields" />
+                </p:outputPanel>
+                <h:panelGroup layout="block" styleClass="form-panel-actions">
+                    <ui:insert name="buttons" />
+                </h:panelGroup>
+            </p:panel>
         </p:panel>
     </h:form>
 </ui:composition>

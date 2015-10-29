@@ -140,10 +140,29 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 			InitialContext ic=new InitialContext();
 			result = (Job) ic.lookup("java:global/"+paramBean.getProperty("meveo.moduleName", "meveo")+"/"+jobName);
 		} catch (NamingException e) {
-			log.error("Failed to get job by name",e);
+			log.error("Failed to get job by name {}", jobName,e);
 		}
 		return result;
 	}
+
+    public List<Job> getJobs() {
+        List<Job> jobs = new ArrayList<Job>();
+
+        for (HashMap<String, String> jobInfos : jobEntries.values()) {
+            for (String url : jobInfos.values()) {
+                try {
+                    InitialContext ic = new InitialContext();
+                    Job job = (Job) ic.lookup(url);
+                    jobs.add(job);
+
+                } catch (NamingException e) {
+                    log.error("Failed to get job by url {}", url, e);
+                }
+            }
+        }
+        
+        return jobs;
+    }
 
 	public void create(JobInstance jobInstance) throws BusinessException {
 		InitialContext ic;

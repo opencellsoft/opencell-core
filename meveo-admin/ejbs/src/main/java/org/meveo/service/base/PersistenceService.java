@@ -179,7 +179,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 	@Override
 	public E findById(Long id, Provider provider, boolean refresh) {
-		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+		log.trace("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
 		final Class<? extends E> productClass = getEntityClass();
 		E e = getEntityManager().find(productClass, id);
 		if (e != null) {
@@ -207,7 +207,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 *      boolean)
 	 */
 	public E findById(Long id, boolean refresh) {
-		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+		log.trace("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
 		final Class<? extends E> productClass = getEntityClass();
 		E e = getEntityManager().find(productClass, id);
 		if (e != null) {
@@ -236,7 +236,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 	@SuppressWarnings("unchecked")
 	public E findById(Long id, List<String> fetchFields, boolean refresh) {
-		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+		log.trace("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
 		final Class<? extends E> productClass = getEntityClass();
 		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
 		if (fetchFields != null && !fetchFields.isEmpty()) {
@@ -274,7 +274,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 	@Override
 	public E findByIdNoCheck(EntityManager em, Long id, boolean refresh) {
-		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+		log.trace("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
 		final Class<? extends E> productClass = getEntityClass();
 		E e = em.find(productClass, id);
 		if (e != null) {
@@ -301,7 +301,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@Override
 	public E disable(E e) {
 		if (e instanceof EnableEntity && ((EnableEntity) e).isActive()) {
-			log.debug("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
+			log.trace("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
 			((EnableEntity) e).setDisabled(true);
 			if (e instanceof IAuditable) {
 				((IAuditable) e).updateAudit(getCurrentUser());
@@ -330,7 +330,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@Override
 	public E enable(E e) {
 		if (e instanceof EnableEntity && ((EnableEntity) e).isDisabled()) {
-			log.debug("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
+			log.trace("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
 			((EnableEntity) e).setDisabled(false);
 			if (e instanceof IAuditable) {
 				((IAuditable) e).updateAudit(getCurrentUser());
@@ -347,7 +347,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 	@Override
 	public void remove(E e) {
-		log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
+		log.trace("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
 		checkProvider(e);
 		getEntityManager().remove(e);
 		if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
@@ -391,7 +391,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 	@Override
 	public E update(E e, User updater) {
-		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
+		log.trace("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
 		
 		if (e instanceof IAuditable) {
 			if (updater != null) {
@@ -442,7 +442,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 	@Override
 	public void create(E e, User creator, Provider provider) {
-		log.debug("start of create {} entity={}", e.getClass().getSimpleName(), e);
+		log.trace("start of create {} entity={}", e.getClass().getSimpleName(), e);
 
 		if (e instanceof IAuditable) {
 			if (creator != null) {

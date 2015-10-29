@@ -84,6 +84,7 @@
                 <p:outputPanel styleClass="form-panel-fields #{edit ? '' : ' form-panel-fields-view'}">
                     <c:set var="id" value="${null}" />
                     <c:set var="edit" value="${null}" />
+                    <c:set var="label" value="${null}" />
                     <ui:insert />
                 </p:outputPanel>
 
@@ -92,7 +93,7 @@
                         submitPartialSubmitFilter="#{submitPartialSubmitFilter}" submitUpdate="#{submitUpdate}" killConversationOnSave="#{killConversationOnSave}"
                         killConversationOnBack="#{killConversationOnBack}" useCustomIdParam="#{useCustomIdParam}" objectIdParamName="#{objectIdParamName}"
                         showBackButton="#{showBackButton}" showEditButton="#{showEditButton}" showEnableDisableButton="#{showEnableDisableButton}"
-                        showDeleteButton="#{showDeleteButton}" updateConfirmationMessage="#{updateConfirmationMessage}" />
+                        showDeleteButton="#{showDeleteButton}" updateConfirmationMessage="#{updateConfirmationMessage}" formId="#{formId}"/>
                 </c:if>
                 <c:if test="#{buttons}">
                     <h:panelGroup layout="block" styleClass="form-panel-actions">

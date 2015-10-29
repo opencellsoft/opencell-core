@@ -16,7 +16,7 @@
     Can be used inside any p:datatable type component including hftl:datalist 
     
     Attributes
-        backingbean - backing bean for data action/navigation. If not provided, defaults to #{backingBean} used in hftl:datalist
+        backingBean - backing bean for data action/navigation. If not provided, defaults to #{backingBean} used in hftl:datalist
         entity - a p:datatable model iteration variable. If not provided, defaults to #{entity} - a default iteration variable of hftl:datalist
         renderViewLink - should reder a "view" button       
         renderEditLink - should render "edit" button
@@ -181,7 +181,7 @@
 				function handleDeleteComplete(xhr, status, args) {
 					var result = args.result;
 					if(typeof(result)!="undefined" && !result){
-						PF('confirmCanotDeleteWidget').show();
+						PF('#{resultsId}confirmCanotDeleteWidget').show();
 					}
 				}
 			//]]>
@@ -209,10 +209,10 @@
 		</p:confirmDialog>
 		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmCanotDelete']}" header="" rendered="#{renderDeleteLink}"
-			severity="alert" widgetVar="confirmCanotDeleteWidget" appendTo="@(body)">
+			severity="alert" widgetVar="#{resultsId}confirmCanotDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
-					oncomplete="PF('confirmCanotDeleteWidget').hide()" update="@this" />
+					oncomplete="PF('#{resultsId}confirmCanotDeleteWidget').hide()" update="@this" />
 			</p:panel>
 		</p:confirmDialog>
 		

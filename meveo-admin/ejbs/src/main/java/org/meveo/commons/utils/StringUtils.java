@@ -195,4 +195,26 @@ public class StringUtils {
     	}
     	return result;
     }
+    
+    /**
+     * Compares two strings. Handles null values witout exception
+     * 
+     * @param one First string
+     * @param two Second string
+     * @return Matches String.compare() return value
+     */
+    public static int compare(String one, String two) {
+
+        if (one == null && two != null) {
+            return 1;
+        } else if (one != null && two == null) {
+            return -1;
+        } else if (one == null && two == null) {
+            return 0;
+        } else if (one != null && two != null) {
+            return one.compareTo(two);
+        }
+
+        return 0;
+    }
 }

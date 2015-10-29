@@ -43,8 +43,7 @@
                 <!--                 </c:if> -->
             </p:inputText>
         </c:if>
-        <c:if test="#{isAutocomplete and  edit}">
-        complete method 
+        <c:if test="#{isAutocomplete and  edit}">        
             <p:autoComplete id="#{id}" value="#{fieldItem}" disabled="#{disabled}" required="#{required}" size="#{size}" maxlength="#{maxlength}" dropdown="true"
                 completeMethod="#{autocompleteBean[autocompleteMethod]}" var="e" itemLabel="#{e}" itemValue="#{e}">
             </p:autoComplete>

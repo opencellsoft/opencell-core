@@ -226,7 +226,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return Entity from database.
      */
     public T initEntity() {
-        log.debug("instantiating " + this.getClass());
+        log.debug("instantiating {} with id {}", this.getClass(), getObjectId());
         if (getObjectId() != null) {
             if (getFormFieldsToFetch() == null) {
                 entity = (T) getPersistenceService().findById(getObjectId());
@@ -255,6 +255,18 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
 
         return entity;
+    }
+
+    /**
+     * Clear object parameters and instantiate a new entity
+     * 
+     * @return Entity instantiated
+     */
+    public T newEntity() {
+        log.debug("instantiating {} with id {}", this.getClass(), getObjectId());
+        entity = null;
+        setObjectId(null);
+        return initEntity();
     }
 
     /**
@@ -413,7 +425,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return string for navigation
      */
     public String back() {
-        if (backView != null && backView.get() != null) {
+        if (backViewSave == null && backView != null && backView.get() != null) {
             // log.debug("backview parameter is " + backView.get());
             backViewSave = backView.get();
         } else if (backViewSave == null) {

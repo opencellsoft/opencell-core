@@ -102,21 +102,14 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         if (entity.getJobTemplate() == null) {
             return null;
         }
-        // Get templates matching a job template name
-        List<CustomFieldTemplate> jobTemplates = customFieldTemplateService.findByAppliesTo((ICustomFieldEntity) entity, getCurrentProvider());
 
-        // In case when job template has new custom fields defined in code, create them.
+        // Get job definition and custom field templates defined in a job
         Job job = jobInstanceService.getJobByName(entity.getJobTemplate());
         Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
 
-        if (jobCustomFields != null && (jobTemplates.size() != jobCustomFields.size())) {
-            for (CustomFieldTemplate cf : jobCustomFields.values()) {
-                if (!jobTemplates.contains(cf)) {
-                    customFieldTemplateService.create(cf, getCurrentUser(), entity.getProvider());
-                    jobTemplates.add(cf);
-                }
-            }
-        }
+        // Create missing custom field templates if needed
+        List<CustomFieldTemplate> jobTemplates = customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobCustomFields.values(), getCurrentProvider());
+
         return jobTemplates;
     }
 
