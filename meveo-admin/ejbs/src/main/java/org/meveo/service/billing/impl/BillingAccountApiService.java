@@ -22,7 +22,6 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.AccountLevelEnum;
@@ -437,8 +436,22 @@ public class BillingAccountApiService extends AccountApiService {
 				throw new EntityDoesNotExistsException(BillingAccount.class,
 						billingAccountCode);
 			}
+			
+			BillingAccountDto billingAccountDto = new BillingAccountDto(billingAccount);
+			List<Invoice> invoices = billingAccount.getInvoices();
+			if (invoices != null && invoices.size() > 0) {
+				List<InvoiceDto> invoicesDto = new ArrayList<InvoiceDto>();
+				if (invoices != null && invoices.size() > 0) {
+					for (Invoice i: invoices) {
+							InvoiceDto invoiceDto = new InvoiceDto(i, billingAccountCode);
+							invoicesDto.add(invoiceDto);
+					}
+					
+					billingAccountDto.setInvoices(invoicesDto);
+				}
+			}
 
-			return new BillingAccountDto(billingAccount);
+			return billingAccountDto;
 		} else {
 			missingParameters.add("billingAccountCode");
 
@@ -488,11 +501,9 @@ public class BillingAccountApiService extends AccountApiService {
 						List<InvoiceDto> invoicesDto = new ArrayList<InvoiceDto>();
 						String billingAccountCode = ba.getCode();
 						if (invoices != null && invoices.size() > 0) {
-							for (Invoice i: invoices) {
-								if (i.getInvoiceTypeEnum() == InvoiceTypeEnum.CREDIT_NOTE_ADJUST) {
-									InvoiceDto invoiceDto = new InvoiceDto(i, billingAccountCode);
-									invoicesDto.add(invoiceDto);
-								}
+							for (Invoice i : invoices) {
+								InvoiceDto invoiceDto = new InvoiceDto(i, billingAccountCode);
+								invoicesDto.add(invoiceDto);
 							}
 							billingAccountDto.setInvoices(invoicesDto);
 						}
