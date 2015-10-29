@@ -502,17 +502,13 @@
 								<p:rowExpansion>
 									<p:dataTable value="#{entity.invoiceAdjustments}" var="obj">
 										<p:column headerText="#{messages['BusinessEntity.code']}">
-											<h:link value="#{obj.code}" outcome="invoiceAdjustmentDetail">
+											<h:link value="#{obj.invoiceNumber}" outcome="invoiceAdjustmentDetail">
 												<f:param name="adjustedInvoiceIdParam" value="#{entity.id}" />
 												<f:param name="objectId" value="#{obj.id}" />
 												<f:param name="edit" value="true" />
 												<f:param name="cid"
 													value="#{javax.enterprise.context.conversation.id}" />
 											</h:link>
-										</p:column>
-										<p:column
-											headerText="#{messages['BusinessEntity.description']}">
-											<h:outputText value="#{obj.description}" />
 										</p:column>
 										<p:column headerText="#{messages['invoice.amountWithoutTax']}">
 											<h:outputText value="#{obj.amountWithoutTax}"
