@@ -2,8 +2,7 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
@@ -48,7 +47,8 @@
 
 			<hf:formField id="roleId" label="#{messages['chart.role']}"
 				field="role" valueLabelField="name" required="false" popup="true"
-				popupId="searchRole" rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
+				popupId="searchRole"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
 			<hf:formField label="#{messages['chart.style']}" field="style" />
 			<hf:formField label="#{messages['chart.styleClass']}"
@@ -85,7 +85,8 @@
 				value="#{messages['page.chart.preview']}" update="@all"></p:commandButton>
 
 			<p:outputPanel id="chartPreview"
-				rendered="#{barChartBean.chartEntityModel.model != null}">
+				rendered="#{barChartBean.chartEntityModel.model != null}"
+				style="margin:100px">
 				<p:chart type="bar" model="#{barChartBean.chartEntityModel.model}"
 					fill="#{barChartBean.chartEntityModel.barChart.filled}"
 					legendPosition="#{barChartBean.chartEntityModel.barChart.legendPosition}"
@@ -105,7 +106,8 @@
 					animate="#{barChartBean.chartEntityModel.barChart.animate}"
 					showDatatip="#{barChartBean.chartEntityModel.barChart.showDataTip}"
 					datatipFormat="#{barChartBean.chartEntityModel.barChart.datatipFormat}"
-					style="#{bar.barChart.style}" styleClass="#{bar.barChart.styleClass}" />
+					style="#{bar.barChart.style}"
+					styleClass="#{bar.barChart.styleClass}" />
 			</p:outputPanel>
 
 		</hf:formPanel>

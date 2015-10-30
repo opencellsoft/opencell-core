@@ -83,7 +83,7 @@
 				value="#{messages['page.chart.preview']}" update="@all"></p:commandButton>
 
 			<p:outputPanel id="chartPreview"
-				rendered="#{pieChartBean.chartEntityModel.model != null}">
+				rendered="#{pieChartBean.chartEntityModel.model != null}" style="margin:100px">
 				<p:chart type="pie" model="#{pieChartBean.chartEntityModel.model}"
 					legendPosition="#{pieChartBean.chartEntityModel.pieChart.legendPosition}"
 					fill="#{pieChartBean.chartEntityModel.pieChart.filled}"
