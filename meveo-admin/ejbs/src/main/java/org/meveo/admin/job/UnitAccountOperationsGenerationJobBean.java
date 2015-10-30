@@ -16,6 +16,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceTypeEnum;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -76,27 +77,29 @@ public class UnitAccountOperationsGenerationJobBean {
 			}
 
 			try {
-
 				String occCode = "accountOperationsGenerationJob.occCode";
-				CustomFieldInstance cfInstance = (CustomFieldInstance) providerService
-						.getCustomFieldOrProperty(occCode, "FA_FACT", customerAccount.getProvider(), true,
+				String occCodeDefaultValue = "FA_FACT";
+				
+				if(InvoiceTypeEnum.CREDIT_NOTE_ADJUST      ==  invoice.getInvoiceTypeEnum() ||
+				   InvoiceTypeEnum.DEBIT_NODE_ADJUST       ==  invoice.getInvoiceTypeEnum() ||
+				   InvoiceTypeEnum.SELF_BILLED_CREDIT_NOTE ==  invoice.getInvoiceTypeEnum() ){
+					
+					occCode = "accountOperationsGenerationJob.occCodeAdjustement";
+					occCodeDefaultValue = "FA_ADJ";
+				}
+				CustomFieldInstance cfInstance = (CustomFieldInstance) providerService.getCustomFieldOrProperty(occCode,occCodeDefaultValue , customerAccount.getProvider(), true,
 								AccountLevelEnum.PROVIDER, currentUser);
 
 				if (cfInstance == null) {
-					log.error("Custom Field Instance with code=" + occCode
-							+ " does not exist");
-					throw new EntityDoesNotExistsException("Custom Field Instance with code=" + occCode
-							+ " does not exist");
+					log.error("Custom Field Instance with code=" + occCode+ " does not exist");
+					throw new EntityDoesNotExistsException("Custom Field Instance with code=" + occCode+ " does not exist");
 				}
 
-				invoiceTemplate = oCCTemplateService.findByCode(cfInstance.getValueAsString(), customerAccount
-						.getProvider().getCode());
+				invoiceTemplate = oCCTemplateService.findByCode(cfInstance.getValueAsString(), customerAccount.getProvider().getCode());
 
 				if (invoiceTemplate == null) {
-					log.error("Invoice template with code="
-							+ cfInstance.getValueAsString() + " does not exist");
-					throw new EntityDoesNotExistsException("Invoice template with code="
-							+ cfInstance.getValueAsString() + " does not exist");
+					log.error("Invoice template with code="+ cfInstance.getValueAsString() + " does not exist");
+					throw new EntityDoesNotExistsException("Invoice template with code="+ cfInstance.getValueAsString() + " does not exist");
 				}
 			} catch (Exception e) {
 				log.error("error while getting occ template ", e);
