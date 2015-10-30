@@ -125,6 +125,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	private RejectedBillingAccountService rejectedBillingAccountService;
 
 	private String PDF_DIR_NAME = "pdf";
+	private String ADJUSTEMENT_DIR_NAME = "invoiceAdjustmentPdf";
 	private String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
 	private String DATE_PATERN = "yyyy.MM.dd";
 
@@ -570,7 +571,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
 		}
 
-		File jasperFile = getJasperTemplateFile(resDir, billingTemplate, billingAccount.getPaymentMethod());
+		File jasperFile = getJasperTemplateFile(resDir, billingTemplate, billingAccount.getPaymentMethod(),isInvoiceAdjustment);
 		if (!jasperFile.exists()) {
 			throw new InvoiceJasperNotFoundException("The jasper file doesn't exist.");
 		}
@@ -598,10 +599,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 		if (node != null) {
 			dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()),
-					"/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line");
+					"/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory");
 		} else {
 			dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()),
-					"/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line");
+					"/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory");
 		}
 
 		JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
@@ -644,9 +645,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 
-	private File getJasperTemplateFile(String resDir, String billingTemplate, PaymentMethodEnum paymentMethod) {
-		String pdfDirName = new StringBuilder(resDir).append(File.separator).append(billingTemplate)
-				.append(File.separator).append(PDF_DIR_NAME).toString();
+	private File getJasperTemplateFile(String resDir, String billingTemplate, PaymentMethodEnum paymentMethod,boolean isInvoiceAdjustment) {
+	  String pdfDirName= new StringBuilder(resDir).append(File.separator).append(billingTemplate)
+					.append(File.separator).append(isInvoiceAdjustment?ADJUSTEMENT_DIR_NAME:PDF_DIR_NAME).toString();
 		File pdfDir = new File(pdfDirName);
 		String paymentMethodFileName = new StringBuilder("invoice_").append(paymentMethod).append(".jasper").toString();
 		File paymentMethodFile = new File(pdfDir, paymentMethodFileName);
