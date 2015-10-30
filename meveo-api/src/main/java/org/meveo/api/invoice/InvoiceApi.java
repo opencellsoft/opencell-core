@@ -146,7 +146,6 @@ public class InvoiceApi extends BaseApi {
 			invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
 			invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
 			invoice.setDiscount(invoiceDTO.getDiscount());
-			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
 
 			InvoiceTypeEnum invoiceTypeEnum = null;
 
@@ -165,19 +164,30 @@ public class InvoiceApi extends BaseApi {
 			invoice.setInvoiceTypeEnum(invoiceTypeEnum);
 
 			if (invoiceTypeEnum.equals(InvoiceTypeEnum.CREDIT_NOTE_ADJUST)) {
-				// generate
-				invoice.setCode(invoiceService.getInvoiceAdjustmentNumber(
-						invoice, currentUser));
-				invoiceService.create(invoice, currentUser, provider);
+				String invoiceNumber = invoiceDTO.getInvoiceNumber();
+				if (invoiceNumber == null) {
+					missingParameters.add("invoiceNumber");
+					throw new MissingParameterException(
+							getMissingParametersExceptionMessage());
+				}
+				Invoice commercialInvoice = invoiceService
+						.getInvoiceByNumber(invoiceNumber);
+				if (commercialInvoice == null) {
+					throw new EntityDoesNotExistsException(Invoice.class,
+							invoiceNumber);
+				}
+				invoice.setAdjustedInvoice(commercialInvoice);
+				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, currentUser));
 			} else {
-				// ocb+id
-				invoice.setCode(paramBean.getProperty("invoice.prefix",
-						"ocb_id_") + new Date().toString());
-				invoiceService.create(invoice, currentUser, provider);
-				invoice.setCode(paramBean.getProperty("invoice.prefix",
-						"ocb_id_") + invoice.getId());
+				invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
 			}
 
+			invoiceService.create(invoice, currentUser, provider);
+			
+			if (invoiceTypeEnum.equals(InvoiceTypeEnum.CREDIT_NOTE_ADJUST)) {
+				invoiceService.updateInvoiceAdjustmentCurrentNb(invoice);
+			}
+			
 			UserAccount userAccount = billingAccount.getDefaultUserAccount();
 
 			for (SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDTO : invoiceDTO
