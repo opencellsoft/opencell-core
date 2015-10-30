@@ -96,6 +96,15 @@
 						<p:inputText id="currentInvoiceNb"
 							value="#{sellerBean.entity.currentInvoiceNb}" />
 					</hftl:decorateFormField>
+					
+					<hf:formField label="#{messages['invoice.adjustment.prefix']}"
+								field="invoiceAdjustmentPrefix" id="invoiceAdjustmentPrefix" />
+								
+					<hf:formField label="#{messages['invoice.adjustment.currentSequenceNb']}"
+						field="currentInvoiceAdjustmentNb" id="currentInvoiceAdjustmentNb"/>
+						
+				 	<hf:formField label="#{messages['invoice.adjustment.sequenceSize']}"
+				       field="invoiceAdjustmentSequenceSize" id="invoiceAdjustmentSequenceSize"/>
 
 					<hf:formField id="trCurrencySelectId"
 						label="#{messages['currency.codeCurrency']}"
