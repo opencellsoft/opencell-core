@@ -82,6 +82,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForValue</td>
+	<td>//input[@type='text']</td>
+	<td>${BillingCycleCode}</td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectType}</td>
 	<td></td>
@@ -90,6 +95,21 @@
 	<td>click</td>
 	<td>css=li:contains(&quot;${TypeValue}&quot;)</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
+	<td>${TypeValue}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
+	<td>${TypeValue}</td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
+	<td>${TypeValue}</td>
 </tr>
 <tr>
 	<td>if</td>

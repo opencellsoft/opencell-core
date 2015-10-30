@@ -77,7 +77,22 @@
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>${ChooseServices}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddOne}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>waitForText</td>
+	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
+	<td>${ServicesValue}</td>
+</tr>
+<tr>
+	<td>assertText</td>
 	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
 	<td>${ServicesValue}</td>
 </tr>
@@ -87,13 +102,23 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
-	<td>${ServicesValue}</td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${ServicesValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${ServicesValue}</td>
 	<td></td>
 </tr>
 <tr>

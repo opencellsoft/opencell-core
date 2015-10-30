@@ -101,11 +101,53 @@
 	<td>${ChargeCodeREC}</td>
 	<td></td>
 </tr>
+<!--debut-->
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${ChargeCodeREC}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=pricPlanMatChargePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=td</td>
+	<td>${ChargeCodeREC}</td>
+</tr>
 <tr>
 	<td>click</td>
 	<td>css=td</td>
 	<td></td>
 </tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=pricPlanMatChargePopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=formPricePlanPanel:formPricePlan:chargeSelectId:txtFieldSingle:eventCode_text_pp</td>
+	<td>${ChargeCodeREC}</td>
+</tr>
+<!--fin-->
 <tr>
 	<td>if</td>
 	<td>${DescriptionBool}==true</td>
