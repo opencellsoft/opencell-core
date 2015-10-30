@@ -139,7 +139,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		Invoice invoice = super.initEntity();
 
 		if (adjustedInvoiceIdParam != null && adjustedInvoiceIdParam.get() != null) {
-			if (detailedParam != null) {
+			if (detailedParam != null && invoice.isTransient()) {
 				if (isDetailed()) {
 					invoice.setDetailedInvoice(true);
 				} else {
@@ -154,15 +154,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoice.setAdjustedInvoice(adjustedInvoice);
 				invoice.setBillingAccount(adjustedInvoice.getBillingAccount());
 				invoice.setBillingRun(adjustedInvoice.getBillingRun());
-				invoice.setAmountTax(adjustedInvoice.getAmountTax());
 				invoice.setDueDate(adjustedInvoice.getDueDate());
 				invoice.setInvoiceDate(adjustedInvoice.getInvoiceDate());
 				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());
-				invoice.setAmountWithoutTax(adjustedInvoice.getAmountWithoutTax());
-				invoice.setAmountWithTax(adjustedInvoice.getAmountWithTax());
-				invoice.setNetToPay(adjustedInvoice.getNetToPay());
-				invoice.setCode(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));
-				invoice.setInvoiceNumber(invoice.getCode());
+				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, getCurrentUser()));
 				invoice.setInvoiceTypeEnum(InvoiceTypeEnum.CREDIT_NOTE_ADJUST);
 
 				Auditable auditable = new Auditable();
@@ -598,8 +593,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		return total;
 	}
 
-	public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate line) {
-		line.computeWithTax();
+	public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
+		subCategoryInvoiceAgregate.computeWithTax();
 	}
 
 	public void reComputeDetailedInvoiceAdjustment(RatedTransaction ratedTx) {
@@ -634,7 +629,14 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 		super.saveOrUpdate(false);
 
-		invoiceService.recomputeAggregates(entity, uiSubCategoryInvoiceAgregates, isDetailed());
+		if (isDetailed()) {
+			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),
+					getCurrentUser(), true);
+		} else {
+			invoiceService.recomputeAggregates(entity, uiSubCategoryInvoiceAgregates, getCurrentUser());
+		}
+
+		invoiceService.updateInvoiceAdjustmentCurrentNb(entity);
 
 		// create xml invoice adjustment
 		String invoicesDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");
