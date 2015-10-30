@@ -101,6 +101,7 @@
 	<td>${Customer}</td>
 	<td></td>
 </tr>
+<!--debut-->
 <tr>
 	<td>verifyTextPresent</td>
 	<td>${Customer}</td>
@@ -108,9 +109,45 @@
 </tr>
 <tr>
 	<td>click</td>
+	<td>id=searchCustomerPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=td</td>
+	<td>${Customer}</td>
+</tr>
+<tr>
+	<td>click</td>
 	<td>css=td</td>
 	<td></td>
 </tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=searchCustomerPopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectCustomer}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=parentTab:formCustomerAccount:childTab:customerSelectId</td>
+	<td>${Customer}</td>
+</tr>
+<!--fin-->
 <tr>
 	<td>type</td>
 	<td>${CodeText}</td>

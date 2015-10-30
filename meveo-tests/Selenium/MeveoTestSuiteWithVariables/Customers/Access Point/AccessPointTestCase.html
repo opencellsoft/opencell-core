@@ -111,6 +111,7 @@
 	<td>${SubscriptionValue}</td>
 	<td></td>
 </tr>
+<!--debut-->
 <tr>
 	<td>verifyTextPresent</td>
 	<td>${SubscriptionValue}</td>
@@ -118,9 +119,45 @@
 </tr>
 <tr>
 	<td>click</td>
+	<td>id=searchSubscriptionPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=td</td>
+	<td>${SubscriptionValue}</td>
+</tr>
+<tr>
+	<td>click</td>
 	<td>css=td</td>
 	<td></td>
 </tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=searchSubscriptionPopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectSubscription}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=formId:tabView:subscriptionId</td>
+	<td>${SubscriptionValue}</td>
+</tr>
+<!--fin-->
 <tr>
 	<td>if</td>
 	<td>${StartDateBool}==true</td>
