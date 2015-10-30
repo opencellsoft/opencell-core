@@ -77,18 +77,83 @@
 	<td></td>
 </tr>
 <tr>
+	<td>verifyTextPresent</td>
+	<td>${BillingCycleCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=td</td>
+	<td>${BillingCycleCode}</td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>css=td</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForValue</td>
-	<td>//input[@type='text']</td>
+	<td>waitForNotVisible</td>
+	<td>id=billingCyclePopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectBillingCycle}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTable</td>
+	<td>css=table.1.0</td>
 	<td>${BillingCycleCode}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${TypeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${SelectType}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${TypeValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>${TypeValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -107,9 +172,14 @@
 	<td>${TypeValue}</td>
 </tr>
 <tr>
-	<td>waitForValue</td>
-	<td>//*[contains(@id, 'processType_enum_label')]</td>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
 	<td>${TypeValue}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>if</td>
