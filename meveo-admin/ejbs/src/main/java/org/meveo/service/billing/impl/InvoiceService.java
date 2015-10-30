@@ -170,7 +170,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return null;
 		}
 	}
-	
+
 	public Invoice getInvoiceByNumber(String invoiceNumber) throws BusinessException {
 		return getInvoiceByNumber(invoiceNumber, InvoiceTypeEnum.COMMERCIAL);
 	}
@@ -891,8 +891,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return result;
 	}
 
-	public void recomputeAggregates(Invoice invoice, List<SubCategoryInvoiceAgregate> uiSubCategoryInvoiceAgregates,
-			User currentUser) throws BusinessException {
+	public void recomputeAggregates(Invoice invoice, User currentUser) throws BusinessException {
 		boolean entreprise = invoice.getBillingAccount().getProvider().isEntreprise();
 		int rounding = invoice.getBillingAccount().getProvider().getRounding() == null ? 2 : invoice
 				.getBillingAccount().getProvider().getRounding();
@@ -904,18 +903,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
 			if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
 				invoiceAgregate.resetAmounts();
-			} else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-				SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = (SubCategoryInvoiceAgregate) invoiceAgregate;
-				for (SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
-					if (subCategoryInvoiceAgregate.getId().equals(newSubCategoryInvoiceAgregate.getId())) {
-						subCategoryInvoiceAgregate.setAmountWithoutTax(newSubCategoryInvoiceAgregate
-								.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP));
-						subCategoryInvoiceAgregate.setAmountWithTax(newSubCategoryInvoiceAgregate.getAmountWithTax()
-								.setScale(rounding, RoundingMode.HALF_UP));
-						subCategoryInvoiceAgregate.setAmountTax(newSubCategoryInvoiceAgregate.getAmountTax().setScale(
-								rounding, RoundingMode.HALF_UP));
-					}
-				}
 			}
 		}
 
@@ -942,24 +929,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					subCategoryInvoiceAgregate.getAmountWithoutTax());
 
 			for (TaxInvoiceAgregate taxInvoiceAgregate : subCategoryInvoiceAgregate.getTaxInvoiceAggregates()) {
-				taxInvoiceAgregate.resetAmounts();
-
 				// add to map
 				taxInvoiceAgregateMap.put(taxInvoiceAgregate.getTax().getId(), taxInvoiceAgregate);
-
-				if (taxInvoiceAgregate.getTax().getPercent().compareTo(BigDecimal.ZERO) == 0 || exoneratedFromTaxes) {
-					taxInvoiceAgregate.addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
-					taxInvoiceAgregate.setAmountTax(BigDecimal.ZERO);
-					taxInvoiceAgregate.addAmountWithTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
-					taxInvoiceAgregate.setTaxPercent(BigDecimal.ZERO);
-				}
-
-				for (Tax tax : subCategoryInvoiceAgregate.getSubCategoryTaxes()) {
-					if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !exoneratedFromTaxes) {
-						taxInvoiceAgregate.addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
-						log.debug("tax={}, ht={}", tax.getPercent(), taxInvoiceAgregate.getAmountWithoutTax());
-					}
-				}
 			}
 
 			if (subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(biggestAmount) > 0) {
@@ -969,23 +940,44 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 
 		// compute the tax
-		if (!exoneratedFromTaxes) {
-			List<? extends InvoiceAgregate> taxInvoiceAgregates = invoiceAgregateService.listByInvoiceAndType(invoice,
-					"T");
-			for (InvoiceAgregate invoiceAgregate : taxInvoiceAgregates) {
-				TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
-				if (taxInvoiceAgregate.getTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
-					// then compute the tax
-					taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountWithoutTax()
-							.multiply(taxInvoiceAgregate.getTaxPercent()).divide(new BigDecimal("100")));
-					// then round the tax
-					taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding,
-							RoundingMode.HALF_UP));
+		// if (!exoneratedFromTaxes) {
+		// List<? extends InvoiceAgregate> taxInvoiceAgregates =
+		// invoiceAgregateService.listByInvoiceAndType(invoice,
+		// "T");
+		// for (InvoiceAgregate invoiceAgregate : taxInvoiceAgregates) {
+		// TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate)
+		// invoiceAgregate;
+		// if
+		// (taxInvoiceAgregate.getTax().getPercent().compareTo(BigDecimal.ZERO)
+		// != 0) {
+		// // then compute the tax
+		// taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountWithoutTax()
+		// .multiply(taxInvoiceAgregate.getTaxPercent()).divide(new
+		// BigDecimal("100")));
+		// // then round the tax
+		// taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding,
+		// RoundingMode.HALF_UP));
+		//
+		// log.debug("tax2 ht={}", taxInvoiceAgregate.getAmountWithoutTax());
+		// }
+		// }
+		// }
 
-					log.debug("tax2 ht={}", taxInvoiceAgregate.getAmountWithoutTax());
-				}
-			}
-		}
+		// update subcategory tax amount
+		// for (InvoiceAgregate invoiceAgregate : subCategoryInvoiceAgregates) {
+		// SubCategoryInvoiceAgregate subCategoryInvoiceAgregate =
+		// (SubCategoryInvoiceAgregate) invoiceAgregate;
+		//
+		// for (TaxInvoiceAgregate taxInvoiceAgregate :
+		// subCategoryInvoiceAgregate.getTaxInvoiceAggregates()) {
+		// subCategoryInvoiceAgregate.addAmountTax(taxInvoiceAgregate.getAmountTax());
+		// }
+		//
+		// subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithoutTax().add(
+		// subCategoryInvoiceAgregate.getAmountTax()));
+		// subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax().setScale(
+		// rounding, RoundingMode.HALF_UP));
+		// }
 
 		for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
 			if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
@@ -1077,4 +1069,34 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 
+	public void recomputeSubCategoryAggregate(Invoice invoice, SubCategoryInvoiceAgregate subCategoryInvoiceAgregate,
+			User currentUser) {
+		int rounding = invoice.getBillingAccount().getProvider().getRounding() == null ? 2 : invoice
+				.getBillingAccount().getProvider().getRounding();
+		boolean exoneratedFromTaxes = invoice.getBillingAccount().getCustomerAccount().getCustomer()
+				.getCustomerCategory().getExoneratedFromTaxes();
+
+		subCategoryInvoiceAgregate.setAmountTax(new BigDecimal(0));
+
+		for (TaxInvoiceAgregate taxInvoiceAgregate : subCategoryInvoiceAgregate.getTaxInvoiceAggregates()) {
+			if (taxInvoiceAgregate.getTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
+				taxInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+				taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountWithoutTax()
+						.multiply(taxInvoiceAgregate.getTaxPercent()).divide(new BigDecimal("100")));
+				// then round the tax
+				taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding,
+						RoundingMode.HALF_UP));
+
+				taxInvoiceAgregate.setAmountWithTax(taxInvoiceAgregate.getAmountWithoutTax().add(
+						taxInvoiceAgregate.getAmountTax()));
+			}
+
+			subCategoryInvoiceAgregate.addAmountTax(taxInvoiceAgregate.getAmountTax());
+		}
+
+		subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithoutTax().add(
+				subCategoryInvoiceAgregate.getAmountTax()));
+		subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax().setScale(rounding,
+				RoundingMode.HALF_UP));
+	}
 }
