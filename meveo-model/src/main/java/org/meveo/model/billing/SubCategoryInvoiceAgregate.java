@@ -183,15 +183,4 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		this.discountPercent = discountPercent;
 	}
 
-	public BigDecimal computeWithTax() {
-		if (getAmountWithoutTax() != null && getAmountTax() == null) {
-			setAmountWithTax(getAmountWithoutTax());
-		}
-		if (getAmountWithoutTax() != null && getAmountTax() != null) {
-			setAmountWithTax(getAmountWithoutTax().add(getAmountTax()));
-		}
-
-		return getAmountWithTax();
-	}
-
 }

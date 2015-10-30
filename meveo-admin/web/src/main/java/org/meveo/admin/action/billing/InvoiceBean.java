@@ -592,7 +592,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	}
 
 	public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
-		subCategoryInvoiceAgregate.computeWithTax();
+		invoiceService.recomputeSubCategoryAggregate(entity, subCategoryInvoiceAgregate, currentUser);
 	}
 
 	public void reComputeDetailedInvoiceAdjustment(RatedTransaction ratedTx) {
@@ -635,7 +635,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),
 					getCurrentUser(), true);
 		} else {
-			invoiceService.recomputeAggregates(entity, uiSubCategoryInvoiceAgregates, getCurrentUser());
+			invoiceService.recomputeAggregates(entity, getCurrentUser());
 		}
 
 		invoiceService.updateInvoiceAdjustmentCurrentNb(entity);
