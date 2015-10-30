@@ -48,83 +48,38 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${ServicesBool}==true</td>
+	<td>${ServiceBool}==true</td>
 	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ChooseServices}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div/ul/li</td>
-	<td>${ServicesValue}</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div/ul/li</td>
-	<td>${ServicesValue}</td>
+	<td>${ServiceLocatorIN}</td>
+	<td>${ServiceValue}</td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${AddOne}</td>
+	<td>doubleClick</td>
+	<td>${ServiceLocatorIN}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${ServiceLocatorOUT}</td>
+	<td>${ServiceValue}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${ServiceLocatorOUT}</td>
+	<td>${ServiceValue}</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
 	<td></td>
 </tr>
 <tr>
 	<td>endIf</td>
 	<td></td>
 	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ChooseServices}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${AddOne}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
-	<td>${ServicesValue}</td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
-	<td>${ServicesValue}</td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForVisible</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>${ServicesValue}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>${ServicesValue}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForValue</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div[3]/ul/li</td>
-	<td>${ServicesValue}</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -145,6 +100,16 @@
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${CodeLocatorResult}</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${ServiceLocatorResult}</td>
+	<td>${ServiceValue}</td>
 </tr>
 </tbody></table>
 </body>
