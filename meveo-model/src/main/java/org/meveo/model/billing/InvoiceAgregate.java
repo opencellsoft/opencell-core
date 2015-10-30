@@ -300,7 +300,11 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 		this.discountAggregate = discountAggregate;
 	}
 
+	public void resetAmounts() {
+		setAmount(new BigDecimal(0));
+		setAmountTax(new BigDecimal(0));
+		setAmountWithoutTax(new BigDecimal(0));
+		setAmountWithTax(new BigDecimal(0));
+	}
 	
-	
-
 }
