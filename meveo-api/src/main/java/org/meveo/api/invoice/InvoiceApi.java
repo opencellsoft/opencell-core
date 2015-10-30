@@ -150,7 +150,6 @@ public class InvoiceApi extends BaseApi {
 			invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
 			invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
 			invoice.setDiscount(invoiceDTO.getDiscount());
-			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
 
 			InvoiceTypeEnum invoiceTypeEnum = null;
 
@@ -182,9 +181,16 @@ public class InvoiceApi extends BaseApi {
 							invoiceNumber);
 				}
 				invoice.setAdjustedInvoice(commercialInvoice);
-			} 
+				invoice.setInvoiceNumber(invoiceService.getInvoiceAdjustmentNumber(invoice, currentUser));
+			} else {
+				invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
+			}
 
 			invoiceService.create(invoice, currentUser, provider);
+			
+			if (invoiceTypeEnum.equals(InvoiceTypeEnum.CREDIT_NOTE_ADJUST)) {
+				invoiceService.updateInvoiceAdjustmentCurrentNb(invoice);
+			}
 			
 			UserAccount userAccount = billingAccount.getDefaultUserAccount();
 

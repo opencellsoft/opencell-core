@@ -169,13 +169,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return null;
 		}
 	}
-
+	
 	public Invoice getInvoiceByNumber(String invoiceNumber) throws BusinessException {
+		return getInvoiceByNumber(invoiceNumber, InvoiceTypeEnum.COMMERCIAL);
+	}
+
+	public Invoice getInvoiceByNumber(String invoiceNumber, InvoiceTypeEnum type) throws BusinessException {
+		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, null);
 		try {
-			Query q = getEntityManager().createQuery("from Invoice where invoiceNumber = :invoiceNumber");
-			q.setParameter("invoiceNumber", invoiceNumber);
-			Object invoiceObject = q.getSingleResult();
-			return (Invoice) invoiceObject;
+			qb.addCriterion("invoiceNumber", "=", invoiceNumber, true);
+			qb.addCriterionEnum("invoiceTypeEnum", type);
+			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
 			log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
 			return null;
@@ -1047,13 +1051,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		// update seller or provider current invoice sequence value
 		if (invoice.getInvoiceAdjustmentCurrentSellerNb() != null) {
 			Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-			seller.setCFValue(InvoiceService.INVOICE_SEQUENCE, invoice.getInvoiceAdjustmentCurrentSellerNb() + 1,
-					new Date(), null);
+			seller.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE,
+					invoice.getInvoiceAdjustmentCurrentSellerNb() + 1, new Date(), null);
 			sellerService.update(seller, getCurrentUser());
 		} else if (invoice.getInvoiceAdjustmentCurrentProviderNb() != null) {
 			Provider provider = invoice.getProvider();
-			provider.setCFValue(InvoiceService.INVOICE_SEQUENCE, invoice.getInvoiceAdjustmentCurrentProviderNb() + 1,
-					new Date(), null);
+			provider.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE,
+					invoice.getInvoiceAdjustmentCurrentProviderNb() + 1, new Date(), null);
 			providerService.update(provider, getCurrentUser());
 		}
 	}
