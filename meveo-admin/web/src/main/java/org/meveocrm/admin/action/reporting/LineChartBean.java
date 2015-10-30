@@ -15,8 +15,8 @@ import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.services.dwh.LineChartService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.model.chart.CartesianChartModel;
 import org.primefaces.model.chart.ChartSeries;
+import org.primefaces.model.chart.LineChartModel;
 
 /**
  * 
@@ -67,10 +67,10 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 		for (LineChart lineChart : lineChartList) {
 
 			MeasurableQuantity mq = lineChart.getMeasurableQuantity();
-			List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-					fromDate.getTime(), toDate.getTime(), null, mq);
+			List<MeasuredValue> mvs = mvService
+					.getByDateAndPeriod(null, fromDate.getTime(), toDate.getTime(), null, mq);
 
-			CartesianChartModel chartModel = new CartesianChartModel();
+			LineChartModel chartModel = new LineChartModel();
 
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
 			ChartSeries mvSeries = new ChartSeries();
@@ -79,21 +79,20 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 
 			if (mvs.size() > 0) {
 				for (MeasuredValue measuredValue : mvs) {
-					mvSeries.set(sdf.format(measuredValue.getDate()),
-							measuredValue.getValue());
+					mvSeries.set(sdf.format(measuredValue.getDate()), measuredValue.getValue());
 				}
-				chartModel.addSeries(mvSeries);
 			} else {
+				mvSeries.set("No Data", 0);
+				chartModel.setLegendPosition("w");
 				log.info("No measured values found for : " + mq.getCode());
 			}
+			chartModel.addSeries(mvSeries);
 
 			LineChartEntityModel chartEntityModel = new LineChartEntityModel();
-			boolean isAdmin = lineChart.getAuditable().getCreator()
-					.hasRole("administrateur");
-			boolean equalUser = lineChart.getAuditable().getCreator().getId() == getCurrentUser()
-					.getId();
-			boolean sameRoleWithChart = lineChart.getRole() != null ? getCurrentUser()
-					.hasRole(lineChart.getRole().getDescription()) : false;
+			boolean isAdmin = lineChart.getAuditable().getCreator().hasRole("administrateur");
+			boolean equalUser = lineChart.getAuditable().getCreator().getId() == getCurrentUser().getId();
+			boolean sameRoleWithChart = lineChart.getRole() != null ? getCurrentUser().hasRole(
+					lineChart.getRole().getDescription()) : false;
 			lineChart.setVisible(isAdmin || equalUser || sameRoleWithChart);
 			chartEntityModel.setLineChart(lineChart);
 			chartEntityModel.setModel(chartModel);
@@ -118,10 +117,10 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 				toDate.add(Calendar.MONTH, 1);
 
 				MeasurableQuantity mq = getEntity().getMeasurableQuantity();
-				List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-						fromDate.getTime(), toDate.getTime(), null, mq);
+				List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null, fromDate.getTime(), toDate.getTime(),
+						null, mq);
 
-				CartesianChartModel chartModel = new CartesianChartModel();
+				LineChartModel chartModel = new LineChartModel();
 
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
 				ChartSeries mvSeries = new ChartSeries();
@@ -130,13 +129,14 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 
 				if (mvs.size() > 0) {
 					for (MeasuredValue measuredValue : mvs) {
-						mvSeries.set(sdf.format(measuredValue.getDate()),
-								measuredValue.getValue());
+						mvSeries.set(sdf.format(measuredValue.getDate()), measuredValue.getValue());
 					}
-					chartModel.addSeries(mvSeries);
 				} else {
+					mvSeries.set("No Data", 0);
+					chartModel.setLegendPosition("w");
 					log.info("No measured values found for : " + mq.getCode());
 				}
+				chartModel.addSeries(mvSeries);
 
 				chartEntityModel.setModel(chartModel);
 				chartEntityModel.setLineChart(getEntity());
@@ -155,10 +155,9 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(curr.getMaxDate());
 		cal.add(Calendar.DATE, 1);
-		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-				curr.getMinDate(), cal.getTime(), null, mq);
+		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null, curr.getMinDate(), cal.getTime(), null, mq);
 
-		CartesianChartModel chartModel = new CartesianChartModel();
+		LineChartModel chartModel = new LineChartModel();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
 		ChartSeries mvSeries = new ChartSeries();
@@ -167,13 +166,14 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 
 		if (mvs.size() > 0) {
 			for (MeasuredValue measuredValue : mvs) {
-				mvSeries.set(sdf.format(measuredValue.getDate()),
-						measuredValue.getValue());
+				mvSeries.set(sdf.format(measuredValue.getDate()), measuredValue.getValue());
 			}
-			chartModel.addSeries(mvSeries);
 		} else {
+			mvSeries.set("No Data", 0);
+			chartModel.setLegendPosition("w");
 			log.info("No measured values found for : " + mq.getCode());
 		}
+		chartModel.addSeries(mvSeries);
 
 		curr.setLineChart(curr.getLineChart());
 		curr.setModel(chartModel);
@@ -187,10 +187,8 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 		return lineChartEntityModels;
 	}
 
-	public void setLineChartEntityModels(
-			List<LineChartEntityModel> lineChartEntityModels) {
+	public void setLineChartEntityModels(List<LineChartEntityModel> lineChartEntityModels) {
 		this.lineChartEntityModels = lineChartEntityModels;
 	}
 
 }
-

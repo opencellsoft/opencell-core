@@ -2,8 +2,7 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
@@ -49,7 +48,8 @@
 
 			<hf:formField id="roleId" label="#{messages['chart.role']}"
 				field="role" valueLabelField="name" required="false" popup="true"
-				popupId="searchRole" rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
+				popupId="searchRole"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
 			<hf:formField label="#{messages['chart.style']}" field="style" />
 			<hf:formField label="#{messages['chart.styleClass']}"
@@ -58,8 +58,10 @@
 			<hf:formField label="#{messages['lineChart.filled']}" field="filled" />
 			<hf:formField label="#{messages['lineChart.legendposition']}"
 				field="legendPosition" />
-			<hftl:decorateFormField fieldId="color" label="#{messages['pieChart.seriesColors']}" >
-				<p:colorPicker id="color" value="#{lineChartBean.entity.seriesColors}" />
+			<hftl:decorateFormField fieldId="color"
+				label="#{messages['pieChart.seriesColors']}">
+				<p:colorPicker id="color"
+					value="#{lineChartBean.entity.seriesColors}" />
 			</hftl:decorateFormField>
 			<hf:formField label="#{messages['lineChart.shadow']}" field="shadow" />
 			<hf:formField label="#{messages['lineChart.minX']}" field="minX" />
@@ -95,7 +97,8 @@
 				value="#{messages['page.chart.preview']}" update="@all"></p:commandButton>
 
 			<p:outputPanel id="chartPreview"
-				rendered="#{lineChartBean.chartEntityModel.model != null}">
+				rendered="#{lineChartBean.chartEntityModel.model != null}"
+				style="margin:100px">
 				<p:chart type="line" model="#{lineChartBean.chartEntityModel.model}"
 					fill="#{lineChartBean.chartEntityModel.lineChart.filled}"
 					legendPosition="#{lineChartBean.chartEntityModel.lineChart.legendPosition}"
