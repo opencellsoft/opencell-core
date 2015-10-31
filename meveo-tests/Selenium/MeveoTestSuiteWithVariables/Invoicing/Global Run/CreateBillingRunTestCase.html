@@ -27,93 +27,23 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>id=billingCyclePopup_title</td>
-	<td>Billing cycle</td>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='billingCyclePopuppopupForm:billingCyclePopupdatatable_data']/tr/td[text()=&quot;${BillingCycleCode}&quot;]</td>
+	<td></td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=billingCyclePopup_title</td>
-	<td>Billing cycle</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>css=div.ui-dialog-content.ui-widget-content</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>id=billingCyclePopuppopupForm:searchField1</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>id=billingCyclePopuppopupForm:searchField1</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>css=td</td>
-	<td>${BillingCycleCode}</td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>css=td</td>
-	<td>${BillingCycleCode}</td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>${BillingCycleCode}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTextPresent</td>
-	<td>${BillingCycleCode}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>${BillingCycleCode}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>css=td</td>
+	<td>//tbody[@id='billingCyclePopuppopupForm:billingCyclePopupdatatable_data']/tr/td[text()=&quot;${BillingCycleCode}&quot;]</td>
 	<td>${BillingCycleCode}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>//tbody[@id='billingCyclePopuppopupForm:billingCyclePopupdatatable_data']/tr/td[text()=&quot;${BillingCycleCode}&quot;]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForNotVisible</td>
-	<td>id=billingCyclePopup</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectBillingCycle}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForTable</td>
-	<td>css=table.1.0</td>
+	<td>waitForValue</td>
+	<td>id=formPanel:formId:billingCycleId:entityFieldSingle:billingCycle_entity</td>
 	<td>${BillingCycleCode}</td>
 </tr>
 <tr>
@@ -128,11 +58,6 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//*[contains(@id, 'processType_enum_label')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
 	<td>//*[contains(@id, 'processType_enum_label')]</td>
 	<td></td>
 </tr>
