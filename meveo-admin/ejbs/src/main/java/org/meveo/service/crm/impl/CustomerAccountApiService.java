@@ -140,9 +140,6 @@ public class CustomerAccountApiService extends AccountApiService {
 						postData.getContactInformation().getFax());
 			}
 			
-			customerAccount.setDefaultLevel(postData.isDefaultLevel());
-			
-			checkEntityDefaultLevel(customerAccount);
 			
 			customerAccountService.create(customerAccount, currentUser,
 					provider);
@@ -254,9 +251,6 @@ public class CustomerAccountApiService extends AccountApiService {
 				}
 			}
 			
-			customerAccount.setDefaultLevel(postData.isDefaultLevel());
-			
-			checkEntityDefaultLevel(customerAccount);
 			updateAccount(customerAccount, postData, currentUser,
 					AccountLevelEnum.CA, checkCustomFields);
 
@@ -596,18 +590,6 @@ public class CustomerAccountApiService extends AccountApiService {
 			create(postData, currentUser);
 		} else {
 			update(postData, currentUser);
-		}
-	}
-
-	@Override
-	public void checkEntityDefaultLevel(AccountEntity entity)
-			throws DuplicateDefaultAccountException {
-		CustomerAccount customerAccount = (CustomerAccount) entity;
-		if (customerAccount != null) {
-			if (customerAccountService.isDuplicationExist(customerAccount)) {
-				customerAccount.setDefaultLevel(false);
-				throw new DuplicateDefaultAccountException();
-			}
 		}
 	}
 }

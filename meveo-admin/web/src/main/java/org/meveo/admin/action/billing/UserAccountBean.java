@@ -142,10 +142,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			entity.setBillingAccount(billingAccount);
 			populateAccounts(billingAccount);
 
-			// check if has default
-			if (!billingAccount.getDefaultLevel()) {
-				entity.setDefaultLevel(true);
-			}
 		}
 		selectedCounterInstance=entity.getCounters()!=null && entity.getCounters().size()>0?entity.getCounters().values().iterator().next():null;
 		return entity;
@@ -162,12 +158,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	    entity.setBillingAccount(billingAccountService.attach(entity.getBillingAccount()));
 	    
 	    try {
-			if (entity.getDefaultLevel()) {
-				if (userAccountService.isDuplicationExist(entity)) {
-					entity.setDefaultLevel(false);
-					throw new DuplicateDefaultAccountException();
-				}
-			}
 
             String outcome = super.saveOrUpdate(killConversation);
 
@@ -303,11 +293,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public void populateAccounts(BillingAccount billingAccount) {
 		entity.setBillingAccount(billingAccount);
-		if (userAccountService.isDuplicationExist(entity)) {
-			entity.setDefaultLevel(false);
-		} else {
-			entity.setDefaultLevel(true);
-		}
+		
 		if (billingAccount.getProvider() != null && billingAccount.getProvider().isLevelDuplication()) {
 			entity.setCode(billingAccount.getCode());
 			entity.setDescription(billingAccount.getDescription());

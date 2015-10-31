@@ -175,10 +175,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 			UserAccount userAccount = userAccountService.findById(getUserAccountId());
 			populateAccounts(userAccount);
 
-			// check if has default
-			if (!userAccount.getDefaultLevel()) {
-				entity.setDefaultLevel(true);
-			}
 		}
 		log.debug("SubscriptionBean initEntity id={}", entity.getId());
 		if (entity.getId() == null) {
@@ -236,16 +232,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
-			if (subscriptionService.isDuplicationExist(entity)) {
-				entity.setDefaultLevel(false);
-				messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
-
-				return null;
-			}
-		}
-
-        String outcome = super.saveOrUpdate(killConversation);
+		String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
             return "subscriptionDetailSubscriptionTab"; //getEditViewName(); // "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() +
@@ -635,11 +622,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 	public void populateAccounts(UserAccount userAccount) {
 		entity.setUserAccount(userAccount);
-		if (subscriptionService.isDuplicationExist(entity)) {
-			entity.setDefaultLevel(false);
-		} else {
-			entity.setDefaultLevel(true);
-		}
 		if (userAccount != null && userAccount.getProvider() != null && userAccount.getProvider().isLevelDuplication()) {
 			entity.setCode(userAccount.getCode());
 			entity.setDescription(userAccount.getDescription());

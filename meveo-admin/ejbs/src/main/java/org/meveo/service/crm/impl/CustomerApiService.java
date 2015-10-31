@@ -191,7 +191,6 @@ public class CustomerApiService extends AccountApiService {
 				}
 				customer.setSeller(seller);
 			}
-			checkEntityDefaultLevel(customer);
 			updateAccount(customer, postData, currentUser,
 					AccountLevelEnum.CUST, checkCustomFields);
 			if (!StringUtils.isBlank(postData.getMandateDate())) {
@@ -546,13 +545,6 @@ public class CustomerApiService extends AccountApiService {
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
-	}
-
-	@Override
-	public void checkEntityDefaultLevel(AccountEntity entity)
-			throws DuplicateDefaultAccountException {
-		// Nothing to do here since there is no default level for customers.
-		
 	}
 	
 }

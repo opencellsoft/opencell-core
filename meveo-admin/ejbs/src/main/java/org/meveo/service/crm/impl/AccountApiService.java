@@ -252,6 +252,4 @@ public abstract class AccountApiService extends BaseApi {
 		}
 	}
 
-	public abstract void checkEntityDefaultLevel(AccountEntity entity)
-			throws DuplicateDefaultAccountException;
 }

@@ -62,10 +62,6 @@ public class UserAccountApiService extends AccountApiService {
 			userAccount.setBillingAccount(billingAccount);
 			userAccount.setProvider(currentUser.getProvider());
 			
-			userAccount.setDefaultLevel(postData.isDefaultLevel());
-			
-			checkEntityDefaultLevel(userAccount);
-			
 			try {
 				
 				userAccountService.createUserAccount(billingAccount,
@@ -119,9 +115,7 @@ public class UserAccountApiService extends AccountApiService {
 				userAccount.setBillingAccount(billingAccount);
 			}
 			
-			userAccount.setDefaultLevel(postData.isDefaultLevel());
 			
-			checkEntityDefaultLevel(userAccount);
 			updateAccount(userAccount, postData, currentUser,
 					AccountLevelEnum.UA, checkCustomFields);
 
@@ -228,13 +222,4 @@ public class UserAccountApiService extends AccountApiService {
 		}
 	}
 
-	@Override
-	public void checkEntityDefaultLevel(AccountEntity entity)
-			throws DuplicateDefaultAccountException {
-		UserAccount userAccount = (UserAccount) entity;
-		if (userAccountService.isDuplicationExist(userAccount)) {
-			userAccount.setDefaultLevel(false);
-			throw new DuplicateDefaultAccountException();
-		}
-	}
 }

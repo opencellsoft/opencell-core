@@ -102,10 +102,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 			Customer customer = customerService.findById(getCustomerId());
 			populateAccounts(customer);
 
-			// check if has default
-			if (!customer.getDefaultLevel()) {
-				entity.setDefaultLevel(true);
-			}
+			
 		}
 
 		return entity;
@@ -125,12 +122,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	    entity.setCustomer(customerService.refreshOrRetrieve(entity.getCustomer()));
 	    
 		try {
-			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
-				if (customerAccountService.isDuplicationExist(entity)) {
-					entity.setDefaultLevel(false);
-					throw new DuplicateDefaultAccountException();
-				}
-			}
 
             String outcome = super.saveOrUpdate(killConversation);
             
@@ -138,9 +129,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
                 return getEditViewName();// "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&customerAccountId=" + entity.getId() +
                                          // "&faces-redirect=true&includeViewParams=true";
             }
-			
-		} catch (DuplicateDefaultAccountException e1) {
-			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
 			log.error("failed to save or update customer account",e);
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
@@ -275,11 +263,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	
 	public void populateAccounts(Customer customer) {
 		entity.setCustomer(customer);
-		if (customerAccountService.isDuplicationExist(entity)) {
-			entity.setDefaultLevel(false);
-		} else {
-			entity.setDefaultLevel(true);
-		}
+		
 		if (customer != null && customer.getProvider() != null && customer.getProvider().isLevelDuplication()) {
 
 			entity.setCode(customer.getCode());

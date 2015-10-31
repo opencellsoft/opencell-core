@@ -213,25 +213,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		update(subscription, user);
 	}
 
-	public boolean isDuplicationExist(Subscription subscription) {
-		if (subscription == null) {
-			return false;
-		}
-
-		List<Subscription> subscriptions = listByUserAccount(subscription
-				.getUserAccount());
-		for (Subscription sub : subscriptions) {
-			if (sub.getDefaultLevel() != null
-					&& sub.getDefaultLevel()
-					&& (subscription.getId() == null || (subscription.getId() != null && !subscription
-							.getId().equals(sub.getId())))) {
-				return true;
-			}
-		}
-
-		return false;
-
-	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Subscription> findByOfferTemplate(OfferTemplate offerTemplate){

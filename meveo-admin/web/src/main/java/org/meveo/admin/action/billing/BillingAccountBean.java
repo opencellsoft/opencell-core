@@ -141,10 +141,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			entity.setTradingLanguage(customerAccount.getTradingLanguage());
 			populateAccounts(customerAccount);
 
-			// check if has default
-			if (!customerAccount.getDefaultLevel()) {
-				entity.setDefaultLevel(true);
-			}
+			
 		}
 
 		if (entity.getName() == null) {
@@ -179,23 +176,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         try {
 
             entity.setCustomerAccount(customerAccountService.refreshOrRetrieve(entity.getCustomerAccount()));
-            
-            if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
-                if (billingAccountService.isDuplicationExist(entity)) {
-                    entity.setDefaultLevel(false);
-                    throw new DuplicateDefaultAccountException();
-                }
-            }
-
-//            CustomerAccount customerAccount = entity.getCustomerAccount();
-//            if (customerAccount != null) {
-//                List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
-//                if (billingAccounts != null) {
-//                    if (!billingAccounts.contains(entity)) {
-//                        customerAccount.getBillingAccounts().add(entity);
-//                    }
-//                }
-//            }
 
             if (entity.isTransient()) {
                 billingAccountService.initBillingAccount(entity);
@@ -434,11 +414,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	public void populateAccounts(CustomerAccount customerAccount) {
 		entity.setCustomerAccount(customerAccount);
-		if (billingAccountService.isDuplicationExist(entity)) {
-			entity.setDefaultLevel(false);
-		} else {
-			entity.setDefaultLevel(true);
-		}
+		
 		if (customerAccount != null && customerAccount.getProvider() != null && customerAccount.getProvider().isLevelDuplication()) {
 
 			entity.setCode(customerAccount.getCode());

@@ -597,26 +597,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		return customerAccount;
 	}
 
-	public boolean isDuplicationExist(CustomerAccount customerAccount) {
-		if (customerAccount == null || (customerAccount.getDefaultLevel() != null && !customerAccount.getDefaultLevel())) {
-			return false;
-		}
-		Customer customer = customerAccount.getCustomer();
-		if (customer != null) {
-			for (CustomerAccount ca : customer.getCustomerAccounts()) {
-				if (ca.getDefaultLevel() != null
-						&& ca.getDefaultLevel()
-						&& (customerAccount.getId() == null || (customerAccount.getId() != null && !customerAccount
-								.getId().equals(ca.getId())))) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-
-	}
-
 	public boolean isAllServiceInstancesTerminated(CustomerAccount customerAccount) {
 		// FIXME : just count inside the query
 		Query billingQuery = getEntityManager()

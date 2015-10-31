@@ -192,8 +192,8 @@ public class InvoiceApi extends BaseApi {
 				invoiceService.updateInvoiceAdjustmentCurrentNb(invoice);
 			}
 			
-			UserAccount userAccount = billingAccount.getDefaultUserAccount();
-
+			List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+			
 			for (SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDTO : invoiceDTO
 					.getSubCategoryInvoiceAgregates()) {
 				String invoiceSubCategoryCode = subCategoryInvoiceAgregateDTO
@@ -214,6 +214,24 @@ public class InvoiceApi extends BaseApi {
 						&& !StringUtils.isBlank(subCategoryInvoiceAgregateDTO
 								.getAmountWithTax())) {
 					SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
+					String sciaDTOUserAccountCode = subCategoryInvoiceAgregateDTO.getUserAccountCode();
+					UserAccount billingAccountUserAccount = null;
+					if (sciaDTOUserAccountCode != null) {
+						for (UserAccount ua: userAccounts) {
+							if (sciaDTOUserAccountCode.equals(ua.getCode())) {
+								billingAccountUserAccount = ua;
+								break;
+							}
+						}
+						if (billingAccountUserAccount == null) {
+							throw new BusinessException("Incorrect userAccountCode in subCategoryInvoiceAgregateDTO " + subCategoryInvoiceAgregateDTO.getDescription());
+						}
+					} else {
+						throw new BusinessException("Missing userAccountCode in subCategoryInvoiceAgregateDTO " + subCategoryInvoiceAgregateDTO.getDescription());
+					}
+					
+					
+					
 					for (String taxCode : subCategoryInvoiceAgregateDTO
 							.getTaxesCodes()) {
 
@@ -236,8 +254,7 @@ public class InvoiceApi extends BaseApi {
 						taxInvoiceAgregate.setTaxPercent(tax.getPercent());
 						taxInvoiceAgregate.setBillingAccount(billingAccount);
 						taxInvoiceAgregate.setInvoice(invoice);
-						taxInvoiceAgregate.setUserAccount(billingAccount
-								.getDefaultUserAccount());
+						taxInvoiceAgregate.setUserAccount(billingAccountUserAccount);
 						taxInvoiceAgregate
 								.setItemNumber(subCategoryInvoiceAgregateDTO
 										.getItemNumber());
@@ -263,14 +280,14 @@ public class InvoiceApi extends BaseApi {
 									.getAccountingCode());
 					subCategoryInvoiceAgregate
 							.setBillingAccount(billingAccount);
-					subCategoryInvoiceAgregate.setUserAccount(userAccount);
+					subCategoryInvoiceAgregate.setUserAccount(billingAccountUserAccount);
 					subCategoryInvoiceAgregate.setInvoice(invoice);
 					subCategoryInvoiceAgregate
 							.setItemNumber(subCategoryInvoiceAgregateDTO
 									.getItemNumber());
 					subCategoryInvoiceAgregate
 							.setInvoiceSubCategory(invoiceSubCategory);
-					subCategoryInvoiceAgregate.setWallet(userAccount
+					subCategoryInvoiceAgregate.setWallet(billingAccountUserAccount
 							.getWallet());
 
 					CategoryInvoiceAgregate categoryInvoiceAgregate = new CategoryInvoiceAgregate();
@@ -288,8 +305,7 @@ public class InvoiceApi extends BaseApi {
 					categoryInvoiceAgregate
 							.setItemNumber(subCategoryInvoiceAgregateDTO
 									.getItemNumber());
-					categoryInvoiceAgregate.setUserAccount(billingAccount
-							.getDefaultUserAccount());
+					categoryInvoiceAgregate.setUserAccount(billingAccountUserAccount);
 					categoryInvoiceAgregate
 							.setInvoiceCategory(invoiceSubCategory
 									.getInvoiceCategory());
@@ -324,7 +340,7 @@ public class InvoiceApi extends BaseApi {
 										.getUnityDescription());
 						meveoRatedTransaction.setInvoice(invoice);
 						meveoRatedTransaction
-								.setWallet(userAccount.getWallet());
+								.setWallet(billingAccountUserAccount.getWallet());
 						ratedTransactionService.create(meveoRatedTransaction,
 								currentUser, provider);
 
