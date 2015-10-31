@@ -14,7 +14,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
@@ -59,10 +58,6 @@ public class UserAccountApiService extends AccountApiService {
 
 			userAccount.setBillingAccount(billingAccount);
 			userAccount.setProvider(currentUser.getProvider());
-			
-			userAccount.setDefaultLevel(postData.isDefaultLevel());
-			
-			checkEntityDefaultLevel(userAccount);
 			
 			try {
 				
@@ -117,9 +112,6 @@ public class UserAccountApiService extends AccountApiService {
 				userAccount.setBillingAccount(billingAccount);
 			}
 			
-			userAccount.setDefaultLevel(postData.isDefaultLevel());
-			
-			checkEntityDefaultLevel(userAccount);
 			updateAccount(userAccount, postData, currentUser, checkCustomFields);
 
 			userAccountService.updateAudit(userAccount, currentUser);
@@ -225,13 +217,4 @@ public class UserAccountApiService extends AccountApiService {
 		}
 	}
 
-	@Override
-	public void checkEntityDefaultLevel(AccountEntity entity)
-			throws DuplicateDefaultAccountException {
-		UserAccount userAccount = (UserAccount) entity;
-		if (userAccountService.isDuplicationExist(userAccount)) {
-			userAccount.setDefaultLevel(false);
-			throw new DuplicateDefaultAccountException();
-		}
-	}
 }

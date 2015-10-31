@@ -3,7 +3,6 @@ package org.meveo.service.crm.impl;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -11,19 +10,12 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.TitleService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * @author Edward P. Legaspi
@@ -36,15 +28,6 @@ public abstract class AccountApiService extends BaseApi {
 
 	@Inject
 	private TitleService titleService;
-	
-	@Inject
-	private CustomerAccountService customerAccountService;
-	
-	@Inject
-	private BillingAccountService billingAccountService;
-	
-	@Inject
-	private UserAccountService userAccountService;
 
     public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser) throws MeveoApiException {
         populate(postData, accountEntity, currentUser, true);
@@ -193,75 +176,5 @@ public abstract class AccountApiService extends BaseApi {
             }
         }
 	}
-
-	public void checkEntityDefaultLevel(AccountEntity entity)
-			throws DuplicateDefaultAccountException {
-		if (entity != null && entity.getDefaultLevel() != null
-				&& entity.getDefaultLevel()) {
-			if (entity instanceof Customer) {
-				checkCustomerDefaultLevel((Customer) entity);
-			} else if (entity instanceof CustomerAccount) {
-				checkCustomerAccountDefaultLevel((CustomerAccount) entity);
-			} else if (entity instanceof BillingAccount) {
-				checkBillingAccountDefaultLevel((BillingAccount) entity);
-			} else if (entity instanceof UserAccount) {
-				checkUserAccountDefaultLevel((UserAccount) entity);
-			} else {
-				throw new IllegalArgumentException(
-						"Passed parameter is not yet supported");
-			}
-		}
-	}
-
-	private void checkCustomerDefaultLevel(Customer customer)
-			throws DuplicateDefaultAccountException {
-		if (customer != null && customer.getCustomerAccounts() != null
-				&& customer.getCustomerAccounts().size() > 0) {
-			for (CustomerAccount ca : customer.getCustomerAccounts()) {
-				if (customerAccountService.isDuplicationExist(ca)) {
-					ca.setDefaultLevel(false);
-					throw new DuplicateDefaultAccountException();
-				} else {
-					checkCustomerAccountDefaultLevel(ca);
-				}
-			}
-		}
-	}
-
-	private void checkCustomerAccountDefaultLevel(
-			CustomerAccount customerAccount)
-			throws DuplicateDefaultAccountException {
-		if (customerAccount != null
-				&& customerAccount.getBillingAccounts() != null
-				&& customerAccount.getBillingAccounts().size() > 0) {
-			for (BillingAccount ba : customerAccount.getBillingAccounts()) {
-				if (billingAccountService.isDuplicationExist(ba)) {
-					ba.setDefaultLevel(false);
-					throw new DuplicateDefaultAccountException();
-				} else {
-					checkBillingAccountDefaultLevel(ba);
-				}
-			}
-		}
-	}
-
-	private void checkBillingAccountDefaultLevel(BillingAccount billingAccount)
-			throws DuplicateDefaultAccountException {
-		if (billingAccount != null && billingAccount.getUsersAccounts() != null
-				&& billingAccount.getUsersAccounts().size() > 0) {
-			for (UserAccount ua : billingAccount.getUsersAccounts()) {
-				checkUserAccountDefaultLevel(ua);
-			}
-		}
-	}
-
-	private void checkUserAccountDefaultLevel(UserAccount userAccount)
-			throws DuplicateDefaultAccountException {
-		if (userAccount != null) {
-			if (userAccountService.isDuplicationExist(userAccount)) {
-				userAccount.setDefaultLevel(false);
-				throw new DuplicateDefaultAccountException();
-			}
-		}
-	}
+	
 }

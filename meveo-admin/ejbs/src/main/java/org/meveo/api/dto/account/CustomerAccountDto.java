@@ -91,7 +91,6 @@ public class CustomerAccountDto extends AccountDto {
 		if (e.getContactInformation() != null) {
 			contactInformation = new ContactInformationDto(e.getContactInformation());
 		}
-		defaultLevel = e.getDefaultLevel();
 		
 		mandateIdentification = e.getMandateIdentification();
 		mandateDate = e.getMandateDate();

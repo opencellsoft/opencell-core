@@ -140,15 +140,6 @@ public class Customer extends AccountEntity {
 		this.mandateDate = mandateDate;
 	}
 
-	public CustomerAccount getDefaultCustomerAccount() {
-		for (CustomerAccount customerAccount : getCustomerAccounts()) {
-			if (customerAccount.getDefaultLevel()) {
-				return customerAccount;
-			}
-		}
-		return null;
-	}
-
     @Override
     public ICustomFieldEntity getParentCFEntity() {
         return seller;

@@ -301,15 +301,6 @@ public class BillingAccount extends AccountEntity {
 		this.invoicePrefix = invoicePrefix;
 	}
 
-	public UserAccount getDefaultUserAccount() {
-		for (UserAccount userAccount : getUsersAccounts()) {
-			if (userAccount.getDefaultLevel()) {
-				return userAccount;
-			}
-		}
-		return null;
-	}
-
 	public List<BillingRunList> getBillingRunLists() {
 		return billingRunLists;
 	}

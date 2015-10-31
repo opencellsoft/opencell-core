@@ -15,7 +15,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
@@ -189,8 +188,9 @@ public class CustomerApiService extends AccountApiService {
 				}
 				customer.setSeller(seller);
 			}
-			checkEntityDefaultLevel(customer);
+			
 			updateAccount(customer, postData, currentUser, checkCustomFields);
+
 			if (!StringUtils.isBlank(postData.getMandateDate())) {
 				customer.setMandateDate(postData.getMandateDate());
 			}
@@ -543,13 +543,6 @@ public class CustomerApiService extends AccountApiService {
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
-	}
-
-	@Override
-	public void checkEntityDefaultLevel(AccountEntity entity)
-			throws DuplicateDefaultAccountException {
-		// Nothing to do here since there is no default level for customers.
-		
 	}
 	
 }

@@ -21,7 +21,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -137,9 +136,6 @@ public class CustomerAccountApiService extends AccountApiService {
 						postData.getContactInformation().getFax());
 			}
 			
-			customerAccount.setDefaultLevel(postData.isDefaultLevel());
-			
-			checkEntityDefaultLevel(customerAccount);
 			
 			customerAccountService.create(customerAccount, currentUser,
 					provider);
@@ -250,9 +246,6 @@ public class CustomerAccountApiService extends AccountApiService {
 							postData.getContactInformation().getFax());
 				}
 			}
-			
-			customerAccount.setDefaultLevel(postData.isDefaultLevel());
-			checkEntityDefaultLevel(customerAccount);
 
 			updateAccount(customerAccount, postData, currentUser, checkCustomFields);
 
@@ -607,18 +600,6 @@ public class CustomerAccountApiService extends AccountApiService {
 			create(postData, currentUser);
 		} else {
 			update(postData, currentUser);
-		}
-	}
-
-	@Override
-	public void checkEntityDefaultLevel(AccountEntity entity)
-			throws DuplicateDefaultAccountException {
-		CustomerAccount customerAccount = (CustomerAccount) entity;
-		if (customerAccount != null) {
-			if (customerAccountService.isDuplicationExist(customerAccount)) {
-				customerAccount.setDefaultLevel(false);
-				throw new DuplicateDefaultAccountException();
-			}
 		}
 	}
 }

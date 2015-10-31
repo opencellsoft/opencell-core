@@ -193,25 +193,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return null;
 	}
 
-	public boolean isDuplicationExist(BillingAccount billingAccount) {
-		if (billingAccount == null || !billingAccount.getDefaultLevel()) {
-			return false;
-		}
-
-		List<BillingAccount> billingAccounts = listByCustomerAccount(billingAccount.getCustomerAccount());
-		for (BillingAccount ba : billingAccounts) {
-			if (ba.getDefaultLevel() != null
-					&& ba.getDefaultLevel()
-					&& (billingAccount.getId() == null || (billingAccount.getId() != null && !billingAccount.getId()
-							.equals(ba.getId())))) {
-				return true;
-			}
-		}
-
-		return false;
-
-	}
-
 	@SuppressWarnings("unchecked")
     public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate,Provider currentProvider) {
 		try {

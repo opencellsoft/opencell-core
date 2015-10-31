@@ -389,10 +389,8 @@ public class AccountHierarchyApiService extends BaseApi {
 				customerAccount.setTradingCurrency(tradingCurrency);
 				customerAccount.setTradingLanguage(tradingLanguage);
 				customerAccount.setDateDunningLevel(new Date());
-				customerAccount.setDefaultLevel(true);
-				
-				customerAccountService.create(customerAccount, currentUser,
-						provider);
+
+				customerAccountService.create(customerAccount, currentUser, provider);
 
 				String billingCycleCode = StringUtils.normalizeHierarchyCode(postData.getBillingCycleCode());
 				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser,
@@ -415,9 +413,8 @@ public class AccountHierarchyApiService extends BaseApi {
 				billingAccount.setTradingLanguage(tradingLanguage);
 				billingAccount.setBillingCycle(billingCycle);
 				billingAccount.setProvider(provider);
-				billingAccount.setDefaultLevel(true);
-				billingAccountService.createBillingAccount(billingAccount,
-						currentUser, provider);
+
+				billingAccountService.createBillingAccount(billingAccount, currentUser, provider);
 
 				String userAccountCode = USER_ACCOUNT_PREFIX
 						+ StringUtils.normalizeHierarchyCode(postData.getCustomerId());
@@ -425,7 +422,6 @@ public class AccountHierarchyApiService extends BaseApi {
 				userAccount.setStatus(AccountStatusEnum.ACTIVE);
 				userAccount.setBillingAccount(billingAccount);
 				userAccount.setCode(userAccountCode);
-				userAccount.setDefaultLevel(true);
 				try {
 					userAccountService.createUserAccount(billingAccount, userAccount, currentUser);
 				} catch (AccountAlreadyExistsException e) {

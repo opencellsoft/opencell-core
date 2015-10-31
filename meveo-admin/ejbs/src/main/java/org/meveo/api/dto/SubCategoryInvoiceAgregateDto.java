@@ -47,7 +47,7 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
 	private BigDecimal amountWithTax;
 	private String invoiceSubCategoryCode;
 	private List<String> taxesCodes=new ArrayList<String>();
-	
+	private String userAccountCode;
 	
 	private List<RatedTransactionDto> ratedTransactions = new ArrayList<RatedTransactionDto>();
 
@@ -153,6 +153,14 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
 
 	public void setTaxesCodes(List<String> taxesCodes) {
 		this.taxesCodes = taxesCodes;
+	}
+
+	public String getUserAccountCode() {
+		return userAccountCode;
+	}
+
+	public void setUserAccountCode(String userAccountCode) {
+		this.userAccountCode = userAccountCode;
 	}
 
 

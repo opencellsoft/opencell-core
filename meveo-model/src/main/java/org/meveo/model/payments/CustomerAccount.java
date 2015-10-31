@@ -223,14 +223,6 @@ public class CustomerAccount extends AccountEntity {
 		this.password = password;
 	}
 
-	public BillingAccount getDefaultBillingAccount() {
-		for (BillingAccount billingAccount : getBillingAccounts()) {
-			if (billingAccount.getDefaultLevel()) {
-				return billingAccount;
-			}
-		}
-		return null;
-	}
 
 	public List<ActionDunning> getActionDunnings() {
 		return actionDunnings;

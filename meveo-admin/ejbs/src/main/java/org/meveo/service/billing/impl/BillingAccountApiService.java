@@ -16,7 +16,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
@@ -175,9 +174,6 @@ public class BillingAccountApiService extends AccountApiService {
 						postData.getBankCoordinates().getIcs());
 			}
 			
-			billingAccount.setDefaultLevel(postData.isDefaultLevel());
-			
-			checkEntityDefaultLevel(billingAccount);
 			
 			billingAccountService.createBillingAccount(billingAccount,
 					currentUser, provider);
@@ -306,11 +302,6 @@ public class BillingAccountApiService extends AccountApiService {
 				}
 			}
 			
-			billingAccount.setDefaultLevel(postData.isDefaultLevel());
-			
-			checkEntityDefaultLevel(billingAccount);
-	
-
 			updateAccount(billingAccount, postData, currentUser, checkCustomFields);
 
 			if (!StringUtils.isBlank(postData.getNextInvoiceDate())) {
@@ -525,19 +516,6 @@ public class BillingAccountApiService extends AccountApiService {
 			create(postData, currentUser);
 		} else {
 			update(postData, currentUser);
-		}
-	}
-
-	@Override
-	public void checkEntityDefaultLevel(AccountEntity entity)
-			throws DuplicateDefaultAccountException {
-		BillingAccount billingAccount = (BillingAccount) entity;
-		if (billingAccount != null) {
-			if (billingAccountService.isDuplicationExist(billingAccount)) {
-				billingAccount.setDefaultLevel(false);
-				throw new DuplicateDefaultAccountException();
-			}
-
 		}
 	}
 }

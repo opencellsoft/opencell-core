@@ -31,7 +31,7 @@ public abstract class AccountDto implements Serializable {
 	private AddressDto address = new AddressDto();
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 	protected boolean loaded = false;
-	protected boolean defaultLevel = true;
+	
 
 	public AccountDto() {
 		super();
@@ -143,21 +143,12 @@ public abstract class AccountDto implements Serializable {
 		return true;
 	}
 
-	public boolean isDefaultLevel() {
-		return defaultLevel;
-	}
-
-	public void setDefaultLevel(boolean defaultLevel) {
-		this.defaultLevel = defaultLevel;
-	}
-
 	@Override
 	public String toString() {
 		return "AccountDto [code=" + code + ", description=" + description
 				+ ", externalRef1=" + externalRef1 + ", externalRef2="
 				+ externalRef2 + ", name=" + name + ", address=" + address
-				+ ", customFields=" + customFields + ", loaded=" + loaded
-				+ ", defaultLevel=" + defaultLevel + "]";
+				+ ", customFields=" + customFields + ", loaded=" + loaded + "]";
 	}
 
 }

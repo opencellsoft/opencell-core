@@ -145,26 +145,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return wallet.getRatedTransactions();
 	}
 
-	public boolean isDuplicationExist(UserAccount userAccount) {
-		if (userAccount == null || !userAccount.getDefaultLevel()) {
-			return false;
-		}
-
-		List<UserAccount> userAccounts = listByBillingAccount(userAccount.getBillingAccount());
-		if (userAccounts != null) {
-			for (UserAccount ua : userAccounts) {
-				if (ua.getDefaultLevel() != null
-						&& ua.getDefaultLevel()
-						&& (userAccount.getId() == null || (userAccount.getId() != null && !userAccount.getId().equals(
-								ua.getId())))) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-
-	}
 
 	@SuppressWarnings("unchecked")
 	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {
