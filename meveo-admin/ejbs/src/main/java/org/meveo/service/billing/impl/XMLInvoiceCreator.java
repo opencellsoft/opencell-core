@@ -1204,10 +1204,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					}
 					subCategory.setAttribute("taxCode", taxesCode);
 					subCategory.setAttribute("taxPercent", taxesPercent);
-					subCategory
-							.setAttribute("amountWithTax", round(subCatInvoiceAgregate.getAmountWithTax(), rounding));
-					subCategory.setAttribute("amountWithoutTax",
-							round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
+					// subCategory
+					// .setAttribute("amountWithTax",
+					// round(subCatInvoiceAgregate.getAmountWithTax(),
+					// rounding));
+					// subCategory.setAttribute("amountWithoutTax",
+					// round(subCatInvoiceAgregate.getAmountWithoutTax(),
+					// rounding));
 					subCategory.setAttribute("taxAmount", round(subCatInvoiceAgregate.getAmountTax(), rounding));
 				}
 			}
