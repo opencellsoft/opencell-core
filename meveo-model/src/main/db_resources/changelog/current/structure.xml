@@ -579,4 +579,15 @@
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />        
     
     </changeSet>
+    
+    <changeSet id="#1102_20151030" author="AndriusKarpavicius">
+        <addColumn tableName="CUST_CET">
+            <column name="ACCESS_PERMISSION" type="VARCHAR(100)"/>        
+        </addColumn>
+        
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="GUI_POSITION" type="VARCHAR(100)"/>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
