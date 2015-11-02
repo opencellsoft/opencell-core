@@ -937,13 +937,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
 						line.appendChild(lineAmountWithoutTax);
 
-						if (!enterprise) {
-							Element lineAmountWithTax = doc.createElement("amountWithTax");
-							Text lineAmountWithTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithTax(),
-									rounding));
-							lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
-							line.appendChild(lineAmountWithTax);
-						}
+						// if (!enterprise) {
+						// Element lineAmountWithTax =
+						// doc.createElement("amountWithTax");
+						// Text lineAmountWithTaxTxt =
+						// doc.createTextNode(round(ratedTransaction.getAmountWithTax(),
+						// rounding));
+						// lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+						// line.appendChild(lineAmountWithTax);
+						// }
 
 						Element quantity = doc.createElement("quantity");
 						Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction
@@ -1210,9 +1212,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					// .setAttribute("amountWithTax",
 					// round(subCatInvoiceAgregate.getAmountWithTax(),
 					// rounding));
-					// subCategory.setAttribute("amountWithoutTax",
-					// round(subCatInvoiceAgregate.getAmountWithoutTax(),
-					// rounding));
+					subCategory.setAttribute("amountWithoutTax",
+							round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
 					// subCategory.setAttribute("taxAmount",
 					// round(subCatInvoiceAgregate.getAmountTax(), rounding));
 				}
