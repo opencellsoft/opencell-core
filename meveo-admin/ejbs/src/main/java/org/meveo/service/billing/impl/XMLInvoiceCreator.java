@@ -862,6 +862,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					subCategories.appendChild(subCategory);
 					subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
 					subCategory.setAttribute("code", invoiceSubCat.getCode());
+					subCategory.setAttribute("amountWithoutTax",
+							round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
 					String taxesCode = "";
 					String taxesPercent = "";
 					String sep = "";
