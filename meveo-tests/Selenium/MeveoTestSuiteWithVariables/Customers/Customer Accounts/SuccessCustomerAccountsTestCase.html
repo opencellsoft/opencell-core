@@ -42,6 +42,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCustomer}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectCustomer}</td>
 	<td></td>
@@ -78,12 +83,12 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
 	<td>${Customer}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -103,12 +108,12 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
 	<td>${Customer}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -123,18 +128,23 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForValue</td>
 	<td>id=parentTab:formCustomerAccount:childTab:customerSelectId</td>
 	<td>${Customer}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${CodeText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
@@ -144,6 +154,11 @@
 <tr>
 	<td>if</td>
 	<td>${PrimaryContactBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectPrimaryContact}</td>
 	<td></td>
 </tr>
 <tr>
@@ -162,6 +177,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${DescriptionText}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${DescriptionText}</td>
 	<td>${Description}</td>
@@ -169,6 +189,11 @@
 <tr>
 	<td>if</td>
 	<td>${RefExt1Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${RefExt1}</td>
 	<td></td>
 </tr>
 <tr>
@@ -187,6 +212,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${RefExt2}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${RefExt2}</td>
 	<td>${RefExt2Value}</td>
@@ -197,6 +227,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCurrency}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectCurrency}</td>
 	<td></td>
@@ -204,6 +239,11 @@
 <tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${CurrencyValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectLanguage}</td>
 	<td></td>
 </tr>
 <tr>
@@ -222,6 +262,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SelectTitle}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectTitle}</td>
 	<td></td>
@@ -237,6 +282,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${LastName}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${LastName}</td>
 	<td>${LastnameValue}</td>
@@ -244,6 +294,11 @@
 <tr>
 	<td>if</td>
 	<td>${FirstnameBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${FirtName}</td>
 	<td></td>
 </tr>
 <tr>
@@ -259,6 +314,11 @@
 <tr>
 	<td>if</td>
 	<td>${PaymentMethodBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectPaymentMethod}</td>
 	<td></td>
 </tr>
 <tr>
@@ -282,6 +342,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCreditCategory}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectCreditCategory}</td>
 	<td></td>
@@ -299,6 +364,11 @@
 <tr>
 	<td>if</td>
 	<td>${DefaultBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Default}</td>
 	<td></td>
 </tr>
 <tr>
@@ -332,6 +402,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${Email}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${Email}</td>
 	<td>${EmailValue}</td>
@@ -344,6 +419,11 @@
 <tr>
 	<td>if</td>
 	<td>${PhoneBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Phone}</td>
 	<td></td>
 </tr>
 <tr>
@@ -362,6 +442,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${Mobile}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${Mobile}</td>
 	<td>${MobileValue}</td>
@@ -374,6 +459,11 @@
 <tr>
 	<td>if</td>
 	<td>${Address1Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Address1}</td>
 	<td></td>
 </tr>
 <tr>
@@ -392,6 +482,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${Address2}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${Address2}</td>
 	<td>${Address2Value}</td>
@@ -404,6 +499,11 @@
 <tr>
 	<td>if</td>
 	<td>${Address3Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Address3}</td>
 	<td></td>
 </tr>
 <tr>
@@ -422,6 +522,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${ZipCode}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${ZipCode}</td>
 	<td>${ZipCodeValue}</td>
@@ -437,6 +542,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${City}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${City}</td>
 	<td>${CityValue}</td>
@@ -449,6 +559,11 @@
 <tr>
 	<td>if</td>
 	<td>${CountryBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Country}</td>
 	<td></td>
 </tr>
 <tr>
@@ -472,6 +587,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${MandateIdentification}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${MandateIdentification}</td>
 	<td>${MandateIdentificationValue}</td>
@@ -484,6 +604,11 @@
 <tr>
 	<td>if</td>
 	<td>${SignatureDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SignatureDate}</td>
 	<td></td>
 </tr>
 <tr>
@@ -517,6 +642,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${CRMAccountType}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${CRMAccountType}</td>
 	<td>${CRMAccountTypeValue}</td>
@@ -529,6 +659,11 @@
 <tr>
 	<td>if</td>
 	<td>${CRMParentAccountCodeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${CRMParentAccountCode}</td>
 	<td></td>
 </tr>
 <tr>

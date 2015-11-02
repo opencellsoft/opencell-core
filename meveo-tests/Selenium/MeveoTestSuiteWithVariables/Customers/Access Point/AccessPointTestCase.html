@@ -42,9 +42,19 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${AccessPointCode}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${AccessPointCode}</td>
 	<td>${AccCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectSubscription}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -83,12 +93,12 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
 	<td>${SubscriptionValue}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -108,12 +118,12 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
 	<td>${SubscriptionValue}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -128,12 +138,12 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -144,6 +154,11 @@
 <tr>
 	<td>if</td>
 	<td>${StartDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${StartDate}</td>
 	<td></td>
 </tr>
 <tr>
@@ -159,6 +174,11 @@
 <tr>
 	<td>if</td>
 	<td>${EndDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${EndDate}</td>
 	<td></td>
 </tr>
 <tr>
