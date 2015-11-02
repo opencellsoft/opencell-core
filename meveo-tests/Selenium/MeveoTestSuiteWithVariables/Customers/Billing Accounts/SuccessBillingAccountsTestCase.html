@@ -102,9 +102,49 @@
 	<td></td>
 </tr>
 <tr>
+	<td>verifyTextPresent</td>
+	<td>${CustomerAccount}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=customerAccountPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=td</td>
+	<td>${CustomerAccount}</td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>css=td</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=customerAccountPopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectCustomerAccount}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=parentTab:formId:childTab:customerSelectId</td>
+	<td>${CustomerAccount}</td>
 </tr>
 <tr>
 	<td>type</td>
@@ -239,6 +279,11 @@
 <tr>
 	<td>click</td>
 	<td>${SelectTitle}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=parentTab:formId:childTab:email_select</td>
 	<td></td>
 </tr>
 <tr>
@@ -447,18 +492,33 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForVisible</td>
-	<td>id=parentTab:formId:childTab:bankCode</td>
-	<td></td>
-</tr>
-<tr>
 	<td>endIf</td>
 	<td></td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>waitForText</td>
+	<td>id=parentTab:formId:childTab:paymentMethod_enum_label</td>
+	<td>${PaymentMethodValue}</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${PaymentMethodValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>${PaymentMethodValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=parentTab:formId:childTab:bankCode</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=parentTab:formId:childTab:bankCode</td>
 	<td></td>
 </tr>
 <tr>
@@ -492,6 +552,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>//label[contains(@for, 'email')]/span</td>
+	<td>exact:*</td>
+</tr>
+<tr>
 	<td>endIf</td>
 	<td></td>
 	<td></td>
@@ -499,6 +564,11 @@
 <tr>
 	<td>if</td>
 	<td>${EmailBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Email}</td>
 	<td></td>
 </tr>
 <tr>
@@ -512,9 +582,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>Custom fields</td>
-	<td></td>
+	<td>type</td>
+	<td>${Email}</td>
+	<td>${EmailValue}</td>
 </tr>
 <tr>
 	<td>assertText</td>
@@ -523,11 +593,6 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//a[contains(text(),'Custom fields')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td></td>
 </tr>

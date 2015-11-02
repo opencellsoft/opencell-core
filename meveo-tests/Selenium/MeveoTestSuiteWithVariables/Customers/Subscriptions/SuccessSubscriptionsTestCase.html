@@ -107,9 +107,49 @@
 	<td></td>
 </tr>
 <tr>
+	<td>verifyTextPresent</td>
+	<td>${UserAccount}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=userAccountPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=td</td>
+	<td>${UserAccount}</td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>css=td</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=userAccountPopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectUserAccount}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=subscriptionTab:subscriptionFormId:informationTab:userSelectId</td>
+	<td>${UserAccount}</td>
 </tr>
 <tr>
 	<td>click</td>

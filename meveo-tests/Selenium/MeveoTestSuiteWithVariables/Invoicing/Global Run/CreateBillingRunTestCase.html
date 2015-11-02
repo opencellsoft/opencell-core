@@ -27,63 +27,38 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>id=billingCyclePopup_title</td>
-	<td>Billing cycle</td>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='billingCyclePopuppopupForm:billingCyclePopupdatatable_data']/tr/td[text()=&quot;${BillingCycleCode}&quot;]</td>
+	<td></td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=billingCyclePopup_title</td>
-	<td>Billing cycle</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>css=div.ui-dialog-content.ui-widget-content</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>id=billingCyclePopuppopupForm:searchField1</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>id=billingCyclePopuppopupForm:searchField1</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>id=billingCyclePopuppopupForm:searchField1</td>
+	<td>//tbody[@id='billingCyclePopuppopupForm:billingCyclePopupdatatable_data']/tr/td[text()=&quot;${BillingCycleCode}&quot;]</td>
 	<td>${BillingCycleCode}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=billingCyclePopuppopupForm:buttonSearch</td>
+	<td>//tbody[@id='billingCyclePopuppopupForm:billingCyclePopupdatatable_data']/tr/td[text()=&quot;${BillingCycleCode}&quot;]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>css=td</td>
+	<td>waitForValue</td>
+	<td>id=formPanel:formId:billingCycleId:entityFieldSingle:billingCycle_entity</td>
 	<td>${BillingCycleCode}</td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>css=td</td>
-	<td>${BillingCycleCode}</td>
+	<td>if</td>
+	<td>${TypeBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=td</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>${BillingCycleCode}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=td</td>
+	<td>assertElementPresent</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -92,8 +67,43 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForTextPresent</td>
+	<td>${TypeValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>${TypeValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${TypeValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
+	<td>${TypeValue}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//*[contains(@id, 'processType_enum_label')]</td>
+	<td>${TypeValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${TypeValue}</td>
 	<td></td>
 </tr>
 <tr>

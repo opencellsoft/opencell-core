@@ -77,9 +77,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
+	<td>waitForTable</td>
+	<td>css=table.1.1</td>
+	<td>${CodeService}</td>
 </tr>
 <tr>
 	<td>waitForText</td>
@@ -202,18 +202,38 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>waitForText</td>
+	<td>//div/button</td>
+	<td>Activate</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//div/button</td>
+	<td>Activate</td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>//div/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ActivateServiceNotDisable}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
 	<td>${ActivateService}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[55]/div[3]/button</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>//div[55]/div[3]/button[1]</td>
 	<td></td>
 </tr>
 <tr>

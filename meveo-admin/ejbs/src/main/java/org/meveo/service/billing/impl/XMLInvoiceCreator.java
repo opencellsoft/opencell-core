@@ -183,8 +183,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					ics.appendChild(icsTxt);			
 					Text ibanTxt = doc.createTextNode(provider.getBankCoordinates().getIban() != null ? provider.getBankCoordinates().getIban() : "");
 					iban.appendChild(ibanTxt);
-					Text bicTxt = doc.createTextNode(provider.getBankCoordinates().getBic() != null ? provider.getBankCoordinates().getBic() : "");
-					bic.appendChild(bicTxt);					
+					Text bicTxt = doc.createTextNode(provider.getBankCoordinates().getBic() != null ? provider
+							.getBankCoordinates().getBic() : "");
+					bic.appendChild(bicTxt);
 				}
 			}
 
@@ -861,6 +862,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					subCategories.appendChild(subCategory);
 					subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
 					subCategory.setAttribute("code", invoiceSubCat.getCode());
+					subCategory.setAttribute("amountWithoutTax",
+							round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
 					String taxesCode = "";
 					String taxesPercent = "";
 					String sep = "";
@@ -925,7 +928,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							line.appendChild(lineUnit);
 						}
 						Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-						Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+						Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction
+								.getUnitAmountWithoutTax().toPlainString());
 						lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
 						line.appendChild(lineUnitAmountWithoutTax);
 
@@ -935,13 +939,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
 						line.appendChild(lineAmountWithoutTax);
 
-						if (!enterprise) {
-							Element lineAmountWithTax = doc.createElement("amountWithTax");
-							Text lineAmountWithTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithTax(),
-									rounding));
-							lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
-							line.appendChild(lineAmountWithTax);
-						}
+						// if (!enterprise) {
+						// Element lineAmountWithTax =
+						// doc.createElement("amountWithTax");
+						// Text lineAmountWithTaxTxt =
+						// doc.createTextNode(round(ratedTransaction.getAmountWithTax(),
+						// rounding));
+						// lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+						// line.appendChild(lineAmountWithTax);
+						// }
 
 						Element quantity = doc.createElement("quantity");
 						Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction
@@ -1204,11 +1210,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					}
 					subCategory.setAttribute("taxCode", taxesCode);
 					subCategory.setAttribute("taxPercent", taxesPercent);
-					subCategory
-							.setAttribute("amountWithTax", round(subCatInvoiceAgregate.getAmountWithTax(), rounding));
+					// subCategory
+					// .setAttribute("amountWithTax",
+					// round(subCatInvoiceAgregate.getAmountWithTax(),
+					// rounding));
 					subCategory.setAttribute("amountWithoutTax",
 							round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
-					subCategory.setAttribute("taxAmount", round(subCatInvoiceAgregate.getAmountTax(), rounding));
+					// subCategory.setAttribute("taxAmount",
+					// round(subCatInvoiceAgregate.getAmountTax(), rounding));
 				}
 			}
 		}

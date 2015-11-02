@@ -48,27 +48,32 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${ServicesBool}==true</td>
+	<td>${ServiceBool}==true</td>
 	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ChooseServices}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div/ul/li</td>
-	<td>${ServicesValue}</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>//div[@id='formId:tabView:serviceTemplates_list']/div/ul/li</td>
-	<td>${ServicesValue}</td>
+	<td>${ServiceLocatorIN}</td>
+	<td>${ServiceValue}</td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${AddOne}</td>
+	<td>doubleClick</td>
+	<td>${ServiceLocatorIN}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${ServiceLocatorOUT}</td>
+	<td>${ServiceValue}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${ServiceLocatorOUT}</td>
+	<td>${ServiceValue}</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
 	<td></td>
 </tr>
 <tr>
@@ -95,6 +100,16 @@
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${CodeLocatorResult}</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//tbody[@id='datatable_results_data']/tr/td[4]/a</td>
+	<td>${ServiceValue}</td>
 </tr>
 </tbody></table>
 </body>
