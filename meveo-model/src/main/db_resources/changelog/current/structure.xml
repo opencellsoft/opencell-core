@@ -1893,23 +1893,49 @@
 			<column name="INVOICE_SEQUENCE_SIZE" type="INT4" defaultValue="9" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="#1187_20151027" author="Mbarek">
-		<addColumn tableName="adm_notification">
-			<column name="script_notification" type="BOOL" defaultValue="false">
+
+	<changeSet author="1187_20151102" id="Mbarek">
+		<createTable tableName="adm_script_notification">
+			<column name="id" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-		</addColumn>
-		<sql>
-		update adm_notification set script_notification='true' where id not in(
-		SELECT id FROM adm_notif_webhooks
-		UNION
-		SELECT id FROM adm_notif_email
-		UNION
-		SELECT id FROM adm_notif_job
-		UNION
-		SELECT id FROM adm_notif_im
-		)
+		</createTable>
+		<addPrimaryKey columnNames="id"
+			constraintName="adm_script_notification_pkey" tableName="adm_script_notification" />
+		<addForeignKeyConstraint baseColumnNames="id"
+			baseTableName="adm_script_notification" constraintName="fk_n1n2i3ht998wlegdshme8gyfd"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
+
+		<!--migration notifications -->
+		<sql splitStatements="false">
+			create or replace function scriptNotification() returns void as
+			$body$
+			declare
+			cursorNotif cursor for
+			select * from adm_notification where id not in(
+			SELECT id FROM adm_notif_webhooks
+			UNION
+			SELECT id FROM adm_notif_email
+			UNION
+			SELECT id FROM adm_notif_job
+			UNION
+			SELECT id FROM adm_notif_history
+			);
+			notifRecord record;
+			begin
+			open cursorNotif;
+			loop
+			fetch cursorNotif into notifRecord;
+			exit when not found;
+			insert into adm_script_notification(id) values(notifRecord.id);
+			end loop;
+			close cursorNotif;
+			end;
+			$body$
+			language plpgsql volatile;
+			<!--execute function -->
+			select scriptNotification();
 		</sql>
 	</changeSet>
 	

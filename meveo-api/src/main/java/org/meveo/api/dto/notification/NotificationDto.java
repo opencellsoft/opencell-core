@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.model.notification.Notification;
+import org.meveo.model.notification.ScriptNotification;
 
 /**
  * @author Edward P. Legaspi
@@ -44,7 +44,7 @@ public class NotificationDto extends BaseDto {
 
 	}
 
-	public NotificationDto(Notification e) {
+	public NotificationDto(ScriptNotification e) {
 		code = e.getCode();
 		classNameFilter = e.getClassNameFilter();
 		eventTypeFilter = e.getEventTypeFilter().name();
