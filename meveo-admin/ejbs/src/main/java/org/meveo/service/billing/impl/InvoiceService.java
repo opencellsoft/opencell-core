@@ -732,10 +732,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		int result = 9;
 
 		if (seller != null) {
-			if (seller.getInvoiceAdjustmentSequenceSize() != null) {
+			if (seller.getInvoiceAdjustmentSequenceSize() != null && seller.getInvoiceAdjustmentSequenceSize() != 0) {
 				result = seller.getInvoiceAdjustmentSequenceSize();
 			} else {
-				if (seller.getProvider().getInvoiceAdjustmentSequenceSize() != null) {
+				if (seller.getProvider().getInvoiceAdjustmentSequenceSize() != null
+						&& seller.getProvider().getInvoiceAdjustmentSequenceSize() != 0) {
 					result = seller.getProvider().getInvoiceAdjustmentSequenceSize();
 				}
 			}
