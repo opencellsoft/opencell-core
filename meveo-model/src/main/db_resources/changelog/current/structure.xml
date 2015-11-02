@@ -1922,5 +1922,10 @@
 		<sql>update BILLING_INVOICE_AGREGATE set DISCOUNT_AGGREGATE=false where DISCOUNT_AGGREGATE is null;</sql>
 		<addDefaultValue columnName="discount_aggregate" tableName="billing_invoice_agregate" defaultValueBoolean="false" />
 	</changeSet>
+	
+	<changeSet id="1201_20151102" author="EdwardLegaspi">
+		<sql>ALTER TABLE crm_seller DROP CONSTRAINT IF EXISTS uk_rsylyj7p2u3xkey9tkiu9rn7d;</sql>
+		<addUniqueConstraint columnNames="code, provider_id" constraintName="uk_rsylyj7p2u3xkey9tkiu9rn7d" deferrable="false" disabled="false" initiallyDeferred="false" tableName="crm_seller"/>
+	</changeSet>
 
 </databaseChangeLog>
