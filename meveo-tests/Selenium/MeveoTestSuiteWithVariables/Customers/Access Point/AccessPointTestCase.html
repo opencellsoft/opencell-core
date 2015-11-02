@@ -32,11 +32,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>link=Informations</td>
-	<td>Informations</td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>link=Informations</td>
 	<td>Informations</td>
@@ -67,11 +62,6 @@
 	<td>Subscription</td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>css=div.ui-dialog-content.ui-widget-content</td>
-	<td></td>
-</tr>
-<tr>
 	<td>waitForElementPresent</td>
 	<td>id=searchSubscriptionPopuppopupForm:searchField1</td>
 	<td></td>
@@ -97,11 +87,6 @@
 	<td>${SubscriptionValue}</td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>css=td</td>
 	<td></td>
@@ -111,7 +96,6 @@
 	<td>${SubscriptionValue}</td>
 	<td></td>
 </tr>
-<!--debut-->
 <tr>
 	<td>verifyTextPresent</td>
 	<td>${SubscriptionValue}</td>
@@ -157,7 +141,6 @@
 	<td>id=formId:tabView:subscriptionId</td>
 	<td>${SubscriptionValue}</td>
 </tr>
-<!--fin-->
 <tr>
 	<td>if</td>
 	<td>${StartDateBool}==true</td>
@@ -189,17 +172,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>//a[contains(text(),'Custom fields')]</td>
-	<td>Custom fields</td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td>Custom fields</td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
+	<td>waitForElementPresent</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td></td>
 </tr>
