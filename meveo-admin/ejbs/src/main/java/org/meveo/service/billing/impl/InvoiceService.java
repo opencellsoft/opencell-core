@@ -537,27 +537,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			FileUtils.copyDirectory(sourceFile, destDir);
 		}
-
-		File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplate + File.separator
-				+ "invoiceAdjustmentPdf");
-		if (!destDirInvoiceAdjustment.exists()) {
-			destDirInvoiceAdjustment.mkdirs();
-			String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader()
-					.getResource("./invoiceAdjustment").getPath();
-			File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
-			if (!sourceFileInvoiceAdjustment.exists()) {
-				VirtualFile vfDir = VFS.getChild("/content/"
-						+ ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")
-						+ ".war/WEB-INF/classes/invoiceAdjustment");
-				URL vfPath = VFSUtils.getPhysicalURL(vfDir);
-				sourceFileInvoiceAdjustment = new File(vfPath.getPath());
-				if (!sourceFileInvoiceAdjustment.exists()) {
-					throw new BusinessException("embedded jasper report for invoice isn't existed!");
-				}
-			}
-			FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
-		}
-
+		
 		File jasperFile = getJasperTemplateFile(resDir, billingTemplate, billingAccount.getPaymentMethod());
 		if (!jasperFile.exists()) {
 			throw new InvoiceJasperNotFoundException("The jasper file doesn't exist.");
