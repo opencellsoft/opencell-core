@@ -32,11 +32,15 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = -1403961759495272885L;
 
+    public static String POSITION_TAB = "tab";
+    public static String POSITION_FIELD_GROUP = "fieldGroup";
+    public static String POSITION_FIELD = "field";
+
     @Column(name = "FIELD_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
     private CustomFieldTypeEnum fieldType;
 
-    @Column(name = "APPLIES_TO", nullable = false)
+    @Column(name = "APPLIES_TO", nullable = false, length = 100)
     private String appliesTo;
 
     @Column(name = "VALUE_REQUIRED")
@@ -68,6 +72,9 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
     private boolean triggerEndPeriodEvent;
+
+    @Column(name = "GUI_POSITION", length = 100)
+    private String guiPosition;
 
     @Transient
     private CustomFieldInstance instance;
@@ -185,5 +192,38 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setCacheValueTimeperiod(Integer cacheValueTimeperiod) {
         this.cacheValueTimeperiod = cacheValueTimeperiod;
+    }
+
+    public String getGuiPosition() {
+        return guiPosition;
+    }
+
+    public void setGuiPosition(String guiPosition) {
+        this.guiPosition = guiPosition;
+    }
+
+    public Map<String, String> getGuiPositionParsed() {
+
+        if (guiPosition == null) {
+            return null;
+        }
+
+        Map<String, String> parsedInfo = new HashMap<String, String>();
+
+        String[] positions = guiPosition.split(";");
+
+        for (String position : positions) {
+            String[] positionDetails = position.split(":");
+            if (!positionDetails[0].equals(POSITION_FIELD)) {
+                parsedInfo.put(positionDetails[0] + "_name", positionDetails[1]);
+                if (positionDetails.length == 3) {
+                    parsedInfo.put(positionDetails[0] + "_pos", positionDetails[2]);
+                }
+            } else if (positionDetails[0].equals(POSITION_FIELD) && positionDetails.length == 2) {
+                parsedInfo.put(positionDetails[0] + "_pos", positionDetails[1]);
+            }
+        }
+
+        return parsedInfo;
     }
 }

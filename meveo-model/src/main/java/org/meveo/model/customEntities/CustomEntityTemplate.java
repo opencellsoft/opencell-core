@@ -1,5 +1,6 @@
 package org.meveo.model.customEntities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -15,6 +16,17 @@ import org.meveo.model.ExportIdentifier;
 public class CustomEntityTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = 8281478284763353310L;
+
+    @Column(name = "ACCESS_PERMISSION", length = 100)
+    public String permission;
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
 
     public String getCFTPrefix() {
         return "CET_" + getCode();
