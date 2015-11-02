@@ -207,7 +207,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
 
 	@OneToOne(mappedBy = "provider")
-	private InvoiceConfiguration invoiceConfiguration = null;
+	private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 
 	@OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@MapKeyColumn(name = "code")
@@ -572,9 +572,6 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	}
 
     public InvoiceConfiguration getInvoiceConfiguration() {
-        if (invoiceConfiguration == null) {
-            invoiceConfiguration = new InvoiceConfiguration();
-        }
         return invoiceConfiguration;
     }
 
