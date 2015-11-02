@@ -183,8 +183,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					ics.appendChild(icsTxt);			
 					Text ibanTxt = doc.createTextNode(provider.getBankCoordinates().getIban() != null ? provider.getBankCoordinates().getIban() : "");
 					iban.appendChild(ibanTxt);
-					Text bicTxt = doc.createTextNode(provider.getBankCoordinates().getBic() != null ? provider.getBankCoordinates().getBic() : "");
-					bic.appendChild(bicTxt);					
+					Text bicTxt = doc.createTextNode(provider.getBankCoordinates().getBic() != null ? provider
+							.getBankCoordinates().getBic() : "");
+					bic.appendChild(bicTxt);
 				}
 			}
 
@@ -925,7 +926,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							line.appendChild(lineUnit);
 						}
 						Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-						Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+						Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction
+								.getUnitAmountWithoutTax().toPlainString());
 						lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
 						line.appendChild(lineUnitAmountWithoutTax);
 
@@ -1211,7 +1213,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					// subCategory.setAttribute("amountWithoutTax",
 					// round(subCatInvoiceAgregate.getAmountWithoutTax(),
 					// rounding));
-					subCategory.setAttribute("taxAmount", round(subCatInvoiceAgregate.getAmountTax(), rounding));
+					// subCategory.setAttribute("taxAmount",
+					// round(subCatInvoiceAgregate.getAmountTax(), rounding));
 				}
 			}
 		}
