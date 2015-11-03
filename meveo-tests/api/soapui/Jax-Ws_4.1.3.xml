@@ -29095,8 +29095,8 @@ public class BRInfoTest extends Script {
             </address>
             
             <customerCategory>CLIENT</customerCategory>
-            <customerBrand>DEFAULT</customerBrand>
-            <seller>SELLER_FR</seller>
+            <customerBrand>OBS</customerBrand>
+            <seller>OBS</seller>
             <contactInformation>
                <email>613@manaty.net</email>
                <phone>+33100000000</phone>
@@ -29212,8 +29212,8 @@ public class BRInfoTest extends Script {
             </address>
             
             <customerCategory>CLIENT</customerCategory>
-            <customerBrand>DEFAULT</customerBrand>
-            <seller>SELLER_FR</seller>
+            <customerBrand>OBS</customerBrand>
+            <seller>OBS</seller>
             <contactInformation>
                <email>613@manaty.net</email>
                <phone>+33100000000</phone>
@@ -29280,6 +29280,17 @@ public class BRInfoTest extends Script {
             <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
+              <customFields>
+               <customField code="CACONTRIBUTIF">
+                  <stringValue>CACONTRIBUTIF1</stringValue>
+               </customField>
+                <customField code="INTERCO">
+                  <stringValue>INTERCO1</stringValue>
+               </customField>
+                 <customField code="OFFRE">
+                  <stringValue>OFFRE1</stringValue>
+               </customField>
+          </customFields>
             
          </billingAccount>
       </ws:createOrUpdateBillingAccount>
@@ -29313,6 +29324,17 @@ public class BRInfoTest extends Script {
             <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
+              <customFields>
+               <customField code="CACONTRIBUTIF">
+                  <stringValue>CACONTRIBUTIF1</stringValue>
+               </customField>
+                <customField code="INTERCO">
+                  <stringValue>INTERCO1</stringValue>
+               </customField>
+                 <customField code="OFFRE">
+                  <stringValue>OFFRE1</stringValue>
+               </customField>
+          </customFields>
             
          </billingAccount>
       </ws:createOrUpdateBillingAccount>
@@ -29372,8 +29394,8 @@ public class BRInfoTest extends Script {
             </address>
             
             <customerCategory>CLIENT</customerCategory>
-            <customerBrand>DEFAULT</customerBrand>
-            <seller>SELLER_FR</seller>
+            <customerBrand>OBS</customerBrand>
+            <seller>OBS</seller>
             <contactInformation>
                <email>613@manaty.net</email>
                <phone>+33100000000</phone>
@@ -29440,6 +29462,17 @@ public class BRInfoTest extends Script {
             <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
+              <customFields>
+               <customField code="CACONTRIBUTIF">
+                  <stringValue>CACONTRIBUTIF1</stringValue>
+               </customField>
+                <customField code="INTERCO">
+                  <stringValue>INTERCO1</stringValue>
+               </customField>
+                 <customField code="OFFRE">
+                  <stringValue>OFFRE1</stringValue>
+               </customField>
+          </customFields>
             
          </billingAccount>
       </ws:createOrUpdateBillingAccount>
@@ -29517,7 +29550,7 @@ public class BRInfoTest extends Script {
          </userAccount>
       </ws:createOrUpdateUserAccount>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a6e1ccc3-fde4-49f7-9a2d-d8acc4645b5b"/><con:assertion type="Simple Contains" id="1a1aa66d-1b17-4f04-9dcb-f4e505d00adc" name="Contains"><con:configuration><token>soap:Client</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="8514acdd-f654-4038-a2a8-6f39edfb490f" name="unexpectedElement_defaultLevel"><con:configuration><token>Unmarshalling Error: unexpected element (uri:"", local:"defaultLevel")</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1177</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#1134_invoice_sequence_size" id="b5508896-209d-4eaa-98fb-2e55b033d717"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="update_seller" searchProperties="true" id="bc3f31da-3ad6-4d14-9ec2-196fc1ca39b0"><con:settings/><con:testStep type="request" name="update_seller" id="48440902-9491-49a5-91c6-b6a04df58826"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="update_seller" id="fc356bef-2092-4fb7-ac25-63c700f03b64"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a6e1ccc3-fde4-49f7-9a2d-d8acc4645b5b"/><con:assertion type="Simple Contains" id="1a1aa66d-1b17-4f04-9dcb-f4e505d00adc" name="Contains"><con:configuration><token>soap:Client</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="8514acdd-f654-4038-a2a8-6f39edfb490f" name="unexpectedElement_defaultLevel"><con:configuration><token>Unmarshalling Error: unexpected element (uri:"", local:"defaultLevel")</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1177_6</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#1134_invoice_sequence_size" id="b5508896-209d-4eaa-98fb-2e55b033d717"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="update_seller" searchProperties="true" id="bc3f31da-3ad6-4d14-9ec2-196fc1ca39b0"><con:settings/><con:testStep type="request" name="update_seller" id="48440902-9491-49a5-91c6-b6a04df58826"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="update_seller" id="fc356bef-2092-4fb7-ac25-63c700f03b64"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateSeller>
