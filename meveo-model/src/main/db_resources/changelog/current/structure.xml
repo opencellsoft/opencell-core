@@ -1790,13 +1790,6 @@
 			tableName="MEVEO_SCRIPT_INSTANCE_ERROR" />
 	</changeSet>
 
-	<changeSet id="#1150_20151013" author="Mbarek">
-		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
-			<column name="display_provider" type="BOOL"
-				defaultValueBoolean="false"></column>
-		</addColumn>
-	</changeSet>
-
 	<changeSet id="#REVERT_CREDIT_NOTE_20151014" author="EdwardLegaspi">
 		<dropForeignKeyConstraint baseTableName="billing_credit_note"
 			constraintName="fk_billing_credit_note_crm_provider" />
