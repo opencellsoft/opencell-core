@@ -13,42 +13,152 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${Countries}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${NewCountry}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>assertElementPresent</td>
 	<td>${CountryCode}</td>
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>${CountryCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=popup_title</td>
+	<td>Countries</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=popup_title</td>
+	<td>Countries</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=popuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=popuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
-	<td>${InputCountryCode}</td>
-	<td>AF</td>
+	<td>id=popuppopupForm:searchField1</td>
+	<td>${CtryCode}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SearchCountryCode}</td>
+	<td>id=popuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>css=td</td>
+	<td>waitForText</td>
+	<td>//tbody[@id='popuppopupForm:popupdatatable_data']/tr/td[1]</td>
+	<td>${CtryCode}</td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${CtryCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=popuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='popuppopupForm:popupdatatable_data']/tr/td[1]</td>
+	<td>${CtryCode}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='popuppopupForm:popupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=popup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${CountryCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='popuppopupForm:popupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='popuppopupForm:popupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=formPanel:formId:countrySelectedId:entityFieldSingle:country_entity</td>
+	<td>${CtryCode}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionCtry}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionText}</td>
-	<td>Afghanistan</td>
+	<td>${descriptionCtry}</td>
+	<td>${Description}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

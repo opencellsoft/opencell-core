@@ -13,47 +13,172 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${Currencies}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${NewCurrencies}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>assertElementPresent</td>
 	<td>${CurrencyCode}</td>
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>${CurrencyCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=currencyPopup_title</td>
+	<td>Currencies list</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=currencyPopup_title</td>
+	<td>Currencies list</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=currencyPopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=currencyPopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
-	<td>${InputCurrencyCode}</td>
-	<td>AED</td>
+	<td>id=currencyPopuppopupForm:searchField1</td>
+	<td>${CurCode}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SearchCurrencyCode}</td>
+	<td>id=currencyPopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>css=td</td>
+	<td>waitForText</td>
+	<td>//tbody[@id='currencyPopuppopupForm:currencyPopupdatatable_data']/tr/td[1]</td>
+	<td>${CurCode}</td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${CurCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=currencyPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='currencyPopuppopupForm:currencyPopupdatatable_data']/tr/td[1]</td>
+	<td>${CurCode}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='currencyPopuppopupForm:currencyPopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=currencyPopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${CurrencyCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='currencyPopuppopupForm:currencyPopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='currencyPopuppopupForm:currencyPopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=formPanel:currenciesFormId:currencySelectedId:entityFieldSingle:currency_entity</td>
+	<td>${CurCode}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionCurr}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionText}</td>
-	<td>Dirham des émirats arabes unis</td>
+	<td>${descriptionCurr}</td>
+	<td>${Description}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ExchangeRate}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ExchangeRate}</td>
-	<td>1.998448</td>
+	<td>${ExchangeRateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

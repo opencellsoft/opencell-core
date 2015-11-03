@@ -13,42 +13,152 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${Languages}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${NewLanguages}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>assertElementPresent</td>
 	<td>${LanguageCode}</td>
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>${LanguageCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=languagePopup_title</td>
+	<td>Languages</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=languagePopup_title</td>
+	<td>Languages</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=languagePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=languagePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
-	<td>${InputLanguageCode}</td>
-	<td>ARA</td>
+	<td>id=languagePopuppopupForm:searchField1</td>
+	<td>${LangCode}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SearchLanguageCode}</td>
+	<td>id=languagePopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>css=td</td>
+	<td>waitForText</td>
+	<td>//tbody[@id='languagePopuppopupForm:languagePopupdatatable_data']/tr/td[1]</td>
+	<td>${LangCode}</td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${LangCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=languagePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='languagePopuppopupForm:languagePopupdatatable_data']/tr/td[1]</td>
+	<td>${LangCode}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='languagePopuppopupForm:languagePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=languagePopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${LanguageCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='languagePopuppopupForm:languagePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='languagePopuppopupForm:languagePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=formPanel:languagesFormId:languageSelectedId:entityFieldSingle:language_entity</td>
+	<td>${LangCode}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionLang}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionText}</td>
-	<td>arabe</td>
+	<td>${descriptionLang}</td>
+	<td>${Description}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>
