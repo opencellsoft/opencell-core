@@ -14,6 +14,10 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.ftp.event.FileDelete;
+import org.meveo.admin.ftp.event.FileDownload;
+import org.meveo.admin.ftp.event.FileRename;
+import org.meveo.admin.ftp.event.FileUpload;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -38,6 +42,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.mediation.ImportedFile;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
@@ -165,7 +170,12 @@ public class DefaultObserver {
                 webHookNotifier.sendRequest((WebHook) notif, e);
             } else if (notif instanceof InstantMessagingNotification) {
                 imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
-            } else if (notif.getEventTypeFilter() != NotificationEventTypeEnum.INBOUND_REQ){
+            } else if (notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_UPLOAD||
+            		notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_DOWNLOAD||
+            		notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_DELETE||
+            		notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_RENAME){
+            	notificationHistoryService.create(notif, e,"", NotificationHistoryStatusEnum.SENT);
+            }else if(notif.getEventTypeFilter() != NotificationEventTypeEnum.INBOUND_REQ){
                 notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
             }
             if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ) {
@@ -303,6 +313,23 @@ public class DefaultObserver {
 	
 	public void knownMeveoInstance(@Observes InboundCommunicationEvent event) {
 		log.debug("DefaultObserver.knownMeveoInstance" + event);
+	}
+	
+	public void ftpFileUpload(@Observes @FileUpload ImportedFile importedFile){
+		log.debug("observe a file upload event ");
+		checkEvent(NotificationEventTypeEnum.FILE_UPLOAD,importedFile);
+	}
+	public void ftpFileDownload(@Observes @FileDownload ImportedFile importedFile){
+		log.debug("observe a file download event ");
+		checkEvent(NotificationEventTypeEnum.FILE_DOWNLOAD,importedFile);
+	}
+	public void ftpFileDelete(@Observes @FileDelete ImportedFile importedFile){
+		log.debug("observe a file delete event ");
+		checkEvent(NotificationEventTypeEnum.FILE_DELETE,importedFile);
+	}
+	public void ftpFileRename(@Observes @FileRename ImportedFile importedFile){
+		log.debug("observe a file rename event ");
+		checkEvent(NotificationEventTypeEnum.FILE_RENAME,importedFile);
 	}
    
 }

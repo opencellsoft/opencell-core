@@ -5,5 +5,19 @@
 	<changeSet id="#1110_20151002" author="EdwardLegaspi">
 		<sql>update billing_invoice set code=concat('ocb_id_', id);</sql>
 	</changeSet>
+	<changeSet id="#1205_20151103" author="TyshanShi">
+		<insert tableName="adm_permission">
+            <column name="id" valueNumeric="15" />
+            <column name="name" value="FTP Read" />
+            <column name="permission" value="ftpread" />
+            <column name="ressource" value="administration" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="16" />
+            <column name="name" value="FTP Write" />
+            <column name="permission" value="ftpwrite" />
+            <column name="ressource" value="administration" />
+        </insert>
+	</changeSet>
 
 </databaseChangeLog>

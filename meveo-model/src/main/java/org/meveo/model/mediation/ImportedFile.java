@@ -48,6 +48,10 @@ public class ImportedFile extends BusinessEntity implements Serializable {
 		calendar=Calendar.getInstance();
 	}
 	public ImportedFile(){}
+	public ImportedFile(String uri,Long size){
+		this.uri=uri;
+		this.size=size;
+	}
 	public ImportedFile(String uri,Long size,Long lastModified){
 		this.uri=uri;
 		this.size=size;
