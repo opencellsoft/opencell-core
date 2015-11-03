@@ -19,9 +19,9 @@
 
 		<hftl:searchPanel id="searchPanel" columns="2"
 			label="#{messages['importedFile.search']}"
-			backingBean="#{importedFileListBean}">
-			<hftl:searchField label="#{messages['importedFile.description']}" field="description" />
+			backingBean="#{importedFileListBean}" renderNewButton="false">
 			<hftl:searchField label="#{messages['importedFile.uri']}" field="uri" />
+			<hftl:searchField label="#{messages['importedFile.description']}" field="description" />
 			<hftl:searchField label="#{messages['importedFile.lastModified']}"
 				field="lastModified" />
 		</hftl:searchPanel>
