@@ -377,7 +377,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			Element detail = null;
 			boolean displayDetail = false;
-			if (provider.getInvoiceConfiguration().getDisplayDetail() != null
+			if (provider.getInvoiceConfiguration()!=null && provider.getInvoiceConfiguration().getDisplayDetail() != null
 					&& provider.getInvoiceConfiguration().getDisplayDetail()) {
 				displayDetail = true;
 
