@@ -129,7 +129,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			boolean entreprise = invoice.getProvider().isEntreprise();
 			int rounding = invoice.getProvider().getRounding() == null ? 2 : invoice.getProvider().getRounding();
 
-			if (!isInvoiceAdjustment && BillingRunStatusEnum.VALIDATED.equals(invoice.getBillingRun().getStatus())
+			if (!isInvoiceAdjustment && invoice.getBillingRun() != null
+					&& BillingRunStatusEnum.VALIDATED.equals(invoice.getBillingRun().getStatus())
 					&& invoice.getInvoiceNumber() == null) {
 				invoiceService.setInvoiceNumber(invoice);
 			}
@@ -153,8 +154,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				invoiceTag.setAttribute("adjustedInvoiceNumber", invoice.getAdjustedInvoice().getInvoiceNumber());
 			}
 
-			BillingCycle billingCycle = isInvoiceAdjustment ? invoice.getAdjustedInvoice().getBillingRun()
-					.getBillingCycle() : invoice.getBillingRun().getBillingCycle();
+			BillingCycle billingCycle = null;
+			if (isInvoiceAdjustment && invoice.getAdjustedInvoice().getBillingRun() != null) {
+				billingCycle = invoice.getAdjustedInvoice().getBillingRun().getBillingCycle();
+			} else {
+				if (invoice.getBillingRun() != null && invoice.getBillingRun().getBillingCycle() != null) {
+					billingCycle = invoice.getBillingRun().getBillingCycle();
+				}
+			}
+
 			invoiceTag.setAttribute("templateName", billingCycle != null
 					&& billingCycle.getBillingTemplateName() != null ? billingCycle.getBillingTemplateName()
 					: "default");

@@ -29,6 +29,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
@@ -47,6 +48,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -131,11 +133,11 @@ public class InvoiceApi extends BaseApi {
 
 			Invoice invoice = new Invoice();
 			invoice.setBillingAccount(billingAccount);
-			if (billingAccount.getBillingRun() == null) {
-				throw new MeveoApiException("BillingAccount with code=" + billingAccount.getCode()
-						+ " is not assigned a billingRun.");
-			}
-			invoice.setBillingRun(billingAccount.getBillingRun());
+			
+			// no billing run here, use auditable.created as xml dir
+			Auditable auditable = new Auditable(currentUser);
+			invoice.setAuditable(auditable);
+			
 			invoice.setProvider(provider);
 			Date invoiceDate = new Date();
 			invoice.setInvoiceDate(invoiceDate);
@@ -572,18 +574,25 @@ public class InvoiceApi extends BaseApi {
 		return generateInvoiceResultDto;
 	}
 
-	public String getXMLInvoice(String invoiceNumber, User currentUser)
+	public String getXMLInvoice(String invoiceNumber, String invoiceType, User currentUser)
 			throws FileNotFoundException, MissingParameterException,
-			EntityDoesNotExistsException, BusinessException {
+			EntityDoesNotExistsException, BusinessException, InvalidEnumValue {
 		log.debug("getXMLInvoice  invoiceNumber:{}", invoiceNumber);
 		if (invoiceNumber == null) {
 			missingParameters.add("invoiceNumber");
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
+		
+		InvoiceTypeEnum invoiceTypeEnum = InvoiceTypeEnum.COMMERCIAL;
+		try {
+			invoiceTypeEnum = InvoiceTypeEnum.valueOf(invoiceType);
+		} catch (IllegalArgumentException e) {
+			throw new InvalidEnumValue(InvoiceTypeEnum.class.getName(), invoiceType);
+		}
 
-		Invoice invoice = invoiceService.getInvoiceByNumber(invoiceNumber,
-				currentUser.getProvider().getCode());
+		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceTypeEnum,
+				currentUser.getProvider());
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
 		}
@@ -591,9 +600,17 @@ public class InvoiceApi extends BaseApi {
 		String invoicesDir = param.getProperty("providers.rootDir",
 				"/tmp/meveo");
 		String sep = File.separator;
-		String invoicePath = invoicesDir + sep
-				+ currentUser.getProvider().getCode() + sep + "invoices" + sep
-				+ "xml" + sep + invoice.getBillingRun().getId();
+		String invoicePath = invoicesDir
+				+ sep
+				+ currentUser.getProvider().getCode()
+				+ sep
+				+ "invoices"
+				+ sep
+				+ "xml"
+				+ sep
+				+ (invoice.getBillingRun() == null ? DateUtils.formatDateWithPattern(invoice.getAuditable()
+						.getCreated(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss"))
+						: invoice.getBillingRun().getId());
 		File billingRundir = new File(invoicePath);
 		xmlInvoiceCreator.createXMLInvoice(invoice.getId(), billingRundir);
 		String xmlCanonicalPath = invoicePath + sep + invoiceNumber + ".xml";
@@ -604,24 +621,29 @@ public class InvoiceApi extends BaseApi {
 		return xmlContent;
 	}
 
-	public byte[] getPdfInvoince(String invoiceNumber, User currentUser)
-			throws MissingParameterException, EntityDoesNotExistsException,
-			Exception {
+	public byte[] getPdfInvoince(String invoiceNumber, String invoiceType, User currentUser)
+			throws MissingParameterException, EntityDoesNotExistsException, Exception {
 		log.debug("getPdfInvoince  invoiceNumber:{}", invoiceNumber);
 		if (invoiceNumber == null) {
 			missingParameters.add("invoiceNumber");
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
-		Invoice invoice = invoiceService.getInvoiceByNumber(invoiceNumber,
-				currentUser.getProvider().getCode());
+
+		InvoiceTypeEnum invoiceTypeEnum = InvoiceTypeEnum.COMMERCIAL;
+		try {
+			invoiceTypeEnum = InvoiceTypeEnum.valueOf(invoiceType);
+		} catch (IllegalArgumentException e) {
+			throw new InvalidEnumValue(InvoiceTypeEnum.class.getName(), invoiceType);
+		}
+
+		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceTypeEnum,
+				currentUser.getProvider());
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
 		}
 		if (invoice.getPdf() == null) {
-			Map<String, Object> parameters = pDFParametersConstruction
-					.constructParameters(invoice.getId(),
-							currentUser.getProvider());
+			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(),
+					currentUser.getProvider());
 			invoiceService.producePdf(parameters, currentUser);
 		}
 		invoiceService.findById(invoice.getId(), true);

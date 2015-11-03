@@ -146,6 +146,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return null;
 		}
 	}
+	
+	public Invoice findByInvoiceNumberAndType(String invoiceNumber, InvoiceTypeEnum type, Provider provider)
+			throws BusinessException {
+		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, provider);
+		qb.addCriterion("invoiceNumber", "=", invoiceNumber, true);
+		qb.addCriterionEnum("invoiceTypeEnum", type);
+		try {
+			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
+			return null;
+		} catch (NonUniqueResultException e) {
+			log.info("Multiple invoices with invoice number #0 was found. Returning null.", invoiceNumber);
+			return null;
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
 	public Invoice getInvoice(String invoiceNumber, CustomerAccount customerAccount) throws BusinessException {
 		return getInvoice(getEntityManager(), invoiceNumber, customerAccount);
@@ -498,8 +516,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				+ currentUser.getProvider().getCode() + File.separator;
 
 		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
-		File billingRundir = new File(meveoDir + "invoices" + File.separator + "xml" + File.separator
-				+ invoice.getBillingRun().getId());
+		File billingRundir = new File(meveoDir
+				+ "invoices"
+				+ File.separator
+				+ "xml"
+				+ File.separator
+				+ (invoice.getBillingRun() == null ? DateUtils.formatDateWithPattern(invoice.getAuditable()
+						.getCreated(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss"))
+						: invoice.getBillingRun().getId()));
 
 		String invoiceXmlFileName = billingRundir
 				+ File.separator
@@ -525,7 +549,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (!invoiceXmlFile.exists()) {
 			throw new InvoiceXmlNotFoundException("The xml invoice file doesn't exist.");
 		}
-		BillingCycle billingCycle = invoice.getBillingRun().getBillingCycle();
+		
+		BillingCycle billingCycle = null;
+		if (invoice.getBillingRun() != null) {
+			invoice.getBillingRun().getBillingCycle();
+		}
 		BillingAccount billingAccount = invoice.getBillingAccount();
 		String billingTemplate = (billingCycle != null && billingCycle.getBillingTemplateName() != null) ? billingCycle
 				.getBillingTemplateName() : "default";
@@ -1039,8 +1067,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			User currentUser) {
 		int rounding = invoice.getBillingAccount().getProvider().getRounding() == null ? 2 : invoice
 				.getBillingAccount().getProvider().getRounding();
-		boolean exoneratedFromTaxes = invoice.getBillingAccount().getCustomerAccount().getCustomer()
-				.getCustomerCategory().getExoneratedFromTaxes();
 
 		subCategoryInvoiceAgregate.setAmountTax(new BigDecimal(0));
 

@@ -39,7 +39,6 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.TIP;
 import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -84,9 +83,11 @@ public class PDFParametersConstruction {
 			Invoice invoice = invoiceService.findById(invoiceId, provider);
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
-
-			BillingCycle billingCycle = invoice.getBillingRun()
-					.getBillingCycle();
+			
+			BillingCycle billingCycle = null;
+			if (invoice.getBillingRun() != null) {
+				invoice.getBillingRun().getBillingCycle();
+			}
 			BillingAccount billingAccount = invoice.getBillingAccount();			
 			String billingTemplateName = billingCycle != null
 					&& billingCycle.getBillingTemplateName() != null ? billingCycle
