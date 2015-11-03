@@ -32,6 +32,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${codeText}</td>
 	<td>${UsageCode}</td>
@@ -50,11 +55,6 @@
 	<td>assertText</td>
 	<td>//div[@id='pricPlanMatChargePopup']/div</td>
 	<td>Charges</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>css=div.ui-dialog-content.ui-widget-content</td>
-	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -78,12 +78,12 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>css=td</td>
+	<td>//tbody[@id='pricPlanMatChargePopuppopupForm:pricPlanMatChargePopupdatatable_data']/tr/td[1]</td>
 	<td>${ChargeCodeUSG}</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=td</td>
+	<td>//tbody[@id='pricPlanMatChargePopuppopupForm:pricPlanMatChargePopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -98,12 +98,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>//tbody[@id='pricPlanMatChargePopuppopupForm:pricPlanMatChargePopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>if</td>
 	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
 	<td></td>
 </tr>
 <tr>
@@ -119,6 +124,11 @@
 <tr>
 	<td>if</td>
 	<td>${SellersBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectSeller}</td>
 	<td></td>
 </tr>
 <tr>
@@ -142,6 +152,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCountry}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectCountry}</td>
 	<td></td>
@@ -159,6 +174,11 @@
 <tr>
 	<td>if</td>
 	<td>${OfferCodeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectOfferCode}</td>
 	<td></td>
 </tr>
 <tr>
@@ -182,6 +202,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCurrency}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectCurrency}</td>
 	<td></td>
@@ -199,6 +224,11 @@
 <tr>
 	<td>if</td>
 	<td>${ValidityCalendarBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectValidityCalendar}</td>
 	<td></td>
 </tr>
 <tr>
@@ -222,6 +252,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${Priority}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${Priority}</td>
 	<td>${PriorityValue}</td>
@@ -234,6 +269,11 @@
 <tr>
 	<td>if</td>
 	<td>${MinQuantityBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${MinQuantity}</td>
 	<td></td>
 </tr>
 <tr>
@@ -252,6 +292,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${MaxQuantity}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${MaxQuantity}</td>
 	<td>${MaxQuantityValue}</td>
@@ -264,6 +309,11 @@
 <tr>
 	<td>if</td>
 	<td>${StartDateSubscriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${StartDateSubscription}</td>
 	<td></td>
 </tr>
 <tr>
@@ -282,6 +332,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${EndSubscriptionDate}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${EndSubscriptionDate}</td>
 	<td>${EndDateSubscriptionValue}</td>
@@ -294,6 +349,11 @@
 <tr>
 	<td>if</td>
 	<td>${StartDateEventBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${StartDateEvent}</td>
 	<td></td>
 </tr>
 <tr>
@@ -312,6 +372,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${EndDateEvent}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${EndDateEvent}</td>
 	<td>${EndDateEventValue}</td>
@@ -324,6 +389,11 @@
 <tr>
 	<td>if</td>
 	<td>${Criteria1Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Criteria1}</td>
 	<td></td>
 </tr>
 <tr>
@@ -342,6 +412,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${Criteria2}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${Criteria2}</td>
 	<td>${Criteria2Value}</td>
@@ -354,6 +429,11 @@
 <tr>
 	<td>if</td>
 	<td>${Criteria3Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Criteria3}</td>
 	<td></td>
 </tr>
 <tr>
@@ -372,6 +452,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${ELExpression}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${ELExpression}</td>
 	<td>${ELExpressionValue}</td>
@@ -384,6 +469,11 @@
 <tr>
 	<td>if</td>
 	<td>${AmountWithoutTaxUSBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AmountWithoutTax}</td>
 	<td></td>
 </tr>
 <tr>
@@ -402,6 +492,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${AmountWithoutTaxEL}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${AmountWithoutTaxEL}</td>
 	<td>${AmountWithoutTaxELUSValue}</td>
@@ -414,6 +509,11 @@
 <tr>
 	<td>if</td>
 	<td>${AmountWithTaxUSBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AmountWithTax}</td>
 	<td></td>
 </tr>
 <tr>
@@ -432,6 +532,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${AmountWithTaxEL}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${AmountWithTaxEL}</td>
 	<td>${AmountWithTaxELUSValue}</td>
@@ -447,6 +552,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${MinSubscrAge}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${MinSubscrAge}</td>
 	<td>${MinSubscrAgeValue}</td>
@@ -459,6 +569,11 @@
 <tr>
 	<td>if</td>
 	<td>${MaxSubscrAgeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${MaxSubscrAge}</td>
 	<td></td>
 </tr>
 <tr>

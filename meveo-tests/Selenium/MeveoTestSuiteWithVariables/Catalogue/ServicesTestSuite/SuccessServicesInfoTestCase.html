@@ -32,9 +32,19 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${codeText}</td>
 	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
@@ -44,6 +54,11 @@
 <tr>
 	<td>if</td>
 	<td>${DateCalendarBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCalendar}</td>
 	<td></td>
 </tr>
 <tr>
@@ -82,18 +97,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>Recurring charges</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
-	<td>link=Recurring charges</td>
+	<td>${RecurringCharges}</td>
 	<td>Recurring charges</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>link=Recurring charges</td>
+	<td>${RecurringCharges}</td>
 	<td></td>
 </tr>
 <tr>
@@ -120,11 +130,6 @@
 	<td>assertText</td>
 	<td>id=searchRecurringChargeTemplatePopup_title</td>
 	<td>Recurring charges</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>css=div.ui-dialog-content.ui-widget-content</td>
-	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -202,6 +207,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${ChoosePrepaidWallet}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${ChoosePrepaidWallet}</td>
 	<td></td>
@@ -255,11 +265,6 @@
 	<td>assertText</td>
 	<td>id=searchUsageChargeTemplatePopup_title</td>
 	<td>Usage</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>css=div.ui-dialog-content.ui-widget-content</td>
-	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -352,6 +357,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${ChoosePrepaidWallet}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${ChoosePrepaidWallet}</td>
 	<td></td>
@@ -369,6 +379,11 @@
 <tr>
 	<td>if</td>
 	<td>${CounterBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCounter}</td>
 	<td></td>
 </tr>
 <tr>

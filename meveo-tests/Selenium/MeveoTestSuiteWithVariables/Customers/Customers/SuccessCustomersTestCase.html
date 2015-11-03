@@ -32,29 +32,34 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertText</td>
+	<td>${Account}</td>
+	<td>Account</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Account}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${Account}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>Account</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>link=Account</td>
-	<td>Account</td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
-	<td>link=Account</td>
+	<td>${CodeText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${CodeText}</td>
 	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
@@ -64,6 +69,11 @@
 <tr>
 	<td>if</td>
 	<td>${RefExt1Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${RefExt1}</td>
 	<td></td>
 </tr>
 <tr>
@@ -82,6 +92,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${RefExt2}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${RefExt2}</td>
 	<td>${RefExt2Value}</td>
@@ -94,6 +109,11 @@
 <tr>
 	<td>if</td>
 	<td>${TitleBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectTitle}</td>
 	<td></td>
 </tr>
 <tr>
@@ -112,6 +132,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${LastName}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${LastName}</td>
 	<td>${LastnameValue}</td>
@@ -119,6 +144,11 @@
 <tr>
 	<td>if</td>
 	<td>${FirstnameBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${FirtName}</td>
 	<td></td>
 </tr>
 <tr>
@@ -132,6 +162,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCustomerCategory}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectCustomerCategory}</td>
 	<td></td>
@@ -139,6 +174,11 @@
 <tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${CustomerCategoryValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectBrand}</td>
 	<td></td>
 </tr>
 <tr>
@@ -152,6 +192,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SelectParentSeller}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${SelectParentSeller}</td>
 	<td></td>
@@ -162,17 +207,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForTextPresent</td>
-	<td>Custom fields</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td>Custom fields</td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
+	<td>waitForElementPresent</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td></td>
 </tr>
@@ -184,6 +224,11 @@
 <tr>
 	<td>if</td>
 	<td>${CRMAccountTypeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${CRMAccountType}</td>
 	<td></td>
 </tr>
 <tr>
@@ -199,6 +244,11 @@
 <tr>
 	<td>if</td>
 	<td>${CRMParentAccountCodeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${CRMParentAccountCode}</td>
 	<td></td>
 </tr>
 <tr>

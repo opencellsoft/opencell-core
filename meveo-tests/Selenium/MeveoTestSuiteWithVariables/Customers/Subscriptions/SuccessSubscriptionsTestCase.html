@@ -32,11 +32,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>link=Informations</td>
-	<td>Informations</td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>link=Informations</td>
 	<td>Informations</td>
@@ -44,6 +39,11 @@
 <tr>
 	<td>click</td>
 	<td>${Informations}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectUserAccount}</td>
 	<td></td>
 </tr>
 <tr>
@@ -60,11 +60,6 @@
 	<td>assertText</td>
 	<td>id=userAccountPopup_title</td>
 	<td>User account</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>css=div.ui-dialog-content.ui-widget-content</td>
-	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -88,17 +83,12 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>css=td</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
 	<td>${UserAccount}</td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
-	<td>css=td</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -118,12 +108,12 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>css=td</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
 	<td>${UserAccount}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -138,18 +128,23 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=td</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForValue</td>
 	<td>id=subscriptionTab:subscriptionFormId:informationTab:userSelectId</td>
 	<td>${UserAccount}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectOffer}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -162,14 +157,29 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${codeText}</td>
 	<td>${Code}</td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
 	<td>${Description}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${InitialAgreementDate}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
@@ -179,6 +189,11 @@
 <tr>
 	<td>if</td>
 	<td>${EndAgreementDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${EndAgreementDate}</td>
 	<td></td>
 </tr>
 <tr>
@@ -194,6 +209,11 @@
 <tr>
 	<td>if</td>
 	<td>${DefaultBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Default}</td>
 	<td></td>
 </tr>
 <tr>

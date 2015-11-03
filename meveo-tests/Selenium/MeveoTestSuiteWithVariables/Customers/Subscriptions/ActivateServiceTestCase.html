@@ -17,17 +17,7 @@
 	<td>Services</td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//a[contains(text(),'Services')]</td>
-	<td>Services</td>
-</tr>
-<tr>
 	<td>waitForElementPresent</td>
-	<td>//a[contains(text(),'Services')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
 	<td>//a[contains(text(),'Services')]</td>
 	<td></td>
 </tr>
@@ -59,6 +49,11 @@
 <tr>
 	<td>if</td>
 	<td>${QuantityBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Quantity}</td>
 	<td></td>
 </tr>
 <tr>
@@ -137,6 +132,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SubscriptionDate}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${SubscriptionDate}</td>
 	<td>${SubscriptionDateValue}</td>
@@ -152,6 +152,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${EndOfEngagement}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${EndOfEngagement}</td>
 	<td>${EndOfEngagementValue}</td>
@@ -164,6 +169,11 @@
 <tr>
 	<td>if</td>
 	<td>${QuantityBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${QuantityNumber}</td>
 	<td></td>
 </tr>
 <tr>

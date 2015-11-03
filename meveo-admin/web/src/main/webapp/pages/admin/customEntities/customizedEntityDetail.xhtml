@@ -21,6 +21,7 @@
                 backingBean="#{customEntityTemplateBean}">
                 <hftl:formField label="#{messages['customizedEntities.entityName']}" field="code" showOnlyOnNew="true" />
                 <hftl:formField label="#{messages['customizedEntities.description']}" field="description" />
+                <hftl:formField label="#{messages['customizedEntities.permission']}" field="permission" />
             </hftl:formPanel>
         </h:panelGroup>
         <h:panelGroup rendered="#{! customEntityTemplateBean.customEntityTemplate}">
@@ -29,105 +30,253 @@
             </hftl:decorateFormPanel>
         </h:panelGroup>
 
-        <h:form id="fieldForm">
+        <h:form id="fieldsForm">
             <p:panel width="100" header="#{messages['customizedEntities.fields']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
-                <p:dataTable id="fields" value="#{customEntityTemplateBean.fields}" var="entity" sortBy="#{entity.code}" sortField="code" paginator="false" resizableColumns="true"
-                    lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex">
-                    <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
-                    <hftl:column label="#{messages['customFieldTemplate.fieldLabel']}" field="description" />
-                    <hftl:column label="#{messages['customFieldTemplate.fieldType']}" field="fieldType.label" isMessage="true" />
-                    <hftl:column label="#{messages['customFieldTemplate.storageType']}" field="storageType.label" isMessage="true" />
-                    <hftl:column label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" />
-                    <hftl:column label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" />
-                    <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+                <p:treeTable id="fields" value="#{customEntityTemplateBean.fields}" var="entity" nodeVar="node">
+                    <p:column headerText="#{messages['BusinessEntity.code']}">
+                        <h:outputText value="#{entity.code}" rendered="#{node.type == 'field'}" />
+                        <h:panelGroup styleClass="ui-icon ui-icon-folder-collapsed inlineIcon" rendered="#{node.type == 'tab'}" />
+                        <h:panelGroup styleClass="ui-icon ui-icon-contact inlineIcon" rendered="#{node.type == 'fieldGroup'}" />
+                        <h:outputText value="#{entity}" rendered="#{node.type == 'tab' or node.type == 'fieldGroup'}" />
+                    </p:column>
+                    <p:column headerText="#{messages['customFieldTemplate.fieldLabel']}">
+                        <h:outputText value="#{entity.description}" rendered="#{node.type == 'field'}" />
+                    </p:column>
+                    <p:column headerText="#{messages['customFieldTemplate.fieldType']}">
+                        <h:outputText value="#{messages[entity.fieldType.label]}" rendered="#{node.type == 'field'}" />
+                    </p:column>
+                    <p:column headerText="#{messages['customFieldTemplate.storageType']}">
+                        <h:outputText value="#{messages[entity.storageType.label]}" rendered="#{node.type == 'field'}" />
+                    </p:column>
+                    <p:column headerText="#{messages['customFieldTemplate.fieldRequired']}">
+                        <h:outputText value="#{messages['commons.yes']}"
+                            rendered="#{node.type == 'field' and entity.valueRequired != null and entity.valueRequired.toString() == 'true'}" />
+                        <h:outputText value="#{messages['commons.no']}"
+                            rendered="#{node.type == 'field' and entity.valueRequired != null and entity.valueRequired.toString() == 'false'}" />
+                    </p:column>
+                    <p:column headerText="#{messages['customFieldTemplate.versionable']}">
+                        <h:outputText value="#{messages['commons.yes']}"
+                            rendered="#{node.type == 'field' and entity.versionable != null and entity.versionable.toString() == 'true'}" />
+                        <h:outputText value="#{messages['commons.no']}"
+                            rendered="#{node.type == 'field' and entity.versionable != null and entity.versionable.toString() == 'false'}" />
+                    </p:column>
+                    <p:column headerText="#{messages['enableEntity.active']}">
+                        <h:outputText value="#{messages['commons.yes']}" rendered="#{node.type == 'field' and entity.active != null and entity.active.toString() == 'true'}" />
+                        <h:outputText value="#{messages['commons.no']}" rendered="#{node.type == 'field' and entity.active != null and entity.active.toString() == 'false'}" />
+                    </p:column>
                     <p:column headerText="#{messages['commons.actions']}" width="10%">
-                        <p:tooltip for="editlink0" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="editlink0" icon="ui-icon-document" oncomplete="PF('cftDialog').show()" action="#{customFieldTemplateBean.initEntity(entity.id)}"
-                            update=":cftForm">
-                            <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
-                        </p:commandButton>
+                        <h:panelGroup rendered="#{node.type == 'tab'}">
+                            <p:tooltip for="editTabBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="editTabBtn" icon="ui-icon-document" oncomplete="PF('groupDialog').show()" update=":groupForm">
+                                <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
+                            </p:commandButton>
+
+                            <p:tooltip for="addFieldGroupBtn" value="#{messages['customizedEntities.addFieldGroup']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="addFieldGroupBtn" icon="ui-icon-contact" action="#{customEntityTemplateBean.newFieldGroup(node)}"
+                                oncomplete="PF('groupDialog').show()" update=":groupForm" />
+
+                            <p:tooltip for="addFieldInTabBtn" value="#{messages['customizedEntities.addField']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="addFieldInTabBtn" icon="ui-icon-plus" oncomplete="PF('cftDialog').show()" actionListener="#{customFieldTemplateBean.newEntity()}"
+                                update=":cftForm">
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.guiPosition}" value="#{node.guiPositionForField}" />
+                            </p:commandButton>
+
+                            <p:tooltip for="deleteTablink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="deleteTablink" icon="ui-icon-trash" oncomplete="PF('tabConfirmDeleteWidget').show()" rendered="#{node.parent.childCount &gt; 1}">
+                                <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
+                            </p:commandButton>
+
+
+                            <p:tooltip for="moveUpTabBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="moveUpTabBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields"
+                                rendered="#{node.canMoveUp}" />
+
+                            <p:tooltip for="moveDownTabBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="moveDownTabBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields"
+                                rendered="#{node.canMoveDown}" />
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{node.type == 'fieldGroup'}">
+                            <p:tooltip for="editFieldGroupBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="editFieldGroupBtn" icon="ui-icon-document" oncomplete="PF('groupDialog').show()" update=":groupForm">
+                                <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
+                            </p:commandButton>
+
+                            <p:tooltip for="addFieldInFieldGroupBtn" value="#{messages['customizedEntities.addField']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="addFieldInFieldGroupBtn" icon="ui-icon-plus" oncomplete="PF('cftDialog').show()"
+                                actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm">
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.guiPosition}" value="#{node.guiPositionForField}" />
+                            </p:commandButton>
+
+                            <p:tooltip for="deleteFieldGrouplink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="deleteFieldGrouplink" icon="ui-icon-trash" oncomplete="PF('fieldGroupConfirmDeleteWidget').show()">
+                                <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
+                            </p:commandButton>
+
+                            <p:tooltip for="moveUpFgBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="moveUpFgBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields"
+                                rendered="#{node.canMoveUp}" />
+
+                            <p:tooltip for="moveDownFgBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="moveDownFgBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields"
+                                rendered="#{node.canMoveDown}" />
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{node.type == 'field'}">
+
+                            <p:tooltip for="editFieldBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="editFieldBtn" icon="ui-icon-document" oncomplete="PF('cftDialog').show()" action="#{customFieldTemplateBean.initEntity(entity.id)}"
+                                update=":cftForm">
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
+                            </p:commandButton>
+
+
+                            <p:commandButton id="enablelink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" oncomplete="PF('confirmEnableWidget').show()">
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
+                            </p:commandButton>
+                            <p:commandButton id="disablelink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}" oncomplete="PF('confirmDisableWidget').show()">
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
+                            </p:commandButton>
+
+                            <p:tooltip for="enablelink" value="#{messages['commons.enable']}" showEffect="slide" hideEffect="slide" />
+
+                            <p:tooltip for="disablelink" value="#{messages['commons.disable']}" showEffect="slide" hideEffect="slide" />
 
 
 
-                        <p:commandButton id="enablelink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" oncomplete="PF('confirmEnableWidget').show()">
-                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
-                        </p:commandButton>
-                        <p:commandButton id="disablelink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}" oncomplete="PF('confirmDisableWidget').show()">
-                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
-                        </p:commandButton>
+                            <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.deleteInlist}" action="#{customEntityTemplateBean.refreshFields}"
+                                name="fieldsDoDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
+                            <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="PF('fieldsConfirmDeleteWidget').show()">
+                                <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}"></f:setPropertyActionListener>
+                            </p:commandButton>
 
-                        <p:tooltip for="enablelink" value="#{messages['commons.enable']}" showEffect="slide" hideEffect="slide" />
-                        <p:confirmDialog id="confirmEnableDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmEnable']}" header="#{messages['commons.enable']}"
-                            severity="alert" widgetVar="confirmEnableWidget" appendTo="@(body)">
-                            <p:panel styleClass="confirm-dialog-content">
-                                <p:commandButton id="enableOk" value="#{messages['commons.yes']}" oncomplete="PF('confirmEnableWidget').hide()" process="@this"
-                                    actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable()}" update="@form" />
-                                <p:commandButton id="enableKo" value="#{messages['commons.no']}" onclick="PF('confirmEnableWidget').hide()" type="button" />
-                            </p:panel>
-                        </p:confirmDialog>
-                        <p:tooltip for="disablelink" value="#{messages['commons.disable']}" showEffect="slide" hideEffect="slide" />
-                        <p:confirmDialog id="confirmDisableDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDisable']}"
-                            header="#{messages['commons.disable']}" severity="alert" widgetVar="confirmDisableWidget" appendTo="@(body)">
-                            <p:panel styleClass="confirm-dialog-content">
-                                <p:commandButton id="disableOk" value="#{messages['commons.yes']}" oncomplete="PF('confirmEnableWidget').hide()" process="@this"
-                                    actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable()}" update="@form" />
-                                <p:commandButton id="disableKo" value="#{messages['commons.no']}" onclick="PF('confirmDisableWidget').hide()" type="button" />
-                            </p:panel>
-                        </p:confirmDialog>
 
-                        <script type="text/javascript">
-																									//<![CDATA[
-																									function handleDeleteComplete(
-																											xhr,
-																											status,
-																											args) {
-																										var result = args.result;
-																										if (typeof (result) != "undefined"
-																												&& !result) {
-																											PF(
-																													'fieldsConfirmCanotDeleteWidget')
-																													.show();
-																										}
-																									}
-																									//]]>
-																								</script>
-                        <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.deleteInlist}" action="#{customEntityTemplateBean.refreshFields}"
-                            name="fieldsDoDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
-                        <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="PF('fieldsConfirmDeleteWidget').show()">
-                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}"></f:setPropertyActionListener>
-                        </p:commandButton>
-                        <p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDelete']}" header="" severity="alert"
-                            widgetVar="fieldsConfirmDeleteWidget" appendTo="@(body)">
-                            <p:panel styleClass="confirm-dialog-content">
-                                <p:commandButton id="deleteOk" value="#{messages['commons.yes']}" oncomplete="fieldsDoDelete()" onclick="PF('fieldsConfirmDeleteWidget').hide()" />
-                                <p:commandButton id="deleteKo" value="#{messages['commons.no']}" onclick="PF('fieldsConfirmDeleteWidget').hide()" type="button" />
-                            </p:panel>
-                        </p:confirmDialog>
-                        <p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmCanotDelete']}" header="" severity="alert"
-                            widgetVar="fieldsConfirmCanotDeleteWidget" appendTo="@(body)">
-                            <p:panel styleClass="confirm-dialog-content">
-                                <p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}" oncomplete="PF('fieldsConfirmCanotDeleteWidget').hide()" update="@this" />
-                            </p:panel>
-                        </p:confirmDialog>
+                            <p:tooltip for="moveUpFBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="moveUpFBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields"
+                                rendered="#{node.canMoveUp}" />
 
+                            <p:tooltip for="moveDownFBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="moveDownFBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields"
+                                rendered="#{node.canMoveDown}" />
+
+                        </h:panelGroup>
                     </p:column>
 
                     <f:facet name="footer">
-                        <p:commandButton id="addlink" value="#{messages['commons.addNew']}" oncomplete="PF('cftDialog').show()"
-                            actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm">
-                            <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
-                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
+                        <p:commandButton id="addTab" value="#{messages['customizedEntities.addNewTab']}" oncomplete="PF('groupDialog').show()"
+                            actionListener="#{customEntityTemplateBean.newTab()}" update=":groupForm">
                         </p:commandButton>
+                        <!--                         <p:commandButton id="addlink" value="#{messages['customizedEntities.addNewField']}" oncomplete="PF('cftDialog').show()" -->
+                        <!--                             actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm"> -->
+                        <!--                             <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" /> -->
+                        <!--                             <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" /> -->
+                        <!--                         </p:commandButton> -->
                     </f:facet>
-                </p:dataTable>
+                </p:treeTable>
 
                 <p:button id="backButton" value="#{messages['action.back']}" outcome="#{customEntityTemplateBean.back()}" includeViewParams="true">
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                 </p:button>
+
+
+                <p:confirmDialog id="confirmDeleteTabDialog" styleClass="confirm-dialog" message="#{messages['customizedEntities.confirmDeleteTab']}" header="" severity="alert"
+                    widgetVar="tabConfirmDeleteWidget" appendTo="@(body)">
+                    <p:panel styleClass="confirm-dialog-content">
+                        <p:commandButton id="confirmDeleteTabOk" value="#{messages['commons.yes']}" action="#{customEntityTemplateBean.removeFieldGrouping()}"
+                            update=":fieldsForm:fields" onclick="PF('tabConfirmDeleteWidget').hide()" process="@this" />
+                        <p:commandButton value="#{messages['commons.no']}" onclick="PF('tabConfirmDeleteWidget').hide()" type="button" />
+                    </p:panel>
+                </p:confirmDialog>
+
+
+                <p:confirmDialog id="confirmDeleteFieldGroupDialog" styleClass="confirm-dialog" message="#{messages['customizedEntities.confirmDeleteFieldGroup']}" header=""
+                    severity="alert" widgetVar="fieldGroupConfirmDeleteWidget" appendTo="@(body)">
+                    <p:panel styleClass="confirm-dialog-content">
+                        <p:commandButton id="confirmDeleteFieldGroupOk" value="#{messages['commons.yes']}" action="#{customEntityTemplateBean.removeFieldGrouping()}"
+                            update=":fieldsForm:fields" onclick="PF('fieldGroupConfirmDeleteWidget').hide()" process="@this" />
+                        <p:commandButton value="#{messages['commons.no']}" onclick="PF('fieldGroupConfirmDeleteWidget').hide()" type="button" />
+                    </p:panel>
+                </p:confirmDialog>
+
+                <p:confirmDialog id="confirmEnableDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmEnable']}" header="#{messages['commons.enable']}"
+                    severity="alert" widgetVar="confirmEnableWidget" appendTo="@(body)">
+                    <p:panel styleClass="confirm-dialog-content">
+                        <p:commandButton id="enableOk" value="#{messages['commons.yes']}" oncomplete="PF('confirmEnableWidget').hide()" process="@this"
+                            actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable()}" update="@form" />
+                        <p:commandButton id="enableKo" value="#{messages['commons.no']}" onclick="PF('confirmEnableWidget').hide()" type="button" />
+                    </p:panel>
+                </p:confirmDialog>
+                <p:confirmDialog id="confirmDisableDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDisable']}" header="#{messages['commons.disable']}"
+                    severity="alert" widgetVar="confirmDisableWidget" appendTo="@(body)">
+                    <p:panel styleClass="confirm-dialog-content">
+                        <p:commandButton id="disableOk" value="#{messages['commons.yes']}" oncomplete="PF('confirmEnableWidget').hide()" process="@this"
+                            actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable()}" update="@form" />
+                        <p:commandButton id="disableKo" value="#{messages['commons.no']}" onclick="PF('confirmDisableWidget').hide()" type="button" />
+                    </p:panel>
+                </p:confirmDialog>
+
+                <p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDelete']}" header="" severity="alert"
+                    widgetVar="fieldsConfirmDeleteWidget" appendTo="@(body)">
+                    <p:panel styleClass="confirm-dialog-content">
+                        <p:commandButton id="deleteOk" value="#{messages['commons.yes']}" oncomplete="fieldsDoDelete()" onclick="PF('fieldsConfirmDeleteWidget').hide()" />
+                        <p:commandButton id="deleteKo" value="#{messages['commons.no']}" onclick="PF('fieldsConfirmDeleteWidget').hide()" type="button" />
+                    </p:panel>
+                </p:confirmDialog>
+                <p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmCanotDelete']}" header="" severity="alert"
+                    widgetVar="fieldsConfirmCanotDeleteWidget" appendTo="@(body)">
+                    <p:panel styleClass="confirm-dialog-content">
+                        <p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}" oncomplete="PF('fieldsConfirmCanotDeleteWidget').hide()" update="@this" />
+                    </p:panel>
+                </p:confirmDialog>
+
+                <script type="text/javascript">
+																	//<![CDATA[
+																	function handleDeleteComplete(
+																			xhr,
+																			status,
+																			args) {
+																		var result = args.result;
+																		if (typeof (result) != "undefined"
+																				&& !result) {
+																			PF(
+																					'fieldsConfirmCanotDeleteWidget')
+																					.show();
+																		}
+																	}
+																	//]]>
+																</script>
+
+
+
             </p:panel>
         </h:form>
 
+        <p:dialog id="groupDialog" header="#{messages['customizedEntities.groupDialogHeader']}" modal="true" closeOnEscape="false" widgetVar="groupDialog" width="50%"
+            closable="false">
+
+            <hftl:decorateFormPanel formId="groupForm" label="#{messages['customizedEntities.'.concat(customEntityTemplateBean.selectedFieldGrouping.type).concat('DialogHeader')]}">
+                <ui:define name="fields">
+                    <hftl:decorateFormField fieldId="parentName" label="#{messages['customizedEntities.parentTabTitle']}"
+                        rendered="#{customEntityTemplateBean.selectedFieldGrouping.parent!=null and customEntityTemplateBean.selectedFieldGrouping.parent.type!='root'}">
+                        <h:outputText id="parentName" value="#{customEntityTemplateBean.selectedFieldGrouping.parent.data}" />
+                    </hftl:decorateFormField>
+
+                    <hftl:decorateFormField fieldId="name" label="#{messages['customizedEntities.title']}">
+                        <p:inputText id="name" value="#{customEntityTemplateBean.selectedFieldGrouping.data}" required="true" />
+                    </hftl:decorateFormField>
+                </ui:define>
+                <ui:define name="buttons">
+                    <p:commandButton value="#{messages['action.save']}" action="#{customEntityTemplateBean.saveUpdateFieldGrouping}" update="@form :fieldsForm:fields"
+                        oncomplete="PF('groupDialog').hide()" />
+                    <p:commandButton value="#{messages['action.cancel']}" action="#{customEntityTemplateBean.cancelFieldGrouping}" oncomplete="PF('groupDialog').hide()" />
+                </ui:define>
+            </hftl:decorateFormPanel>
+        </p:dialog>
 
 
         <p:dialog id="cftDialog" header="#{messages['customFieldTemplate.panel']}" modal="true" closeOnEscape="true" maximizable="true" widgetVar="cftDialog" width="90%">
@@ -137,7 +286,8 @@
                 <hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" maxlength="50" />
                 <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="20"
                     listenerUpdate=":cftForm:listValuesField :cftForm:defaultValueField :cftForm:entityClazzField" />
-                <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" required="true" componentWidth="20" newLine="true" edit="false" /> -->
+                <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
+                <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
                 <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" />
                 <h:panelGroup id="defaultValueField">
                     <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
@@ -165,13 +315,13 @@
                 <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
                 <ui:param name="buttons" value="true" />
                 <ui:define name="buttons">
-                    <hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldForm:fields" edit="true"
+                    <hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true"
                         killConversationOnSave="false">
                         <p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.active}"
-                            actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable}" update="@form :fieldForm:fields" />
+                            actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable}" update="@form :fieldsForm:fields" />
 
                         <p:commandButton value="#{messages['commons.enable']}" rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.disabled}"
-                            actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable}" update="@form :fieldForm:fields" />
+                            actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable}" update="@form :fieldsForm:fields" />
 
                         <p:commandButton value="#{messages['commons.close']}" onclick="PF('cftDialog').hide()" type="button" />
                     </hf:formButtons>
