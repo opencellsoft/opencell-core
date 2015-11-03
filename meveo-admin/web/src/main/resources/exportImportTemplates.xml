@@ -101,7 +101,7 @@
         </groupedTemplates>
     </template>
 
-    <template name="Customer hierarchy and subscriptions with instantiated services">
+    <template name="Customer hierarchy and subscriptions">
         <parameters>
             <entry>
                 <string>provider</string>
@@ -233,7 +233,7 @@
     </template>
     
 
-    <template name="Catalog, Customer hierarchy and subscriptions with instantiated services">
+    <template name="Catalog, Customer hierarchy and subscriptions">
         <parameters>
             <entry>
                 <string>provider</string>
