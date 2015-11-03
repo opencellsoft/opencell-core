@@ -966,7 +966,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						usageDate.appendChild(usageDateTxt);
 						line.appendChild(usageDate);
 						EDR edr = ratedTransaction.getEdr();
-						if (ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs() && edr != null) {
+						if(ratedTransaction.getProvider().getInvoiceConfiguration() != null && ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs() && edr!=null){
 							Element edrInfo = doc.createElement("edr");
 							edrInfo.setAttribute("originRecord", edr.getOriginRecord() != null ? edr.getOriginRecord()
 									: "");
