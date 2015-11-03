@@ -30,8 +30,16 @@ public interface InvoiceWs extends IBaseWs {
 
 	@WebMethod
 	public GetXmlInvoiceResponseDto findXMLInvoice(@WebParam(name = "invoiceNumber") String invoiceNumber);
+	
+	@WebMethod
+	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(@WebParam(name = "invoiceNumber") String invoiceNumber,
+			@WebParam(name = "invoiceType") String invoiceType);
 
 	@WebMethod
 	public GetPdfInvoiceResponseDto findPdfInvoice(@WebParam(name = "invoiceNumber") String invoiceNumber);
+	
+	@WebMethod
+	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@WebParam(name = "invoiceNumber") String invoiceNumber,
+			@WebParam(name = "invoiceType") String invoiceType);
 
 }

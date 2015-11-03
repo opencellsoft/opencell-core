@@ -21,6 +21,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.InvoiceWs;
+import org.meveo.model.billing.InvoiceTypeEnum;
 
 @WebService(serviceName = "InvoiceWs", endpointInterface = "org.meveo.api.ws.InvoiceWs")
 @Interceptors({ LoggingInterceptor.class })
@@ -97,13 +98,18 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 		log.info("generateInvoice Response={}", result);
 		return result;
 	}
-
+	
 	@Override
 	public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber) {
+		return findXMLInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+	}
+
+	@Override
+	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(String invoiceNumber, String invoiceType) {
 		GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
 		try {
 
-			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, getCurrentUser()));
+			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (MissingParameterException mpe) {
@@ -126,13 +132,18 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 		log.info("getXMLInvoice Response={}", result);
 		return result;
 	}
-
+	
 	@Override
 	public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber) {
+		return findPdfInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+	}
+
+	@Override
+	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(String invoiceNumber, String invoiceType) {
 		GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
 		try {
 
-			result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, getCurrentUser()));
+			result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, invoiceType, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (MissingParameterException mpe) {

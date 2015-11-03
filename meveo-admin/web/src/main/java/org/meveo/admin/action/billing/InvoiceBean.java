@@ -61,6 +61,7 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -390,8 +391,19 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	public File getXmlInvoiceDir() {
 		ParamBean param = ParamBean.getInstance();
 		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo");
-		File billingRundir = new File(invoicesDir + File.separator + getCurrentProvider().getCode() + File.separator
-				+ "invoices" + File.separator + "xml" + File.separator + entity.getBillingRun().getId());
+
+		File billingRundir = new File(invoicesDir
+				+ File.separator
+				+ getCurrentProvider().getCode()
+				+ File.separator
+				+ "invoices"
+				+ File.separator
+				+ "xml"
+				+ File.separator
+				+ (getEntity().getBillingRun() == null ? DateUtils.formatDateWithPattern(getEntity().getAuditable()
+						.getCreated(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss"))
+						: getEntity().getBillingRun().getId()));
+
 		return billingRundir;
 	}
 
