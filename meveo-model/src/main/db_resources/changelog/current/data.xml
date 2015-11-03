@@ -418,5 +418,16 @@
 		<sql>DELETE FROM crm_custom_field_tmpl WHERE code='CRM_ACCOUNT_TYPE'</sql>
 		<sql>DELETE FROM crm_custom_field_tmpl WHERE code='CRM_ACCOUNT_PARENT'</sql>
 	</changeSet>
+	
+	<changeSet id="#1229_20151103" author="anasseh">		
+		<sql>
+				UPDATE billing_invoice_configuration SET  display_subscriptions = FALSE WHERE  display_subscriptions IS NULL;
+				UPDATE billing_invoice_configuration SET  display_services = FALSE WHERE  display_services IS NULL;
+				UPDATE billing_invoice_configuration SET  display_offers = FALSE WHERE  display_offers IS NULL;
+				UPDATE billing_invoice_configuration SET  display_edrs = FALSE WHERE  display_edrs IS NULL;
+				UPDATE billing_invoice_configuration SET  display_detail = FALSE WHERE  display_detail IS NULL;
+				UPDATE billing_invoice_configuration SET  display_provider = FALSE WHERE  display_provider IS NULL;
+	   </sql>
+	</changeSet>	
 		
 </databaseChangeLog>
