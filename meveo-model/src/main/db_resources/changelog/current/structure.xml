@@ -226,6 +226,10 @@
 	<column name="display_provider" type="BOOL" defaultValueBoolean="false"></column>
 	</addColumn>
 	</changeSet>
+	
+	  <changeSet id="1201_20151102" author="Mbarek">
+		<sql>ALTER TABLE crm_custom_field_tmpl DROP CONSTRAINT IF EXISTS uk_odjxv76fr14lrm19mt961b04p;</sql>
+	</changeSet>
 
     <changeSet id="#1101_20151021" author="AndriusKarpavicius">
         <createSequence sequenceName="CRM_CUSTOM_FIELD_FIELDS_SEQ"/>
@@ -394,7 +398,12 @@
         
         <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="account_type"/>
         
-    </changeSet>         
+    </changeSet> 
+    
+    <changeSet id="1201-20151102" author="Mbarek">
+		<addUniqueConstraint columnNames="code,applies_to,provider_id" constraintName="uk_abfci88fr16lqf19cf961b08d" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="crm_custom_field_tmpl" />
+	</changeSet>          
 
 	<changeSet author="EdwardLegaspi" id="#1147_20151009">
 		<addColumn tableName="crm_provider">
