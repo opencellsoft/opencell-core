@@ -1055,15 +1055,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					taxInvoiceAgregate.getAmountTax()));
 
 			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
-				subCategoryInvoiceAgregate.addAmountTax(taxInvoiceAgregate.getAmountTax());
+				if (subCategoryInvoiceAgregate.getQuantity() != null
+						&& subCategoryInvoiceAgregate.getQuantity().compareTo(BigDecimal.ZERO) != 0
+						&& subCategoryInvoiceAgregate.getAmountWithoutTax().signum() != 0) {
+					subCategoryInvoiceAgregate.addAmountTax(taxInvoiceAgregate.getAmountTax());
+				}
 			}
 		}
 
 		for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
-			subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithoutTax().add(
-					subCategoryInvoiceAgregate.getAmountTax()));
-			subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax().setScale(
-					rounding, RoundingMode.HALF_UP));
+			if (subCategoryInvoiceAgregate.getQuantity() != null
+					&& subCategoryInvoiceAgregate.getQuantity().compareTo(BigDecimal.ZERO) != 0
+					&& subCategoryInvoiceAgregate.getQuantity().signum() != 0) {
+				subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithoutTax().add(
+						subCategoryInvoiceAgregate.getAmountTax()));
+				subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax().setScale(
+						rounding, RoundingMode.HALF_UP));
+			}
 		}
 	}
 
