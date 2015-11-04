@@ -1947,4 +1947,18 @@
 		<addUniqueConstraint columnNames="code, provider_id" constraintName="uk_rsylyj7p2u3xkey9tkiu9rn7d" deferrable="false" disabled="false" initiallyDeferred="false" tableName="crm_seller"/>
 	</changeSet>
 
+	<changeSet id="#1227_20151104x" author="EdwardLegaspi"
+		failOnError="false">
+		<preConditions>
+			<not>
+				<columnExists tableName="BILLING_INVOICE_CONFIGURATION"
+					columnName="display_provider" />
+			</not>
+		</preConditions>
+		<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+			<column name="display_provider" type="BOOL"
+				defaultValueBoolean="false"></column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
