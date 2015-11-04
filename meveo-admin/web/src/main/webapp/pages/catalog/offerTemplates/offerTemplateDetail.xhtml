@@ -48,9 +48,7 @@
 						valueLabelField="code" newLine="true" />
 				</p:tab>
 
-				<p:tab title="#{messages['customFieldTemplate.cfValues']}">
-                    <hf:customFields id="customFields" backingBean="#{offerTemplateBean}" messagesId=":formId:messages" />
-                </p:tab>
+                <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" />
 
 			</p:tabView>
         </hftl:formPanel>

@@ -235,9 +235,7 @@
 											</p:fieldset>
 										</p:tab>
 
-										<p:tab title="#{messages['customFieldTemplate.cfValues']}" id="tab2">
-											<hf:customFields id="customFields" backingBean="#{customerAccountBean}" messagesId=":parentTab:formCustomerAccount:messages"/>
-										</p:tab>
+										<hftl:customFields backingBean="#{customerAccountBean}" messagesId=":parentTab:formCustomerAccount:messages"/>
 
 									</p:tabView>
 

@@ -200,9 +200,7 @@
 								</p:fieldset>
 							</p:tab>
 
-							<p:tab title="#{messages['customFieldTemplate.cfValues']}" id="tab2">
-								<hf:customFields id="customFields" backingBean="#{userAccountBean}" messagesId=":userAccountFormId:messages"/>
-							</p:tab>
+							<hftl:customFields backingBean="#{userAccountBean}" messagesId=":userAccountFormId:messages"/>
 
 							<c:forEach items="#{userAccountBean.entity.prepaidWallets}"
 								var="wallet"> 

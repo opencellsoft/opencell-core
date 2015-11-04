@@ -63,10 +63,10 @@
 								field="endDate" />
 							<hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true"
 								field="disabled" isMessage="true"/>
-					     </p:tab>
-					<p:tab title="#{messages['customFieldTemplate.cfValues']}">
-						<hf:customFields id="customFields" backingBean="#{accessBean}" messagesId=":formId:messages"/>
-					</p:tab>
+				     </p:tab>
+
+					<hftl:customFields backingBean="#{accessBean}" messagesId=":formId:messages"/>
+
 				</p:tabView>
 			</hftl:formPanel>
 		</h:panelGroup >

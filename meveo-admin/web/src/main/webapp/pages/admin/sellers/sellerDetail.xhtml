@@ -105,10 +105,7 @@
 
 				</p:tab>
 
-				<p:tab title="#{messages['customFieldTemplate.cfValues']}">
-					<hf:customFields id="customFields" backingBean="#{sellerBean}"
-						messagesId=":sellerFormId:messages" />
-				</p:tab>
+                <hftl:customFields backingBean="#{sellerBean}" messagesId=":sellerFormId:messages" />
 
 			</p:tabView>
 		</hftl:formPanel>

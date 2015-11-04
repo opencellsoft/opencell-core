@@ -102,11 +102,9 @@
 
 				</p:tab>
 
-				<p:tab title="#{messages['customFieldTemplate.cfValues']}">
-					<hf:customFields id="customFields"  backingBean="#{recurringChargeTemplateBean}" messagesId=":formPanel:reccuringChargeId:messages"/>
-				</p:tab>
+				<hftl:customFields backingBean="#{recurringChargeTemplateBean}" messagesId=":formPanel:reccuringChargeId:messages"/>
 				
-					<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{pricePlanMatrixBean.objectId!=null}" >  
+				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{pricePlanMatrixBean.objectId!=null}" >  
                     <p:panel>
 						<hf:formDecorateField fieldId="recurringChargeCode" label="#{messages['pricePlanMatrix.eventCode']} :">
 							<h:outputText id="recurringChargeCode"

@@ -106,9 +106,9 @@
 									field="invoicingCalendar" valueLabelField="code" required="false" popup="false"
 									listBean="#{calendarBean}" />
 							</p:tab>
-							<p:tab title="#{messages['customFieldTemplate.cfValues']}">
-								<hf:customFields id="customFields" backingBean="#{serviceTemplateBean}" messagesId=":tabView:serviceTemplatePabel:formId:messages" />
-							</p:tab>
+
+							<hftl:customFields backingBean="#{serviceTemplateBean}" messagesId=":tabView:serviceTemplatePabel:formId:messages" />
+
 						</p:tabView>
 					</hf:formPanel>
 				</p:tab>

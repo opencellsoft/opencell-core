@@ -342,9 +342,7 @@
 
 										</p:tab>
 
-										<p:tab title="#{messages['customFieldTemplate.cfValues']}" id="tab2">
-                                            <hf:customFields id="customFields" backingBean="#{billingAccountBean}" messagesId=":parentTab:formId:messages" />
-										</p:tab>
+                                        <hftl:customFields backingBean="#{billingAccountBean}" messagesId=":parentTab:formId:messages" />
 
 										<p:tab title="#{messages['counterPeriod.title']}" id="tab3"
 											rendered="#{billingAccountBean.entity.id!=null}">
