@@ -32,7 +32,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
 	private static final String ADMINISTRATOR="administrateur";
 
 	private Logger log = LoggerFactory.getLogger(MeveoFtpUserManager.class);
-	private static final String PREFIX = ParamBean.getInstance().getProperty("ftpserver.path", "/tmp/meveoftp");
+	private static final String PREFIX = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveoftp");
 
 	private UserService userService;
 
@@ -63,7 +63,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
 				meveoUser = userService.loginChecks(user, password);
 				return getUserFromMeveoUser(meveoUser);
 			} catch (LoginException |FtpException e) {
-				log.error("failed login into FTP server with credential {}", user, e);
+				log.error("Ftp user {} failed login into FTP server", user, e);
 				throw new AuthenticationFailedException("Authentication failed");
 			}
 
@@ -95,27 +95,18 @@ public class MeveoFtpUserManager extends AbstractUserManager {
 	@Override
 	public User getUserByName(String username) throws FtpException {
 		log.debug("getUserByName... " + username);
-		org.meveo.model.admin.User meveoUser = userService.findByUsername(username);
-		if (meveoUser == null || meveoUser.isDisabled()) {
-			log.debug("not found ftp user {} or user is disabled",username);
-			return null;
+		boolean result=userService.isUsernameExists(username);
+		if(!result){
+			log.error("Ftp user {} doesn't exist!",username);
+			throw new FtpException(String.format("Ftp user {} doesn't exist!", username));
 		}
-		String homeDir = String.format("%s%s%s", PREFIX,File.separator, meveoUser.getUserName());
-		log.debug("ftp user home {}",homeDir);
-		File home = new File(homeDir);
-		if (!home.exists()) {
-			home.mkdirs();
-		}
+		
 		BaseUser user = new BaseUser();
-		user.setName(meveoUser.getUserName());
-		user.setEnabled(meveoUser.isActive());
-		user.setHomeDirectory(homeDir);
+		user.setName(username);
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new ConcurrentLoginPermission(0,0));
 		authorities.add(new TransferRatePermission(0,0));
-
 		user.setAuthorities(authorities);
-
 		user.setMaxIdleTime(HOUR);
 		return user;
 	}
@@ -134,7 +125,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
 	 * @return ftp user
 	 */
 	private User getUserFromMeveoUser(org.meveo.model.admin.User meveoUser) throws FtpException{
-		String homeDir = String.format("%s%s%s", PREFIX,File.separator, meveoUser.getUserName());
+		String homeDir = String.format("%s%s%s", PREFIX,File.separator, meveoUser.getProvider().getCode());
 		log.debug("ftp user home {}",homeDir);
 		File home = new File(homeDir);
 		if (!home.exists()) {
