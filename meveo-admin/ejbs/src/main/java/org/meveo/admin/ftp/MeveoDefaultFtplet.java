@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.apache.ftpserver.ftplet.DefaultFtplet;
 import org.apache.ftpserver.ftplet.FtpException;
-import org.apache.ftpserver.ftplet.FtpFile;
 import org.apache.ftpserver.ftplet.FtpRequest;
 import org.apache.ftpserver.ftplet.FtpSession;
 import org.apache.ftpserver.ftplet.FtpletResult;
@@ -18,7 +17,8 @@ import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
 import org.meveo.model.Auditable;
-import org.meveo.model.mediation.ImportedFile;
+import org.meveo.model.mediation.ActionEnum;
+import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 
@@ -29,73 +29,47 @@ public class MeveoDefaultFtplet extends DefaultFtplet {
 
 	@Inject
 	@FileUpload
-	private Event<ImportedFile> upload;
+	private Event<MeveoFtpFile> upload;
 
 	@Inject
 	@FileDownload
-	private Event<ImportedFile> download;
+	private Event<MeveoFtpFile> download;
 
 	@Inject
 	@FileDelete
-	private Event<ImportedFile> delete;
+	private Event<MeveoFtpFile> delete;
 
 	@Inject
 	@FileRename
-	private Event<ImportedFile> rename;
-	
+	private Event<MeveoFtpFile> rename;
+
 	@Inject
 	private UserService userService;
 
 	@Override
-	public FtpletResult onDeleteEnd(FtpSession session, FtpRequest request) throws FtpException, IOException {
-		log.debug("ftp end delete... ");
-		FtpFile file = session.getFileSystemView().getFile(request.getArgument());
-		if(!file.doesExist()){
-			ImportedFile imported = new ImportedFile(file.getAbsolutePath(), file.getSize());
-			User user=session.getUser();
-			org.meveo.model.admin.User meveoUser=userService.findByUsername(user.getName());
-			imported.setProvider(meveoUser.getProvider());
-			imported.setDisabled(false);
-			imported.setAuditable(new Auditable());
-			imported.getAuditable().setCreator(meveoUser);
-			log.debug("trace ftp file {}",imported);
+	public FtpletResult onDeleteStart(FtpSession session, FtpRequest request) throws FtpException, IOException {
+		log.debug("ftp start delete... ");
+		MeveoFtpFile file = getEventFile(session, request,ActionEnum.DELETE);
+		if (file != null) {
+			delete.fire(file);
 		}
-		return super.onDeleteEnd(session, request);
+		return super.onDownloadStart(session, request);
 	}
-
-
-	private ImportedFile getEventFile(FtpSession session, FtpRequest request) throws FtpException {
-		FtpFile file = session.getFileSystemView().getFile(request.getArgument());
-		log.debug("ftp file {} is existed {}",file.getAbsolutePath(),file.doesExist());
-		if(file.doesExist()){
-			ImportedFile imported = new ImportedFile(file.getAbsolutePath(), file.getSize(), file.getLastModified());
-			User user=session.getUser();
-			org.meveo.model.admin.User meveoUser=userService.findByUsername(user.getName());
-			imported.setProvider(meveoUser.getProvider());
-			imported.setDisabled(false);
-			imported.setAuditable(new Auditable());
-			imported.getAuditable().setCreator(meveoUser);
-			log.debug("trace ftp file {}",imported);
-			return imported;
-		}
-		return null;
-	}
-
 	@Override
 	public FtpletResult onDownloadEnd(FtpSession session, FtpRequest request) throws FtpException, IOException {
 		log.debug("ftp end download ...");
-		ImportedFile imported = getEventFile(session,request);
-		if(imported!=null){
-			download.fire(imported);
+		MeveoFtpFile file = getEventFile(session, request,ActionEnum.DOWNLOAD);
+		if (file != null) {
+			download.fire(file);
 		}
 		return super.onDownloadEnd(session, request);
 	}
 
 	@Override
 	public FtpletResult onRenameEnd(FtpSession session, FtpRequest request) throws FtpException, IOException {
-		ImportedFile imported = getEventFile(session,request);
-		if(imported!=null){
-			rename.fire(imported);
+		MeveoFtpFile file = getEventFile(session, request,ActionEnum.RENAME);
+		if (file != null) {
+			rename.fire(file);
 		}
 		return super.onRenameEnd(session, request);
 	}
@@ -103,11 +77,27 @@ public class MeveoDefaultFtplet extends DefaultFtplet {
 	@Override
 	public FtpletResult onUploadEnd(FtpSession session, FtpRequest request) throws FtpException, IOException {
 		log.debug("ftp end upload... ");
-		ImportedFile imported = getEventFile(session,request);
-		if(imported!=null){
-			upload.fire(imported);
+		MeveoFtpFile file = getEventFile(session, request,ActionEnum.UPLOAD);
+		if (file != null) {
+			upload.fire(file);
 		}
 		return super.onUploadEnd(session, request);
 	}
-
+	private MeveoFtpFile getEventFile(FtpSession session, FtpRequest request, ActionEnum action) throws FtpException {
+		org.apache.ftpserver.ftplet.FtpFile ftp = session.getFileSystemView().getFile(request.getArgument());
+		log.debug("ftp file {} is existed {}", ftp.getAbsolutePath(), ftp.doesExist());
+		if (ftp.doesExist()) {
+			MeveoFtpFile file = new MeveoFtpFile(ftp.getAbsolutePath(), ftp.getSize(), ftp.getLastModified());
+			User user = session.getUser();
+			file.setAction(action);
+			org.meveo.model.admin.User meveoUser = userService.findByUsername(user.getName());
+			file.setProvider(meveoUser.getProvider());
+			file.setDisabled(false);
+			file.setAuditable(new Auditable());
+			file.getAuditable().setCreator(meveoUser);
+			log.debug("trace ftp file {}", file);
+			return file;
+		}
+		return null;
+	}
 }

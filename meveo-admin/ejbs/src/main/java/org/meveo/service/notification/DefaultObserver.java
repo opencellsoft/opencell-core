@@ -43,6 +43,7 @@ import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.mediation.ImportedFile;
+import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.InstantMessagingNotification;
@@ -174,7 +175,7 @@ public class DefaultObserver {
             		notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_DOWNLOAD||
             		notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_DELETE||
             		notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_RENAME){
-            	notificationHistoryService.create(notif, e,"", NotificationHistoryStatusEnum.SENT);
+            	notificationHistoryService.createNotificationByAuditable(notif, e,"", NotificationHistoryStatusEnum.SENT);
             }else if(notif.getEventTypeFilter() != NotificationEventTypeEnum.INBOUND_REQ){
                 notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
             }
@@ -212,7 +213,6 @@ public class DefaultObserver {
     }
 
     private void checkEvent(NotificationEventTypeEnum type, BaseEntity entity) {
-
         for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(type, entity)) {
             fireNotification(notif, entity);
         }
@@ -315,19 +315,19 @@ public class DefaultObserver {
 		log.debug("DefaultObserver.knownMeveoInstance" + event);
 	}
 	
-	public void ftpFileUpload(@Observes @FileUpload ImportedFile importedFile){
+	public void ftpFileUpload(@Observes @FileUpload MeveoFtpFile importedFile){
 		log.debug("observe a file upload event ");
 		checkEvent(NotificationEventTypeEnum.FILE_UPLOAD,importedFile);
 	}
-	public void ftpFileDownload(@Observes @FileDownload ImportedFile importedFile){
+	public void ftpFileDownload(@Observes @FileDownload MeveoFtpFile importedFile){
 		log.debug("observe a file download event ");
 		checkEvent(NotificationEventTypeEnum.FILE_DOWNLOAD,importedFile);
 	}
-	public void ftpFileDelete(@Observes @FileDelete ImportedFile importedFile){
+	public void ftpFileDelete(@Observes @FileDelete MeveoFtpFile importedFile){
 		log.debug("observe a file delete event ");
 		checkEvent(NotificationEventTypeEnum.FILE_DELETE,importedFile);
 	}
-	public void ftpFileRename(@Observes @FileRename ImportedFile importedFile){
+	public void ftpFileRename(@Observes @FileRename MeveoFtpFile importedFile){
 		log.debug("observe a file rename event ");
 		checkEvent(NotificationEventTypeEnum.FILE_RENAME,importedFile);
 	}
