@@ -207,9 +207,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					: "");
 			customerTag.setAttribute("sellerCode", customer.getSeller().getCode() != null ? customer.getSeller()
 					.getCode() : "");
-			customerTag.setAttribute("brand", customer.getCustomerBrand().getCode() != null ? customer
+			customerTag.setAttribute("brand", customer.getCustomerBrand() != null ? customer
 					.getCustomerBrand().getCode() : "");
-			customerTag.setAttribute("category", customer.getCustomerCategory().getCode() != null ? customer
+			customerTag.setAttribute("category", customer.getCustomerCategory() != null ? customer
 					.getCustomerCategory().getCode() : "");
 			if (PaymentMethodEnum.DIRECTDEBIT.equals(invoice.getBillingAccount().getPaymentMethod())) {
 				customerTag.setAttribute("mandateIdentification",
