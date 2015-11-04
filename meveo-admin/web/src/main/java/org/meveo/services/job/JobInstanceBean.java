@@ -1,6 +1,8 @@
 package org.meveo.services.job;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +110,13 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
 
         // Create missing custom field templates if needed
-        List<CustomFieldTemplate> jobTemplates = customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobCustomFields.values(), getCurrentProvider());
+        Collection<CustomFieldTemplate> jobTemplatesFromJob = null;
+        if (jobCustomFields == null) {
+            jobTemplatesFromJob = new ArrayList<CustomFieldTemplate>();
+        } else {
+            jobTemplatesFromJob = jobCustomFields.values();
+        }
+        List<CustomFieldTemplate> jobTemplates = customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentProvider());
 
         return jobTemplates;
     }

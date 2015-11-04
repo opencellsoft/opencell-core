@@ -119,9 +119,7 @@
 								field="invoiceConfiguration" childField="displayProvider" id="displayProvider"/>		
                 </p:tab>
 
-                <p:tab title="#{messages['customFieldTemplate.cfValues']}">
-                    <hf:customFields id="customFields" backingBean="#{providerBean}" messagesId=":providerFormPanel:providerFormId:messages" />
-                </p:tab>
+                <hftl:customFields backingBean="#{providerBean}" messagesId=":providerFormPanel:providerFormId:messages" />
             </p:tabView>
         </hf:formPanel>
     </ui:define>

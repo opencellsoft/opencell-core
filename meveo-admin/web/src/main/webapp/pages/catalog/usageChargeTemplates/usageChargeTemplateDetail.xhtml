@@ -99,9 +99,7 @@
                             
 				</p:tab>
 
-				<p:tab title="#{messages['customFieldTemplate.cfValues']}">
-					<hf:customFields id="customFields" backingBean="#{usageChargeTemplateBean}" messagesId=":panelUsage:usageChargeId:messages"/>
-				</p:tab>
+				<hftl:customFields backingBean="#{usageChargeTemplateBean}" messagesId=":panelUsage:usageChargeId:messages"/>
 				
 				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{pricePlanMatrixBean.objectId!=null}" >  
                     <p:panel>

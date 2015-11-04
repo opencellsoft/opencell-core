@@ -329,11 +329,9 @@
 											label="#{messages['subscription.endAgrementDate']}"
 											field="endAgrementDate" />
 									</p:tab>
-									<p:tab title="#{messages['customFieldTemplate.cfValues']}">
-										<hf:customFields id="customFields"
-											backingBean="#{subscriptionBean}"
-											messagesId=":subscriptionTab:subscriptionFormId:messages" />
-									</p:tab>
+
+									<hftl:customFields backingBean="#{subscriptionBean}" messagesId=":subscriptionTab:subscriptionFormId:messages" />
+
 								</p:tabView>
 						</hftl:formPanel>
 					</p:tab>
@@ -942,9 +940,8 @@
                         <hftl:formField label="#{messages['access.endDate']}" field="endDate" edit="true" />
                     </p:tab>
 
-                    <p:tab title="#{messages['customFieldTemplate.cfValues']}">
-                        <hf:customFields id="customFields" edit="true" backingBean="#{accessBean}" messagesId=":accessForm:messages" />
-                    </p:tab>
+                    <hftl:customFields prefix="access" edit="true" backingBean="#{accessBean}" messagesId=":accessForm:messages" />
+
                 </p:tabView>
                 <ui:param name="buttons" value="true"/>
                 <ui:define name="buttons">    

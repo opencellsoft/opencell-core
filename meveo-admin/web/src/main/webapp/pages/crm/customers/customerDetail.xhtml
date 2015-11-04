@@ -135,9 +135,8 @@
 <!-- 								</p:fieldset> -->
 <!-- 							</p:tab> -->
 
-							<p:tab title="#{messages['customFieldTemplate.cfValues']}" id="tab2">
-								<hf:customFields backingBean="#{customerBean}" id="customFields" messagesId=":formCustomer:messages" />
-							</p:tab>
+								<hftl:customFields backingBean="#{customerBean}" messagesId=":formCustomer:messages" />
+
 						</p:tabView>
 
                     <hf:formButtons columns="5" backingBean="#{customerBean}" edit="#{customerBean.edit}" ajaxSubmit="true"

@@ -57,10 +57,10 @@
         <tag-name>exportToXmlDialogs</tag-name>
         <source>exportToXmlDialogs.xhtml</source>
     </tag>
-    <!-- <tag> -->
-    <!-- <tag-name>customFields</tag-name> -->
-    <!-- <source>customFields.xhtml</source> -->
-    <!-- </tag> -->
+    <tag>
+        <tag-name>customFields</tag-name>
+        <source>customFields.xhtml</source>
+    </tag>
     <tag>
         <tag-name>searchPanel</tag-name>
         <source>searchPanel.xhtml</source>

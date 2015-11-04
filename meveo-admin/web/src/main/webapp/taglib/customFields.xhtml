@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<!--
+    A tag to manage custom field values of an entity
+    Makes part of custom field management tag group 
+    
+    Attributes
+        prefix - prefix for component to distinguish when used multiple times in save page
+        backingBean - backing bean associated with entity
+        edit - edit mode. Inherited from formPanel otherwise
+        datePatter - date pattern   
+        messagesId - an ID of messages component for validation messages
+        
+-->
+
+<ui:composition>
+
+    <c:if test="${empty(formLevelEdit)}">
+        <c:set var="formLevelEdit" value="${backingBean.edit}" />
+    </c:if>
+    <c:if test="${empty(edit)}">
+        <c:set var="edit" value="#{formLevelEdit}" />
+    </c:if>
+    <c:if test="${empty(datePattern)}">
+        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+    </c:if>
+    <c:if test="${empty(messagesId)}">
+        <c:set var="messagesId" value=":formPanel:formId:messages" />
+    </c:if>
+    <c:if test="${empty(prefix)}">
+        <c:set var="prefix" value="cf" />
+    </c:if>
+
+
+    <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
+    <o:importFunctions type="org.meveo.model.crm.CustomFieldValue" var="cfv" />
+
+    <f:event listener="#{backingBean.validateCustomFields}" type="postValidate" />
+
+    <c:set var="index" value="0" />
+
+    <c:forEach items="#{backingBean.groupedCustomField.children}" var="cfTab">
+
+        <p:tab title="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}">
+
+            <c:forEach items="${cfTab.children}" var="cfFieldOrFg">
+                <c:if test="#{cfFieldOrFg.type == 'field'}">
+                    <c:set var="cft" value="#{cfFieldOrFg.data}" />
+                    <c:if test="#{(not cft.disabled) or (cft.disabled and not cft.instance.isValueEmptyForGui())}">
+                        <hf:customField backingBean="#{backingBean}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" prefix="#{prefix}" />
+                    </c:if>
+                </c:if>
+                <c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
+                    <p:panel header="#{cfFieldOrFg.data}">
+                        <c:forEach items="${cfFieldOrFg.children}" var="cfField">
+                            <c:set var="cft" value="#{cfField.data}" />
+                            <c:if test="#{(not cft.disabled) or (cft.disabled and not cft.instance.isValueEmptyForGui())}">
+                                <hf:customField backingBean="#{backingBean}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" prefix="#{prefix}" />
+                            </c:if>
+                        </c:forEach>
+                    </p:panel>
+                </c:if>
+            </c:forEach>
+
+            <c:if test="#{index==0}">
+                <p:dialog id="#{prefix}dlg_periodValues" widgetVar="#{prefix}periodValuesDialogWidget" header="#{messages['customFieldTemplate.periodValues']}" closeOnEscape="true"
+                    modal="true" appendTo="@(body)" rendered="#{edit}" width="700">
+
+                    <p:panel>
+                        <h:panelGroup id="#{prefix}periodFields" layout="block" styleClass="form-panel">
+                            <hf:formDecorateField fieldId="period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
+                                <h:outputText id="period_start_date" value="#{backingBean.customFieldSelectedPeriod.periodStartDate}">
+                                    <f:convertDateTime type="date" pattern="#{datePattern}" />
+                                </h:outputText>
+                            </hf:formDecorateField>
+                            <hf:formDecorateField fieldId="period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}">
+                                <h:outputText id="period_end_date" value="#{backingBean.customFieldSelectedPeriod.periodEndDate}">
+                                    <f:convertDateTime type="date" pattern="#{datePattern}" />
+                                </h:outputText>
+                            </hf:formDecorateField>
+                            <p:remoteCommand name="updateMasterTable" update="#{backingBean.customFieldSelectedPeriodId}" process="@this" partialSubmit="true"
+                                partialSubmitFilter=":not([name*='addNewFields'])" />
+                            <hftl:customFieldListTable edit="#{edit}" cft="#{backingBean.customFieldSelectedTemplate}" backingBean="#{backingBean}"
+                                field="#{backingBean.customFieldSelectedPeriod.cfValue}" updateOnAddEdit="#{backingBean.customFieldSelectedPeriodId}" messagesId="#{messagesId}"
+                                popupWidgetVar="#{prefix}periodValuesDialogWidget" />
+
+                        </h:panelGroup>
+                    </p:panel>
+                </p:dialog>
+            </c:if>
+        </p:tab>
+        <c:set var="index" value="#{index+1}" />
+    </c:forEach>
+
+</ui:composition>
+</html>

@@ -101,7 +101,7 @@
         </groupedTemplates>
     </template>
 
-    <template name="Customer hierarchy and subscriptions with instantiated services">
+    <template name="Customer hierarchy and subscriptions">
         <parameters>
             <entry>
                 <string>provider</string>
@@ -145,7 +145,6 @@
                     <java-class>org.meveo.model.crm.CustomFieldPeriod</java-class>
                 </classesToExportAsFull>
             </template>
-            <template name="ServiceInstance" entityToExport="org.meveo.model.billing.ServiceInstance" />
             <template name="Access" entityToExport="org.meveo.model.mediation.Access">
                 <classesToExportAsFull>
                     <java-class>org.meveo.model.crm.CustomFieldFields</java-class>
@@ -233,7 +232,7 @@
     </template>
     
 
-    <template name="Catalog, Customer hierarchy and subscriptions with instantiated services">
+    <template name="Catalog, Customer hierarchy and subscriptions">
         <parameters>
             <entry>
                 <string>provider</string>
@@ -356,7 +355,6 @@
                     <java-class>org.meveo.model.crm.CustomFieldPeriod</java-class>
                 </classesToExportAsFull>
             </template>
-            <template name="ServiceInstance" entityToExport="org.meveo.model.billing.ServiceInstance" />
             <template name="Access" entityToExport="org.meveo.model.mediation.Access">
                 <classesToExportAsFull>
                     <java-class>org.meveo.model.crm.CustomFieldFields</java-class>

@@ -14,6 +14,7 @@ import javax.faces.event.ComponentSystemEvent;
 import javax.inject.Inject;
 
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.admin.custom.GroupedCustomField;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.MessagesUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -52,9 +53,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     private Map<String, Object> customFieldNewValue = new HashMap<String, Object>();
 
     /**
-     * Custom field templates
+     * Custom field templates grouped into tabs and field groups
      */
-    protected List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
+    private GroupedCustomField groupedCustomField = null;
 
     @Inject
     private CalendarService calendarService;
@@ -88,7 +89,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     protected void initCustomFields() {
 
-        customFieldTemplates = getApplicateCustomFieldTemplates();
+        List<CustomFieldTemplate> customFieldTemplates = getApplicateCustomFieldTemplates();
 
         if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
             for (CustomFieldTemplate cft : customFieldTemplates) {
@@ -105,11 +106,13 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                 }
             }
         }
+
+        groupedCustomField = new GroupedCustomField(customFieldTemplates, "Custom fields", false);      
     }
 
     private void updateCustomFieldsInEntity() {
 
-        for (CustomFieldTemplate cft : customFieldTemplates) {
+        for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
             CustomFieldInstance cfi = cft.getInstance();
             // Not saving empty values
             if (cfi.isValueEmptyForGui()) {
@@ -122,7 +125,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             } else {
                 serializeForGUI(cft, cfi);
                 cfi.updateAudit(getCurrentUser());
-                if (((ICustomFieldEntity) entity).getCfFields() == null) {                    
+                if (((ICustomFieldEntity) entity).getCfFields() == null) {
                     ((ICustomFieldEntity) entity).initCustomFields();
                 }
                 ((ICustomFieldEntity) entity).getCfFields().addUpdateCFI(cfi);
@@ -263,19 +266,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         }
     }
 
-    public List<CustomFieldTemplate> getCustomFieldTemplates() {
-        if (customFieldTemplates == null || customFieldTemplates.size() == 0) {
-            if (entity != null) {
-                initCustomFields();
-            } else {
-                initEntity();
-            }
-        }
-        return customFieldTemplates;
-    }
 
-    public void setCustomFieldTemplates(List<CustomFieldTemplate> customFieldTemplates) {
-        this.customFieldTemplates = customFieldTemplates;
+    public GroupedCustomField getGroupedCustomField() {
+        return groupedCustomField;
     }
 
     public CustomFieldPeriod getCustomFieldSelectedPeriod() {
@@ -371,6 +364,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         // Set value
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
             period.getCfValue().setSingleValue(value, cft.getFieldType());
+            if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                period.getCfValue().setEntityReferenceValueForGUI((BusinessEntity) value);
+            }
         } else {
             Map<String, Object> newValue = new HashMap<String, Object>();
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
@@ -452,10 +448,11 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         boolean valid = true;
         FacesContext fc = FacesContext.getCurrentInstance();
-        for (CustomFieldTemplate cft : customFieldTemplates) {
+        for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
             if (cft.isActive() && cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
 
                 CustomFieldInstance cfi = cft.getInstance();
+
                 // Fail validation on non empty values
                 if (cfi.isValueEmptyForGui()) {
 

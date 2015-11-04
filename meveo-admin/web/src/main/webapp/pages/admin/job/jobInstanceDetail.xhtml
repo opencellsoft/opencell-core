@@ -4,13 +4,13 @@
     xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:s="http://jboss.org/seam/faces"
-	xmlns:sc="http://java.sun.com/jsf/composite/components/seamfaces"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
-    xmlns:e="http://primefaces.org/extension">
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
 
     <ui:define name="metadata">
         <f:metadata>
             <f:viewParam name="objectId" value="#{jobInstanceBean.objectId}" />
+            <f:viewParam name="tab" value="#{jobInstanceBean.activeTab}"/>
         </f:metadata>
     </ui:define>
     
@@ -34,57 +34,52 @@
                 <h:outputText value="#{messages['jobInstance.title']}" />
             </f:facet>
 
-            <hf:formPanel id="formPanel" backingBean="#{jobInstanceBean}" showFormButtons="false">
-              <p:tabView id="tabView">
+            <hftl:formPanel backingBean="#{jobInstanceBean}" showFormButtons="false">
+                        
+              <p:tabView id="tabView" activeIndex="#{jobInstanceBean.activeTab}">
 				<p:tab title="#{messages['job.info']}">
-                    <hf:formDecorateField fieldId="jobCategory" label="#{messages['timer.jobCategory']}">
-                        <p:selectOneMenu id="jobCategory" value="#{jobInstanceBean.entity.jobCategoryEnum}" required="true" rendered="#{jobInstanceBean.edit}">
-                            <f:selectItem itemLabel="#{messages['commons.select']}" />
-                            <f:selectItems value="#{jobInstanceBean.jobCategoryEnumValues}" var="jobCat" itemLabel="#{messages[jobCat.label]}" />
-                            <p:ajax event="valueChange" update="@form"></p:ajax>
-                        </p:selectOneMenu>
-                    </hf:formDecorateField>
-                    <hf:formDecorateField fieldId="timerJobName" label="#{messages['timer.jobName']}">
+                    <hftl:formField label="#{messages['timer.jobCategory']}" field="jobCategoryEnum" required="true" edit="#{jobInstanceBean.entity.id==null}" listenerUpdate="@form" />
+                    <hftl:decorateFormField fieldId="timerJobName" label="#{messages['timer.jobName']}">
                         <p:selectOneMenu id="timerJobName" value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id == null}" required="true">
                             <f:selectItem itemLabel="#{messages['commons.select']}" />
                             <f:selectItems value="#{jobInstanceBean.jobNames}" />
                             <p:ajax event="valueChange" listener="#{jobInstanceBean.initCustomFields}" update="@form"></p:ajax>
                         </p:selectOneMenu>
                         <h:outputText value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id!=null}" />
-                    </hf:formDecorateField>
-                    <hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
-                    <hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
+                    </hftl:decorateFormField>
+                    <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" />
+                    <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
 
 
-                    <hf:formDecorateField fieldId="timer" label="#{messages['jobInstance.timer']}">
+                    <hftl:decorateFormField fieldId="timer" label="#{messages['jobInstance.timer']}">
                         <p:selectOneMenu id="timer" value="#{jobInstanceBean.entity.timerEntity}" rendered="#{jobInstanceBean.edit}">
                             <s:objectConverter />
                             <f:selectItem itemLabel="#{messages['commons.select']}" />
                             <f:selectItems value="#{timerEntityBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
                         </p:selectOneMenu>
-                    </hf:formDecorateField>
+                    </hftl:decorateFormField>
 
-                    <hf:formField label="#{messages['timer.active']}" field="active" />
-                    <hf:formField label="#{messages['jobInstance.parametres']}" field="parametres" />
-                    <hf:formDecorateField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}">
+                    <hftl:formField label="#{messages['timer.active']}" field="active" />
+                    <hftl:formField label="#{messages['jobInstance.parametres']}" field="parametres" />
+                    <hftl:decorateFormField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}">
                         <p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.followingJob}" rendered="#{jobInstanceBean.edit}">
                             <s:objectConverter />
                             <f:selectItem itemLabel="#{messages['commons.select']}" />
                             <f:selectItems value="#{jobInstanceBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
                         </p:selectOneMenu>
-                    </hf:formDecorateField>
+                    </hftl:decorateFormField>
 
                    </p:tab>
-                   <p:tab title="#{messages['customFieldTemplate.cfValues']}" rendered="#{! empty(jobInstanceBean.customFieldTemplates)}">
-                        <hf:customFields id="customFields" backingBean="#{jobInstanceBean}" messagesId=":formPanel:formId:messages" />
-                   </p:tab>
-                  </p:tabView>
+                   
+                   <hftl:customFields backingBean="#{jobInstanceBean}" messagesId=":formId:messages" />
+                  
+                </p:tabView>
 
                 <hf:formButtons execute="true" executeLabel="#{messages['job.executeJobNow']}" backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
-                    submitPartialProcess=":formPanel:formId:tabView"  />
+                    submitPartialProcess=":formId:tabView"  />
                   
                     
-            </hf:formPanel>
+            </hftl:formPanel>
 
 
             <!-- ===================================== JOB EXECUTION RESULTS ===================================== -->
