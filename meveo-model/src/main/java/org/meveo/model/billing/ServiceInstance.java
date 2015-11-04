@@ -248,4 +248,9 @@ public class ServiceInstance extends BusinessEntity {
         }
         return false;
     }
+    
+    @Override
+    public String toString() {
+        return String.format("ServiceInstance [code=%s, status=%s]", code, status);
+    }
 }

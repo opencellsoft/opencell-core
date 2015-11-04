@@ -145,6 +145,11 @@ public class SubscriptionImportService extends ImportService{
 				+ ", status:Created");
 
 		for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : checkSubscription.serviceInsts) {
+            if (!"ACTIVE".equals(serviceInst.getStatus().getValue())) {
+                log.debug("Skipping import of a non-active Service instance {} with status {} for subscription {}", serviceInst.getCode(), serviceInst.getStatus().getValue(),
+                    subscription.getCode());
+                continue;
+            }
 			try {
 				ServiceTemplate serviceTemplate = null;
 				ServiceInstance serviceInstance = new ServiceInstance();
