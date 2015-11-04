@@ -13,48 +13,153 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${BillingCycles}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>bc_01</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>_description_bc_01</td>
+	<td>${Description}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${InvoiceTemplateNameBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${InvoiceTemplateName}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${InvoiceTemplateName}</td>
-	<td>Tem_bill_cycle</td>
+	<td>${InvoiceTemplateNameValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${LastTransactionDelayBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${LastTransactionDelay}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${LastTransactionDelay}</td>
-	<td>4</td>
+	<td>${LastTransactionDelayValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${InvoiceDateDelayBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${InvoiceDateDelay}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${InvoiceDateDelay}</td>
-	<td>10</td>
+	<td>${InvoiceDateDelayValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DueDateDelayBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${DueDateDelay}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${DueDateDelay}</td>
-	<td>7</td>
+	<td>${DueDateDelayValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ImmediateInvoicingDelayBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ImmediateInvoicingDelay}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ImmediateInvoicingDelay}</td>
-	<td>12</td>
+	<td>${ImmediateInvoicingDelayValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CalendarBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Calendar}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -63,12 +168,52 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;CAL_INV_MONTHLY&quot;)</td>
+	<td>css=li:contains(&quot;${CalendarValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${InvoicingThresholdBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${InvoicingThreshold}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${InvoicingThreshold}</td>
+	<td>${InvoicingThresholdValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>
