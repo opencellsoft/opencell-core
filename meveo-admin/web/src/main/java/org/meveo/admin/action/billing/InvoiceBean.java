@@ -179,6 +179,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 					Auditable auditable = new Auditable();
 					auditable.setCreator(getCurrentUser());
 					auditable.setCreated(new Date());
+					uiSubCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
 					for (InvoiceAgregate invoiceAgregate : adjustedInvoice.getInvoiceAgregates()) {
 						if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
 							CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
@@ -190,14 +191,11 @@ public class InvoiceBean extends BaseBean<Invoice> {
 							newCategoryInvoiceAgregate.setAuditable(auditable);
 
 							if (categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
-								uiSubCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
-
 								for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : categoryInvoiceAgregate
 										.getSubCategoryInvoiceAgregates()) {
 									SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate(
 											subCategoryInvoiceAgregate);
-
-									newSubCategoryInvoiceAgregate.setTaxInvoiceAggregates(null);
+									
 									newSubCategoryInvoiceAgregate.setInvoice(invoice);
 									newSubCategoryInvoiceAgregate.setAuditable(auditable);
 									newSubCategoryInvoiceAgregate
@@ -208,23 +206,6 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 									uiSubCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);
 
-									// duplicate taxes
-									if (subCategoryInvoiceAgregate.getTaxInvoiceAggregates() != null) {
-										for (TaxInvoiceAgregate taxInvoiceAgregate : subCategoryInvoiceAgregate
-												.getTaxInvoiceAggregates()) {
-											TaxInvoiceAgregate newTaxInvoiceAgregate = new TaxInvoiceAgregate(
-													taxInvoiceAgregate);
-
-											newTaxInvoiceAgregate.setInvoice(invoice);
-											newTaxInvoiceAgregate.setAuditable(auditable);
-											newTaxInvoiceAgregate.setTax(taxInvoiceAgregate.getTax());
-											newTaxInvoiceAgregate
-													.setSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
-
-											newSubCategoryInvoiceAgregate.addTaxInvoiceAggregate(newTaxInvoiceAgregate);
-										}
-									}
-
 									if (subCategoryInvoiceAgregate.getSubCategoryTaxes() != null) {
 										newSubCategoryInvoiceAgregate.setSubCategoryTaxes(new HashSet<Tax>());
 										for (Tax tax : subCategoryInvoiceAgregate.getSubCategoryTaxes()) {
@@ -233,6 +214,13 @@ public class InvoiceBean extends BaseBean<Invoice> {
 									}
 								}
 							}
+						} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+							TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
+							TaxInvoiceAgregate newTaxInvoiceAgregate = new TaxInvoiceAgregate(taxInvoiceAgregate);
+
+							newTaxInvoiceAgregate.setInvoice(invoice);
+							newTaxInvoiceAgregate.setAuditable(auditable);
+							newTaxInvoiceAgregate.setTax(taxInvoiceAgregate.getTax());
 						}
 					}
 				}
@@ -602,7 +590,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	}
 
 	public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
-		invoiceService.recomputeSubCategoryAggregate(entity, subCategoryInvoiceAgregate, currentUser);
+		invoiceService.recomputeSubCategoryAggregate(entity, currentUser);
 	}
 
 	public void reComputeDetailedInvoiceAdjustment(RatedTransaction ratedTx) {

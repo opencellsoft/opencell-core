@@ -51,9 +51,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	@JoinColumn(name = "CATEGORY_INVOICE_AGREGATE")
 	private CategoryInvoiceAgregate categoryInvoiceAgregate;
 
-	@OneToMany(mappedBy = "subCategoryInvoiceAggregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<TaxInvoiceAgregate> taxInvoiceAggregates = new HashSet<TaxInvoiceAgregate>();
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "WALLET_ID")
 	private WalletInstance wallet;
@@ -106,23 +103,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 		this.categoryInvoiceAgregate = categoryInvoiceAgregate;
 		if (categoryInvoiceAgregate != null && categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
 			categoryInvoiceAgregate.getSubCategoryInvoiceAgregates().add(this);
-		}
-	}
-
-	public Set<TaxInvoiceAgregate> getTaxInvoiceAggregates() {
-		return taxInvoiceAggregates;
-	}
-
-	public void setTaxInvoiceAggregates(Set<TaxInvoiceAgregate> taxInvoiceAggregates) {
-		this.taxInvoiceAggregates = taxInvoiceAggregates;
-	}
-
-	public void addTaxInvoiceAggregate(TaxInvoiceAgregate taxInvoiceAggregate) {
-		if (taxInvoiceAggregates == null) {
-			taxInvoiceAggregates = new HashSet<TaxInvoiceAgregate>();
-		}
-		if (taxInvoiceAggregate != null) {
-			taxInvoiceAggregates.add(taxInvoiceAggregate);
 		}
 	}
 

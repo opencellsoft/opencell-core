@@ -32,10 +32,6 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
 	@JoinColumn(name = "TAX_ID")
 	private Tax tax;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUb_CAT_INVOICE_AGREGATE_ID")
-	SubCategoryInvoiceAgregate subCategoryInvoiceAggregate;
-
 	public TaxInvoiceAgregate() {
 
 	}
@@ -59,14 +55,6 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
 
 	public void setTax(Tax tax) {
 		this.tax = tax;
-	}
-
-	public SubCategoryInvoiceAgregate getSubCategoryInvoiceAggregate() {
-		return subCategoryInvoiceAggregate;
-	}
-
-	public void setSubCategoryInvoiceAggregate(SubCategoryInvoiceAgregate subCategoryInvoiceAggregate) {
-		this.subCategoryInvoiceAggregate = subCategoryInvoiceAggregate;
 	}
 
 }

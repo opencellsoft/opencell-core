@@ -263,8 +263,6 @@ public class InvoiceApi extends BaseApi {
 						taxInvoiceAgregate.setTax(tax);
 						invoiceAgregateService.create(taxInvoiceAgregate,
 								currentUser, provider);
-						subCategoryInvoiceAgregate
-								.addTaxInvoiceAggregate(taxInvoiceAgregate);
 						subCategoryInvoiceAgregate.addSubCategoryTax(tax);
 					}
 
