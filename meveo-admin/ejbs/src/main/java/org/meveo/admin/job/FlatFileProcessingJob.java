@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
@@ -36,13 +35,6 @@ public class FlatFileProcessingJob extends Job {
 
 	@Inject
 	private ResourceBundle resourceMessages;
-	
-	@Override
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobInstance jobInstance, User currentUser) {
-		super.execute(jobInstance, currentUser);
-	}
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
