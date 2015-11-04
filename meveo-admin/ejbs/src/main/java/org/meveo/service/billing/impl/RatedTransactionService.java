@@ -366,9 +366,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 							invoiceAgregateService.create(invoiceAgregateTax, currentUser, currentUser.getProvider());
 						}
 						
-						invoiceAgregateTax.setSubCategoryInvoiceAggregate(invoiceAgregateSubcat);
 						invoiceAgregateSubcat.addSubCategoryTax(tax);
-						invoiceAgregateSubcat.addTaxInvoiceAggregate(invoiceAgregateTax);
 					}
 
 
