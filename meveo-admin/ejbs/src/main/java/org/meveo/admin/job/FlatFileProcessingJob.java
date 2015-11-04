@@ -81,7 +81,7 @@ public class FlatFileProcessingJob extends Job {
 			
 			String fileAccess=null;
 			String distantServer=null;
-			long distantPort=0L;
+			String distantPort=null;
 			String removeDistantFile=null;
 			String ftpInputDirectory=null;
 			String ftpUsername=null;
@@ -101,7 +101,7 @@ public class FlatFileProcessingJob extends Job {
 				
 				fileAccess=(String)jobInstance.getCFValue("FlatFileProcessingJob_fileAccess");
 				distantServer=(String)jobInstance.getCFValue("FlatFileProcessingJob_distantServer");
-				distantPort=(Long)jobInstance.getCFValue("FlatFileProcessingJob_distantPort");
+				distantPort=(String)jobInstance.getCFValue("FlatFileProcessingJob_distantPort");
 				removeDistantFile=(String)jobInstance.getCFValue("FlatFileProcessingJob_removeDistantFile");
 				ftpInputDirectory=(String)jobInstance.getCFValue("FlatFileProcessingJob_ftpInputDirectory");
 				ftpUsername=(String)jobInstance.getCFValue("FlatFileProcessingJob_ftpUsername");
@@ -350,7 +350,7 @@ public class FlatFileProcessingJob extends Job {
 		return opts;
 	}
 
-	private Map<String,ImportedFile> connect2FTP(String fileAccess,String inputDir,String ftpInputDirectory,String distantServer,String ftpUsername,String ftpPassword,long distantPort,final String ftpFileExtension,User currentUser) throws IOException {
+	private Map<String,ImportedFile> connect2FTP(String fileAccess,String inputDir,String ftpInputDirectory,String distantServer,String ftpUsername,String ftpPassword,String distantPort,final String ftpFileExtension,User currentUser) throws IOException {
 		
 		Map<String,ImportedFile> result=new HashMap<String,ImportedFile>();
 		if(ftpInputDirectory==null){
@@ -430,7 +430,7 @@ public class FlatFileProcessingJob extends Job {
 		return result;
 	}
 	private void removeFtpfile(ImportedFile importedFile, String fileAccess, String distantServer, String ftpUsername,
-			String ftpPassword, long distantPort,String ftpInputDirectory,final String ftpFileExtension) {
+			String ftpPassword, String distantPort,String ftpInputDirectory,final String ftpFileExtension) {
 		final String ftpAddress=String.format("%s://%s:%s@%s:%s/%s", fileAccess.toLowerCase(),ftpUsername,ftpPassword,distantServer,distantPort,ftpInputDirectory);
 		String ftpUri=String.format("%s://%s:%s%s", fileAccess.toLowerCase(),distantServer,distantPort,ftpInputDirectory);
 		log.debug("ftp address {}",ftpAddress);
