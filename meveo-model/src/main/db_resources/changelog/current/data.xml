@@ -18,6 +18,14 @@
             <column name="permission" value="ftpwrite" />
             <column name="ressource" value="administration" />
         </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="15" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="1" />
+            <column name="permission_id" valueNumeric="16" />
+        </insert>
 	</changeSet>
 
 </databaseChangeLog>
