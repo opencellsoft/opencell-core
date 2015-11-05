@@ -89,7 +89,6 @@ import org.w3c.dom.Text;
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private ParamBean paramBean = ParamBean.getInstance();
-	private String dueDateFormat = "yyyy-MM-dd";
 
 	@Inject
 	private InvoiceService invoiceService;
@@ -321,7 +320,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			if (invoice.getDueDate() != null) {
 				Element dueDate = doc.createElement("dueDate");
 				Text dueDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoice.getDueDate(),
-						dueDateFormat));
+						"dd/MM/yyyy"));
 				dueDate.appendChild(dueDateTxt);
 				header.appendChild(dueDate);
 			}
