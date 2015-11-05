@@ -89,7 +89,6 @@ import org.w3c.dom.Text;
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private ParamBean paramBean = ParamBean.getInstance();
-
 	private String dueDateFormat = "yyyy-MM-dd";
 
 	@Inject
@@ -216,7 +215,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						customer.getMandateIdentification() != null ? customer.getMandateIdentification() : "");
 			}
 			String json = customer.getCustomFieldsAsJson();
-			if (json.length() > 0) {
+			if (json!=null && json.length() > 0) {
 				customerTag.setAttribute("customFields", customer.getCustomFieldsAsJson());
 			}
 			header.appendChild(customerTag);
@@ -244,7 +243,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 								: "");
 			}
 			json = customerAccount.getCustomFieldsAsJson();
-			if (json.length() > 0) {
+			if (json!=null && json.length() > 0) {
 				customerAccountTag.setAttribute("customFields", customerAccount.getCustomFieldsAsJson());
 			}
 			header.appendChild(customerAccountTag);
@@ -288,7 +287,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			billingAccountTag.setAttribute("externalRef2",
 					billingAccount.getExternalRef2() != null ? billingAccount.getExternalRef2() : "");
 			json = billingAccount.getCustomFieldsAsJson();
-			if (json.length() > 0) {
+			if (json!=null && json.length() > 0) {
 				billingAccountTag.setAttribute("customFields", billingAccount.getCustomFieldsAsJson());
 			}
 			header.appendChild(billingAccountTag);
@@ -443,7 +442,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			userAccountTag.setAttribute("description",
 					userAccount.getDescription() != null ? userAccount.getDescription() : "");
 			String json = userAccount.getCustomFieldsAsJson();
-			if (json.length() > 0) {
+			if (json!=null && json.length() > 0) {
 				userAccountTag.setAttribute("customFields", userAccount.getCustomFieldsAsJson());
 			}
 
