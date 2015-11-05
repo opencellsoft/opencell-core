@@ -32,6 +32,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 @Entity
 @DiscriminatorValue("F")
@@ -69,6 +70,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
 	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal discountPercent;
+	
+	@Transient
+	private BigDecimal oldAmountWithoutTax;
 
 	public SubCategoryInvoiceAgregate() {
 
@@ -181,6 +185,14 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
 	public void setDiscountPercent(BigDecimal discountPercent) {
 		this.discountPercent = discountPercent;
+	}
+
+	public BigDecimal getOldAmountWithoutTax() {
+		return oldAmountWithoutTax;
+	}
+
+	public void setOldAmountWithoutTax(BigDecimal oldAmountWithoutTax) {
+		this.oldAmountWithoutTax = oldAmountWithoutTax;
 	}
 
 }

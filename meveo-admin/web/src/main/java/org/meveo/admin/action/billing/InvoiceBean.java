@@ -186,9 +186,6 @@ public class InvoiceBean extends BaseBean<Invoice> {
 								newSubCategoryInvoiceAgregate.setAuditable(auditable);
 								newSubCategoryInvoiceAgregate.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
 
-								newCategoryInvoiceAgregate
-										.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
-
 								uiSubCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);
 
 								// duplicate taxes

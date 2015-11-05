@@ -135,8 +135,8 @@
 							</p:column>
 							<p:column>
 								<h:outputText
-									value="#{entity.invoice.adjustedInvoice.amountWithoutTax}"
-									converter="#{getConverter.forType(entity.invoice.adjustedInvoice.amountWithoutTax,'4digits')}" />
+									value="#{entity.amountWithoutTax}"
+									converter="#{getConverter.forType(entity.oldAmountWithoutTax,'4digits')}" />
 							</p:column>
 
 							<!-- // -->
