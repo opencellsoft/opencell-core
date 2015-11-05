@@ -599,4 +599,11 @@
         </addColumn>
     </changeSet>
     
+     <changeSet id="2037_20151105" author="Mbarek">
+     	<modifyDataType columnName="FILTER_PARAM_1" newDataType="varchar(255)"   tableName="CAT_USAGE_CHARGE_TEMPLATE"/>
+     	<modifyDataType columnName="FILTER_PARAM_2" newDataType="varchar(255)"   tableName="CAT_USAGE_CHARGE_TEMPLATE"/>
+     	<modifyDataType columnName="FILTER_PARAM_3" newDataType="varchar(255)"   tableName="CAT_USAGE_CHARGE_TEMPLATE"/>
+     	<modifyDataType columnName="FILTER_PARAM_4" newDataType="varchar(255)"   tableName="CAT_USAGE_CHARGE_TEMPLATE"/>
+     </changeSet>
+    
 </databaseChangeLog>
