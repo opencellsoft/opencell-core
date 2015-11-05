@@ -1,824 +1,235 @@
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
-155
-156
-157
-158
-159
-160
-161
-162
-163
-164
-165
-166
-167
-168
-169
-170
-171
-172
-173
-174
-175
-176
-177
-178
-179
-180
-181
-182
-183
-184
-185
-186
-187
-188
-189
-190
-191
-192
-193
-194
-195
-196
-197
-198
-199
-200
-201
-202
-203
-204
-205
-206
-207
-208
-209
-210
-211
-212
-213
-214
-215
-216
-217
-218
-219
-220
-221
-222
-223
-224
-225
-226
-227
-228
-229
-230
-231
-232
-233
-234
-235
-236
-237
-238
-239
-240
-241
-242
-243
-244
-245
-246
-247
-248
-249
-250
-251
-252
-253
-254
-255
-256
-257
-258
-259
-260
-261
-262
-263
-264
-265
-266
-267
-268
-269
-270
-271
-272
-273
-274
-275
-276
-277
-278
-279
-280
-281
-282
-283
-284
-285
-286
-287
-288
-289
-290
-291
-292
-293
-294
-295
-296
-297
-298
-299
-300
-301
-302
-303
-304
-305
-306
-307
-308
-309
-310
-311
-312
-313
-314
-315
-316
-317
-318
-319
-320
-321
-322
-323
-324
-325
-326
-327
-328
-329
-330
-331
-332
-333
-334
-335
-336
-337
-338
-339
-340
-341
-342
-343
-344
-345
-346
-347
-348
-349
-350
-351
-352
-353
-354
-355
-356
-357
-358
-359
-360
-361
-362
-363
-364
-365
-366
-367
-368
-369
-370
-371
-372
-373
-374
-375
-376
-377
-378
-379
-380
-381
-382
-383
-384
-385
-386
-387
-388
-389
-390
-391
-392
-393
-394
-395
-396
-397
-398
-399
-400
-401
-402
-403
-404
-405
-406
-407
-408
-409
-410
-411
-412
-413
-414
-415
-416
-417
-418
-419
-420
-421
-422
-423
-424
-425
-426
-427
-428
-429
-430
-431
-432
-433
-434
-435
-436
-437
-438
-439
-440
-441
-442
-443
-444
-445
-446
-447
-448
-449
-450
-451
-452
-453
-454
-455
-456
-457
-458
-459
-460
-461
-462
-463
-464
-465
-466
-467
-468
-469
-470
-471
-472
-473
-474
-475
-476
-477
-478
-479
-480
-481
-482
-483
-484
-485
-486
-487
-488
-489
-490
-491
-492
-493
-494
-495
-496
-497
-498
-499
-500
-501
-502
-503
-504
-505
-506
-507
-508
-509
-510
-511
-512
-513
-514
-515
-516
-517
-518
-519
-520
-521
-522
-523
-524
-525
-526
-527
-528
-529
-530
-531
-532
-533
-534
-535
-536
-537
-538
-539
-540
-541
-542
-543
-544
-545
-546
-547
-548
-549
-550
-551
-552
-553
-554
-555
-556
-557
-558
-559
-560
-561
-562
-563
-564
-565
-566
-567
-568
-569
-570
-571
-572
-573
-574
-575
-576
-577
-578
-579
-580
-581
-582
-583
-584
-585
-586
-587
-588
-589
-590
-591
-592
-593
- <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
 
-    <changeSet author="EdwardLegaspi" id="#1087_20150922">
-        <createTable tableName="meveo_filter_parameter">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-            <column name="version" type="INT4" />
-            <column name="disabled" type="BOOL">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="provider_id" type="BIGINT" />
-            <column name="creator_id" type="BIGINT" />
-            <column name="updater_id" type="BIGINT" />
-            <column name="code" type="VARCHAR(60)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="VARCHAR(100)" />
-            <column name="default_value" type="VARCHAR(50)" />
-            <column name="value_required" type="BOOL" />
-            <column name="field_type" type="VARCHAR(255)" />
-            <column name="entity_clazz" type="VARCHAR(255)" />
-            <column name="filter_id" type="BIGINT" />
-        </createTable>
+	<changeSet author="EdwardLegaspi" id="#1087_20150922">
+		<createTable tableName="meveo_filter_parameter">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="default_value" type="VARCHAR(50)" />
+			<column name="value_required" type="BOOL" />
+			<column name="field_type" type="VARCHAR(255)" />
+			<column name="entity_clazz" type="VARCHAR(255)" />
+			<column name="filter_id" type="BIGINT" />
+		</createTable>
 
-        <addPrimaryKey columnNames="id" constraintName="meveo_filter_parameter_pkey"
-            tableName="meveo_filter_parameter" />
+		<addPrimaryKey columnNames="id" constraintName="meveo_filter_parameter_pkey"
+			tableName="meveo_filter_parameter" />
 
-        <addForeignKeyConstraint baseColumnNames="provider_id"
-            baseTableName="meveo_filter_parameter" constraintName="fk_meveo_filter_parameter_crm_provider"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="meveo_filter_parameter" constraintName="fk_meveo_filter_parameter_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="meveo_filter_parameter" constraintName="fk_creator_meveo_filter_parameter_adm_user"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="meveo_filter_parameter" constraintName="fk_updater_meveo_filter_parameter_adm_user"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		
+		<addForeignKeyConstraint baseColumnNames="filter_id"
+			baseTableName="meveo_filter_parameter" constraintName="fk_meveo_filter_parameter_meveo_filter"
+			deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+			onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter" />
 
-        <addForeignKeyConstraint baseColumnNames="creator_id"
-            baseTableName="meveo_filter_parameter" constraintName="fk_creator_meveo_filter_parameter_adm_user"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<createTable tableName="meveo_filter_parameter_list_val">
+			<column name="filterparameter_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="listvalues" type="VARCHAR(255)" />
+			<column name="listvalues_key" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
 
-        <addForeignKeyConstraint baseColumnNames="updater_id"
-            baseTableName="meveo_filter_parameter" constraintName="fk_updater_meveo_filter_parameter_adm_user"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<createSequence sequenceName="meveo_filter_parameter_seq" />
+	</changeSet>
 
-        <addForeignKeyConstraint baseColumnNames="filter_id"
-            baseTableName="meveo_filter_parameter" constraintName="fk_meveo_filter_parameter_meveo_filter"
-            deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
-            onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="meveo_filter" />
-
-        <createTable tableName="meveo_filter_parameter_list_val">
-            <column name="filterparameter_id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-            <column name="listvalues" type="VARCHAR(255)" />
-            <column name="listvalues_key" type="VARCHAR(255)">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-
-        <createSequence sequenceName="meveo_filter_parameter_seq" />
-    </changeSet>
-
-    <changeSet author="anasseh" id="20150928_text">
-         <modifyDataType columnName="string_value" newDataType="text"   tableName="CRM_CUSTOM_FIELD_INST"/>
+	<changeSet author="anasseh" id="20150928_text">
+     	<modifyDataType columnName="string_value" newDataType="text"   tableName="CRM_CUSTOM_FIELD_INST"/>
      </changeSet>
-
+    
     <changeSet author="AndriusKarpavicius" id="#1094_20150929">
-        <addColumn tableName="CRM_CUSTOM_FIELD_INST">
-            <column name="seller_id" type="BIGINT" />
-        </addColumn>
-
-        <addForeignKeyConstraint constraintName="fk_seller_id_crm_custom_field_inst"
-            referencedTableName="CRM_SELLER" baseColumnNames="seller_id"
-            baseTableName="CRM_CUSTOM_FIELD_INST" referencedColumnNames="id" />
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="seller_id" type="BIGINT" />
+		</addColumn>    
+    
+    	<addForeignKeyConstraint constraintName="fk_seller_id_crm_custom_field_inst"
+			referencedTableName="CRM_SELLER" baseColumnNames="seller_id"
+			baseTableName="CRM_CUSTOM_FIELD_INST" referencedColumnNames="id" />
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="#1123_20151006">
         <dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="user_id"/>
     </changeSet>
-     <changeSet author="anasseh" id="#1117_20151005">
-            <addColumn tableName="BILLING_CYCLE">
-                <column name="INVOICING_THRESHOLD" type="numeric(23, 12)" />
-            </addColumn>
-    </changeSet>
+	 <changeSet author="anasseh" id="#1117_20151005">
+		    <addColumn tableName="BILLING_CYCLE">
+	            <column name="INVOICING_THRESHOLD" type="numeric(23, 12)" />
+	        </addColumn>	
+	</changeSet>       
     <changeSet author="anasseh" id="20151009_1149">
         <modifyDataType columnName="SELECTED_BILLING_ACCOUNTS" newDataType="text"   tableName="BILLING_BILLING_RUN"/>
      </changeSet>
-       <changeSet author="anasseh" id="20151013_1165">
-         <modifyDataType columnName="MESSAGE" newDataType="text"   tableName="MEVEO_SCRIPT_INSTANCE_ERROR"/>
-     </changeSet>
-
+   	<changeSet author="anasseh" id="20151013_1165">
+     	<modifyDataType columnName="MESSAGE" newDataType="text"   tableName="MEVEO_SCRIPT_INSTANCE_ERROR"/>
+     </changeSet>      
+     
      <changeSet author="EdwardLegaspi" id="#1105_20150930">
-        <addColumn tableName="ar_account_operation">
-            <column name="credit_note_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
-        </addColumn>
+		<addColumn tableName="ar_account_operation">
+			<column name="credit_note_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+		</addColumn>
 
-        <createTable tableName="billing_credit_note">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-            <column name="version" type="INT4" />
-            <column name="disabled" type="BOOL">
-                <constraints nullable="false" />
-            </column>
-            <column name="code" type="VARCHAR(60)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="VARCHAR(100)" />
-            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="provider_id" type="BIGINT" />
-            <column name="creator_id" type="BIGINT" />
-            <column name="updater_id" type="BIGINT" />
-            <column name="billing_account_id" type="BIGINT" />
-            <column name="recorded_invoice_id" type="BIGINT" />
-            <column name="invoice_id" type="BIGINT" />
-            <column name="credit_note_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
-            <column name="due_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
-            <column name="amount_without_tax" type="numeric(23, 12)" />
-            <column name="amount_with_tax" type="numeric(23, 12)" />
-            <column name="net_to_pay" type="numeric(23, 12)" />
-        </createTable>
+		<createTable tableName="billing_credit_note">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="BOOL">
+				<constraints nullable="false" />
+			</column>
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="billing_account_id" type="BIGINT" />
+			<column name="recorded_invoice_id" type="BIGINT" />
+			<column name="invoice_id" type="BIGINT" />
+			<column name="credit_note_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="due_date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+			<column name="amount_without_tax" type="numeric(23, 12)" />
+			<column name="amount_with_tax" type="numeric(23, 12)" />
+			<column name="net_to_pay" type="numeric(23, 12)" />
+		</createTable>
 
-        <createSequence sequenceName="billing_credit_note_seq"
-            startValue="1" />
-        <addPrimaryKey columnNames="id" constraintName="billing_credit_note_pkey"
-            tableName="billing_credit_note" />
-        <addForeignKeyConstraint baseColumnNames="provider_id"
-            baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_crm_provider"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-        <addForeignKeyConstraint baseColumnNames="creator_id"
-            baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_adm_user_creator"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-        <addForeignKeyConstraint baseColumnNames="updater_id"
-            baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_adm_user_updater"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-        <addForeignKeyConstraint baseColumnNames="billing_account_id"
-            baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_billing_account"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
-        <addForeignKeyConstraint baseColumnNames="recorded_invoice_id"
-            baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_recorded_invoice"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
-        <addForeignKeyConstraint baseColumnNames="invoice_id"
-            baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_invoice"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+		<createSequence sequenceName="billing_credit_note_seq"
+			startValue="1" />
+		<addPrimaryKey columnNames="id" constraintName="billing_credit_note_pkey"
+			tableName="billing_credit_note" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="creator_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_adm_user_creator"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="updater_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_adm_user_updater"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+		<addForeignKeyConstraint baseColumnNames="billing_account_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_billing_account"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+		<addForeignKeyConstraint baseColumnNames="recorded_invoice_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_recorded_invoice"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+		<addForeignKeyConstraint baseColumnNames="invoice_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_invoice"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
 
-        <createTable tableName="billing_credit_note_tax_amt">
-            <column name="creditnote_id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-            <column name="taxamounts_key" type="VARCHAR(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="taxamounts" type="numeric(23, 12)" />
-        </createTable>
+		<createTable tableName="billing_credit_note_tax_amt">
+			<column name="creditnote_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="taxamounts_key" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="taxamounts" type="numeric(23, 12)" />
+		</createTable>
 
-        <addPrimaryKey columnNames="creditnote_id, taxamounts_key"
-            constraintName="billing_credit_note_tax_amt_pkey" tableName="billing_credit_note_tax_amt" />
-        <addForeignKeyConstraint baseColumnNames="creditnote_id"
-            baseTableName="billing_credit_note_tax_amt" constraintName="fk_billing_credit_note_tax_amt_credit_note"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_credit_note" />
+		<addPrimaryKey columnNames="creditnote_id, taxamounts_key"
+			constraintName="billing_credit_note_tax_amt_pkey" tableName="billing_credit_note_tax_amt" />
+		<addForeignKeyConstraint baseColumnNames="creditnote_id"
+			baseTableName="billing_credit_note_tax_amt" constraintName="fk_billing_credit_note_tax_amt_credit_note"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_credit_note" />
 
-        <createTable tableName="billing_credit_note_line">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" />
-            </column>
-            <column name="version" type="INT4" />
-            <column name="provider_id" type="BIGINT" />
-            <column name="description" type="VARCHAR(255)" />
-            <column name="credit_note_id" type="BIGINT" />
-            <column name="invoice_sub_category" type="BIGINT" />
-            <column name="amount_without_tax" type="numeric(23, 12)" />
-            <column name="tax_amount" type="numeric(23, 12)" />
-            <column name="amount_with_tax" type="numeric(23, 12)" />
-        </createTable>
+		<createTable tableName="billing_credit_note_line">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="description" type="VARCHAR(255)" />
+			<column name="credit_note_id" type="BIGINT" />
+			<column name="invoice_sub_category" type="BIGINT" />
+			<column name="amount_without_tax" type="numeric(23, 12)" />
+			<column name="tax_amount" type="numeric(23, 12)" />
+			<column name="amount_with_tax" type="numeric(23, 12)" />
+		</createTable>
 
-        <createSequence sequenceName="billing_credit_note_line_seq"
-            startValue="1" />
-        <addPrimaryKey columnNames="id"
-            constraintName="billing_credit_note_line_pkey" tableName="billing_credit_note_line" />
-        <addForeignKeyConstraint baseColumnNames="provider_id"
-            baseTableName="billing_credit_note_line" constraintName="fk_billing_credit_note_line_crm_provider"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-        <addForeignKeyConstraint baseColumnNames="credit_note_id"
-            baseTableName="billing_credit_note_line" constraintName="fk_billing_credit_note_line_credit_note"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_credit_note" />
-        <addForeignKeyConstraint baseColumnNames="invoice_sub_category"
-            baseTableName="billing_credit_note_line" constraintName="fk_billing_credit_note_line_invoice_sub_cat"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
-    </changeSet>
+		<createSequence sequenceName="billing_credit_note_line_seq"
+			startValue="1" />
+		<addPrimaryKey columnNames="id"
+			constraintName="billing_credit_note_line_pkey" tableName="billing_credit_note_line" />
+		<addForeignKeyConstraint baseColumnNames="provider_id"
+			baseTableName="billing_credit_note_line" constraintName="fk_billing_credit_note_line_crm_provider"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+		<addForeignKeyConstraint baseColumnNames="credit_note_id"
+			baseTableName="billing_credit_note_line" constraintName="fk_billing_credit_note_line_credit_note"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_credit_note" />
+		<addForeignKeyConstraint baseColumnNames="invoice_sub_category"
+			baseTableName="billing_credit_note_line" constraintName="fk_billing_credit_note_line_invoice_sub_cat"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+	</changeSet>
+     
+	<changeSet author="EdwardLegaspi" id="#1110_20151002">
+		<addColumn tableName="billing_invoice">
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="true" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+		</addColumn>
 
-    <changeSet author="EdwardLegaspi" id="#1110_20151002">
-        <addColumn tableName="billing_invoice">
-            <column name="code" type="VARCHAR(60)">
-                <constraints nullable="true" />
-            </column>
-            <column name="description" type="VARCHAR(100)" />
-        </addColumn>
+		<sql>UPDATE billing_invoice SET code=concat('ocb_id_', id)</sql>
 
-        <sql>UPDATE billing_invoice SET code=concat('ocb_id_', id)</sql>
-
-        <addNotNullConstraint columnDataType="VARCHAR(60)"
-            columnName="code" tableName="billing_invoice" />
-    </changeSet>
-
+		<addNotNullConstraint columnDataType="VARCHAR(60)"
+			columnName="code" tableName="billing_invoice" />
+	</changeSet>  
+	
     <changeSet id="#1150_20151013" author="Mbarek">
-    <addColumn tableName="BILLING_INVOICE_CONFIGURATION">
-    <column name="display_provider" type="BOOL" defaultValueBoolean="false"></column>
-    </addColumn>
-    </changeSet>
+	<addColumn tableName="BILLING_INVOICE_CONFIGURATION">
+	<column name="display_provider" type="BOOL" defaultValueBoolean="false"></column>
+	</addColumn>
+	</changeSet>
+	
+	  <changeSet id="1201_20151102" author="Mbarek">
+		<sql>ALTER TABLE crm_custom_field_tmpl DROP CONSTRAINT IF EXISTS uk_odjxv76fr14lrm19mt961b04p;</sql>
+	</changeSet>
 
     <changeSet id="#1101_20151021" author="AndriusKarpavicius">
         <createSequence sequenceName="CRM_CUSTOM_FIELD_FIELDS_SEQ"/>
@@ -826,27 +237,27 @@
             <column name="id" type="BIGINT">
                 <constraints nullable="false"  />
             </column>
-            <column name="version" type="INT4" />
+            <column name="version" type="INT4" />        
             <column name="provider_id" type="BIGINT" />
             <column name="UUID" type="VARCHAR(60)" >
                 <constraints nullable="false"/>
-            </column>
+            </column> 
         </createTable>
-
+        
         <addColumn tableName="CRM_CUSTOM_FIELD_INST">
             <column name="CFF_ID" type="BIGINT"/>
         </addColumn>
-
+        
         <addPrimaryKey columnNames="id" constraintName="crm_custom_field_fields_pkey"
             tableName="CRM_CUSTOM_FIELD_FIELDS" />
-
+            
         <addForeignKeyConstraint constraintName="fk_crm_custom_field_inst_cff_id"
             referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
             baseTableName="CRM_CUSTOM_FIELD_INST" referencedColumnNames="id" />
-
+        
         <addColumn tableName="MEDINA_ACCESS">
             <column name="CFF_ID" type="BIGINT"/>
-        </addColumn>
+        </addColumn>        
         <addColumn tableName="CRM_PROVIDER">
             <column name="CFF_ID" type="BIGINT"/>
         </addColumn>
@@ -871,7 +282,7 @@
         <addColumn tableName="BILLING_SUBSCRIPTION">
             <column name="CFF_ID" type="BIGINT"/>
         </addColumn>
-
+        
         <addForeignKeyConstraint constraintName="fk_medina_access_cff_id"
             referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
             baseTableName="MEDINA_ACCESS" referencedColumnNames="id" />
@@ -899,63 +310,63 @@
         <addForeignKeyConstraint constraintName="fk_billing_subscription_cff_id"
             referencedTableName="CRM_CUSTOM_FIELD_FIELDS" baseColumnNames="CFF_ID"
             baseTableName="BILLING_SUBSCRIPTION" referencedColumnNames="id" />
-
+        
         <sql>
             insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'provider_'||cfi_ent_id, cfi_ent_id from (select distinct provider_id as cfi_ent_id from crm_custom_field_inst where provider_id is not null) as sql_one;
             update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='provider_'||crm_custom_field_inst.provider_id) where provider_id is not null;
             update crm_provider set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='provider_'||crm_provider.id);
-        </sql>
+        </sql>        
         <sql>
-            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'access_'||cfi_ent_id, cfi_ent_provider_id from
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'access_'||cfi_ent_id, cfi_ent_provider_id from 
               (select distinct medina_access.id as cfi_ent_id, medina_access.provider_id as cfi_ent_provider_id from crm_custom_field_inst join medina_access on crm_custom_field_inst.access_id =medina_access.id and crm_custom_field_inst.access_id is not null) as sql_one;
             update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='access_'||crm_custom_field_inst.access_id) where access_id is not null;
             update medina_access set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='access_'||medina_access.id);
         </sql>
         <sql>
-            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'charge_'||cfi_ent_id, cfi_ent_provider_id from
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'charge_'||cfi_ent_id, cfi_ent_provider_id from 
               (select distinct CAT_CHARGE_TEMPLATE.id as cfi_ent_id, CAT_CHARGE_TEMPLATE.provider_id as cfi_ent_provider_id from crm_custom_field_inst join CAT_CHARGE_TEMPLATE on crm_custom_field_inst.charge_template_id =CAT_CHARGE_TEMPLATE.id and crm_custom_field_inst.charge_template_id is not null) as sql_one;
             update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='charge_'||crm_custom_field_inst.charge_template_id) where charge_template_id is not null;
             update CAT_CHARGE_TEMPLATE set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='charge_'||CAT_CHARGE_TEMPLATE.id);
         </sql>
         <sql>
-            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'offer_'||cfi_ent_id, cfi_ent_provider_id from
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'offer_'||cfi_ent_id, cfi_ent_provider_id from 
               (select distinct CAT_OFFER_TEMPLATE.id as cfi_ent_id, CAT_OFFER_TEMPLATE.provider_id as cfi_ent_provider_id from crm_custom_field_inst join CAT_OFFER_TEMPLATE on crm_custom_field_inst.offer_template_id =CAT_OFFER_TEMPLATE.id and crm_custom_field_inst.offer_template_id is not null) as sql_one;
             update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='offer_'||crm_custom_field_inst.offer_template_id) where offer_template_id is not null;
             update CAT_OFFER_TEMPLATE set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='offer_'||CAT_OFFER_TEMPLATE.id);
         </sql>
         <sql>
-            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'service_'||cfi_ent_id, cfi_ent_provider_id from
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'service_'||cfi_ent_id, cfi_ent_provider_id from 
               (select distinct CAT_SERVICE_TEMPLATE.id as cfi_ent_id, CAT_SERVICE_TEMPLATE.provider_id as cfi_ent_provider_id from crm_custom_field_inst join CAT_SERVICE_TEMPLATE on crm_custom_field_inst.service_template_id =CAT_SERVICE_TEMPLATE.id and crm_custom_field_inst.service_template_id is not null) as sql_one;
             update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='service_'||crm_custom_field_inst.service_template_id) where service_template_id is not null;
             update CAT_SERVICE_TEMPLATE set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='service_'||CAT_SERVICE_TEMPLATE.id);
         </sql>
         <sql>
-            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'subs_'||cfi_ent_id, cfi_ent_provider_id from
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'subs_'||cfi_ent_id, cfi_ent_provider_id from 
               (select distinct BILLING_SUBSCRIPTION.id as cfi_ent_id, BILLING_SUBSCRIPTION.provider_id as cfi_ent_provider_id from crm_custom_field_inst join BILLING_SUBSCRIPTION on crm_custom_field_inst.subscription_id =BILLING_SUBSCRIPTION.id and crm_custom_field_inst.subscription_id is not null) as sql_one;
             update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='subs_'||crm_custom_field_inst.subscription_id) where subscription_id is not null;
             update BILLING_SUBSCRIPTION set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='subs_'||BILLING_SUBSCRIPTION.id);
         </sql>
         <sql>
-            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'job_'||cfi_ent_id, cfi_ent_provider_id from
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'job_'||cfi_ent_id, cfi_ent_provider_id from 
               (select distinct MEVEO_JOB_INSTANCE.id as cfi_ent_id, MEVEO_JOB_INSTANCE.provider_id as cfi_ent_provider_id from crm_custom_field_inst join MEVEO_JOB_INSTANCE on crm_custom_field_inst.job_instance_id =MEVEO_JOB_INSTANCE.id and crm_custom_field_inst.job_instance_id is not null) as sql_one;
             update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='job_'||crm_custom_field_inst.job_instance_id) where job_instance_id is not null;
             update MEVEO_JOB_INSTANCE set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='job_'||MEVEO_JOB_INSTANCE.id);
         </sql>
         <sql>
-            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'seller_'||cfi_ent_id, cfi_ent_provider_id from
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'seller_'||cfi_ent_id, cfi_ent_provider_id from 
               (select distinct CRM_SELLER.id as cfi_ent_id, CRM_SELLER.provider_id as cfi_ent_provider_id from crm_custom_field_inst join CRM_SELLER on crm_custom_field_inst.seller_id =CRM_SELLER.id and crm_custom_field_inst.seller_id is not null) as sql_one;
             update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='seller_'||crm_custom_field_inst.seller_id) where seller_id is not null;
-            update CRM_SELLER set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='seller_'||CRM_SELLER.id);
+            update CRM_SELLER set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='seller_'||CRM_SELLER.id);        
         </sql>
         <sql>
-            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'account_'||cfi_ent_id, cfi_ent_provider_id from
+            insert into CRM_CUSTOM_FIELD_FIELDS (id, version, uuid, provider_id) select nextval('CRM_CUSTOM_FIELD_FIELDS_SEQ'), 0, 'account_'||cfi_ent_id, cfi_ent_provider_id from 
               (select distinct ACCOUNT_ENTITY.id as cfi_ent_id, ACCOUNT_ENTITY.provider_id as cfi_ent_provider_id from crm_custom_field_inst join ACCOUNT_ENTITY on crm_custom_field_inst.account_id =ACCOUNT_ENTITY.id and crm_custom_field_inst.account_id is not null) as sql_one;
             update crm_custom_field_inst set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='account_'||crm_custom_field_inst.account_id) where account_id is not null;
             update ACCOUNT_ENTITY set cff_id = (select id from CRM_CUSTOM_FIELD_FIELDS where uuid='account_'||ACCOUNT_ENTITY.id);
         </sql>
-
+        
         <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_INST" columnName="CFF_ID"/>
-
+        
         <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="provider_id"/>
         <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="access_id"/>
         <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="charge_template_id"/>
@@ -965,175 +376,180 @@
         <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="job_instance_id"/>
         <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="seller_id"/>
         <dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="account_id"/>
-
+                
         <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
             <column name="APPLIES_TO" type="VARCHAR(100)"/>
         </addColumn>
-
+        
         <sql>
             update CRM_CUSTOM_FIELD_TMPL set applies_to = account_type where account_type&lt;&gt; 'TIMER';
             update CRM_CUSTOM_FIELD_TMPL set applies_to = 'JOB_'|| SUBSTR(code, 0, strpos(code, '_')) where account_type= 'TIMER';
             update CRM_CUSTOM_FIELD_TMPL set code = 'nbRuns' where right(code,7)='_nbRuns' and account_type= 'TIMER';
-            update CRM_CUSTOM_FIELD_TMPL set code = 'waitingMillis' where right(code,14)='_waitingMillis' and account_type= 'TIMER';
+            update CRM_CUSTOM_FIELD_TMPL set code = 'waitingMillis' where right(code,14)='_waitingMillis' and account_type= 'TIMER';        
         </sql>
-
+        
         <sql>
             update CRM_CUSTOM_FIELD_TMPL set storage_type='SINGLE' where storage_type is null;
         </sql>
-
+        
         <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL" columnName="APPLIES_TO"/>
         <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL" columnName="field_type"/>
         <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL" columnName="storage_type"/>
-
+        
         <dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="account_type"/>
+        
+    </changeSet> 
+    
+    <changeSet id="1201-20151102" author="Mbarek">
+		<addUniqueConstraint columnNames="code,applies_to,provider_id" constraintName="uk_abfci88fr16lqf19cf961b08d" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="crm_custom_field_tmpl" />
+	</changeSet>          
 
-    </changeSet>
+	<changeSet author="EdwardLegaspi" id="#1147_20151009">
+		<addColumn tableName="crm_provider">
+			<column name="credit_note_prefix" type="VARCHAR(255)" />
+			<column name="current_credit_note_nb" type="BIGINT" />
+		</addColumn>
+		<addColumn tableName="crm_seller">
+			<column name="credit_note_prefix" type="VARCHAR(255)" />
+			<column name="current_credit_note_nb" type="BIGINT" />
+		</addColumn>
+	</changeSet>
 
-    <changeSet author="EdwardLegaspi" id="#1147_20151009">
-        <addColumn tableName="crm_provider">
-            <column name="credit_note_prefix" type="VARCHAR(255)" />
-            <column name="current_credit_note_nb" type="BIGINT" />
-        </addColumn>
-        <addColumn tableName="crm_seller">
-            <column name="credit_note_prefix" type="VARCHAR(255)" />
-            <column name="current_credit_note_nb" type="BIGINT" />
-        </addColumn>
-    </changeSet>
+	<changeSet id="#1105_20151009" author="EdwardLegaspi">
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_recorded_invoice" />
+		<dropColumn tableName="billing_credit_note" columnName="recorded_invoice_id" />
 
-    <changeSet id="#1105_20151009" author="EdwardLegaspi">
-        <dropForeignKeyConstraint baseTableName="billing_credit_note"
-            constraintName="fk_billing_credit_note_recorded_invoice" />
-        <dropColumn tableName="billing_credit_note" columnName="recorded_invoice_id" />
+		<addColumn tableName="billing_credit_note">
+			<column name="recorded_credit_note_id" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="recorded_credit_note_id"
+			baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_recorded_credit_note"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+	</changeSet>
 
-        <addColumn tableName="billing_credit_note">
-            <column name="recorded_credit_note_id" type="BIGINT" />
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="recorded_credit_note_id"
-            baseTableName="billing_credit_note" constraintName="fk_billing_credit_note_recorded_credit_note"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
-    </changeSet>
+	<changeSet id="#1138_20151009" author="EdwardLegaspi">
+		<addColumn tableName="crm_provider">
+			<column name="credit_note_sequence_size" type="INT4" />
+		</addColumn>
+		<addColumn tableName="crm_seller">
+			<column name="credit_note_sequence_size" type="INT4" />
+		</addColumn>
 
-    <changeSet id="#1138_20151009" author="EdwardLegaspi">
-        <addColumn tableName="crm_provider">
-            <column name="credit_note_sequence_size" type="INT4" />
-        </addColumn>
-        <addColumn tableName="crm_seller">
-            <column name="credit_note_sequence_size" type="INT4" />
-        </addColumn>
+		<sql>UPDATE crm_provider SET credit_note_sequence_size=9;</sql>
+	</changeSet>
 
-        <sql>UPDATE crm_provider SET credit_note_sequence_size=9;</sql>
-    </changeSet>
+	<changeSet id="#REVERT_CREDIT_NOTE_20151014" author="EdwardLegaspi">
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_crm_provider" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_adm_user_creator" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_adm_user_updater" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_billing_account" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_invoice" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note_tax_amt"
+			constraintName="fk_billing_credit_note_tax_amt_credit_note" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note_line"
+			constraintName="fk_billing_credit_note_line_crm_provider" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note_line"
+			constraintName="fk_billing_credit_note_line_credit_note" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note_line"
+			constraintName="fk_billing_credit_note_line_invoice_sub_cat" />
+		<dropForeignKeyConstraint baseTableName="billing_credit_note"
+			constraintName="fk_billing_credit_note_recorded_credit_note" />
 
-    <changeSet id="#REVERT_CREDIT_NOTE_20151014" author="EdwardLegaspi">
-        <dropForeignKeyConstraint baseTableName="billing_credit_note"
-            constraintName="fk_billing_credit_note_crm_provider" />
-        <dropForeignKeyConstraint baseTableName="billing_credit_note"
-            constraintName="fk_billing_credit_note_adm_user_creator" />
-        <dropForeignKeyConstraint baseTableName="billing_credit_note"
-            constraintName="fk_billing_credit_note_adm_user_updater" />
-        <dropForeignKeyConstraint baseTableName="billing_credit_note"
-            constraintName="fk_billing_credit_note_billing_account" />
-        <dropForeignKeyConstraint baseTableName="billing_credit_note"
-            constraintName="fk_billing_credit_note_invoice" />
-        <dropForeignKeyConstraint baseTableName="billing_credit_note_tax_amt"
-            constraintName="fk_billing_credit_note_tax_amt_credit_note" />
-        <dropForeignKeyConstraint baseTableName="billing_credit_note_line"
-            constraintName="fk_billing_credit_note_line_crm_provider" />
-        <dropForeignKeyConstraint baseTableName="billing_credit_note_line"
-            constraintName="fk_billing_credit_note_line_credit_note" />
-        <dropForeignKeyConstraint baseTableName="billing_credit_note_line"
-            constraintName="fk_billing_credit_note_line_invoice_sub_cat" />
-        <dropForeignKeyConstraint baseTableName="billing_credit_note"
-            constraintName="fk_billing_credit_note_recorded_credit_note" />
+		<dropPrimaryKey tableName="billing_credit_note"
+			constraintName="billing_credit_note_pkey" />
+		<dropPrimaryKey tableName="billing_credit_note_line"
+			constraintName="billing_credit_note_line_pkey" />
+		<dropPrimaryKey tableName="billing_credit_note_tax_amt"
+			constraintName="billing_credit_note_tax_amt_pkey" />
 
-        <dropPrimaryKey tableName="billing_credit_note"
-            constraintName="billing_credit_note_pkey" />
-        <dropPrimaryKey tableName="billing_credit_note_line"
-            constraintName="billing_credit_note_line_pkey" />
-        <dropPrimaryKey tableName="billing_credit_note_tax_amt"
-            constraintName="billing_credit_note_tax_amt_pkey" />
+		<dropSequence sequenceName="billing_credit_note_seq" />
+		<dropSequence sequenceName="billing_credit_note_line_seq" />
 
-        <dropSequence sequenceName="billing_credit_note_seq" />
-        <dropSequence sequenceName="billing_credit_note_line_seq" />
+		<dropColumn tableName="crm_provider" columnName="credit_note_prefix" />
+		<dropColumn tableName="crm_provider" columnName="current_credit_note_nb" />
+		<dropColumn tableName="crm_provider" columnName="credit_note_sequence_size" />
 
-        <dropColumn tableName="crm_provider" columnName="credit_note_prefix" />
-        <dropColumn tableName="crm_provider" columnName="current_credit_note_nb" />
-        <dropColumn tableName="crm_provider" columnName="credit_note_sequence_size" />
+		<dropColumn tableName="crm_seller" columnName="credit_note_prefix" />
+		<dropColumn tableName="crm_seller" columnName="current_credit_note_nb" />
+		<dropColumn tableName="crm_seller" columnName="credit_note_sequence_size" />
 
-        <dropColumn tableName="crm_seller" columnName="credit_note_prefix" />
-        <dropColumn tableName="crm_seller" columnName="current_credit_note_nb" />
-        <dropColumn tableName="crm_seller" columnName="credit_note_sequence_size" />
+		<dropColumn tableName="ar_account_operation" columnName="credit_note_date" />
 
-        <dropColumn tableName="ar_account_operation" columnName="credit_note_date" />
+		<dropTable tableName="billing_credit_note_tax_amt" />
+		<dropTable tableName="billing_credit_note_line" />
+		<dropTable tableName="billing_credit_note" />
+	</changeSet>
 
-        <dropTable tableName="billing_credit_note_tax_amt" />
-        <dropTable tableName="billing_credit_note_line" />
-        <dropTable tableName="billing_credit_note" />
-    </changeSet>
+	<changeSet id="#1167_20151015" author="EdwardLegaspi">
+		<addColumn tableName="crm_provider">
+			<column name="invoice_adjustment_prefix" type="VARCHAR(255)" />
+			<column name="current_invoice_adjustment_nb" type="BIGINT" />
+			<column name="invoice_adjustment_sequence_size" type="INT4" />
+		</addColumn>
+		<addColumn tableName="crm_seller">
+			<column name="invoice_adjustment_prefix" type="VARCHAR(255)" />
+			<column name="current_invoice_adjustment_nb" type="BIGINT" />
+			<column name="invoice_adjustment_sequence_size" type="INT4" />
+		</addColumn>
 
-    <changeSet id="#1167_20151015" author="EdwardLegaspi">
-        <addColumn tableName="crm_provider">
-            <column name="invoice_adjustment_prefix" type="VARCHAR(255)" />
-            <column name="current_invoice_adjustment_nb" type="BIGINT" />
-            <column name="invoice_adjustment_sequence_size" type="INT4" />
-        </addColumn>
-        <addColumn tableName="crm_seller">
-            <column name="invoice_adjustment_prefix" type="VARCHAR(255)" />
-            <column name="current_invoice_adjustment_nb" type="BIGINT" />
-            <column name="invoice_adjustment_sequence_size" type="INT4" />
-        </addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="detailed_invoice" type="boolean" defaultValue="true" />
+			<column name="invoice_id" type="BIGINT" />
+		</addColumn>
 
-        <addColumn tableName="billing_invoice">
-            <column name="detailed_invoice" type="boolean" defaultValue="true" />
-            <column name="invoice_id" type="BIGINT" />
-        </addColumn>
+		<addForeignKeyConstraint constraintName="fk_billing_invoice_adjusted_invoice"
+			referencedTableName="billing_invoice" baseColumnNames="invoice_id"
+			baseTableName="billing_invoice" referencedColumnNames="id" />
 
-        <addForeignKeyConstraint constraintName="fk_billing_invoice_adjusted_invoice"
-            referencedTableName="billing_invoice" baseColumnNames="invoice_id"
-            baseTableName="billing_invoice" referencedColumnNames="id" />
+		<sql>UPDATE billing_invoice SET invoice_type='COMMERCIAL'</sql>
+	</changeSet>
 
-        <sql>UPDATE billing_invoice SET invoice_type='COMMERCIAL'</sql>
-    </changeSet>
+	<changeSet id="#1170_20151020" author="EdwardLegaspi">
+		<addColumn tableName="billing_invoice_configuration">
+			<column name="display_detail" type="BOOL" defaultValueBoolean="true"></column>
+		</addColumn>
+	</changeSet>
 
-    <changeSet id="#1170_20151020" author="EdwardLegaspi">
-        <addColumn tableName="billing_invoice_configuration">
-            <column name="display_detail" type="BOOL" defaultValueBoolean="true"></column>
-        </addColumn>
-    </changeSet>
+	<changeSet id="#1184_20151022" author="EdwardLegaspi">
+		<addColumn tableName="billing_rated_transaction">
+			<column name="adjusted_rated_tx" type="BIGINT" />
+		</addColumn>
 
-    <changeSet id="#1184_20151022" author="EdwardLegaspi">
-        <addColumn tableName="billing_rated_transaction">
-            <column name="adjusted_rated_tx" type="BIGINT" />
-        </addColumn>
-
-        <addForeignKeyConstraint
-            constraintName="fk_billing_rated_transaction_rated_transaction"
-            referencedTableName="billing_rated_transaction" baseColumnNames="adjusted_rated_tx"
-            baseTableName="billing_rated_transaction" referencedColumnNames="id" />
-    </changeSet>
-
-    <changeSet id="#1134-20151026" author="Mbarek">
-        <addColumn tableName="crm_provider">
-            <column name="INVOICE_SEQUENCE_SIZE" type="INT4" defaultValue="9" />
-        </addColumn>
-        <addColumn tableName="crm_seller">
-            <column name="INVOICE_SEQUENCE_SIZE" type="INT4" defaultValue="9" />
-        </addColumn>
-    </changeSet>
+		<addForeignKeyConstraint
+			constraintName="fk_billing_rated_transaction_rated_transaction"
+			referencedTableName="billing_rated_transaction" baseColumnNames="adjusted_rated_tx"
+			baseTableName="billing_rated_transaction" referencedColumnNames="id" />		
+	</changeSet>
+	
+	<changeSet id="#1134-20151026" author="Mbarek">
+		<addColumn tableName="crm_provider"> 
+			<column name="INVOICE_SEQUENCE_SIZE" type="INT4" defaultValue="9" />
+		</addColumn>
+		<addColumn tableName="crm_seller"> 
+			<column name="INVOICE_SEQUENCE_SIZE" type="INT4" defaultValue="9" />
+		</addColumn>
+	</changeSet>
 
     <changeSet id="#1101_20151022" author="AndriusKarpavicius">
-
+    
         <addForeignKeyConstraint baseColumnNames="provider_id"
             baseTableName="crm_custom_field_fields" constraintName="fk_crm_custom_field_fields_crm_provider"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-
+            
     </changeSet>
-
+    
     <changeSet id="#1102_20151023" author="AndriusKarpavicius">
         <createSequence sequenceName="CUST_CET_SEQ"/>
-
+        
         <createTable tableName="CUST_CET">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" />
@@ -1152,7 +568,7 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
         </createTable>
-
+    
         <addPrimaryKey columnNames="id" constraintName="cust_cet_pkey"
             tableName="cust_cet" />
 
@@ -1160,34 +576,34 @@
             baseTableName="cust_cet" constraintName="fk_cust_cet_crm_provider"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-
+        
         <addForeignKeyConstraint baseColumnNames="creator_id"
             baseTableName="cust_cet" constraintName="fk_creator_cust_cet_adm_user"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-
+        
         <addForeignKeyConstraint baseColumnNames="updater_id"
             baseTableName="cust_cet" constraintName="fk_updater_cust_cet_adm_user"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />        
+    
     </changeSet>
-
+    
     <changeSet id="#1102_20151030" author="AndriusKarpavicius">
         <addColumn tableName="CUST_CET">
-            <column name="ACCESS_PERMISSION" type="VARCHAR(100)"/>
+            <column name="ACCESS_PERMISSION" type="VARCHAR(100)"/>        
         </addColumn>
-
+        
         <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
             <column name="GUI_POSITION" type="VARCHAR(100)"/>
         </addColumn>
     </changeSet>
-
-	<changeSet id="#1231_20151104" author="EdwardLegaspi">
-		<dropForeignKeyConstraint baseTableName="billing_invoice_agregate"
-			constraintName="fkc92fa77a520f2e17" />
-		<dropColumn tableName="billing_invoice_agregate"
-			columnName="sub_cat_invoice_agregate_id" />
-	</changeSet>
-
+    
+     <changeSet id="2037_20151105" author="Mbarek">
+     	<modifyDataType columnName="FILTER_PARAM_1" newDataType="varchar(255)"   tableName="CAT_USAGE_CHARGE_TEMPLATE"/>
+     	<modifyDataType columnName="FILTER_PARAM_2" newDataType="varchar(255)"   tableName="CAT_USAGE_CHARGE_TEMPLATE"/>
+     	<modifyDataType columnName="FILTER_PARAM_3" newDataType="varchar(255)"   tableName="CAT_USAGE_CHARGE_TEMPLATE"/>
+     	<modifyDataType columnName="FILTER_PARAM_4" newDataType="varchar(255)"   tableName="CAT_USAGE_CHARGE_TEMPLATE"/>
+     </changeSet>
+    
 </databaseChangeLog>

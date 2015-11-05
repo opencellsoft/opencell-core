@@ -149,24 +149,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 
-	public Invoice findByInvoiceNumberAndType(String invoiceNumber, InvoiceTypeEnum type, Provider provider)
-			throws BusinessException {
-		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, provider);
-		qb.addCriterion("invoiceNumber", "=", invoiceNumber, true);
-		qb.addCriterionEnum("invoiceTypeEnum", type);
-		try {
-			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
-			return null;
-		} catch (NonUniqueResultException e) {
-			log.info("Multiple invoices with invoice number #0 was found. Returning null.", invoiceNumber);
-			return null;
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
 	public Invoice getInvoice(String invoiceNumber, CustomerAccount customerAccount) throws BusinessException {
 		return getInvoice(getEntityManager(), invoiceNumber, customerAccount);
 	}
@@ -519,14 +501,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				+ currentUser.getProvider().getCode() + File.separator;
 
 		Invoice invoice = (Invoice) parameters.get(PdfGeneratorConstants.INVOICE);
-		File billingRundir = new File(meveoDir
-				+ "invoices"
-				+ File.separator
-				+ "xml"
-				+ File.separator
-				+ (invoice.getBillingRun() == null ? DateUtils.formatDateWithPattern(invoice.getAuditable()
-						.getCreated(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss"))
-						: invoice.getBillingRun().getId()));
+		File billingRundir = new File(meveoDir + "invoices" + File.separator + "xml" + File.separator
+				+ invoice.getBillingRun().getId());
 
 		String invoiceXmlFileName = billingRundir
 				+ File.separator
@@ -552,11 +528,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (!invoiceXmlFile.exists()) {
 			throw new InvoiceXmlNotFoundException("The xml invoice file doesn't exist.");
 		}
-
-		BillingCycle billingCycle = null;
-		if (invoice.getBillingRun() != null) {
-			invoice.getBillingRun().getBillingCycle();
-		}
+		BillingCycle billingCycle = invoice.getBillingRun().getBillingCycle();
 		BillingAccount billingAccount = invoice.getBillingAccount();
 		String billingTemplate = (billingCycle != null && billingCycle.getBillingTemplateName() != null) ? billingCycle
 				.getBillingTemplateName() : "default";
@@ -909,15 +881,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				.getCustomerCategory().getExoneratedFromTaxes();
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 
-		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
-
 		// update the aggregated subcat of an invoice
 		for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
 			if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
 				invoiceAgregate.resetAmounts();
-			} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-				TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
-				taxInvoiceAgregateMap.put(taxInvoiceAgregate.getTax().getId(), taxInvoiceAgregate);
 			}
 		}
 
@@ -926,6 +893,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		SubCategoryInvoiceAgregate biggestSubCat = null;
 		BigDecimal biggestAmount = new BigDecimal("-100000000");
 
+		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
 		List<? extends InvoiceAgregate> subCategoryInvoiceAgregates = invoiceAgregateService.listByInvoiceAndType(
 				invoice, "F");
 		for (InvoiceAgregate invoiceAgregate : subCategoryInvoiceAgregates) {
@@ -942,11 +910,56 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(
 					subCategoryInvoiceAgregate.getAmountWithoutTax());
 
+			for (TaxInvoiceAgregate taxInvoiceAgregate : subCategoryInvoiceAgregate.getTaxInvoiceAggregates()) {
+				// add to map
+				taxInvoiceAgregateMap.put(taxInvoiceAgregate.getTax().getId(), taxInvoiceAgregate);
+			}
+
 			if (subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(biggestAmount) > 0) {
 				biggestAmount = subCategoryInvoiceAgregate.getAmountWithoutTax();
 				biggestSubCat = subCategoryInvoiceAgregate;
 			}
 		}
+
+		// compute the tax
+		// if (!exoneratedFromTaxes) {
+		// List<? extends InvoiceAgregate> taxInvoiceAgregates =
+		// invoiceAgregateService.listByInvoiceAndType(invoice,
+		// "T");
+		// for (InvoiceAgregate invoiceAgregate : taxInvoiceAgregates) {
+		// TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate)
+		// invoiceAgregate;
+		// if
+		// (taxInvoiceAgregate.getTax().getPercent().compareTo(BigDecimal.ZERO)
+		// != 0) {
+		// // then compute the tax
+		// taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountWithoutTax()
+		// .multiply(taxInvoiceAgregate.getTaxPercent()).divide(new
+		// BigDecimal("100")));
+		// // then round the tax
+		// taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding,
+		// RoundingMode.HALF_UP));
+		//
+		// log.debug("tax2 ht={}", taxInvoiceAgregate.getAmountWithoutTax());
+		// }
+		// }
+		// }
+
+		// update subcategory tax amount
+		// for (InvoiceAgregate invoiceAgregate : subCategoryInvoiceAgregates) {
+		// SubCategoryInvoiceAgregate subCategoryInvoiceAgregate =
+		// (SubCategoryInvoiceAgregate) invoiceAgregate;
+		//
+		// for (TaxInvoiceAgregate taxInvoiceAgregate :
+		// subCategoryInvoiceAgregate.getTaxInvoiceAggregates()) {
+		// subCategoryInvoiceAgregate.addAmountTax(taxInvoiceAgregate.getAmountTax());
+		// }
+		//
+		// subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithoutTax().add(
+		// subCategoryInvoiceAgregate.getAmountTax()));
+		// subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax().setScale(
+		// rounding, RoundingMode.HALF_UP));
+		// }
 
 		for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
 			if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
@@ -1056,9 +1069,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		for (TaxInvoiceAgregate taxInvoiceAgregate : taxInvoiceAgregates) {
 			taxInvoiceAgregate.setAmountWithoutTax(new BigDecimal(0));
 			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
-				subCategoryInvoiceAgregate.setAmountTax(new BigDecimal(0));
-
-				taxInvoiceAgregate.addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+				if (subCategoryInvoiceAgregate.getQuantity().signum() != 0) {
+					if (subCategoryInvoiceAgregate.getSubCategoryTaxes().contains(taxInvoiceAgregate.getTax())) {
+						taxInvoiceAgregate.addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+					}
+				}
 			}
 
 			taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountWithoutTax()
@@ -1068,18 +1083,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 			taxInvoiceAgregate.setAmountWithTax(taxInvoiceAgregate.getAmountWithoutTax().add(
 					taxInvoiceAgregate.getAmountTax()));
-
-			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
-				subCategoryInvoiceAgregate.addAmountTax(taxInvoiceAgregate.getAmountTax());
-			}
-		}
-
-		for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
-			subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithoutTax().add(
-					subCategoryInvoiceAgregate.getAmountTax()));
-			subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax().setScale(
-					rounding, RoundingMode.HALF_UP));
 		}
 	}
-
+	
 }

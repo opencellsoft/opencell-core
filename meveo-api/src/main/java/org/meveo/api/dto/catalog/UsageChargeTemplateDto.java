@@ -18,16 +18,16 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 
 	static String WILCARD = null;
 
-	@Size(min = 0, max = 20)
+	@Size(min = 0, max = 255)
 	private String filterParam1 = WILCARD;
 	
-	@Size(min = 0, max = 20)
+	@Size(min = 0, max = 255)
 	private String filterParam2 = WILCARD;
 	
-	@Size(min = 0, max = 20)
+	@Size(min = 0, max = 255)
 	private String filterParam3 = WILCARD;
 	
-	@Size(min = 0, max = 20)
+	@Size(min = 0, max = 255)
 	private String filterParam4 = WILCARD;
 	
 	@Size(max = 255)

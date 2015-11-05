@@ -173,7 +173,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			invoiceTag.appendChild(header);
 			// log.debug("creating provider");
 			Provider provider = invoice.getProvider();
-			if(provider.getInvoiceConfiguration() != null && provider.getInvoiceConfiguration().getDisplayProvider()){
+			if(provider.getInvoiceConfiguration() != null && provider.getInvoiceConfiguration().getDisplayProvider()!=null && provider.getInvoiceConfiguration().getDisplayProvider()){
 				Element providerTag = doc.createElement("provider");
 				providerTag.setAttribute("code", provider.getCode() + "");
 				Element bankCoordinates = doc.createElement("bankCoordinates");
@@ -377,7 +377,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			Element detail = null;
 			boolean displayDetail = false;
-			if (provider.getInvoiceConfiguration().getDisplayDetail() != null
+			if (provider.getInvoiceConfiguration()!=null && provider.getInvoiceConfiguration().getDisplayDetail() != null
 					&& provider.getInvoiceConfiguration().getDisplayDetail()) {
 				displayDetail = true;
 
@@ -969,7 +969,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						usageDate.appendChild(usageDateTxt);
 						line.appendChild(usageDate);
 						EDR edr = ratedTransaction.getEdr();
-						if (ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs() && edr != null) {
+						if (ratedTransaction.getProvider().getInvoiceConfiguration()!=null && ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs()!=null 
+								&& ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs() && edr != null) {
 							Element edrInfo = doc.createElement("edr");
 							edrInfo.setAttribute("originRecord", edr.getOriginRecord() != null ? edr.getOriginRecord()
 									: "");

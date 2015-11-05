@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -195,23 +194,26 @@ public class InvoiceBean extends BaseBean<Invoice> {
 										.getSubCategoryInvoiceAgregates()) {
 									SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate(
 											subCategoryInvoiceAgregate);
-
+									
 									newSubCategoryInvoiceAgregate.setInvoice(invoice);
 									newSubCategoryInvoiceAgregate.setAuditable(auditable);
+									newSubCategoryInvoiceAgregate.setOldAmountWithoutTax(subCategoryInvoiceAgregate
+											.getAmountWithoutTax());
+									newSubCategoryInvoiceAgregate.setAmountWithTax(new BigDecimal(0));
+									newSubCategoryInvoiceAgregate.setAmountTax(new BigDecimal(0));
 									newSubCategoryInvoiceAgregate
 											.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
 
 									newCategoryInvoiceAgregate
 											.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
-
-									uiSubCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);
-
+									
 									if (subCategoryInvoiceAgregate.getSubCategoryTaxes() != null) {
-										newSubCategoryInvoiceAgregate.setSubCategoryTaxes(new HashSet<Tax>());
 										for (Tax tax : subCategoryInvoiceAgregate.getSubCategoryTaxes()) {
 											newSubCategoryInvoiceAgregate.addSubCategoryTax(tax);
 										}
 									}
+
+									uiSubCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);									
 								}
 							}
 						} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
@@ -377,7 +379,6 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	public File getXmlInvoiceDir() {
 		ParamBean param = ParamBean.getInstance();
 		String invoicesDir = param.getProperty("providers.rootDir", "/tmp/meveo");
-
 		File billingRundir = new File(invoicesDir
 				+ File.separator
 				+ getCurrentProvider().getCode()
@@ -389,7 +390,6 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				+ (getEntity().getBillingRun() == null ? DateUtils.formatDateWithPattern(getEntity().getAuditable()
 						.getCreated(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss"))
 						: getEntity().getBillingRun().getId()));
-
 		return billingRundir;
 	}
 
@@ -621,8 +621,12 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	public String saveOrUpdateInvoiceAdjustment() throws Exception {
 		if (entity.isTransient()) {
-			Long creditNoteNo = Long.parseLong(entity.getCode());
-			invoiceService.updateCreditNoteNb(entity, creditNoteNo);
+			if (isDetailed()) {
+				for (RatedTransaction rt : uiRatedTransactions) {
+					ratedTransactionService.create(rt, getCurrentUser());
+				}
+			}
+			invoiceService.updateCreditNoteNb(entity, Long.parseLong(entity.getAlias()));
 		}
 
 		super.saveOrUpdate(false);

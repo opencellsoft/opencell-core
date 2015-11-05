@@ -125,8 +125,6 @@
 									<p:column headerText="#{messages['charge.subCategory']}" />
 									<p:column headerText="#{messages['invoice.amountWithoutTax']}" />
 									<p:column headerText="#{messages['invoice.amountWithoutTax']}" />
-									<p:column headerText="#{messages['invoice.amountTax']}" />
-									<p:column headerText="#{messages['invoice.amountWithTax']}" />
 								</p:row>
 							</p:columnGroup>
 
@@ -135,8 +133,8 @@
 							</p:column>
 							<p:column>
 								<h:outputText
-									value="#{entity.invoice.adjustedInvoice.amountWithoutTax}"
-									converter="#{getConverter.forType(entity.invoice.adjustedInvoice.amountWithoutTax,'4digits')}" />
+									value="#{entity.oldAmountWithoutTax}"
+									converter="#{getConverter.forType(entity.oldAmountWithoutTax,'4digits')}" />
 							</p:column>
 
 							<!-- // -->
@@ -147,14 +145,6 @@
 										listener="#{invoiceBean.reComputeInvoiceAdjustment(entity)}"
 										update="resultsId_invoiceAdjustmentLines"></p:ajax>
 								</p:inputText>
-							</p:column>
-							<p:column>
-								<h:outputText id="amountTax" value="#{entity.amountTax}"
-									converter="#{getConverter.forType(entity.amountTax,'4digits')}" />
-							</p:column>
-							<p:column>
-								<h:outputText id="amountWithTax" value="#{entity.amountWithTax}"
-									converter="#{getConverter.forType(entity.amountWithoutTax,'4digits')}" />
 							</p:column>
 
 							<p:columnGroup type="footer">
@@ -169,25 +159,7 @@
 												converter="#{getConverter.forType(invoiceBean.totalInvoiceAdjustmentAmountWithoutTax,'4digits')}">
 											</h:outputText>
 										</f:facet>
-									</p:column>
-
-									<p:column>
-										<f:facet name="footer">
-											<h:outputText
-												value="#{invoiceBean.totalInvoiceAdjustmentAmountTax}"
-												converter="#{getConverter.forType(invoiceBean.totalInvoiceAdjustmentAmountTax,'4digits')}">
-											</h:outputText>
-										</f:facet>
-									</p:column>
-
-									<p:column>
-										<f:facet name="footer">
-											<h:outputText
-												value="#{invoiceBean.totalInvoiceAdjustmentAmountWithTax}"
-												converter="#{getConverter.forType(invoiceBean.totalInvoiceAdjustmentAmountWithTax,'4digits')}">
-											</h:outputText>
-										</f:facet>
-									</p:column>
+									</p:column>									
 								</p:row>
 							</p:columnGroup>
 

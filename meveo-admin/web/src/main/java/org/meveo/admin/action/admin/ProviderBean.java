@@ -88,6 +88,12 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 			invoiceConfiguration.setCode(entity.getCode()); 
 			invoiceConfiguration.setDescription(entity.getDescription());   
 	   		invoiceConfiguration.setProvider(entity);
+	   		invoiceConfiguration.setDisplaySubscriptions(false);
+	   		invoiceConfiguration.setDisplayOffers(false);
+	   		invoiceConfiguration.setDisplayServices(false);
+	   		invoiceConfiguration.setDisplayProvider(false);
+	   		invoiceConfiguration.setDisplayEdrs(false);
+	   		invoiceConfiguration.setDisplayDetail(false);
 	   		invoiceConfigurationService.create(invoiceConfiguration);
 	   	    entity.setInvoiceConfiguration(invoiceConfiguration);
 	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
@@ -154,6 +160,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 	   		invoiceConfiguration.setDisplaySubscriptions(entity.getInvoiceConfiguration().getDisplaySubscriptions());
 	   		invoiceConfiguration.setDisplayEdrs(entity.getInvoiceConfiguration().getDisplayEdrs());
 	   		invoiceConfiguration.setDisplayProvider(entity.getInvoiceConfiguration().getDisplayProvider());
+	   		invoiceConfiguration.setDisplayDetail(entity.getInvoiceConfiguration().getDisplayDetail());
 	   		invoiceConfigurationService.create(invoiceConfiguration);
 			entity.setInvoiceConfiguration(invoiceConfiguration); 
 	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
