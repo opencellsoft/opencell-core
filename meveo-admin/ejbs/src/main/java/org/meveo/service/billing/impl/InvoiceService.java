@@ -1041,8 +1041,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		for (TaxInvoiceAgregate taxInvoiceAgregate : taxInvoiceAgregates) {
 			taxInvoiceAgregate.setAmountWithoutTax(new BigDecimal(0));
 			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
-				if (subCategoryInvoiceAgregate.getSubCategoryTaxes().contains(taxInvoiceAgregate.getTax())) {
-					taxInvoiceAgregate.addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+				if (subCategoryInvoiceAgregate.getQuantity().signum() != 0) {
+					if (subCategoryInvoiceAgregate.getSubCategoryTaxes().contains(taxInvoiceAgregate.getTax())) {
+						taxInvoiceAgregate.addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+					}
 				}
 			}
 
