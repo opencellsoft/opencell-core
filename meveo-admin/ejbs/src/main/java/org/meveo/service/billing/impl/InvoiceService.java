@@ -27,6 +27,7 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1050,34 +1051,39 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 
-	public void recomputeSubCategoryAggregate(Invoice invoice, SubCategoryInvoiceAgregate subCategoryInvoiceAgregate,
-			User currentUser) {
+	public void recomputeSubCategoryAggregate(Invoice invoice, User currentUser) {
 		int rounding = invoice.getBillingAccount().getProvider().getRounding() == null ? 2 : invoice
 				.getBillingAccount().getProvider().getRounding();
-		boolean exoneratedFromTaxes = invoice.getBillingAccount().getCustomerAccount().getCustomer()
-				.getCustomerCategory().getExoneratedFromTaxes();
 
-		subCategoryInvoiceAgregate.setAmountTax(new BigDecimal(0));
+		List<TaxInvoiceAgregate> taxInvoiceAgregates = new ArrayList<TaxInvoiceAgregate>();
+		List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
 
-		for (TaxInvoiceAgregate taxInvoiceAgregate : subCategoryInvoiceAgregate.getTaxInvoiceAggregates()) {
-			if (taxInvoiceAgregate.getTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
-				taxInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
-				taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountWithoutTax()
-						.multiply(taxInvoiceAgregate.getTaxPercent()).divide(new BigDecimal("100")));
-				// then round the tax
-				taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding,
-						RoundingMode.HALF_UP));
-
-				taxInvoiceAgregate.setAmountWithTax(taxInvoiceAgregate.getAmountWithoutTax().add(
-						taxInvoiceAgregate.getAmountTax()));
+		for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+			if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+				taxInvoiceAgregates.add((TaxInvoiceAgregate) invoiceAgregate);
+			} else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
+				subCategoryInvoiceAgregates.add((SubCategoryInvoiceAgregate) invoiceAgregate);
 			}
-
-			subCategoryInvoiceAgregate.addAmountTax(taxInvoiceAgregate.getAmountTax());
 		}
 
-		subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithoutTax().add(
-				subCategoryInvoiceAgregate.getAmountTax()));
-		subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax().setScale(rounding,
-				RoundingMode.HALF_UP));
+		for (TaxInvoiceAgregate taxInvoiceAgregate : taxInvoiceAgregates) {
+			taxInvoiceAgregate.setAmountWithoutTax(new BigDecimal(0));
+			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
+				if (subCategoryInvoiceAgregate.getQuantity().signum() != 0) {
+					if (subCategoryInvoiceAgregate.getSubCategoryTaxes().contains(taxInvoiceAgregate.getTax())) {
+						taxInvoiceAgregate.addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+					}
+				}
+			}
+
+			taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountWithoutTax()
+					.multiply(taxInvoiceAgregate.getTaxPercent()).divide(new BigDecimal("100")));
+			// then round the tax
+			taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
+
+			taxInvoiceAgregate.setAmountWithTax(taxInvoiceAgregate.getAmountWithoutTax().add(
+					taxInvoiceAgregate.getAmountTax()));
+		}
 	}
+	
 }
