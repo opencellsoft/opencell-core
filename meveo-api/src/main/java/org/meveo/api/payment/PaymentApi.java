@@ -67,27 +67,30 @@ public class PaymentApi extends BaseApi {
 				+ "  customerAccount:" + paymentDto.getCustomerAccountCode()
 				+ "...");
 
-		Provider provider = currentUser.getProvider();
-		CustomerAccount customerAccount = customerAccountService.findByCode(
-				paymentDto.getCustomerAccountCode(), provider);
-		if (customerAccount == null) {
-			throw new BusinessException(
-					"Cannot find customer account with code="
-							+ paymentDto.getCustomerAccountCode());
-		}
 
-		OCCTemplate occTemplate = oCCTemplateService.findByCode(
-				paymentDto.getOccTemplateCode(), provider.getCode());
-		if (occTemplate == null) {
-			throw new BusinessException("Cannot find OCC Template with code="
-					+ paymentDto.getOccTemplateCode());
-		}
 
 		if (!StringUtils.isBlank(paymentDto.getAmount())
 				&& !StringUtils.isBlank(paymentDto.getPaymentMethod())
 				&& !StringUtils.isBlank(paymentDto.getCustomerAccountCode())
 				&& !StringUtils.isBlank(paymentDto.getOccTemplateCode())
 				&& !StringUtils.isBlank(paymentDto.getReference())) {
+			
+			Provider provider = currentUser.getProvider();
+			CustomerAccount customerAccount = customerAccountService.findByCode(
+					paymentDto.getCustomerAccountCode(), provider);
+			if (customerAccount == null) {
+				throw new BusinessException(
+						"Cannot find customer account with code="
+								+ paymentDto.getCustomerAccountCode());
+			}
+
+			OCCTemplate occTemplate = oCCTemplateService.findByCode(
+					paymentDto.getOccTemplateCode(), provider.getCode());
+			if (occTemplate == null) {
+				throw new BusinessException("Cannot find OCC Template with code="
+						+ paymentDto.getOccTemplateCode());
+			}
+			
 			AutomatedPayment automatedPayment = new AutomatedPayment();
 			automatedPayment.setProvider(provider);
 			automatedPayment.setPaymentMethod(PaymentMethodEnum
