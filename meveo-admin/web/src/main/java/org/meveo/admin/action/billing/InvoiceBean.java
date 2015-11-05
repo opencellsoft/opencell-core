@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -205,15 +204,14 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 									newCategoryInvoiceAgregate
 											.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
-
-									uiSubCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);
-
+									
 									if (subCategoryInvoiceAgregate.getSubCategoryTaxes() != null) {
-										newSubCategoryInvoiceAgregate.setSubCategoryTaxes(new HashSet<Tax>());
 										for (Tax tax : subCategoryInvoiceAgregate.getSubCategoryTaxes()) {
 											newSubCategoryInvoiceAgregate.addSubCategoryTax(tax);
 										}
 									}
+
+									uiSubCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);									
 								}
 							}
 						} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
