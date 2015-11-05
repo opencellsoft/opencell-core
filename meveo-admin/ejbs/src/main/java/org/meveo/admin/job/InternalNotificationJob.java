@@ -16,8 +16,8 @@
  */
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -25,7 +25,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -42,8 +41,8 @@ public class InternalNotificationJob extends Job {
 
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        String filterCode = jobInstance.getStringCustomValue("InternalNotificationJob_filterCode");
-        String notificationCode = jobInstance.getStringCustomValue("InternalNotificationJob_notificationCode");
+        String filterCode = (String) jobInstance.getCFValue("InternalNotificationJob_filterCode");
+        String notificationCode = (String) jobInstance.getCFValue("InternalNotificationJob_notificationCode");
         internalNotificationJobBean.execute(filterCode,notificationCode,result, currentUser);
     }
 
@@ -53,26 +52,26 @@ public class InternalNotificationJob extends Job {
     }
     
     @Override
-    public List<CustomFieldTemplate> getCustomFields() {
-        List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate filterCode = new CustomFieldTemplate();
         filterCode.setCode("InternalNotificationJob_filterCode");
-        filterCode.setAccountLevel(AccountLevelEnum.TIMER);
+        filterCode.setAppliesTo("JOB_InternalNotificationJob");
         filterCode.setActive(true);
         filterCode.setDescription("Filter (sql query)");
         filterCode.setFieldType(CustomFieldTypeEnum.STRING);
         filterCode.setValueRequired(true);
-        result.add(filterCode);
+        result.put("InternalNotificationJob_filterCode", filterCode);
 
         CustomFieldTemplate notificationCode = new CustomFieldTemplate();
         notificationCode.setCode("InternalNotificationJob_notificationCode");
-        notificationCode.setAccountLevel(AccountLevelEnum.TIMER);
+        notificationCode.setAppliesTo("JOB_InternalNotificationJob");
         notificationCode.setActive(true);
         notificationCode.setDescription("Notification code");
         notificationCode.setFieldType(CustomFieldTypeEnum.STRING);
         notificationCode.setValueRequired(true);
-        result.add(notificationCode);
+        result.put("InternalNotificationJob_notificationCode", notificationCode);
 
         return result;
     }

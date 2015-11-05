@@ -17,9 +17,6 @@
 package org.meveo.model.mediation;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,246 +24,105 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
-import org.meveo.model.Auditable;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldFields;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Access linked to Subscription and Zone.
  */
 @Entity
 @ObservableEntity
+@CustomFieldEntity(cftCodePrefix = "ACC")
 @ExportIdentifier({ "accessUserId", "subscription.code", "provider" })
-@Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
+@Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = { "ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_ACCESS_SEQ")
 @NamedQueries({ @NamedQuery(name = "Access.getAccessesForCache", query = "SELECT a from Access a where a.disabled=false order by a.accessUserId") })
-public class Access extends EnableEntity implements ICustomFieldEntity{
+public class Access extends EnableEntity implements ICustomFieldEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// input
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "START_DATE")
-	private Date startDate;
+    // input
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "START_DATE")
+    private Date startDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "END_DATE")
-	private Date endDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "END_DATE")
+    private Date endDate;
 
-	@Column(name = "ACCES_USER_ID")
-	private String accessUserId;
+    @Column(name = "ACCES_USER_ID")
+    private String accessUserId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUBSCRIPTION_ID")
-	private Subscription subscription;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SUBSCRIPTION_ID")
+    private Subscription subscription;
 
-	@OneToMany(mappedBy = "access", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@MapKeyColumn(name = "code")
-	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
-	
-	public Date getStartDate() {
-		return startDate;
-	}
+    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "CFF_ID")
+    private CustomFieldFields cfFields;
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public String getAccessUserId() {
-		return accessUserId;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public void setAccessUserId(String accessUserId) {
-		this.accessUserId = accessUserId;
-	}
+    public String getAccessUserId() {
+        return accessUserId;
+    }
 
-	public Subscription getSubscription() {
-		return subscription;
-	}
+    public void setAccessUserId(String accessUserId) {
+        this.accessUserId = accessUserId;
+    }
 
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-	}
+    public Subscription getSubscription() {
+        return subscription;
+    }
 
-	public String getCacheKey(){
-		return getProvider().getCode()+"_"+accessUserId;
-	}
-	
-	public Map<String, CustomFieldInstance> getCustomFields() {
-		return customFields;
-	}
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 
-	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-		this.customFields = customFields;
-	}
+    public String getCacheKey() {
+        return getProvider().getCode() + "_" + accessUserId;
+    }
 
-    private CustomFieldInstance getOrCreateCustomFieldInstance(String code) {
-        CustomFieldInstance cfi = null;
-
-		if (customFields.containsKey(code)) {
-			cfi = customFields.get(code);
-		} else {
-			cfi = new CustomFieldInstance();
-			Auditable au=new Auditable();
-			au.setCreated(new Date());
-			if(subscription!=null && subscription.getAuditable()!=null){
-				au.setCreator(subscription.getAuditable().getCreator());
-			}
-			cfi.setAuditable(au);
-			cfi.setCode(code);
-			cfi.setAccess(this);
-			cfi.setProvider(this.getProvider());
-			customFields.put(code, cfi);
-		}
-
-		return cfi;
-	}
-
-	public String getStringCustomValue(String code) {
-		String result = null;
-		if (customFields.containsKey(code)) {
-			result = customFields.get(code).getStringValue();
-		}
-
-		return result;
-	}
-
-	public void setStringCustomValue(String code, String value) {
-	    getOrCreateCustomFieldInstance(code).setStringValue(value);
-	}
-
-	public Date getDateCustomValue(String code) {
-		Date result = null;
-		if (customFields.containsKey(code)) {
-			result = customFields.get(code).getDateValue();
-		}
-
-		return result;
-	}
-
-	public void setDateCustomValue(String code, Date value) {
-	    getOrCreateCustomFieldInstance(code).setDateValue(value);
-	}
-
-	public Long getLongCustomValue(String code) {
-		Long result = null;
-		if (customFields.containsKey(code)) {
-			result = customFields.get(code).getLongValue();
-		}
-		return result;
-	}
-
-	public void setLongCustomValue(String code, Long value) {
-	    getOrCreateCustomFieldInstance(code).setLongValue(value);
-	}
-
-	public Double getDoubleCustomValue(String code) {
-		Double result = null;
-
-		if (customFields.containsKey(code)) {
-			result = customFields.get(code).getDoubleValue();
-		}
-
-		return result;
-	}
-
-	public void setDoubleCustomValue(String code, Double value) {
-	    getOrCreateCustomFieldInstance(code).setDoubleValue(value);
-	}
-
-	public String getCustomFieldsAsJson() {
-		String result = "";
-		String sep = "";
-
-		for (Entry<String, CustomFieldInstance> cf : customFields.entrySet()) {
-			result += sep + cf.getValue().toJson();
-			sep = ";";
-		}
-
-		return result;
-	}
-	
-	
-	public String getInheritedCustomStringValue(String code){
-		String stringValue=null;
-		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
-			stringValue=getCustomFields().get(code).getStringValue();
-		}else if(subscription!=null){
-			stringValue=subscription.getInheritedCustomStringValue(code);
-		}
-		return stringValue;
-		}
-	
-	public Long getInheritedCustomLongValue(String code){
-		Long result=null; 
-		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
-			result=getCustomFields().get(code).getLongValue();
-		}else if(subscription!=null){
-			result=subscription.getInheritedCustomLongValue(code);
-		}
-		return result;
-		}
-	
-	public Date getInheritedCustomDateValue(String code){
-		Date result=null; 
-		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
-			result=getCustomFields().get(code).getDateValue();
-		}else if(subscription!=null){
-			result=subscription.getInheritedCustomDateValue(code);
-		}
-		return result;
-		}
-	
-
-	public Double getInheritedCustomDoubleValue(String code){
-		Double result=null; 
-		if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
-			result=getCustomFields().get(code).getDoubleValue();
-		}else if(subscription!=null){
-			result=subscription.getInheritedCustomDoubleValue(code);
-		}
-		return result;
-		}
-	
-	public String getICsv(String code){
-		return getInheritedCustomStringValue(code);
-	}
-	
-	public Long getIClv(String code){
-		return getInheritedCustomLongValue(code);
-	}
-	
-	public Date getICdav(String code){
-		return getInheritedCustomDateValue(code);
-	}
-	
-	public Double getICdov(String code){
-		return getInheritedCustomDoubleValue(code);
-	}
+    @Override
+    public CustomFieldFields getCfFields() {
+        return cfFields;
+    }
+    
+    @Override
+    public void initCustomFields() {
+        cfFields = new CustomFieldFields();
+    } 
 
     @Override
     public boolean equals(Object obj) {
@@ -286,12 +142,79 @@ public class Access extends EnableEntity implements ICustomFieldEntity{
         return false;
     }
 
-	@Override
-	public String toString() {
-		return String.format(
-				"Access [%s, accessUserId=%s, startDate=%s, endDate=%s, subscription=%s, subscription.status=%s]",
-				super.toString(), accessUserId, startDate, endDate, subscription != null ? subscription.getId() : null,
-				subscription != null ? subscription.getStatus() : null);
-	}
-    
+    @Override
+    public String toString() {
+        return String.format("Access [%s, accessUserId=%s, startDate=%s, endDate=%s, subscription=%s, subscription.status=%s]", super.toString(), accessUserId, startDate, endDate,
+            subscription != null ? subscription.getId() : null, subscription != null ? subscription.getStatus() : null);
+    }
+
+    @Override
+    public ICustomFieldEntity getParentCFEntity() {
+        return subscription;
+    }
+
+    @Override
+    public Object getCFValue(String cfCode) {
+        if (cfFields != null) {
+            return cfFields.getCFValue(cfCode);
+        }
+        return null;
+    }
+
+    @Override
+    public Object getCFValue(String cfCode, Date date) {
+        if (cfFields != null) {
+            return cfFields.getCFValue(cfCode, date);
+        }
+        return null;
+    }
+
+    @Override
+    public Object getInheritedOnlyCFValue(String cfCode) {
+        if (getParentCFEntity() != null) {
+            return getParentCFEntity().getInheritedCFValue(cfCode);
+        }
+        return null;
+    }
+
+    @Override
+    public Object getInheritedOnlyCFValue(String cfCode, Date date) {
+
+        if (getParentCFEntity() != null) {
+            return getParentCFEntity().getInheritedCFValue(cfCode, date);
+        }
+        return null;
+    }
+
+    @Override
+    public Object getInheritedCFValue(String cfCode) {
+
+        try {
+            if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
+                return cfFields.getCustomFields().get(cfCode).getValue();
+
+            } else if (getParentCFEntity() != null) {
+                return getParentCFEntity().getInheritedCFValue(cfCode);
+            }
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(getClass());
+            log.error("Failed to access inherited CF values", e);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object getInheritedCFValue(String cfCode, Date date) {
+
+        Object value = null;
+
+        if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
+            value = cfFields.getCustomFields().get(cfCode).getValue(date);
+        }
+        if (value == null && getParentCFEntity() != null) {
+            return getParentCFEntity().getInheritedCFValue(cfCode, date);
+        }
+        return null;
+    }
 }

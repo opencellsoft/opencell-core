@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="http://jboss.org/seam/faces" xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
+        style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
+        inputWidth="#{inputWidth}">
+
+        <!--  As a list of values -->
+        <c:if test="#{listType == 'simpleList'}">
+            <p:dataTable id="#{id}" resizableColumns="true" value="#{fieldItem}" var="listElement" rowIndexVar="rowIndex">
+                <c:if test="#{showFields !=null}">
+                    <c:forEach items="#{showFields.split(';')}" var="fieldToShow">
+                        <c:set var="headerAndValue" value="#{fieldToShow.split(',')}" />
+                        <c:set var="style" value="text-align:left;" />
+                        <c:if test="#{'right'.equals(headerAndValue[2])}">
+                            <c:set var="style" value="text-align:right;" />
+                        </c:if>
+                        <p:column width="100" style="${style}">
+                            <f:facet name="header">
+                                <h:outputText value="#{messages[headerAndValue[0]]}" />
+                            </f:facet>
+                            <c:set var="value" value="#{listElement[headerAndValue[1]]}"></c:set>
+                            <c:if test="#{'msg'.equals(headerAndValue[2])}">
+                                <c:set var="value" value="#{messages[listElement[headerAndValue[1]].label]}" />
+                            </c:if>
+                            <h:outputText style="text-align:right;" value="#{value}" converter="#{getConverter.forType(listElement[headerAndValue[1]])}" />
+                        </p:column>
+                    </c:forEach>
+                    <c:if test="#{deleteButton and edit}">
+                        <p:column>
+                            <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                            <h:commandLink id="deletelink" action="#{backingBeean.delete(listElement.id)}"
+                                onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+                                <h:graphicImage value="/img/delete.gif" style="border:0" />
+                            </h:commandLink>
+                        </p:column>
+                    </c:if>
+                </c:if>
+                <c:if test="#{showFields ==null}">
+                    <p:column width="90%" headerText="#{messages['commons.value']}">
+                        <c:if test="#{!edit}">
+                            <h:outputText style="text-align:right;" value="#{listElement}" converter="#{getConverter.forType(listElement)}" />
+                        </c:if>
+                        <c:if test="#{edit}">
+                            <p:inputText value="#{listElement}" size="50" maxlength="100" valueChangeListener="#{backingBeean.updateItemInCollection}">
+                                <f:attribute name="values" value="#{fieldItem}" />
+                                <f:attribute name="itemIndex" value="#{rowIndex}" />
+                            </p:inputText>
+                        </c:if>
+                    </p:column>
+                    <c:if test="#{deleteButton and edit}">
+                        <p:column width="10%">
+                            <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                            <p:commandButton id="deletelink" action="#{backingBeean.deleteItemFromCollection(fieldItem, rowIndex)}" partialSubmit="true" icon="ui-icon-trash"
+                                process="@this" update="#{id}">
+                            </p:commandButton>
+                        </p:column>
+                    </c:if>
+                </c:if>
+                <f:facet name="footer">
+                    <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this #{id}" update="#{id}"
+                        actionListener="#{backingBeean.addItemToCollection(fieldItem, fieldGenericsType)}" rendered="#{showFields ==null and showButtonAddNew and edit}" />
+                    <p:commandButton rendered="#{showFields !=null and showButtonAddNew and edit and ! newEntity}" value="#{messages['commons.addNew']}"
+                        onclick="alert('not implemented. formListField.xhtml line 52')" />
+                </f:facet>
+            </p:dataTable>
+
+
+        </c:if>
+
+        <!--  As a dual picklist of values -->
+        <c:if test="#{listType=='pickUpList'}">
+
+            <c:if test="#{edit}">
+                <c:if test="#{empty dualListModel}">
+                    <c:set var="elements" value="#{backingBean.dualListModel}" />
+                </c:if>
+                <c:if test="#{!empty dualListModel}">
+                    <c:set var="elements" value="#{dualListModel}" />
+                </c:if>
+                <c:if test="#{not empty(valueLabelField2)}">
+                    <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}" itemValue="#{elem}">
+                        <s:objectConverter />
+                    </p:pickList>
+                </c:if>
+                <c:if test="#{empty(valueLabelField2)}">
+                    <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}">
+                        <s:objectConverter />
+                    </p:pickList>
+                </c:if>
+
+            </c:if>
+            <c:if test="#{! edit}">
+                <p:dataList id="#{id}" value="#{fieldItem.toArray()}" var="elem" type="ordered">
+                    <c:if test="#{not empty(valueLabelField2)}">
+                                #{elem[valueLabelField]} #{elem[valueLabelField2]}
+                    </c:if>
+                    <c:if test="#{empty(valueLabelField2)}">
+                                #{elem[valueLabelField]}
+                    </c:if>
+                </p:dataList>
+            </c:if>
+        </c:if>
+    </hftl:decorateFormField>
+</ui:composition>
+
+</html>

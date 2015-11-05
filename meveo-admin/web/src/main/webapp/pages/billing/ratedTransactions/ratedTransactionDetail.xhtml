@@ -1,0 +1,133 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
+
+    <ui:define name="body">
+    	<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+					<p:menuitem outcome="ratedTransactions"
+						value="#{messages['menu.ratedTransactions']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		
+		<hftl:entityPopup id="searchPricePlanPopup"
+			header="#{messages['pricePlan.title']}"
+			backingBean="#{pricePlanMatrixBean}"
+			formField1Label="#{messages['pricePlanMatrix.table.eventCode']}"
+			formField1="code" 
+			column1Label="#{messages['BusinessEntity.code']}" column1="code" 
+			selection="#{ratedTransactionBean.entity.priceplan}" 
+			updateField=":#{p:component('priceplanSelectId')}" >
+		</hftl:entityPopup> 
+		
+		<hftl:entityPopup id="searchWalletInstancePopup"
+			header="#{messages['walletTemplate.title']}"
+			updateField=":#{p:component('walletId')}"
+			selection="#{ratedTransactionBean.entity.wallet}"
+			backingBean="#{walletTemplateBean}"
+			formField1Label="#{messages['BusinessEntity.code']}"
+			formField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+		
+		<hftl:entityPopup id="searchInvoicePopup"
+			header="#{messages['invoice.search']}"
+			backingBean="#{invoiceBean}"
+			updateField=":#{p:component('invoice')}"
+			selection="#{ratedTransactionBean.entity.invoice}"
+			column1Label="#{messages['role.id']}"
+			column1="id"
+		    formField1Label="#{messages['BusinessEntity.code']}"
+			formField2="code" column2Label="#{messages['BusinessEntity.code']}"
+			column2="code"
+			column3Label="#{messages['BusinessEntity.description']}"
+			column3="description">
+		  </hftl:entityPopup>
+		  
+		  <hftl:entityPopup id="billingAccountPopup"
+			header="#{messages['billingAccount.popup.header']}"
+			backingBean="#{billingAccountBean}"
+			searchField1Label="#{messages['billingAccount.code']}"
+			searchField1="code" 
+			searchField2Label="#{messages['invoiceSubCategory.description']}"
+			searchField2="description"
+			column1Label="#{messages['billingAccount.code']}"
+			column1="code"
+			column2Label="#{messages['invoiceSubCategory.description']}"
+			column2="description" 
+			selection="#{ratedTransactionBean.entity.billingAccount}"
+            updateField=":#{p:component('billingAccountId')}">
+		</hftl:entityPopup>  
+		  
+		  <hftl:entityPopup id="searchBillingRunPopup"
+			header="#{messages['billingRun.search']}"
+			backingBean="#{billingRunBean}"
+			updateField=":#{p:component('billingRunId')}"
+			selection="#{ratedTransactionBean.entity.billingRun}"
+			searchField1Label="#{messages['role.id']}"
+			searchField1="id" 
+			searchField2Label="#{messages['billingRun.status']}"
+			searchField2="status" 
+			column1Label="#{messages['role.id']}" column1="id"
+			column2Label="#{messages['billingRun.status']}" column2="status"
+			column3Label="#{messages['billingRun.processDate']}" column3="processDate">
+		  </hftl:entityPopup>
+		  
+		  <hftl:entityPopup id="searchEdrPopup"
+			header="#{messages['ratedTransaction.edr']}"
+			backingBean="#{edrBean}"
+			updateField=":#{p:component('edrId')}"
+			selection="#{ratedTransactionBean.entity.edr}"
+			searchField1Label="#{messages['role.id']}"
+			searchField1="id"  
+			searchField2Label="#{messages['subscription.panel']}"
+			searchField2="subscription.code"
+			column1Label="#{messages['role.id']}" column1="id"
+            column2Label="#{messages['billingRun.status']}" column2="status" >
+		  </hftl:entityPopup>
+
+        <hf:formPanel id="formPanel" label="#{messages['ratedTransaction.panel']}" backingBean="#{ratedTransactionBean}" showDeleteButton="false" showBackButton="true"
+		 showFormButtons="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null ? false : true}" >
+            <hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
+            <hf:formField label="#{messages['BusinessEntity.description']}" field="description" />   
+			 <hf:formField id="priceplanSelectId" label="#{messages['ratedTransaction.pricePlan']}" field="priceplan" valueLabelField="code"  popup="true" popupId="searchPricePlanPopup" disabled="true" />
+			<hf:formField id="walletId" label="#{messages['ratedTransaction.wallet']}" field="wallet" valueLabelField="code"  popup="true" popupId="searchWalletInstancePopup" disabled="true" /> 
+			<hf:formField label="#{messages['invoiceSubCategory.title']}" id="invoiceSubCategoryId" field="invoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" /> 
+			<hf:formField label="#{messages['ratedTransaction.invoice']}" id="invoice" field="invoice" valueLabelField="code" popup="true" popupId="searchInvoicePopup" clearButton="true" /> 
+			<hf:formField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount" valueLabelField="code" popup="true"  popupId="billingAccountPopup" clearButton="true" />
+			<hf:formField label="#{messages['billingRun.panel']}" id="billingRunId" field="billingRun" valueLabelField="id" popup="true" popupId="searchBillingRunPopup" clearButton="true" renderNewButton="false" />
+		    <hf:formField label="#{messages['ratedTransaction.edr']}" id="edrId" field="edr" valueLabelField="id" popup="true" popupId="searchEdrPopup" clearButton="true" renderNewButton="false" />
+			<hf:formField label="#{messages['ratedTransaction.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" /> 
+			<hf:formField label="#{messages['ratedTransaction.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter" />
+			<hf:formField label="#{messages['ratedTransaction.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" />
+			<hf:formField label="#{messages['ratedTransaction.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter" />
+			<hf:formField label="#{messages['ratedTransaction.unitAmountWithTax']}" field="unitAmountWithTax" converter="bigDecimal4DigitsConverter" />
+			<hf:formField label="#{messages['ratedTransaction.unitAmountTax']}" field="unitAmountTax" converter="bigDecimal4DigitsConverter" />
+			<hf:formField label="#{messages['ratedTransaction.quantity']}" field="quantity" />
+			<hf:formField label="#{messages['ratedTransaction.status']}" field="status" />
+			<hf:formField label="#{messages['ratedTransaction.param1']}" field="parameter1" />
+			<hf:formField label="#{messages['ratedTransaction.param2']}" field="parameter2" />
+			<hf:formField label="#{messages['ratedTransaction.param3']}" field="parameter3" />
+			<hf:formField label="#{messages['ratedTransaction.usageDate']}" field="usageDate"/>
+			<hf:formField label="#{messages['ratedTransaction.unityDescription']}" field="unityDescription" />
+			<hf:formField label="#{messages['ratedTransaction.doNotTriggerInvoicing']}" field="doNotTriggerInvoicing" /> 			
+        </hf:formPanel>
+		<p:outputPanel layout="block">
+               <p:button id="backButton" value="#{messages['action.back']}" style="left:35px;" 
+				outcome="#{ratedTransactionBean.back()}" rendered="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null}">
+				<f:param name="cid"
+					value="#{javax.enterprise.context.conversation.id}" />
+			   </p:button>
+			</p:outputPanel>
+    </ui:define>
+
+</ui:composition>

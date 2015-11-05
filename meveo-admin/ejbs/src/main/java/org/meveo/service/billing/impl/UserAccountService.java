@@ -67,7 +67,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		userAccount.setWallet(wallet);
 	}
 
-	public void userAccountTermination(UserAccount userAccount, Date terminationDate,
+	public UserAccount userAccountTermination(UserAccount userAccount, Date terminationDate,
 			SubscriptionTerminationReason terminationReason, User updater) throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
@@ -81,10 +81,10 @@ public class UserAccountService extends AccountService<UserAccount> {
 		userAccount.setTerminationReason(terminationReason);
 		userAccount.setTerminationDate(terminationDate);
 		userAccount.setStatus(AccountStatusEnum.TERMINATED);
-		update(userAccount, updater);
+		return update(userAccount, updater);
 	}
 
-	public void userAccountCancellation(UserAccount userAccount, Date terminationDate, User updater)
+	public UserAccount userAccountCancellation(UserAccount userAccount, Date terminationDate, User updater)
 			throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
@@ -98,10 +98,10 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 		userAccount.setTerminationDate(terminationDate);
 		userAccount.setStatus(AccountStatusEnum.CANCELED);
-		update(userAccount, updater);
+		return update(userAccount, updater);
 	}
 
-	public void userAccountReactivation(UserAccount userAccount, Date activationDate, User updater)
+	public UserAccount userAccountReactivation(UserAccount userAccount, Date activationDate, User updater)
 			throws BusinessException {
 		if (activationDate == null) {
 			activationDate = new Date();
@@ -113,7 +113,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(activationDate);
-		update(userAccount, updater);
+		return update(userAccount, updater);
 	}
 
 	public BillingWalletDetailDTO BillingWalletDetail(UserAccount userAccount) throws BusinessException {
@@ -145,26 +145,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return wallet.getRatedTransactions();
 	}
 
-	public boolean isDuplicationExist(UserAccount userAccount) {
-		if (userAccount == null || !userAccount.getDefaultLevel()) {
-			return false;
-		}
-
-		List<UserAccount> userAccounts = listByBillingAccount(userAccount.getBillingAccount());
-		if (userAccounts != null) {
-			for (UserAccount ua : userAccounts) {
-				if (ua.getDefaultLevel() != null
-						&& ua.getDefaultLevel()
-						&& (userAccount.getId() == null || (userAccount.getId() != null && !userAccount.getId().equals(
-								ua.getId())))) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-
-	}
 
 	@SuppressWarnings("unchecked")
 	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {

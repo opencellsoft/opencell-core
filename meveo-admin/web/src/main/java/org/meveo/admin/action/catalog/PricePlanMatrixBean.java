@@ -24,10 +24,12 @@ import javax.enterprise.inject.Instance;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.NoResultException;
 
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -70,25 +72,18 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 
 	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
-	
-	@Inject
-	@RequestParam
-	private Instance<String> pricePlanCode;
-	
-	
+
 	@Inject
 	@RequestParam
 	private Instance<String> backView;
 	
 	@Inject
 	@RequestParam
-	private Instance<Long> chargeId;
+	private Instance<Long> chargeId; 
 	
-	private boolean pricePlanCharge;
+	private String backPage;
 	
-	private String chargeDetail;
-	
-	private long objectId;
+	private long chargeTemplateId;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -108,30 +103,47 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 
 	public PricePlanMatrix initEntity() {
 		PricePlanMatrix obj = super.initEntity();
-		if(obj.isTransient()){
+		if (obj.isTransient()) {
 			obj.setMinSubscriptionAgeInMonth(0L);
 			obj.setMaxSubscriptionAgeInMonth(9999L);
 		}
-		if (pricePlanCode.get()!=null&& chargeId.get()!=null) { 
-			RecurringChargeTemplate recurring= recurringChargeTemplateService.findById(chargeId.get());
-			if(recurring!=null){
-				obj.setEventCode(recurring.getCode());
-				obj.setDescription(recurring.getDescription());
+		if (chargeId.get() != null) {
+			RecurringChargeTemplate recurring = recurringChargeTemplateService
+					.findById(chargeId.get());
+			if (recurring != null) {
+				if (getObjectId() == null) {
+					obj.setCode(getPricePlanCode(recurring));
+					obj.setEventCode(recurring.getCode());
+					obj.setDescription(recurring.getDescription());
+					obj.setSequence(getNextSequence(recurring));
+				}
+				backPage = "recurringChargeTemplateDetail";
+			} else {
+				OneShotChargeTemplate oneShot = oneShotChargeTemplateService
+						.findById(chargeId.get());
+				if (oneShot != null) {
+					if (getObjectId() == null) {
+						obj.setCode(getPricePlanCode(oneShot));
+						obj.setEventCode(oneShot.getCode());
+						obj.setDescription(oneShot.getDescription());
+						obj.setSequence(getNextSequence(oneShot));
+					}
+					backPage = "oneShotChargeTemplateDetail";
+				} else {
+					UsageChargeTemplate usageCharge = usageChargeTemplateService
+							.findById(chargeId.get());
+					if (usageCharge != null) {
+						if (getObjectId() == null) {
+							obj.setCode(getPricePlanCode(usageCharge));
+							obj.setEventCode(usageCharge.getCode());
+							obj.setDescription(usageCharge.getDescription());
+							obj.setSequence(getNextSequence(usageCharge));
+						}
+						backPage = "usageChargeTemplateDetail";
+					}
+				}
 			}
-			OneShotChargeTemplate oneShot= oneShotChargeTemplateService.findById(chargeId.get());
-			if(oneShot!=null){
-				obj.setEventCode(oneShot.getCode());
-				obj.setDescription(oneShot.getDescription());
-			}
-			UsageChargeTemplate usageCharge= usageChargeTemplateService.findById(chargeId.get());
-			if(usageCharge!=null){
-				obj.setEventCode(usageCharge.getCode());
-				obj.setDescription(usageCharge.getDescription());
-			}
-			obj.setCode(pricePlanCode.get());
-			pricePlanCharge=true;
-			chargeDetail=backView.get();
-			objectId=chargeId.get();
+			chargeTemplateId = chargeId.get();
 		}
 		return obj;
 	}
@@ -149,14 +161,17 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 		return "pricePlanMatrixes";
 	}
 
+	
 	public void onRowSelect(SelectEvent event) {
 		if (event.getObject() instanceof ChargeTemplate) {
 			ChargeTemplate chargeTemplate = (ChargeTemplate) event.getObject();
 			if (chargeTemplate != null) {
 				entity.setEventCode(chargeTemplate.getCode());
+				entity.setCode(getPricePlanCode(chargeTemplate));
+				entity.setDescription(chargeTemplate.getDescription());
+				entity.setSequence(getNextSequence(chargeTemplate));
 			}
 		}
-
 	}
 
 	@Override
@@ -200,15 +215,37 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 			filters.put("eventCode", chargeTemplate.getCode());
 			return getLazyDataModel();
 		}
+
 	
-	public String resetEntity() {
-	 return "/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml?pricePlanCode="+pricePlanCode.get()+"&chargeId="+chargeId.get()+"&backView="+backView.get()+""
-	         + "&edit=true&faces-redirect=true&includeViewParams=true";
+
+	public String getPricePlanCode(ChargeTemplate chargetemplate) {
+		String pricePlanCode=null;
+		try{
+		if (chargetemplate != null) { 
+		pricePlanCode="PP_"+chargetemplate.getCode()+"_"+getNextSequence(chargetemplate);
+		}} catch (Exception e) {
+			log.warn("error while getting pricePlan code", e);
+			return null;
+		}
+		return pricePlanCode;
+	}
+
+	public Long getNextSequence(ChargeTemplate chargetemplate) {
+		long result = 0;
+		try {
+		if (chargetemplate != null) {
+			result = pricePlanMatrixService.getLastPricePlanByCharge(chargetemplate.getCode(), chargetemplate.getProvider()) + 1;
+		}
+		} catch (Exception e) {
+			log.warn("error while getting next sequence", e);
+			return null;
+		}
+		return result;
 	}
 	
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException { 
-		   if(pricePlanCharge){
+		   if(chargeTemplateId!=0){ 
 		    super.saveOrUpdate(killConversation); 
 		    return getBackCharge();
 		   }else{
@@ -218,28 +255,31 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
   
 	 public String getBackCharge() {
 		 String chargeName=null;
-		  if(chargeDetail.equals("recurringChargeTemplateDetail")){
+		  if(backPage.equals("recurringChargeTemplateDetail")){
 			  chargeName="recurringChargeTemplates";
-		   }else if(chargeDetail.equals("oneShotChargeTemplateDetail")){
+		   }else if(backPage.equals("oneShotChargeTemplateDetail")){
 			   chargeName="oneShotChargeTemplates";
 		   }else{
 			   chargeName="usageChargeTemplates";
 		   }
-   	      return "/pages/catalog/"+chargeName+"/"+chargeDetail+".xhtml?objectId="+objectId+"&edit=true&faces-redirect=true&includeViewParams=true"; 
+   	      return "/pages/catalog/"+chargeName+"/"+backPage+".xhtml?objectId="+chargeTemplateId+"&edit=true&faces-redirect=true&includeViewParams=true"; 
 	    }
-
-	public boolean isPricePlanCharge() {
-		return pricePlanCharge;
-	}
  
-	public void duplicate() {
-		if (entity != null && entity.getId() != null) {
-			pricePlanMatrixService.detach(entity);
-			entity.setId(null);
-			entity.setCode(entity.getCode() + "_copy");
-			pricePlanMatrixService.create(entity);
+	 
+	 public void duplicate() {
+			if (entity != null && entity.getId() != null) {
+				pricePlanMatrixService.detach(entity);
+				entity.setId(null);
+				entity.setCode(entity.getCode() + "_copy");
+				pricePlanMatrixService.create(entity);
+			}
 		}
+	 
+
+	public long getChargeTemplateId() {
+		return chargeTemplateId;
 	}
+  
 	
 }
 

@@ -33,9 +33,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
@@ -49,62 +51,54 @@ import org.meveo.model.rating.EDR;
 		@NamedQuery(name = "RatedTransaction.countNotInvoinced", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
 				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.usageDate<:lastTransactionDate "
-                + " AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null "),
+				+ " AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null "),
 		@NamedQuery(name = "RatedTransaction.countNotInvoincedDisplayFree", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount"
 				+ " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
-		        + " AND r.usageDate<:lastTransactionDate "
+				+ " AND r.usageDate<:lastTransactionDate "
 				+ " AND r.doNotTriggerInvoicing=false AND r.invoice is null "),
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByCycle", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r"
 				+ " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
-                + " AND r.usageDate<:lastTransactionDate "
+				+ " AND r.usageDate<:lastTransactionDate "
 				+ " AND r.billingAccount.billingCycle=:billingCycle"
 				+ " AND (r.billingAccount.nextInvoiceDate >= :startDate)"
 				+ " AND (r.billingAccount.nextInvoiceDate < :endDate) and r.provider=:provider"),
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByCycleNoDate", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r"
 				+ " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
-                + " AND r.usageDate<:lastTransactionDate "
+				+ " AND r.usageDate<:lastTransactionDate "
 				+ " AND r.billingAccount.billingCycle=:billingCycle and r.provider=:provider"),
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByList", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
-				+ " AND r.usageDate<:lastTransactionDate "
-                + " AND r.billingAccount IN :billingAccountList"),
+				+ " AND r.usageDate<:lastTransactionDate " + " AND r.billingAccount IN :billingAccountList"),
 		@NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.doNotTriggerInvoicing=false "
 				+ "AND r.amountWithoutTax<>0 "
 				+ " AND r.usageDate<:lastTransactionDate "
-                + "AND r.invoice is null"
+				+ "AND r.invoice is null"
 				+ " AND r.billingAccount=:billingAccount"),
 		@NamedQuery(name = "RatedTransaction.sumBillingAccountDisplayFree", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN"
 				+ " AND r.usageDate<:lastTransactionDate "
-                + " AND r.doNotTriggerInvoicing=false "
-				+ "AND r.invoice is null"
-				+ " AND r.billingAccount=:billingAccount"),
+				+ " AND r.doNotTriggerInvoicing=false "
+				+ "AND r.invoice is null" + " AND r.billingAccount=:billingAccount"),
 		@NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
 				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
 				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
 				+ " and r.doNotTriggerInvoicing=false" + " AND r.amountWithoutTax<>0"
-                + " AND r.usageDate<:lastTransactionDate "
-				+ " and r.billingAccount=:billingAccount"),
+				+ " AND r.usageDate<:lastTransactionDate " + " and r.billingAccount=:billingAccount"),
 		@NamedQuery(name = "RatedTransaction.updateInvoicedDisplayFree", query = "UPDATE RatedTransaction r "
 				+ "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
 				+ "where r.invoice is null" + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-                + " AND r.usageDate<:lastTransactionDate "
-				+ " and r.doNotTriggerInvoicing=false" + " and r.billingAccount=:billingAccount"),
-				
-	 @NamedQuery(name = "RatedTransaction.getRatedTransactionsBilled",  
-				  query = "SELECT r.walletOperationId FROM RatedTransaction r "
-				  + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED"
-				  + " AND r.walletOperationId IN :walletIdList"),
-				
-	@NamedQuery(name = "RatedTransaction.setStatusToCanceled", 
-		           query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
-		         + " where rt.walletOperationId IN :notBilledWalletIdList"),
-			
-	@NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", 
-	           query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory ")
-		})
+				+ " AND r.usageDate<:lastTransactionDate " + " and r.doNotTriggerInvoicing=false"
+				+ " and r.billingAccount=:billingAccount"),
+		@NamedQuery(name = "RatedTransaction.getRatedTransactionsBilled", query = "SELECT r.walletOperationId FROM RatedTransaction r "
+				+ " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED"
+				+ " AND r.walletOperationId IN :walletIdList"),
+		@NamedQuery(name = "RatedTransaction.setStatusToCanceled", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
+				+ " where rt.walletOperationId IN :notBilledWalletIdList"),
+		@NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory "),
+		@NamedQuery(name = "RatedTransaction.deleteInvoice", query = "UPDATE RatedTransaction r "
+				+ "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null,r.billingRun=null,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN where r.invoice=:invoice") })
 public class RatedTransaction extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -201,20 +195,57 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "OFFER_CODE", length = 35)
 	@Size(max = 35, min = 1)
 	protected String offerCode;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "EDR_ID")
 	private EDR edr;
-	
+
+	@ManyToOne
+	@JoinColumn(name = "ADJUSTED_RATED_TX")
+	private RatedTransaction adjustedRatedTx;
+
+	@Transient
+	private OfferTemplate offerTemplate;
+
 	public RatedTransaction() {
 		super();
+	}
+
+	public RatedTransaction(RatedTransaction ratedTransaction) {
+		this.setWallet(ratedTransaction.getWallet());
+		this.setBillingAccount(ratedTransaction.getBillingAccount());
+		this.setWalletOperationId(ratedTransaction.getWalletOperationId());
+		this.setUsageDate(ratedTransaction.getUsageDate());
+		this.setInvoiceSubCategory(ratedTransaction.getInvoiceSubCategory());
+		this.setCode(ratedTransaction.getCode());
+		this.setDescription(ratedTransaction.getDescription());
+		this.setUnityDescription(ratedTransaction.getUnityDescription());
+		this.setUnitAmountWithoutTax(ratedTransaction.getUnitAmountWithoutTax());
+		this.setUnitAmountWithTax(ratedTransaction.getUnitAmountWithTax());
+		this.setUnitAmountTax(ratedTransaction.getUnitAmountTax());
+		this.setQuantity(ratedTransaction.getQuantity());
+		this.setAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+		this.setAmountWithTax(ratedTransaction.getAmountWithTax());
+		this.setAmountTax(ratedTransaction.getAmountTax());
+		this.setInvoice(ratedTransaction.getInvoice());
+		this.setStatus(ratedTransaction.getStatus());
+		this.setDoNotTriggerInvoicing(ratedTransaction.isDoNotTriggerInvoicing());
+		this.setParameter1(ratedTransaction.getParameter1());
+		this.setParameter2(ratedTransaction.getParameter2());
+		this.setParameter3(ratedTransaction.getParameter3());
+		this.setPriceplan(ratedTransaction.getPriceplan());
+		this.setOfferCode(ratedTransaction.getOfferCode());
+		this.setEdr(ratedTransaction.getEdr());
+		this.setOfferTemplate(ratedTransaction.getOfferTemplate());
+		this.setProvider(ratedTransaction.getProvider());
 	}
 
 	public RatedTransaction(Long walletOperationId, Date usageDate, BigDecimal unitAmountWithoutTax,
 			BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax,
 			BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, Provider provider,
 			WalletInstance wallet, BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory,
-			String parameter1, String parameter2, String parameter3, String unityDescription,PricePlanMatrix priceplan,String offerCode,EDR edr) {
+			String parameter1, String parameter2, String parameter3, String unityDescription,
+			PricePlanMatrix priceplan, String offerCode, EDR edr) {
 		super();
 		this.walletOperationId = walletOperationId;
 		this.usageDate = usageDate;
@@ -233,9 +264,9 @@ public class RatedTransaction extends BaseEntity {
 		this.parameter2 = parameter2;
 		this.parameter3 = parameter3;
 		this.priceplan = priceplan;
-		this.offerCode=offerCode;
+		this.offerCode = offerCode;
 		this.unityDescription = unityDescription;
-		this.edr=edr;
+		this.edr = edr;
 		setProvider(provider);
 	}
 
@@ -455,7 +486,7 @@ public class RatedTransaction extends BaseEntity {
 		this.offerCode = offerCode;
 	}
 
-    public EDR getEdr() {
+	public EDR getEdr() {
 		return edr;
 	}
 
@@ -463,5 +494,33 @@ public class RatedTransaction extends BaseEntity {
 		this.edr = edr;
 	}
 
+	public RatedTransaction getAdjustedRatedTx() {
+		return adjustedRatedTx;
+	}
 
+	public void setAdjustedRatedTx(RatedTransaction adjustedRatedTx) {
+		this.adjustedRatedTx = adjustedRatedTx;
+	}
+
+	public void recompute() {
+		recompute(false);
+	}
+
+	// recompute given unit amount and quantity
+	public void recompute(boolean isEnterprise) {
+		unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
+		amountWithoutTax = unitAmountWithoutTax.multiply(quantity);
+
+		if (!isEnterprise) {
+			amountWithTax = unitAmountWithTax.multiply(quantity);
+		}
+	}
+
+	public OfferTemplate getOfferTemplate() {
+		return offerTemplate;
+	}
+
+	public void setOfferTemplate(OfferTemplate offerTemplate) {
+		this.offerTemplate = offerTemplate;
+	}
 }

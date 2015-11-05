@@ -87,5 +87,19 @@ public class EjbUtils {
         properties.put(Context.PROVIDER_URL, serverName);
         return new InitialContext(properties);
     }
+    
+    /**
+     * @param serviceInterfaceName
+     * @return
+     */
+	public static Object getServiceInterface(String serviceInterfaceName){
+		try {
+			InitialContext ic = new InitialContext();
+			return ic.lookup("java:global/"+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+"/"+serviceInterfaceName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

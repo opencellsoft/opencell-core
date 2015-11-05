@@ -292,5 +292,12 @@ public class PricePlanApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	public void createOrUpdate(PricePlanDto postData, User currentUser) throws MeveoApiException {
+		if (pricePlanMatrixService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

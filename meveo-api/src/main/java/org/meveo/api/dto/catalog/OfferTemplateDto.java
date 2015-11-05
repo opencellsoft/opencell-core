@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 
@@ -27,6 +28,8 @@ public class OfferTemplateDto implements Serializable {
 
 	private boolean disabled;
 	private ServiceTemplatesDto serviceTemplates = new ServiceTemplatesDto();
+	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public OfferTemplateDto() {
 
@@ -42,6 +45,8 @@ public class OfferTemplateDto implements Serializable {
 				serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getCode()));
 			}
 		}
+
+		customFields = CustomFieldsDto.toDTO(e.getCfFields());
 	}
 
 	public String getCode() {
@@ -71,7 +76,7 @@ public class OfferTemplateDto implements Serializable {
 	@Override
 	public String toString() {
 		return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled
-				+ ", serviceTemplates=" + serviceTemplates + "]";
+				+ ", serviceTemplates=" + serviceTemplates + ", customFields=" + customFields + "]";
 	}
 
 	public ServiceTemplatesDto getServiceTemplates() {
@@ -80,6 +85,14 @@ public class OfferTemplateDto implements Serializable {
 
 	public void setServiceTemplates(ServiceTemplatesDto serviceTemplates) {
 		this.serviceTemplates = serviceTemplates;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 }

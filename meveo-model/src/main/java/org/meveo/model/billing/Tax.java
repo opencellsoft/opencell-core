@@ -37,15 +37,13 @@ import org.meveo.model.ObservableEntity;
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_TAX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TAX_SEQ")
-@NamedQueries({			
-@NamedQuery(name = "tax.getNbTaxesNotAssociated", 
-	           query = "select count(*) from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null)"
-	         + " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null) and t.provider=:provider"),
-@NamedQuery(name = "tax.getTaxesNotAssociated", 
-	           query = "from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null ) "
-				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null) and t.provider=:provider")	              
-	         
-	})
+@NamedQueries({
+		@NamedQuery(name = "tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null)"
+				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null) and t.provider=:provider"),
+		@NamedQuery(name = "tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null ) "
+				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null) and t.provider=:provider")
+
+})
 public class Tax extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
@@ -54,7 +52,21 @@ public class Tax extends BusinessEntity {
 
 	@Column(name = "TAX_PERCENTAGE", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal percent;
-	
+
+	public Tax() {
+
+	}
+
+	public Tax(Tax tax) {
+		this.code = tax.getCode();
+		this.description = tax.getDescription();
+		this.setAuditable(tax.getAuditable());
+		this.setDisabled(tax.isDisabled());
+		this.setProvider(tax.getProvider());
+		this.accountingCode = tax.getAccountingCode();
+		this.percent = tax.getPercent();
+	}
+
 	public String getAccountingCode() {
 		return accountingCode;
 	}
@@ -70,9 +82,5 @@ public class Tax extends BusinessEntity {
 	public void setPercent(BigDecimal percent) {
 		this.percent = percent;
 	}
-
-
-	
-	
 
 }

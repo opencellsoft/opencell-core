@@ -28,6 +28,9 @@ public interface WalletWs extends IBaseWs {
 	ActionStatus updateWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
 	
 	@WebMethod
+	ActionStatus createOrUpdateWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
+	
+	@WebMethod
 	GetWalletTemplateResponseDto findWalletTemplate(@WebParam(name = "walletTemplateCode") String walletTemplateCode);
 	
 	@WebMethod

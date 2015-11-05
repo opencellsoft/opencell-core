@@ -42,13 +42,16 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentTermEnum;
 
 @Entity
+@CustomFieldEntity(cftCodePrefix = "BA")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "BILLING_BILLING_ACCOUNT")
 @DiscriminatorValue(value = "ACCT_BA")
@@ -101,7 +104,7 @@ public class BillingAccount extends AccountEntity {
 	@Enumerated(EnumType.STRING)
 	private PaymentTermEnum paymentTerm;
 
-	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	// TODO : Add orphanRemoval annotation.
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<UserAccount> usersAccounts = new ArrayList<UserAccount>();
@@ -298,15 +301,6 @@ public class BillingAccount extends AccountEntity {
 		this.invoicePrefix = invoicePrefix;
 	}
 
-	public UserAccount getDefaultUserAccount() {
-		for (UserAccount userAccount : getUsersAccounts()) {
-			if (userAccount.getDefaultLevel()) {
-				return userAccount;
-			}
-		}
-		return null;
-	}
-
 	public List<BillingRunList> getBillingRunLists() {
 		return billingRunLists;
 	}
@@ -395,4 +389,8 @@ public class BillingAccount extends AccountEntity {
 		this.counters = counters;
 	}
 
+    @Override
+    public ICustomFieldEntity getParentCFEntity() {
+        return customerAccount;
+	}
 }

@@ -18,6 +18,8 @@ package org.meveo.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
@@ -38,7 +40,8 @@ public abstract class ProviderlessEntity implements Serializable, IEntity, IAudi
     @Id
     @GeneratedValue(generator = "ID_GENERATOR")
     @Column(name = "ID")
-    private Long id;
+    @Access(AccessType.PROPERTY)
+    protected Long id;
 
     @Version
     @Column(name = "VERSION")

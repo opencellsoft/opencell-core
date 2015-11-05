@@ -3,8 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:cc="http://java.sun.com/jsf/composite"
-      xmlns:hftl="http://hftl.org">
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:hftl="http://hftl.org">
 
 <!--
     Makes part of "happy faces" component group.
@@ -35,47 +34,49 @@
 </cc:interface>
 
 <cc:implementation>
-    <h:form id="searchForm">
-        <p:panel header="#{cc.attrs.label}">
-            <h:panelGroup layout="block" styleClass="search-panel">
-                <p:messages id="search_messages" />
-                <p:outputPanel styleClass="search-panel-fields">
-                    <cc:insertChildren />
-                </p:outputPanel>
-                
+    <span id="#{cc.clientId}" style="white-space: nowrap"> 
+        <h:form id="searchForm">
+            <p:panel header="#{cc.attrs.label}">
+                <h:panelGroup layout="block" styleClass="search-panel">
+                    <p:messages id="search_messages" />
+                    <p:outputPanel styleClass="search-panel-fields">
+                        <cc:insertChildren />
+                    </p:outputPanel>
+
                 <h:panelGroup layout="block" styleClass="search-panel-actions" rendered="#{cc.attrs.backingBean.getListFilters() ne null and cc.attrs.backingBean.getListFilters().size() > 0}">
-                	<hftl:decorateFormField label="#{messages['menu.filters']}" fieldId="filter">
-						<p:selectOneMenu id="filter" value="#{cc.attrs.backingBean.listFilter}" converter="omnifaces.SelectItemsConverter">
-							<f:selectItem itemLabel="" itemValue="" />
-							<f:selectItems value="#{cc.attrs.backingBean.getListFilters()}" var="elem" itemLabel="#{elem.code}" itemValue="#{elem}" />
-							<p:ajax listener="#{cc.attrs.backingBean.runListFilter()}" update="#{cc.attrs.ajaxUpdateIds}"></p:ajax>
-						</p:selectOneMenu>
-					</hftl:decorateFormField>
-				</h:panelGroup>                
-                
-                <h:panelGroup layout="block" styleClass="search-panel-actions">
-                    <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="#{cc.attrs.ajax}" action="#{cc.attrs.backingBean.search}"
-                        update="#{cc.attrs.ajaxUpdateIds}" />
-                    <p:commandButton id="buttonAdvanced" rendered="#{cc.attrs.renderAdvancedLink and !cc.attrs.backingBean.advanced}" value="#{messages['commons.advancedButton']}"
-                        actionListener="#{cc.attrs.backingBean.advancedAction}" update="@form" />
-                    <p:commandButton id="buttonHideAdvanced" rendered="#{cc.attrs.renderHideAdvancedLink and cc.attrs.backingBean.advanced}"
-                        value="#{messages['commons.hideAdvancedButton']}" actionListener="#{cc.attrs.backingBean.advancedAction}" update="@form" />                        
-                    <hf:clearButton label="#{messages['commons.clean']}" resetAction="#{cc.attrs.backingBean.clean}" />
-                    <p:button id="buttonNew" value="#{messages['commons.new']}" outcome="#{cc.attrs.newButtonView}" rendered="#{cc.attrs.renderNewButton}">
-                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                        <f:param name="edit" value="true" />
-                    </p:button>
+                        <hftl:decorateFormField label="#{messages['menu.filters']}" fieldId="filter">
+                            <p:selectOneMenu id="filter" value="#{cc.attrs.backingBean.listFilter}" converter="omnifaces.SelectItemsConverter">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItems value="#{cc.attrs.backingBean.getListFilters()}" var="elem" itemLabel="#{elem.code}" itemValue="#{elem}" />
+                                <p:ajax listener="#{cc.attrs.backingBean.runListFilter()}" update="#{cc.attrs.ajaxUpdateIds}"></p:ajax>
+                            </p:selectOneMenu>
+                        </hftl:decorateFormField>
+                    </h:panelGroup>
 
-                    <cc:insertFacet name="buttons" />
+                    <h:panelGroup layout="block" styleClass="search-panel-actions">
+                        <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="#{cc.attrs.ajax}" action="#{cc.attrs.backingBean.search}"
+                            update="#{cc.attrs.ajaxUpdateIds}" />
+                        <p:commandButton id="buttonAdvanced" rendered="#{cc.attrs.renderAdvancedLink and !cc.attrs.backingBean.advanced}"
+                            value="#{messages['commons.advancedButton']}" actionListener="#{cc.attrs.backingBean.advancedAction}" update="@form" />
+                        <p:commandButton id="buttonHideAdvanced" rendered="#{cc.attrs.renderHideAdvancedLink and cc.attrs.backingBean.advanced}"
+                            value="#{messages['commons.hideAdvancedButton']}" actionListener="#{cc.attrs.backingBean.advancedAction}" update="@form" />
+                        <hf:clearButton label="#{messages['commons.clean']}" resetAction="#{cc.attrs.backingBean.clean}" />
+                        <p:button id="buttonNew" value="#{messages['commons.new']}" outcome="#{cc.attrs.newButtonView}" rendered="#{cc.attrs.renderNewButton}">
+                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                            <f:param name="edit" value="true" />
+                        </p:button>
+
+                        <cc:insertFacet name="buttons" />
+                    </h:panelGroup>
                 </h:panelGroup>
-            </h:panelGroup>
-        </p:panel>
+            </p:panel>
 
-		<p:blockUI block="#{cc.attrs.ajaxUpdateIds}" trigger="buttonSearch">
+            <p:blockUI block="#{cc.attrs.ajaxUpdateIds}" trigger="buttonSearch">
         	LOADING<br />
-			<p:graphicImage library="img" name="ajaxloadingbar.gif" />
-		</p:blockUI>
-	</h:form>
+                <p:graphicImage library="img" name="ajaxloadingbar.gif" />
+            </p:blockUI>
+        </h:form>
+    </span>
 </cc:implementation>
 
 </html>

@@ -17,9 +17,7 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -28,7 +26,6 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -36,8 +33,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -47,12 +42,12 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.util.PersistenceUtils;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
 @Named
 @ViewScoped
-@CustomFieldEnabledBean(accountLevel = AccountLevelEnum.SERVICE)
 public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
 	private static final long serialVersionUID = 1L;
@@ -231,8 +226,13 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 			}
 		}
 		boolean newEntity = (entity.getId() == null);
-		String back = super.saveOrUpdate(killConversation);
-		return newEntity ? null : back;
+	
+        String outcome = super.saveOrUpdate(killConversation);
+
+        if (outcome != null) {
+            return newEntity ? getEditViewName() : outcome;
+        }
+        return null;
 	}
 
 	public void saveServiceChargeTemplateSubscription() {
@@ -425,22 +425,29 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	}
 
 	public void duplicate() {
-		if(entity!=null&&entity.getId()!=null){
-			entity.getCustomFields().size();
+	    
+        if (entity != null && entity.getId() != null) {
+            
+            entity = serviceTemplateService.refreshOrRetrieve(entity);
+            
+            // Lazy load related values first 
+            if (entity.getCfFields() != null) {
+                entity.getCfFields().getUuid();
+                entity.setCfFields(PersistenceUtils.initializeAndUnproxy(entity.getCfFields()));
+            }
 			entity.getServiceRecurringCharges().size();
 			entity.getServiceSubscriptionCharges().size();
 			entity.getServiceTerminationCharges().size();
 			entity.getServiceUsageCharges().size();
+            
+            // Detach and clear ids of entity and related entities
 			serviceTemplateService.detach(entity);
 			entity.setId(null);
-			Map<String,CustomFieldInstance> customFields= entity.getCustomFields();
-			entity.setCustomFields(new HashMap<String,CustomFieldInstance>());
-			for(String code:customFields.keySet()){
-				CustomFieldInstance instance=customFields.get(code);
-				customFieldInstanceService.detach(instance);
-				instance.setId(null);
-				entity.getCustomFields().put(code, instance);
-			}
+
+            if (entity.getCfFields() != null) {
+                entity.getCfFields().clearForDuplication();
+            }
+            
 			List<ServiceChargeTemplateRecurring> recurrings=entity.getServiceRecurringCharges();
 			entity.setServiceRecurringCharges(new ArrayList<ServiceChargeTemplateRecurring>());
 			for(ServiceChargeTemplateRecurring recurring:recurrings){
@@ -478,6 +485,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 				entity.getServiceUsageCharges().add(usage);
 			}
 			entity.setCode(entity.getCode()+"_copy");
+			
 			try {
 				serviceTemplateService.create(entity);
 			} catch (BusinessException e) {

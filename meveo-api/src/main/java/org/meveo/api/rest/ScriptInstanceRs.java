@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.response.GetScriptInstanceResponseDto;
+import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
@@ -27,11 +28,11 @@ public interface ScriptInstanceRs extends IBaseRs {
 
 	@POST
 	@Path("/")
-	ActionStatus create(ScriptInstanceDto postData);
+	ScriptInstanceReponseDto create(ScriptInstanceDto postData);
 
 	@PUT
 	@Path("/")
-	ActionStatus update(ScriptInstanceDto postData);
+	ScriptInstanceReponseDto update(ScriptInstanceDto postData);
 
 	@DELETE
 	@Path("/{scriptInstanceCode}")
@@ -43,5 +44,5 @@ public interface ScriptInstanceRs extends IBaseRs {
 	
 	@POST
 	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(ScriptInstanceDto postData);
+	ScriptInstanceReponseDto createOrUpdate(ScriptInstanceDto postData);
 }

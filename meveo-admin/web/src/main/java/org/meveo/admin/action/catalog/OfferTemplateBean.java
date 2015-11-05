@@ -18,7 +18,6 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,18 +26,16 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.util.PersistenceUtils;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
@@ -51,7 +48,6 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
-@CustomFieldEnabledBean(accountLevel = AccountLevelEnum.OFFER)
 public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	private static final long serialVersionUID = 1L;
@@ -76,18 +72,19 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	 * bean for {@link BaseBean}.
 	 */
 
-	public DualListModel<ServiceTemplate> getDualListModel() {
-		if (perks == null) {
-			List<ServiceTemplate> perksSource = serviceTemplateService.listActive();
-			List<ServiceTemplate> perksTarget = new ArrayList<ServiceTemplate>();
-			if (getEntity().getCode() != null) {
-				perksTarget.addAll(getEntity().getServiceTemplates());
-			}
-			perksSource.removeAll(perksTarget);
-			perks = new DualListModel<ServiceTemplate>(perksSource, perksTarget);
-		}
-		return perks;
-	}
+    public DualListModel<ServiceTemplate> getDualListModel() {
+
+        if (perks == null) {
+            List<ServiceTemplate> perksSource = serviceTemplateService.listActive();
+            List<ServiceTemplate> perksTarget = new ArrayList<ServiceTemplate>();
+            if (getEntity().getServiceTemplates() != null) {
+                perksTarget.addAll(getEntity().getServiceTemplates());
+            }
+            perksSource.removeAll(perksTarget);
+            perks = new DualListModel<ServiceTemplate>(perksSource, perksTarget);
+        }
+        return perks;
+    }
 
 	public OfferTemplateBean() {
 		super(OfferTemplate.class);
@@ -117,6 +114,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public void setDualListModel(DualListModel<ServiceTemplate> perks) {
 		getEntity().setServiceTemplates((List<ServiceTemplate>) perks.getTarget());
+		this.perks = perks;
 	}
 
 	public List<OfferTemplate> listActive() {
@@ -133,20 +131,26 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	}
 
 	public void duplicate() {
-		
-		if(entity!=null&&entity.getId()!=null){
-			entity.getCustomFields().size();
+
+        if (entity != null && entity.getId() != null) {
+            
+            entity = offerTemplateService.refreshOrRetrieve(entity);
+            
+		    // Lazy load related values first 
+		    if (entity.getCfFields() != null) {
+                entity.getCfFields().getUuid();
+                entity.setCfFields(PersistenceUtils.initializeAndUnproxy(entity.getCfFields()));
+		    }
 			entity.getServiceTemplates().size();
-			offerTemplateService.detach(entity);
-			entity.setId(null);
-			Map<String,CustomFieldInstance> customFields= entity.getCustomFields();
-			entity.setCustomFields(new HashMap<String,CustomFieldInstance>());
-			for(String code:customFields.keySet()){
-				CustomFieldInstance instance=customFields.get(code);
-				customFieldInstanceService.detach(instance);
-				instance.setId(null);
-				entity.getCustomFields().put(code, instance);
-			}
+
+			// Detach and clear ids of entity and related entities
+            offerTemplateService.detach(entity);
+            entity.setId(null);
+            
+            if (entity.getCfFields() != null) {
+                entity.getCfFields().clearForDuplication();
+            }
+
 			List<ServiceTemplate> serviceTemplates=entity.getServiceTemplates();
 			entity.setServiceTemplates(new ArrayList<ServiceTemplate>());
 			for(ServiceTemplate serviceTemplate:serviceTemplates){
@@ -154,12 +158,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				entity.getServiceTemplates().add(serviceTemplate);
 			}
 			entity.setCode(entity.getCode()+"_copy");
+			
 			try {
 				offerTemplateService.create(entity);
 			} catch (BusinessException e) {
 				log.error("error when duplicate offer#{0}:#{1}",entity.getCode(),e);
-			}
-			
+			}			
 		}
 	}
 	

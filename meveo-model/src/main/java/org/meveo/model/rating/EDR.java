@@ -400,7 +400,7 @@ public class EDR extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "EDR [subscription=" + subscription + ", originBatch="
+		return "EDR [subscription=" + (subscription!=null?subscription.getId():null) + ", originBatch="
 				+ originBatch + ", originRecord=" + originRecord
 				+ ", eventDate=" + eventDate + ", quantity=" + quantity+ ", access=" + accessCode
 				+ ", parameter1=" + parameter1 + ", parameter2=" + parameter2

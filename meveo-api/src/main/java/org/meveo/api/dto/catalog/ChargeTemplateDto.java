@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -19,7 +21,7 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
  **/
 @XmlRootElement(name = "ChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChargeTemplateDto implements Serializable {
+public class ChargeTemplateDto extends BaseDto implements Serializable {
 
 	private static final long serialVersionUID = -5143285194077662656L;
 
@@ -42,6 +44,7 @@ public class ChargeTemplateDto implements Serializable {
 	private String ratingUnitDescription;
 	private BigDecimal unitMultiplicator;
 	private int unitNbDecimal;
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
 
@@ -63,6 +66,8 @@ public class ChargeTemplateDto implements Serializable {
 				triggeredEdrs.getTriggeredEdr().add(new TriggeredEdrTemplateDto(edrTemplate));
 			}
 		}
+		
+		customFields = CustomFieldsDto.toDTO(e.getCfFields());
 	}
 
 	public String getCode() {
@@ -91,9 +96,12 @@ public class ChargeTemplateDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ChargeTemplateDto [code=" + code + ", description=" + description + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + disabled + ", amountEditable="
-				+ amountEditable + ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription="
-				+ ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal=" + unitNbDecimal + ", triggeredEdrs=" + triggeredEdrs + "]";
+		return "ChargeTemplateDto [code=" + code + ", description=" + description + ", invoiceSubCategory="
+				+ invoiceSubCategory + ", disabled=" + disabled + ", amountEditable=" + amountEditable
+				+ ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription
+				+ ", ratingUnitDescription=" + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator
+				+ ", unitNbDecimal=" + unitNbDecimal + ", customFields=" + customFields + ", triggeredEdrs="
+				+ triggeredEdrs + "]";
 	}
 
 	public Boolean getAmountEditable() {
@@ -158,6 +166,14 @@ public class ChargeTemplateDto implements Serializable {
 
 	public void setTriggeredEdrs(TriggeredEdrTemplatesDto triggeredEdrs) {
 		this.triggeredEdrs = triggeredEdrs;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 }

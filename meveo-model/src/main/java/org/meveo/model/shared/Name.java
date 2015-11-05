@@ -75,10 +75,10 @@ public class Name implements Serializable, Cloneable {
 	}
 
 	@Override
-	public String toString() {
-		return (title != null ? (title.getDescription() + " " + (firstName != null ? firstName : "") + (lastName != null ? " "
-				+ lastName : "")) : "");
-	}
+    public String toString() {
+        return (title != null ? ((title.getDescription() != null ? title.getDescription() : title.getCode()) + " " + (firstName != null ? firstName : "") + (lastName != null ? " "
+                + lastName : "")) : "");
+    }
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {

@@ -13,7 +13,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.meveo.api.SellerApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.SellerDto;
@@ -23,6 +22,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
+import org.meveo.service.crm.impl.SellerApiService;
 
 /**
  * @author Edward P. Legaspi
@@ -41,7 +41,7 @@ public class SellerRsTest extends BaseRsTest {
 
 		// seller
 		result = result.addClasses(SellerRsImpl.class, SellerRs.class,
-				GetSellerResponse.class, SellerApi.class, SellerService.class,
+				GetSellerResponse.class, SellerApiService.class, SellerService.class,
 				TradingCountryService.class, TradingLanguageService.class,
 				TradingCurrencyService.class);
 

@@ -12,6 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -22,20 +24,24 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.catalog.Calendar;
 
 @Entity
-@ExportIdentifier({ "code", "accountLevel", "provider" })
-@Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "ACCOUNT_TYPE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code", "appliesTo", "provider" })
+@Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
+@NamedQueries({ @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft  where cft.disabled=false and cft.versionable=true and cacheValueTimeperiod is not null") })
 public class CustomFieldTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = -1403961759495272885L;
 
-    @Column(name = "FIELD_TYPE")
+    public static String POSITION_TAB = "tab";
+    public static String POSITION_FIELD_GROUP = "fieldGroup";
+    public static String POSITION_FIELD = "field";
+
+    @Column(name = "FIELD_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
     private CustomFieldTypeEnum fieldType;
 
-    @Column(name = "ACCOUNT_TYPE")
-    @Enumerated(EnumType.STRING)
-    private AccountLevelEnum accountLevel;
+    @Column(name = "APPLIES_TO", nullable = false, length = 100)
+    private String appliesTo;
 
     @Column(name = "VALUE_REQUIRED")
     private boolean valueRequired;
@@ -51,18 +57,24 @@ public class CustomFieldTemplate extends BusinessEntity {
     @JoinColumn(name = "CALENDAR_ID")
     private Calendar calendar;
 
+    @Column(name = "CACHE_VALUE_FOR")
+    private Integer cacheValueTimeperiod;
+
     @Column(name = "DEFAULT_VALUE", length = 50)
     private String defaultValue;
 
     @Column(name = "ENTITY_CLAZZ")
     private String entityClazz;
 
-    @Column(name = "STORAGE_TYPE")
+    @Column(name = "STORAGE_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
     private CustomFieldStorageTypeEnum storageType = CustomFieldStorageTypeEnum.SINGLE;
 
     @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
     private boolean triggerEndPeriodEvent;
+
+    @Column(name = "GUI_POSITION", length = 100)
+    private String guiPosition;
 
     @Transient
     private CustomFieldInstance instance;
@@ -75,12 +87,12 @@ public class CustomFieldTemplate extends BusinessEntity {
         this.fieldType = fieldType;
     }
 
-    public AccountLevelEnum getAccountLevel() {
-        return accountLevel;
+    public String getAppliesTo() {
+        return appliesTo;
     }
 
-    public void setAccountLevel(AccountLevelEnum accountLevel) {
-        this.accountLevel = accountLevel;
+    public void setAppliesTo(String appliesTo) {
+        this.appliesTo = appliesTo;
     }
 
     public boolean isValueRequired() {
@@ -172,5 +184,46 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
         this.triggerEndPeriodEvent = triggerEndPeriodEvent;
+    }
+
+    public Integer getCacheValueTimeperiod() {
+        return cacheValueTimeperiod;
+    }
+
+    public void setCacheValueTimeperiod(Integer cacheValueTimeperiod) {
+        this.cacheValueTimeperiod = cacheValueTimeperiod;
+    }
+
+    public String getGuiPosition() {
+        return guiPosition;
+    }
+
+    public void setGuiPosition(String guiPosition) {
+        this.guiPosition = guiPosition;
+    }
+
+    public Map<String, String> getGuiPositionParsed() {
+
+        if (guiPosition == null) {
+            return null;
+        }
+
+        Map<String, String> parsedInfo = new HashMap<String, String>();
+
+        String[] positions = guiPosition.split(";");
+
+        for (String position : positions) {
+            String[] positionDetails = position.split(":");
+            if (!positionDetails[0].equals(POSITION_FIELD)) {
+                parsedInfo.put(positionDetails[0] + "_name", positionDetails[1]);
+                if (positionDetails.length == 3) {
+                    parsedInfo.put(positionDetails[0] + "_pos", positionDetails[2]);
+                }
+            } else if (positionDetails[0].equals(POSITION_FIELD) && positionDetails.length == 2) {
+                parsedInfo.put(positionDetails[0] + "_pos", positionDetails[1]);
+            }
+        }
+
+        return parsedInfo;
     }
 }

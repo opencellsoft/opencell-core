@@ -70,10 +70,10 @@ public class DDRequestLOT extends AuditableEntity {
 	private String returnStatusCode;
 
 	@Column(name = "REJECTED_CAUSE")
-	private String RejectedCause;
+	private String rejectedCause;
 	
 	@Column(name = "REJECTED_INVOICES")
-	private Integer RejectedInvoices;
+	private Integer rejectedInvoices;
 	
 	
 	
@@ -152,20 +152,22 @@ public class DDRequestLOT extends AuditableEntity {
 	}
 
 	public String getRejectedCause() {
-		return RejectedCause;
+		return rejectedCause;
 	}
 
 	public void setRejectedCause(String rejectedCause) {
-		RejectedCause = rejectedCause;
+		this.rejectedCause = rejectedCause;
 	}
 
 	public Integer getRejectedInvoices() {
-		return RejectedInvoices;
+		return rejectedInvoices;
 	}
 
 	public void setRejectedInvoices(Integer rejectedInvoices) {
-		RejectedInvoices = rejectedInvoices;
+		this.rejectedInvoices = rejectedInvoices;
 	}
+
+	
 
 	
 	

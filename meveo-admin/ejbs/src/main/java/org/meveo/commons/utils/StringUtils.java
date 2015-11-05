@@ -21,6 +21,8 @@ import java.io.FileReader;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utils class for working with strings.
@@ -49,7 +51,6 @@ public class StringUtils {
         return false;
     }
 
-    // TODO test and comment those methods.
     public static boolean isBlank(Object value) {
         return ((value == null) || ((value instanceof String) && ((String) value).trim().length() == 0));
     }
@@ -173,4 +174,47 @@ public class StringUtils {
 		}
 		return Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
 	}
+    
+	public static String normalizeHierarchyCode(String value) {
+		if (StringUtils.isBlank(value)) {
+			return value;
+		}
+
+		String newValue = enleverAccent(value) ;
+
+		newValue = newValue.replaceAll("[^A-Za-z0-9]", "_");
+		return newValue;
+	}
+    
+    public static String patternMacher(String regex, String text){
+    	String result=null;
+    	Pattern pattern = Pattern.compile(regex);
+    	Matcher matcher = pattern.matcher(text);
+    	if(matcher.find()) {
+    		result = matcher.group(1);
+    	}
+    	return result;
+    }
+    
+    /**
+     * Compares two strings. Handles null values witout exception
+     * 
+     * @param one First string
+     * @param two Second string
+     * @return Matches String.compare() return value
+     */
+    public static int compare(String one, String two) {
+
+        if (one == null && two != null) {
+            return 1;
+        } else if (one != null && two == null) {
+            return -1;
+        } else if (one == null && two == null) {
+            return 0;
+        } else if (one != null && two != null) {
+            return one.compareTo(two);
+        }
+
+        return 0;
+    }
 }

@@ -23,11 +23,14 @@
 		</p:panel>
 	
 		<hf:formPanel showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddRequestLOTBean}" edit="false">
+		    <p:panel>
 			<hf:formField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
 			<hf:formField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
 			<hf:formField label="#{messages['ddrequestLot.invoicesNumber']}" field="invoicesNumber" />
 			<hf:formField label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount" />
-			<hf:formField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true"/>			
+			<hf:formField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true"/>
+			<hf:formField label="#{messages['ddrequestLot.rejectedCause']}" field="rejectedCause" />
+		   </p:panel>	
 		<h:panelGrid columns="3">
 			<p:commandButton rendered="#{!edit}" action="#{ddRequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
      		<p:commandButton value="#{messages['action.back']}" action="#{ddRequestLOTBean.back}" immediate="true" />

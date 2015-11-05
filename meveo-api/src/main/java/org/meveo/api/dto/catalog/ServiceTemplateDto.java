@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -36,6 +37,8 @@ public class ServiceTemplateDto implements Serializable {
 	private ServiceChargeTemplateSubscriptionsDto serviceChargeTemplateSubscriptions;
 	private ServiceChargeTemplateTerminationsDto serviceChargeTemplateTerminations;
 	private ServiceChargeTemplateUsagesDto serviceChargeTemplateUsages;
+	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public ServiceTemplateDto() {
 	}
@@ -116,7 +119,8 @@ public class ServiceTemplateDto implements Serializable {
 				serviceChargeTemplateUsages.getServiceChargeTemplateUsage().add(serviceUsageChargeTemplate);
 			}
 		}
-
+		
+		customFields = CustomFieldsDto.toDTO(serviceTemplate.getCfFields());
 	}
 
 	public ServiceTemplateDto(String code) {
@@ -183,10 +187,19 @@ public class ServiceTemplateDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ServiceTemplateDto [code=" + code + ", description=" + description+", invoicingCalendar=" + invoicingCalendar  
-				+ ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings
+		return "ServiceTemplateDto [code=" + code + ", description=" + description + ", invoicingCalendar="
+				+ invoicingCalendar + ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings
 				+ ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
 				+ ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations
-				+ ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + "]";
+				+ ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields=" + customFields
+				+ "]";
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }

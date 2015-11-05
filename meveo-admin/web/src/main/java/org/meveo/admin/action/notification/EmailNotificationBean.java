@@ -15,16 +15,17 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.EmailNotificationService;
@@ -41,7 +42,7 @@ import org.primefaces.model.UploadedFile;
  */
 @Named
 @ViewScoped
-public class EmailNotificationBean extends BaseBean<EmailNotification> {
+public class EmailNotificationBean extends UpdateMapTypeFieldBean<EmailNotification> {
 
 	private static final long serialVersionUID = 6473465285480945644L;
 

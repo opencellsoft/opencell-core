@@ -34,12 +34,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
 @Entity
+@CustomFieldEntity(cftCodePrefix = "CUST")
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "CRM_CUSTOMER")
@@ -57,7 +60,7 @@ public class Customer extends AccountEntity {
 	@JoinColumn(name = "CUSTOMER_BRAND_ID")
 	private CustomerBrand customerBrand;
 
-	@OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<CustomerAccount> customerAccounts = new ArrayList<CustomerAccount>();
 
 	@Embedded
@@ -137,12 +140,8 @@ public class Customer extends AccountEntity {
 		this.mandateDate = mandateDate;
 	}
 
-	public CustomerAccount getDefaultCustomerAccount() {
-		for (CustomerAccount customerAccount : getCustomerAccounts()) {
-			if (customerAccount.getDefaultLevel()) {
-				return customerAccount;
-			}
-		}
-		return null;
+    @Override
+    public ICustomFieldEntity getParentCFEntity() {
+        return seller;
 	}
 }

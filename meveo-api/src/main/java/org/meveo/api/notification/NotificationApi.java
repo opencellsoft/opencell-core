@@ -20,11 +20,11 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.InboundRequestService;
 import org.meveo.service.notification.NotificationHistoryService;
@@ -230,5 +230,12 @@ public class NotificationApi extends BaseApi {
 
 		return result;
 	}
-
+	
+	public void createOrUpdate(NotificationDto postData, User currentUser) throws MeveoApiException {
+		if (notificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

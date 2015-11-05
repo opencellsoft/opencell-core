@@ -63,6 +63,16 @@ public class OfferTemplateApi extends BaseApi {
 
 				offerTemplate.setServiceTemplates(serviceTemplates);
 			}
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+                try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), offerTemplate, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
 
 			offerTemplateService.create(offerTemplate, currentUser, provider);
 		} else {
@@ -106,6 +116,16 @@ public class OfferTemplateApi extends BaseApi {
 				offerTemplate.getServiceTemplates().clear();
 				offerTemplate.setServiceTemplates(serviceTemplates);
 			}
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+                try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), offerTemplate, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -145,6 +165,22 @@ public class OfferTemplateApi extends BaseApi {
 			missingParameters.add("offerTemplateCode");
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+	
+	/**
+	 * Create or updates the OfferTemplate based on code
+	 * @param postData
+	 * @param currentUser
+	 * @throws MeveoApiException
+	 */
+	public void createOrUpdate(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
+		
+		if (offerTemplate == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
 		}
 	}
 

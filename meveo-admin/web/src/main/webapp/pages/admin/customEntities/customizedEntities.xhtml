@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:p="http://primefaces.org/ui"
+    template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{customEntityTemplateListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
+
+    <ui:define name="body">
+
+        <hftl:decorateFormPanel formId="searchPanel" label="#{messages['customizedEntities.search']}">
+            <ui:define name="fields">
+                <hftl:decorateFormField fieldId="entityName" label="#{messages['customizedEntities.entityName']}">
+                    <p:inputText id="entityName" value="#{customEntityTemplateListBean.filters['entityName']}" />
+                </hftl:decorateFormField>
+                <hftl:decorateFormField fieldId="customEntity" label="#{messages['customizedEntities.customEntity']}">
+                    <p:selectBooleanCheckbox id="customEntity" value="#{customEntityTemplateListBean.filters['customEntity']}" />
+                </hftl:decorateFormField>
+            </ui:define>
+            <ui:define name="buttons">
+                <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="true" update="searchResults" />
+
+                <p:commandButton value="#{messages['commons.clean']}" process="@this" update="@form" action="#{customEntityTemplateListBean.clean}">
+                    <f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+                </p:commandButton>
+                <p:button id="buttonNew" value="#{messages['commons.new']}" outcome="customizedEntity"
+                    rendered="#{identity.hasPermission('administration','administrationManagement')}">
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                    <f:param name="edit" value="true" />
+                </p:button>
+            </ui:define>
+        </hftl:decorateFormPanel>
+
+        <h:form prependId="false">
+            <p:panel width="100">
+                <p:dataTable id="searchResults" value="#{customEntityTemplateListBean.customizedEntities}" var="entity" sortOrder="ascending" sortBy="#{'null'}"
+                    sortField="entityName" paginator="true" rows="30" resizableColumns="true"
+                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="30,50"
+                    lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex">
+                    <hftl:column label="#{messages['customizedEntities.entityName']}" field="entityName" />
+                    <hftl:column label="#{messages['customizedEntities.description']}" field="description" />
+                    <hftl:column label="#{messages['customizedEntities.customEntity']}" field="customEntity" isMessage="true" sort="false"/>
+                    <c:if test="#{identity.hasPermission('administration','administrationManagement')}">
+                        <p:column headerText="#{messages['commons.actions']}" width="10%">
+                            <p:tooltip for="editlink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" rendered="#{entity.customEntity}" />
+                            <p:button id="editlink" outcome="customizedEntity" icon="ui-icon-document" rendered="#{entity.customEntity}">
+                                <f:param name="entityClass" value="#{entity.entityClass.name}" />
+                                <f:param name="cetId" value="#{entity.customEntityId}" />
+                                <f:param name="backView" value="customizedEntities" />
+                                <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                            </p:button>
+                            <p:tooltip for="editlink2" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" rendered="#{!entity.customEntity}" />
+                            <p:button id="editlink2" outcome="customizedEntity" icon="ui-icon-document" rendered="#{!entity.customEntity}">
+                                <f:param name="entityClass" value="#{entity.entityClass.name}" />
+                                <f:param name="backView" value="customizedEntities" />
+                                <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                            </p:button>
+                        </p:column>
+                    </c:if>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

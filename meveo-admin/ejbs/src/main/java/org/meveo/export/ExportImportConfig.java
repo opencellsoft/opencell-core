@@ -95,15 +95,15 @@ public class ExportImportConfig {
      */
     public boolean isExportFull(Class<? extends IEntity> clazz) {
         for (Class<? extends IEntity> clazzAsFull : classesToExportAsFull) {
-        	log.debug("clazzAsFull={}", clazzAsFull);
+        	log.trace("clazzAsFull={}", clazzAsFull);
             if (clazzAsFull.isAssignableFrom(clazz)) {
-                log.info("Exporting/importing entity " + clazz.getName() + " as full. Match classesToExportAsFull rule " + clazzAsFull.getName());
+                log.debug("Exporting/importing entity " + clazz.getName() + " as full. Match classesToExportAsFull rule " + clazzAsFull.getName());
                 return true;
             }
         }
 
         if (!isExportIdOnly(clazz) && getExportIdsForClass(clazz) == null) {
-            log.info("Exporting/importing entity " + clazz.getName() + " as full by default.clazz No rule matched.");
+            log.debug("Exporting/importing entity " + clazz.getName() + " as full by default.clazz No rule matched.");
             return true;
         }
         return false;

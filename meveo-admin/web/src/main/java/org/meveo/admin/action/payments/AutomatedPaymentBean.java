@@ -16,7 +16,6 @@
  */
 package org.meveo.admin.action.payments;
 
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -53,19 +52,6 @@ public class AutomatedPaymentBean extends BaseBean<AutomatedPayment> {
 	 */
 	public AutomatedPaymentBean() {
 		super(AutomatedPayment.class);
-	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("automatedPayment")
-	public AutomatedPayment init() {
-		return initEntity();
 	}
 
 	/*

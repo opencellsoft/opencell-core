@@ -21,27 +21,18 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AccountEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ProviderlessEntity;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.mediation.Access;
 
 @Entity
-@ExportIdentifier({ "code", "subscription.code", "subscription.provider", "account.code", "account.provider", "chargeTemplate.code", "chargeTemplate.provider",
-        "serviceTemplate.code", "serviceTemplate.provider", "offerTemplate.code", "offerTemplate.provider", "access.accessUserId", "access.subscription.code", "access.provider",
-        "jobInstance.code", "jobInstance.provider", "provider" })
-@Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "SUBSCRIPTION_ID", "ACCOUNT_ID", "CHARGE_TEMPLATE_ID", "SERVICE_TEMPLATE_ID",
-        "OFFER_TEMPLATE_ID", "ACCESS_ID", "JOB_INSTANCE_ID", "PROVIDER_ID" }))
+@ExportIdentifier({ "code", "cfFields.uuid", "cfFields.provider" })
+@Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "CFF_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
 public class CustomFieldInstance extends ProviderlessEntity {
 
     private static final long serialVersionUID = 8691447585410651639L;
+
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Column(name = "CODE", nullable = false, length = 60)
@@ -53,43 +44,15 @@ public class CustomFieldInstance extends ProviderlessEntity {
     @Size(max = 100)
     private String description;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "PROVIDER_ID")
-    private Provider provider;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCOUNT_ID")
-    private AccountEntity account;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUBSCRIPTION_ID")
-    private Subscription subscription;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CHARGE_TEMPLATE_ID")
-    private ChargeTemplate chargeTemplate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SERVICE_TEMPLATE_ID")
-    private ServiceTemplate serviceTemplate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OFFER_TEMPLATE_ID")
-    private OfferTemplate offerTemplate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCESS_ID")
-    private Access access;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "JOB_INSTANCE_ID")
-    private JobInstance jobInstance;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CFF_ID")
+    private CustomFieldFields cfFields;
 
     @Column(name = "VERSIONABLE")
     private boolean versionable;
 
     @Embedded
-    private CustomFieldValue value;
+    private CustomFieldValue cfValue;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CALENDAR_ID")
@@ -107,7 +70,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
     public CustomFieldInstance() {
         super();
         valuePeriods = new ArrayList<CustomFieldPeriod>();
-        value = new CustomFieldValue();
+        cfValue = new CustomFieldValue();
     }
 
     public boolean isDisabled() {
@@ -127,97 +90,35 @@ public class CustomFieldInstance extends ProviderlessEntity {
     }
 
     public String getStringValue() {
-        return value.getStringValue();
+        return getCfValue().getStringValue();
     }
 
     public void setStringValue(String stringValue) {
-        this.value.setStringValue(stringValue);
+        getCfValue().setStringValue(stringValue);
     }
 
     public Date getDateValue() {
-        return value.getDateValue();
+        return getCfValue().getDateValue();
     }
 
     public void setDateValue(Date dateValue) {
-        this.value.setDateValue(dateValue);
+        getCfValue().setDateValue(dateValue);
     }
 
     public Long getLongValue() {
-        return value.getLongValue();
+        return getCfValue().getLongValue();
     }
 
     public void setLongValue(Long longValue) {
-        this.value.setLongValue(longValue);
+        getCfValue().setLongValue(longValue);
     }
 
     public Double getDoubleValue() {
-        return value.getDoubleValue();
+        return getCfValue().getDoubleValue();
     }
 
     public void setDoubleValue(Double doubleValue) {
-        this.value.setDoubleValue(doubleValue);
-    }
-
-    public AccountEntity getAccount() {
-        return account;
-    }
-
-    public void setAccount(AccountEntity account) {
-        this.account = account;
-    }
-
-    public Subscription getSubscription() {
-        return subscription;
-    }
-
-    public void setSubscription(Subscription subscription) {
-        this.subscription = subscription;
-    }
-
-    public Access getAccess() {
-        return access;
-    }
-
-    public void setAccess(Access access) {
-        this.access = access;
-    }
-
-    public ChargeTemplate getChargeTemplate() {
-        return chargeTemplate;
-    }
-
-    public void setChargeTemplate(ChargeTemplate chargeTemplate) {
-        this.chargeTemplate = chargeTemplate;
-    }
-
-    public ServiceTemplate getServiceTemplate() {
-        return serviceTemplate;
-    }
-
-    public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-        this.serviceTemplate = serviceTemplate;
-    }
-
-    public OfferTemplate getOfferTemplate() {
-        return offerTemplate;
-    }
-
-    public void setOfferTemplate(OfferTemplate offerTemplate) {
-        this.offerTemplate = offerTemplate;
-    }
-
-    /**
-     * @return the jobInstance
-     */
-    public JobInstance getJobInstance() {
-        return jobInstance;
-    }
-
-    /**
-     * @param jobInstance the jobInstance to set
-     */
-    public void setJobInstance(JobInstance jobInstance) {
-        this.jobInstance = jobInstance;
+        getCfValue().setDoubleValue(doubleValue);
     }
 
     public List<CustomFieldPeriod> getValuePeriods() {
@@ -238,7 +139,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (versionable) {
             CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
-                return period.getValue().getStringValue();
+                return period.getCfValue().getStringValue();
             }
             return null;
 
@@ -265,7 +166,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
             if (period != null) {
-                period.getValue().setStringValue(value);
+                period.getCfValue().setStringValue(value);
             }
         }
     }
@@ -285,7 +186,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
             if (period != null) {
-                period.getValue().setStringValue(value);
+                period.getCfValue().setStringValue(value);
             }
         }
     }
@@ -300,7 +201,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (versionable) {
             CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
-                return period.getValue().getDateValue();
+                return period.getCfValue().getDateValue();
             }
             return null;
 
@@ -327,7 +228,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
             if (period != null) {
-                period.getValue().setDateValue(value);
+                period.getCfValue().setDateValue(value);
             }
         }
     }
@@ -347,7 +248,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
             if (period != null) {
-                period.getValue().setDateValue(value);
+                period.getCfValue().setDateValue(value);
             }
         }
     }
@@ -362,7 +263,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (versionable) {
             CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
-                return period.getValue().getLongValue();
+                return period.getCfValue().getLongValue();
             }
             return null;
 
@@ -389,7 +290,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
             if (period != null) {
-                period.getValue().setLongValue(value);
+                period.getCfValue().setLongValue(value);
             }
         }
     }
@@ -409,7 +310,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
             if (period != null) {
-                period.getValue().setLongValue(value);
+                period.getCfValue().setLongValue(value);
             }
         }
     }
@@ -424,7 +325,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (versionable) {
             CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
-                return period.getValue().getDoubleValue();
+                return period.getCfValue().getDoubleValue();
             }
             return null;
 
@@ -451,7 +352,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
             if (period != null) {
-                period.getValue().setDoubleValue(value);
+                period.getCfValue().setDoubleValue(value);
             }
         }
     }
@@ -471,17 +372,17 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
             if (period != null) {
-                period.getValue().setDoubleValue(value);
+                period.getCfValue().setDoubleValue(value);
             }
         }
     }
 
     public List<Object> getListValue() {
-        return value.getListValue();
+        return getCfValue().getListValue();
     }
 
     public void setListValue(List<Object> listValue) {
-        value.setListValue(listValue);
+        getCfValue().setListValue(listValue);
     }
 
     /**
@@ -494,7 +395,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (versionable) {
             CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
-                return period.getValue().getListValue();
+                return period.getCfValue().getListValue();
             }
             return null;
 
@@ -521,7 +422,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, listValue != null);
             if (period != null) {
-                period.getValue().setListValue(listValue);
+                period.getCfValue().setListValue(listValue);
             }
         }
     }
@@ -541,17 +442,17 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, listValue != null);
             if (period != null) {
-                period.getValue().setListValue(listValue);
+                period.getCfValue().setListValue(listValue);
             }
         }
     }
 
     public Map<String, Object> getMapValue() {
-        return value.getMapValue();
+        return getCfValue().getMapValue();
     }
 
     public void setMapValue(Map<String, Object> mapValue) {
-        value.setMapValue(mapValue);
+        getCfValue().setMapValue(mapValue);
     }
 
     /**
@@ -564,7 +465,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (versionable) {
             CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
-                return period.getValue().getMapValue();
+                return period.getCfValue().getMapValue();
             }
             return null;
 
@@ -591,7 +492,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, mapValue != null);
             if (period != null) {
-                period.getValue().setMapValue(mapValue);
+                period.getCfValue().setMapValue(mapValue);
             }
         }
     }
@@ -611,17 +512,17 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, mapValue != null);
             if (period != null) {
-                period.getValue().setMapValue(mapValue);
+                period.getCfValue().setMapValue(mapValue);
             }
         }
     }
 
     public EntityReferenceWrapper getEntityReferenceValue() {
-        return value.getEntityReferenceValue();
+        return getCfValue().getEntityReferenceValue();
     }
 
     public void setEntityReferenceValue(EntityReferenceWrapper entityReference) {
-        value.setEntityReferenceValue(entityReference);
+        getCfValue().setEntityReferenceValue(entityReference);
     }
 
     /**
@@ -634,7 +535,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (versionable) {
             CustomFieldPeriod period = getValuePeriod(valueDate, false);
             if (period != null) {
-                return period.getValue().getEntityReferenceValue();
+                return period.getCfValue().getEntityReferenceValue();
             }
             return null;
 
@@ -661,7 +562,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, entityReference != null);
             if (period != null) {
-                period.getValue().setEntityReferenceValue(entityReference);
+                period.getCfValue().setEntityReferenceValue(entityReference);
             }
         }
     }
@@ -681,7 +582,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, entityReference != null);
             if (period != null) {
-                period.getValue().setEntityReferenceValue(entityReference);
+                period.getCfValue().setEntityReferenceValue(entityReference);
             }
         }
     }
@@ -691,17 +592,105 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (versionable) {
 
         } else {
-            result += value.toJson(sdf);
+            result += getCfValue().toJson(sdf);
         }
 
         return result;
+    }
+
+    /**
+     * Get value. A generic way to retrieve a value, not knowing of its type beforehand
+     * 
+     * @return A non-versioned value
+     */
+    public Object getValue() {
+        if (!versionable) {
+            return getCfValue().getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Get value for a given date. If values are versioned, a matching period will be searched for.
+     * 
+     * @param valueDate Date
+     * @return A value or a versioned value
+     */
+    public Object getValue(Date valueDate) {
+        if (versionable) {
+            CustomFieldPeriod period = getValuePeriod(valueDate, false);
+            if (period != null) {
+                return period.getCfValue().getValue();
+            }
+            return null;
+
+        } else {
+            return getValue();
+        }
+    }
+
+    /**
+     * Set value. A generic way to set a value. What field to populate determines by a value data type.
+     * 
+     * @param value Value to set
+     */
+    public void setValue(Object value) {
+        if (value == null) {
+            this.cfValue = new CustomFieldValue();
+        } else {
+            getCfValue().setValue(value);
+        }
+    }
+
+    /**
+     * Set value for a given date. If value is versioned with a help of a calendar, a period will be created if does not exist yet. A generic way to set a value. What field to
+     * populate determines by a value data type.
+     * 
+     * @param value Value to set
+     * @param valueDate Date of a value
+     * @throws RuntimeException If versionable and calendar is not provided. A method setXX(value, dateFrom, dateTo) should be used.
+     */
+    public void setValue(Object value, Date valueDate) {
+        if (!versionable) {
+            setValue(value);
+
+        } else if (calendar == null) {
+            throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
+
+        } else {
+            // If value is null, don't create a new period -just nullify existing value if period exists already
+            CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
+            if (period != null) {
+                period.getCfValue().setValue(value);
+            }
+        }
+    }
+
+    /**
+     * Set value for a given date period. A generic way to set a value. What field to populate is determined by a value data type.
+     * 
+     * @param value Value to set
+     * @param valueDateFrom Period start date
+     * @param valueDateTo Period end date
+     */
+    public void setValue(Object value, Date valueDateFrom, Date valueDateTo) {
+        if (!versionable) {
+            setValue(value);
+
+        } else {
+            // If value is null, don't create a new period -just nullify existing value if period exists already
+            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
+            if (period != null) {
+                period.getCfValue().setValue(value);
+            }
+        }
     }
 
     public String getValueAsString() {
         if (versionable) {
             return null;
         } else {
-            return value.getValueAsString(sdf);
+            return getCfValue().getValueAsString(sdf);
         }
     }
 
@@ -776,8 +765,9 @@ public class CustomFieldInstance extends ProviderlessEntity {
         CustomFieldPeriod periodFound = null;
         for (CustomFieldPeriod period : valuePeriods) {
             if (period.isCorrespondsToPeriod(startDate, endDate, strictMatch)) {
-                periodFound = period;
-                break;
+                if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
+                    periodFound = period;
+                }
             }
         }
         // Create a period if match not found
@@ -836,7 +826,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
         // Set a default value
         if (!cft.isVersionable()) {
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
-                cfi.getValue().setSingleValue(cft.getDefaultValueConverted(), cft.getFieldType());
+                cfi.getCfValue().setValue(cft.getDefaultValueConverted());
             }
         }
         cfi.setTriggerEndPeriodEvent(cft.isTriggerEndPeriodEvent());
@@ -850,7 +840,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
      * @return True is value is empty
      */
     public boolean isValueEmptyForGui() {
-        return (!isVersionable() && value.isValueEmptyForGui()) || (isVersionable() && valuePeriods.isEmpty());
+        return (!isVersionable() && getCfValue().isValueEmptyForGui()) || (isVersionable() && valuePeriods.isEmpty());
     }
 
     /**
@@ -859,19 +849,14 @@ public class CustomFieldInstance extends ProviderlessEntity {
      * @return True is value is empty
      */
     public boolean isValueEmpty() {
-        return (!isVersionable() && value.isValueEmpty()) || (isVersionable() && valuePeriods.isEmpty());
+        return (!isVersionable() && getCfValue().isValueEmpty()) || (isVersionable() && valuePeriods.isEmpty());
     }
 
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String
-            .format(
-                "CustomFieldInstance [%s, account=%s, subscription=%s, chargeTemplate=%s, serviceTemplate=%s, offerTemplate=%s, access=%s, jobInstance=%s, versionable=%s, calendar=%s, valuePeriods=%s, value=%s]",
-                super.toString(), account != null ? account.getId() : null, subscription != null ? subscription.getId() : null, chargeTemplate != null ? chargeTemplate.getId()
-                        : null, serviceTemplate != null ? serviceTemplate.getId() : null, offerTemplate != null ? offerTemplate.getId() : null, access != null ? access.getId()
-                        : null, jobInstance != null ? jobInstance.getId() : null, versionable, calendar != null ? calendar.getCode() : null,
-                valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null, value);
+        return String.format("CustomFieldInstance [%s, cfFields=%s, versionable=%s, calendar=%s, valuePeriods=%s, value=%s]", super.toString(), cfFields.getId(), versionable,
+            calendar != null ? calendar.getCode() : null, valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null, cfValue);
     }
 
     public String getCode() {
@@ -890,14 +875,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
         this.description = description;
     }
 
-    public Provider getProvider() {
-        return provider;
-    }
-
-    public void setProvider(Provider provider) {
-        this.provider = provider;
-    }
-
     public boolean isTriggerEndPeriodEvent() {
         return triggerEndPeriodEvent;
     }
@@ -906,12 +883,23 @@ public class CustomFieldInstance extends ProviderlessEntity {
         this.triggerEndPeriodEvent = triggerEndPeriodEvent;
     }
 
-    public CustomFieldValue getValue() {
-        return value;
+    public CustomFieldValue getCfValue() {
+        if (cfValue == null) {
+            cfValue = new CustomFieldValue();
+        }
+        return cfValue;
     }
 
-    public void setValue(CustomFieldValue value) {
-        this.value = value;
+    public void setCfValue(CustomFieldValue cfValue) {
+        this.cfValue = cfValue;
+    }
+
+    public CustomFieldFields getCfFields() {
+        return cfFields;
+    }
+
+    public void setCfFields(CustomFieldFields cfFields) {
+        this.cfFields = cfFields;
     }
 
     // /**
@@ -931,9 +919,24 @@ public class CustomFieldInstance extends ProviderlessEntity {
      * A JPA callback to deserialise reference to entity, list and map values upon retrieval from DB.
      */
     @PostLoad
-    private void deserializeValue() {
-        if (value != null) {
-            value.deserializeValue();
+    public void deserializeValue() {
+        if (cfValue != null) {
+            getCfValue().deserializeValue();
+        }
+    }
+
+    /**
+     * Remove ids from entity and child entities, reconstruct new persistent collections
+     */
+    protected void clearForDuplication() {
+        id = null;
+        if (valuePeriods != null) {
+            List<CustomFieldPeriod> cfps = new ArrayList<CustomFieldPeriod>();
+            for (CustomFieldPeriod cfp : valuePeriods) {
+                cfp.setId(null);
+                cfps.add(cfp);
+            }
+            valuePeriods = cfps;
         }
     }
 }

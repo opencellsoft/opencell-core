@@ -12,34 +12,54 @@
 <tr><td rowspan="1" colspan="3">SuccessServicesInfoTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>clickAndWait</td>
+	<td>${CatalogueServices}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${NewService}</td>
+	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
 </tr>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${CodeText}</td>
-	<td>01</td>
+	<td>${codeText}</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>some description for this service</td>
+	<td>${Description}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DateCalendarBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCalendar}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -48,23 +68,348 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[38]/div/ul/li[2]</td>
+	<td>css=li:contains(&quot;${DateCalendarValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${saveWithObjectId}</td>
+	<td>${saveButtonWhenCreateAjax}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${ConfirmSave}</td>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${RecurringCharges}</td>
+	<td>Recurring charges</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${RecurringCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${RecurringCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>id=tabView:serviceRecurringChargediv</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectRecurringCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=searchRecurringChargeTemplatePopup_title</td>
+	<td>Recurring charges</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=searchRecurringChargeTemplatePopup_title</td>
+	<td>Recurring charges</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:searchField1</td>
+	<td>${RecurringChargeCode}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td>${RecurringChargeCode}</td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${RecurringChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchRecurringChargeTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td>${RecurringChargeCode}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=searchRecurringChargeTemplatePopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectRecurringCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=tabView:formPanelRecurringCharge:formRecurringCharge:recurringChargeTemplateSelectedId:entityFieldSingle:chargeTemplate_entity</td>
+	<td>${RecurringChargeCode}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PrepaidWalletBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ChoosePrepaidWallet}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ChoosePrepaidWallet}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddOne}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddSaveRecurringCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=tabView:datatable_serviceRecurringCharges_results:0:chargeTemplate_code_chargeTemplate_id_message_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=tabView:datatable_serviceRecurringCharges_results:0:chargeTemplate_code_chargeTemplate_id_message_link</td>
+	<td>${RecurringChargeCode}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${UsageCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>id=tabView:serviceUsageChargediv_content</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectUsageCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=searchUsageChargeTemplatePopup_title</td>
+	<td>Usage</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=searchUsageChargeTemplatePopup_title</td>
+	<td>Usage</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=searchUsageChargeTemplatePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>id=searchUsageChargeTemplatePopuppopupForm:searchField1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=searchUsageChargeTemplatePopuppopupForm:searchField1</td>
+	<td>${UsageChargeCode}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchUsageChargeTemplatePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td>${UsageChargeCode}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${UsageChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${UsageChargeCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTable</td>
+	<td>//div[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable']/div[2]/table.1.0</td>
+	<td>${UsageChargeCode}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=searchUsageChargeTemplatePopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectUsageCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=tabView:formPanelUsageCharge:formUsageCharge:usageChargeTemplateSelectedId:entityFieldSingle:chargeTemplate_entity</td>
+	<td>${UsageChargeCode}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PrepaidWalletBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ChoosePrepaidWallet}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ChoosePrepaidWallet}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddOne}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CounterBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCounter}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectCounter}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddSaveUsageCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=tabView:datatable_serviceUsageCharges_results:0:chargeTemplate_code_chargeTemplate_id_message_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=tabView:datatable_serviceUsageCharges_results:0:chargeTemplate_code_chargeTemplate_id_message_link</td>
+	<td>${UsageChargeCode}</td>
 </tr>
 </tbody></table>
 </body>

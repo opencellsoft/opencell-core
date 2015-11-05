@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.shared.Title;
@@ -16,8 +17,10 @@ import org.meveo.model.shared.Title;
 public class TitleDto implements Serializable {
 
 	private static final long serialVersionUID = -1332916104721562522L;
-
+	
+	@XmlAttribute(required = true)
 	private String code;
+	
 	private String description;
 	private Boolean isCompany = Boolean.FALSE;
 

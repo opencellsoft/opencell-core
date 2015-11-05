@@ -20,23 +20,23 @@
 	<ui:define name="body">
 
 		<!-- Entity select popup. -->
-		<hftl:entityPopup id="searchInvoiceCategoryPopup"
-			header="#{messages['customer.popup.header']}"
-			updateField=":searchPanel:searchForm:invoiceCategoryField"
-			selection="#{invoiceSubCategoryListBean.filters['invoiceCategory']}"
-			backingBean="#{invoiceCategoryBean}"
-			searchField1Label="#{messages['invoiceCategory.code']}"
-			searchField1="code"
-			column1Label="#{messages['invoiceCategory.code']}" column1="code">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="searchInvoiceCategoryPopup" -->
+<!-- 			header="#{messages['customer.popup.header']}" -->
+<!-- 			updateField=":searchPanel:searchForm:invoiceCategoryField" -->
+<!-- 			selection="#{invoiceSubCategoryListBean.filters['invoiceCategory']}" -->
+<!-- 			backingBean="#{invoiceCategoryBean}" -->
+<!-- 			searchField1Label="#{messages['invoiceCategory.code']}" -->
+<!-- 			searchField1="code" -->
+<!-- 			column1Label="#{messages['invoiceCategory.code']}" column1="code"> -->
+<!-- 		</hftl:entityPopup> -->
 
 		<hf:searchPanel id="searchPanel"
 			label="#{messages['invoiceSubCategory.search']}"
 			backingBean="#{invoiceSubCategoryListBean}">
 			<hf:searchField id="invoiceCategoryField"
 				label="#{messages['invoiceSubCategory.invoiceCategory']}"
-				field="invoiceCategory" valueLabelField="code" popup="true"
-				popupId="searchInvoiceCategoryPopup" clearButton="true" />
+				field="invoiceCategory" valueLabelField="code" listBean="#{invoiceCategoryBean}"/>
+<!--                 popup="true" popupId="searchInvoiceCategoryPopup" clearButton="true" /> -->
 			<hf:searchField label="#{messages['invoiceSubCategory.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['invoiceSubCategory.description']}"

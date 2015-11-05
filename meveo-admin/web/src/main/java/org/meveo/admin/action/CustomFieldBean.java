@@ -7,22 +7,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ComponentSystemEvent;
 import javax.inject.Inject;
 
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.admin.custom.GroupedCustomField;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.MessagesUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
@@ -30,12 +29,9 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.CustomFieldValue;
 import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.crm.impl.CustomFieldJob;
+import org.meveo.service.catalog.impl.CalendarService;
 
 /**
  * Backing bean for support custom field instances value data entry
@@ -57,12 +53,12 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     private Map<String, Object> customFieldNewValue = new HashMap<String, Object>();
 
     /**
-     * Custom field templates
+     * Custom field templates grouped into tabs and field groups
      */
-    protected List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
+    private GroupedCustomField groupedCustomField = null;
 
     @Inject
-    private CustomFieldJob customFieldJob;
+    private CalendarService calendarService;
 
     public CustomFieldBean() {
     }
@@ -85,12 +81,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         updateCustomFieldsInEntity();
 
         String outcome = super.saveOrUpdate(killConversation);
-        
-        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
-            return null;
-        } else {
-            return outcome;
-        }
+        return outcome;
     }
 
     /**
@@ -98,72 +89,46 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     protected void initCustomFields() {
 
-        if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class)) {
-            return;
-        }
-
-        customFieldTemplates = getApplicateCustomFieldTemplates();
+        List<CustomFieldTemplate> customFieldTemplates = getApplicateCustomFieldTemplates();
 
         if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
             for (CustomFieldTemplate cft : customFieldTemplates) {
-                CustomFieldInstance cfi = ((ICustomFieldEntity) entity).getCustomFields().get(cft.getCode());
+                CustomFieldInstance cfi = null;
+                if (((ICustomFieldEntity) entity).getCfFields() != null) {
+                    cfi = ((ICustomFieldEntity) entity).getCfFields().getCFI(cft.getCode());
+                }
 
                 if (cfi == null) {
                     cft.setInstance(CustomFieldInstance.fromTemplate(cft));
                 } else {
-                    if (cfi.getValue() == null) {
-                        cfi.setValue(new CustomFieldValue());
-                    }
                     deserializeForGUI(cft, cfi);
                     cft.setInstance(cfi);
                 }
             }
         }
+
+        groupedCustomField = new GroupedCustomField(customFieldTemplates, "Custom fields", false);      
     }
 
     private void updateCustomFieldsInEntity() {
 
-        if (!this.getClass().isAnnotationPresent(CustomFieldEnabledBean.class) || customFieldTemplates == null || customFieldTemplates.isEmpty()) {
-            return;
-        }
-
-        for (CustomFieldTemplate cft : customFieldTemplates) {
+        for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
             CustomFieldInstance cfi = cft.getInstance();
             // Not saving empty values
             if (cfi.isValueEmptyForGui()) {
-                if (!cfi.isTransient()) {
-                    ((ICustomFieldEntity) entity).getCustomFields().remove(cfi.getCode());
-                    log.debug("Remove empty cfi value {}", cfi.getCode());
+                if (((ICustomFieldEntity) entity).getCfFields() != null) {
+                    ((ICustomFieldEntity) entity).getCfFields().removeCFI(cfi.getCode());
+                    log.trace("Remove empty cfi value {}", cfi.getCode());
                 }
+
                 // Existing value update
             } else {
                 serializeForGUI(cft, cfi);
-                if (!cfi.isTransient()) {
-
-                    cfi.updateAudit(getCurrentUser());
-                    // Create a new instance from a template value
-                } else {
-                    cfi.updateAudit(getCurrentUser());
-                    IEntity entity = getEntity();
-                    if (entity instanceof AccountEntity) {
-                        cfi.setAccount((AccountEntity) getEntity());
-                    } else if (entity instanceof Subscription) {
-                        cfi.setSubscription((Subscription) entity);
-                    } else if (entity instanceof Access) {
-                        cfi.setAccess((Access) entity);
-                    } else if (entity instanceof ChargeTemplate) {
-                        cfi.setChargeTemplate((ChargeTemplate) entity);
-                    } else if (entity instanceof ServiceTemplate) {
-                        cfi.setServiceTemplate((ServiceTemplate) entity);
-                    } else if (entity instanceof OfferTemplate) {
-                        cfi.setOfferTemplate((OfferTemplate) entity);
-                    } else if (entity instanceof JobInstance) {
-                        cfi.setJobInstance((JobInstance) entity);
-                    } else if (entity instanceof Provider) {
-                        cfi.setProvider((Provider) entity);
-                    }
+                cfi.updateAudit(getCurrentUser());
+                if (((ICustomFieldEntity) entity).getCfFields() == null) {
+                    ((ICustomFieldEntity) entity).initCustomFields();
                 }
-                ((ICustomFieldEntity) entity).getCustomFields().put(cfi.getCode(), cfi);
+                ((ICustomFieldEntity) entity).getCfFields().addUpdateCFI(cfi);
             }
         }
     }
@@ -171,10 +136,10 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     private void deserializeForGUI(CustomFieldTemplate cft, CustomFieldInstance cfi) {
         if (cft.isVersionable()) {
             for (CustomFieldPeriod period : cfi.getValuePeriods()) {
-                deserializeForGUI(cft, period.getValue());
+                deserializeForGUI(cft, period.getCfValue());
             }
         } else {
-            deserializeForGUI(cft, cfi.getValue());
+            deserializeForGUI(cft, cfi.getCfValue());
         }
     }
 
@@ -253,10 +218,10 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         if (cft.isVersionable()) {
             for (CustomFieldPeriod period : cfi.getValuePeriods()) {
-                serializeForGUI(cft, period.getValue());
+                serializeForGUI(cft, period.getCfValue());
             }
         } else {
-            serializeForGUI(cft, cfi.getValue());
+            serializeForGUI(cft, cfi.getCfValue());
         }
     }
 
@@ -301,19 +266,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         }
     }
 
-    public List<CustomFieldTemplate> getCustomFieldTemplates() {
-        if (customFieldTemplates == null || customFieldTemplates.size() == 0) {
-            if (entity != null) {
-                initCustomFields();
-            } else {
-                initEntity();
-            }
-        }
-        return customFieldTemplates;
-    }
 
-    public void setCustomFieldTemplates(List<CustomFieldTemplate> customFieldTemplates) {
-        this.customFieldTemplates = customFieldTemplates;
+    public GroupedCustomField getGroupedCustomField() {
+        return groupedCustomField;
     }
 
     public CustomFieldPeriod getCustomFieldSelectedPeriod() {
@@ -399,6 +354,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         // Create period if passed a period check or if user decided to create it anyway
         if (cft.getInstance().getCalendar() != null) {
+            cft.getInstance().setCalendar(calendarService.attach(cft.getInstance().getCalendar()));
             period = cft.getInstance().addValuePeriod(periodStartDate);
 
         } else {
@@ -407,19 +363,17 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         // Set value
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
-            period.getValue().setSingleValue(value, cft.getFieldType());
+            period.getCfValue().setSingleValue(value, cft.getFieldType());
+            if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                period.getCfValue().setEntityReferenceValueForGUI((BusinessEntity) value);
+            }
         } else {
             Map<String, Object> newValue = new HashMap<String, Object>();
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
                 newValue.put("key", key);
             }
             newValue.put("value", value);
-            period.getValue().getMapValuesForGUI().add(newValue);
-        }
-
-        // Create a timer if was requested
-        if (cft.isVersionable() && cft.getCalendar() != null && cft.isTriggerEndPeriodEvent()) {
-            customFieldJob.triggerEndPeriodEvent(cft.getInstance(), periodEndDate);
+            period.getCfValue().getMapValuesForGUI().add(newValue);
         }
 
         customFieldNewValue.clear();
@@ -472,5 +426,49 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     public List<BusinessEntity> autocompleteCustomEntityForCFV(String wildcode) {
         String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
         return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode, this.currentProvider);
+    }
+
+    /**
+     * Get a list of custom field templates applicable to an entity.
+     * 
+     * @return A list of custom field templates
+     */
+    protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
+        List<CustomFieldTemplate> result = customFieldTemplateService.findByAppliesTo((ICustomFieldEntity) entity, getCurrentProvider());
+        log.debug("Found {} custom field templates for entity {}", result.size(), entity.getClass());
+        return result;
+    }
+
+    /**
+     * Validate complex custom fields
+     * 
+     * @param event
+     */
+    public void validateCustomFields(ComponentSystemEvent event) {
+
+        boolean valid = true;
+        FacesContext fc = FacesContext.getCurrentInstance();
+        for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
+            if (cft.isActive() && cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
+
+                CustomFieldInstance cfi = cft.getInstance();
+
+                // Fail validation on non empty values
+                if (cfi.isValueEmptyForGui()) {
+
+                    FacesMessage msg = new FacesMessage(MessagesUtils.getMessage("javax.faces.component.UIInput.REQUIRED", FacesContext.getCurrentInstance().getViewRoot()
+                        .getLocale(), cft.getDescription()));
+                    msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    fc.addMessage(null, msg);
+                    valid = false;
+                }
+            }
+        }
+
+        if (!valid) {
+
+            fc.validationFailed();
+            fc.renderResponse();
+        }
     }
 }

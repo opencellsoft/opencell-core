@@ -13,153 +13,43 @@
 </thead><tbody>
 <tr>
 	<td>store</td>
-	<td>http://i.meveo.info/meveo/loginInternal.jsf</td>
-	<td>url</td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>This is the Target URL: ${url}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>id=loginForm:username</td>
-	<td>UsernameID</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>meveo.admin</td>
-	<td>userName</td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>This is the correct Username : ${userName}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>id=loginForm:password</td>
-	<td>PasswordID</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>meveo.admin</td>
-	<td>passWord</td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>This is the correct Password : ${passWord}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>id=loginForm:submit</td>
-	<td>Connect</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>link=Logout</td>
-	<td>Logout</td>
-</tr>
-<tr>
-	<td>store</td>
 	<td>id=menu:MeveoInstances</td>
 	<td>MeveoInstances</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
-	<td>NewMeveoInstances</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
-	<td>CodeText</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
+	<td>//*[contains(@id, 'url_text')]</td>
 	<td>URL</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/input</td>
-	<td>Description</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/button/span[2]</td>
+	<td>id=formPanel:meveoInstanceForm:userSelectedId:entityFieldSingle:selectLink</td>
 	<td>SelectUser</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[5]/div/div/button/span[2]</td>
+	<td>id=formPanel:meveoInstanceForm:customerSelectedId:entityFieldSingle:selectLink</td>
 	<td>SelectCustomer</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/input</td>
+	<td>//*[contains(@id, 'authUsername_text')]</td>
 	<td>UsernameForWSRestAccess</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[7]/div/div/input</td>
+	<td>//*[contains(@id, 'authPassword_text')]</td>
 	<td>PasswordForWSRestAccess</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span[2]</td>
-	<td>saveWithObjectId</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span[2]</td>
-	<td>saveButton</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
-	<td>backButton</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
-	<td>resetButton</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
-	<td>Disable</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
-	<td>Enable</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
-	<td>searchWithCode</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/input</td>
-	<td>searchWithDescription</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/input</td>
+	<td>//*[contains(@id, 'productVersion_text')]</td>
 	<td>searchWithVersion</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/input</td>
+	<td>//*[contains(@id, 'owner_text')]</td>
 	<td>searchWithOwner</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
-	<td>buttonSearch</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -168,13 +58,13 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=results_formbuttonExport</td>
-	<td>ExportToExcel</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>Check</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=results_formdeleteEntitieslink</td>
-	<td>DeleteMultiple</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>UnCheck</td>
 </tr>
 </tbody></table>
 </body>

@@ -26,8 +26,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
@@ -36,10 +38,11 @@ import org.meveo.model.shared.Address;
 
 @Entity
 @ObservableEntity
+@CustomFieldEntity(cftCodePrefix = "SELLER")
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "CRM_SELLER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_SELLER_SEQ")
-public class Seller extends BusinessEntity {
+public class Seller extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -61,13 +64,24 @@ public class Seller extends BusinessEntity {
 	@Column(name = "CURRENT_INVOICE_NB")
 	private Long currentInvoiceNb;
 
+	@Column(name = "INVOICE_ADJUSTMENT_PREFIX", length = 50)
+	private String invoiceAdjustmentPrefix;
+
+	@Column(name = "CURRENT_INVOICE_ADJUSTMENT_NB")
+	private Long currentInvoiceAdjustmentNb;
+
+	@Column(name = "INVOICE_ADJUSTMENT_SEQUENCE_SIZE")
+	private Integer invoiceAdjustmentSequenceSize = 9;
+	
 	@Embedded
 	private Address address = new Address();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PARENT_SELLER_ID")
 	private Seller seller;
-
+	
+	@Column(name = "INVOICE_SEQUENCE_SIZE")
+	private Integer invoiceSequenceSize=9;
 	public Seller() {
 		super();
 	}
@@ -127,5 +141,47 @@ public class Seller extends BusinessEntity {
 	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
+
+	@Override
+	public ICustomFieldEntity getParentCFEntity() {
+		if (seller != null) {
+			return seller;
+		}
+		return getProvider();
+	}
+
+	public String getInvoiceAdjustmentPrefix() {
+		return invoiceAdjustmentPrefix;
+	}
+
+	public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
+		this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
+	}
+
+	public Integer getInvoiceAdjustmentSequenceSize() {
+		return invoiceAdjustmentSequenceSize;
+	}
+
+	public void setInvoiceAdjustmentSequenceSize(Integer invoiceAdjustmentSequenceSize) {
+		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
+	}
+
+	public Long getCurrentInvoiceAdjustmentNb() {
+		return currentInvoiceAdjustmentNb;
+	}
+
+	public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
+		this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
+	}
+
+	public Integer getInvoiceSequenceSize() {
+		return invoiceSequenceSize;
+	}
+
+	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
+		this.invoiceSequenceSize = invoiceSequenceSize;
+	}
+	
+	
 
 }

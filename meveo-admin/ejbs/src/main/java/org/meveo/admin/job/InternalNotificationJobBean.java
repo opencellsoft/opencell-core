@@ -26,7 +26,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.notification.NotificationService;
-import org.meveo.service.script.JavaCompilerManager;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
@@ -50,7 +50,7 @@ public class InternalNotificationJobBean {
 	NotificationService notificationService;
 
 	@Inject
-	JavaCompilerManager javaCompilerManager;
+	ScriptInstanceService scriptInstanceService;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -96,7 +96,7 @@ public class InternalNotificationJobBean {
 				}
 				try {
 					if (notification.getScriptInstance() != null) {
-						Class<ScriptInterface> scriptInterfaceClass = javaCompilerManager.getScriptInterface(provider, notification.getScriptInstance().getCode());
+						Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(provider, notification.getScriptInstance().getCode());
 						ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
 						Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
 						for (@SuppressWarnings("rawtypes")

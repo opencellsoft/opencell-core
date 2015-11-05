@@ -41,5 +41,9 @@ public interface EmailNotificationRs extends IBaseRs {
 	@DELETE
 	@Path("/{notificationCode}")
 	ActionStatus remove(@PathParam("notificationCode") String notificationCode);
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(EmailNotificationDto postData);
 
 }

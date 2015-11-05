@@ -63,18 +63,18 @@ public class MeasurableQuantityAggregationJob extends Job {
         } 
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq,User currentUser) {
         for (MeasurableQuantity measurableQuantity : mq) {
             aggregateMeasuredValues(result, report, measurableQuantity,currentUser);
         }
-
     }
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-
+    	log.info("Running for user={}, parameter={}, provider={}", currentUser, null, currentUser.getProvider().getCode());
+		
         StringBuilder report = new StringBuilder();
         if (jobInstance.getParametres() != null && !jobInstance.getParametres().isEmpty()) {
 
@@ -86,8 +86,6 @@ public class MeasurableQuantityAggregationJob extends Job {
             aggregateMeasuredValues(result, report, mqService.list(currentUser.getProvider()),currentUser);
             result.setReport(report.toString());
         }
-
-        result.setDone(true);
     }
 
     public BigDecimal getMeasuredValueListValueSum(List<MeasuredValue> mvList) {

@@ -145,6 +145,7 @@ public class CalendarBean extends BaseBean<Calendar> {
 
     public void setDayInYearModel(DualListModel<DayInYear> perks) {
         ((CalendarYearly) getEntity()).setDays((List<DayInYear>) perks.getTarget());
+        this.dayInYearListModel = perks; 
     }
 
     @Override

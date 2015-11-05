@@ -75,6 +75,7 @@
                     <jobTemplate>
                         <xsl:value-of select="jobName" />
                     </jobTemplate>
+                    <xsl:copy-of select="jobCategoryEnum" />
                     <timerEntity reference="../../.." />
                 </org.meveo.model.jobs.JobInstance>
             </jobInstances>

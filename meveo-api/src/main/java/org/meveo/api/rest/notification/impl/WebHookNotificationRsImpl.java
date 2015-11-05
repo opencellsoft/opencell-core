@@ -107,5 +107,25 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+	
+	@Override
+	public ActionStatus createOrUpdate(WebhookNotificationDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+		try {
+			webhookNotificationApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error occured while creating webhook notification ",e);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error generated while creating webhook notification ",e);
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 }

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
+        style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
+        inputWidth="#{inputWidth}">
+
+
+        <!-- Show a popup to select entity from a list -->
+        <c:if test="#{popup}">
+            <c:if test="#{edit}">
+                <p:inputText id="#{id}" value="#{fieldItem[valueLabelField]}" required="#{required}" size="#{size}" disabled="true" />
+                <p:commandButton immediate="true" rendered="#{(!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)}" id="selectLink" onclick="PF('dlg_#{popupId}').show()"
+                    icon="ui-icon-search" type="button" />
+                <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
+
+            </c:if>
+
+            <c:if test="#{! edit}">
+                <h:outputText id="#{id}" value="#{fieldItem[valueLabelField]}" styleClass="field-value" />
+            </c:if>
+        </c:if>
+
+
+        <!-- Select entity from a picklist and store a entity itself OR store only a code value -->
+        <c:if test="#{!popup}">
+            <c:if test="#{ edit}">
+                <c:if test="#{listElements==null}">
+                    <c:set var="elements" value="#{listBean.listAll()}" />
+                </c:if>
+                <c:if test="#{listElements!=null}">
+                    <c:set var="elements" value="#{listElements}" />
+                </c:if>
+
+                <p:selectOneMenu id="#{id}" value="#{fieldItem}" required="#{required}">
+                    <f:selectItem itemLabel="" itemValue="" />
+                    <!-- store a entity itself -->
+                    <c:if test="#{! fkToEntity}">
+                        <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}" />
+                    </c:if>
+                    <!-- store only a code value -->
+                    <c:if test="#{fkToEntity}">
+                        <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem[valueField]}" />
+                    </c:if>
+                    <s:objectConverter />
+                    <c:if test="#{not empty listenerUpdate}">
+                        <p:ajax event="valueChange" update="#{listenerUpdate}" />
+                    </c:if>
+                </p:selectOneMenu>
+            </c:if>
+            <c:if test="#{! edit}">
+                <c:if test="#{! fkToEntity}">
+                    <h:outputText id="#{id}" value="#{fieldItem[valueLabelField]}" styleClass="field-value" />
+                </c:if>
+                <c:if test="#{fkToEntity}">
+                    <h:outputText id="#{id}" value="#{listBean.persistenceService.findByCode(fieldItem)[valueLabelField]}" styleClass="field-value" />
+                </c:if>
+            </c:if>
+        </c:if>
+    </hftl:decorateFormField>
+</ui:composition>
+
+</html>

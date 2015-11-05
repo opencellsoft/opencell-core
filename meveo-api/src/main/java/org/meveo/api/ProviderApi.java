@@ -138,6 +138,7 @@ public class ProviderApi extends BaseApi {
 			Provider provider = new Provider();
 			provider.setCode(postData.getCode().toUpperCase());
 			provider.setDescription(postData.getDescription());
+			provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
 
 			provider.setMulticountryFlag(postData.isMultiCountry());
 			provider.setMulticurrencyFlag(postData.isMultiCurrency());
@@ -194,6 +195,16 @@ public class ProviderApi extends BaseApi {
 			invoiceConfigurationService.create(invoiceConfiguration, currentUser);
 
 			provider.setInvoiceConfiguration(invoiceConfiguration);
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+				try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), provider, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
 
 			providerService.create(provider, currentUser);
 		} else {
@@ -233,7 +244,7 @@ public class ProviderApi extends BaseApi {
 			}
 
 			provider.setDescription(postData.getDescription());
-
+			provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
 			provider.setMulticountryFlag(postData.isMultiCountry());
 			provider.setMulticurrencyFlag(postData.isMultiCurrency());
 			provider.setMultilanguageFlag(postData.isMultiLanguage());
@@ -271,6 +282,16 @@ public class ProviderApi extends BaseApi {
 			if (!StringUtils.isBlank(postData.getUserAccount())) {
 				UserAccount ua = userAccountService.findByCode(postData.getUserAccount(), currentUser.getProvider());
 				provider.setUserAccount(ua);
+			}
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+				try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), provider, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
 			}
 
 			providerService.update(provider, currentUser);

@@ -11,6 +11,7 @@ import org.meveo.api.dto.CalendarDateIntervalDto;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.DayInYearDto;
 import org.meveo.api.dto.HourInDayDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -152,6 +153,8 @@ public class CalendarApi extends BaseApi {
                 calendar.setJoinCalendar2(cal2);
 
                 calendarService.create(calendar, currentUser, provider);
+            } else {
+            	throw new BusinessApiException("invalid calendar type, possible values YEARLY, DAILY, PERIOD, INTERVAL, JOIN");
             }
             
 

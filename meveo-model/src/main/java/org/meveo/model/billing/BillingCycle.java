@@ -16,6 +16,7 @@
  */
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -70,6 +71,9 @@ public class BillingCycle extends BusinessEntity {
 
 	@OneToMany(mappedBy = "billingCycle", fetch = FetchType.LAZY)
 	private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+	
+	@Column(name = "INVOICING_THRESHOLD")
+	private BigDecimal invoicingThreshold; 
 
 	public String getBillingTemplateName() {
 		return billingTemplateName;
@@ -128,13 +132,30 @@ public class BillingCycle extends BusinessEntity {
 	}
 
 	public Date getNextCalendarDate(Date subscriptionDate, Date date) {
-
-		return calendar != null ? calendar.nextCalendarDate(date) : null;
+		Date result = null;
+		if(calendar != null){
+			calendar.setInitDate(subscriptionDate);
+			result=calendar.nextCalendarDate(date);
+		}
+		return result;
 	}
 
 	public Date getNextCalendarDate(Date subscriptionDate) {
-		calendar.setInitDate(subscriptionDate);
-		return calendar != null ? calendar.nextCalendarDate(new Date()) : null;
+		return getNextCalendarDate(subscriptionDate,new Date());
+	}
+
+	/**
+	 * @return the invoicingThreshold
+	 */
+	public BigDecimal getInvoicingThreshold() {
+		return invoicingThreshold;
+	}
+
+	/**
+	 * @param invoicingThreshold the invoicingThreshold to set
+	 */
+	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+		this.invoicingThreshold = invoicingThreshold;
 	}
 
 }

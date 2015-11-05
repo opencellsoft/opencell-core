@@ -85,9 +85,9 @@
 		<ui:insert name="body" />
 
 	</div>
-
+	<!-- <div class="footer"><p:link href="#{monitoringBean.getDocUrl()}">Help ?</p:link></div> -->
 	<div class="footer">MEVEO @VERSION_NUMBER@ @BUILD_NUMBER@</div>
-	<div class="footer"><h:outputText value="#{checkUpdateBean.versionOutput}" escape="false" /></div>
+	<div class="footer"><h:outputText value="#{monitoringBean.getLastVersion()}" escape="false" /></div>
 
 	<p:ajaxStatus
 		style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">

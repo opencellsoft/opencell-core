@@ -24,6 +24,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -34,7 +35,7 @@ import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped
-public class SellerBean extends BaseBean<Seller> {
+public class SellerBean extends CustomFieldBean<Seller> {
 
 	private static final long serialVersionUID = 1L;
 

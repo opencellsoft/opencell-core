@@ -27,7 +27,7 @@ public class LoggingInterceptor {
 
 		if (invocationContext.getParameters() != null) {
 			for (Object obj : invocationContext.getParameters()) {
-				log.debug(obj.toString());
+				log.debug(obj==null?null:obj.toString());
 			}
 		}
 

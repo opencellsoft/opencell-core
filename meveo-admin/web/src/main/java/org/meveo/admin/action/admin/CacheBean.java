@@ -34,7 +34,9 @@ import org.infinispan.api.BasicCache;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
+import org.meveo.admin.action.LazyDataModelWSize;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -61,6 +63,9 @@ public class CacheBean implements Serializable {
 
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
+    
+    @Inject
+    private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
 
     /** Logger. */
     @Inject
@@ -122,6 +127,7 @@ public class CacheBean implements Serializable {
             caches.putAll(cdrEdrProcessingCacheContainerProvider.getCaches());
             caches.putAll(notificationCacheContainerProvider.getCaches());
             caches.putAll(ratingCacheContainerProvider.getCaches());
+            caches.putAll(customFieldsCacheContainerProvider.getCaches());
 
             selectedCache = caches.get(cacheName.get());
         }
@@ -140,6 +146,7 @@ public class CacheBean implements Serializable {
         caches.putAll(cdrEdrProcessingCacheContainerProvider.getCaches());
         caches.putAll(notificationCacheContainerProvider.getCaches());
         caches.putAll(ratingCacheContainerProvider.getCaches());
+        caches.putAll(customFieldsCacheContainerProvider.getCaches());
         caches = new TreeMap<String, BasicCache>(caches);
 
         for (Entry<String, BasicCache> cache : caches.entrySet()) {
@@ -161,6 +168,7 @@ public class CacheBean implements Serializable {
         cdrEdrProcessingCacheContainerProvider.refreshCache(cacheName);
         notificationCacheContainerProvider.refreshCache(cacheName);
         ratingCacheContainerProvider.refreshCache(cacheName);
+        customFieldsCacheContainerProvider.refreshCache(cacheName);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
@@ -169,6 +177,7 @@ public class CacheBean implements Serializable {
         cdrEdrProcessingCacheContainerProvider.refreshCache(null);
         notificationCacheContainerProvider.refreshCache(null);
         ratingCacheContainerProvider.refreshCache(null);
+        customFieldsCacheContainerProvider.refreshCache(null);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
@@ -183,7 +192,7 @@ public class CacheBean implements Serializable {
 
             // final Map<String, Object> filters = inputFilters;
 
-            cacheContents = new LazyDataModel() {
+            cacheContents = new LazyDataModelWSize() {
 
                 private static final long serialVersionUID = -5796910936316457321L;
 
@@ -216,7 +225,7 @@ public class CacheBean implements Serializable {
 
             // final Map<String, Object> filters = inputFilters;
 
-            cacheMapContents = new LazyDataModel() {
+            cacheMapContents = new LazyDataModelWSize() {
 
                 private static final long serialVersionUID = -5796910936316457321L;
 
@@ -250,7 +259,7 @@ public class CacheBean implements Serializable {
 
             // final Map<String, Object> filters = inputFilters;
 
-            cacheItemContents = new LazyDataModel() {
+            cacheItemContents = new LazyDataModelWSize() {
 
                 private static final long serialVersionUID = -5796910936316457322L;
 

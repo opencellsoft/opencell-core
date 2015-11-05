@@ -55,12 +55,14 @@ public class UsageRatingJobBean {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = jobInstance.getLongCustomValue("UsageRatingJob_nbRuns").longValue();  			
-				waitingMillis = jobInstance.getLongCustomValue("UsageRatingJob_waitingMillis").longValue();
+				nbRuns = (Long) jobInstance.getCFValue("nbRuns");  			
+				waitingMillis = (Long) jobInstance.getCFValue("waitingMillis");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
 				}
 			}catch(Exception e){
+				nbRuns = new Long(1);
+				waitingMillis = new Long(0);
 				log.warn("Cant get customFields for "+jobInstance.getJobTemplate());
 			}
 
@@ -93,7 +95,6 @@ public class UsageRatingJobBean {
                     log.error("Failed to execute async method", cause);
                 }
             }
-            result.setDone(true);
         } catch (Exception e) {
             log.error("Failed to run usage rating job",e);
             result.registerError(e.getMessage());

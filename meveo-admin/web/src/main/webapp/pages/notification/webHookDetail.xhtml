@@ -61,9 +61,9 @@
 				field="elFilter" textArea="true" maxlength="1000" componentWidth="50" newLine="true"/>
 			<hf:formField id="scriptInstanceSelectId"
 										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
-										valueLabelField="description" required="true" popup="true"
+										valueLabelField="description" required="false" popup="true"
 										popupId="scriptInstancePopup" />
-
+           <hf:formField label="#{messages['entity.notification.params']}" field="params"  />  
 			<hf:formField label="#{messages['entity.webHook.host']}" field="host"
 				required="true" size="100" maxlength="255" />
 			<hf:formField label="#{messages['entity.webHook.port']}" field="port" maxValue="65535"/>
@@ -79,7 +79,7 @@
 			<hf:formField label="#{messages['entity.webHook.headers']}"
 				field="headers" componentWidth="100" />
 			<hf:formField label="#{messages['entity.webHook.params']}"
-				field="params" componentWidth="100"/>
+				field="webhookParams" componentWidth="100"/>
 
 			<hf:formField id="counterTemplateSelectedId"
 				label="#{messages['counterTemplate.title']}" field="counterTemplate"

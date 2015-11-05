@@ -19,7 +19,6 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -33,41 +32,34 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class ServiceChargeTemplateSubscriptionService extends PersistenceService<ServiceChargeTemplateSubscription> {
 
-	public void removeByPrefix(EntityManager em, String prefix, Provider provider) {
-		Query query = em.createQuery("DELETE ServiceChargeTemplateSubscription t WHERE t.chargeTemplate.code LIKE '"
-				+ prefix + "%' AND t.provider=:provider");
-		query.setParameter("provider", provider);
-		query.executeUpdate();
-	}
+    // public void removeByPrefix(EntityManager em, String prefix, Provider provider) {
+    // Query query = em.createQuery("DELETE ServiceChargeTemplateSubscription t WHERE t.chargeTemplate.code LIKE '"
+    // + prefix + "%' AND t.provider=:provider");
+    // query.setParameter("provider", provider);
+    // query.executeUpdate();
+    // }
 
-	public List<ServiceChargeTemplateSubscription> findBySubscriptionChargeTemplate(
-			OneShotChargeTemplate chargeTemplate, Provider provider) {
-		return findBySubscriptionChargeTemplate(getEntityManager(), chargeTemplate, provider);
-	}
+    @SuppressWarnings("unchecked")
+    public List<ServiceChargeTemplateSubscription> findBySubscriptionChargeTemplate(OneShotChargeTemplate chargeTemplate, Provider provider) {
 
-	@SuppressWarnings("unchecked")
-	public List<ServiceChargeTemplateSubscription> findBySubscriptionChargeTemplate(EntityManager em,
-			OneShotChargeTemplate chargeTemplate, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateSubscription.class, "a");
-		qb.addCriterionEntity("chargeTemplate", chargeTemplate);
-		qb.addCriterionEntity("provider", provider);
+        QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateSubscription.class, "a");
+        qb.addCriterionEntity("chargeTemplate", chargeTemplate);
+        qb.addCriterionEntity("provider", provider);
 
-		return (List<ServiceChargeTemplateSubscription>) qb.getQuery(em).getResultList();
-	}
+        return (List<ServiceChargeTemplateSubscription>) qb.getQuery(getEntityManager()).getResultList();
+    }
 
-	public void removeByServiceTemplate(ServiceTemplate serviceTemplate, Provider provider) {
-		Query query = getEntityManager()
-				.createQuery(
-						"DELETE ServiceChargeTemplateSubscription t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
-		query.setParameter("serviceTemplate", serviceTemplate);
-		query.setParameter("provider", provider);
-		query.executeUpdate();
-	}
-	@SuppressWarnings("unchecked")
-	public List<ServiceChargeTemplateSubscription> findByWalletTemplate(WalletTemplate walletTemplate){
-		QueryBuilder qb=new QueryBuilder(ServiceChargeTemplateSubscription.class,"s");
-		qb.addCriterionEntity("walletTemplate", walletTemplate);
-		return qb.find(getEntityManager());
-	}
+    public void removeByServiceTemplate(ServiceTemplate serviceTemplate, Provider provider) {
+        Query query = getEntityManager().createQuery("DELETE ServiceChargeTemplateSubscription t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
+        query.setParameter("serviceTemplate", serviceTemplate);
+        query.setParameter("provider", provider);
+        query.executeUpdate();
+    }
 
+    @SuppressWarnings("unchecked")
+    public List<ServiceChargeTemplateSubscription> findByWalletTemplate(WalletTemplate walletTemplate) {
+        QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateSubscription.class, "s");
+        qb.addCriterionEntity("walletTemplate", walletTemplate);
+        return qb.find(getEntityManager());
+    }
 }

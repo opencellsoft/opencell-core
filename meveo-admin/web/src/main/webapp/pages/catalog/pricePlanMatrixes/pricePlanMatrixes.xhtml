@@ -15,20 +15,20 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<hftl:entityPopup id="offerPopup"
-			header="#{messages['offer.search']}"
-			backingBean="#{offerTemplateBean}"
-			searchField1Label="#{messages['offerTemplate.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['offerTemplate.description']}"
-			searchField2="description"
-			column1Label="#{messages['offerTemplate.code']}" column1="code"
-			column2Label="#{messages['offerTemplate.description']}"
-			column2="description"
-			selection="#{pricePlanMatrixListBean.filters['offerTemplate']}"
-			lazy="false" dataModel="#{offerTemplateBean.listActive}"
-			updateField=":searchPanel:searchForm:offer">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="offerPopup" -->
+<!-- 			header="#{messages['offer.search']}" -->
+<!-- 			backingBean="#{offerTemplateBean}" -->
+<!-- 			searchField1Label="#{messages['offerTemplate.code']}" -->
+<!-- 			searchField1="code" -->
+<!-- 			searchField2Label="#{messages['offerTemplate.description']}" -->
+<!-- 			searchField2="description" -->
+<!-- 			column1Label="#{messages['offerTemplate.code']}" column1="code" -->
+<!-- 			column2Label="#{messages['offerTemplate.description']}" -->
+<!-- 			column2="description" -->
+<!-- 			selection="#{pricePlanMatrixListBean.filters['offerTemplate']}" -->
+<!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive}" -->
+<!-- 			updateField=":searchPanel:searchForm:offer"> -->
+<!-- 		</hftl:entityPopup> -->
 		<hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['seller.search']}" backingBean="#{sellerBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -40,32 +40,32 @@
 			dataModel="#{sellerBean.listAll}"
 			updateField=":searchPanel:searchForm:seller">
 		</hftl:entityPopup>
-		<hftl:entityPopup id="searchTradingCountryPopup"
-			header="#{messages['country.search']}"
-			backingBean="#{tradingCountryBean}"
-			searchField1Label="#{messages['BusinessEntity.description']}"
-			searchField1="prDescription"
-			column1Label="#{messages['BusinessEntity.code']}"
-			column1="countryCode"
-			column2Label="#{messages['BusinessEntity.description']}"
-			column2="prDescription"
-			selection="#{pricePlanMatrixListBean.filters['tradingCountry']}"
-			lazy="false" dataModel="#{tradingCountryBean.listAll}"
-			updateField=":searchPanel:searchForm:tradingCountry">
-		</hftl:entityPopup>
-		<hftl:entityPopup id="searchTradingCurrencyPopup"
-			header="#{messages['currency.search']}"
-			backingBean="#{tradingCurrencyBean}"
-			searchField1Label="#{messages['BusinessEntity.description']}"
-			searchField1="prDescription"
-			column1Label="#{messages['BusinessEntity.code']}"
-			column1="currencyCode"
-			column2Label="#{messages['BusinessEntity.description']}"
-			column2="prDescription"
-			selection="#{pricePlanMatrixListBean.filters['tradingCurrency']}"
-			lazy="false" dataModel="#{tradingCurrencyBean.listAll}"
-			updateField=":searchPanel:searchForm:tradingCurrency">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="searchTradingCountryPopup" -->
+<!-- 			header="#{messages['country.search']}" -->
+<!-- 			backingBean="#{tradingCountryBean}" -->
+<!-- 			searchField1Label="#{messages['BusinessEntity.description']}" -->
+<!-- 			searchField1="prDescription" -->
+<!-- 			column1Label="#{messages['BusinessEntity.code']}" -->
+<!-- 			column1="countryCode" -->
+<!-- 			column2Label="#{messages['BusinessEntity.description']}" -->
+<!-- 			column2="prDescription" -->
+<!-- 			selection="#{pricePlanMatrixListBean.filters['tradingCountry']}" -->
+<!-- 			lazy="false" dataModel="#{tradingCountryBean.listAll}" -->
+<!-- 			updateField=":searchPanel:searchForm:tradingCountry"> -->
+<!-- 		</hftl:entityPopup> -->
+<!-- 		<hftl:entityPopup id="searchTradingCurrencyPopup" -->
+<!-- 			header="#{messages['currency.search']}" -->
+<!-- 			backingBean="#{tradingCurrencyBean}" -->
+<!-- 			searchField1Label="#{messages['BusinessEntity.description']}" -->
+<!-- 			searchField1="prDescription" -->
+<!-- 			column1Label="#{messages['BusinessEntity.code']}" -->
+<!-- 			column1="currencyCode" -->
+<!-- 			column2Label="#{messages['BusinessEntity.description']}" -->
+<!-- 			column2="prDescription" -->
+<!-- 			selection="#{pricePlanMatrixListBean.filters['tradingCurrency']}" -->
+<!-- 			lazy="false" dataModel="#{tradingCurrencyBean.listAll}" -->
+<!-- 			updateField=":searchPanel:searchForm:tradingCurrency"> -->
+<!-- 		</hftl:entityPopup> -->
 
 		<hf:searchPanel id="searchPanel" columns="3"
 			label="#{messages['pricePlanMatrix.search']}"
@@ -78,20 +78,20 @@
 				field="eventCode" />
 			<hf:searchField id="offer"
 				label="#{messages['pricePlanMatrix.offerCode']}"
-				field="offerTemplate" valueLabelField="code" popup="true"
-				popupId="offerPopup" clearButton="true" />
+				field="offerTemplate" valueLabelField="code" listElements="#{offerTemplateBean.listActive}"/>
+<!--                 popup="true" popupId="offerPopup" clearButton="true" /> -->
 			<hf:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" valueLabelField="description" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
 			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
 				<hf:searchField id="tradingCountry"
 					label="#{messages['tradingCountry.tradingCountry']}"
-					field="tradingCountry" valueLabelField="countryCode" popup="true"
-					popupId="searchTradingCountryPopup" clearButton="true" />
+					field="tradingCountry" valueLabelField="countryCode" listBean="#{tradingCountryBean}" />
+<!--                     popup="true" popupId="searchTradingCountryPopup" clearButton="true" /> -->
 				<hf:searchField id="tradingCurrency"
 					label="#{messages['currency.codeCurrency']}"
-					field="tradingCurrency" valueLabelField="currencyCode" popup="true"
-					popupId="searchTradingCurrencyPopup" clearButton="true" />
+					field="tradingCurrency" valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}" />
+<!--                     popup="true" popupId="searchTradingCurrencyPopup" clearButton="true" /> -->
 				<hf:searchMinMaxField
 					label="#{messages['pricePlanMatrix.quantity']}"
 					minField="minQuantity" maxField="maxQuantity" />

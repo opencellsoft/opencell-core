@@ -30,8 +30,8 @@ public class JobApi extends BaseApi {
 	 */
 
 	public Long executeJob(JobInstanceInfoDto timerInfoDTO, User currentUser) throws MeveoApiException {
-		if (StringUtils.isBlank(timerInfoDTO.getTimerName())) {
-			missingParameters.add("timerName");
+		if (StringUtils.isBlank(timerInfoDTO.getCode()) && StringUtils.isBlank(timerInfoDTO.getTimerName())) {
+			missingParameters.add("timerName or code");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		} else {
 			try {

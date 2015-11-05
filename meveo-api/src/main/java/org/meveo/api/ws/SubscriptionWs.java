@@ -46,5 +46,8 @@ public interface SubscriptionWs extends IBaseWs {
 
 	@WebMethod
 	GetSubscriptionResponseDto findSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode);
+	
+	@WebMethod
+	ActionStatus createOrUpdateSubscription(@WebParam(name = "subscription") SubscriptionDto postData);
 
 }

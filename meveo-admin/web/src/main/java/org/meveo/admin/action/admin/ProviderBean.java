@@ -21,13 +21,12 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
@@ -40,7 +39,6 @@ import org.primefaces.event.SelectEvent;
 
 @Named
 @ViewScoped
-@CustomFieldEnabledBean(accountLevel=AccountLevelEnum.PROVIDER)
 public class ProviderBean extends CustomFieldBean<Provider> {
 
     private static final long serialVersionUID = 1L;
@@ -90,10 +88,19 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 			invoiceConfiguration.setCode(entity.getCode()); 
 			invoiceConfiguration.setDescription(entity.getDescription());   
 	   		invoiceConfiguration.setProvider(entity);
+	   		invoiceConfiguration.setDisplaySubscriptions(false);
+	   		invoiceConfiguration.setDisplayOffers(false);
+	   		invoiceConfiguration.setDisplayServices(false);
+	   		invoiceConfiguration.setDisplayProvider(false);
+	   		invoiceConfiguration.setDisplayEdrs(false);
+	   		invoiceConfiguration.setDisplayDetail(false);
 	   		invoiceConfigurationService.create(invoiceConfiguration);
 	   	    entity.setInvoiceConfiguration(invoiceConfiguration);
 	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
 			}
+		if (entity.getBankCoordinates() == null) {
+			entity.setBankCoordinates(new BankCoordinates());
+		}
 		}catch(BusinessException e){
 		  log.error("error while saving invoiceConfiguration "+e);	
 		 }
@@ -118,10 +125,10 @@ public class ProviderBean extends CustomFieldBean<Provider> {
      * @throws BusinessException
      */
     @Override
-    protected String saveOrUpdate(Provider entity) throws BusinessException {
+    protected Provider saveOrUpdate(Provider entity) throws BusinessException {
 
         boolean isNew = entity.isTransient();
-        String back = super.saveOrUpdate(entity);
+        entity = super.saveOrUpdate(entity);
 
         // Create a default role and a user
         if (isNew) {
@@ -152,12 +159,25 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 	   		invoiceConfiguration.setDisplayServices(entity.getInvoiceConfiguration().getDisplayServices());
 	   		invoiceConfiguration.setDisplaySubscriptions(entity.getInvoiceConfiguration().getDisplaySubscriptions());
 	   		invoiceConfiguration.setDisplayEdrs(entity.getInvoiceConfiguration().getDisplayEdrs());
+	   		invoiceConfiguration.setDisplayProvider(entity.getInvoiceConfiguration().getDisplayProvider());
+	   		invoiceConfiguration.setDisplayDetail(entity.getInvoiceConfiguration().getDisplayDetail());
 	   		invoiceConfigurationService.create(invoiceConfiguration);
 			entity.setInvoiceConfiguration(invoiceConfiguration); 
 	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
             messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
          }
 
-        return back;
+        return entity;
+    }
+    
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        
+        String outcome = super.saveOrUpdate(killConversation);
+
+        if (outcome != null) {
+            return getEditViewName();
+        }
+        return null;
     }
 }

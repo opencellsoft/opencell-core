@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -19,23 +20,24 @@ import org.meveo.model.admin.User;
 public class JobInstanceInfoDto implements Serializable {
 
 	private static final long serialVersionUID = -7091372162470026030L;
-    
+
 	@XmlTransient
 	private User currentUser;
 
-	
-	@XmlElement(required = true)
+	@Deprecated
+	@XmlElement(required = false)
 	private String timerName;
-	
+
+	@XmlAttribute(required = true)
+	private String code;
+
 	private Date lastTransactionDate;
 	private Date invoiceDate;
 	private String billingCycle;
 
-	
 	public User getCurrentUser() {
 		return currentUser;
 	}
-
 
 	public Date getLastTransactionDate() {
 		return lastTransactionDate;
@@ -53,8 +55,6 @@ public class JobInstanceInfoDto implements Serializable {
 		this.invoiceDate = invoiceDate;
 	}
 
-	
-
 	public String getBillingCycle() {
 		return billingCycle;
 	}
@@ -64,17 +64,26 @@ public class JobInstanceInfoDto implements Serializable {
 	}
 
 	public String getTimerName() {
-        return timerName;
-    }
+		return timerName;
+	}
 
-    public void setTimerName(String timerName) {
-        this.timerName = timerName;
-    }
+	public void setTimerName(String timerName) {
+		this.timerName = timerName;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-		return "TimerInfoDto [timerName=" + timerName + "invoiceDate=" + invoiceDate + "lastTransactionDate=" + lastTransactionDate + "billingCycle=" + billingCycle + ", toString()="
-				+ super.toString() + "]";
+		return "JobInstanceInfoDto [currentUser=" + currentUser + ", timerName=" + timerName + ", code=" + code
+				+ ", lastTransactionDate=" + lastTransactionDate + ", invoiceDate=" + invoiceDate + ", billingCycle="
+				+ billingCycle + "]";
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }

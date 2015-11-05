@@ -91,7 +91,7 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			result.setMessage("" + walletApi.createReservation(postData, getCurrentUser().getProvider()));
+			result.setMessage("" + walletApi.createReservation(postData, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -110,7 +110,7 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			walletApi.updateReservation(postData, getCurrentUser().getProvider());
+			walletApi.updateReservation(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -148,7 +148,7 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			result.setMessage("" + walletApi.confirmReservation(postData, getCurrentUser().getProvider()));
+			result.setMessage("" + walletApi.confirmReservation(postData, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -258,7 +258,7 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
 		}
 
 		log.debug("RESPONSE={}", result);
-		return result;
+		return result;	
 	}
 
 	@Override
@@ -280,5 +280,24 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+	
+	@Override
+	public ActionStatus createOrUpdateWalletTemplate( WalletTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			walletApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
 
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 }

@@ -1,7 +1,9 @@
 package org.meveo.admin.job.importexport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -13,7 +15,6 @@ import org.meveo.admin.async.ImportCustomersAsync;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -37,8 +38,8 @@ public class ImportCustomersJob extends Job {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             try {
-                nbRuns = jobInstance.getLongCustomValue("ImportCustomersJob_nbRuns").longValue();
-                waitingMillis = jobInstance.getLongCustomValue("ImportCustomersJob_waitingMillis").longValue();
+                nbRuns = (Long) jobInstance.getCFValue("nbRuns");
+                waitingMillis = (Long) jobInstance.getCFValue("waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
@@ -83,28 +84,28 @@ public class ImportCustomersJob extends Job {
     }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields() {
-        List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
-        customFieldNbRuns.setCode("ImportCustomersJob_nbRuns");
-        customFieldNbRuns.setAccountLevel(AccountLevelEnum.TIMER);
+        customFieldNbRuns.setCode("nbRuns");
+        customFieldNbRuns.setAppliesTo("JOB_ImportCustomersJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setDefaultValue("1");
         customFieldNbRuns.setValueRequired(false);
-        result.add(customFieldNbRuns);
+        result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
-        customFieldNbWaiting.setCode("ImportCustomersJob_waitingMillis");
-        customFieldNbWaiting.setAccountLevel(AccountLevelEnum.TIMER);
+        customFieldNbWaiting.setCode("waitingMillis");
+        customFieldNbWaiting.setAppliesTo("JOB_ImportCustomersJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setDefaultValue("500");
         customFieldNbWaiting.setValueRequired(false);
-        result.add(customFieldNbWaiting);
+        result.put("waitingMillis", customFieldNbWaiting);
 
         return result;
     }

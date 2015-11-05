@@ -106,7 +106,7 @@ public class RatingCacheContainerProvider {
             populatePricePlanCache();
             populateUsageChargeCache();
 
-            log.debug("RatingCacheContainerProvider initialized");
+            log.info("RatingCacheContainerProvider initialized");
 
         } catch (Exception e) {
             log.error("RatingCacheContainerProvider init() error", e);
@@ -118,7 +118,7 @@ public class RatingCacheContainerProvider {
      */
     private void populatePricePlanCache() {
 
-        log.info("Start to populate price plan cache");
+        log.debug("Start to populate price plan cache");
 
         pricePlanCache.clear();
         List<PricePlanMatrix> activePricePlans = pricePlanMatrixService.getPricePlansForCache();
@@ -151,7 +151,7 @@ public class RatingCacheContainerProvider {
                 preloadCache(pricePlan.getValidityCalendar());
             }
 
-            log.info("Added pricePlan to cache for provider=" + pricePlan.getProvider().getCode() + "; chargeCode=" + pricePlan.getEventCode() + "; priceplan=" + pricePlan);
+            log.debug("Added pricePlan to cache for provider=" + pricePlan.getProvider().getCode() + "; chargeCode=" + pricePlan.getEventCode() + "; priceplan=" + pricePlan);
             chargePriceList.add(pricePlan);
 
         }
@@ -160,7 +160,7 @@ public class RatingCacheContainerProvider {
             Collections.sort(chargePriceList);
         }
 
-        log.debug("Price plan cache populated with {} price plans", activePricePlans.size());
+        log.info("Price plan cache populated with {} price plans", activePricePlans.size());
     }
 
     private void preloadCache(Calendar calendar) {
@@ -213,7 +213,7 @@ public class RatingCacheContainerProvider {
 
         Collections.sort(chargePriceList);
 
-        log.info("Added pricePlan to cache for provider=" + pricePlan.getProvider().getCode() + "; chargeCode=" + pricePlan.getEventCode() + "; priceplan=" + pricePlan);
+        log.debug("Added pricePlan to cache for provider=" + pricePlan.getProvider().getCode() + "; chargeCode=" + pricePlan.getEventCode() + "; priceplan=" + pricePlan);
     }
 
     /**
@@ -233,7 +233,7 @@ public class RatingCacheContainerProvider {
         for (PricePlanMatrix chargePricePlan : chargePriceList) {
             if (pricePlan.getId().equals(chargePricePlan.getId())) {
                 chargePriceList.remove(index);
-                log.info("Removed pricePlan from cache for provider=" + pricePlan.getProvider().getCode() + "; chargeCode=" + pricePlan.getEventCode() + "; priceplan=" + pricePlan);
+                log.debug("Removed pricePlan from cache for provider=" + pricePlan.getProvider().getCode() + "; chargeCode=" + pricePlan.getEventCode() + "; priceplan=" + pricePlan);
                 break;
             }
             index++;
@@ -273,7 +273,7 @@ public class RatingCacheContainerProvider {
             }
         }
 
-        log.debug("Usage charge cache populated with {} usage charge instances", usageChargeInstances.size());
+        log.info("Usage charge cache populated with {} usage charge instances", usageChargeInstances.size());
     }
 
     public void updateUsageChargeInstanceInCache(UsageChargeInstance usageChargeInstance) {
@@ -286,7 +286,7 @@ public class RatingCacheContainerProvider {
         // usageChargeInstance.getChargeTemplate();
         UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findByIdNoCheck(usageChargeInstance.getChargeTemplate().getId());
         Long subscriptionId = usageChargeInstance.getServiceInstance().getSubscription().getId();
-        log.info("Updating usageChargeInstance cache with usageChargeInstance: subscription Id: {}, charge id={}, usageChargeTemplate id: {}", subscriptionId,
+        log.debug("Updating usageChargeInstance cache with usageChargeInstance: subscription Id: {}, charge id={}, usageChargeTemplate id: {}", subscriptionId,
             usageChargeInstance.getId(), usageChargeTemplate.getId());
 
         boolean cacheContainsKey = usageChargeInstanceCache.containsKey(subscriptionId);
@@ -298,7 +298,7 @@ public class RatingCacheContainerProvider {
             for (CachedUsageChargeInstance charge : charges) {
                 if (charge.getId() == usageChargeInstance.getId()) {
                     if (usageChargeInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
-                        log.info("The cache contains the UsageChargeInstance {} but its status in db is not active so we remove it", usageChargeInstance.getId());
+                        log.debug("The cache contains the UsageChargeInstance {} but its status in db is not active so we remove it", usageChargeInstance.getId());
                         charges.remove(charge);
                         if (charges.size() == 0) {
                             usageChargeInstanceCache.remove(subscriptionId);
@@ -315,7 +315,7 @@ public class RatingCacheContainerProvider {
             charges = new ArrayList<CachedUsageChargeInstance>();
         }
         if (usageChargeInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
-            log.info("UsageChargeInstance {} is not active, we dont add it to cache", usageChargeInstance.getId());
+            log.debug("UsageChargeInstance {} is not active, we dont add it to cache", usageChargeInstance.getId());
             return;
         }
         CachedUsageChargeTemplate templateCache = updateUsageChargeTemplateInCache(usageChargeTemplate);
@@ -336,7 +336,7 @@ public class RatingCacheContainerProvider {
             usageChargeInstanceCache.put(subscriptionId, charges);
         }
 
-        log.info("UsageChargeInstance " + (!cacheContainsCharge ? "added" : "updated") + " in usageChargeInstanceCache: subscription id {}, charge id {}", subscriptionId,
+        log.debug("UsageChargeInstance " + (!cacheContainsCharge ? "added" : "updated") + " in usageChargeInstanceCache: subscription id {}, charge id {}", subscriptionId,
             usageChargeInstance.getId());
 
         reorderUserChargeInstancesInCache(subscriptionId);
@@ -376,7 +376,7 @@ public class RatingCacheContainerProvider {
             }
         }
 
-        log.info("UsageChargeTemplate " + (addedToCache ? "added" : "updated") + " in usageChargeTemplateCacheCache: template {}", usageChargeTemplate.getCode());
+        log.debug("UsageChargeTemplate " + (addedToCache ? "added" : "updated") + " in usageChargeTemplateCacheCache: template {}", usageChargeTemplate.getCode());
 
         return cachedTemplate;
     }
@@ -420,7 +420,7 @@ public class RatingCacheContainerProvider {
     private void reorderUserChargeInstancesInCache(Long subscriptionId) {
         List<CachedUsageChargeInstance> charges = usageChargeInstanceCache.get(subscriptionId);
         Collections.sort(charges);
-        log.info("Sorted subscription {} {} usage charges", subscriptionId, charges.size());
+        log.debug("Sorted subscription {} {} usage charges", subscriptionId, charges.size());
     }
 
     /**
@@ -433,7 +433,7 @@ public class RatingCacheContainerProvider {
 
         CachedCounterInstance counterCacheValue = new CachedCounterInstance(counterInstance);
         counterCache.put(counterInstance.getId(), counterCacheValue);
-        log.info("Added counter to the counter cache counter: {}", counterInstance);
+        log.debug("Added counter to the counter cache counter: {}", counterInstance);
 
         return counterCacheValue;
     }

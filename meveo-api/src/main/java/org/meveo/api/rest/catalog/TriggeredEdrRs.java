@@ -65,5 +65,8 @@ public interface TriggeredEdrRs extends IBaseRs {
 	@Path("/{triggeredEdrCode}")
 	@DELETE
 	ActionStatus remove(@PathParam("triggeredEdrCode") String triggeredEdrCode);
-
+	
+	@Path("/createOrUpdate")
+	@POST
+	ActionStatus createOrUpdate(TriggeredEdrTemplateDto postData);
 }

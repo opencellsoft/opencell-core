@@ -69,18 +69,8 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	@Inject
 	private MatchingCodeService matchingCodeService;
 
-	@SuppressWarnings("unused")
-	// TODO: @Out(required = false)
-	private AutomatedPayment automatedPayment;
-
-	@SuppressWarnings("unused")
-	// TODO: @Out(required = false)
-	private RecordedInvoice recordedInvoice;
-
-	// TODO: @Out(required = false)
 	private List<PartialMatchingOccToSelect> partialMatchingOps = new ArrayList<PartialMatchingOccToSelect>();
 
-	// TODO: @Out(required = false)
 	private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
 	public List<PartialMatchingOccToSelect> getPartialMatchingOps() {
@@ -128,15 +118,13 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	/**
 	 * TODO
 	 */
-	public String displayOperation(Long accountOperationId) {
+	public String displayOperation(AccountOperation accountOperation) {
 		String page = "/pages/payments/accountOperations/showOcc.xhtml";
-		AccountOperation accountOperation = accountOperationService
-				.findById(accountOperationId);
+		
 		if (accountOperation instanceof RecordedInvoice) {
 			page = "/pages/payments/accountOperations/showInvoice.xhtml";
 		}
 		if (accountOperation instanceof AutomatedPayment) {
-			automatedPayment = (AutomatedPayment) accountOperation;
 			page = "/pages/payments/accountOperations/showAutomatedPayment.xhtml";
 		}
 		return page;
@@ -182,7 +170,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			messages.error(e.getMessage());
 		}
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
+				+ customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
 	}
 
 	// called from page of selection partial operation
@@ -215,7 +203,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ partialMatchingOccSelected.getAccountOperation()
 						.getCustomerAccount().getId()
-				+ "&edit=true&tab=ops&faces-redirect=true";
+				+ "&edit=true&mainTab=1&faces-redirect=true";
 	}
 
 	/**
@@ -266,7 +254,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		}
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ customerAccountId + "&edit=true&tab=ops&faces-redirect=true";
+				+ customerAccountId + "&edit=true&mainTab=1&faces-redirect=true";
 	}
 	
 	public boolean isSelectedOperationIncluded(){
@@ -307,7 +295,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 					+ customerAccountId
-					+ "&edit=false&tab=ops&faces-redirect=true";
+					+ "&edit=false&mainTab=1&faces-redirect=true";
 		}
 		AccountOperation accountOperation = accountOperationService
 				.findById(operationIds.get(0));
@@ -318,7 +306,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 					+ customerAccountId
-					+ "&edit=false&tab=ops&faces-redirect=true";
+					+ "&edit=false&mainTab=1&faces-redirect=true";
 		}
 		matchingAmounts = accountOperation.getMatchingAmounts();
 		if (matchingAmounts.size() == 1) {

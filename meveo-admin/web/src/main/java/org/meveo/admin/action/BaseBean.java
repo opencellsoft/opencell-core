@@ -36,25 +36,26 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.Identity;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
+import org.meveo.admin.action.admin.CurrentUser;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.IProvider;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
-import org.meveo.security.MeveoUser;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
@@ -87,6 +88,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected Provider currentProvider;
 
     @Inject
+    @CurrentUser
+    protected User currentUser;
+    
+    @Inject
     protected Conversation conversation;
 
     @Inject
@@ -101,6 +106,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     private FilterService filterService;
     
+    @Inject
+    private ProviderService providerService;
+    
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
 
@@ -109,6 +117,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     /** Class of backing bean. */
     private Class<T> clazz;
+    
 
     /**
      * Request parameter. Should form be displayed in create/edit or view mode
@@ -160,6 +169,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private Filter listFilter;
     
     private boolean listFiltered = false;
+
+    /**
+     * Tracks active tabs in GUI
+     */        
+    private int activeTab; 
+
+    private int activeMainTab = 0;
     
     /**
      * Constructor
@@ -210,7 +226,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return Entity from database.
      */
     public T initEntity() {
-        log.debug("instantiating " + this.getClass());
+        log.debug("instantiating {} with id {}", this.getClass(), getObjectId());
         if (getObjectId() != null) {
             if (getFormFieldsToFetch() == null) {
                 entity = (T) getPersistenceService().findById(getObjectId());
@@ -224,8 +240,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         } else {
             try {
                 entity = getInstance();
-                if (entity instanceof BaseEntity) {
-                    ((BaseEntity) entity).setProvider(getCurrentProvider());
+                if (entity instanceof IProvider) {
+                    ((IProvider) entity).setProvider(providerService.refreshOrRetrieve(currentProvider));
                 }
                 // FIXME: If entity is Auditable, set here the creator and
                 // creation time
@@ -239,6 +255,18 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
 
         return entity;
+    }
+
+    /**
+     * Clear object parameters and instantiate a new entity
+     * 
+     * @return Entity instantiated
+     */
+    public T newEntity() {
+        log.debug("instantiating {} with id {}", this.getClass(), getObjectId());
+        entity = null;
+        setObjectId(null);
+        return initEntity();
     }
 
     /**
@@ -299,10 +327,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        String outcome = null;
 
+        String message = entity.isTransient()?"save.successful":"update.successful";
+        
         if (!isMultilanguageEntity()) {
-            outcome = saveOrUpdate(entity);
+            entity = saveOrUpdate(entity);
 
         } else {
             if (entity.getId() != null) {
@@ -319,10 +348,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     }
                 }
 
-                outcome = saveOrUpdate(entity);
+                entity = saveOrUpdate(entity);
 
             } else {
-                outcome = saveOrUpdate(entity);
+                entity = saveOrUpdate(entity);
 
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
@@ -336,7 +365,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             endConversation();
         }
 
-        return outcome;
+        messages.info(new BundleKey("messages", message));
+        return back();
     }
     
     public String saveOrUpdateWithMessage(boolean killConversation) throws BusinessException {
@@ -357,16 +387,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @param entity Entity to save.
      * @throws BusinessException
      */
-    protected String saveOrUpdate(T entity) throws BusinessException {
+    protected T saveOrUpdate(T entity) throws BusinessException {
         if (entity.isTransient()) {
             getPersistenceService().create(entity);
-            messages.info(new BundleKey("messages", "save.successful"));
+
         } else {
-            getPersistenceService().update(entity);
-            messages.info(new BundleKey("messages", "update.successful"));
+            entity = getPersistenceService().update(entity);
         }
 
-        return back();
+        objectIdFromSet = (Long) entity.getId();
+
+        return entity;
     }
 
     /**
@@ -394,7 +425,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return string for navigation
      */
     public String back() {
-        if (backView != null && backView.get() != null) {
+        if (backViewSave == null && backView != null && backView.get() != null) {
             // log.debug("backview parameter is " + backView.get());
             backViewSave = backView.get();
         } else if (backViewSave == null) {
@@ -714,6 +745,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                         cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
                     }
 
+//                    cleanFilters.put(PersistenceService.SEARCH_CURRENT_USER, getCurrentUser());
+                    cleanFilters.put(PersistenceService.SEARCH_CURRENT_PROVIDER, getCurrentProvider());
                     return BaseBean.this.supplementSearchCriteria(cleanFilters);
                 }
 
@@ -773,7 +806,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public Long getObjectId() {
-        if (objectIdFromParam != null && objectIdFromParam.get() != null) {
+        if (objectIdFromSet == null && objectIdFromParam != null && objectIdFromParam.get() != null) {
             objectIdFromSet = objectIdFromParam.get();
         }
 
@@ -784,6 +817,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         objectIdFromSet = objectId;
     }
 
+    public void setObjectIdFromSet(Long objectIdFromSet) {
+        this.objectIdFromSet = objectIdFromSet;
+    }
+    
+    public Long getObjectIdFromSet() {
+        return objectIdFromSet;
+    }
+    
     /**
      * true in edit mode
      * 
@@ -803,7 +844,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     protected User getCurrentUser() {
-        return ((MeveoUser) identity.getUser()).getUser();
+        return currentUser; 
+        
+        // return ((MeveoUser) identity.getUser()).getUser();
     }
 
     public List<TradingLanguage> getProviderLanguages() {
@@ -811,7 +854,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public String getProviderLanguageCode() {
-        if (getCurrentProvider() != null) {
+        if (getCurrentProvider() != null && getCurrentProvider().getLanguage() != null) {
             return getCurrentProvider().getLanguage().getLanguageCode();
         }
         return "";
@@ -927,18 +970,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         requestContext.addCallbackParam("result", result);
         return null;
     }
-
-    /**
-     * Get a list of custom field templates applicable to an entity.
-     * 
-     * @return A list of custom field templates
-     */
-    protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
-        AccountLevelEnum accountLevel = this.getClass().getAnnotation(CustomFieldEnabledBean.class).accountLevel();
-        List<CustomFieldTemplate> result= customFieldTemplateService.findByAccountLevel(accountLevel);
-        log.debug("Found {} custom field templates by fieldType={} for {}",result.size(),accountLevel,this.getClass());
-        return result;
-    }
     
     public CSVExportOptions csvOptions(){
 	    ParamBean param = ParamBean.getInstance();
@@ -976,5 +1007,27 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		} else {
 			filters.remove("$FILTER");
 		}
-	}    
+	}
+	
+	public int getActiveTab() {
+        return activeTab;
+    }
+	
+	public void setActiveTab(int activeTab) {
+        this.activeTab = activeTab;
+    }
+	
+    /**
+     * @param activeMainTab Main tab to select
+     */
+    public void setActiveMainTab(int activeMainTab) {
+        this.activeMainTab = activeMainTab;
+    }
+
+    /**
+     * @return the activeMainTab
+     */
+    public int getActiveMainTab() {
+        return activeMainTab;
+    }    
 }

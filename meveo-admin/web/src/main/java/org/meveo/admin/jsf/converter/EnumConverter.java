@@ -12,24 +12,31 @@ import javax.faces.convert.FacesConverter;
  */
 @FacesConverter("enumConverter")
 public class EnumConverter implements javax.faces.convert.Converter {
-    
+
     private static final String ATTRIBUTE_ENUM_TYPE = "GenericEnumConverter.enumType";
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value != null && !"".equals(value)) {
-            Class<Enum> enumType = (Class<Enum>) component.getAttributes().get(ATTRIBUTE_ENUM_TYPE);
+            Object enumType = null;
             try {
-                return Enum.valueOf(enumType, value);
+                enumType = component.getAttributes().get(ATTRIBUTE_ENUM_TYPE);
+                if (enumType != null && enumType instanceof String) {
+                    enumType = Class.forName((String) enumType);
+                }
+
+                return Enum.valueOf((Class<Enum>) enumType, value);
             } catch (IllegalArgumentException e) {
                 throw new ConverterException(new FacesMessage("Value is not an enum of type: " + enumType));
+            } catch (ClassNotFoundException e) {
+                throw new ConverterException(new FacesMessage("Unknown enum classname: " + enumType));
             }
         } else {
             return null;
         }
     }
-    
+
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         if (value != null && !"".equals(value)) {

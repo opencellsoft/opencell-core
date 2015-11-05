@@ -113,5 +113,12 @@ public class TriggeredEdrApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	public void createOrUpdate(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (triggeredEDRTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

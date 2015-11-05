@@ -6,25 +6,32 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{usageChargeTemplateBean.objectId}" />
+            <f:viewParam name="tab" value="#{usageChargeTemplateBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
 
-		<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
-			header="#{messages['invoiceSubCategory.panel']}"
-			backingBean="#{invoiceSubCategoryBean}"
-			updateField=":panelUsage:usageChargeId:tabView:invoiceSubCategorySelectedId"
-			selection="#{usageChargeTemplateBean.entity.invoiceSubCategory}"
-			searchField1Label="#{messages['invoiceSubCategory.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['invoiceSubCategory.description']}"
-			searchField2="description"
-			column1Label="#{messages['invoiceSubCategory.code']}" column1="code"
-			column2Label="#{messages['invoiceSubCategory.description']}"
-			column2="description">
-		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="searchInvoiceSubCategoryPopup" -->
+<!-- 			header="#{messages['invoiceSubCategory.panel']}" -->
+<!-- 			backingBean="#{invoiceSubCategoryBean}" -->
+<!-- 			updateField=":panelUsage:usageChargeId:tabView:invoiceSubCategorySelectedId" -->
+<!-- 			selection="#{usageChargeTemplateBean.entity.invoiceSubCategory}" -->
+<!-- 			searchField1Label="#{messages['invoiceSubCategory.code']}" -->
+<!-- 			searchField1="code" -->
+<!-- 			searchField2Label="#{messages['invoiceSubCategory.description']}" -->
+<!-- 			searchField2="description" -->
+<!-- 			column1Label="#{messages['invoiceSubCategory.code']}" column1="code" -->
+<!-- 			column2Label="#{messages['invoiceSubCategory.description']}" -->
+<!-- 			column2="description"> -->
+<!-- 		</hftl:entityPopup> -->
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -39,7 +46,7 @@
 			label="#{messages['usageChargeTemplate.title']}"
 			backingBean="#{usageChargeTemplateBean}" showEnableDisableButton="true" updateConfirmationMessage="#{usageChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
-			<p:tabView id="tabView">
+			<p:tabView id="tabView" activeIndex="#{usageChargeTemplateBean.activeTab}">
 
 				<p:tab title="#{messages['customer.tab.information']}">
 
@@ -80,8 +87,8 @@
 
 						<hf:formField id="invoiceSubCategorySelectedId"
 							label="#{messages['charge.subCategory']}"
-							field="invoiceSubCategory" valueLabelField="code" required="true"
-							popup="true" popupId="searchInvoiceSubCategoryPopup" />
+							field="invoiceSubCategory" valueLabelField="code" required="true" listBean="#{invoiceSubCategoryBean}"/>
+<!-- 							popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->
                                                         
                         <hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
                             field="disabled" isMessage="true" />
@@ -92,25 +99,23 @@
                             
 				</p:tab>
 
-				<p:tab title="#{messages['customFieldTemplate.cfValues']}">
-					<hf:customFields id="customFields" backingBean="#{usageChargeTemplateBean}" messagesId=":panelUsage:usageChargeId:messages"/>
-				</p:tab>
+				<hftl:customFields backingBean="#{usageChargeTemplateBean}" messagesId=":panelUsage:usageChargeId:messages"/>
 				
 				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{pricePlanMatrixBean.objectId!=null}" >  
-                    <p:panel styleClass="form-panel">
+                    <p:panel>
 						<hf:formDecorateField fieldId="usageChargeCode" label="#{messages['pricePlanMatrix.eventCode']} :">
 							<h:outputText id="usageChargeCode"
 								value="#{usageChargeTemplateBean.entity.code}"
 								disabled="true" style="font-weight:bold;" />
 						</hf:formDecorateField> 
 						
-						<hf:formDecorateField fieldId="usageChargeDescription" label="#{messages['businessEntity.description']}">
+						<hf:formDecorateField fieldId="usageChargeDescription" label="#{messages['businessEntity.description']} :">
 							<h:outputText id="usageChargeDescription"
 								value="#{usageChargeTemplateBean.entity.description}" 
 								disabled="true" style="font-weight:bold;" />
 						</hf:formDecorateField>
-						<ui:include src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />
-                    </p:panel> 						
+                    </p:panel>
+					<ui:include src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />					
 				   </p:tab>
 			</p:tabView>
 

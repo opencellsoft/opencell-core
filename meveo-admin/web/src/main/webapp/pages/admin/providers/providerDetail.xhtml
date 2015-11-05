@@ -2,6 +2,13 @@
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{providerBean.objectId}" /> 
+            <f:viewParam name="tab" value="#{providerBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="navigation">
         <ui:include src="/layout/navigation.xhtml" />
     </ui:define>
@@ -28,7 +35,7 @@
 
         <hf:formPanel id="providerFormPanel" formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormPanel:providerFormId:tabView"
             label="#{messages['provider.title']}" backingBean="#{providerBean}">
-            <p:tabView id="tabView">
+            <p:tabView id="tabView" activeIndex="#{providerBean.activeTab}">
                 <p:tab title="#{messages['customer.tab.information']}">
 							<hf:formField label="#{messages['businessEntity.code']}"
 								field="code" maxlength="35" required="true" />
@@ -53,6 +60,18 @@
 								
 							<hf:formField label="#{messages['provider.currentInvoiceNb']}"
 								field="currentInvoiceNb" id="currentInvoiceNb"/>
+								
+						    <hf:formField label="#{messages['provider.invoiceSequenceSize']}"
+						       field="invoiceSequenceSize" id="invoiceSequenceSize"/>
+						       
+					       <hf:formField label="#{messages['invoice.adjustment.prefix']}"
+								field="invoiceAdjustmentPrefix" id="invoiceAdjustmentPrefix" />
+								
+							<hf:formField label="#{messages['invoice.adjustment.currentSequenceNb']}"
+								field="currentInvoiceAdjustmentNb" id="currentInvoiceAdjustmentNb"/>
+								
+						 	<hf:formField label="#{messages['invoice.adjustment.sequenceSize']}"
+						       field="invoiceAdjustmentSequenceSize" id="invoiceAdjustmentSequenceSize"/>
 						
 							<!-- <hf:formField label="#{messages['provider.amountValidation']}"
 								field="amountValidation" id="amountValidation"/> -->
@@ -65,6 +84,21 @@
 								
 							<hf:formField label="#{messages['provider.email']}"
 								field="email" id="email"/>
+								
+							<hf:formField
+								label="#{messages['bankCoordinates.bic']}"
+								field="bankCoordinates" childField="bic" size="15"
+								maxlength="11" />
+								
+							<hf:formField
+								label="#{messages['bankCoordinates.iban']}"
+								field="bankCoordinates" childField="iban" size="45"
+								maxlength="34" />
+								
+							<hf:formField
+								label="#{messages['bankCoordinates.ics']}"
+								field="bankCoordinates" childField="ics" size="45"
+								maxlength="35" />
 							
 							<hf:formField label="#{messages['invoiceConfiguration.displaySubscriptions']}"
 								field="invoiceConfiguration" childField="displaySubscriptions" id="displaySubscriptions"/>
@@ -77,11 +111,15 @@
 								
 							<hf:formField label="#{messages['invoiceConfiguration.displayEdrs']}"
 								field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs"/>	
+								
+							<hf:formField label="#{messages['invoiceConfiguration.displayFreeTransacInInvoice']}"
+								field="displayFreeTransacInInvoice"  id="displayFreeTx"/>
+								
+							<hf:formField label="#{messages['invoiceConfiguration.displayProvider']}"
+								field="invoiceConfiguration" childField="displayProvider" id="displayProvider"/>		
                 </p:tab>
 
-                <p:tab title="#{messages['customFieldTemplate.cfValues']}">
-                    <hf:customFields id="customFields" backingBean="#{providerBean}" messagesId=":providerFormPanel:providerFormId:messages" />
-                </p:tab>
+                <hftl:customFields backingBean="#{providerBean}" messagesId=":providerFormPanel:providerFormId:messages" />
             </p:tabView>
         </hf:formPanel>
     </ui:define>

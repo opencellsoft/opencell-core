@@ -1,7 +1,10 @@
 package org.meveocrm.admin.action.reporting;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -22,7 +25,9 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -33,6 +38,7 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.TabChangeEvent;
  
@@ -72,10 +78,18 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 		@SuppressWarnings("rawtypes")
         @Inject
 		private CounterTemplateService counterTemplateService;
+		
+		@Inject
+		private ScriptInstanceService scriptInstanceService;
+		
+		@Inject
+		private InvoiceService invoiceService;
 				
 		@Inject
 	    @CurrentProvider
 	    private Provider currentProvider;
+		
+		private List<Entry<String, List<String>>> jaspers;
 		
 		List<Tax> taxesNotAssociatedList=new ArrayList<Tax>();
 		List<UsageChargeTemplate> usagesWithNotPricePlList = new ArrayList<UsageChargeTemplate>();
@@ -90,6 +104,9 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 	    List<RecurringChargeTemplate> recurringNotAssociatedList = new ArrayList<RecurringChargeTemplate>();
 	    List<OneShotChargeTemplate> terminationNotAssociatedList=new ArrayList<OneShotChargeTemplate>();
 	    List<OneShotChargeTemplate> subNotAssociatedList=new ArrayList<OneShotChargeTemplate>();
+	    List<ScriptInstance> scriptInstanceWithErrorList = new ArrayList<ScriptInstance>();
+	    Map<String,List<String>> jasperFilesList = new HashMap<String,List<String>>();
+	    
 		
 		
 		
@@ -148,7 +165,16 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
      public void constructSubChrgNotAssociated(TabChangeEvent event){
     	 subNotAssociatedList= oneShotChargeTemplateService.getSubscriptionChrgNotAssociated(currentProvider);
      }
+     public void constructScriptInstancesWithError(TabChangeEvent event){
+    	 scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError(currentProvider);
+     } 
      
+     public void getJasperFiles(TabChangeEvent event){
+    	 jasperFilesList = invoiceService.getJasperFiles();
+    	 if(jasperFilesList!=null && jasperFilesList.size()>0){
+    		 jaspers = new ArrayList<>(jasperFilesList.entrySet());  
+    	   }
+          } 
   
 	       ConfigIssuesReportingDTO reportConfigDto;
 	       
@@ -164,6 +190,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 		    reportConfigDto.setNbrEdrOpen(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.OPEN, currentProvider).intValue());
 		    reportConfigDto.setNbrEdrRated(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.RATED, currentProvider).intValue());
 		    reportConfigDto.setNbrEdrRejected(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.REJECTED, currentProvider).intValue());
+		    reportConfigDto.setNbrJasperDir(invoiceService.getJasperFiles().size());
 	        }
 	        public Integer getNbrChargesWithNotPricePlan(){
 				return getNbrUsagesWithNotPricePlan()+getNbrRecurringWithNotPricePlan()+getNbrOneShotWithNotPricePlan();
@@ -202,6 +229,11 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 	        public Integer getNbrSubscriptionChrgNotAssociated(){
 				return oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated(currentProvider);
 			}
+	        
+	        public long getNbrScriptInstanceWithError(){
+				return scriptInstanceService.countScriptInstancesWithError(currentProvider);
+			}
+	   
 	   
 			public ConfigIssuesReportingDTO getReportConfigDto() {
 				return reportConfigDto;
@@ -247,6 +279,11 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 				return subNotAssociatedList;
 			}
 			
+			public List<ScriptInstance> getScriptInstanceWithErrorList() {
+				return scriptInstanceWithErrorList;
+			}
+			 
+			 
 			@Override
 			public IPersistenceService<BaseEntity> getPersistenceService() {
 				return getPersistenceService();
@@ -255,4 +292,18 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 			public String getEditViewName() {
 				return "";
 			}
+			public List<Entry<String, List<String>>> getJaspers() {
+				return jaspers;
+			}
+			public Map<String, List<String>> getJasperFilesList() {
+				return jasperFilesList;
+			}
+		
+		
+		
+			
+			
+			 
+			
+			
 }

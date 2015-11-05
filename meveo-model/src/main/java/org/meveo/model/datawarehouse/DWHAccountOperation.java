@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -43,6 +45,7 @@ public class DWHAccountOperation implements Serializable, IEntity, IVersionedEnt
 	@Id
 	@GeneratedValue(generator = "ID_GENERATOR")
 	@Column(name = "ID")
+    @Access(AccessType.PROPERTY)
 	private Long id;
 
 	@Version

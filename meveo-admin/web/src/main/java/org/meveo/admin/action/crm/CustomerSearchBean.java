@@ -22,6 +22,8 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.AccountEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
@@ -71,6 +73,10 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 		return new AccountEntity() {
 			private static final long serialVersionUID = 1L;
 
+            @Override
+            public ICustomFieldEntity getParentCFEntity() {
+                return null;
+            }
 		};
 	}
 

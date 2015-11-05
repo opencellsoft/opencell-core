@@ -65,12 +65,14 @@ public class RecurringRatingJobBean implements Serializable {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = jobInstance.getLongCustomValue("RecurringRatingJob_nbRuns").longValue();  			
-				waitingMillis = jobInstance.getLongCustomValue("RecurringRatingJob_waitingMillis").longValue();
+				nbRuns = (Long) jobInstance.getCFValue("nbRuns");  			
+				waitingMillis = (Long) jobInstance.getCFValue("waitingMillis");
 				if(nbRuns == -1){
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
 			}catch(Exception e){
+				nbRuns = new Long(1);
+				waitingMillis = new Long(0);
 				log.warn("Cant get customFields for "+jobInstance.getJobTemplate());
 			}
 
@@ -106,7 +108,6 @@ public class RecurringRatingJobBean implements Serializable {
             log.error("Failed to run recurring rating job", e);
             result.registerError(e.getMessage());
         }
-		result.setDone(true);
 		log.debug("end running RecurringRatingJobBean!");
 	}
 }

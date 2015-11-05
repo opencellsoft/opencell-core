@@ -36,7 +36,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -47,6 +49,7 @@ import org.meveo.model.shared.ContactInformation;
  * Customer Account entity.
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "CA")
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "AR_CUSTOMER_ACCOUNT")
@@ -72,7 +75,7 @@ public class CustomerAccount extends AccountEntity {
 	@JoinColumn(name = "CREDIT_CATEGORY_ID")
 	private CreditCategory creditCategory;
 
-	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE)
 	// TODO : Add orphanRemoval annotation.
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
@@ -220,14 +223,6 @@ public class CustomerAccount extends AccountEntity {
 		this.password = password;
 	}
 
-	public BillingAccount getDefaultBillingAccount() {
-		for (BillingAccount billingAccount : getBillingAccounts()) {
-			if (billingAccount.getDefaultLevel()) {
-				return billingAccount;
-			}
-		}
-		return null;
-	}
 
 	public List<ActionDunning> getActionDunnings() {
 		return actionDunnings;
@@ -276,5 +271,9 @@ public class CustomerAccount extends AccountEntity {
 	public void setCreditCategory(CreditCategory creditCategory) {
 		this.creditCategory = creditCategory;
 	}
-	
+
+    @Override
+    public ICustomFieldEntity getParentCFEntity() {
+        return customer;
+    }	
 }

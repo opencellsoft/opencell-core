@@ -7,8 +7,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
+import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.rating.EDR;
@@ -38,6 +41,7 @@ public class UnitUsageRatingJobBean {
     @Rejected
     Event<Serializable> rejectededEdrProducer;
 
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, User currentUser, Long edrId) {
     	log.debug("Running for user={}, edrId={}", currentUser, edrId);

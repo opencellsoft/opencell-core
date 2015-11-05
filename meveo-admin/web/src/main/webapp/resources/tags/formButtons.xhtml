@@ -30,6 +30,8 @@
         showEnableDisableButton - show a default "enable/disable" button
         useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation
         updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message  
+        execute - show button to invoke a execute method
+        formId - form id, to distinguish buttons, defaults to 'formId'
         
 -->
 
@@ -50,12 +52,13 @@
 	<cc:attribute name="updateConfirmationMessage" default="" />
     <cc:attribute name="ajaxSubmit" required="true" />
     <cc:attribute name="submitPartialProcess" />
-    <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/>
-    <cc:attribute name="submitUpdate" default="@form"/>
+    <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/> <!--  instead of partial submit filter, jquery expression could be used in process attribute:  process="@this @( :input:not([name*='omitFromSubmit']))" -->
+    <cc:attribute name="submitUpdate" default="@all"/>
+    <cc:attribute name="execute" default="false" />
+    <cc:attribute name="formId" default="formId" />
 </cc:interface>
 
 <cc:implementation>
-
 	<h:panelGroup layout="block" styleClass="form-panel-actions">
 		<p:button value="#{messages['commons.edit']}" includeViewParams="true"
 			rendered="#{!cc.attrs.edit and cc.attrs.showEditButton}">
@@ -92,46 +95,54 @@
             icon="ui-icon-check" process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
         </p:commandButton>
+        
+        <p:commandButton id="ExecuteButtonAjax"
+            rendered="#{ cc.attrs.execute  and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit}"
+            value="#{cc.attrs.executeLabel}" oncomplete="$('html,body').scrollTop(0);"
+            action="#{cc.attrs.backingBean.execute()}"
+            process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
+            <f:param name="edit" value="#{cc.attrs.edit}" />
+        </p:commandButton>        
 
 		<!-- Update with message -->
 		<p:remoteCommand id="remoteUpdateWithMessageButton" rendered="#{cc.attrs.submitPartialProcess==null}"
 			action="#{cc.attrs.backingBean.saveOrUpdateWithMessage(cc.attrs.killConversationOnSave)}"
-			name="updateWithMessage" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />
+			name="#{cc.attrs.formId}updateWithMessage" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />
             
         <!-- Update with message with partial submit -->
         <p:remoteCommand id="remoteUpdateWithMessageButtonPartialSubmit" rendered="#{cc.attrs.submitPartialProcess!=null}"
             action="#{cc.attrs.backingBean.saveOrUpdateWithMessage(cc.attrs.killConversationOnSave)}"
             process="@this #{cc.attrs.submitPartialProcess}" partialSubmit="true" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" 
-            update="#{cc.attrs.submitUpdate}" name="updateWithMessagePartialSubmit" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />            
+            update="#{cc.attrs.submitUpdate}" name="#{cc.attrs.formId}updateWithMessagePartialSubmit" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />            
             
-		<p:commandButton id="#{resultsId}saveButtonWithMessage"
+		<p:commandButton id="saveButtonWithMessage"
 			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage)}"
 			value="#{messages['action.save']}" icon="ui-icon-check"
-			oncomplete="PF('saveButtonWithMessageDialog').show()">
+			onclick="PF('#{cc.attrs.formId}saveButtonWithMessageDialog').show()" type="button">
 		</p:commandButton>
         
 		<!-- Update the message handling when  -->
 		<p:confirmDialog id="confirmUpdateWithMessage" appendTo="@(body)"
-			widgetVar="saveButtonWithMessageDialog" showEffect="fade"
+			widgetVar="#{cc.attrs.formId}saveButtonWithMessageDialog" showEffect="fade"
 			hideEffect="fade" severity="alert"
 			message="#{(cc.attrs.updateConfirmationMessage eq '') ? messages['confirmationMessage.confirmUpdate'] : cc.attrs.updateConfirmationMessage}">
 			<p:commandButton id="updateOk" value="#{messages['commons.yes']}" rendered="#{cc.attrs.submitPartialProcess==null}"
 				styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-				oncomplete="updateWithMessage()"
-				onclick="PF('saveButtonWithMessageDialog').hide()">
+				oncomplete="#{cc.attrs.formId}updateWithMessage()"
+				onclick="PF('#{cc.attrs.formId}saveButtonWithMessageDialog').hide()">
 				<f:param name="edit" value="#{cc.attrs.edit}" />
 			</p:commandButton>
             
             <p:commandButton id="updateOkPartialSubmit" value="#{messages['commons.yes']}" rendered="#{cc.attrs.submitPartialProcess!=null}"
                 styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-                oncomplete="updateWithMessagePartialSubmit()"
-                onclick="PF('saveButtonWithMessageDialog').hide()">
+                oncomplete="#{cc.attrs.formId}updateWithMessagePartialSubmit()"
+                onclick="PF('#{cc.attrs.formId}saveButtonWithMessageDialog').hide()">
                 <f:param name="edit" value="#{cc.attrs.edit}" />
             </p:commandButton>            
 
             <p:commandButton id="updateKO" value="#{messages['commons.no']}"
 				type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"
-				onclick="PF('saveButtonWithMessageDialog').hide()" />
+				onclick="PF('#{cc.attrs.formId}saveButtonWithMessageDialog').hide()" />
 		</p:confirmDialog>
 		<!-- Update with message -->
 
@@ -163,41 +174,41 @@
 				function handleUpdateWithMessageComplete(xhr, status, args) {
 					var result = args.result;
 					if(typeof(result)!="undefined" && !result){
-						PF('confirmCannotUpdateWithMessageDialog').show();
+						PF('#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog').show();
 					}
 				}
 			//]]>
 		</script>	
-		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.deleteWithBack}" name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
-		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}"
-			oncomplete="PF('confirmDeleteWidget').show()" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null}">
+		<p:remoteCommand id="remoteDeleteButton" action="#{cc.attrs.backingBean.deleteWithBack}" name="#{cc.attrs.formId}doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" />
+		<p:commandButton id="deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}"
+			onclick="PF('#{cc.attrs.formId}confirmDeleteWidget').show()" type="button" rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null}">
 			<f:setPropertyActionListener target="#{cc.attrs.backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>
 		<p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDelete']}" header=""
-			severity="alert" widgetVar="confirmDeleteWidget" appendTo="@(body)">
+			severity="alert" widgetVar="#{cc.attrs.formId}confirmDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-					oncomplete="doDelete()" onclick="PF('confirmDeleteWidget').hide()"/>
+					oncomplete="#{cc.attrs.formId}doDelete()" onclick="PF('#{cc.attrs.formId}confirmDeleteWidget').hide()"/>
 				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
-					onclick="PF('confirmDeleteWidget').hide()" type="button" />
+					onclick="PF('#{cc.attrs.formId}confirmDeleteWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
 		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmCanotDelete']}" header=""
-			severity="alert" widgetVar="confirmCanotDeleteWidget" appendTo="@(body)">
+			severity="alert" widgetVar="#{cc.attrs.formId}confirmCanotDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
-					oncomplete="PF('confirmCanotDeleteWidget').hide()" update="@this" />
+					oncomplete="PF('#{cc.attrs.formId}confirmCanotDeleteWidget').hide()" update="@this" />
 			</p:panel>
 		</p:confirmDialog>
 		<p:confirmDialog id="confirmCannotUpdateWithMessageDialog" styleClass="confirm-dialog"
 			message="#{messages['message.confirm.cannotUpdate']}" header=""
-			severity="alert" widgetVar="confirmCannotUpdateWithMessageDialog" appendTo="@(body)">
+			severity="alert" widgetVar="#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="cannotUpdateWithMessage" value="#{messages['commons.ok']}"
-					oncomplete="PF('confirmCannotUpdateWithMessageDialog').hide()" update="@this" />
+					oncomplete="PF('#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog').hide()" update="@this" />
 			</p:panel>
 		</p:confirmDialog>
 

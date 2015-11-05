@@ -88,6 +88,7 @@
                     <userId>1</userId>
                     <code>A - Import Customers</code>
                     <jobTemplate>ImportCustomersJob</jobTemplate>
+                    <jobCategoryEnum>ACCOUNT_RECEIVABLES</jobCategoryEnum>
                     <timerEntity reference="../../.." />
                 </org.meveo.model.jobs.JobInstance>
             </jobInstances>

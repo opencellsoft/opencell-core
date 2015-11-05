@@ -35,7 +35,6 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.ListItemsSelector;
@@ -45,13 +44,13 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.omnifaces.cdi.ViewScoped;
@@ -74,7 +73,6 @@ import com.lowagie.text.pdf.PdfStamper;
  */
 @Named
 @ViewScoped
-@CustomFieldEnabledBean(accountLevel = AccountLevelEnum.BA)
 public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
@@ -98,6 +96,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	@Inject
 	private Messages messages;
 
+	@Inject 
+	private CounterInstanceService counterInstanceService;
 	
 	private boolean returnToAgency;
 
@@ -141,10 +141,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			entity.setTradingLanguage(customerAccount.getTradingLanguage());
 			populateAccounts(customerAccount);
 
-			// check if has default
-			if (!customerAccount.getDefaultLevel()) {
-				entity.setDefaultLevel(true);
-			}
+			
 		}
 
 		if (entity.getName() == null) {
@@ -176,39 +173,24 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	 */
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
-		try {
+		
+	    entity.setCustomerAccount(customerAccountService.attach(entity.getCustomerAccount()));
+	    
+	    try {
 
-			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
-				if (billingAccountService.isDuplicationExist(entity)) {
-					entity.setDefaultLevel(false);
-					throw new DuplicateDefaultAccountException();
-				}
-			}
+            entity.setCustomerAccount(customerAccountService.refreshOrRetrieve(entity.getCustomerAccount()));
 
-			CustomerAccount customerAccount = entity.getCustomerAccount();
-			if (customerAccount != null) {
-				List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
-				if (billingAccounts != null) {
-					if (!billingAccounts.contains(entity)) {
-						customerAccount.getBillingAccounts().add(entity);
-					}
-				}
-			}
+            if (entity.isTransient()) {
+                billingAccountService.initBillingAccount(entity);
+            }
 
-			if (entity.isTransient()) {
-				billingAccountService.initBillingAccount(entity);
-			}
+            String outcome = super.saveOrUpdate(killConversation);
 
-			super.saveOrUpdate(killConversation);
-
-			log.debug("isAttached={}", getPersistenceService().getEntityManager().contains(entity));
-
-			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
-	            return null;
-	        } else {
-	            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
-	        }
-			
+            if (outcome != null) {
+                return getEditViewName(); // "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() +
+                                          // "&faces-redirect=true&includeViewParams=true";
+            }
+            
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
@@ -229,7 +211,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public void terminateAccount() {
 		log.debug("terminateAccount billingAccountId: {}", entity.getId());
 		try {
-			billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
+
+		    entity = billingAccountService.attach(entity);
+			entity = billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
 			log.error("error occured while terminating account ",e);
@@ -243,9 +227,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String cancelAccount() {
 		log.info("cancelAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.billingAccountCancellation(entity, new Date(), getCurrentUser());
+		    entity = billingAccountService.attach(entity);
+            entity = billingAccountService.billingAccountCancellation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?billingAccountId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
 			log.error("error occured while canceling account ",e);
 			messages.error(e.getMessage());
@@ -259,9 +244,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String closeAccount() {
 		log.info("closeAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.closeBillingAccount(entity, getCurrentUser());
+			entity = billingAccountService.closeBillingAccount(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?billingAccountId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
 			log.error("error occured while closing account ",e);
 			messages.error(e.getMessage());
@@ -431,11 +416,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	public void populateAccounts(CustomerAccount customerAccount) {
 		entity.setCustomerAccount(customerAccount);
-		if (billingAccountService.isDuplicationExist(entity)) {
-			entity.setDefaultLevel(false);
-		} else {
-			entity.setDefaultLevel(true);
-		}
+		
 		if (customerAccount != null && customerAccount.getProvider() != null && customerAccount.getProvider().isLevelDuplication()) {
 
 			entity.setCode(customerAccount.getCode());
@@ -474,9 +455,13 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		return selectedCounterInstance;
 	}
 
-	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
-		this.selectedCounterInstance = selectedCounterInstance;
-	}
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
+    }
 
 	public Date getExceptionalInvoicingDate() {
 		return exceptionalInvoicingDate;

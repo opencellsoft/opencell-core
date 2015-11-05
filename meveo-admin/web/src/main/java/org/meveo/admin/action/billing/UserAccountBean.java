@@ -23,10 +23,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.enterprise.inject.Produces;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,7 +34,6 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -46,11 +45,11 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -67,7 +66,6 @@ import org.primefaces.model.LazyDataModel;
  */
 @Named
 @ViewScoped
-@CustomFieldEnabledBean(accountLevel=AccountLevelEnum.UA)
 public class UserAccountBean extends AccountBean<UserAccount> {
 
 	private static final long serialVersionUID = 1L;
@@ -98,6 +96,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	
 	@Inject
 	private WalletCacheContainerProvider walletCacheContainerProvider;
+
+    @Inject 
+    private CounterInstanceService counterInstanceService;
 	   
 	private CounterInstance selectedCounterInstance;
 
@@ -105,6 +106,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	private WalletOperation reloadOperation;
 	private String selectedWalletCode;
 
+	// Retrieved wallet operations to improve GUI performance for Ajax request
+    private Map<String, List<WalletOperation>> walletOperations = new HashMap<String, List<WalletOperation>>();
+	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -138,10 +142,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			entity.setBillingAccount(billingAccount);
 			populateAccounts(billingAccount);
 
-			// check if has default
-			if (!billingAccount.getDefaultLevel()) {
-				entity.setDefaultLevel(true);
-			}
 		}
 		selectedCounterInstance=entity.getCounters()!=null && entity.getCounters().size()>0?entity.getCounters().values().iterator().next():null;
 		return entity;
@@ -154,23 +154,18 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	 */
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
-		try {
-			if (entity.getDefaultLevel()) {
-				if (userAccountService.isDuplicationExist(entity)) {
-					entity.setDefaultLevel(false);
-					throw new DuplicateDefaultAccountException();
-				}
-			}
-			
-			super.saveOrUpdate(killConversation);
+		
+	    entity.setBillingAccount(billingAccountService.attach(entity.getBillingAccount()));
+	    
+	    try {
 
-			if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
-	            return null;
-	        } else {
-    			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=true&userAccountId=" + entity.getId()
-    					+ "&faces-redirect=true&includeViewParams=true";
-	        }
-			
+            String outcome = super.saveOrUpdate(killConversation);
+
+            if (outcome != null) {
+                return getEditViewName(); // "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=true&userAccountId=" + entity.getId() +
+                                          // "&faces-redirect=true&includeViewParams=true";
+            }
+
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
@@ -196,28 +191,26 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	 * @see
 	 * org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	@Override
-	protected String saveOrUpdate(UserAccount entity) {
-		try {
-			if (entity.isTransient()) {
-				userAccountService.createUserAccount(entity.getBillingAccount(), entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "save.successful"));
-			} else {
-				getPersistenceService().update(entity, getCurrentUser());
-				messages.info(new BundleKey("messages", "update.successful"));
-			}
-		} catch (Exception e) {
-			log.error("error generated while saving or updating user account ",e);
-			messages.error(e.getMessage());
-		}
+	@Override 
+	// TODO this has to be removed as BaseBean has identical method. Only need to take care of userAccountService.createUserAccount method call
+	protected UserAccount saveOrUpdate(UserAccount entity) throws BusinessException{
 
-		return back();
+        if (entity.isTransient()) {
+            userAccountService.createUserAccount(entity.getBillingAccount(), entity, getCurrentUser());
+        } else {
+            entity = getPersistenceService().update(entity, getCurrentUser());
+        }
+
+        setObjectId((Long) entity.getId());
+
+		return entity;
 	}
 
 	public void terminateAccount() {
 		log.debug("resiliateAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountTermination(entity, entity.getTerminationDate(),
+		    entity = userAccountService.attach(entity);
+		    entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(),
 					entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
@@ -232,7 +225,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	public String cancelAccount() {
 		log.info("cancelAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountCancellation(entity, new Date(), getCurrentUser());
+		    entity = userAccountService.attach(entity);
+            entity = userAccountService.userAccountCancellation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
@@ -248,7 +242,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	public String reactivateAccount() {
 		log.info("reactivateAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountReactivation(entity, new Date(), getCurrentUser());
+		    entity = userAccountService.attach(entity);
+            entity = userAccountService.userAccountReactivation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
 		} catch (BusinessException e) {
@@ -281,14 +276,13 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	}
 
 	public List<WalletOperation> getWalletOperations(String walletCode) {
-		log.debug("getWalletOperations {}", walletCode);
+		
+        if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
+            log.debug("getWalletOperations {}", walletCode);
+            walletOperations.put(walletCode, walletOperationService.findByUserAccountAndWalletCode(walletCode, entity, false));
+        }
 
-		if (entity != null && entity.getProvider() != null) {
-			return walletOperationService.findByUserAccountAndWalletCode(walletCode, entity, entity.getProvider(),
-					false);
-		}
-
-		return null;
+		return walletOperations.get(walletCode);
 	}
 
 	@Produces
@@ -299,11 +293,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public void populateAccounts(BillingAccount billingAccount) {
 		entity.setBillingAccount(billingAccount);
-		if (userAccountService.isDuplicationExist(entity)) {
-			entity.setDefaultLevel(false);
-		} else {
-			entity.setDefaultLevel(true);
-		}
+		
 		if (billingAccount.getProvider() != null && billingAccount.getProvider().isLevelDuplication()) {
 			entity.setCode(billingAccount.getCode());
 			entity.setDescription(billingAccount.getDescription());
@@ -367,7 +357,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	}
 
 	public String getBalance(WalletInstance wallet) {
-
+        
 		String result = null;
 		BigDecimal balance = walletCacheContainerProvider.getBalance(wallet.getId());
 		if (balance != null) {
@@ -398,7 +388,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public String getOpenBalanceWithTax(Provider provider, String sellerCode, String userAccountCode, Date startDate,
 			Date endDate) throws BusinessException {
-		String result = null;
+
+	    String result = null;
 		BigDecimal balance = walletReservationService.getOpenBalanceWithTax(provider, sellerCode, userAccountCode,
 				startDate, endDate);
 		if (balance != null) {
@@ -472,8 +463,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		  return selectedCounterInstance;
 		 }
 
-	public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
-		this.selectedCounterInstance = selectedCounterInstance;
-	}
-
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
+    }
 }

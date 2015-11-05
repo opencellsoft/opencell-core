@@ -1,8 +1,8 @@
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -27,18 +26,9 @@ public class BillingRunJob extends Job {
 
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        String billingCycle = null;
-        if (jobInstance.getStringCustomValue("BillingRunJob_billingCycle") != null) {
-            billingCycle = jobInstance.getStringCustomValue("BillingRunJob_billingCycle");
-        }
-        Date lastTransactionDate = null;
-        if (jobInstance.getDateCustomValue("BillingRunJob_lastTransactionDate") != null) {
-            lastTransactionDate = jobInstance.getDateCustomValue("BillingRunJob_lastTransactionDate");
-        }
-        Date invoiceDate = null;
-        if (jobInstance.getDateCustomValue("BillingRunJob_invoiceDate") != null) {
-            invoiceDate = jobInstance.getDateCustomValue("BillingRunJob_invoiceDate");
-        }
+        String billingCycle = (String) jobInstance.getCFValue("BillingRunJob_billingCycle");
+        Date lastTransactionDate = (Date) jobInstance.getCFValue("BillingRunJob_lastTransactionDate");
+        Date invoiceDate = (Date) jobInstance.getCFValue("BillingRunJob_invoiceDate");
 
         billingRunJobBean.execute(result, jobInstance.getParametres(), billingCycle, invoiceDate, lastTransactionDate, currentUser);
     }
@@ -49,35 +39,35 @@ public class BillingRunJob extends Job {
     }
 
     @Override
-    public List<CustomFieldTemplate> getCustomFields() {
-        List<CustomFieldTemplate> result = new ArrayList<CustomFieldTemplate>();
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
         
         CustomFieldTemplate lastTransactionDate = new CustomFieldTemplate();
         lastTransactionDate.setCode("BillingRunJob_lastTransactionDate");
-        lastTransactionDate.setAccountLevel(AccountLevelEnum.TIMER);
+        lastTransactionDate.setAppliesTo("JOB_BillingRunJob");
         lastTransactionDate.setActive(true);
         lastTransactionDate.setDescription("last transaction date");
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
         lastTransactionDate.setValueRequired(true);
-        result.add(lastTransactionDate);
+        result.put("BillingRunJob_lastTransactionDate", lastTransactionDate);
 
         CustomFieldTemplate invoiceDate = new CustomFieldTemplate();
         invoiceDate.setCode("BillingRunJob_invoiceDate");
-        invoiceDate.setAccountLevel(AccountLevelEnum.TIMER);
+        invoiceDate.setAppliesTo("JOB_BillingRunJob");
         invoiceDate.setActive(true);
         invoiceDate.setDescription("invoice date");
         invoiceDate.setFieldType(CustomFieldTypeEnum.DATE);
         invoiceDate.setValueRequired(true);
-        result.add(invoiceDate);
+        result.put("BillingRunJob_invoiceDate", invoiceDate);
 
         CustomFieldTemplate billingCycle = new CustomFieldTemplate();
         billingCycle.setCode("BillingRunJob_billingCycle");
-        billingCycle.setAccountLevel(AccountLevelEnum.TIMER);
+        billingCycle.setAppliesTo("JOB_BillingRunJob");
         billingCycle.setActive(true);
         billingCycle.setDescription("billing cycle");
         billingCycle.setFieldType(CustomFieldTypeEnum.STRING);
         billingCycle.setValueRequired(true);
-        result.add(billingCycle);
+        result.put("BillingRunJob_billingCycle", billingCycle);
 
         return result;
     }

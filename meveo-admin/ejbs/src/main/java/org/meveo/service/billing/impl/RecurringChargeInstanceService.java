@@ -18,6 +18,7 @@ package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -123,7 +124,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
 	@SuppressWarnings("unchecked")
 	public List<RecurringChargeInstance> findRecurringChargeInstanceBySubscriptionId(Long subscriptionId) {
-		QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
+		QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 		return qb.getQuery(getEntityManager()).getResultList();
 	}

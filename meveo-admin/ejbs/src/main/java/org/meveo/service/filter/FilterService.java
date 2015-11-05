@@ -251,6 +251,10 @@ public class FilterService extends BusinessService<Filter> {
 	public List<Filter> findByPrimaryTargetClass(String className) {
 		QueryBuilder qb = new QueryBuilder(Filter.class, "f", null, getCurrentProvider());
 		qb.addCriterion("primarySelector.targetEntity", "=", className, true);
+		qb.startOrClause();
+		qb.addBooleanCriterion("shared", true);
+		qb.addCriterionEntity("f.auditable.creator", getCurrentUser());
+		qb.endOrClause();
 
 		try {
 			return (List<Filter>) qb.getQuery(getEntityManager()).getResultList();

@@ -68,7 +68,7 @@ public class CdrEdrProcessingCacheContainerProvider {
             populateAccessCache();
             populateEdrCache();
 
-            log.debug("CdrEdrProcessingCacheContainerProvider initialized");
+            log.info("CdrEdrProcessingCacheContainerProvider initialized");
 
         } catch (Exception e) {
             log.error("CdrEdrProcessingCacheContainerProvider init() error", e);
@@ -80,7 +80,7 @@ public class CdrEdrProcessingCacheContainerProvider {
      */
     private void populateAccessCache() {
 
-        log.info("Start to populate access cache");
+        log.debug("Start to populate access cache");
         accessCache.clear();
         List<Access> activeAccesses = accessService.getAccessesForCache();
 
@@ -88,7 +88,7 @@ public class CdrEdrProcessingCacheContainerProvider {
             addAccessToCache(access);
         }
 
-        log.debug("Access cache populated with {} accesses", activeAccesses.size());
+        log.info("Access cache populated with {} accesses", activeAccesses.size());
     }
 
     /**
@@ -102,7 +102,7 @@ public class CdrEdrProcessingCacheContainerProvider {
         // because acccessed later, to avoid lazy init
         access.getSubscription().getId();
         accessCache.get(cacheKey).add(access);
-        log.info("Added access {} to access cache", access);
+        log.trace("Added access {} to access cache", access);
     }
 
     /**
@@ -116,7 +116,7 @@ public class CdrEdrProcessingCacheContainerProvider {
         if (accessCache.containsKey(access.getProvider().getId() + "_" + access.getAccessUserId())
                 && accessCache.get(access.getProvider().getId() + "_" + access.getAccessUserId()).contains(access)) {
             accessCache.get(access.getProvider().getId() + "_" + access.getAccessUserId()).remove(access);
-            log.info("Removed access {} from access cache", access);
+            log.trace("Removed access {} from access cache", access);
             return;
 
             // Case when AccessUserId values has changed
@@ -124,7 +124,7 @@ public class CdrEdrProcessingCacheContainerProvider {
             for (List<Access> accesses : accessCache.values()) {
                 if (accesses.contains(access)) {
                     accesses.remove(access);
-                    log.info("Removed access {} from access cache", access);
+                    log.trace("Removed access {} from access cache", access);
                     return;
                 }
             }
@@ -164,7 +164,7 @@ public class CdrEdrProcessingCacheContainerProvider {
             return;
         }
 
-        log.info("Start to populate EDR cache");
+        log.debug("Start to populate EDR cache");
 
         edrCache.clear();
         int maxDuplicateRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize", "100000"));
@@ -173,7 +173,7 @@ public class CdrEdrProcessingCacheContainerProvider {
             edrCache.put(edrHash, 0);
         }
 
-        log.debug("EDR cache populated with {} EDRs", edrs.size());
+        log.info("EDR cache populated with {} EDRs", edrs.size());
     }
 
     /**

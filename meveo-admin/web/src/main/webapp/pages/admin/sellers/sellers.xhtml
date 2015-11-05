@@ -1,43 +1,30 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
+    template="/layout/template.xhtml">
 
-	<f:metadata>
-		<f:event type="preRenderView" listener="#{sellerListBean.preRenderView}" />
-	</f:metadata>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{sellerListBean.preRenderView}" />
+    </f:metadata>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hf:searchPanel id="searchPanel" backingBean="#{sellerListBean}"
-			label="#{messages['seller.search']}">
-            <hf:searchField id="seller"
-                label="#{messages['BusinessEntity.code']}" field="code" />
-			<hf:searchField label="#{messages['BusinessEntity.description']}"
-				field="description" />
-		</hf:searchPanel>
+        <hftl:searchPanel id="searchPanel" backingBean="#{sellerListBean}" label="#{messages['seller.search']}">
+            <hftl:searchField id="seller" label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['BusinessEntity.description']}" field="description" />
+        </hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['seller.title']}"
-			backingBean="#{sellerListBean}">
-			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['BusinessEntity.description']}"
-				field="description" />
-			<hftl:column
-				label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
-				field="tradingCurrency.currencyCode" />
-			<hftl:column label="#{messages['tradingCountry.title']}"
-				field="tradingCountry.countryCode" />
-			<hftl:column label="#{messages['seller.title']}" field="seller.code" />
+        <hftl:dataList label="#{messages['seller.title']}" backingBean="#{sellerListBean}">
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['tradingCurrency.tradingCurrencyPanel']}" field="tradingCurrency.currencyCode" />
+            <hftl:column label="#{messages['tradingCountry.title']}" field="tradingCountry.countryCode" />
+            <hftl:column label="#{messages['seller.title']}" field="seller.code" />
 
-			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}" />
-		</hftl:dataList>
-	</ui:define>
+            <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
+        </hftl:dataList>
+    </ui:define>
 
 </ui:composition>

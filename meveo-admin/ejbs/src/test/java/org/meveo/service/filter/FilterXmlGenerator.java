@@ -8,9 +8,11 @@ import java.util.List;
 import javax.persistence.DiscriminatorValue;
 
 import org.junit.Test;
+import org.meveo.admin.exception.FilterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.filter.AndCompositeFilterCondition;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.filter.FilterCondition;
@@ -31,20 +33,63 @@ import com.thoughtworks.xstream.mapper.ClassAliasingMapper;
 public class FilterXmlGenerator {
 
 	public static void main(String[] args) {
-		FilterXmlGenerator fg = new FilterXmlGenerator();
-		// fg.filter1();
-		// String result = fg.generate();
-		// System.out.println(result);
+		try {
+			FilterXmlGenerator fg = new FilterXmlGenerator();
+			// fg.filter1();
+			// String result = fg.generate();
+			// System.out.println(result);
 
-		// country
-		String result = fg.generate1();
-		System.out.println(result);
+			// country
+			String result = fg.generate2();
+			System.out.println(result);
 
-		// fg.degenerate(result);
-		// fg.getLinkedListFields();
+			// fg.degenerate(result);
+			// fg.getLinkedListFields();
+		} catch (Exception e) {
+
+		}
 	}
 
-	private String generate1() {
+	public String generate2() throws FilterException {
+		AndCompositeFilterCondition andCompositeFilterCondition = new AndCompositeFilterCondition();
+		andCompositeFilterCondition.setFilterConditionType(AndCompositeFilterCondition.class.getAnnotation(
+				DiscriminatorValue.class).value());
+		List<FilterCondition> andFilterConditions = new ArrayList<>();
+
+		PrimitiveFilterCondition primitiveFilterCondition = new PrimitiveFilterCondition();
+		primitiveFilterCondition.setFilterConditionType(PrimitiveFilterCondition.class.getAnnotation(
+				DiscriminatorValue.class).value());
+		primitiveFilterCondition.setFieldName("startRatingDate");
+		primitiveFilterCondition.setOperator("=");
+		primitiveFilterCondition.setOperand("date:2015-08-01");
+
+		andFilterConditions.add(primitiveFilterCondition);
+
+		andCompositeFilterCondition.setFilterConditions(andFilterConditions);
+
+		FilterSelector filterSelector1 = new FilterSelector();
+		filterSelector1.setTargetEntity(PricePlanMatrix.class.getName());
+		filterSelector1.setAlias("p");
+		filterSelector1.setDisplayFields(new ArrayList<>(Arrays.asList("code", "eventCode")));
+
+		Filter filter = new Filter();
+		filter.setFilterCondition(andCompositeFilterCondition);
+		filter.setPrimarySelector(filterSelector1);
+
+		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter);
+		System.out.println(fq.getSqlString());
+
+		try {
+			XStream xStream = getXStream();
+			return xStream.toXML(filter);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "";
+	}
+
+	public String generate1() throws FilterException {
 		AndCompositeFilterCondition andCompositeFilterCondition = new AndCompositeFilterCondition();
 		andCompositeFilterCondition.setFilterConditionType(AndCompositeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());
@@ -118,7 +163,7 @@ public class FilterXmlGenerator {
 		}
 	}
 
-	public String generate() {
+	public String generate() throws FilterException {
 		AndCompositeFilterCondition andCompositeFilterCondition = new AndCompositeFilterCondition();
 		andCompositeFilterCondition.setFilterConditionType(AndCompositeFilterCondition.class.getAnnotation(
 				DiscriminatorValue.class).value());

@@ -263,6 +263,17 @@ public class ServiceTemplateApi extends BaseApi {
 			serviceTemplate.setDescription(postData.getDescription());
 			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
 			serviceTemplate.setProvider(provider);
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+				try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), serviceTemplate, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
+			
 			serviceTemplateService.create(serviceTemplate, currentUser, provider);
 
 			// check for recurring charges
@@ -311,6 +322,16 @@ public class ServiceTemplateApi extends BaseApi {
 			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
 			
 			setAllWalletTemplatesToNull(serviceTemplate);
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+                try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), serviceTemplate, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
 
 			serviceTemplateService.update(serviceTemplate, currentUser);
 			serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, provider);
@@ -413,5 +434,12 @@ public class ServiceTemplateApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	public void createOrUpdate(ServiceTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (serviceTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

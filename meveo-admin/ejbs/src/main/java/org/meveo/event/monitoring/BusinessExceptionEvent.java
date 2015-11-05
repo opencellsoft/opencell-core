@@ -4,14 +4,12 @@ import java.util.Date;
 
 import javax.inject.Named;
 
-import org.meveo.admin.exception.BusinessException;
-
 @Named
 public class BusinessExceptionEvent {
 
 	public Date dateTime;
 	public String meveoInstanceCode;
-	public BusinessException businessException;
+	public Exception exception;
 	
 	public BusinessExceptionEvent(){
 		
@@ -46,23 +44,23 @@ public class BusinessExceptionEvent {
 	}
 
 	/**
-	 * @return the businessException
+	 * @return the exception
 	 */
-	public BusinessException getBusinessException() {
-		return businessException;
+	public Exception getException() {
+		return exception;
 	}
 
 	/**
-	 * @param businessException the businessException to set
+	 * @param exception the exception to set
 	 */
-	public void setBusinessException(BusinessException businessException) {
-		this.businessException = businessException;
+	public void setException(Exception exception) {
+		this.exception = exception;
 	}
 	
 	@Override
 	public String toString() {
 		return "{ dateTime:"+dateTime+", "
 				+ "meveoInstanceCode:"+meveoInstanceCode+","
-				+ " businessException:"+businessException+" }";
+				+ " exception:"+exception+" }";
 	}
 }

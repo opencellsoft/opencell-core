@@ -367,27 +367,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		queryBA.executeUpdate();
 	}
 
-	public void deleteInvoice(Invoice invoice) {
-		Query queryTrans = getEntityManager()
-				.createQuery(
-						"update "
-								+ RatedTransaction.class.getName()
-								+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where invoice=:invoice");
-		queryTrans.setParameter("invoice", invoice);
-		queryTrans.executeUpdate();
-
-		Query queryAgregate = getEntityManager().createQuery(
-				"delete from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
-		queryAgregate.setParameter("invoice", invoice);
-		queryAgregate.executeUpdate();
-
-		Query queryInvoices = getEntityManager().createQuery(
-				"delete from " + Invoice.class.getName() + " where id=:invoiceId");
-		queryInvoices.setParameter("invoiceId", invoice.getId());
-		queryInvoices.executeUpdate();
-		getEntityManager().flush();
-	}
-
 	@SuppressWarnings("unchecked")
 	public boolean isActiveBillingRunsExist(Provider provider) {
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c");
@@ -568,7 +547,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void validate(BillingRun billingRun, User user) {
+	public void validate(BillingRun billingRun, User user) throws BusinessException {
 		billingRun = findById(billingRun.getId(), true);
 		user = getEntityManager().find(User.class, user.getId());
 		for (Invoice invoice : billingRun.getInvoices()) {

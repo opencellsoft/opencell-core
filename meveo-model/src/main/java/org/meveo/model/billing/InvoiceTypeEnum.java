@@ -21,22 +21,30 @@ package org.meveo.model.billing;
  */
 public enum InvoiceTypeEnum {
 
-	COMMERCIAL(1, "invoiceType.commercial"), 
-	SELF_BILLED(2, "invoiceType.selfBilled"), 
-	PROFORMA(3, "invoiceType.proforma"), 
-	CORRECTED(4, "invoiceType.corrected"), 
-	CREDIT_NOTE(5, "invoiceType.creditNote"), 
-	DEBIT_NOTE(6, "invoiceType.debitNote"), 
-	CREDIT_NOTE_ADJUST(7, "invoiceType.creditNoteAdjust"), 
-	DEBIT_NODE_ADJUST(8, "invoiceType.debitNodeAdjust"), 
-	SELF_BILLED_CREDIT_NOTE(9, "invoiceType.selfBilledCreditNote");
+	/**
+	 * This is the normal invoice.
+	 */
+	COMMERCIAL(1, "invoiceType.commercial",false), 
+	SELF_BILLED(2, "invoiceType.selfBilled",false), 
+	PROFORMA(3, "invoiceType.proforma",false), 
+	CORRECTED(4, "invoiceType.corrected",false), 
+	CREDIT_NOTE(5, "invoiceType.creditNote",false), 
+	DEBIT_NOTE(6, "invoiceType.debitNote",false),
+	/**
+	 * Invoice adjustment.
+	 */
+	CREDIT_NOTE_ADJUST(7, "invoiceType.creditNoteAdjust",true), 
+	DEBIT_NODE_ADJUST(8, "invoiceType.debitNodeAdjust",true), 
+	SELF_BILLED_CREDIT_NOTE(9, "invoiceType.selfBilledCreditNote",true);
 
 	private Integer id;
 	private String label;
+	private boolean isAdjustment;
 
-	private InvoiceTypeEnum(Integer id, String label) {
+	private InvoiceTypeEnum(Integer id, String label, boolean isAdjustment) {
 		this.id = id;
 		this.label = label;
+		this.isAdjustment = isAdjustment;
 	}
 
 	public int getId() {
@@ -57,4 +65,17 @@ public enum InvoiceTypeEnum {
 		}
 		return null;
 	}
+
+	public boolean isAdjustment() {
+		return isAdjustment;
+	}
+
+	public void setAdjustment(boolean isAdjustment) {
+		this.isAdjustment = isAdjustment;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
 }

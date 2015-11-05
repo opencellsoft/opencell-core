@@ -6,6 +6,14 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{serviceTemplateBean.objectId}" />
+            <f:viewParam name="mainTab" value="#{serviceTemplateBean.activeMainTab}" />	
+            <f:viewParam name="tab" value="#{serviceTemplateBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+    
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -81,27 +89,30 @@
 		</p:panel>
 
 		<p:panel header="#{messages['menu.serviceTemplates']}" >
-			<p:tabView id="tabView">
+			<p:tabView id="tabView" activeIndex="#{serviceTemplateBean.activeMainTab}">
 				<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
+					<hf:formPanel id="serviceTemplatePabel" backingBean="#{serviceTemplateBean}" showEnableDisableButton="true" updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? 'confirmationMessage.confirmUpdate' : ''}" ajaxSubmit="true" submitPartialProcess=":tabView:serviceTemplatePabel:formId:informationTab">
+						<p:tabView id="informationTab" activeIndex="#{serviceTemplateBean.activeTab}">
+							<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
+								<hf:formField label="#{messages['serviceTemplate.code']}"
+									field="code" required="true" validateUnique="true" />
+								<hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+									field="disabled" isMessage="true" />
+								<hf:formField label="#{messages['serviceTemplate.description']}"
+									field="description" required="true" useConverter="false"
+									size="50" maxlength="50" />
+								<hf:formField
+									label="#{messages['serviceTemplate.calendar']}"
+									field="invoicingCalendar" valueLabelField="code" required="false" popup="false"
+									listBean="#{calendarBean}" />
+							</p:tab>
 
-					<hf:formPanel backingBean="#{serviceTemplateBean}" columns="1" showEnableDisableButton="true" updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? 'confirmationMessage.confirmUpdate' : ''}">
+							<hftl:customFields backingBean="#{serviceTemplateBean}" messagesId=":tabView:serviceTemplatePabel:formId:messages" />
 
-							<hf:formField label="#{messages['serviceTemplate.code']}"
-								field="code" required="true" validateUnique="true" />
-							<hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
-								field="disabled" isMessage="true" />
-							<hf:formField label="#{messages['serviceTemplate.description']}"
-								field="description" required="true" useConverter="false"
-								size="50" maxlength="50" />
-							<hf:formField
-								label="#{messages['serviceTemplate.calendar']}"
-								field="invoicingCalendar" valueLabelField="code" required="false" popup="false"
-								listBean="#{calendarBean}" />
-
+						</p:tabView>
 					</hf:formPanel>
-
 				</p:tab>
-
+				
 				<p:tab title="#{messages['serviceTemplate.recurringCharges']}"
 					id="tab2" rendered="#{serviceTemplateBean.entity.id!=null}">
 					<p:outputPanel id="invoiceRecurringCountries_MSG_panel">
@@ -127,7 +138,7 @@
 						<hftl:dataList id="serviceRecurringChargeTempalte_table"
 							backingBean="#{serviceChargeTemplateRecurringBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceRecurringCharges}"
-							resultsId="serviceRecurringCharges_results">
+							resultsId="serviceRecurringCharges_results" exportToXml="false">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="recurringChargeTemplateDetail"/>
@@ -220,7 +231,7 @@
 						<hftl:dataList id="serviceSubscriptionChargeTempalte_table"
 							backingBean="#{serviceChargeTemplateSubscriptionBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceSubscriptionCharges}"
-							resultsId="serviceSubscriptionCharges_results">
+							resultsId="serviceSubscriptionCharges_results" exportToXml="false">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="oneShotChargeTemplateDetail"/>
@@ -310,7 +321,7 @@
 						<hftl:dataList id="serviceTerminationChargeTempalte_table"
 							backingBean="#{serviceChargeTemplateTerminationBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceTerminationCharges}"
-							resultsId="serviceTerminationCharges_results">
+							resultsId="serviceTerminationCharges_results" exportToXml="false">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="oneShotChargeTemplateDetail"/>
@@ -399,7 +410,7 @@
                     <h:panelGroup id="serviceUsageChargeTempalte_panel">
 						<hftl:dataList backingBean="#{serviceChargeTemplateUsageBean}"
 							dataModel="#{serviceTemplateBean.entity.serviceUsageCharges}"
-							resultsId="serviceUsageCharges_results">
+							resultsId="serviceUsageCharges_results" exportToXml="false">
 							<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate.code" valueIdField="chargeTemplate.id" 
 								entityView="usageChargeTemplateDetail"/>
@@ -467,15 +478,6 @@
 								</hf:formPanel>
 						</p:panel>
 				</p:tab>
-
-				<p:tab title="#{messages['customFieldTemplate.cfValues']}" rendered="#{serviceTemplateBean.entity.id!=null}">
-    				<hf:formPanel id="cfFormPanel" backingBean="#{serviceTemplateBean}" ajaxSubmit="true" submitPartialProcess=":tabView:cfFormPanel:formId:fieldGroup">
-                        <h:panelGroup id="fieldGroup">
-    						<hf:customFields id="customFields" backingBean="#{serviceTemplateBean}" messagesId=":tabView:cfFormPanel:formId:messages" />
-    					</h:panelGroup>
-                    </hf:formPanel>
-				</p:tab>
-
 			</p:tabView>
 		</p:panel>
 	</ui:define>

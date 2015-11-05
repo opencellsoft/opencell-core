@@ -19,18 +19,27 @@ import org.meveo.api.dto.response.InvoiceCreationResponse;
 public interface InvoiceWs extends IBaseWs {
 
 	@WebMethod
-	public InvoiceCreationResponse create(@WebParam(name = "invoice") InvoiceDto invoiceDto);
+	public InvoiceCreationResponse createInvoice(@WebParam(name = "invoice") InvoiceDto invoiceDto);
 
 	@WebMethod
-	public CustomerInvoicesResponse find(@WebParam(name = "customerAccountCode") String customerAccountCode);
+	public CustomerInvoicesResponse findInvoice(@WebParam(name = "customerAccountCode") String customerAccountCode);
+
+	@WebMethod
+	public GenerateInvoiceResponseDto generateInvoiceData(
+			@WebParam(name = "generateInvoiceRequest") GenerateInvoiceRequestDto generateInvoiceRequestDto);
+
+	@WebMethod
+	public GetXmlInvoiceResponseDto findXMLInvoice(@WebParam(name = "invoiceNumber") String invoiceNumber);
 	
 	@WebMethod
-	public GenerateInvoiceResponseDto generateInvoice(@WebParam(name = "generateInvoiceRequest") GenerateInvoiceRequestDto generateInvoiceRequestDto);
+	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(@WebParam(name = "invoiceNumber") String invoiceNumber,
+			@WebParam(name = "invoiceType") String invoiceType);
+
+	@WebMethod
+	public GetPdfInvoiceResponseDto findPdfInvoice(@WebParam(name = "invoiceNumber") String invoiceNumber);
 	
 	@WebMethod
-	public GetXmlInvoiceResponseDto getXMLInvoice(@WebParam(name = "invoiceId")Long invoiceId);
-	
-	@WebMethod
-	public GetPdfInvoiceResponseDto getPdfInvoice(@WebParam(name = "invoiceId")Long invoiceId);
+	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@WebParam(name = "invoiceNumber") String invoiceNumber,
+			@WebParam(name = "invoiceType") String invoiceType);
 
 }

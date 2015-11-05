@@ -13,158 +13,93 @@
 </thead><tbody>
 <tr>
 	<td>store</td>
-	<td>http://i.meveo.info/meveo/loginInternal.jsf</td>
-	<td>url</td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>This is the Target URL: ${url}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>id=loginForm:username</td>
-	<td>UsernameID</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>meveo.admin</td>
-	<td>userName</td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>This is the correct Username : ${userName}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>id=loginForm:password</td>
-	<td>PasswordID</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>meveo.admin</td>
-	<td>passWord</td>
-</tr>
-<tr>
-	<td>echo</td>
-	<td>This is the correct Password : ${passWord}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>id=loginForm:submit</td>
-	<td>Connect</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>link=Logout</td>
-	<td>Logout</td>
-</tr>
-<tr>
-	<td>store</td>
 	<td>id=menu:emailNotifications</td>
 	<td>EmailNotifications</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
-	<td>NewEmailNotifications</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
-	<td>CodeText</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/input[1]</td>
+	<td>//*[contains(@id, 'classNameFilter_text_ac_input')]</td>
 	<td>ClassnameFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/button/span[2]</td>
-	<td>SelectClassnameFilter</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/div/div[3]/span</td>
+	<td>//*[contains(@id, 'eventTypeFilter_enum_label')]</td>
 	<td>EventTypeFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/textarea</td>
+	<td>//*[contains(@id, 'elFilter_text_area')]</td>
 	<td>EventELFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[5]/div/div/button/span[2]</td>
+	<td>id=emailNotificationForm:emailNotificationFormId:scriptInstanceSelectId:entityFieldSingle:selectLink</td>
 	<td>ScriptInstance</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/textarea</td>
+	<td>//*[contains(@id, 'mapValueList')]</td>
+	<td>AddNewParametrers</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/div/div[1]/table/tbody/tr/td[1]/input</td>
+	<td>Name</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/div/div[1]/table/tbody/tr/td[2]/input</td>
+	<td>Value</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[6]/div/div/div/div[1]/table/tbody/tr/td[3]/button/span[2]</td>
+	<td>Actions</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'emailFrom_text_area')]</td>
 	<td>SentFrom</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[7]/div/div/textarea</td>
+	<td>//*[contains(@id, 'emailToEl_text_area')]</td>
 	<td>SentToEL</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[8]/div/div/div/div[2]/button/span</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[9]/div/div/div/div[2]/button/span</td>
 	<td>AddNewSendToMailingList</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[8]/div/div/div/div[1]/table/tbody/tr/td[1]/input</td>
+	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[9]/div/div/div/div[1]/table/tbody/tr/td[1]/input</td>
 	<td>MailingListValue</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[8]/div/div/div/div[1]/table/tbody/tr/td[2]/button/span[2]</td>
+	<td>//*[contains(@id, 'deletelink')]</td>
 	<td>MailingListActions</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[9]/div/div/input</td>
+	<td>//*[contains(@id, 'subject_text')]</td>
 	<td>Subject</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[10]/div/div/textarea</td>
+	<td>//*[contains(@id, 'body_text_area')]</td>
 	<td>TextBody</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[11]/div/div/textarea</td>
+	<td>//*[contains(@id, 'htmlBody_text_area')]</td>
 	<td>HtmlBody</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[12]/div/div/button/span[2]</td>
+	<td>id=emailNotificationForm:emailNotificationFormId:counterTemplateSelectedId:entityFieldSingle:selectLink</td>
 	<td>SelectCounter</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span[2]</td>
-	<td>saveWithObjectId</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span[2]</td>
-	<td>saveButton</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[3]/span</td>
-	<td>backButton</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
-	<td>resetButton</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -178,42 +113,32 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[1]/div/div/input</td>
-	<td>searchWithCode</td>
-</tr>
-<tr>
-	<td>store</td>
 	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/button/span[2]</td>
 	<td>searchWithClickClassnameFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[2]/div/div/span/input</td>
+	<td>//*[contains(@id, 'classNameFilter_text_ac_input')]</td>
 	<td>searchWithClassnameFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/div/div[3]/span</td>
+	<td>//*[contains(@id, 'eventTypeFilter_enum_label')]</td>
 	<td>searchWithEventTypeFilter</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/input</td>
+	<td>//*[contains(@id, 'subject_text')]</td>
 	<td>searchWithSubject</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[5]/div/div/input</td>
+	<td>//*[contains(@id, 'emailFrom_text')]</td>
 	<td>searchWithSentFrom</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[1]/span</td>
-	<td>buttonSearch</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[3]/button[2]/span</td>
+	<td>xpath=/html/body/div[1]/span/form/div/div[2]/div/div[3]/button[2]/span</td>
 	<td>CleanFilters</td>
 </tr>
 <tr>
@@ -228,8 +153,13 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=results_formdeleteEntitieslink</td>
-	<td>DeleteMultiple</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>Check</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
+	<td>UnCheck</td>
 </tr>
 </tbody></table>
 </body>

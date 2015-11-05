@@ -14,47 +14,54 @@ import org.meveo.model.ExportIdentifier;
  **/
 @Entity
 @ExportIdentifier({ "code", "provider" })
-@Table(name = "BILLING_INVOICE_CONFIGURATION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@Table(name = "BILLING_INVOICE_CONFIGURATION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE",
+		"PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CONFIGURATION_SEQ")
 public class InvoiceConfiguration extends BusinessEntity {
 
-    private static final long serialVersionUID = -735961368678724497L;
+	private static final long serialVersionUID = -735961368678724497L;
 
-    @Column(name = "DISPLAY_SUBSCRIPTIONS")
-    private Boolean displaySubscriptions = false;
+	@Column(name = "DISPLAY_SUBSCRIPTIONS")
+	private Boolean displaySubscriptions = false;
 
-    @Column(name = "DISPLAY_SERVICES")
-    private Boolean displayServices = false;
+	@Column(name = "DISPLAY_SERVICES")
+	private Boolean displayServices = false;
 
-    @Column(name = "DISPLAY_OFFERS")
-    private Boolean displayOffers = false;
-    
-    @Column(name = "DISPLAY_EDRS")
-    private Boolean displayEdrs = false;
+	@Column(name = "DISPLAY_OFFERS")
+	private Boolean displayOffers = false;
 
-    public Boolean getDisplaySubscriptions() {
-        return displaySubscriptions;
-    }
+	@Column(name = "DISPLAY_EDRS")
+	private Boolean displayEdrs = false;
 
-    public void setDisplaySubscriptions(Boolean displaySubscriptions) {
-        this.displaySubscriptions = displaySubscriptions;
-    }
+	@Column(name = "DISPLAY_PROVIDER")
+	private Boolean displayProvider = false;
 
-    public Boolean getDisplayServices() {
-        return displayServices;
-    }
+	@Column(name = "DISPLAY_DETAIL")
+	private Boolean displayDetail = true;
 
-    public void setDisplayServices(Boolean displayServices) {
-        this.displayServices = displayServices;
-    }
+	public Boolean getDisplaySubscriptions() {
+		return displaySubscriptions;
+	}
 
-    public Boolean getDisplayOffers() {
-        return displayOffers;
-    }
+	public void setDisplaySubscriptions(Boolean displaySubscriptions) {
+		this.displaySubscriptions = displaySubscriptions;
+	}
 
-    public void setDisplayOffers(Boolean displayOffers) {
-        this.displayOffers = displayOffers;
-    }
+	public Boolean getDisplayServices() {
+		return displayServices;
+	}
+
+	public void setDisplayServices(Boolean displayServices) {
+		this.displayServices = displayServices;
+	}
+
+	public Boolean getDisplayOffers() {
+		return displayOffers;
+	}
+
+	public void setDisplayOffers(Boolean displayOffers) {
+		this.displayOffers = displayOffers;
+	}
 
 	public Boolean getDisplayEdrs() {
 		return displayEdrs;
@@ -63,7 +70,21 @@ public class InvoiceConfiguration extends BusinessEntity {
 	public void setDisplayEdrs(Boolean displayEdrs) {
 		this.displayEdrs = displayEdrs;
 	}
-    
-    
+
+	public Boolean getDisplayProvider() {
+		return displayProvider;
+	}
+
+	public void setDisplayProvider(Boolean displayProvider) {
+		this.displayProvider = displayProvider;
+	}
+
+	public Boolean getDisplayDetail() {
+		return displayDetail;
+	}
+
+	public void setDisplayDetail(Boolean displayDetail) {
+		this.displayDetail = displayDetail;
+	}
 
 }

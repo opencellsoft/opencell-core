@@ -19,10 +19,7 @@ package org.meveo.model.crm;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -33,7 +30,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -44,7 +40,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.Auditable;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
@@ -66,6 +62,7 @@ import org.meveo.model.shared.InterBankTitle;
 
 @Entity
 @ObservableEntity
+@CustomFieldEntity(cftCodePrefix = "PROVIDER")
 @ExportIdentifier("code")
 @Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
@@ -85,7 +82,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
     @Column(name = "DISABLED", nullable = false)
     private boolean disabled;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CURRENCY_ID")
     private Currency currency;
@@ -129,9 +126,10 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<TradingCountry> tradingCountries;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
-//    private List<User> users = new ArrayList<User>();
+    // @ManyToMany(fetch = FetchType.LAZY)
+    // @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name =
+    // "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
+    // private List<User> users = new ArrayList<User>();
 
     private static final String PM_SEP = ",";
 
@@ -151,6 +149,15 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
     @Column(name = "CURRENT_INVOICE_NB")
     private Long currentInvoiceNb;
+
+    @Column(name = "INVOICE_ADJUSTMENT_PREFIX", length = 50)
+    private String invoiceAdjustmentPrefix;
+
+    @Column(name = "CURRENT_INVOICE_ADJUSTMENT_NB")
+    private Long currentInvoiceAdjustmentNb;
+
+    @Column(name = "INVOICE_ADJUSTMENT_SEQUENCE_SIZE")
+    private Integer invoiceAdjustmentSequenceSize = 9;
 
     @Column(name = "RATING_ROUNDING", columnDefinition = "int DEFAULT 2")
     private Integer rounding = 2;
@@ -187,18 +194,21 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
     private boolean displayFreeTransacInInvoice = false;
 
+    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "CFF_ID")
+    private CustomFieldFields cfFields;
+
     @Column(name = "DISCOUNT_ACCOUNTING_CODE", length = 255)
     private String discountAccountingCode;
 
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
-    
-	@OneToOne(mappedBy = "provider")
-	private InvoiceConfiguration invoiceConfiguration=new InvoiceConfiguration();
+
+    @OneToOne(mappedBy = "provider")
+    private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 	
-	@OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@MapKeyColumn(name = "code")
-	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
+	@Column(name = "INVOICE_SEQUENCE_SIZE")
+	private Integer invoiceSequenceSize=9;
 
     public String getCode() {
         return code;
@@ -215,7 +225,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public boolean isDisabled() {
         return disabled;
     }
@@ -231,7 +241,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     public void setActive(boolean active) {
         setDisabled(!active);
     }
-    
+
     public String getSerializedPaymentMethods() {
         return serializedPaymentMethods;
     }
@@ -348,13 +358,13 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         }
     }
 
-//    public List<User> getUsers() {
-//        return users;
-//    }
-//
-//    public void setUsers(List<User> users) {
-//        this.users = users;
-//    }
+    // public List<User> getUsers() {
+    // return users;
+    // }
+    //
+    // public void setUsers(List<User> users) {
+    // this.users = users;
+    // }
 
     public Blob getLogo() {
         return logo;
@@ -528,7 +538,9 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         }
         if (obj == null) {
             return false;
-        } else if (!(obj instanceof Provider)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        } else if (!(obj instanceof Provider)) { // Fails with proxed objects:
+                                                 // getClass() !=
+                                                 // obj.getClass()){
             return false;
         }
 
@@ -553,154 +565,129 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         return String.format("Provider [code=%s]", code);
     }
 
-	public InvoiceConfiguration getInvoiceConfiguration() {
-		return invoiceConfiguration;
+    @Override
+    public CustomFieldFields getCfFields() {
+        return cfFields;
+    }
+
+    @Override
+    public void initCustomFields() {
+        cfFields = new CustomFieldFields();
+    }
+
+    public InvoiceConfiguration getInvoiceConfiguration() {
+        return invoiceConfiguration;
+    }
+
+    public void setInvoiceConfiguration(InvoiceConfiguration invoiceConfiguration) {
+        this.invoiceConfiguration = invoiceConfiguration;
+    }
+
+    @Override
+    public Object getCFValue(String cfCode) {
+        if (cfFields != null) {
+            return cfFields.getCFValue(cfCode);
+        }
+        return null;
+    }
+
+    @Override
+    public Object getCFValue(String cfCode, Date date) {
+        if (cfFields != null) {
+            return cfFields.getCFValue(cfCode, date);
+        }
+        return null;
+    }
+    
+    public void setCFValue(String cfCode, Object value) {
+        setCFValue(cfCode, value, null);
+    }
+
+    public void setCFValue(String cfCode, Object value, CustomFieldTemplate cft) {
+
+        if (cfFields == null) {
+            initCustomFields();
+        }
+
+        cfFields.setCFValue(cfCode, value, cft);
+    }
+
+    public void setCFValue(String cfCode, Object value, Date valueDate, CustomFieldTemplate cft) {
+
+        if (cfFields == null) {
+            initCustomFields();
+        }
+
+        cfFields.setCFValue(cfCode, value, valueDate, cft);
+    }
+
+    public void setCFValue(String cfCode, Object value, Date valueDateFrom, Date valueDateTo, CustomFieldTemplate cft) {
+
+        if (cfFields == null) {
+            initCustomFields();
+        }
+
+        cfFields.setCFValue(cfCode, value, valueDateFrom, valueDateTo, cft);
+    }
+    
+
+    @Override
+    public ICustomFieldEntity getParentCFEntity() {
+        return null;
+    }
+
+    @Override
+    public Object getInheritedOnlyCFValue(String cfCode) {
+
+        return null;
+    }
+    
+    @Override
+    public Object getInheritedOnlyCFValue(String cfCode, Date date) {
+
+        return null;
+    }
+
+    @Override
+    public Object getInheritedCFValue(String cfCode) {
+        // Nothing to inherit from
+        return getCFValue(cfCode);
+    }
+    
+    @Override
+    public Object getInheritedCFValue(String cfCode, Date date) {
+        // Nothing to inherit from
+        return getCFValue(cfCode, date);
+    }
+    
+    public String getInvoiceAdjustmentPrefix() {
+        return invoiceAdjustmentPrefix;
+    }
+
+    public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
+        this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
+    }
+
+    public Integer getInvoiceAdjustmentSequenceSize() {
+        return invoiceAdjustmentSequenceSize;
+    }
+
+    public void setInvoiceAdjustmentSequenceSize(Integer invoiceAdjustmentSequenceSize) {
+        this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
+    }
+
+    public Long getCurrentInvoiceAdjustmentNb() {
+        return currentInvoiceAdjustmentNb;
+    }
+
+    public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
+        this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
+    }
+	public Integer getInvoiceSequenceSize() {
+		return invoiceSequenceSize;
 	}
 
-	public void setInvoiceConfiguration(InvoiceConfiguration invoiceConfiguration) {
-		this.invoiceConfiguration = invoiceConfiguration;
+	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
+		this.invoiceSequenceSize = invoiceSequenceSize;
 	}
-	
-	public Map<String, CustomFieldInstance> getCustomFields() {
-		return customFields;
-	}
-
-	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
-		this.customFields = customFields;
-	}
-
-	private CustomFieldInstance getOrCreateCustomFieldInstance(String code) {
-	        CustomFieldInstance cfi = null;
-
-	        if (customFields.containsKey(code)) {
-	            cfi = customFields.get(code);
-	        } else {
-	            cfi = new CustomFieldInstance();
-	            Auditable au = new Auditable();
-	            au.setCreated(new Date());
-	            if (this.getAuditable() != null) {
-	                au.setCreator(this.getAuditable().getCreator());
-	            }
-	            cfi.setAuditable(au);
-	            cfi.setCode(code);
-	            cfi.setProvider(this); 
-	            customFields.put(code, cfi);
-	        }
-
-	        return cfi;
-	    }
-
-	    public String getStringCustomValue(String code) {
-	        String result = null;
-	        if (customFields.containsKey(code)) {
-	            result = customFields.get(code).getStringValue();
-	        }
-
-	        return result;
-	    }
-
-	    public void setStringCustomValue(String code, String value) {
-	        getOrCreateCustomFieldInstance(code).setStringValue(value);
-	    }
-
-	    public Date getDateCustomValue(String code) {
-	        Date result = null;
-	        if (customFields.containsKey(code)) {
-	            result = customFields.get(code).getDateValue();
-	        }
-
-	        return result;
-	    }
-
-	    public void setDateCustomValue(String code, Date value) {
-	        getOrCreateCustomFieldInstance(code).setDateValue(value);
-	    }
-
-	    public Long getLongCustomValue(String code) {
-	        Long result = null;
-	        if (customFields.containsKey(code)) {
-	            result = customFields.get(code).getLongValue();
-	        }
-	        return result;
-	    }
-
-	    public void setLongCustomValue(String code, Long value) {
-	        getOrCreateCustomFieldInstance(code).setLongValue(value);
-	    }
-
-	    public Double getDoubleCustomValue(String code) {
-	        Double result = null;
-
-	        if (customFields.containsKey(code)) {
-	            result = customFields.get(code).getDoubleValue();
-	        }
-
-	        return result;
-	    }
-
-	    public void setDoubleCustomValue(String code, Double value) {
-	        getOrCreateCustomFieldInstance(code).setDoubleValue(value);
-	    }
-
-	    public String getCustomFieldsAsJson() {
-	        String result = "";
-	        String sep = "";
-
-	        for (Entry<String, CustomFieldInstance> cf : customFields.entrySet()) {
-	            result += sep + cf.getValue().toJson();
-	            sep = ";";
-	        }
-
-	        return result;
-	    }
-	    
-	    public String getInheritedCustomStringValue(String code){
-			String stringValue=null;
-			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getStringValue()!=null) {
-				stringValue=getCustomFields().get(code).getStringValue();}
-			return stringValue;
-			}
-		
-		public Long getInheritedCustomLongValue(String code){
-			Long result=null; 
-			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getLongValue()!=null) {
-				result=getCustomFields().get(code).getLongValue();
-			}
-			return result;
-			}
-		
-		public Date getInheritedCustomDateValue(String code){
-			Date result=null; 
-			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDateValue()!=null) {
-				result=getCustomFields().get(code).getDateValue();
-			}
-			return result;
-			}
-		
-
-		public Double getInheritedCustomDoubleValue(String code){
-			Double result=null; 
-			if (getCustomFields().containsKey(code)&& getCustomFields().get(code).getDoubleValue()!=null) {
-				result=getCustomFields().get(code).getDoubleValue();
-			}
-			return result;
-			}
-		
-		public String getICsv(String code){
-			return getInheritedCustomStringValue(code);
-		}
-		
-		public Long getIClv(String code){
-			return getInheritedCustomLongValue(code);
-		}
-		
-		public Date getICdav(String code){
-			return getInheritedCustomDateValue(code);
-		}
-		
-		public Double getICdov(String code){
-			return getInheritedCustomDoubleValue(code);
-		}
-
-
 }

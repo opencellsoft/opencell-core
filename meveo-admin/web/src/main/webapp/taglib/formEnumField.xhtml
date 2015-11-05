@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
+        style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
+        inputWidth="#{inputWidth}">
+        <c:if test="#{edit}">
+            <p:selectOneMenu id="#{id}" value="#{fieldItem}" disabled="#{disabled}" required="#{required}">
+                <f:selectItem itemLabel="" />
+                <f:selectItems value="#{listValues}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
+                <f:converter converterId="enumConverter"/>
+                <f:attribute name="GenericEnumConverter.enumType" value="#{enumClassname}"/>
+                <c:if test="#{not empty listenerUpdate}">
+                    <p:ajax update="#{listenerUpdate}" event="change" />
+                </c:if>
+            </p:selectOneMenu>
+        </c:if>
+        <c:if test="#{! edit}">
+            <h:outputText id="#{id}" value="#{messages[fieldItem.label]}" styleClass="field-value" />
+        </c:if>
+    </hftl:decorateFormField>
+</ui:composition>
+
+</html>

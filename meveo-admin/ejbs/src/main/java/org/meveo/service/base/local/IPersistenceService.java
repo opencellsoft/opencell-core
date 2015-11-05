@@ -247,14 +247,19 @@ public interface IPersistenceService<E extends IEntity> {
 	 * @param entity
 	 *            Entity which has to be detached.
 	 */
-	public void detach(Object entity);
+	public void detach(E entity);
 
-	public BaseEntity attach(BaseEntity e);
+	public E attach(E e);
 
 	/**
 	 * Refresh entity with state from database.
 	 */
-	public void refresh(BaseEntity entity);
+	public void refresh(E entity);
+	
+	/**
+     * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
+     */    
+	public E refreshOrRetrieve(E entity);
 	
 	public void commit();
 

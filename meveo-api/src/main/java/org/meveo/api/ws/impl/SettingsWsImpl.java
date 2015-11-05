@@ -17,7 +17,6 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.OccTemplateApi;
 import org.meveo.api.ProviderApi;
 import org.meveo.api.ScriptInstanceApi;
-import org.meveo.api.SellerApi;
 import org.meveo.api.TaxApi;
 import org.meveo.api.UserApi;
 import org.meveo.api.dto.ActionStatus;
@@ -33,7 +32,6 @@ import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.ProviderDto;
-import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.UserDto;
@@ -51,7 +49,6 @@ import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
-import org.meveo.api.dto.response.GetScriptInstanceResponseDto;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
@@ -61,6 +58,7 @@ import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.SettingsWs;
+import org.meveo.service.crm.impl.SellerApiService;
 
 /**
  * @author Edward P. Legaspi
@@ -97,7 +95,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	private ProviderApi providerApi;
 
 	@Inject
-	private SellerApi sellerApi;
+	private SellerApiService sellerApi;
 
 	@Inject
 	private TaxApi taxApi;
@@ -1317,11 +1315,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public ActionStatus removeCustomFieldTemplate(String customFieldTemplateCode, String accountLevel) {
+	public ActionStatus removeCustomFieldTemplate(String customFieldTemplateCode, String appliesTo) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customFieldTemplateApi.remove(customFieldTemplateCode, accountLevel, getCurrentUser().getProvider());
+			customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1337,11 +1335,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetCustomFieldTemplateReponseDto findCustomFieldTemplate(String customFieldTemplateCode, String accountLevel) {
+	public GetCustomFieldTemplateReponseDto findCustomFieldTemplate(String customFieldTemplateCode, String appliesTo) {
 		GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
 		try {
-			result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, accountLevel,
+			result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo,
 					getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -1357,85 +1355,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		return result;
 	}
 
-	@Override
-	public ActionStatus createScriptInstance(ScriptInstanceDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			scriptInstanceApi.create(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-
-	@Override
-	public ActionStatus updateScriptInstance(ScriptInstanceDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			scriptInstanceApi.update(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-
-	@Override
-	public ActionStatus removeScriptInstance(String scriptInstanceCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			scriptInstanceApi.remove(scriptInstanceCode, getCurrentUser().getProvider());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-
-	@Override
-	public GetScriptInstanceResponseDto findScriptInstance(String scriptInstanceCode) {
-		GetScriptInstanceResponseDto result = new GetScriptInstanceResponseDto();
-
-		try {
-			result.setScriptInstance(scriptInstanceApi.find(scriptInstanceCode, getCurrentUser().getProvider()));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
-
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
 
 	@Override
 	public ActionStatus createOrUpdateCountry(CountryDto postData) {
@@ -1654,12 +1574,13 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		return result;
 	}
 	
+	
 	@Override
-	public ActionStatus createOrUpdateScriptInstance(ScriptInstanceDto postData) {
+	public ActionStatus createOrUpdateUser(UserDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		
 		try {
-			scriptInstanceApi.createOrUpdate(postData, getCurrentUser());
+			userApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1672,5 +1593,25 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		
 		log.debug("RESPONSE={}", result);
 		return result;
+	}
+	
+	public ActionStatus createOrUpdateInvoiceSubCategory(InvoiceSubCategoryDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			invoiceSubCategoryApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+		
 	}
 }

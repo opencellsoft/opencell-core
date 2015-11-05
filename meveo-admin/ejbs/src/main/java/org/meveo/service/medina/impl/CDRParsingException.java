@@ -12,7 +12,7 @@ public class CDRParsingException extends Exception {
 	private CDRRejectionCauseEnum rejectionCause;
 
 	public CDRParsingException(Serializable cdr,CDRRejectionCauseEnum cause) {
-        super();
+        super("");
 		setCdr(cdr);
 		setRejectionCause(cause);
 	}

@@ -16,7 +16,7 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +39,8 @@ public class ValueExpressionWrapper {
         if (StringUtils.isBlank(expression)) {
             return null;
         }
+        expression = StringUtils.trim(expression);
+        
         if (expression.indexOf("#{") < 0) {
             log.debug("the expression '{}' doesnt contain any EL", expression);
             if (resultClass.equals(String.class)) {
@@ -55,10 +57,10 @@ public class ValueExpressionWrapper {
         }
         try {
             result = ValueExpressionWrapper.getValue(expression, userMap, resultClass);
-            log.debug("EL {} => {}", expression, result);
+            log.trace("EL {} => {}", expression, result);
 
         } catch (Exception e) {
-            log.warn("EL {} throw error {}", expression, e.getMessage());
+            log.warn("EL {} throw error", expression, e);
             throw new BusinessException("Error while evaluating expression " + expression + " : " + e.getMessage());
         }
         return result;

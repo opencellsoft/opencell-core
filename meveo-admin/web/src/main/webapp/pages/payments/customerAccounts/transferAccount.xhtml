@@ -49,7 +49,7 @@
                     <hf:formDecorateField id="accountTransferCode" fieldId="accountTransferCode" label="#{messages['customerAccount.accountTransferTo']}">
 
                         <p:inputText id="accountTransferCode" value="#{customerAccountBean.getCustomerAccountTransfer().getCode()}" required="true" disabled="true" size="30"></p:inputText>
-                        <p:commandLink id="selectLink" onclick="PF('dlg_customerAccountPopup').show()">
+                        <p:commandLink id="selectLink" onclick="PF('dlg_customerAccountPopup').show()" type="button">
                             <h:graphicImage value="/img/search.gif" style="border:0" />
                         </p:commandLink>
                         <p:tooltip for="selectLink" value="#{messages['commons.search']}"></p:tooltip>

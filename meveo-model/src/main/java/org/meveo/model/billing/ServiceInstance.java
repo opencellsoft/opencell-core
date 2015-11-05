@@ -231,4 +231,21 @@ public class ServiceInstance extends BusinessEntity {
 			return status.name();
 	}
 
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof ServiceInstance)) {
+            return false;
+        }
+
+        ServiceInstance other = (ServiceInstance) obj;
+
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+            return true;
+        }
+        return false;
+    }
 }

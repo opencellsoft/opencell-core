@@ -124,12 +124,15 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Exceptio
 				// new Headers<Object>()));
 			}
 
+			boolean isAllowed = false;
+			
 			if (currentUser == null) {
 				requestContext.abortWith(ACCESS_DENIED);
+			} else {
+				// check if user has permission
+				isAllowed = currentUser.hasPermission("user", "apiAccess");
 			}
-
-			// check if user has permission
-			boolean isAllowed = currentUser.hasPermission("user", "apiAccess");
+			
 
 			if (!isAllowed) {
 				requestContext.abortWith(ACCESS_DENIED);

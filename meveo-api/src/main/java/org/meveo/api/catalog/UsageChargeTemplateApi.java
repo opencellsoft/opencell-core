@@ -48,6 +48,9 @@ public class UsageChargeTemplateApi extends BaseApi {
 	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	public void create(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		
+		validate(postData);
+		
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())) {
 			Provider provider = currentUser.getProvider();
 
@@ -115,6 +118,16 @@ public class UsageChargeTemplateApi extends BaseApi {
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+                try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
 
 			usageChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
@@ -142,6 +155,9 @@ public class UsageChargeTemplateApi extends BaseApi {
 	}
 
 	public void update(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		
+		validate(postData);
+		
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())) {
 			Provider provider = currentUser.getProvider();
 
@@ -241,6 +257,16 @@ public class UsageChargeTemplateApi extends BaseApi {
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+				try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
 
 			usageChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
@@ -307,5 +333,13 @@ public class UsageChargeTemplateApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	public void createOrUpdate(UsageChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		
+		if (usageChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

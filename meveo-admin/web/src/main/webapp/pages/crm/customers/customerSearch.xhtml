@@ -45,7 +45,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList backingBean="#{customerSearchBean}"
-			label="#{messages['customerSearch.title']}">
+			label="#{messages['customerSearch.title']}" exportToXml="false">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code"
 				editView="#{customerSearchBean.getView(entity['accountType'])}" propagateConversation="false"
 				objectIdParamName="#{customerSearchBean.getIdParameterName(entity['accountType'])}"/>

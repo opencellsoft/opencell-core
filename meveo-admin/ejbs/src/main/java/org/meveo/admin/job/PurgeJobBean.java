@@ -46,8 +46,8 @@ public class PurgeJobBean implements Serializable {
 
         try {
             // Purge job execution history
-            String jobname = jobInstance.getStringCustomValue("PurgeJob_jobExecHistory_jobName");
-            Long nbDays = jobInstance.getLongCustomValue("PurgeJob_jobExecHistory_nbDays");
+            String jobname = (String) jobInstance.getCFValue("PurgeJob_jobExecHistory_jobName");
+            Long nbDays = (Long) jobInstance.getCFValue("PurgeJob_jobExecHistory_nbDays");
             if (jobname != null || nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date, currentProvider);
@@ -63,7 +63,7 @@ public class PurgeJobBean implements Serializable {
             }
 
             // Purge counter periods
-            nbDays = jobInstance.getLongCustomValue("PurgeJob_counterPeriod_nbDays");
+            nbDays = (Long) jobInstance.getCFValue("PurgeJob_counterPeriod_nbDays");
             if (nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = counterInstanceService.countCounterPeriodsToDelete(date, currentProvider);

@@ -47,7 +47,7 @@ public class SubscriptionTerminationReasonService extends
 		QueryBuilder qb = new QueryBuilder(SubscriptionTerminationReason.class,
 				"r");
 
-		qb.addCriterion("codeReason", "=", codeReason, true);
+		qb.addCriterion("code", "=", codeReason, true);
 		qb.addCriterionEntity("provider", provider);
 
 		try {

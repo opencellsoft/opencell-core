@@ -18,29 +18,24 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.meveo.util.PersistenceUtils;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
@@ -53,7 +48,6 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
-@CustomFieldEnabledBean(accountLevel = AccountLevelEnum.CHARGE)
 public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 
@@ -141,12 +135,12 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 			return null;
 		}
 
-		String outcome = super.saveOrUpdate(killConversation);
-        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()){
-            return null;
-        } else {
-            return outcome;
+        String outcome = super.saveOrUpdate(killConversation);
+
+        if (outcome != null) {
+            return getEditViewName();
         }
+        return null;
 	}
 
 	/**
@@ -175,8 +169,9 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 		return edrTemplates;
 	}
 
-	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> temp) {
-		getEntity().setEdrTemplates(temp.getTarget());
+	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {
+		getEntity().setEdrTemplates(edrTemplates.getTarget());
+		this.edrTemplates = edrTemplates;
 	}
 
 	@Override
@@ -188,20 +183,26 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 	private TriggeredEDRTemplateService edrTemplateService;
 	
 	public void duplicate() {
-		
-		if(entity!=null&&entity.getId()!=null){
-			entity.getCustomFields().size();
+
+        if (entity != null && entity.getId() != null) {
+            
+            entity = oneShotChargeTemplateService.refreshOrRetrieve(entity);
+            
+		    // Lazy load related values first 
+            if (entity.getCfFields() != null) {
+                entity.getCfFields().getUuid();
+                entity.setCfFields(PersistenceUtils.initializeAndUnproxy(entity.getCfFields()));
+            }
 			entity.getEdrTemplates().size();
+
+            // Detach and clear ids of entity and related entities
 			oneShotChargeTemplateService.detach(entity);
 			entity.setId(null);
-			Map<String,CustomFieldInstance> customFields= entity.getCustomFields();
-			entity.setCustomFields(new HashMap<String,CustomFieldInstance>());
-			for(String code:customFields.keySet()){
-				CustomFieldInstance instance=customFields.get(code);
-				customFieldInstanceService.detach(instance);
-				instance.setId(null);
-				entity.getCustomFields().put(code, instance);
-			}
+			
+			if (entity.getCfFields() != null) {
+                entity.getCfFields().clearForDuplication();
+            }
+			
 			List<TriggeredEDRTemplate> edrTemplates=entity.getEdrTemplates();
 			entity.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
 			if(edrTemplates!=null&edrTemplates.size()!=0){
@@ -212,6 +213,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 			}
 			entity.setChargeInstances(null);
 			entity.setCode(entity.getCode()+"_copy");
+			
 			try{
 				oneShotChargeTemplateService.create(entity);
 			}catch(Exception e){

@@ -122,6 +122,16 @@ public class RecurringChargeTemplateApi extends BaseApi {
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+                try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
 
 			recurringChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
@@ -233,6 +243,16 @@ public class RecurringChargeTemplateApi extends BaseApi {
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+				try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
 
 			recurringChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
@@ -300,6 +320,15 @@ public class RecurringChargeTemplateApi extends BaseApi {
 			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+	
+	public void createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		
+		if (recurringChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
 		}
 	}
 }

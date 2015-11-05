@@ -72,5 +72,8 @@ public interface PricePlanRs extends IBaseRs {
 	@Path("/")
 	@GET
 	PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
-
+	
+	@Path("/createOrUpdate")
+	@POST
+	ActionStatus createOrUpdate(PricePlanDto postData);
 }

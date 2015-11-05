@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -19,11 +20,10 @@ import org.meveo.model.BaseProviderlessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "customFieldInstance.code", "customFieldInstance.provider", "customFieldInstance.subscription.code", "customFieldInstance.account.code",
-        "customFieldInstance.chargeTemplate.code", "customFieldInstance.serviceTemplate.code", "customFieldInstance.offerTemplate.code", "customFieldInstance.access.accessUserId",
-        "customFieldInstance.access.subscription.code", "customFieldInstance.jobInstance.code", "periodStartDate", "periodEndDate" })
+@ExportIdentifier({ "customFieldInstance.code", "customFieldInstance.cfFields.uuid", "customFieldInstance.cfFields.provider", "periodStartDate", "periodEndDate" })
 @Table(name = "CRM_CUSTOM_FIELD_PERIOD", uniqueConstraints = @UniqueConstraint(columnNames = { "CF_INSTANCE_ID", "PERIOD_START_DATE", "PERIOD_END_DATE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_PERIOD_SEQ")
+@EntityListeners({ CustomFieldPeriodListener.class })
 public class CustomFieldPeriod extends BaseProviderlessEntity {
 
     private static final long serialVersionUID = -3613016075735338913L;
@@ -44,11 +44,11 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
     private int priority;
 
     @Embedded
-    private CustomFieldValue value;
+    private CustomFieldValue cfValue;
 
     public CustomFieldPeriod() {
         super();
-        value = new CustomFieldValue();
+        cfValue = new CustomFieldValue();
     }
 
     public CustomFieldInstance getCustomFieldInstance() {
@@ -83,12 +83,15 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
         this.priority = priority;
     }
 
-    public CustomFieldValue getValue() {
-        return value;
+    public CustomFieldValue getCfValue() {
+        if (cfValue == null) {
+            cfValue = new CustomFieldValue();
+        }
+        return cfValue;
     }
 
-    public void setValue(CustomFieldValue value) {
-        this.value = value;
+    public void setCfValue(CustomFieldValue cfValue) {
+        this.cfValue = cfValue;
     }
 
     /**
@@ -98,7 +101,7 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
      * @return True/false
      */
     public boolean isCorrespondsToPeriod(Date date) {
-        return date.compareTo(periodStartDate) >= 0 && date.before(periodEndDate);
+        return (periodStartDate == null || date.compareTo(periodStartDate) >= 0) && (periodEndDate == null || date.before(periodEndDate));
     }
 
     /**
@@ -165,13 +168,16 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
 
     @Override
     public String toString() {
-        return String.format("CustomFieldPeriod [periodStartDate=%s, periodEndDate=%s, priority=%s, value=%s]", periodStartDate, periodEndDate, priority, value);
+        return String.format("CustomFieldPeriod [periodStartDate=%s, periodEndDate=%s, priority=%s, value=%s]", periodStartDate, periodEndDate, priority, cfValue);
     }
 
     // /**
-    // * NOT WORK/NOT USED: A JPA callback method to serialise reference to entity, list and map values upon persisting to DB.
+    // * NOT WORK/NOT USED: A JPA callback method to serialise reference to
+    // entity, list and map values upon persisting to DB.
     // *
-    // * On update (@PreUpdate) does not work, as merge loose all transient values before calling PreUpdate callback. EclipseLink has PostMerge callback that Hibernate does not
+    // * On update (@PreUpdate) does not work, as merge loose all transient
+    // values before calling PreUpdate callback. EclipseLink has PostMerge
+    // callback that Hibernate does not
     // have.
     // */
     // @PrePersist
@@ -184,9 +190,10 @@ public class CustomFieldPeriod extends BaseProviderlessEntity {
      * A JPA callback to deserialise reference to entity, list and map values upon retrieval from DB.
      */
     @PostLoad
-    private void deserializeValue() {
-        if (value != null) {
-            value.deserializeValue();
+    public void deserializeValue() {
+        if (cfValue != null) {
+            cfValue.deserializeValue();
         }
     }
+
 }

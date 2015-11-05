@@ -3,6 +3,7 @@ package org.meveo.api.dto;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.Provider;
@@ -27,20 +28,33 @@ public class ProviderDto extends BaseDto {
 	private boolean multiCountry;
 	private boolean multiLanguage;
 	private String userAccount;
+	private Integer invoiceSequenceSize;
+	
+	@XmlElement(required = false)
+    private CustomFieldsDto customFields;
 
 	public ProviderDto() {
 
 	}
 
-	public ProviderDto(Provider provider) {
-		code = provider.getCode();
-		description = provider.getDescription();
-		currency = provider.getCurrency().getCurrencyCode();
-		country = provider.getCountry().getCountryCode();
-		language = provider.getLanguage().getLanguageCode();
-		multiCurrency = provider.getMulticurrencyFlag();
-		multiCountry = provider.getMulticountryFlag();
-		multiLanguage = provider.getMultilanguageFlag();
+	public ProviderDto(Provider e) {
+		code = e.getCode();
+		description = e.getDescription();
+		invoiceSequenceSize=e.getInvoiceSequenceSize();
+		if (e.getCurrency() != null) {
+			currency = e.getCurrency().getCurrencyCode();
+		}
+		if (e.getCountry() != null) {
+			country = e.getCountry().getCountryCode();
+		}
+		if (e.getLanguage() != null) {
+			language = e.getLanguage().getLanguageCode();
+		}
+		multiCurrency = e.getMulticurrencyFlag();
+		multiCountry = e.getMulticountryFlag();
+		multiLanguage = e.getMultilanguageFlag();
+		
+		customFields = CustomFieldsDto.toDTO(e.getCfFields());
 	}
 
 	public String getCode() {
@@ -119,7 +133,25 @@ public class ProviderDto extends BaseDto {
 	public String toString() {
 		return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country="
 				+ country + ", language=" + language + ", multiCurrency=" + multiCurrency + ", multiCountry="
-				+ multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + "]";
+				+ multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount+"invoiceSequenceSize=" + invoiceSequenceSize
+				+ ", customFields=" + customFields + "]";
 	}
 
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
+
+	public Integer getInvoiceSequenceSize() {
+		return invoiceSequenceSize;
+	}
+
+	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
+		this.invoiceSequenceSize = invoiceSequenceSize;
+	}
+
+	
 }

@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.LazyDataModelWSize;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
@@ -76,24 +77,21 @@ public class CounterPeriodBean extends BaseBean<CounterPeriod> {
 	}
 	
 	
-	public LazyDataModel<CounterPeriod> getCounterPeriods(CounterInstance counterInstance) {
-		  if (counterInstance != null) {
-		   filters.put("counterInstance", counterInstance);
-		   return getLazyDataModel();
-		  }
+    public LazyDataModel<CounterPeriod> getCounterPeriods(CounterInstance counterInstance) {
+        if (counterInstance != null) {
+            filters.put("counterInstance", counterInstance);
+            return getLazyDataModel();
+        }
 
-		  return new LazyDataModel<CounterPeriod>() {  
-		   private static final long serialVersionUID = 1L;
-		   @Override
-		   public List<CounterPeriod> load(int first, int pageSize, String sortField,
-					SortOrder sortOrder, Map<String, Object> loadingFilters) {
-		    return new ArrayList<CounterPeriod>();
-		   }
-		   
-		  };
-		 }
-	
-	
+        return new LazyDataModelWSize<CounterPeriod>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public List<CounterPeriod> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
+                return new ArrayList<CounterPeriod>();
+            }
+        };
+    }
 	
 	 
 	@Override

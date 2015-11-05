@@ -139,6 +139,16 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+                try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
+			}
 
 			oneShotChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
@@ -241,6 +251,16 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				}
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
+			}
+			
+			// populate customFields
+			if (postData.getCustomFields() != null) {
+				try {
+                    populateCustomFields(postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					log.error("Failed to associate custom field instance to an entity", e);
+					throw new MeveoApiException("Failed to associate custom field instance to an entity");
+				}
 			}
 			
 			oneShotChargeTemplateService.update(chargeTemplate, currentUser);
@@ -355,5 +375,12 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
 		return oneShotChargeTemplateListDto;
 	}
-
+	
+	public void createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException {
+		if (oneShotChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

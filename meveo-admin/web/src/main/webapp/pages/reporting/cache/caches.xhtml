@@ -34,7 +34,7 @@
                         <!--                         </p:button> -->
 
                         <p:tooltip for="refreshlink" value="#{messages['cache.reload']}" showEffect="slide" hideEffect="slide" />
-                        <p:commandButton id="refreshlink" icon="ui-icon-refresh" oncomplete="PF('confirmRefreshWidget#{rowIndex}').show()" />
+                        <p:commandButton id="refreshlink" icon="ui-icon-refresh" onclick="PF('confirmRefreshWidget#{rowIndex}').show()" type="button" />
 
                         <p:confirmDialog styleClass="confirm-dialog" message="#{messages['cache.confirmReload']}" header="" severity="alert"
                             widgetVar="confirmRefreshWidget#{rowIndex}">
@@ -49,7 +49,7 @@
 
                 <p:commandButton value="#{messages['commons.refresh']}" update="@all" />
 
-                <p:commandButton value="#{messages['cache.reload']}" oncomplete="PF('confirmRefreshAllWidget').show()" />
+                <p:commandButton value="#{messages['cache.reload']}" onclick="PF('confirmRefreshAllWidget').show()" type="button" />
 
                 <p:confirmDialog styleClass="confirm-dialog" message="#{messages['cache.confirmReloadAll']}" header="" severity="alert" widgetVar="confirmRefreshAllWidget">
                     <p:panel styleClass="confirm-dialog-content">

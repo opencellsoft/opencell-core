@@ -30,14 +30,14 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 	public FilteredListResponseDto list(String filter, Integer firstRow, Integer numberOfRows) {
 		FilteredListResponseDto result = new FilteredListResponseDto();
 		try {
-			String response = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser().getProvider());
+			String response = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser());
 			result.getActionStatus().setMessage(response);
 		} catch (MeveoApiException e) {
-			log.debug("RESPONSE={}", e);
+			log.debug("RESPONSE={}", e.getMessage());
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			log.debug("RESPONSE={}", e);
+			log.debug("RESPONSE={}", e.getMessage());
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -52,11 +52,11 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 			String response = filteredListApi.listByXmlInput(postData, getCurrentUser().getProvider());
 			result.getActionStatus().setMessage(response);
 		} catch (MeveoApiException e) {
-			log.debug("RESPONSE={}", e);
+			log.debug("RESPONSE={}", e.getMessage());
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			log.debug("RESPONSE={}", e);
+			log.debug("RESPONSE={}", e.getMessage());
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
 			result.getActionStatus().setMessage(e.getMessage());
 		}

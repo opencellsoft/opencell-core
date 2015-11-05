@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:hftl="http://hftl.org" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition>
+    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
+        style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
+        inputWidth="#{inputWidth}">
+
+
+        <!-- Entity selection via popup -->
+        <c:if test="#{popup}">
+            <h:panelGroup>
+                <p:inputText id="#{id}" value="#{backingBean.filters[field][valueLabelField]}" size="#{size}" disabled="true" />
+                <p:commandButton id="selectLink" onclick="PF('dlg_#{popupId}').show()" icon="ui-icon-search" type="button" />
+                <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
+            </h:panelGroup>
+        </c:if>
+
+        <!-- Entity selection from a picklist -->
+        <c:if test="#{!popup}">
+
+            <c:if test="#{listElements==null}">
+                <c:set var="elements" value="#{listBean.listAll()}" />
+            </c:if>
+            <c:if test="#{listElements!=null}">
+                <c:set var="elements" value="#{listElements}" />
+            </c:if>
+
+            <p:selectOneMenu id="#{id}" value="#{backingBean.filters[field]}">
+                <f:selectItem itemLabel="" itemValue="" />
+                <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}" />
+                <s:objectConverter />
+            </p:selectOneMenu>
+        </c:if>
+    </hftl:decorateFormField>
+</ui:composition>
+
+</html>

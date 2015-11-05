@@ -22,7 +22,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.ActionPlanItem;
@@ -57,18 +56,12 @@ public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
 	}
 
 	@Override
-	public String saveOrUpdate(DDRequestLotOp entity) throws BusinessException {
+	public DDRequestLotOp saveOrUpdate(DDRequestLotOp entity) throws BusinessException {
 		if (entity.isTransient()) {
 			entity.setDdrequestOp(DDRequestOpEnum.CREATE);
 			entity.setStatus(DDRequestOpStatusEnum.WAIT);
-			getPersistenceService().create(entity);
-			messages.info(new BundleKey("messages", "save.successful"));
-		} else {
-			getPersistenceService().update(entity);
-			messages.info(new BundleKey("messages", "update.successful"));
 		}
-
-		return back();
+		return super.saveOrUpdate(entity);
 	}
 
 	@Override

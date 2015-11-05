@@ -1,8 +1,11 @@
 package org.meveo.services.job;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -10,8 +13,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.action.CustomFieldEnabledBean;
-import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -23,7 +25,6 @@ import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped
-@CustomFieldEnabledBean(accountLevel = AccountLevelEnum.TIMER)
 public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     private static final long serialVersionUID = 1L;
@@ -60,7 +61,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         return null;
     }
 
-    public String executeTimer() {
+    public String execute() {
         try {
             jobInstanceService.manualExecute(entity);
             messages.info(new BundleKey("messages", "info.entity.executed"), entity.getJobTemplate());
@@ -103,37 +104,31 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         if (entity.getJobTemplate() == null) {
             return null;
         }
-        // Get templates matching a job template name
-        List<CustomFieldTemplate> jobTemplates = customFieldTemplateService.findByJobName(entity.getJobTemplate());
 
-        // In case when job template has new custom fields defined in code, create them.
+        // Get job definition and custom field templates defined in a job
         Job job = jobInstanceService.getJobByName(entity.getJobTemplate());
-        List<CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+        Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
 
-        if (jobCustomFields != null && (jobTemplates.size() != jobCustomFields.size())) {
-            for (CustomFieldTemplate cf : jobCustomFields) {
-                if (!jobTemplates.contains(cf)) {
-                    customFieldTemplateService.create(cf, getCurrentUser(), entity.getProvider());
-                    jobTemplates.add(cf);
-                }
-            }
+        // Create missing custom field templates if needed
+        Collection<CustomFieldTemplate> jobTemplatesFromJob = null;
+        if (jobCustomFields == null) {
+            jobTemplatesFromJob = new ArrayList<CustomFieldTemplate>();
+        } else {
+            jobTemplatesFromJob = jobCustomFields.values();
         }
+        List<CustomFieldTemplate> jobTemplates = customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentProvider());
+
         return jobTemplates;
     }
 
     /**
-     * Check if a timer is running.
+     * Check if a job is running.
      * 
-     * @param timerEntity Timer entity
+     * @param jobInstance JobInstance entity
      * @return True if running
      */
-    public boolean isTimerRunning(JobInstance jobInstance) {
-        // Check a timerEntityservice's job cache only when timerEntity itself does not have that info - cases when executing an inactive job manually.
-        if (!jobInstance.isRunning()) {
-            return jobInstanceService.isTimerRunning(jobInstance.getId());
-        } else {
-            return true;
-        }
+    public boolean isTimerRunning(JobInstance jobInstance) {     
+            return jobInstanceService.isJobRunning(jobInstance.getId());
     }
 
 }

@@ -1,8 +1,10 @@
 package org.meveo.model.notification;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -15,6 +17,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -26,7 +29,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.jobs.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.validation.constraint.ClassName;
 
 @Entity
@@ -69,7 +72,10 @@ public class Notification extends BusinessEntity {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "ADM_NOTIFICATION_PARAMS") 
 	private Map<String, String> params = new HashMap<String, String>();
-
+	
+	@OneToMany (mappedBy = "notification", cascade = CascadeType.REMOVE)
+	protected List<NotificationHistory> notificationHistories;
+	
     public String getClassNameFilter() {
         return classNameFilter;
     }
@@ -143,7 +149,16 @@ public class Notification extends BusinessEntity {
 	@Override
     public String toString() {
         return String.format("Notification [%s, classNameFilter=%s, eventTypeFilter=%s, elFilter=%s, scriptInstance=%s, counterTemplate=%s, counterInstance=%s]", super.toString(),
-            classNameFilter, eventTypeFilter, elFilter, scriptInstance==null?"null":scriptInstance.getCode(), counterTemplate != null ? counterTemplate.getId() : null, counterInstance != null ? counterInstance.getId()
+            classNameFilter, eventTypeFilter, elFilter, scriptInstance != null ? scriptInstance.getId() : null , counterTemplate != null ? counterTemplate.getId() : null, counterInstance != null ? counterInstance.getId()
                     : null);
     }
+
+	public List<NotificationHistory> getNotificationHistories() {
+		return notificationHistories;
+	}
+
+	public void setNotificationHistories(
+			List<NotificationHistory> notificationHistories) {
+		this.notificationHistories = notificationHistories;
+	}
 }

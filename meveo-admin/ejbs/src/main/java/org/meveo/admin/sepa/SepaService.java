@@ -232,13 +232,14 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		}
 	}
 
-	public String getDDFileName(DDRequestLOT ddRequestLot) {
+	public String getDDFileName(DDRequestLOT ddRequestLot){
 		String fileName = ArConfig.getDDRequestFileNamePrefix()
 				+ ddRequestLot.getId();
 		fileName = fileName + "_" + ddRequestLot.getProvider().getCode();
 		fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")
 				+ ArConfig.getDDRequestFileNameExtension();
 		String outputDir = ArConfig.getDDRequestOutputDirectory();
+		log.info("DDRequest output directory=" + outputDir);
 		File dir = new File(outputDir);
 		if (!dir.exists()) {
 			dir.mkdirs();

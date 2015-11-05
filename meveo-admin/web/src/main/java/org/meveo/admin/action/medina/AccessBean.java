@@ -28,10 +28,8 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.action.CustomFieldEnabledBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -48,7 +46,6 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-@CustomFieldEnabledBean(accountLevel=AccountLevelEnum.ACC)
 public class AccessBean extends CustomFieldBean<Access> {
 
 	private static final long serialVersionUID = 1L;
@@ -127,7 +124,7 @@ public class AccessBean extends CustomFieldBean<Access> {
 	
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = "";
-		Subscription subscription = subscriptionService.findById(entity.getSubscription().getId());
+		Subscription subscription = subscriptionService.refreshOrRetrieve(entity.getSubscription());
 		entity.setSubscription(subscription);
 
 		if (entity.isTransient()) {
@@ -135,11 +132,15 @@ public class AccessBean extends CustomFieldBean<Access> {
 				messages.error(new BundleKey("messages", "access.duplicate"));
 				return result;
 			}
-		}
-		super.saveOrUpdate(killConversation);
+        }
 		
-		return "/pages/medina/access/accessDetail.xhtml?edit=true&accessId=" + entity.getId()
-				+ "&faces-redirect=true";
+        String outcome = super.saveOrUpdate(killConversation);
+
+        if (outcome != null) {
+            return getEditViewName(); // "/pages/medina/access/accessDetail.xhtml?edit=true&accessId=" + entity.getId() + "&faces-redirect=true";
+        }
+        
+        return null;
 	}
 	
 	public void resetEntity() {

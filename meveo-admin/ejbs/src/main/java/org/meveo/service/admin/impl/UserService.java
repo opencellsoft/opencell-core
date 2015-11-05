@@ -261,10 +261,14 @@ public class UserService extends PersistenceService<User> {
 		provider.getCode();
 		if (provider.getLanguage() != null) {
 			provider.getLanguage().getLanguageCode();
+		}
+		
+		if(provider.getTradingLanguages() != null){
 			for (TradingLanguage language : provider.getTradingLanguages()) {
 				language.getLanguageCode();
 			}
 		}
+		
 		for (WalletTemplate template : provider.getPrepaidWalletTemplates()) {
 			template.getCode();
 		}

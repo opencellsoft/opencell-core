@@ -180,4 +180,11 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends
 	protected List<String> getListFieldsToFetchImpl() {
 		return null;
 	}
+	
+    /**
+     * A method to mock List/Set/Collection size property, so it is easy to be used in EL expressions
+     */
+    public Integer size() {
+        return rowCount;
+    }
 }

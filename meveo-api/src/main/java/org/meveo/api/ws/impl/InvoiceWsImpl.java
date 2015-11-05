@@ -21,6 +21,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.InvoiceWs;
+import org.meveo.model.billing.InvoiceTypeEnum;
 
 @WebService(serviceName = "InvoiceWs", endpointInterface = "org.meveo.api.ws.InvoiceWs")
 @Interceptors({ LoggingInterceptor.class })
@@ -30,7 +31,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	InvoiceApi invoiceApi;
 
 	@Override
-	public InvoiceCreationResponse create(InvoiceDto invoiceDto) {
+	public InvoiceCreationResponse createInvoice(InvoiceDto invoiceDto) {
 		InvoiceCreationResponse result = new InvoiceCreationResponse();
 
 		try {
@@ -51,7 +52,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	}
 
 	@Override
-	public CustomerInvoicesResponse find(String customerAccountCode) {
+	public CustomerInvoicesResponse findInvoice(String customerAccountCode) {
 		CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
 		try {
@@ -70,25 +71,25 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	}
 
 	@Override
-	public GenerateInvoiceResponseDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto) {
+	public GenerateInvoiceResponseDto generateInvoiceData(GenerateInvoiceRequestDto generateInvoiceRequestDto) {
 		GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
-		try{
+		try {
 
 			result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
-		}catch(MissingParameterException mpe){
+		} catch (MissingParameterException mpe) {
 			result.getActionStatus().setErrorCode(mpe.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(mpe.getMessage());
-		}catch (EntityDoesNotExistsException ednep) {
+		} catch (EntityDoesNotExistsException ednep) {
 			result.getActionStatus().setErrorCode(ednep.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(ednep.getMessage());
-		}catch (BusinessApiException bae) {
+		} catch (BusinessApiException bae) {
 			result.getActionStatus().setErrorCode(bae.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(bae.getMessage());			
+			result.getActionStatus().setMessage(bae.getMessage());
 		} catch (Exception e) {
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -97,27 +98,32 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 		log.info("generateInvoice Response={}", result);
 		return result;
 	}
+	
+	@Override
+	public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber) {
+		return findXMLInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+	}
 
 	@Override
-	public GetXmlInvoiceResponseDto getXMLInvoice(Long invoiceId) {
+	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(String invoiceNumber, String invoiceType) {
 		GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
-		try{
-			
-			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceId, getCurrentUser()));
+		try {
+
+			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-			
-		}catch(MissingParameterException mpe){
+
+		} catch (MissingParameterException mpe) {
 			result.getActionStatus().setErrorCode(mpe.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(mpe.getMessage());
-		}catch (EntityDoesNotExistsException ednep) {
+		} catch (EntityDoesNotExistsException ednep) {
 			result.getActionStatus().setErrorCode(ednep.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(ednep.getMessage());
-		}catch (BusinessException bae) {
+		} catch (BusinessException bae) {
 			result.getActionStatus().setErrorCode("BusinessException");
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(bae.getMessage());			
+			result.getActionStatus().setMessage(bae.getMessage());
 		} catch (Exception e) {
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -126,23 +132,28 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 		log.info("getXMLInvoice Response={}", result);
 		return result;
 	}
+	
+	@Override
+	public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber) {
+		return findPdfInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+	}
 
 	@Override
-	public GetPdfInvoiceResponseDto getPdfInvoice(Long invoiceId) {
+	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(String invoiceNumber, String invoiceType) {
 		GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
 		try {
-			
-			result.setPdfContent(invoiceApi.getPdfInvoince(invoiceId, getCurrentUser()));
+
+			result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, invoiceType, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-			
-		}catch(MissingParameterException mpe){
+
+		} catch (MissingParameterException mpe) {
 			result.getActionStatus().setErrorCode(mpe.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(mpe.getMessage());
-		}catch (EntityDoesNotExistsException ednep) {
+		} catch (EntityDoesNotExistsException ednep) {
 			result.getActionStatus().setErrorCode(ednep.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(ednep.getMessage());			
+			result.getActionStatus().setMessage(ednep.getMessage());
 		} catch (Exception e) {
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

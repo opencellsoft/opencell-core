@@ -67,5 +67,9 @@ public interface CounterTemplateRs extends IBaseRs {
 	@DELETE
 	ActionStatus remove(
 			@PathParam("counterTemplateCode") String counterTemplateCode);
-
+	
+	@Path("/createOrUpdate")
+	@POST
+	ActionStatus createOrUpdate(CounterTemplateDto postData);
+	
 }

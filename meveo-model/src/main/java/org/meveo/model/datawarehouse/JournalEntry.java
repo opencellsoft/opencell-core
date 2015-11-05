@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -47,6 +49,7 @@ public class JournalEntry implements IEntity, IVersionedEntity {
 	@Id
 	@GeneratedValue(generator = "ID_GENERATOR")
 	@Column(name = "ID")
+    @Access(AccessType.PROPERTY)
 	private Long id;
 
 	@Version

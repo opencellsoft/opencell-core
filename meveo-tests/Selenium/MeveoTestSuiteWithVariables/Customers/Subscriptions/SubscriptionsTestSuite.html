@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the tow fields "Code, Status, Description and Filters" then click on the button "search".
+Expected Results : The result of research gives the items matching with the Code, Status, Description and Filters filled bellow
+
+Description Test Case 2: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "clean filters".
+Expected Results : The fileds (Code, Status, Description and Filters) become empty.
+
+Description Test Case 3: 
+Actions : Click on the button "New" in order to add a new Subscriptions.
+Expected Results : A list of empty items are showed.
+
+Description Test Case 4: 
+Actions : Don't fill any field then click on "save".
+Expected Results : A new Subscriptions can not be created, an alert appears to mention that User Account, Offer,Code, Description and Initial Agreement Date are required to create the Subscriptions
+
+Description Test Case 5:
+Actions : Click on "reset".
+Expected Results : The field code become empty.
+
+Description Test Case 6: 
+Actions : Fill only the field "User account" then click on "save".
+Expected Results : A new Subscriptions can not be created, an alert appears to mention that Offer, Code, Description and Initial agreement date are required to create the Subscriptions.
+
+Description Test Case 7: 
+Actions : Fill only the field "Offer" then click on "save".
+Expected Results : A new Subscriptions can not be created, an alert appears to mention that User account, Code, Description and Initial agreement date are required to create the Subscriptions.
+
+Description Test Case 8: 
+Actions : Fill only the field "Code" then click on "save".
+Expected Results : A new Subscriptions can not be created, an alert appears to mention that User account, Offer, Description and Initial agreement date are required to create the Subscriptions.
+
+Description Test Case 9: 
+Actions : Fill only the field "Description" then click on "save".
+Expected Results : A new Subscriptions can not be created, an alert appears to mention that User account, Offer, Code and Initial agreement date are required to create the Subscriptions.
+
+Description Test Case 10: 
+Actions : Fill only the field "Initial agreement date" then click on "save".
+Expected Results : A new Subscriptions can not be created, an alert appears to mention that User account, Offer, Code and Description are required to create the Subscriptions.
+
+Description Test Case 11: 
+Actions : Let the required fields not filled and fill not required fields and click on "save"
+Expected Results : A new Subscriptions can not be created, an alert appears to mention that User account, Offer, Code, Description and Initial agreement date are required to create the Subscriptions
+
+Description Test Case 12: 
+Actions : Click on "back".
+Expected Results : Return to the previous page. 
+
+Description Test Case 13: 
+Actions : Fill in the tab 'Informations' the required fields ( User account, Offer, Code, Description and Initial agreement date) then fill (End Agreement Date,Default) and click on "save".
+Expected Results : A new Subscriptions is created.
+
+Description Test Case 14: 
+Actions : Click on the link "Subscriptions".
+Expected Results :  Return to the table informations page.
+
+Description Test Case 15: 
+Actions : Make a search by filling the field "Code" then click on the button "search".
+Expected Results :The result of research gives the items which are matching with the chosen Subscriptions.
+
+Description Test Case 16: 
+Actions : Pick one or more lines from the table then click on the button "Export to Excel"
+Expected Results : The picked lines are exported on an Excel file
+
+Description Test Case 17: 
+Actions : Click on the button "Export to excel", without picking any line from the table
+Expected Results : All the lines from the table are been exported on an excel file
+
+Description Test Case 18: 
+Actions : Make a search by filling the field "Code, Status and Description" then click on the button "search".
+Expected Results :The result of research gives the items which are matching with the chosen Subscriptions.
+
+Description Test Case 19: 
+Actions : Click on the button"delete multiple" wihout picking any line from the table.
+Expected Results : Nothing happened.
+
+Description Test Case 20: 
+Actions : Pick more than one line from the table then click on the button "Delete multiple"
+Expected Results : The picked lines are erased
+
+Description Test Case 21: 
+Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
+Expected Results : The table shows 15 lines per page 
+
+Description Test Case 22: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
+Expected Results : The table shows 20 lines per page 
+
+Description Test Case 23: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
+Expected Results : The table shows 50 lines per page 
+
+Description Test Case 24: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
+Expected Results : The table shows 10 lines per page 
+
+Description Test Case 25: 
+Actions : Click on the button to move to the next page 
+Expected Results : The next page is displayed
+
+Description Test Case 26: 
+Actions : Click on the button to move to the last page 
+Expected Results :The last page is displayed
+
+Description Test Case 27: 
+Actions : Click on the button to move to the previous page
+Expected Results :The previous page is displayed
+
+Description Test Case 28: 
+Actions : In each column from the table (Code, Description, Status, User Account) there is a filter , click on the filter in column "Code" in order to refine your search in an ascending/descending order.
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 29: 
+Actions : Click on the filter in column "Description" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 30: 
+Actions : Click on the filter in column "Status" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+Description Test Case 31: 
+Actions : Click on the filter in column "User Account" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order.
+
+-->
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="../../VariablesGlobales.html">VariablesGlobales</a></td></tr>
+<tr><td><a href="variables.html">variables</a></td></tr>
+<tr><td><a href="SearchWithCodeStatusDescriptionFiltersTestCase.html">SearchWithCodeStatusDescriptionFiltersTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="NewSubscriptionsTestCase.html">NewSubscriptionsTestCase</a></td></tr>
+<tr><td><a href="EmptySubscriptionsTestCase.html">EmptySubscriptionsTestCase</a></td></tr>
+<tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
+<tr><td><a href="FillOnlyUserAccountTestCase.html">FillOnlyUserAccountTestCase</a></td></tr>
+<tr><td><a href="FillOnlyOfferTestCase.html">FillOnlyOfferTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyDescriptionTestCase.html">FillOnlyDescriptionTestCase</a></td></tr>
+<tr><td><a href="FillOnlyInitialAgreementDateTestCase.html">FillOnlyInitialAgreementDateTestCase</a></td></tr>
+<tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
+<tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
+<tr><td><a href="SuccessSubscriptionsTestCase.html">SuccessSubscriptionsTestCase</a></td></tr>
+<tr><td><a href="ReturnToSubscriptionTableTestCase.html">ReturnToSubscriptionTableTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeTestCase.html">SearchWithCodeTestCase</a></td></tr>
+<tr><td><a href="ExportWithPickLineTestCase.html">ExportWithPickLineTestCase</a></td></tr>
+<tr><td><a href="ExportWithoutPickAnyLineTestCase.html">ExportWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeStatusDescriptionTestCase.html">SearchWithCodeStatusDescriptionTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithoutPickAnyLineTestCase.html">DeleteMultipleWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithPickLineTestCase.html">DeleteMultipleWithPickLineTestCase</a></td></tr>
+<tr><td><a href="DropdownWith15TestCase.html">DropdownWith15TestCase</a></td></tr>
+<tr><td><a href="DropdownWith20TestCase.html">DropdownWith20TestCase</a></td></tr>
+<tr><td><a href="DropdownWith50TestCase.html">DropdownWith50TestCase</a></td></tr>
+<tr><td><a href="DropdownWith10TestCase.html">DropdownWith10TestCase</a></td></tr>
+<tr><td><a href="NextPageTestCase.html">NextPageTestCase</a></td></tr>
+<tr><td><a href="LastPageTestCase.html">LastPageTestCase</a></td></tr>
+<tr><td><a href="PreviousPageTestCase.html">PreviousPageTestCase</a></td></tr>
+<tr><td><a href="FilterWithCodeTestCase.html">FilterWithCodeTestCase</a></td></tr>
+<tr><td><a href="FilterWithDescriptionTestCase.html">FilterWithDescriptionTestCase</a></td></tr>
+<tr><td><a href="FilterWithStatusTestCase.html">FilterWithStatusTestCase</a></td></tr>
+<tr><td><a href="FilterWithUserAccountTestCase.html">FilterWithUserAccountTestCase</a></td></tr>
+<tr><td><a href="LogoutTestCase.html">LogoutTestCase</a></td></tr>
+</tbody></table>
+</body>
+</html>

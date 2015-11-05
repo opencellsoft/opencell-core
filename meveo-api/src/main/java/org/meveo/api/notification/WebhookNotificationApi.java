@@ -14,10 +14,10 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.WebHookService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -245,5 +245,12 @@ public class WebhookNotificationApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	public void createOrUpdate(WebhookNotificationDto postData, User currentUser) throws MeveoApiException {
+		if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

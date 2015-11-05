@@ -1,10 +1,14 @@
 package org.meveo.api.ws.impl;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.catalog.ChargeTemplateApi;
@@ -594,6 +598,27 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
 		try {
 			usageChargeTemplateApi.create(postData, getCurrentUser());
+		} catch (EJBTransactionRolledbackException e) {
+			Throwable t = e.getCause();
+		    while ((t != null) && !(t instanceof ConstraintViolationException)) {
+		        t = t.getCause();
+		    }
+		    if (t instanceof ConstraintViolationException) {
+		    	ConstraintViolationException cve = (ConstraintViolationException) (t);
+		    	Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
+		    	String errMsg = "";
+		    	for (ConstraintViolation<?> cv : violations) {		    		
+		    		errMsg  += cv.getPropertyPath() + " " + cv.getMessage() + ",";
+		    	}
+		    	errMsg = errMsg.substring(0, errMsg.length()-1);
+		    	result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
+				result.setStatus(ActionStatusEnum.FAIL);
+				result.setMessage(errMsg);   
+		    } else {
+		    	result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+				result.setStatus(ActionStatusEnum.FAIL);
+				result.setMessage(e.getMessage());
+		    }
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -614,6 +639,27 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
 		try {
 			usageChargeTemplateApi.update(postData, getCurrentUser());
+		} catch (EJBTransactionRolledbackException e) {
+			Throwable t = e.getCause();
+		    while ((t != null) && !(t instanceof ConstraintViolationException)) {
+		        t = t.getCause();
+		    }
+		    if (t instanceof ConstraintViolationException) {
+		    	ConstraintViolationException cve = (ConstraintViolationException) (t);
+		    	Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
+		    	String errMsg = "";
+		    	for (ConstraintViolation<?> cv : violations) {		    		
+		    		errMsg  += cv.getPropertyPath() + " " + cv.getMessage() + ",";
+		    	}
+		    	errMsg = errMsg.substring(0, errMsg.length()-1);
+		    	result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
+				result.setStatus(ActionStatusEnum.FAIL);
+				result.setMessage(errMsg);   
+		    } else {
+		    	result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+				result.setStatus(ActionStatusEnum.FAIL);
+				result.setMessage(e.getMessage());
+		    }
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -768,4 +814,185 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		return result;
 	}
 
+	@Override
+	public ActionStatus createOrUpdateOfferTemplate(OfferTemplateDto postData) {
+		
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			offerTemplateApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateUsageChargeTemplate(UsageChargeTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			usageChargeTemplateApi.createOrUpdate(postData, getCurrentUser());
+		} catch (EJBTransactionRolledbackException e) {
+			Throwable t = e.getCause();
+		    while ((t != null) && !(t instanceof ConstraintViolationException)) {
+		        t = t.getCause();
+		    }
+		    if (t instanceof ConstraintViolationException) {
+		    	ConstraintViolationException cve = (ConstraintViolationException) (t);
+		    	Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
+		    	String errMsg = "";
+		    	for (ConstraintViolation<?> cv : violations) {		    		
+		    		errMsg  += cv.getPropertyPath() + " " + cv.getMessage() + ",";
+		    	}
+		    	errMsg = errMsg.substring(0, errMsg.length()-1);
+		    	result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
+				result.setStatus(ActionStatusEnum.FAIL);
+				result.setMessage(errMsg);   
+		    } else {
+		    	result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+				result.setStatus(ActionStatusEnum.FAIL);
+				result.setMessage(e.getMessage());
+		    }
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateTriggeredEdr(TriggeredEdrTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			triggeredEdrApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateServiceTemplate(ServiceTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			serviceTemplateApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateRecurringChargeTemplate(RecurringChargeTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			recurringChargeTemplateApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdatePricePlan(PricePlanDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			pricePlanApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateOneShotChargeTemplate(OneShotChargeTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			oneShotChargeTemplateApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateCounterTemplate(CounterTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		
+		try {
+			counterTemplateApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 }

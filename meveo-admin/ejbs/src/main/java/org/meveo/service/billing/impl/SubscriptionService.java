@@ -41,7 +41,6 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 
 @Stateless
@@ -49,9 +48,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
 	@EJB
 	private ServiceInstanceService serviceInstanceService;
-
-	@Inject
-	private OfferTemplateService offerTemplateService;
 
 	@Inject
 	private AccessService accessService;
@@ -213,25 +209,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		update(subscription, user);
 	}
 
-	public boolean isDuplicationExist(Subscription subscription) {
-		if (subscription == null) {
-			return false;
-		}
-
-		List<Subscription> subscriptions = listByUserAccount(subscription
-				.getUserAccount());
-		for (Subscription sub : subscriptions) {
-			if (sub.getDefaultLevel() != null
-					&& sub.getDefaultLevel()
-					&& (subscription.getId() == null || (subscription.getId() != null && !subscription
-							.getId().equals(sub.getId())))) {
-				return true;
-			}
-		}
-
-		return false;
-
-	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Subscription> findByOfferTemplate(OfferTemplate offerTemplate){

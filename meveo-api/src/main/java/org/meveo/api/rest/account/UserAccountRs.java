@@ -58,5 +58,9 @@ public interface UserAccountRs extends IBaseRs {
 	@GET
 	@Path("/list")
 	UserAccountsResponseDto listByBillingAccount(@QueryParam("billingAccountCode") String billingAccountCode);
-
+	
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(UserAccountDto postData);
+	
 }

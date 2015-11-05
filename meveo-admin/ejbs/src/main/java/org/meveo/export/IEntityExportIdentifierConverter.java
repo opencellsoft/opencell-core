@@ -89,7 +89,7 @@ public class IEntityExportIdentifierConverter implements Converter {
 
         boolean willConvert = isIEntity && !exportImportConfig.isExportFull(clazz);
         if (willConvert) {
-            log.debug("Will be using " + this.getClass().getSimpleName() + " for " + clazz);
+            log.trace("Will be using " + this.getClass().getSimpleName() + " for " + clazz);
         }
         return willConvert;
     }

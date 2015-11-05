@@ -39,9 +39,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 
 @Entity
+@CustomFieldEntity(cftCodePrefix = "UA")
 @ExportIdentifier({ "code", "provider" })
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "BILLING_USER_ACCOUNT")
@@ -72,7 +75,7 @@ public class UserAccount extends AccountEntity {
 	@JoinColumn(name = "BILLING_ACCOUNT_ID")
 	private BillingAccount billingAccount;
 
-	@OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "userAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	// TODO : Add orphanRemoval annotation.
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Subscription> subscriptions = new ArrayList<Subscription>();
@@ -204,4 +207,8 @@ public class UserAccount extends AccountEntity {
 		return result;
 	}
 
+    @Override
+    public ICustomFieldEntity getParentCFEntity() {
+        return billingAccount;
+	}
 }

@@ -24,11 +24,11 @@ import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.WebHookService;
@@ -100,7 +100,8 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 
         extractMapTypeFieldFromEntity(webhook.getHeaders(), "headers");
         extractMapTypeFieldFromEntity(webhook.getParams(), "params");
-
+        extractMapTypeFieldFromEntity(webhook.getWebhookParams(), "webhookParams");
+        
         return webhook;
     }
 
@@ -109,6 +110,7 @@ public class WebHookBean extends UpdateMapTypeFieldBean<WebHook> {
 
         updateMapTypeFieldInEntity(entity.getHeaders(), "headers");
         updateMapTypeFieldInEntity(entity.getParams(), "params");
+        updateMapTypeFieldInEntity(entity.getWebhookParams(), "webhookParams");
 
         return super.saveOrUpdate(killConversation);
     }

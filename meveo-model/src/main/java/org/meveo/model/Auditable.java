@@ -99,8 +99,16 @@ public class Auditable implements Serializable {
 		return (updater != null) ? updater : creator;
 	}
 
-	public void updateWith(User currentUser) {
-		this.updated = new Date();
-		this.updater = currentUser;
-	}
+    public void updateWith(User currentUser) {
+        this.updated = new Date();
+        this.updater = currentUser;
+
+        // Make sure that creator and created fields are set in case entity was imported or entered by some other means               
+        if (this.creator == null) {
+            this.creator = currentUser;
+        }
+        if (this.created == null) {
+            this.created = this.updated;
+        }
+    }
 }

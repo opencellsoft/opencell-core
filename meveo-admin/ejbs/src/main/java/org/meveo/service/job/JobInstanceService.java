@@ -16,6 +16,7 @@
  */
 package org.meveo.service.job;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.JobDoesNotExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -54,6 +56,8 @@ import org.slf4j.LoggerFactory;
 public class JobInstanceService extends PersistenceService<JobInstance> {
 	public static Map<JobCategoryEnum, HashMap<String, String>> jobEntries = new HashMap<JobCategoryEnum, HashMap<String, String>>();
 	public static Map<Long, Timer> jobTimers = new HashMap<Long, Timer>();
+	public static List<Long> runningJobs = new ArrayList<Long>();
+	
 
 	@Resource
 	private TimerService timerService;
@@ -136,10 +140,29 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 			InitialContext ic=new InitialContext();
 			result = (Job) ic.lookup("java:global/"+paramBean.getProperty("meveo.moduleName", "meveo")+"/"+jobName);
 		} catch (NamingException e) {
-			log.error("Failed to get job by name",e);
+			log.error("Failed to get job by name {}", jobName,e);
 		}
 		return result;
 	}
+
+    public List<Job> getJobs() {
+        List<Job> jobs = new ArrayList<Job>();
+
+        for (HashMap<String, String> jobInfos : jobEntries.values()) {
+            for (String url : jobInfos.values()) {
+                try {
+                    InitialContext ic = new InitialContext();
+                    Job job = (Job) ic.lookup(url);
+                    jobs.add(job);
+
+                } catch (NamingException e) {
+                    log.error("Failed to get job by url {}", url, e);
+                }
+            }
+        }
+        
+        return jobs;
+    }
 
 	public void create(JobInstance jobInstance) throws BusinessException {
 		InitialContext ic;
@@ -150,7 +173,6 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 				if (getCurrentUser() == null) {
 					throw new BusinessException("User must be logged in to perform this action.");
 				}
-				jobInstance.setUserId(getCurrentUser().getId());
 
 				super.create(jobInstance);
 				HashMap<String, String> jobs = jobEntries.get(jobInstance.getJobCategoryEnum());
@@ -236,7 +258,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 
 					Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
 
-					User currentUser = userService.findById(entity.getUserId());
+					User currentUser = userService.attach(entity.getAuditable().getUpdater()!=null?entity.getAuditable().getUpdater():entity.getAuditable().getCreator());
 					job.execute(entity, currentUser);
 				}
 			}
@@ -245,24 +267,22 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		}
 	}
 
-	public void triggerExecution(JobInstance entity, Map<String, String> params) throws BusinessException {
-		log.info("triggerExecution jobInstance={} via api", entity.getJobTemplate());
-		//TODO customize CF
-		manualExecute( entity);
+	public void triggerExecution(String jobInstanceCode, Map<String, String> params,User user) throws BusinessException {
+		log.info("triggerExecution jobInstance={} via trigger", jobInstanceCode);
+		execute(jobInstanceCode, user, params);
+		
 	}
 
 	public void manualExecute(JobInstance entity) throws BusinessException {
 		log.info("Manual execute a job {} of type {}", entity.getCode(), entity.getJobTemplate());
-
 		try {
-
 			// Retrieve a timer entity from registered job timers, so if job is launched manually and automatically at the same time, only one will run 
 			if (jobTimers.containsKey(entity.getId())){
 				entity = (JobInstance) jobTimers.get(entity.getId()).getInfo();
 			}
 
-			InitialContext ic = new InitialContext();
-			User currentUser = userService.findById(entity.getUserId());
+            InitialContext ic = new InitialContext();
+            User currentUser = userService.attach(entity.getAuditable().getUpdater()!=null?entity.getAuditable().getUpdater():entity.getAuditable().getCreator());
 			if ( !currentUser.doesProviderMatch(getCurrentProvider())) {
 				throw new BusinessException("Not authorized to execute this job");
 			}
@@ -286,22 +306,28 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	}
 
 	public Long executeAPITimer(JobInstanceInfoDto jobInstanceInfoDTO, User currentUser) throws BusinessException {
-		log.info("execute timer={} via api", jobInstanceInfoDTO.getTimerName());
+		log.info("executeAPITimer jobInstance={} via api", jobInstanceInfoDTO.toString());
+		String jobInstanceCode = jobInstanceInfoDTO.getCode();
+		
+		if (StringUtils.isBlank(jobInstanceCode)) {
+			jobInstanceCode = jobInstanceInfoDTO.getTimerName();
+		} 
+		return execute(jobInstanceCode, currentUser, null);
+	}
+	
+	
+	public Long execute(String jobInstanceCode, User currentUser,Map<String, String> params) throws BusinessException {
+		log.info("execute timer={} ",jobInstanceCode);
 		JobInstance entity = null;
-		try {
-			entity = (JobInstance) getEntityManager()
-					.createQuery("FROM JobInstance where code=:codeIN and provider=:providerIN")
-					.setParameter("codeIN", jobInstanceInfoDTO.getTimerName())
-					.setParameter("providerIN", currentUser.getProvider()).getSingleResult();
-		} catch (NoResultException e) {
-			log.warn("No job with name={} was found.", jobInstanceInfoDTO.getTimerName());
-			entity = null;
+		entity = findByCode(jobInstanceCode, currentUser.getProvider());
+		if (entity == null) {
+			throw new JobDoesNotExistsException(jobInstanceCode);
+		}		
+		// lazy loading
+		if (entity.getCfFields() != null) {
+		    entity.getCfFields().getUuid();
 		}
-		
-		if(entity == null) {
-			throw new JobDoesNotExistsException(jobInstanceInfoDTO.getTimerName());
-		}
-		
+	
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		result.setJobInstance(entity);
 		InitialContext ic;
@@ -311,16 +337,6 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 				HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
 				if (jobs.containsKey(entity.getJobTemplate())) {
 					Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
-
-					if(jobInstanceInfoDTO.getInvoiceDate()!=null){
-						entity.setDateCustomValue("BillingRunJob_invoiceDate",jobInstanceInfoDTO.getInvoiceDate());
-					}
-					if(jobInstanceInfoDTO.getLastTransactionDate()!=null){
-						entity.setDateCustomValue("BillingRunJob_lastTransactionDate",jobInstanceInfoDTO.getLastTransactionDate());
-					}
-					if(jobInstanceInfoDTO.getBillingCycle()!=null){
-						entity.setStringCustomValue("BillingRunJob_billingCycle",jobInstanceInfoDTO.getBillingCycle());
-					}					
 					jobExecutionService.create(result, currentUser, currentUser.getProvider());
 					job.execute(entity, result, currentUser);
 				}
@@ -328,7 +344,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 				throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
 			}
 		} catch (NamingException e) {
-			log.error("failed to execute API timer",e);
+			log.error("failed to execute ", e);
 		}
 		
 		return result.getId();
@@ -370,22 +386,13 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	 * @param timerEntityId Timer entity id
 	 * @return True if running
 	 */
-	public boolean isTimerRunning(Long timerEntityId) {
-		Timer timer = jobTimers.get(timerEntityId);
-
-		if (timer != null) {
-			try {
-				return ((JobInstance) timer.getInfo()).isRunning();
-			} catch (Exception e) {
-				log.error("Failed to access timer status {}", e);
-			}
-		}
-		return false;
+	public boolean isJobRunning(Long timerEntityId) {
+		return runningJobs.contains(timerEntityId);		
 	}
 
 	public JobInstance findByCode(String code,Provider provider) {
 		QueryBuilder qb = new QueryBuilder(JobInstance.class, "t");
-		qb.addCriterionWildcard("t.code", code, true); 
+		qb.addCriterion("t.code","=", code, true); 
 		qb.addCriterionEntity("provider", provider);
 		try {
 			return (JobInstance) qb.getQuery(getEntityManager()).getSingleResult();

@@ -14,9 +14,9 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.ScriptInstance;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.EmailNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -212,5 +212,12 @@ public class EmailNotificationApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
+	public void createOrUpdate(EmailNotificationDto postData, User currentUser) throws MeveoApiException {
+		if (emailNotificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+			create(postData, currentUser);
+		} else {
+			update(postData, currentUser);
+		}
+	}
 }

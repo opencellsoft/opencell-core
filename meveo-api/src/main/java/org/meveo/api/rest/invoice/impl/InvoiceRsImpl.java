@@ -23,6 +23,7 @@ import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.invoice.InvoiceRs;
+import org.meveo.model.billing.InvoiceTypeEnum;
 
 /**
  * @author R.AITYAAZZA
@@ -103,13 +104,18 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 		log.info("generateInvoice Response={}", result);
 		return result;
 	}
+	
+	@Override
+	public GetXmlInvoiceResponseDto getXMLInvoice(String invoiceNumber) {
+		return getXMLInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+	}
 
 	@Override
-	public GetXmlInvoiceResponseDto getXMLInvoice(Long invoiceId) {
+	public GetXmlInvoiceResponseDto getXMLInvoiceWithType(String invoiceNumber, String invoiceType) {
 		GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
 		try{
 			
-			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceId, getCurrentUser()));
+			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 			
 		}catch(MissingParameterException mpe){
@@ -132,13 +138,18 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 		log.info("getXMLInvoice Response={}", result);
 		return result;
 	}
+	
+	@Override
+	public GetPdfInvoiceResponseDto getPdfInvoice(String InvoiceNumber) {
+		return getPdfInvoiceWithType(InvoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+	}
 
 	@Override
-	public GetPdfInvoiceResponseDto getPdfInvoice(Long invoiceId) {
+	public GetPdfInvoiceResponseDto getPdfInvoiceWithType(String InvoiceNumber, String invoiceType) {
 		GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
 		try {
 			
-			result.setPdfContent(invoiceApi.getPdfInvoince(invoiceId, getCurrentUser()));
+			result.setPdfContent(invoiceApi.getPdfInvoince(InvoiceNumber, invoiceType, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 			
 		}catch(MissingParameterException mpe){

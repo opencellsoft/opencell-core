@@ -43,7 +43,14 @@
 			<p:menuitem id="providers" outcome="providers"
 				value="#{messages['menu.providers']}"
 				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
-			
+				
+			<p:menuitem id="provider" outcome="providerSelfDetail"
+				value="#{messages['menu.provider']}"
+				rendered="#{identity.hasPermission('administration','administrationManagement')}" >
+				<f:param name="objectId" value="#{providerBean.getCurrentProvider().id}" />
+				<f:param name="edit" value="true" />
+			</p:menuitem>
+				
 			<p:menuitem id="providerContacts" outcome="providerContacts"
 					value="#{messages['menu.providerContacts']}" />
 
@@ -101,8 +108,8 @@
 					outcome="calendars" id="calendars"
 					value="#{messages['menu.calendars']}" />
 					
-				<p:menuitem id="customFieldTemplates" outcome="customFieldTemplates"
-					value="#{messages['menu.customFieldTemplates']}" />
+				<p:menuitem id="customizedEntities" outcome="customizedEntities"
+					value="#{messages['menu.customizedEntities']}" />
 
 			<p:submenu id="invoicingconfig" label="#{messages['menu.invoicing']}">
 			
@@ -132,7 +139,7 @@
 					
 			
 			<p:menuitem id="meveoProperties"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
 				outcome="meveoProperties" value="#{messages['menu.properties']}" />
 
         </p:submenu>
@@ -235,6 +242,9 @@
 
 			<p:menuitem id="billingRuns" outcome="billingRuns"
 				value="#{messages['menu.billingRuns']}" />
+				
+			<p:menuitem id="ratedTransactions" outcome="ratedTransactions"
+				value="#{messages['menu.ratedTransactions']}" />
 
 		</p:submenu>
 
@@ -279,9 +289,9 @@
 					value="#{messages['menu.emailNotifications']}"
 					outcome="emailNotifications" />
 
-				<!-- <p:menuitem id="imNotifications"
-						value="#{messages['menu.instantMessagingNotifications']}"
-						outcome="instantMessagingNotifications" /> -->
+				<p:menuitem id="jobTriggers"
+						value="#{messages['menu.jobTriggers']}"
+						outcome="jobTriggers" /> 
 
 				<p:menuitem id="notificationHistory"
 					value="#{messages['menu.notificationHistories']}"

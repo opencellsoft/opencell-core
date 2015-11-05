@@ -69,5 +69,14 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 	@Path("/{usageChargeTemplateCode}")
 	public ActionStatus remove(
 			@PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
+	
+	/**
+	 * Create or update charge template with a given code.
+	 * @param postData
+	 * @return
+	 */
+	@POST
+	@Path("/createOrUpdate")
+	public ActionStatus createOrUpdate(UsageChargeTemplateDto postData);
 
 }

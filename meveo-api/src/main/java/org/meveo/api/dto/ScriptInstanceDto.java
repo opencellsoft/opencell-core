@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.jobs.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -24,7 +24,7 @@ public class ScriptInstanceDto {
 	@XmlElement
 	private String type;
 
-	@XmlElement
+	@XmlElement(required = true)
 	private String script;
 
 	public ScriptInstanceDto() {

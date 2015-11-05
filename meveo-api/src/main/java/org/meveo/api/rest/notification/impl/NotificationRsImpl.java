@@ -151,5 +151,25 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+	
+	@Override
+	public ActionStatus createOrUpdate(NotificationDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+		try {
+			notificationApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error occurred while creating notification ",e);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error generated while creating notification ",e);
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 }
