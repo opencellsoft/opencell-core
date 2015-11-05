@@ -198,6 +198,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 									
 									newSubCategoryInvoiceAgregate.setInvoice(invoice);
 									newSubCategoryInvoiceAgregate.setAuditable(auditable);
+									newSubCategoryInvoiceAgregate.setOldAmountWithoutTax(subCategoryInvoiceAgregate
+											.getAmountWithoutTax());
 									newSubCategoryInvoiceAgregate
 											.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
 
