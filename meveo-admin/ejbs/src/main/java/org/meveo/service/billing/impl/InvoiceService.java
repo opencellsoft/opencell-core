@@ -148,6 +148,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return null;
 		}
 	}
+	
+	public Invoice findByInvoiceNumberAndType(String invoiceNumber, InvoiceTypeEnum type, Provider provider)
+			throws BusinessException {
+		QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null, provider);
+		qb.addCriterion("invoiceNumber", "=", invoiceNumber, true);
+		qb.addCriterionEnum("invoiceTypeEnum", type);
+		try {
+			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
+			return null;
+		} catch (NonUniqueResultException e) {
+			log.info("Multiple invoices with invoice number #0 was found. Returning null.", invoiceNumber);
+			return null;
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
 	public Invoice getInvoice(String invoiceNumber, CustomerAccount customerAccount) throws BusinessException {
 		return getInvoice(getEntityManager(), invoiceNumber, customerAccount);
@@ -909,11 +927,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 			subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(
 					subCategoryInvoiceAgregate.getAmountWithoutTax());
-
-			for (TaxInvoiceAgregate taxInvoiceAgregate : subCategoryInvoiceAgregate.getTaxInvoiceAggregates()) {
-				// add to map
-				taxInvoiceAgregateMap.put(taxInvoiceAgregate.getTax().getId(), taxInvoiceAgregate);
-			}
 
 			if (subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(biggestAmount) > 0) {
 				biggestAmount = subCategoryInvoiceAgregate.getAmountWithoutTax();
