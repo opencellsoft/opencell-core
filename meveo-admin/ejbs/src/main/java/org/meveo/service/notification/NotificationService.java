@@ -10,10 +10,11 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.Notification;
+import org.meveo.model.notification.ScriptNotification;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
-public class NotificationService extends BusinessService<Notification> {
+public class NotificationService extends BusinessService<ScriptNotification> {
 
 	@SuppressWarnings("unchecked")
 	public List<Notification> listAll() {
@@ -35,35 +36,35 @@ public class NotificationService extends BusinessService<Notification> {
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
 
     @Override
-    public void create(Notification notification, User creator, Provider provider) {
-        super.create(notification, creator, provider);
-        notificationCacheContainerProvider.addNotificationToCache(notification);
+    public void create(ScriptNotification scriptNotification, User creator, Provider provider) {
+        super.create(scriptNotification, creator, provider);
+        notificationCacheContainerProvider.addNotificationToCache(scriptNotification);
     }
 
     @Override
-    public Notification update(Notification notification, User updater) {
-        notification = super.update(notification, updater);
-        notificationCacheContainerProvider.updateNotificationInCache(notification);
-        return notification;
+    public ScriptNotification update(ScriptNotification scriptNotification, User updater) {
+    	scriptNotification = super.update(scriptNotification, updater);
+        notificationCacheContainerProvider.updateNotificationInCache(scriptNotification);
+        return scriptNotification;
     }
 
     @Override
-    public void remove(Notification notification) {
-        super.remove(notification);
-        notificationCacheContainerProvider.removeNotificationFromCache(notification);
+    public void remove(ScriptNotification scriptNotification) {
+        super.remove(scriptNotification);
+        notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
     }
 
     @Override
-    public Notification disable(Notification notification) {
-        notification = super.disable(notification);
-        notificationCacheContainerProvider.removeNotificationFromCache(notification);
-        return notification;
+    public ScriptNotification disable(ScriptNotification scriptNotification) {
+    	scriptNotification = super.disable(scriptNotification);
+        notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
+        return scriptNotification;
     }
 
     @Override
-    public Notification enable(Notification notification) {
-        notification = super.enable(notification);
-        notificationCacheContainerProvider.addNotificationToCache(notification);
-        return notification;
+    public ScriptNotification enable(ScriptNotification scriptNotification) {
+    	scriptNotification = super.enable(scriptNotification);
+        notificationCacheContainerProvider.addNotificationToCache(scriptNotification);
+        return scriptNotification;
     }
 }

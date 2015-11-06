@@ -31,8 +31,6 @@ public class EmailNotificationDto extends NotificationDto {
 	}
 
 	public EmailNotificationDto(EmailNotification e) {
-		super(e);
-
 		emailFrom = e.getEmailFrom();
 		emailToEl = e.getEmailToEl();
 		subject = e.getSubject();

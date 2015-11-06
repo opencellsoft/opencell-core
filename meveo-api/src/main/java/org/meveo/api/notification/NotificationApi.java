@@ -24,6 +24,7 @@ import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.NotificationHistory;
+import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.InboundRequestService;
@@ -86,7 +87,7 @@ public class NotificationApi extends BaseApi {
 				counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
 			}
 
-			Notification notif = new Notification();
+			ScriptNotification notif = new ScriptNotification();
 			notif.setProvider(currentUser.getProvider());
 			notif.setCode(postData.getCode());
 			notif.setClassNameFilter(postData.getClassNameFilter());
@@ -117,7 +118,7 @@ public class NotificationApi extends BaseApi {
 		NotificationDto result = new NotificationDto();
 
 		if (!StringUtils.isBlank(notificationCode)) {
-			Notification notif = notificationService.findByCode(notificationCode, provider);
+			ScriptNotification notif = notificationService.findByCode(notificationCode, provider);
 
 			if (notif == null) {
 				throw new EntityDoesNotExistsException(Notification.class, notificationCode);
@@ -135,7 +136,7 @@ public class NotificationApi extends BaseApi {
 
 	public void update(NotificationDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getClassNameFilter()) && !StringUtils.isBlank(postData.getEventTypeFilter())) {
-			Notification notif = notificationService.findByCode(postData.getCode(), currentUser.getProvider());
+			ScriptNotification notif = notificationService.findByCode(postData.getCode(), currentUser.getProvider());
 			if (notif == null) {
 				throw new EntityDoesNotExistsException(Notification.class, postData.getCode());
 			}
@@ -191,7 +192,7 @@ public class NotificationApi extends BaseApi {
 
 	public void remove(String notificationCode, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(notificationCode)) {
-			Notification notif = notificationService.findByCode(notificationCode, provider);
+			ScriptNotification notif = notificationService.findByCode(notificationCode, provider);
 
 			if (notif == null) {
 				throw new EntityDoesNotExistsException(Notification.class, notificationCode);

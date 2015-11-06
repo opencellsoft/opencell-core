@@ -42,8 +42,6 @@ public class WebhookNotificationDto extends NotificationDto {
 	}
 
 	public WebhookNotificationDto(WebHook e) {
-		super(e);
-
 		host = e.getHost();
 		page = e.getPage();
 		httpMethod = e.getHttpMethod().name();

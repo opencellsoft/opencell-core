@@ -29,8 +29,8 @@ import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.StrategyImportTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.local.IPersistenceService;
@@ -42,7 +42,7 @@ import org.primefaces.model.UploadedFile;
 
 @Named
 @ViewScoped
-public class NotificationBean extends UpdateMapTypeFieldBean<Notification> {
+public class NotificationBean extends UpdateMapTypeFieldBean<ScriptNotification> {
 
 	private static final long serialVersionUID = 6473465285480945644L;
 
@@ -71,20 +71,20 @@ public class NotificationBean extends UpdateMapTypeFieldBean<Notification> {
 	private String existingEntitiesCsvFile = null;
 
 	public NotificationBean() {
-		super(Notification.class);
+		super(ScriptNotification.class);
 	}
 
 	@Override
-	protected IPersistenceService<Notification> getPersistenceService() {
+	protected IPersistenceService<ScriptNotification> getPersistenceService() {
 		return notificationService;
 	}
 
     @Override
-    public Notification initEntity() {
-    	Notification notification = super.initEntity();
-        extractMapTypeFieldFromEntity(notification.getParams(), "params");
+    public ScriptNotification initEntity() {
+    	ScriptNotification scriptNotification = super.initEntity();
+        extractMapTypeFieldFromEntity(scriptNotification.getParams(), "params");
 
-        return notification;
+        return scriptNotification;
     }
 
     @Override
@@ -115,13 +115,13 @@ public class NotificationBean extends UpdateMapTypeFieldBean<Notification> {
 		csv.appendValue("Script instance code");
 		csv.appendValue("Event type filter");
 		csv.startNewLine();
-		for (Notification notification :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():notificationService.list()) {
-			csv.appendValue(notification.getCode());
-			csv.appendValue(notification.getClassNameFilter());
-			csv.appendValue(notification.getElFilter());
-			csv.appendValue(notification.isDisabled() + "");
-			csv.appendValue((notification.getScriptInstance()==null?"":notification.getScriptInstance().getCode()));
-			csv.appendValue(notification.getEventTypeFilter() + "");
+		for (ScriptNotification scriptNotification :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():notificationService.list()) {
+			csv.appendValue(scriptNotification.getCode());
+			csv.appendValue(scriptNotification.getClassNameFilter());
+			csv.appendValue(scriptNotification.getElFilter());
+			csv.appendValue(scriptNotification.isDisabled() + "");
+			csv.appendValue((scriptNotification.getScriptInstance()==null?"":scriptNotification.getScriptInstance().getCode()));
+			csv.appendValue(scriptNotification.getEventTypeFilter() + "");
 			csv.startNewLine();
 		}
 		InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
@@ -155,12 +155,12 @@ public class NotificationBean extends UpdateMapTypeFieldBean<Notification> {
         boolean isEntityAlreadyExist = false;
         while (csvReader.readRecord()) {
             String[] values = csvReader.getValues();
-            Notification existingEntity = notificationService.findByCode(values[CODE], getCurrentProvider());
+            ScriptNotification existingEntity = notificationService.findByCode(values[CODE], getCurrentProvider());
             if (existingEntity != null) {
                 checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
                 isEntityAlreadyExist = true;
             } else {
-                Notification notif = new Notification();
+            	ScriptNotification notif = new ScriptNotification();
                 notif.setCode(values[CODE]);
                 notif.setClassNameFilter(values[CLASS_NAME_FILTER]);
                 notif.setElFilter(values[EL_FILTER]);
@@ -178,7 +178,7 @@ public class NotificationBean extends UpdateMapTypeFieldBean<Notification> {
         }
     }
 
-    public void checkSelectedStrategy(String[] values, Notification existingEntity, boolean isEntityAlreadyExist) throws RejectedImportException {
+    public void checkSelectedStrategy(String[] values, ScriptNotification existingEntity, boolean isEntityAlreadyExist) throws RejectedImportException {
 		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
 			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
 			existingEntity.setElFilter(values[EL_FILTER]);
@@ -316,4 +316,13 @@ public class NotificationBean extends UpdateMapTypeFieldBean<Notification> {
             }
         }
     }
+    
+    @Override
+    public String getEditViewName() {
+        return "notificationDetail";
+    }
+    @Override
+	protected String getListViewName() {
+		return "notifications";
+	}
 }
