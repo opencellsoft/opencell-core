@@ -294,7 +294,7 @@ public class FlatFileProcessingJob extends Job {
 		distantPort.setAccountLevel(AccountLevelEnum.TIMER);
 		distantPort.setActive(true);
 		distantPort.setDescription(resourceMessages.getString("flatFile.distantPort"));
-		distantPort.setFieldType(CustomFieldTypeEnum.LONG);
+		distantPort.setFieldType(CustomFieldTypeEnum.STRING);
 		distantPort.setValueRequired(false);
 		result.put("FlatFileProcessingJob_distantPort", distantPort);
 		
