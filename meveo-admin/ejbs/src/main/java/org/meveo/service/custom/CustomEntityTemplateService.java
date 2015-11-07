@@ -21,7 +21,11 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -32,6 +36,23 @@ public class CustomEntityTemplateService extends PersistenceService<CustomEntity
     @Inject
     CustomFieldTemplateService customFieldTemplateService;
 
+    @Inject
+    private CustomFieldsCacheContainerProvider customFieldsCache;
+
+    @Override
+    public void create(CustomEntityTemplate e, User creator, Provider provider) {
+        super.create(e, creator, provider);
+        customFieldsCache.addUpdateCustomEntityTemplate(e);
+    }
+
+    @Override
+    public CustomEntityTemplate update(CustomEntityTemplate e, User updater) {
+        CustomEntityTemplate eUpdated = super.update(e, updater);
+        customFieldsCache.addUpdateCustomEntityTemplate(e);
+
+        return eUpdated;
+    }
+
     @Override
     public void remove(Long id) {
 
@@ -40,8 +61,41 @@ public class CustomEntityTemplateService extends PersistenceService<CustomEntity
         List<CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cet.getCFTPrefix(), cet.getProvider());
 
         for (CustomFieldTemplate cft : fields) {
-            customFieldTemplateService.remove(cft);
+            customFieldTemplateService.remove(cft.getId());
         }
         super.remove(id);
+
+        customFieldsCache.removeCustomEntityTemplate(cet);
+    }
+
+    @Override
+    public List<CustomEntityTemplate> list(Provider provider, Boolean active) {
+
+        boolean useCache = true;
+        if (useCache && (active == null || active)) {
+            return customFieldsCache.getCustomEntityTemlates(provider);
+        } else {
+            return super.list(provider, active);
+        }
+    }
+
+    @Override
+    public List<CustomEntityTemplate> list(PaginationConfiguration config) {
+
+        boolean useCache = true;
+        if (useCache) {
+            return customFieldsCache.getCustomEntityTemlates(getCurrentProvider());
+        } else {
+            return super.list(config);
+        }
+    }
+
+    /**
+     * Get a list of custom entity templates for cache
+     * 
+     * @return A list of custom entity templates
+     */
+    public List<CustomEntityTemplate> getCETForCache() {
+        return getEntityManager().createNamedQuery("CustomEntityTemplate.getCETForCache", CustomEntityTemplate.class).getResultList();
     }
 }

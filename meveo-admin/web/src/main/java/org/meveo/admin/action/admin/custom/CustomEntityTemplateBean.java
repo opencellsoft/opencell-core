@@ -93,7 +93,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             entityClass = Class.forName(entityClassName);
             customizedEntity = new CustomizedEntity(entityClass.getSimpleName(), entityClass, null, null);
             if (Job.class.isAssignableFrom(entityClass)) {
-                cetPrefix = "JOB_" + entityClass.getSimpleName();
+                cetPrefix = Job.CFT_PREFIX + "_" + entityClass.getSimpleName();
 
                 // Check and instantiate missing custom field templates for a given job
                 Job job = jobInstanceService.getJobByName(entityClass.getSimpleName());
@@ -118,7 +118,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
         List<CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cetPrefix, getCurrentProvider());
 
-        GroupedCustomField groupedCFT = new GroupedCustomField(fields, CustomEntityTemplate.class.isAssignableFrom(entityClass) ? entity.getCode() : "Custom fields", true);
+        GroupedCustomField groupedCFT = new GroupedCustomField(fields, CustomEntityTemplate.class.isAssignableFrom(entityClass) ? entity.getName() : "Custom fields", true);
 
         groupedFields = new SortedTreeNode(groupedCFT.getType(), groupedCFT.getData(), null);
         groupedFields.setExpanded(true);

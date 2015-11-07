@@ -89,10 +89,16 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         Object value = null;
         if (entity.getCfFields() != null) {
             value = entity.getCFValue(code);
+            if (value != null) {
+                return value;
+            }
         }
-
+        
+        value = ParamBean.getInstance().getProperty(code, defaultParamBeanValue);
         if (value == null) {
-
+            return null;
+        }
+        try {
             CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity, user.getProvider());
 
             if (cft == null) {
@@ -109,7 +115,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
             CustomFieldInstance cfi = new CustomFieldInstance();
             cfi.setCode(code);
-            cfi.setStringValue(ParamBean.getInstance().getProperty(code, defaultParamBeanValue));
+            cfi.setStringValue(value.toString());
 
             if (saveInCFIfNotExist) {
                 if (entity.getCfFields() == null) {
@@ -118,9 +124,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 entity.getCfFields().addUpdateCFI(cfi);
                 pService.update((IEntity) entity, user);
             }
-            return cfi.getCfValue();
+        } catch (CustomFieldException e) {
+            log.error("Can not determine applicable CFT type. Value from propeties file will NOT be saved as customfield");
         }
-
         return value;
     }
 }

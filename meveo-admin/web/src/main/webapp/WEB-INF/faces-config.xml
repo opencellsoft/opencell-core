@@ -402,6 +402,18 @@
             </to-view-id>
             <redirect include-view-params="true"/>
         </navigation-case>    
+        <navigation-case>
+            <from-outcome>customEntities</from-outcome>
+            <to-view-id>/pages/admin/customEntities/customEntities.xhtml
+            </to-view-id>
+            <redirect include-view-params="true"/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>customEntity</from-outcome>
+            <to-view-id>/pages/admin/customEntities/customEntityDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true"/>
+        </navigation-case>          
 		<navigation-case>
 			<from-outcome>customerImportHisto</from-outcome>
 			<to-view-id>/pages/admin/history/customerImportHistory.xhtml

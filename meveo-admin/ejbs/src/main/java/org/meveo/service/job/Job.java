@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Job {
 
+    public static String CFT_PREFIX= "JOB";
+    
     @Resource
     protected TimerService timerService;
 

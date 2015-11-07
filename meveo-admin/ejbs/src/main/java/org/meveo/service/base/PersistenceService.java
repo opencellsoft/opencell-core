@@ -33,6 +33,8 @@ import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 import javax.transaction.TransactionSynchronizationRegistry;
 
@@ -511,16 +513,46 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		return query.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<E> findByCodeLike(String wildcode, Provider provider) {
-		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
-		if (EnableEntity.class.isAssignableFrom(entityClass)) {
-			queryBuilder.addBooleanCriterion("disabled", false);
-		}
-		queryBuilder.addCriterion("code", "like", "%" + wildcode + "%", true);
-		return queryBuilder.getQuery(getEntityManager()).getResultList();
-	}
+    /**
+     * Find entities by code - wild match
+     * 
+     * @param code Code to match
+     * @param provider Provider
+     * @return A list of entities matching code for a given provider
+     */
+    @SuppressWarnings("unchecked")
+    public List<E> findByCodeLike(String wildcode, Provider provider) {
+        final Class<? extends E> entityClass = getEntityClass();
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+        if (EnableEntity.class.isAssignableFrom(entityClass)) {
+            queryBuilder.addBooleanCriterion("disabled", false);
+        }
+        queryBuilder.addCriterion("code", "like", "%" + wildcode + "%", true);
+        return queryBuilder.getQuery(getEntityManager()).getResultList();
+    }
+
+    /**
+     * Find entity by code - strict match
+     * 
+     * @param code Code to match
+     * @param provider Provider
+     * @return A single entity matching code for a given provider
+     */
+    @SuppressWarnings("unchecked")
+    public E findByCode(String code, Provider provider) {
+        final Class<? extends E> entityClass = getEntityClass();
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+
+        queryBuilder.addCriterion("code", "=", code, true);
+        try {
+            return (E) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } catch (NonUniqueResultException e) {
+            log.error("More than one entity of type {} with code {} and provider {} found", entityClass, code, provider);
+            return null;
+        }
+    }
 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
