@@ -1,5 +1,6 @@
 package org.meveo.service.crm.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -31,13 +32,14 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @param provider Provider
      * @return A list of custom field templates
      */
-    @SuppressWarnings("unchecked")
     public List<CustomFieldTemplate> findByAppliesTo(ICustomFieldEntity entity, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", Arrays.asList("calendar"), provider);
-        String appliesTo = calculateAppliesToValue(entity);
-        qb.addCriterion("c.appliesTo", "=", appliesTo, true);
+        try {
+            return findByAppliesTo(calculateAppliesToValue(entity), provider);
 
-        return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (CustomFieldException e) {
+            // Its ok, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
+            return new ArrayList<CustomFieldTemplate>();
+        }
     }
 
     /**
@@ -49,10 +51,17 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     @SuppressWarnings("unchecked")
     public List<CustomFieldTemplate> findByAppliesTo(String appliesTo, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", Arrays.asList("calendar"), provider);
-        qb.addCriterion("c.appliesTo", "=", appliesTo, true);
+        boolean useCache = true;
+        if (useCache) {
+            return customFieldsCache.getCustomFieldTemplatesByAppliesTo(appliesTo, provider);
 
-        return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+        } else {
+
+            QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", Arrays.asList("calendar"), provider);
+            qb.addCriterion("c.appliesTo", "=", appliesTo, true);
+
+            return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+        }
     }
 
     /**
@@ -62,8 +71,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @param entity Entity that custom field templates apply to
      * @param provider Provider
      * @return Custom field template
+     * @throws CustomFieldException An exception when AppliesTo value can not be calculated
      */
-    public CustomFieldTemplate findByCodeAndAppliesTo(String code, ICustomFieldEntity entity, Provider provider) {
+    public CustomFieldTemplate findByCodeAndAppliesTo(String code, ICustomFieldEntity entity, Provider provider) throws CustomFieldException {
         return findByCodeAndAppliesTo(code, calculateAppliesToValue(entity), provider);
     }
 
@@ -120,15 +130,20 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * 
      * @param entity Entity
      * @return A appliesTo value
+     * @throws CustomFieldException An exception when AppliesTo value can not be calculated. Occurs when value that is part of CFT.AppliesTo calculation is not set yet on entity
      */
-    public String calculateAppliesToValue(ICustomFieldEntity entity) {
+    public String calculateAppliesToValue(ICustomFieldEntity entity) throws CustomFieldException {
         CustomFieldEntity cfeAnnotation = entity.getClass().getAnnotation(CustomFieldEntity.class);
 
         String appliesTo = cfeAnnotation.cftCodePrefix();
         if (cfeAnnotation.cftCodeFields().length > 0) {
             for (String fieldName : cfeAnnotation.cftCodeFields()) {
                 try {
-                    appliesTo = appliesTo + "_" + FieldUtils.getField(entity.getClass(), fieldName, true).get(entity);
+                    Object fieldValue = FieldUtils.getField(entity.getClass(), fieldName, true).get(entity);
+                    if (fieldValue == null) {
+                        throw new CustomFieldException("Can not calculate AppliesTo value");
+                    }
+                    appliesTo = appliesTo + "_" + fieldValue;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     log.error("Unable to access field {}.{}", entity.getClass().getSimpleName(), fieldName);
                     throw new RuntimeException("Unable to access field " + entity.getClass().getSimpleName() + "." + fieldName);
@@ -147,7 +162,13 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A complete list of templates for a given entity and provider
      */
     public List<CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, Provider provider) {
-        return createMissingTemplates(calculateAppliesToValue(entity), templates, provider);
+        try {
+            return createMissingTemplates(calculateAppliesToValue(entity), templates, provider);
+
+        } catch (CustomFieldException e) {
+            // Its ok, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
+            return new ArrayList<CustomFieldTemplate>();
+        }
     }
 
     /**

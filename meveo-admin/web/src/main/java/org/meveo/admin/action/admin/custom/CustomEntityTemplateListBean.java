@@ -35,15 +35,15 @@ public class CustomEntityTemplateListBean extends CustomEntityTemplateBean {
     @Inject
     private JobInstanceService jobInstanceService;
 
-    private LazyDataModelWSize<CustomizedEntity> customizedEntitedDM = null;
+    private LazyDataModelWSize<CustomizedEntity> customizedEntityDM = null;
 
     public LazyDataModelWSize<CustomizedEntity> getCustomizedEntities() {
 
-        if (customizedEntitedDM != null) {
-            return customizedEntitedDM;
+        if (customizedEntityDM != null) {
+            return customizedEntityDM;
         }
 
-        customizedEntitedDM = new LazyDataModelWSize<CustomizedEntity>() {
+        customizedEntityDM = new LazyDataModelWSize<CustomizedEntity>() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -131,7 +131,6 @@ public class CustomEntityTemplateListBean extends CustomEntityTemplateBean {
             }
         };
 
-        return customizedEntitedDM;
+        return customizedEntityDM;
     }
-
 }

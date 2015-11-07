@@ -22,6 +22,8 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
+
 @MappedSuperclass
 public class BusinessEntity extends AuditableEntity {
 
@@ -71,6 +73,14 @@ public class BusinessEntity extends AuditableEntity {
 		this.appendGeneratedCode = appendGeneratedCode;
 	}
 
+    public String getDescriptionOrCode() {
+        if (!StringUtils.isBlank(description)) {
+            return description;
+        } else {
+            return code;
+        }
+    }
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
