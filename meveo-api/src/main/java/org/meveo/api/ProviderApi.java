@@ -143,6 +143,11 @@ public class ProviderApi extends BaseApi {
 			provider.setMulticountryFlag(postData.isMultiCountry());
 			provider.setMulticurrencyFlag(postData.isMultiCurrency());
 			provider.setMultilanguageFlag(postData.isMultiLanguage());
+			
+			provider.setEntreprise(postData.isEnterprise());
+			provider.setInvoicePrefix(postData.getInvoicePrefix());
+			provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
+			provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
 
 			// search for country
 			if (!StringUtils.isBlank(postData.getCountry())) {
@@ -191,8 +196,7 @@ public class ProviderApi extends BaseApi {
 			invoiceConfiguration.setDisplayOffers(true);
 			invoiceConfiguration.setDisplayServices(true);
 			invoiceConfiguration.setDisplaySubscriptions(true);
-
-			invoiceConfigurationService.create(invoiceConfiguration, currentUser);
+			invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
 
 			provider.setInvoiceConfiguration(invoiceConfiguration);
 			
@@ -207,6 +211,10 @@ public class ProviderApi extends BaseApi {
 			}
 
 			providerService.create(provider, currentUser);
+			
+			invoiceConfiguration.setProvider(provider);
+			invoiceConfigurationService.create(invoiceConfiguration, currentUser);
+			
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -293,7 +301,21 @@ public class ProviderApi extends BaseApi {
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");
 				}
 			}
-
+			
+			provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
+			provider.setEntreprise(postData.isEnterprise());
+			provider.setInvoicePrefix(postData.getInvoicePrefix());
+			provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
+			
+			InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
+			if (invoiceConfiguration != null) {
+				invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
+				invoiceConfiguration.setDisplayServices(postData.getDisplayServices());
+				invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
+				invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
+				invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
+			}
+			
 			providerService.update(provider, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
