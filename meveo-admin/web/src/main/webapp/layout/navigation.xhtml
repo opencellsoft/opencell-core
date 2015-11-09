@@ -2,6 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:p="http://primefaces.org/ui">
 
 	<p:tooltip for="users">#{help['menu.users']}</p:tooltip>
@@ -35,6 +36,13 @@
 	<p:tooltip for="billingAccounts">#{help['menu.billingAccounts']}</p:tooltip>
 	<p:tooltip for="userAccounts">#{help['menu.userAccounts']}</p:tooltip>
 	<p:tooltip for="subscriptions">#{help['menu.subscriptions']}</p:tooltip>
+    <c:set var="cetIndex" value="0"/>
+    <c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
+        <c:if test="#{cet.permission == null or identity.hasPermission(cet.permissionResource, cet.permissionAction) }">
+            <p:tooltip for="cet_#{cetIndex}" value="#{cet.description}" />
+            <c:set var="cetIndex" value="#{cetIndex + 1}"/>
+        </c:if>
+    </c:forEach>
 
 	<p:menubar rendered="#{identity.loggedIn}">
 		<p:submenu id="admin" label="#{messages['menu.configuration']}"
@@ -179,6 +187,17 @@
 			<p:menuitem id="triggeredEdrTemplates"
 				outcome="triggeredEdrTemplates"
 				value="#{messages['menu.triggeredEdrTemplates']}" />
+
+
+            <c:set var="cetIndex" value="0"/>
+            <c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
+                <c:if test="#{cet.permission == null or identity.hasPermission(cet.permissionResource, cet.permissionAction) }">
+                    <p:menuitem id="cet_#{cetIndex}" outcome="customEntities" value="#{cet.name}" >
+                        <f:param name="cet" value="#{cet.code}"></f:param>
+                    </p:menuitem>
+                    <c:set var="cetIndex" value="#{cetIndex + 1}"/>
+                </c:if>
+             </c:forEach>
 
 		</p:submenu>
 

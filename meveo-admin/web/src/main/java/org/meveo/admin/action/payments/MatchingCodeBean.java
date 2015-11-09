@@ -62,17 +62,6 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 		return matchingCodeService;
 	}
 
-	public String backToCA() {
-		String returnPage = null;
-
-		returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ entity.getMatchingAmounts().get(0).getAccountOperation()
-						.getCustomerAccount().getId()
-				+ "&edit=false&mainTab=1&faces-redirect=true";
-
-		return returnPage;
-	}
-
 	public String unmatching() {
 		String returnPage = null;
 		try {

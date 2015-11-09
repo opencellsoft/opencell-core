@@ -19,9 +19,10 @@
             <hftl:formPanel formId="cetForm"
                 label="#{messages['customizedEntities.detail'].concat(customEntityTemplateBean.entity.code!=null?(' - '.concat(customEntityTemplateBean.entity.getCode)):'')}"
                 backingBean="#{customEntityTemplateBean}">
-                <hftl:formField label="#{messages['customizedEntities.entityName']}" field="code" showOnlyOnNew="true" />
-                <hftl:formField label="#{messages['customizedEntities.description']}" field="description" />
-                <hftl:formField label="#{messages['customizedEntities.permission']}" field="permission" />
+                <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" showOnlyOnNew="true" required="true"/>
+                <hftl:formField label="#{messages['customizedEntities.name']}" field="name" required="true"/>
+                <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
+                <hftl:formField label="#{messages['customizedEntities.permission']}" field="permission" valueLabelField="name" listElements="#{permissionService.list()}" />
             </hftl:formPanel>
         </h:panelGroup>
         <h:panelGroup rendered="#{! customEntityTemplateBean.customEntityTemplate}">

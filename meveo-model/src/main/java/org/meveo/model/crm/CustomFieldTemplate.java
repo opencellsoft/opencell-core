@@ -27,7 +27,7 @@ import org.meveo.model.catalog.Calendar;
 @ExportIdentifier({ "code", "appliesTo", "provider" })
 @Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
-@NamedQueries({ @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft  where cft.disabled=false and cft.versionable=true and cacheValueTimeperiod is not null") })
+@NamedQueries({ @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar cal left join fetch cal.hours hourss left join cal.intervals intervalss left join cal.days dayss  where cft.disabled=false  ") })
 public class CustomFieldTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -225,5 +225,34 @@ public class CustomFieldTemplate extends BusinessEntity {
         }
 
         return parsedInfo;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof CustomFieldTemplate)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        CustomFieldTemplate other = (CustomFieldTemplate) obj;
+
+        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+            // return true;
+        }
+
+        if (code == null && other.getCode() != null) {
+            return false;
+        } else if (!code.equals(other.getCode())) {
+            return false;
+        } else if (appliesTo == null && other.getAppliesTo() != null) {
+            return false;
+        } else if (!appliesTo.equals(other.getAppliesTo())) {
+            return false;
+        }
+        return true;
     }
 }

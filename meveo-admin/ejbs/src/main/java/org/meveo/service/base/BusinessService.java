@@ -33,20 +33,19 @@ public abstract class BusinessService<P extends BusinessEntity> extends
 		return findByCode(getEntityManager(), code, provider);
 	}
 
-	@SuppressWarnings("unchecked")
-	public P findByCode(String code, Provider provider, List<String> fetchFields) {
-		QueryBuilder qb = new QueryBuilder(getEntityClass(), "be", fetchFields,
-				provider);
-		qb.addCriterion("be.code", "=", code, true);
-		qb.addCriterionEntity("be.provider", provider);
+    @SuppressWarnings("unchecked")
+    public P findByCode(String code, Provider provider, List<String> fetchFields) {
+        QueryBuilder qb = new QueryBuilder(getEntityClass(), "be", fetchFields, provider);
+        qb.addCriterion("be.code", "=", code, true);
+        qb.addCriterionEntity("be.provider", provider);
 
-		try {
-			return (P) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			log.warn("error while getting entity by code",e);
-			return null;
-		}
-	}
+        try {
+            return (P) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("No {} of code {} for provider {} found", getEntityClass().getSimpleName(), code, provider.getId());
+            return null;
+        }
+    }
 
 	@SuppressWarnings("unchecked")
 	public P findByCode(EntityManager em, String code, Provider provider) {

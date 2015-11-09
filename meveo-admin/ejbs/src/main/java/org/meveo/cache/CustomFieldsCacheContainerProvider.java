@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -29,8 +30,10 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 
@@ -52,10 +55,26 @@ public class CustomFieldsCacheContainerProvider {
     @EJB
     private CustomFieldTemplateService customFieldTemplateService;
 
+    @EJB
+    CustomEntityTemplateService customEntityTemplateService;
+
+    /**
+     * How long custom field period value should be cached. Key format: <provider id>_<custom field template code>. Value is a number of days to cache custom field value
+     */
     private Map<String, Integer> cfValueCacheTime = new HashMap<String, Integer>();
 
     /**
-     * Contains association between entity, and custom field value(s). Key format: <entity class>_<entity id>. Value is a map where key is CFI code as value is a list of values
+     * Group custom field templates applicable to the same entity type. Key format: <provider id>_<custom field template appliesTo code>. Value is a list of custom field templates
+     */
+    private Map<String, List<CustomFieldTemplate>> cftsByAppliesTo = new HashMap<String, List<CustomFieldTemplate>>();
+
+    /**
+     * Cache custom entity templates by provider. Key format: <provider id>. Value is a list of custom entity templates
+     */
+    private Map<String, List<CustomEntityTemplate>> cetsByProvider = new HashMap<String, List<CustomEntityTemplate>>();
+
+    /**
+     * Contains association between entity, and custom field value(s). Key format: <entity class>_<entity id>. Value is a map where key is CFI code and value is a list of values
      */
     // @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-cfv-cache")
     private BasicCache<String, Map<String, List<CachedCFPeriodValue>>> customFieldValueCache;
@@ -83,7 +102,7 @@ public class CustomFieldsCacheContainerProvider {
      */
     private void populateCFValueCache() {
 
-        log.debug("Start to populate custom field value caching time");
+        log.debug("Start to populate custom field value caching time and appliesTo cache");
 
         // Calculate cache storage cuttoff time for each CFT
         Map<String, Date> cfValueCacheTimeAsDate = new HashMap<String, Date>();
@@ -91,14 +110,47 @@ public class CustomFieldsCacheContainerProvider {
         cfValueCacheTime.clear();
         List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForCache();
         for (CustomFieldTemplate cft : cfts) {
-            cfValueCacheTime.put(cft.getProvider().getId() + "_" + cft.getCode(), cft.getCacheValueTimeperiod());
 
-            Calendar calendar = new GregorianCalendar();
-            calendar.add(Calendar.DATE, (-1) * cft.getCacheValueTimeperiod().intValue());
+            customFieldTemplateService.detach(cft);
 
-            cfValueCacheTimeAsDate.put(cft.getProvider().getId() + "_" + cft.getCode(), calendar.getTime());
+            String cacheKeyByAppliesTo = getCFTCacheKeyByAppliesTo(cft);
+            if (!cftsByAppliesTo.containsKey(cacheKeyByAppliesTo)) {
+                cftsByAppliesTo.put(cacheKeyByAppliesTo, new ArrayList<CustomFieldTemplate>());
+            } else {
+                cftsByAppliesTo.get(cacheKeyByAppliesTo).remove(cft);
+            }
+            cftsByAppliesTo.get(cacheKeyByAppliesTo).add(cft);
+
+            // Remember custom field versionable value cache time
+            if (cft.isVersionable() && cft.getCacheValueTimeperiod() != null) {
+                cfValueCacheTime.put(getCFTCacheKeyByCode(cft), cft.getCacheValueTimeperiod());
+
+                Calendar calendar = new GregorianCalendar();
+                calendar.add(Calendar.DATE, (-1) * cft.getCacheValueTimeperiod().intValue());
+
+                cfValueCacheTimeAsDate.put(getCFTCacheKeyByCode(cft), calendar.getTime());
+            }
         }
-        log.info("Custom field value caching time populated with {} values", cfValueCacheTime.size());
+        log.info("Custom field value caching time populated with {} values. appliesTo cache populated with {} values", cfValueCacheTime.size(), cfts.size());
+
+        log.debug("Start to populate custom entity template cache");
+
+        cetsByProvider.clear();
+
+        // Cache custom entity templates sorted by a cet.name
+        List<CustomEntityTemplate> cets = customEntityTemplateService.getCETForCache();
+        Collections.sort(cets);
+
+        for (CustomEntityTemplate cet : cets) {
+
+            if (!cetsByProvider.containsKey(cet.getProvider().getId().toString())) {
+                cetsByProvider.put(cet.getProvider().getId().toString(), new ArrayList<CustomEntityTemplate>());
+            }
+
+            cetsByProvider.get(cet.getProvider().getId().toString()).add(cet);
+        }
+
+        log.info("Custom entity template cache populated with {} values.", cets.size());
 
         log.debug("Start to populate custom field value cache");
 
@@ -159,7 +211,7 @@ public class CustomFieldsCacheContainerProvider {
                 log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
             }
         }
-        
+
         if (!values.isEmpty()) {
             customFieldValueCache.put(cacheKey, values);
         } else {
@@ -549,31 +601,111 @@ public class CustomFieldsCacheContainerProvider {
     }
 
     /**
-     * Store mapping between CF code and value storage in cache time period
+     * Store mapping between CF code and value storage in cache time period and cache by CFT appliesTo value
      * 
      * @param cft Custom field template definition
      */
     public void addUpdateCustomFieldTemplate(CustomFieldTemplate cft) {
 
+        String cacheKeyByAppliesTo = getCFTCacheKeyByAppliesTo(cft);
+        if (!cftsByAppliesTo.containsKey(cacheKeyByAppliesTo)) {
+            cftsByAppliesTo.put(cacheKeyByAppliesTo, new ArrayList<CustomFieldTemplate>());
+        } else {
+            cftsByAppliesTo.get(cacheKeyByAppliesTo).remove(cft);
+        }
+        cftsByAppliesTo.get(cacheKeyByAppliesTo).add(cft);
+
         if (cft.isVersionable()) {
             if (cft.getCacheValueTimeperiod() != null) {
-                cfValueCacheTime.put(cft.getProvider().getId() + "_" + cft.getCode(), cft.getCacheValueTimeperiod());
+                cfValueCacheTime.put(getCFTCacheKeyByCode(cft), cft.getCacheValueTimeperiod());
 
             } else {
-                cfValueCacheTime.remove(cft.getProvider().getId() + "_" + cft.getCode());
+                cfValueCacheTime.remove(getCFTCacheKeyByCode(cft));
             }
         }
     }
 
     /**
-     * Remove mapping between CF code and value storage in cache time period
+     * Remove mapping between CF code and value storage in cache time period and remove from cache by CFT appliesTo value
      * 
      * @param cft Custom field template definition
      */
     public void removeCustomFieldTemplate(CustomFieldTemplate cft) {
 
+        cftsByAppliesTo.get(getCFTCacheKeyByAppliesTo(cft)).remove(cft);
+
         if (cft.isVersionable()) {
-            cfValueCacheTime.remove(cft.getProvider().getId() + "_" + cft.getCode());
+            cfValueCacheTime.remove(getCFTCacheKeyByCode(cft));
+        }
+    }
+
+    /**
+     * Store custom entity template to cache
+     * 
+     * @param cet Custom entity template definition
+     */
+    public void addUpdateCustomEntityTemplate(CustomEntityTemplate cet) {
+
+        if (!cetsByProvider.containsKey(cet.getProvider().getId().toString())) {
+            cetsByProvider.put(cet.getProvider().getId().toString(), new ArrayList<CustomEntityTemplate>());
+        } else {
+            cetsByProvider.get(cet.getProvider().getId().toString()).remove(cet);
+        }
+        cetsByProvider.get(cet.getProvider().getId().toString()).add(cet);
+
+        // Sort values by cet.name
+        Collections.sort(cetsByProvider.get(cet.getProvider().getId().toString()));
+
+    }
+
+    /**
+     * Remove custom entity template from cache
+     * 
+     * @param cet Custom entity template definition
+     */
+    public void removeCustomEntityTemplate(CustomEntityTemplate cet) {
+
+        cetsByProvider.get(cet.getProvider().getId().toString()).remove(cet);
+    }
+
+    private String getCFTCacheKeyByCode(CustomFieldTemplate cft) {
+        return cft.getProvider().getId() + "_" + cft.getCode();
+    }
+
+    private String getCFTCacheKeyByAppliesTo(CustomFieldTemplate cft) {
+        return cft.getProvider().getId() + "_" + cft.getAppliesTo();
+    }
+
+    /**
+     * Get custom field templates for a given entity (appliesTo value) and provider
+     * 
+     * @param appliesTo entity (appliesTo value)
+     * @param provider Provider
+     * @return A list of custom field templates
+     */
+    public List<CustomFieldTemplate> getCustomFieldTemplatesByAppliesTo(String appliesTo, Provider provider) {
+        String key = provider.getId() + "_" + appliesTo;
+        if (cftsByAppliesTo.containsKey(key)) {
+            return cftsByAppliesTo.get(key);
+
+        } else {
+            return new ArrayList<CustomFieldTemplate>();
+        }
+    }
+
+    /**
+     * Get custom entity templates for a given provider
+     * 
+     * @param provider Provider
+     * @return A list of custom entity templates
+     */
+    public List<CustomEntityTemplate> getCustomEntityTemlates(Provider provider) {
+
+        if (cetsByProvider.containsKey(provider.getId().toString())) {
+            return cetsByProvider.get(provider.getId().toString());
+
+        } else {
+            return new ArrayList<CustomEntityTemplate>();
         }
     }
 }
