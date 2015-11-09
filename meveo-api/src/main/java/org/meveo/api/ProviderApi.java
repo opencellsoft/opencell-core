@@ -209,7 +209,14 @@ public class ProviderApi extends BaseApi {
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");
 				}
 			}
-
+			
+			provider.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
+			provider.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
+			
+			if (postData.getInvoiceAdjustmentSequenceSize() != null) {
+				provider.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
+			}
+			
 			providerService.create(provider, currentUser);
 			
 			invoiceConfiguration.setProvider(provider);
@@ -314,6 +321,22 @@ public class ProviderApi extends BaseApi {
 				invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
 				invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
 				invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
+			}
+			
+			if (postData.getInvoiceSequenceSize() != null) {
+				provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
+			}
+			
+			if (postData.getInvoiceAdjustmentPrefix() != null) {
+				provider.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
+			}
+			
+			if (postData.getCurrentInvoiceAdjustmentNb() != null) {
+				provider.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
+			}
+			
+			if (postData.getInvoiceAdjustmentSequenceSize() != null) {
+				provider.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
 			}
 			
 			providerService.update(provider, currentUser);

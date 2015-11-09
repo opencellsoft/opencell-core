@@ -41,6 +41,10 @@ public class ProviderDto extends BaseDto {
 	private Boolean displayProvider;
 	private boolean displayFreeTransacInInvoice;
 	
+	private String invoiceAdjustmentPrefix;
+	private Long currentInvoiceAdjustmentNb;
+	private Integer invoiceAdjustmentSequenceSize;
+	
 	
 	@XmlElement(required = false)
     private CustomFieldsDto customFields;
@@ -79,6 +83,18 @@ public class ProviderDto extends BaseDto {
 			this.setDisplayOffers(invoiceConfiguration.getDisplayOffers());
 			this.setDisplayEdrs(invoiceConfiguration.getDisplayEdrs());
 			this.setDisplayProvider(invoiceConfiguration.getDisplayProvider());
+		}
+		
+		if (e.getInvoiceAdjustmentPrefix() != null) {
+			this.setInvoiceAdjustmentPrefix(e.getInvoiceAdjustmentPrefix());
+		}
+		
+		if (e.getCurrentInvoiceAdjustmentNb() != null) {
+			this.setCurrentInvoiceAdjustmentNb(e.getCurrentInvoiceAdjustmentNb());
+		}
+		
+		if (e.getInvoiceAdjustmentSequenceSize() != null) {
+			this.setInvoiceAdjustmentSequenceSize(e.getInvoiceAdjustmentSequenceSize());
 		}
 	}
 
@@ -242,6 +258,31 @@ public class ProviderDto extends BaseDto {
 		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
 	}
 
+	public String getInvoiceAdjustmentPrefix() {
+		return invoiceAdjustmentPrefix;
+	}
+
+	public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
+		this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
+	}
+
+	public Long getCurrentInvoiceAdjustmentNb() {
+		return currentInvoiceAdjustmentNb;
+	}
+
+	public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
+		this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
+	}
+
+	public Integer getInvoiceAdjustmentSequenceSize() {
+		return invoiceAdjustmentSequenceSize;
+	}
+
+	public void setInvoiceAdjustmentSequenceSize(
+			Integer invoiceAdjustmentSequenceSize) {
+		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
+	}
+
 	@Override
 	public String toString() {
 		return "ProviderDto [code=" + code + ", description=" + description
@@ -257,7 +298,11 @@ public class ProviderDto extends BaseDto {
 				+ displayOffers + ", displayEdrs=" + displayEdrs
 				+ ", displayProvider=" + displayProvider
 				+ ", displayFreeTransacInInvoice="
-				+ displayFreeTransacInInvoice + ", customFields="
+				+ displayFreeTransacInInvoice + ", invoiceAdjustmentPrefix="
+				+ invoiceAdjustmentPrefix + ", currentInvoiceAdjustmentNb="
+				+ currentInvoiceAdjustmentNb
+				+ ", invoiceAdjustmentSequenceSize="
+				+ invoiceAdjustmentSequenceSize + ", customFields="
 				+ customFields + "]";
 	}
 
