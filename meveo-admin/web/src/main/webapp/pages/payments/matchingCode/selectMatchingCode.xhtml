@@ -1,11 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
-
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -17,22 +18,22 @@
 				<h:outputText value="#{messages['matchingCode.selectMatching']}" />
 			</f:facet>
 			<h:outputText value="#{messages['matchingCode.opInManyMatchings']}" />
-		<custom:dataList backingBean="#{accountOperationBean}" dataModel="#{accountOperationBean.matchingAmounts}" edit="false">    																												
-			<custom:column label="#{messages['matchingCode.code']}" field="matchingCode"	childField="id" />									
-			<custom:column label="#{messages['matchingCode.matchingAmount']}" field="matchingAmount"	 />							
-	    	<custom:column label="#{messages['matchingCode.matchingDate']}" field="matchingCode"	childField="matchingDate" />
+		<hftl:dataList backingBean="#{accountOperationBean}" dataModel="#{accountOperationBean.entity.matchingAmounts}" edit="false">    																												
+			<hftl:column label="#{messages['matchingCode.code']}" field="matchingCode"	childField="id" />									
+			<hftl:column label="#{messages['matchingCode.matchingAmount']}" field="matchingAmount"	 />							
+	    	<hftl:column label="#{messages['matchingCode.matchingDate']}" field="matchingCode"	childField="matchingDate" />
 			<p:column styleClass="actions-column">
             	<f:facet name="header">
                 	<h:outputText value="#{messages['commons.actions']}" />
              	</f:facet>
-             	<s:link id="viewlink" view="/pages/payments/matchingCode/matchingCodeDetail.xhtml" >
+             	<p:link id="viewlink" view="/pages/payments/matchingCode/matchingCodeDetail.xhtml" >
                 <h:graphicImage value="/img/search.gif" style="border:0"/>
              	<f:param name="objectId" value="#{entity.matchingCode.id}"/>
              	<f:param name="edit" value="false"/>
-             </s:link>                               	             	          	            
-            	<p:toolTip for="viewlink" value="#{messages['matching.viewMatchingCode']}"/>
+               </p:link>                	             	          	            
+            	<p:tooltip for="viewlink" value="#{messages['matching.viewMatchingCode']}"/>
              </p:column>							
-		</custom:dataList>	  
+		</hftl:dataList>	  
 	  	</p:panel>				
 	</ui:define>
 </ui:composition>
