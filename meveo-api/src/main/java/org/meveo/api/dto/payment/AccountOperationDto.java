@@ -15,6 +15,7 @@ public class AccountOperationDto extends BaseDto {
 
 	private static final long serialVersionUID = 4329241417200680028L;
 
+	private Long id;
 	private Date dueDate;
 	private String type;
 	private Date transactionDate;
@@ -191,5 +192,11 @@ public class AccountOperationDto extends BaseDto {
 	public void addMatchingAmounts(MatchingAmountDto matchingAmountDto) {
 		matchingAmounts.getMatchingAmount().add(matchingAmountDto);
 	}
+
+	public Long getId() {
+		return id;
+	}
+	
+	
 
 }

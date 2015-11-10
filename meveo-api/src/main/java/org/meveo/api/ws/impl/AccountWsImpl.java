@@ -27,6 +27,7 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.TitleDto;
@@ -34,8 +35,8 @@ import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
-import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.dto.response.account.GetAccessResponseDto;
+import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
@@ -852,6 +853,24 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 			log.error("error generated while getting list account operations  ", e);
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus matchOperations(String customerAccountCode,AccountOperationsDto accountOperationsDto) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			accountOperationApi.matchOperations(customerAccountCode, accountOperationsDto, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		}
 
 		log.debug("RESPONSE={}", result);
