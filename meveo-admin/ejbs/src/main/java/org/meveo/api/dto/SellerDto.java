@@ -31,6 +31,10 @@ public class SellerDto extends BaseDto {
 	private String parentSeller;
 	private String provider;
 	private Integer invoiceSequenceSize;
+	private Integer invoiceAdjustmentSequenceSize;
+	private String invoiceAdjustmentPrefix;
+	private Long currentInvoiceNb;
+	private Long currentInvoiceAdjustmentNb;
 
 	private CustomersDto customers;
 	
@@ -44,6 +48,11 @@ public class SellerDto extends BaseDto {
 		description = seller.getDescription();
 		invoicePrefix = seller.getInvoicePrefix();
 		invoiceSequenceSize=seller.getInvoiceSequenceSize();
+		invoiceAdjustmentSequenceSize=seller.getInvoiceAdjustmentSequenceSize();
+		invoiceAdjustmentPrefix=seller.getInvoiceAdjustmentPrefix();
+		currentInvoiceNb=seller.getCurrentInvoiceNb();
+		currentInvoiceAdjustmentNb=seller.getCurrentInvoiceAdjustmentNb();
+		
 
 		if (seller.getTradingCountry() != null) {
 			countryCode = seller.getTradingCountry().getCountryCode();
@@ -130,9 +139,8 @@ public class SellerDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "SellerDto [code=" + code + ", description=" + description + ", invoicePrefix=" + invoicePrefix +"invoiceSequenceSize=" + invoiceSequenceSize
-				+ ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode
-				+ ", parentSeller=" + parentSeller + ", provider=" + provider + ", customers=" + customers + "]";
+		return "SellerDto [code=" + code + ", description=" + description + ", invoicePrefix=" + invoicePrefix + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", provider=" + provider + ", invoiceSequenceSize=" + invoiceSequenceSize + ", invoiceAdjustmentSequenceSize=" + invoiceAdjustmentSequenceSize + ", invoiceAdjustmentPrefix=" + invoiceAdjustmentPrefix + ", currentInvoiceNb="
+				+ currentInvoiceNb + ", currentInvoiceAdjustmentNb=" + currentInvoiceAdjustmentNb + ", customers=" + customers + ", customFields=" + customFields + "]";
 	}
 
 	public String getProvider() {
@@ -165,6 +173,62 @@ public class SellerDto extends BaseDto {
 
 	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
 		this.invoiceSequenceSize = invoiceSequenceSize;
+	}
+
+	/**
+	 * @return the invoiceAdjustmentSequenceSize
+	 */
+	public Integer getInvoiceAdjustmentSequenceSize() {
+		return invoiceAdjustmentSequenceSize;
+	}
+
+	/**
+	 * @param invoiceAdjustmentSequenceSize the invoiceAdjustmentSequenceSize to set
+	 */
+	public void setInvoiceAdjustmentSequenceSize(Integer invoiceAdjustmentSequenceSize) {
+		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
+	}
+
+	/**
+	 * @return the invoiceAdjustmentPrefix
+	 */
+	public String getInvoiceAdjustmentPrefix() {
+		return invoiceAdjustmentPrefix;
+	}
+
+	/**
+	 * @param invoiceAdjustmentPrefix the invoiceAdjustmentPrefix to set
+	 */
+	public void setInvoiceAdjustmentPrefix(String invoiceAdjustmentPrefix) {
+		this.invoiceAdjustmentPrefix = invoiceAdjustmentPrefix;
+	}
+
+	/**
+	 * @return the currentInvoiceNb
+	 */
+	public Long getCurrentInvoiceNb() {
+		return currentInvoiceNb;
+	}
+
+	/**
+	 * @param currentInvoiceNb the currentInvoiceNb to set
+	 */
+	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+		this.currentInvoiceNb = currentInvoiceNb;
+	}
+
+	/**
+	 * @return the currentInvoiceAdjustmentNb
+	 */
+	public Long getCurrentInvoiceAdjustmentNb() {
+		return currentInvoiceAdjustmentNb;
+	}
+
+	/**
+	 * @param currentInvoiceAdjustmentNb the currentInvoiceAdjustmentNb to set
+	 */
+	public void setCurrentInvoiceAdjustmentNb(Long currentInvoiceAdjustmentNb) {
+		this.currentInvoiceAdjustmentNb = currentInvoiceAdjustmentNb;
 	}
 	
 	
