@@ -65,16 +65,15 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 	public String unmatching() {
 		String returnPage = null;
 		try {
-			returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-					+ entity.getMatchingAmounts().get(0).getAccountOperation()
-							.getCustomerAccount().getId()
-					+ "&edit=false&mainTab=1";
 			matchingCodeService.unmatching(entity.getId(), getCurrentUser());
 			messages.info(new BundleKey("messages", "matchingCode.unmatchingOK"));
+			returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+					+ entity.getMatchingAmounts().get(0).getAccountOperation()
+					.getCustomerAccount().getId()+ "&edit=true&faces-redirect=true&includeViewParams=true";
+			
 		} catch (BusinessException e) {
-			messages.error(new BundleKey("messages",
-					"matchingCode.unmatchingKO"));
 			log.error("failed to unmatching ",e);
+			messages.error(e.getMessage());
 		}
 		return returnPage;
 	}
