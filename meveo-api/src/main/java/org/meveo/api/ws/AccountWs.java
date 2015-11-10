@@ -18,6 +18,7 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.TitleDto;
@@ -25,8 +26,8 @@ import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
-import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.dto.response.account.GetAccessResponseDto;
+import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
@@ -217,6 +218,10 @@ public interface AccountWs extends IBaseWs {
 	@WebMethod
 	AccountOperationsResponseDto listAccountOperations(
 			@WebParam(name = "customerAccountCode") String customerAccountCode);
+	
+	@WebMethod
+	ActionStatus matchOperations(@WebParam(name = "customerAccountCode") String customerAccountCode,
+			@WebParam(name = "accountOperations") AccountOperationsDto accountOperationsDto);
 
 	// dunning
 

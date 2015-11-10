@@ -1,12 +1,17 @@
 package org.meveo.api.payment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.NoAllOperationUnmatchedException;
+import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
@@ -248,6 +253,25 @@ public class AccountOperationApi extends BaseApi {
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
+	}
+	
+	public void matchOperations(String customerAccountCode, AccountOperationsDto accountOperationsDto, User currentUser) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
+		if (StringUtils.isBlank(customerAccountCode)) {
+			missingParameters.add("customerAccountCode");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}else{
+			List<Long> operationsId = new ArrayList<Long>();
+			CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, currentUser.getProvider());
+			if (customerAccount == null) {
+				throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+			}
+			for(AccountOperationDto accountOperation:accountOperationsDto.getAccountOperation()){
+				AccountOperation accountOp=accountOperationService.findById(accountOperation.getId(), currentUser.getProvider());
+				operationsId.add(accountOp.getId());
+			}
+			matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(),operationsId, null,currentUser);
+		}
+
 	}
 
 }
