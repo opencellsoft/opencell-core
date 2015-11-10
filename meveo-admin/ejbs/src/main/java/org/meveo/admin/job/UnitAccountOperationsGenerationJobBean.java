@@ -81,17 +81,22 @@ public class UnitAccountOperationsGenerationJobBean {
 						"Cannot found customerAccount");
 			}
 
+			 String occTemplateCode = null;
 			try {
 
-			    String value = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue("accountOperationsGenerationJob.occCode", "FA_FACT", customerAccount.getProvider(), providerService, true, currentUser);
-                invoiceTemplate = oCCTemplateService.findByCode(value, customerAccount.getProvider().getCode());
+				occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue("accountOperationsGenerationJob.occCode", "FA_FACT", customerAccount.getProvider(), providerService, true, currentUser);
+				log.debug("occTemplateCode:"+occTemplateCode);
+                invoiceTemplate = oCCTemplateService.findByCode(occTemplateCode, customerAccount.getProvider().getCode());
+                
             
 			} catch (Exception e) {
 				log.error("error while getting occ template ", e);
-				throw new ImportInvoiceException(
-						"Cannot found OCC Template for invoice");
+				throw new ImportInvoiceException("Cannot found OCC Template for invoice");
 			}
 
+			if(invoiceTemplate == null){
+				throw new ImportInvoiceException("Cannot found OCC Template for invoice");
+			}
 			recordedInvoice.setReference(invoice.getInvoiceNumber());
 			recordedInvoice
 					.setAccountCode(invoiceTemplate.getAccountCode());
