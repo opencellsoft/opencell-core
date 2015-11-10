@@ -696,5 +696,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 	public void setDetailedInvoiceAdjustment(Boolean detailedInvoiceAdjustment) {
 		this.detailedInvoiceAdjustment = detailedInvoiceAdjustment;
 	}
+	
+	public List<Invoice> findInvoiceAdjustmentByInvoice(Invoice adjustedInvoice) {
+		return invoiceService.findInvoiceAdjustmentByInvoice(adjustedInvoice);
+	}
 
 }

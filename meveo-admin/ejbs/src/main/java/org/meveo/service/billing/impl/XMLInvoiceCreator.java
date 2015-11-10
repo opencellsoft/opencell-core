@@ -21,7 +21,6 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -89,6 +88,8 @@ import org.w3c.dom.Text;
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private ParamBean paramBean = ParamBean.getInstance();
+	
+	private String dueDateFormat = "yyyy-MM-dd";
 
 	@Inject
 	private InvoiceService invoiceService;
@@ -107,7 +108,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	// private static Logger log =
 	// LoggerFactory.getLogger(XMLInvoiceCreator.class);
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createXMLInvoiceAdjustment(Long invoiceId, File billingRundir) throws BusinessException {
 		createXMLInvoice(invoiceId, billingRundir, true);
 	}
@@ -122,7 +122,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		// log.debug("creating xml invoice...");
 
 		try {
-			Invoice invoice = findById(invoiceId, Arrays.asList("billingAccount", "billingAccount.tradingLanguage"));
+			Invoice invoice = findById(invoiceId);
 			getEntityManager().refresh(invoice);
 			String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage()
 					.getLanguageCode();
@@ -152,7 +152,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					invoice.getBillingAccount().getCustomerAccount().getCode() != null ? invoice.getBillingAccount()
 							.getCustomerAccount().getCode() : "");
 			if (invoice.getAdjustedInvoice() != null) {
-				invoiceTag.setAttribute("adjustedInvoiceNumber", invoice.getAdjustedInvoice().getCode());
+				invoiceTag.setAttribute("adjustedInvoiceNumber", invoice.getAdjustedInvoice().getInvoiceNumber());
 			}
 
 			BillingCycle billingCycle = null;
@@ -171,13 +171,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			invoiceTag.appendChild(header);
 			// log.debug("creating provider");
 			Provider provider = invoice.getProvider();
-			if(provider.getInvoiceConfiguration() != null && provider.getInvoiceConfiguration().getDisplayProvider()!=null && provider.getInvoiceConfiguration().getDisplayProvider()){
+			if (provider.getInvoiceConfiguration() != null && provider.getInvoiceConfiguration().getDisplayProvider() != null && provider.getInvoiceConfiguration().getDisplayProvider()) {
 				Element providerTag = doc.createElement("provider");
 				providerTag.setAttribute("code", provider.getCode() + "");
 				Element bankCoordinates = doc.createElement("bankCoordinates");
 				Element ics = doc.createElement("ics");
-				Element iban = doc.createElement("iban"); 
-				Element bic = doc.createElement("bic"); 
+				Element iban = doc.createElement("iban");
+				Element bic = doc.createElement("bic");
 				bankCoordinates.appendChild(ics);
 				bankCoordinates.appendChild(iban);
 				bankCoordinates.appendChild(bic);
@@ -185,9 +185,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				header.appendChild(providerTag);
 			
 				if (provider.getBankCoordinates() != null) {
-					Text icsTxt = doc.createTextNode( provider.getBankCoordinates().getIcs() != null ? provider.getBankCoordinates().getIcs() : "");
-					ics.appendChild(icsTxt);			
-					Text ibanTxt = doc.createTextNode(provider.getBankCoordinates().getIban() != null ? provider.getBankCoordinates().getIban() : "");
+					Text icsTxt = doc.createTextNode(provider.getBankCoordinates().getIcs() != null ? provider
+							.getBankCoordinates().getIcs() : "");
+					ics.appendChild(icsTxt);
+					Text ibanTxt = doc.createTextNode(provider.getBankCoordinates().getIban() != null ? provider
+							.getBankCoordinates().getIban() : "");
 					iban.appendChild(ibanTxt);
 					Text bicTxt = doc.createTextNode(provider.getBankCoordinates().getBic() != null ? provider
 							.getBankCoordinates().getBic() : "");
@@ -205,9 +207,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					: "");
 			customerTag.setAttribute("sellerCode", customer.getSeller().getCode() != null ? customer.getSeller()
 					.getCode() : "");
-			customerTag.setAttribute("brand", customer.getCustomerBrand().getCode() != null ? customer
+			customerTag.setAttribute("brand", customer.getCustomerBrand() != null ? customer
 					.getCustomerBrand().getCode() : "");
-			customerTag.setAttribute("category", customer.getCustomerCategory().getCode() != null ? customer
+			customerTag.setAttribute("category", customer.getCustomerCategory() != null ? customer
 					.getCustomerCategory().getCode() : "");
 			if (PaymentMethodEnum.DIRECTDEBIT.equals(invoice.getBillingAccount().getPaymentMethod())) {
 				customerTag.setAttribute("mandateIdentification",
@@ -320,7 +322,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			if (invoice.getDueDate() != null) {
 				Element dueDate = doc.createElement("dueDate");
 				Text dueDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoice.getDueDate(),
-						"dd/MM/yyyy"));
+						dueDateFormat));
 				dueDate.appendChild(dueDateTxt);
 				header.appendChild(dueDate);
 			}
@@ -967,8 +969,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						usageDate.appendChild(usageDateTxt);
 						line.appendChild(usageDate);
 						EDR edr = ratedTransaction.getEdr();
-						if (ratedTransaction.getProvider().getInvoiceConfiguration()!=null && ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs()!=null 
-								&& ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs() && edr != null) {
+						if (ratedTransaction.getProvider().getInvoiceConfiguration() != null
+								&& ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs() != null
+								&& ratedTransaction.getProvider().getInvoiceConfiguration().getDisplayEdrs()
+								&& edr != null) {
 							Element edrInfo = doc.createElement("edr");
 							edrInfo.setAttribute("originRecord", edr.getOriginRecord() != null ? edr.getOriginRecord()
 									: "");

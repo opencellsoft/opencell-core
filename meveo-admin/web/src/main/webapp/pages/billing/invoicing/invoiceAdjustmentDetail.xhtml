@@ -32,11 +32,11 @@
 				<h:panelGrid columns="2">
 					<h:panelGrid>
 						<p:fieldset legend="#{messages['invoice.totals']}">
-							<hftl:decorateFormField fieldId="invoiceCode"
-								label="#{messages['billingAccount.invoice']}">
-								<h:link id="invoiceCode" outcome="invoiceDetail"
+							<hftl:decorateFormField fieldId="invoiceNumber"
+								label="#{messages['invoice.adjustment.adjustedInvoice']}">
+								<h:link id="invoiceNumber" outcome="invoiceDetail"
 									styleClass="field-value"
-									value="#{invoiceBean.entity.adjustedInvoice.code}">
+									value="#{invoiceBean.entity.adjustedInvoice.invoiceNumber}">
 									<f:param name="objectId"
 										value="#{invoiceBean.adjustedInvoiceId}" />
 									<c:if
@@ -47,12 +47,8 @@
 								</h:link>
 							</hftl:decorateFormField>
 
-							<hf:formField label="#{messages['BusinessEntity.code']}"
-								disabled="true" field="code" validateUnique="true"
-								required="true" />
-							<hf:formField label="#{messages['BusinessEntity.description']}"
-								id="description" field="description" useConverter="false"
-								size="50" maxlength="50" required="true" />
+							<hf:formField label="#{messages['invoice.invoiceNumber']}"
+								disabled="true" field="invoiceNumber" required="true" />
 							<hf:formField label="#{messages['invoice.invoiceDate']}"
 								id="invoiceDate" field="invoiceDate" />
 							<hf:formField label="#{messages['invoice.dueDate']}" id="dueDate"
@@ -96,7 +92,9 @@
 								</p:outputPanel>
 								<p:outputPanel
 									rendered="#{invoiceBean.isXmlInvoiceAdjustmentAlreadyGenerated}">
-									<h:commandLink action="#{invoiceBean.downloadXMLInvoiceAdjustment()}" immediate="true">
+									<h:commandLink
+										action="#{invoiceBean.downloadXMLInvoiceAdjustment()}"
+										immediate="true">
 										<h:outputText value="#{invoiceBean.entity.invoiceNumber}.xml"
 											rendered="#{invoiceBean.entity.transient==false}" />
 									</h:commandLink>

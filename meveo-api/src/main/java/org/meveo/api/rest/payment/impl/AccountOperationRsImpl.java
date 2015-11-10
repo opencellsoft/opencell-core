@@ -7,6 +7,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -58,6 +59,25 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 			log.error("error generated while getting list account operation ",e);
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+    public ActionStatus matchOperations(String customerAccountCode,AccountOperationsDto accountOperationsDto){
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			accountOperationApi.matchOperations(customerAccountCode, accountOperationsDto,getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error occurred while matching account operation ",e);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error generated while matching account operation ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
