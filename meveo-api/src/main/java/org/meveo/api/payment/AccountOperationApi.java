@@ -259,19 +259,23 @@ public class AccountOperationApi extends BaseApi {
 		if (StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountCode");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}else{
-			List<Long> operationsId = new ArrayList<Long>();
-			CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, currentUser.getProvider());
-			if (customerAccount == null) {
-				throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
-			}
-			for(AccountOperationDto accountOperation:accountOperationsDto.getAccountOperation()){
-				AccountOperation accountOp=accountOperationService.findById(accountOperation.getId(), currentUser.getProvider());
-				operationsId.add(accountOp.getId());
-			}
-			matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(),operationsId, null,currentUser);
 		}
-
+		if(accountOperationsDto == null || accountOperationsDto.getAccountOperation() == null || accountOperationsDto.getAccountOperation().isEmpty()){			
+			throw new BusinessException("no account operations");
+		}
+		List<Long> operationsId = new ArrayList<Long>();
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, currentUser.getProvider());
+		if (customerAccount == null) {
+			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+		}
+		for(AccountOperationDto accountOperation:accountOperationsDto.getAccountOperation()){
+			AccountOperation accountOp=accountOperationService.findById(accountOperation.getId(), currentUser.getProvider());
+			if (accountOp == null) {
+				throw new EntityDoesNotExistsException(AccountOperation.class, accountOperation.getId());
+			}
+			operationsId.add(accountOp.getId());
+		}
+		matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(),operationsId, null,currentUser);
 	}
 
 }
