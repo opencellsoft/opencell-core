@@ -1,6 +1,7 @@
 package org.meveo.api.rest.invoice;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -57,18 +58,20 @@ public interface InvoiceRs extends IBaseRs {
 	
 	@POST
 	@Path("/getXMLInvoice")
-	public GetXmlInvoiceResponseDto getXMLInvoice(String invoiceNumber);
+	public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber);
 	
 	@POST
 	@Path("/getXMLInvoiceWithType")
-	public GetXmlInvoiceResponseDto getXMLInvoiceWithType(String invoiceNumber, String invoiceType);
+	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(@FormParam("invoiceNumber") String invoiceNumber,
+			@FormParam("invoiceType") String invoiceType);
 	
 	@POST
 	@Path("/getPdfInvoice")
-	public GetPdfInvoiceResponseDto getPdfInvoice(String invoiceNumber);
+	public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber);
 
 	@POST
 	@Path("/getPdfInvoiceWithType")
-	public GetPdfInvoiceResponseDto getPdfInvoiceWithType(String invoiceNumber, String invoiceType);
+	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@FormParam("invoiceNumber") String invoiceNumber,
+			@FormParam("invoiceType") String invoiceType);
 	
 }

@@ -106,12 +106,12 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 	}
 	
 	@Override
-	public GetXmlInvoiceResponseDto getXMLInvoice(String invoiceNumber) {
-		return getXMLInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+	public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber) {
+		return findXMLInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
 	}
 
 	@Override
-	public GetXmlInvoiceResponseDto getXMLInvoiceWithType(String invoiceNumber, String invoiceType) {
+	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(String invoiceNumber, String invoiceType) {
 		GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
 		try{
 			
@@ -140,12 +140,12 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 	}
 	
 	@Override
-	public GetPdfInvoiceResponseDto getPdfInvoice(String InvoiceNumber) {
-		return getPdfInvoiceWithType(InvoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
+	public GetPdfInvoiceResponseDto findPdfInvoice(String InvoiceNumber) {
+		return findPdfInvoiceWithType(InvoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
 	}
 
 	@Override
-	public GetPdfInvoiceResponseDto getPdfInvoiceWithType(String InvoiceNumber, String invoiceType) {
+	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(String InvoiceNumber, String invoiceType) {
 		GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
 		try {
 			
