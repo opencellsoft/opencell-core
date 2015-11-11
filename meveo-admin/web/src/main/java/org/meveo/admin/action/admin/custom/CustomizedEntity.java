@@ -2,6 +2,7 @@ package org.meveo.admin.action.admin.custom;
 
 public class CustomizedEntity {
 
+	private Long id;
     private String entityName;
 
     @SuppressWarnings("rawtypes")
@@ -20,7 +21,15 @@ public class CustomizedEntity {
         this.description = description;
     }
 
-    public String getEntityName() {
+    public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getEntityName() {
         return entityName;
     }
 

@@ -413,6 +413,18 @@
             <to-view-id>/pages/admin/customEntities/customEntityDetail.xhtml
             </to-view-id>
             <redirect include-view-params="true"/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>meveoModules</from-outcome>
+            <to-view-id>/pages/admin/module/modules.xhtml
+            </to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>meveoModuleDetail</from-outcome>
+            <to-view-id>/pages/admin/module/moduleDetail.xhtml
+            </to-view-id>
+            <redirect include-view-params="true"/>
         </navigation-case>          
 		<navigation-case>
 			<from-outcome>customerImportHisto</from-outcome>

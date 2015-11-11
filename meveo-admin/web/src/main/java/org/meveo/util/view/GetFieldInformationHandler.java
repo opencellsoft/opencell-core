@@ -228,6 +228,7 @@ public class GetFieldInformationHandler extends TagHandler {
         } else {
 
             try {
+            	log.debug("get declared field {}",fieldName);
                 field = c.getDeclaredField(fieldName);
             } catch (NoSuchFieldException e) {
                 if (field == null && c.getSuperclass() != null) {
