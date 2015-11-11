@@ -19,6 +19,7 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -28,6 +29,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -79,6 +82,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private UserAccountService userAccountService;
 
 	@Inject
 	private InvoiceAgregateService invoiceAgregateService;
@@ -234,14 +240,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice,Date lastTransactionDate, User currentUser, boolean isInvoiceAdjustment)
 			throws BusinessException {
+		billingAccount = getEntityManager().merge(billingAccount);
+		
 		boolean entreprise = billingAccount.getProvider().isEntreprise();
 		int rounding = billingAccount.getProvider().getRounding()==null?2:billingAccount.getProvider().getRounding();
 		boolean exoneratedFromTaxes=billingAccount.getCustomerAccount().getCustomer().getCustomerCategory().getExoneratedFromTaxes();
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
+		
+		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
 
-		for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
+		for (UserAccount userAccount : userAccounts) {
 			WalletInstance wallet = userAccount.getWallet();
 
 			// TODO : use Named queries
@@ -261,6 +272,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			cq.groupBy(invoiceSubCategoryPath);
 			// Restrictions (I don't really understand what you're querying)
 			Predicate pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.OPEN);
+			if (isInvoiceAdjustment) {
+				pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.BILLED);
+			}
 			Predicate pWallet = cb.equal(from.get("wallet"), wallet);
 			Predicate pAmoutWithoutTax = null;
 			if (!billingAccount.getProvider().isDisplayFreeTransacInInvoice()) {
@@ -297,7 +311,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory
 							.getInvoiceSubcategoryCountries()) {
 						if (invoicesubcatCountry.getTradingCountry().getCountryCode()
-								.equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode()) 
+								.equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()) 
 								&& matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(),billingAccount, invoice)) {
 							taxes.add(invoicesubcatCountry.getTax());
 						}
@@ -545,7 +559,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	public List<RatedTransaction> getRatedTransactions(WalletInstance wallet, Invoice invoice,
 			InvoiceSubCategory invoiceSubCategory) {
 		long startDate = System.currentTimeMillis();
-		QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
+		QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"),
+				invoice.getProvider());
 		qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
 		qb.addCriterionEntity("c.wallet", wallet);
 		qb.addCriterionEntity("c.invoice", invoice);
