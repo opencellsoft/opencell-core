@@ -3277,15 +3277,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findScriptInstance">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findScriptInstance">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findScriptInstanceResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="updateLanguage">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateLanguage">
@@ -3376,12 +3367,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createScriptInstance">
+    <wsdl:operation name="findCustomEntityInstance">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createScriptInstance">
+      <wsdl:input name="findCustomEntityInstance">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="createScriptInstanceResponse">
+      <wsdl:output name="findCustomEntityInstanceResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -3421,6 +3412,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeCustomEntityTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeCustomEntityTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeCustomEntityTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createBillingCycle">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createBillingCycle">
@@ -3439,12 +3439,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateScriptInstance">
+    <wsdl:operation name="findCustomEntityTemplate">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateScriptInstance">
+      <wsdl:input name="findCustomEntityTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="updateScriptInstanceResponse">
+      <wsdl:output name="findCustomEntityTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -3463,6 +3463,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeSellerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCustomEntityInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeCustomEntityInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeCustomEntityInstanceResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -3493,21 +3502,21 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateInvoiceSubCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateInvoiceSubCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateInvoiceSubCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findOccTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findOccTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findOccTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeScriptInstance">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeScriptInstance">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeScriptInstanceResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -3616,6 +3625,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createCurrencyResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomEntityInstance">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCustomEntityInstance">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCustomEntityInstanceResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -3736,6 +3754,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findTax">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findTax">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findTaxResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateProvider">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateProvider">
@@ -3751,15 +3778,6 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeUserResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findTax">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findTax">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findTaxResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -3826,6 +3844,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomEntityTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCustomEntityTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCustomEntityTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeInvoiceCategory">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeInvoiceCategory">
@@ -3880,15 +3907,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createOrUpdateScriptInstance">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateScriptInstance">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateScriptInstanceResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createOrUpdateInvoiceCategory">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateInvoiceCategory">
@@ -3931,6 +3949,8 @@
       <xs:element name="CreditCategory" type="tns:creditCategoryDto"/>
       <xs:element name="Currencies" type="tns:currenciesDto"/>
       <xs:element name="Currency" type="tns:currencyDto"/>
+      <xs:element name="CustomEntityInstance" type="tns:customEntityInstanceDto"/>
+      <xs:element name="CustomEntityTemplate" type="tns:customEntityTemplateDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
       <xs:element name="CustomFieldTemplate" type="tns:customFieldTemplateDto"/>
       <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
@@ -3958,6 +3978,7 @@
       <xs:element name="GetTradingConfigurationResponse" type="tns:getTradingConfigurationResponseDto"/>
       <xs:element name="GetUserResponse" type="tns:getUserResponse"/>
       <xs:element name="HourInDay" type="tns:hourInDayDto"/>
+      <xs:element name="Invoice" type="tns:invoiceDto"/>
       <xs:element name="InvoiceCategories" type="tns:invoiceCategoriesDto"/>
       <xs:element name="InvoiceCategory" type="tns:invoiceCategoryDto"/>
       <xs:element name="InvoiceSubCategories" type="tns:invoiceSubCategoriesDto"/>
@@ -3969,9 +3990,10 @@
       <xs:element name="Name" type="tns:nameDto"/>
       <xs:element name="OCCTemplate" type="tns:occTemplateDto"/>
       <xs:element name="Provider" type="tns:providerDto"/>
-      <xs:element name="ScriptInstance" type="tns:scriptInstanceDto"/>
+      <xs:element name="RatedTransaction" type="tns:ratedTransactionDto"/>
       <xs:element name="SellerCodesResponse" type="tns:sellerCodesResponseDto"/>
       <xs:element name="SellerResponse" type="tns:sellerResponseDto"/>
+      <xs:element name="SubCategoryInvoiceAgregate" type="tns:subCategoryInvoiceAgregateDto"/>
       <xs:element name="Tax" type="tns:taxDto"/>
       <xs:element name="Taxes" type="tns:taxesDto"/>
       <xs:element name="TerminationReasonDto" nillable="true" type="xs:anyType"/>
@@ -4006,20 +4028,24 @@
       <xs:element name="createOrUpdateCountryResponse" type="tns:createOrUpdateCountryResponse"/>
       <xs:element name="createOrUpdateCurrency" type="tns:createOrUpdateCurrency"/>
       <xs:element name="createOrUpdateCurrencyResponse" type="tns:createOrUpdateCurrencyResponse"/>
+      <xs:element name="createOrUpdateCustomEntityInstance" type="tns:createOrUpdateCustomEntityInstance"/>
+      <xs:element name="createOrUpdateCustomEntityInstanceResponse" type="tns:createOrUpdateCustomEntityInstanceResponse"/>
+      <xs:element name="createOrUpdateCustomEntityTemplate" type="tns:createOrUpdateCustomEntityTemplate"/>
+      <xs:element name="createOrUpdateCustomEntityTemplateResponse" type="tns:createOrUpdateCustomEntityTemplateResponse"/>
       <xs:element name="createOrUpdateCustomFieldTemplate" type="tns:createOrUpdateCustomFieldTemplate"/>
       <xs:element name="createOrUpdateCustomFieldTemplateResponse" type="tns:createOrUpdateCustomFieldTemplateResponse"/>
       <xs:element name="createOrUpdateInvoiceCategory" type="tns:createOrUpdateInvoiceCategory"/>
       <xs:element name="createOrUpdateInvoiceCategoryResponse" type="tns:createOrUpdateInvoiceCategoryResponse"/>
+      <xs:element name="createOrUpdateInvoiceSubCategory" type="tns:createOrUpdateInvoiceSubCategory"/>
       <xs:element name="createOrUpdateInvoiceSubCategoryCountry" type="tns:createOrUpdateInvoiceSubCategoryCountry"/>
       <xs:element name="createOrUpdateInvoiceSubCategoryCountryResponse" type="tns:createOrUpdateInvoiceSubCategoryCountryResponse"/>
+      <xs:element name="createOrUpdateInvoiceSubCategoryResponse" type="tns:createOrUpdateInvoiceSubCategoryResponse"/>
       <xs:element name="createOrUpdateLanguage" type="tns:createOrUpdateLanguage"/>
       <xs:element name="createOrUpdateLanguageResponse" type="tns:createOrUpdateLanguageResponse"/>
       <xs:element name="createOrUpdateOccTemplate" type="tns:createOrUpdateOccTemplate"/>
       <xs:element name="createOrUpdateOccTemplateResponse" type="tns:createOrUpdateOccTemplateResponse"/>
       <xs:element name="createOrUpdateProvider" type="tns:createOrUpdateProvider"/>
       <xs:element name="createOrUpdateProviderResponse" type="tns:createOrUpdateProviderResponse"/>
-      <xs:element name="createOrUpdateScriptInstance" type="tns:createOrUpdateScriptInstance"/>
-      <xs:element name="createOrUpdateScriptInstanceResponse" type="tns:createOrUpdateScriptInstanceResponse"/>
       <xs:element name="createOrUpdateSeller" type="tns:createOrUpdateSeller"/>
       <xs:element name="createOrUpdateSellerResponse" type="tns:createOrUpdateSellerResponse"/>
       <xs:element name="createOrUpdateTax" type="tns:createOrUpdateTax"/>
@@ -4028,8 +4054,6 @@
       <xs:element name="createOrUpdateUserResponse" type="tns:createOrUpdateUserResponse"/>
       <xs:element name="createProvider" type="tns:createProvider"/>
       <xs:element name="createProviderResponse" type="tns:createProviderResponse"/>
-      <xs:element name="createScriptInstance" type="tns:createScriptInstance"/>
-      <xs:element name="createScriptInstanceResponse" type="tns:createScriptInstanceResponse"/>
       <xs:element name="createSeller" type="tns:createSeller"/>
       <xs:element name="createSellerResponse" type="tns:createSellerResponse"/>
       <xs:element name="createTax" type="tns:createTax"/>
@@ -4044,6 +4068,10 @@
       <xs:element name="findCountryResponse" type="tns:findCountryResponse"/>
       <xs:element name="findCurrency" type="tns:findCurrency"/>
       <xs:element name="findCurrencyResponse" type="tns:findCurrencyResponse"/>
+      <xs:element name="findCustomEntityInstance" type="tns:findCustomEntityInstance"/>
+      <xs:element name="findCustomEntityInstanceResponse" type="tns:findCustomEntityInstanceResponse"/>
+      <xs:element name="findCustomEntityTemplate" type="tns:findCustomEntityTemplate"/>
+      <xs:element name="findCustomEntityTemplateResponse" type="tns:findCustomEntityTemplateResponse"/>
       <xs:element name="findCustomFieldTemplate" type="tns:findCustomFieldTemplate"/>
       <xs:element name="findCustomFieldTemplateResponse" type="tns:findCustomFieldTemplateResponse"/>
       <xs:element name="findCustomerAccountConfiguration" type="tns:findCustomerAccountConfiguration"/>
@@ -4064,8 +4092,6 @@
       <xs:element name="findOccTemplateResponse" type="tns:findOccTemplateResponse"/>
       <xs:element name="findProvider" type="tns:findProvider"/>
       <xs:element name="findProviderResponse" type="tns:findProviderResponse"/>
-      <xs:element name="findScriptInstance" type="tns:findScriptInstance"/>
-      <xs:element name="findScriptInstanceResponse" type="tns:findScriptInstanceResponse"/>
       <xs:element name="findSeller" type="tns:findSeller"/>
       <xs:element name="findSellerResponse" type="tns:findSellerResponse"/>
       <xs:element name="findTax" type="tns:findTax"/>
@@ -4088,6 +4114,10 @@
       <xs:element name="removeCountryResponse" type="tns:removeCountryResponse"/>
       <xs:element name="removeCurrency" type="tns:removeCurrency"/>
       <xs:element name="removeCurrencyResponse" type="tns:removeCurrencyResponse"/>
+      <xs:element name="removeCustomEntityInstance" type="tns:removeCustomEntityInstance"/>
+      <xs:element name="removeCustomEntityInstanceResponse" type="tns:removeCustomEntityInstanceResponse"/>
+      <xs:element name="removeCustomEntityTemplate" type="tns:removeCustomEntityTemplate"/>
+      <xs:element name="removeCustomEntityTemplateResponse" type="tns:removeCustomEntityTemplateResponse"/>
       <xs:element name="removeCustomFieldTemplate" type="tns:removeCustomFieldTemplate"/>
       <xs:element name="removeCustomFieldTemplateResponse" type="tns:removeCustomFieldTemplateResponse"/>
       <xs:element name="removeInvoiceCategory" type="tns:removeInvoiceCategory"/>
@@ -4100,8 +4130,6 @@
       <xs:element name="removeLanguageResponse" type="tns:removeLanguageResponse"/>
       <xs:element name="removeOccTemplate" type="tns:removeOccTemplate"/>
       <xs:element name="removeOccTemplateResponse" type="tns:removeOccTemplateResponse"/>
-      <xs:element name="removeScriptInstance" type="tns:removeScriptInstance"/>
-      <xs:element name="removeScriptInstanceResponse" type="tns:removeScriptInstanceResponse"/>
       <xs:element name="removeSeller" type="tns:removeSeller"/>
       <xs:element name="removeSellerResponse" type="tns:removeSellerResponse"/>
       <xs:element name="removeTax" type="tns:removeTax"/>
@@ -4130,8 +4158,6 @@
       <xs:element name="updateOccTemplateResponse" type="tns:updateOccTemplateResponse"/>
       <xs:element name="updateProvider" type="tns:updateProvider"/>
       <xs:element name="updateProviderResponse" type="tns:updateProviderResponse"/>
-      <xs:element name="updateScriptInstance" type="tns:updateScriptInstance"/>
-      <xs:element name="updateScriptInstanceResponse" type="tns:updateScriptInstanceResponse"/>
       <xs:element name="updateSeller" type="tns:updateSeller"/>
       <xs:element name="updateSellerResponse" type="tns:updateSellerResponse"/>
       <xs:element name="updateTax" type="tns:updateTax"/>
@@ -4196,6 +4222,7 @@
               <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
               <xs:element minOccurs="0" name="parentSeller" type="xs:string"/>
               <xs:element minOccurs="0" name="provider" type="xs:string"/>
+              <xs:element minOccurs="0" name="invoiceSequenceSize" type="xs:int"/>
               <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
               <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
@@ -4261,7 +4288,6 @@
               <xs:element minOccurs="0" name="creditCategory" type="xs:string"/>
               <xs:element minOccurs="0" name="dateStatus" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="dateDunningLevel" type="xs:dateTime"/>
-              <xs:element minOccurs="0" name="defaultLevel" type="xs:boolean"/>
               <xs:element minOccurs="0" name="contactInformation" type="tns:ContactInformation"/>
               <xs:element minOccurs="0" name="dunningLevel" type="xs:string"/>
               <xs:element minOccurs="0" name="mandateIdentification" type="xs:string"/>
@@ -4296,6 +4322,7 @@
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
               <xs:element minOccurs="0" name="email" type="xs:string"/>
               <xs:element minOccurs="0" name="bankCoordinates" type="tns:bankCoordinatesDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="invoices" nillable="true" type="tns:invoiceDto"/>
               <xs:element minOccurs="0" name="userAccounts" type="tns:UserAccounts"/>
             </xs:sequence>
           </xs:extension>
@@ -4316,6 +4343,65 @@
           <xs:element minOccurs="0" name="issuerName" type="xs:string"/>
           <xs:element minOccurs="0" name="ics" type="xs:string"/>
         </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="invoiceDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="billingAccountCode" type="xs:string"/>
+              <xs:element name="dueDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
+              <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="discount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="paymentMathod" type="xs:string"/>
+              <xs:element name="PDFpresent" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="subCategoryInvoiceAgregates" nillable="true" type="tns:subCategoryInvoiceAgregateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="subCategoryInvoiceAgregateDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="type" type="xs:string"/>
+          <xs:element minOccurs="0" name="itemNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="accountingCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element minOccurs="0" name="taxPercent" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="discount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCode" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="taxesCodes" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="userAccountCode" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="ratedTransactions" nillable="true" type="tns:ratedTransactionDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ratedTransactionDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="usageDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="unitAmountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="code" type="xs:string"/>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element minOccurs="0" name="unityDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="priceplanCode" type="xs:string"/>
+              <xs:element name="doNotTriggerInvoicing" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="UserAccounts">
         <xs:sequence>
@@ -4495,6 +4581,19 @@
               <xs:element name="multiCountry" type="xs:boolean"/>
               <xs:element name="multiLanguage" type="xs:boolean"/>
               <xs:element minOccurs="0" name="userAccount" type="xs:string"/>
+              <xs:element minOccurs="0" name="invoiceSequenceSize" type="xs:int"/>
+              <xs:element name="enterprise" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="invoicePrefix" type="xs:string"/>
+              <xs:element minOccurs="0" name="currentInvoiceNb" type="xs:long"/>
+              <xs:element minOccurs="0" name="displaySubscriptions" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="displayServices" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="displayOffers" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="displayEdrs" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="displayProvider" type="xs:boolean"/>
+              <xs:element name="displayFreeTransacInInvoice" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="invoiceAdjustmentPrefix" type="xs:string"/>
+              <xs:element minOccurs="0" name="currentInvoiceAdjustmentNb" type="xs:long"/>
+              <xs:element minOccurs="0" name="invoiceAdjustmentSequenceSize" type="xs:int"/>
               <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
@@ -4674,33 +4773,6 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="findScriptInstance">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="scriptInstanceCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findScriptInstanceResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getScriptInstanceResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getScriptInstanceResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="scriptInstance" type="tns:scriptInstanceDto"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="scriptInstanceDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="type" type="xs:string"/>
-          <xs:element name="script" type="xs:string"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string"/>
-      </xs:complexType>
       <xs:complexType name="updateBillingCycle">
         <xs:sequence>
           <xs:element minOccurs="0" name="billingCycle" type="tns:billingCycleDto"/>
@@ -4716,6 +4788,7 @@
               <xs:element minOccurs="0" name="invoiceDateProductionDelay" type="xs:int"/>
               <xs:element minOccurs="0" name="transactionDateDelay" type="xs:int"/>
               <xs:element name="calendar" type="xs:string"/>
+              <xs:element minOccurs="0" name="invoicingThreshold" type="xs:decimal"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
             <xs:attribute name="description" type="xs:string" use="required"/>
@@ -4867,6 +4940,35 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="findCustomEntityInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="cetCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findCustomEntityInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getCustomEntityInstanceResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getCustomEntityInstanceResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customEntityInstance" type="tns:customEntityInstanceDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customEntityInstanceDto">
+        <xs:sequence>
+          <xs:element name="disabled" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
+        <xs:attribute name="cetCode" type="xs:string" use="required"/>
+      </xs:complexType>
       <xs:complexType name="createOrUpdateLanguage">
         <xs:sequence>
           <xs:element minOccurs="0" name="language" type="tns:languageDto"/>
@@ -4909,16 +5011,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="createScriptInstance">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="scriptInstance" type="tns:scriptInstanceDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createScriptInstanceResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="updateCountry">
         <xs:sequence>
           <xs:element minOccurs="0" name="country" type="tns:countryDto"/>
@@ -4939,22 +5031,22 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="removeCustomEntityTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeCustomEntityTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="removeCurrency">
         <xs:sequence>
           <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCurrencyResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateScriptInstance">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="scriptInstance" type="tns:scriptInstanceDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateScriptInstanceResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -5030,6 +5122,73 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="findCustomEntityTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findCustomEntityTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getCustomEntityTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getCustomEntityTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customEntityTemplate" type="tns:customEntityTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customEntityTemplateDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="fields">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="field" type="tns:customFieldTemplateDto"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customFieldTemplateDto">
+        <xs:sequence>
+          <xs:element name="fieldType" type="xs:string"/>
+          <xs:element minOccurs="0" name="accountLevel" type="xs:string"/>
+          <xs:element minOccurs="0" name="appliesTo" type="xs:string"/>
+          <xs:element minOccurs="0" name="defaultValue" type="xs:string"/>
+          <xs:element name="storageType" type="xs:string"/>
+          <xs:element name="valueRequired" type="xs:boolean"/>
+          <xs:element name="versionable" type="xs:boolean"/>
+          <xs:element name="triggerEndPeriodEvent" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="calendar" type="xs:string"/>
+          <xs:element minOccurs="0" name="entityClazz" type="xs:string"/>
+          <xs:element name="listValues">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string"/>
+                      <xs:element minOccurs="0" name="value" type="xs:string"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string" use="required"/>
+      </xs:complexType>
       <xs:complexType name="removeSeller">
         <xs:sequence>
           <xs:element minOccurs="0" name="sellerCode" type="xs:string"/>
@@ -5046,6 +5205,17 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeBillingCycleResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeCustomEntityInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="cetCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeCustomEntityInstanceResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -5096,12 +5266,12 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="removeScriptInstance">
+      <xs:complexType name="createOrUpdateInvoiceSubCategory">
         <xs:sequence>
-          <xs:element minOccurs="0" name="scriptInstanceCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="invoiceSubCategory" type="tns:invoiceSubCategoryDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="removeScriptInstanceResponse">
+      <xs:complexType name="createOrUpdateInvoiceSubCategoryResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -5157,21 +5327,6 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="customField" type="tns:customFieldTemplateDto"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="customFieldTemplateDto">
-        <xs:sequence>
-          <xs:element name="fieldType" type="xs:string"/>
-          <xs:element name="accountLevel" type="xs:string"/>
-          <xs:element minOccurs="0" name="defaultValue" type="xs:string"/>
-          <xs:element name="storageType" type="xs:string"/>
-          <xs:element name="valueRequired" type="xs:boolean"/>
-          <xs:element name="versionable" type="xs:boolean"/>
-          <xs:element name="triggerEndPeriodEvent" type="xs:boolean"/>
-          <xs:element minOccurs="0" name="calendar" type="xs:string"/>
-          <xs:element minOccurs="0" name="entityClazz" type="xs:string"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="updateCustomFieldTemplateResponse">
         <xs:sequence>
@@ -5283,6 +5438,16 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createLanguageResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomEntityInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customEntityInstance" type="tns:customEntityInstanceDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomEntityInstanceResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -5663,6 +5828,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomEntityTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customEntityTemplate" type="tns:customEntityTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomEntityTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createOccTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="occTemplate" type="tns:occTemplateDto"/>
@@ -5712,16 +5887,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="createOrUpdateScriptInstance">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="scriptInstance" type="tns:scriptInstanceDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateScriptInstanceResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="createOrUpdateCurrency">
         <xs:sequence>
           <xs:element minOccurs="0" name="currency" type="tns:currencyDto"/>
@@ -5763,17 +5928,20 @@
   <wsdl:message name="findInvoiceSubCategoryResponse">
     <wsdl:part element="ns1:findInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeScriptInstanceResponse">
-    <wsdl:part element="ns1:removeScriptInstanceResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateInvoiceSubCategoryResponse">
+    <wsdl:part element="ns1:createOrUpdateInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateInvoiceCategoryResponse">
     <wsdl:part element="ns1:updateInvoiceCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findCustomEntityTemplateResponse">
+    <wsdl:part element="ns1:findCustomEntityTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomEntityInstanceResponse">
+    <wsdl:part element="ns1:removeCustomEntityInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createInvoiceSubCategory">
     <wsdl:part element="ns1:createInvoiceSubCategory" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateScriptInstanceResponse">
-    <wsdl:part element="ns1:updateScriptInstanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findBillingCycleResponse">
     <wsdl:part element="ns1:findBillingCycleResponse" name="parameters"></wsdl:part>
@@ -5826,17 +5994,14 @@
   <wsdl:message name="createOrUpdateInvoiceSubCategoryCountry">
     <wsdl:part element="ns1:createOrUpdateInvoiceSubCategoryCountry" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateScriptInstance">
-    <wsdl:part element="ns1:createOrUpdateScriptInstance" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeSellerResponse">
     <wsdl:part element="ns1:removeSellerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createProvider">
     <wsdl:part element="ns1:createProvider" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findScriptInstance">
-    <wsdl:part element="ns1:findScriptInstance" name="parameters"></wsdl:part>
+  <wsdl:message name="findCustomEntityTemplate">
+    <wsdl:part element="ns1:findCustomEntityTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeInvoiceSubCategoryCountryResponse">
     <wsdl:part element="ns1:removeInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
@@ -5853,20 +6018,17 @@
   <wsdl:message name="createOrUpdateOccTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateOccTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findScriptInstanceResponse">
-    <wsdl:part element="ns1:findScriptInstanceResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateProviderResponse">
     <wsdl:part element="ns1:createOrUpdateProviderResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createInvoiceCategoryResponse">
     <wsdl:part element="ns1:createInvoiceCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findCustomEntityInstance">
+    <wsdl:part element="ns1:findCustomEntityInstance" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeBillingCycleResponse">
     <wsdl:part element="ns1:removeBillingCycleResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createScriptInstance">
-    <wsdl:part element="ns1:createScriptInstance" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCurrency">
     <wsdl:part element="ns1:updateCurrency" name="parameters"></wsdl:part>
@@ -5882,6 +6044,9 @@
   </wsdl:message>
   <wsdl:message name="createOrUpdateCustomFieldTemplate">
     <wsdl:part element="ns1:createOrUpdateCustomFieldTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomEntityTemplate">
+    <wsdl:part element="ns1:createOrUpdateCustomEntityTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createInvoiceCategory">
     <wsdl:part element="ns1:createInvoiceCategory" name="parameters"></wsdl:part>
@@ -5921,6 +6086,9 @@
   </wsdl:message>
   <wsdl:message name="createUser">
     <wsdl:part element="ns1:createUser" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomEntityInstance">
+    <wsdl:part element="ns1:removeCustomEntityInstance" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeCountry">
     <wsdl:part element="ns1:removeCountry" name="parameters"></wsdl:part>
@@ -5991,9 +6159,6 @@
   <wsdl:message name="removeCalendarResponse">
     <wsdl:part element="ns1:removeCalendarResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateScriptInstance">
-    <wsdl:part element="ns1:updateScriptInstance" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createBillingCycle">
     <wsdl:part element="ns1:createBillingCycle" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -6042,9 +6207,6 @@
   <wsdl:message name="createOrUpdateCountryResponse">
     <wsdl:part element="ns1:createOrUpdateCountryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateScriptInstanceResponse">
-    <wsdl:part element="ns1:createOrUpdateScriptInstanceResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createInvoiceSubCategoryCountryResponse">
     <wsdl:part element="ns1:createInvoiceSubCategoryCountryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -6063,8 +6225,14 @@
   <wsdl:message name="findOccTemplate">
     <wsdl:part element="ns1:findOccTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomEntityTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateCustomEntityTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findCustomFieldTemplate">
     <wsdl:part element="ns1:findCustomFieldTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomEntityInstance">
+    <wsdl:part element="ns1:createOrUpdateCustomEntityInstance" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findLanguageResponse">
     <wsdl:part element="ns1:findLanguageResponse" name="parameters"></wsdl:part>
@@ -6083,6 +6251,9 @@
   </wsdl:message>
   <wsdl:message name="findCountryResponse">
     <wsdl:part element="ns1:findCountryResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomEntityTemplateResponse">
+    <wsdl:part element="ns1:removeCustomEntityTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeInvoiceCategory">
     <wsdl:part element="ns1:removeInvoiceCategory" name="parameters"></wsdl:part>
@@ -6165,9 +6336,6 @@
   <wsdl:message name="updateInvoiceSubCategoryResponse">
     <wsdl:part element="ns1:updateInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeScriptInstance">
-    <wsdl:part element="ns1:removeScriptInstance" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeInvoiceSubCategoryResponse">
     <wsdl:part element="ns1:removeInvoiceSubCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -6176,6 +6344,12 @@
   </wsdl:message>
   <wsdl:message name="listSeller">
     <wsdl:part element="ns1:listSeller" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCustomEntityTemplate">
+    <wsdl:part element="ns1:removeCustomEntityTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomEntityInstanceResponse">
+    <wsdl:part element="ns1:createOrUpdateCustomEntityInstanceResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createUserResponse">
     <wsdl:part element="ns1:createUserResponse" name="parameters"></wsdl:part>
@@ -6186,8 +6360,8 @@
   <wsdl:message name="findSeller">
     <wsdl:part element="ns1:findSeller" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createScriptInstanceResponse">
-    <wsdl:part element="ns1:createScriptInstanceResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateInvoiceSubCategory">
+    <wsdl:part element="ns1:createOrUpdateInvoiceSubCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateBillingCycle">
     <wsdl:part element="ns1:updateBillingCycle" name="parameters"></wsdl:part>
@@ -6240,6 +6414,9 @@
   <wsdl:message name="updateCurrencyResponse">
     <wsdl:part element="ns1:updateCurrencyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findCustomEntityInstanceResponse">
+    <wsdl:part element="ns1:findCustomEntityInstanceResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:portType name="SettingsWs">
     <wsdl:operation name="createOrUpdateInvoiceSubCategoryCountry">
       <wsdl:input message="ns1:createOrUpdateInvoiceSubCategoryCountry" name="createOrUpdateInvoiceSubCategoryCountry"></wsdl:input>
@@ -6285,10 +6462,6 @@
       <wsdl:input message="ns1:updateLanguage" name="updateLanguage"></wsdl:input>
       <wsdl:output message="ns1:updateLanguageResponse" name="updateLanguageResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findScriptInstance">
-      <wsdl:input message="ns1:findScriptInstance" name="findScriptInstance"></wsdl:input>
-      <wsdl:output message="ns1:findScriptInstanceResponse" name="findScriptInstanceResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="updateBillingCycle">
       <wsdl:input message="ns1:updateBillingCycle" name="updateBillingCycle"></wsdl:input>
       <wsdl:output message="ns1:updateBillingCycleResponse" name="updateBillingCycleResponse"></wsdl:output>
@@ -6321,6 +6494,10 @@
       <wsdl:input message="ns1:createTax" name="createTax"></wsdl:input>
       <wsdl:output message="ns1:createTaxResponse" name="createTaxResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findCustomEntityInstance">
+      <wsdl:input message="ns1:findCustomEntityInstance" name="findCustomEntityInstance"></wsdl:input>
+      <wsdl:output message="ns1:findCustomEntityInstanceResponse" name="findCustomEntityInstanceResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateLanguage">
       <wsdl:input message="ns1:createOrUpdateLanguage" name="createOrUpdateLanguage"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateLanguageResponse" name="createOrUpdateLanguageResponse"></wsdl:output>
@@ -6328,10 +6505,6 @@
     <wsdl:operation name="findInvoiceSubCategory">
       <wsdl:input message="ns1:findInvoiceSubCategory" name="findInvoiceSubCategory"></wsdl:input>
       <wsdl:output message="ns1:findInvoiceSubCategoryResponse" name="findInvoiceSubCategoryResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createScriptInstance">
-      <wsdl:input message="ns1:createScriptInstance" name="createScriptInstance"></wsdl:input>
-      <wsdl:output message="ns1:createScriptInstanceResponse" name="createScriptInstanceResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateCountry">
       <wsdl:input message="ns1:updateCountry" name="updateCountry"></wsdl:input>
@@ -6341,13 +6514,13 @@
       <wsdl:input message="ns1:createOrUpdateProvider" name="createOrUpdateProvider"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateProviderResponse" name="createOrUpdateProviderResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeCustomEntityTemplate">
+      <wsdl:input message="ns1:removeCustomEntityTemplate" name="removeCustomEntityTemplate"></wsdl:input>
+      <wsdl:output message="ns1:removeCustomEntityTemplateResponse" name="removeCustomEntityTemplateResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeCurrency">
       <wsdl:input message="ns1:removeCurrency" name="removeCurrency"></wsdl:input>
       <wsdl:output message="ns1:removeCurrencyResponse" name="removeCurrencyResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateScriptInstance">
-      <wsdl:input message="ns1:updateScriptInstance" name="updateScriptInstance"></wsdl:input>
-      <wsdl:output message="ns1:updateScriptInstanceResponse" name="updateScriptInstanceResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findInvoicingConfiguration">
       <wsdl:input message="ns1:findInvoicingConfiguration" name="findInvoicingConfiguration"></wsdl:input>
@@ -6357,6 +6530,10 @@
       <wsdl:input message="ns1:createBillingCycle" name="createBillingCycle"></wsdl:input>
       <wsdl:output message="ns1:createBillingCycleResponse" name="createBillingCycleResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findCustomEntityTemplate">
+      <wsdl:input message="ns1:findCustomEntityTemplate" name="findCustomEntityTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findCustomEntityTemplateResponse" name="findCustomEntityTemplateResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeSeller">
       <wsdl:input message="ns1:removeSeller" name="removeSeller"></wsdl:input>
       <wsdl:output message="ns1:removeSellerResponse" name="removeSellerResponse"></wsdl:output>
@@ -6364,6 +6541,10 @@
     <wsdl:operation name="removeBillingCycle">
       <wsdl:input message="ns1:removeBillingCycle" name="removeBillingCycle"></wsdl:input>
       <wsdl:output message="ns1:removeBillingCycleResponse" name="removeBillingCycleResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCustomEntityInstance">
+      <wsdl:input message="ns1:removeCustomEntityInstance" name="removeCustomEntityInstance"></wsdl:input>
+      <wsdl:output message="ns1:removeCustomEntityInstanceResponse" name="removeCustomEntityInstanceResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeOccTemplate">
       <wsdl:input message="ns1:removeOccTemplate" name="removeOccTemplate"></wsdl:input>
@@ -6377,9 +6558,9 @@
       <wsdl:input message="ns1:createUser" name="createUser"></wsdl:input>
       <wsdl:output message="ns1:createUserResponse" name="createUserResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="removeScriptInstance">
-      <wsdl:input message="ns1:removeScriptInstance" name="removeScriptInstance"></wsdl:input>
-      <wsdl:output message="ns1:removeScriptInstanceResponse" name="removeScriptInstanceResponse"></wsdl:output>
+    <wsdl:operation name="createOrUpdateInvoiceSubCategory">
+      <wsdl:input message="ns1:createOrUpdateInvoiceSubCategory" name="createOrUpdateInvoiceSubCategory"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateInvoiceSubCategoryResponse" name="createOrUpdateInvoiceSubCategoryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findOccTemplate">
       <wsdl:input message="ns1:findOccTemplate" name="findOccTemplate"></wsdl:input>
@@ -6428,6 +6609,10 @@
     <wsdl:operation name="createLanguage">
       <wsdl:input message="ns1:createLanguage" name="createLanguage"></wsdl:input>
       <wsdl:output message="ns1:createLanguageResponse" name="createLanguageResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomEntityInstance">
+      <wsdl:input message="ns1:createOrUpdateCustomEntityInstance" name="createOrUpdateCustomEntityInstance"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCustomEntityInstanceResponse" name="createOrUpdateCustomEntityInstanceResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCurrency">
       <wsdl:input message="ns1:createCurrency" name="createCurrency"></wsdl:input>
@@ -6529,6 +6714,10 @@
       <wsdl:input message="ns1:removeInvoiceCategory" name="removeInvoiceCategory"></wsdl:input>
       <wsdl:output message="ns1:removeInvoiceCategoryResponse" name="removeInvoiceCategoryResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomEntityTemplate">
+      <wsdl:input message="ns1:createOrUpdateCustomEntityTemplate" name="createOrUpdateCustomEntityTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCustomEntityTemplateResponse" name="createOrUpdateCustomEntityTemplateResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOccTemplate">
       <wsdl:input message="ns1:createOccTemplate" name="createOccTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOccTemplateResponse" name="createOccTemplateResponse"></wsdl:output>
@@ -6544,10 +6733,6 @@
     <wsdl:operation name="findProvider">
       <wsdl:input message="ns1:findProvider" name="findProvider"></wsdl:input>
       <wsdl:output message="ns1:findProviderResponse" name="findProviderResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateScriptInstance">
-      <wsdl:input message="ns1:createOrUpdateScriptInstance" name="createOrUpdateScriptInstance"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateScriptInstanceResponse" name="createOrUpdateScriptInstanceResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOrUpdateCurrency">
       <wsdl:input message="ns1:createOrUpdateCurrency" name="createOrUpdateCurrency"></wsdl:input>
@@ -6898,20 +7083,7 @@
          </provider>\r
       </ws:createOrUpdateProvider>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateProvider"/></con:call></con:operation><con:operation id="59e37e84-f1f7-4c33-b717-b29023cd0ba8" isOneWay="false" action="" name="createOrUpdateScriptInstance" bindingOperationName="createOrUpdateScriptInstance" type="Request-Response" outputName="createOrUpdateScriptInstanceResponse" inputName="createOrUpdateScriptInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="792184e7-9f87-4f2b-8494-31c367075afb" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateScriptInstance>\r
-         <!--Optional:-->\r
-         <scriptInstance code="?" description="?">\r
-            <!--Optional:-->\r
-            <type>?</type>\r
-            <!--Optional:-->\r
-            <script>?</script>\r
-         </scriptInstance>\r
-      </ws:createOrUpdateScriptInstance>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateScriptInstance"/></con:call></con:operation><con:operation id="5211ee3b-dea9-4e0e-9a47-8d4c8f6d5237" isOneWay="false" action="" name="createOrUpdateSeller" bindingOperationName="createOrUpdateSeller" type="Request-Response" outputName="createOrUpdateSellerResponse" inputName="createOrUpdateSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e718b2db-90d5-4739-b962-6e23e930735b" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateProvider"/></con:call></con:operation><con:operation id="5211ee3b-dea9-4e0e-9a47-8d4c8f6d5237" isOneWay="false" action="" name="createOrUpdateSeller" bindingOperationName="createOrUpdateSeller" type="Request-Response" outputName="createOrUpdateSellerResponse" inputName="createOrUpdateSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e718b2db-90d5-4739-b962-6e23e930735b" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateSeller>\r
@@ -7550,20 +7722,7 @@
          </provider>\r
       </ws:createProvider>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createProvider"/></con:call></con:operation><con:operation id="33948340-26fe-4622-b23a-1fc0e347a273" isOneWay="false" action="" name="createScriptInstance" bindingOperationName="createScriptInstance" type="Request-Response" outputName="createScriptInstanceResponse" inputName="createScriptInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a7960878-f14c-422d-9d15-60d5aad454bf" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createScriptInstance>\r
-         <!--Optional:-->\r
-         <scriptInstance code="?" description="?">\r
-            <!--Optional:-->\r
-            <type>?</type>\r
-            <!--Optional:-->\r
-            <script>?</script>\r
-         </scriptInstance>\r
-      </ws:createScriptInstance>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createScriptInstance"/></con:call></con:operation><con:operation id="ef9cb767-c6b1-4297-ad7a-3c30af5b86ae" isOneWay="false" action="" name="createSeller" bindingOperationName="createSeller" type="Request-Response" outputName="createSellerResponse" inputName="createSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="cc50a491-3eca-4f98-a64b-25242cc42665" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createProvider"/></con:call></con:operation><con:operation id="ef9cb767-c6b1-4297-ad7a-3c30af5b86ae" isOneWay="false" action="" name="createSeller" bindingOperationName="createSeller" type="Request-Response" outputName="createSellerResponse" inputName="createSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="cc50a491-3eca-4f98-a64b-25242cc42665" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createSeller>\r
@@ -8287,15 +8446,7 @@
          <providerCode>?</providerCode>\r
       </ws:findProvider>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findProvider"/></con:call></con:operation><con:operation id="aeb875b7-b9ab-4ef6-a3a6-b0634f9a07b6" isOneWay="false" action="" name="findScriptInstance" bindingOperationName="findScriptInstance" type="Request-Response" outputName="findScriptInstanceResponse" inputName="findScriptInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8288cb3e-c367-4731-bfc1-5576adbf5c72" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:findScriptInstance>\r
-         <!--Optional:-->\r
-         <scriptInstanceCode>?</scriptInstanceCode>\r
-      </ws:findScriptInstance>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findScriptInstance"/></con:call></con:operation><con:operation id="17edf3e1-6723-4192-a497-5650315e9a10" isOneWay="false" action="" name="findSeller" bindingOperationName="findSeller" type="Request-Response" outputName="findSellerResponse" inputName="findSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="3a1ad9a9-f66f-4838-913b-8dee05621d36" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findProvider"/></con:call></con:operation><con:operation id="17edf3e1-6723-4192-a497-5650315e9a10" isOneWay="false" action="" name="findSeller" bindingOperationName="findSeller" type="Request-Response" outputName="findSellerResponse" inputName="findSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="3a1ad9a9-f66f-4838-913b-8dee05621d36" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:findSeller>\r
@@ -8425,15 +8576,7 @@
          <occTemplateCode>?</occTemplateCode>\r
       </ws:removeOccTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeOccTemplate"/></con:call></con:operation><con:operation id="8a506907-d4a5-474c-938f-8388b9ce5293" isOneWay="false" action="" name="removeScriptInstance" bindingOperationName="removeScriptInstance" type="Request-Response" outputName="removeScriptInstanceResponse" inputName="removeScriptInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ee005901-b9e8-4f19-9841-5e546d6a0bf0" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:removeScriptInstance>\r
-         <!--Optional:-->\r
-         <scriptInstanceCode>?</scriptInstanceCode>\r
-      </ws:removeScriptInstance>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeScriptInstance"/></con:call></con:operation><con:operation id="000ff421-0a3d-4000-8367-26f51479feed" isOneWay="false" action="" name="removeSeller" bindingOperationName="removeSeller" type="Request-Response" outputName="removeSellerResponse" inputName="removeSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7dc6738e-6236-4ac9-9069-47bf63ac7ef0" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeOccTemplate"/></con:call></con:operation><con:operation id="000ff421-0a3d-4000-8367-26f51479feed" isOneWay="false" action="" name="removeSeller" bindingOperationName="removeSeller" type="Request-Response" outputName="removeSellerResponse" inputName="removeSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7dc6738e-6236-4ac9-9069-47bf63ac7ef0" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeSeller>\r
@@ -8645,20 +8788,7 @@
          </provider>\r
       </ws:updateProvider>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateProvider"/></con:call></con:operation><con:operation id="1932ef91-7742-4fe3-b555-abdced181625" isOneWay="false" action="" name="updateScriptInstance" bindingOperationName="updateScriptInstance" type="Request-Response" outputName="updateScriptInstanceResponse" inputName="updateScriptInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="25bc803b-8198-478c-b029-2bf074bfd365" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:updateScriptInstance>\r
-         <!--Optional:-->\r
-         <scriptInstance code="?" description="?">\r
-            <!--Optional:-->\r
-            <type>?</type>\r
-            <!--Optional:-->\r
-            <script>?</script>\r
-         </scriptInstance>\r
-      </ws:updateScriptInstance>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateScriptInstance"/></con:call></con:operation><con:operation id="c99f8ece-e535-44a7-b84d-c0869e3b3103" isOneWay="false" action="" name="updateSeller" bindingOperationName="updateSeller" type="Request-Response" outputName="updateSellerResponse" inputName="updateSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7906bf40-8b4e-4c01-b59b-acdbfd0b3f58" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateProvider"/></con:call></con:operation><con:operation id="c99f8ece-e535-44a7-b84d-c0869e3b3103" isOneWay="false" action="" name="updateSeller" bindingOperationName="updateSeller" type="Request-Response" outputName="updateSellerResponse" inputName="updateSeller" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7906bf40-8b4e-4c01-b59b-acdbfd0b3f58" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateSeller>\r
@@ -9275,7 +9405,154 @@
          </user>\r
       </ws:updateUser>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateUser"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="9ad9d18f-10c6-4f81-83a5-b1eab9c09dd8" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateUser"/></con:call></con:operation><con:operation id="4eaf4de5-4cd3-42cd-837f-53576522b503" isOneWay="false" action="" name="removeCustomEntityTemplate" bindingOperationName="removeCustomEntityTemplate" type="Request-Response" outputName="removeCustomEntityTemplateResponse" inputName="removeCustomEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fa88ad5b-d2d1-434c-9790-43d824a74f68" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomEntityTemplate>\r
+         <!--Optional:-->\r
+         <code>?</code>\r
+      </ws:removeCustomEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeCustomEntityTemplate"/></con:call></con:operation><con:operation id="28d1c01f-a8f5-4d90-956f-dd6a51673250" isOneWay="false" action="" name="findCustomEntityTemplate" bindingOperationName="findCustomEntityTemplate" type="Request-Response" outputName="findCustomEntityTemplateResponse" inputName="findCustomEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e28be426-4247-4e8d-9958-05ca5fdf4712" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomEntityTemplate>\r
+         <!--Optional:-->\r
+         <code>?</code>\r
+      </ws:findCustomEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCustomEntityTemplate"/></con:call></con:operation><con:operation id="7f760f68-29c0-4d50-a44f-d17e41b190f8" isOneWay="false" action="" name="createOrUpdateInvoiceSubCategory" bindingOperationName="createOrUpdateInvoiceSubCategory" type="Request-Response" outputName="createOrUpdateInvoiceSubCategoryResponse" inputName="createOrUpdateInvoiceSubCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dd439899-7708-4e5c-a5be-d548ffeb5feb" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateInvoiceSubCategory>\r
+         <!--Optional:-->\r
+         <invoiceSubCategory code="?" description="?">\r
+            <invoiceCategory>?</invoiceCategory>\r
+            <accountingCode>?</accountingCode>\r
+            <!--Zero or more repetitions:-->\r
+            <languageDescriptions>\r
+               <!--Optional:-->\r
+               <languageCode>?</languageCode>\r
+               <!--Optional:-->\r
+               <description>?</description>\r
+            </languageDescriptions>\r
+         </invoiceSubCategory>\r
+      </ws:createOrUpdateInvoiceSubCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateInvoiceSubCategory"/></con:call></con:operation><con:operation id="a791c643-2d0d-446f-a01c-af2005deab65" isOneWay="false" action="" name="createOrUpdateCustomEntityTemplate" bindingOperationName="createOrUpdateCustomEntityTemplate" type="Request-Response" outputName="createOrUpdateCustomEntityTemplateResponse" inputName="createOrUpdateCustomEntityTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="539ff0c6-38a6-4416-9211-0d7778539cfd" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomEntityTemplate>\r
+         <!--Optional:-->\r
+         <customEntityTemplate code="?" name="?" description="?">\r
+            <!--Optional:-->\r
+            <fields>\r
+               <!--Zero or more repetitions:-->\r
+               <field code="?" description="?">\r
+                  <fieldType>?</fieldType>\r
+                  <!--Optional:-->\r
+                  <accountLevel>?</accountLevel>\r
+                  <!--Optional:-->\r
+                  <appliesTo>?</appliesTo>\r
+                  <!--Optional:-->\r
+                  <defaultValue>?</defaultValue>\r
+                  <storageType>?</storageType>\r
+                  <valueRequired>?</valueRequired>\r
+                  <versionable>?</versionable>\r
+                  <triggerEndPeriodEvent>?</triggerEndPeriodEvent>\r
+                  <!--Optional:-->\r
+                  <calendar>?</calendar>\r
+                  <!--Optional:-->\r
+                  <entityClazz>?</entityClazz>\r
+                  <listValues>\r
+                     <!--Zero or more repetitions:-->\r
+                     <entry>\r
+                        <!--Optional:-->\r
+                        <key>?</key>\r
+                        <!--Optional:-->\r
+                        <value>?</value>\r
+                     </entry>\r
+                  </listValues>\r
+               </field>\r
+            </fields>\r
+         </customEntityTemplate>\r
+      </ws:createOrUpdateCustomEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCustomEntityTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="39cf4bef-caf3-4e9c-bdac-b746f8b08e28" isOneWay="false" action="" name="findCustomEntityInstance" bindingOperationName="findCustomEntityInstance" type="Request-Response" outputName="findCustomEntityInstanceResponse" inputName="findCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="943d5d5a-3869-48e9-b6b4-3b8dbab68eee" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomEntityInstance>\r
+         <!--Optional:-->\r
+         <cetCode>?</cetCode>\r
+         <!--Optional:-->\r
+         <code>?</code>\r
+      </ws:findCustomEntityInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCustomEntityInstance"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="28243d1e-22bc-4ea9-ab26-d9d5c7ad785f" isOneWay="false" action="" name="removeCustomEntityInstance" bindingOperationName="removeCustomEntityInstance" type="Request-Response" outputName="removeCustomEntityInstanceResponse" inputName="removeCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="f94216c5-7203-4df2-aa2b-cf13fb4d412e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomEntityInstance>\r
+         <!--Optional:-->\r
+         <cetCode>?</cetCode>\r
+         <!--Optional:-->\r
+         <code>?</code>\r
+      </ws:removeCustomEntityInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeCustomEntityInstance"/></con:call></con:operation><con:operation id="81b20550-9bd8-426a-8dff-7ffd06e65eb9" isOneWay="false" action="" name="createOrUpdateCustomEntityInstance" bindingOperationName="createOrUpdateCustomEntityInstance" type="Request-Response" outputName="createOrUpdateCustomEntityInstanceResponse" inputName="createOrUpdateCustomEntityInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="f19f42fc-c845-492d-a516-33ababb1c409" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomEntityInstance>\r
+         <!--Optional:-->\r
+         <customEntityInstance code="?" description="?" cetCode="?">\r
+            <disabled>?</disabled>\r
+            <!--Optional:-->\r
+            <customFields>\r
+               <!--Zero or more repetitions:-->\r
+               <customField code="?" description="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                  <!--Optional:-->\r
+                  <stringValue>?</stringValue>\r
+                  <!--Optional:-->\r
+                  <dateValue>?</dateValue>\r
+                  <!--Optional:-->\r
+                  <longValue>?</longValue>\r
+                  <!--Optional:-->\r
+                  <doubleValue>?</doubleValue>\r
+                  <!--Optional:-->\r
+                  <listValue>\r
+                     <!--Zero or more repetitions:-->\r
+                     <value>\r
+                        <!--You have a CHOICE of the next 5 items at this level-->\r
+                        <dateValue>?</dateValue>\r
+                        <doubleValue>?</doubleValue>\r
+                        <longValue>?</longValue>\r
+                        <stringValue>?</stringValue>\r
+                        <entityReferenceValue classname="?" code="?"/>\r
+                     </value>\r
+                  </listValue>\r
+                  <mapValue>\r
+                     <!--Zero or more repetitions:-->\r
+                     <entry>\r
+                        <!--Optional:-->\r
+                        <key>?</key>\r
+                        <!--Optional:-->\r
+                        <value>\r
+                           <!--You have a CHOICE of the next 5 items at this level-->\r
+                           <dateValue>?</dateValue>\r
+                           <doubleValue>?</doubleValue>\r
+                           <longValue>?</longValue>\r
+                           <stringValue>?</stringValue>\r
+                           <entityReferenceValue classname="?" code="?"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+                  <!--Optional:-->\r
+                  <entityReferenceValue classname="?" code="?"/>\r
+               </customField>\r
+            </customFields>\r
+         </customEntityInstance>\r
+      </ws:createOrUpdateCustomEntityInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCustomEntityInstance"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="9ad9d18f-10c6-4f81-83a5-b1eab9c09dd8" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -25458,7 +25735,199 @@
                   &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 3" id="719c1586-1c8c-4475-a419-888d4b00f573"><con:configuration><token>                  &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_ACC_STRING_SINGLE_NV" description="ACC_STRING_SINGLE_NV field">
                      &lt;stringValue>ACC_STRING_VALUE_0&lt;/stringValue>
                   &lt;/customField>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT by field type" searchProperties="true" id="d810ab64-b19b-4807-9ddc-11e582b39553" disabled="true"><con:settings/><con:testStep type="request" name="Storage=Single, versioned=false" id="49026d37-d51b-49b4-ae0f-41f3b25b4e89"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Storage=Single, versioned=false" id="6b508b87-8014-4b1f-b1bd-ddd89ae847a5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@remove_empty_content">true</con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>684a</con:value></con:property></con:properties></con:testCase><con:testCase id="d0465867-aff5-49c8-97b6-857e90201951" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CET" searchProperties="true"><con:settings/><con:testStep type="request" name="Create cet1" id="e3b051f1-b7c6-4fd0-b9e3-a7088058e2ab"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateCustomEntityTemplate</con:operation><con:request name="Create cet1" id="37325412-edef-4e28-91b0-6c66c999581c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomEntityTemplate>\r
+         <customEntityTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_CET" name="Custom Entity one" description="Custom entity template one">\r
+            <fields>\r
+               <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT1" description="Custom field 1">\r
+                  <fieldType>STRING</fieldType>\r
+                  <defaultValue>Hello</defaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <valueRequired>true</valueRequired>\r
+                  <versionable>false</versionable>\r
+               </field>\r
+               <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
+                  <fieldType>LONG</fieldType>
+                  <defaultValue>15</defaultValue>
+                  <storageType>SINGLE</storageType>
+                  <valueRequired>false</valueRequired>
+                  <versionable>false</versionable>
+               </field>
+            </fields>\r
+         </customEntityTemplate>\r
+      </ws:createOrUpdateCustomEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/><con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find cet1" id="3dfb45e9-1543-4f46-a28b-65f3a37269a3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomEntityTemplate</con:operation><con:request name="Find cet1" id="7c716c95-7f19-4dfe-be43-9ff1cf4d4d1b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomEntityTemplate>\r
+         <code>${#TestSuite#ticket}_${#TestSuite#index}_CET</code>\r
+      </ws:findCustomEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="dc02b508-ddde-4feb-9c03-cc19140c611d"/><con:assertion type="Simple Contains" id="9bcba2be-3ac5-4070-873a-1d75da961b57" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="fdf38239-5fa8-47c2-83c5-9a86b1cf003f" name="Contains 1"><con:configuration><token>&lt;customEntityTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_CET" name="Custom Entity one" description="Custom entity template one"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="d9953d2c-e0de-4384-8224-4c83f7394250" name="Contains 2"><con:configuration><token><![CDATA[                  <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT1" description="Custom field 1">
+                     <fieldType>STRING</fieldType>
+                     <accountLevel>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</accountLevel>
+                     <appliesTo>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</appliesTo>
+                     <defaultValue>Hello</defaultValue>
+                     <storageType>SINGLE</storageType>
+                     <valueRequired>true</valueRequired>
+                     <versionable>false</versionable>
+                     <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+                     <listValues/>
+                  </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3"><con:configuration><token><![CDATA[                  <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
+                     <fieldType>LONG</fieldType>
+                     <accountLevel>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</accountLevel>
+                     <appliesTo>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</appliesTo>
+                     <defaultValue>15</defaultValue>
+                     <storageType>SINGLE</storageType>
+                     <valueRequired>false</valueRequired>
+                     <versionable>false</versionable>
+                     <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+                     <listValues/>
+                  </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create cei1" id="41714a47-dc1f-4e34-a048-9b361055249d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateCustomEntityInstance</con:operation><con:request name="Create cei1" id="772da35a-86be-4c3e-8c87-60d666cb4a64"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomEntityInstance>\r
+         <customEntityInstance code="${#TestSuite#ticket}_${#TestSuite#index}_CEI" description="CEI" cetCode="${#TestSuite#ticket}_${#TestSuite#index}_CET">\r
+            <disabled>false</disabled>\r
+            <customFields>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT1" description="CFT field 1">\r
+                  <stringValue>value one</stringValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="CFT field 2">\r
+                  <longValue>36</longValue>\r
+               </customField>\r
+            </customFields>\r
+         </customEntityInstance>\r
+      </ws:createOrUpdateCustomEntityInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a464ddf1-406f-414d-990c-6eba31007964"/><con:assertion type="Simple Contains" id="6497e272-e4fa-45cb-a133-8c80effd19fe" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find cei1" id="75d50bc9-372b-4d11-8a98-6087806a1b94"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomEntityInstance</con:operation><con:request name="Find cei1" id="bf44bacc-b356-436f-9883-35d1f45b4493"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomEntityInstance>
+         <cetCode>${#TestSuite#ticket}_${#TestSuite#index}_CET</cetCode>
+         <code>${#TestSuite#ticket}_${#TestSuite#index}_CEI</code>
+      </ws:findCustomEntityInstance>
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="12a9b279-249e-442d-bde0-c43111aeadca"/><con:assertion type="Simple Contains" id="77482ed1-f83d-4038-8174-c04af88e6dfb" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="021f9c3e-4f5b-4bd0-90d2-facf58ab85a0" name="Contains 1"><con:configuration><token>&lt;customEntityInstance code="${#TestSuite#ticket}_${#TestSuite#index}_CEI" description="CEI" cetCode="${#TestSuite#ticket}_${#TestSuite#index}_CET">
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="bd143471-127d-430a-854d-5654570caeeb" name="Contains 2"><con:configuration><token>                  &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT1" description="Custom field 1">
+                     &lt;stringValue>value one&lt;/stringValue>
+                  &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="f8fea528-6191-4260-8245-60745992d7d6" name="Contains 3"><con:configuration><token>                  &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
+                     &lt;longValue>36&lt;/longValue>
+                  &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create cei1 - error nonexitstant CFT" id="a8855aa8-2779-4198-bea6-3049ea86ded1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateCustomEntityInstance</con:operation><con:request name="Create cei1 - error nonexitstant CFT" id="772da35a-86be-4c3e-8c87-60d666cb4a64"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomEntityInstance>\r
+         <customEntityInstance code="${#TestSuite#ticket}_${#TestSuite#index}_CEI_ERROR1" description="CEI" cetCode="${#TestSuite#ticket}_${#TestSuite#index}_CET">\r
+            <disabled>false</disabled>\r
+            <customFields>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_XXX_CFT1" description="CFT field 1">\r
+                  <stringValue>value one</stringValue>\r
+               </customField>\r
+            </customFields>\r
+         </customEntityInstance>\r
+      </ws:createOrUpdateCustomEntityInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a464ddf1-406f-414d-990c-6eba31007964"/><con:assertion type="Simple Contains" id="28936afe-2905-458b-bf02-9b15711da958" name="Contains"><con:configuration><token>&lt;errorCode>MISSING_PARAMETER&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="829eb74d-f1b4-475e-aa66-ec1cbc98633e" name="Contains 1"><con:configuration><token>&lt;message>Custom field template with code ${#TestSuite#ticket}_${#TestSuite#index}_XXX_CFT1 and provider Provider [code=DEMO] not found.&lt;/message></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create cei1 - error nonexitstant CET" id="e21be697-b18b-4eb4-a0c5-86b8c21a6ee5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateCustomEntityInstance</con:operation><con:request name="Create cei1 - error nonexitstant CET" id="772da35a-86be-4c3e-8c87-60d666cb4a64"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomEntityInstance>\r
+         <customEntityInstance code="${#TestSuite#ticket}_${#TestSuite#index}_CEI_ERROR1" description="CEI" cetCode="${#TestSuite#ticket}_${#TestSuite#index}_CET2">\r
+            <disabled>false</disabled>\r
+            <customFields>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_XXX_CFT1" description="CFT field 1">\r
+                  <stringValue>value one</stringValue>\r
+               </customField>\r
+            </customFields>\r
+         </customEntityInstance>\r
+      </ws:createOrUpdateCustomEntityInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a464ddf1-406f-414d-990c-6eba31007964"/><con:assertion type="Simple Contains" id="28936afe-2905-458b-bf02-9b15711da958" name="Contains"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="829eb74d-f1b4-475e-aa66-ec1cbc98633e" name="Contains 1"><con:configuration><token>&lt;message>CustomEntityTemplate with code=${#TestSuite#ticket}_${#TestSuite#index}_CET2 does not exists.&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update cet1" id="24d82ae9-da45-4472-9325-7f1dbd59564c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateCustomEntityTemplate</con:operation><con:request name="Update cet1" id="37325412-edef-4e28-91b0-6c66c999581c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomEntityTemplate>\r
+         <customEntityTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_CET" name="Custom Entity one again" description="Custom entity template one again">\r
+            <fields>\r
+               <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT3" description="Custom field 1">\r
+                  <fieldType>STRING</fieldType>\r
+                  <defaultValue>Help</defaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+               </field>\r
+               <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
+                  <fieldType>LONG</fieldType>
+                  <defaultValue>17</defaultValue>
+                  <storageType>SINGLE</storageType>
+                  <valueRequired>false</valueRequired>
+                  <versionable>false</versionable>
+               </field>
+            </fields>\r
+         </customEntityTemplate>\r
+      </ws:createOrUpdateCustomEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/><con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find cet1 -2" id="54bf09c7-f039-49b2-885f-b8b9c31d3363"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomEntityTemplate</con:operation><con:request name="Find cet1 -2" id="7c716c95-7f19-4dfe-be43-9ff1cf4d4d1b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomEntityTemplate>\r
+         <code>${#TestSuite#ticket}_${#TestSuite#index}_CET</code>\r
+      </ws:findCustomEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="dc02b508-ddde-4feb-9c03-cc19140c611d"/><con:assertion type="Simple Contains" id="9bcba2be-3ac5-4070-873a-1d75da961b57" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="fdf38239-5fa8-47c2-83c5-9a86b1cf003f" name="Contains 1"><con:configuration><token>&lt;customEntityTemplate code="${#TestSuite#ticket}_${#TestSuite#index}_CET" name="Custom Entity one again" description="Custom entity template one again"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="d9953d2c-e0de-4384-8224-4c83f7394250" name="Contains 2"><con:configuration><token><![CDATA[                  <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT3" description="Custom field 1">
+                     <fieldType>STRING</fieldType>
+                     <accountLevel>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</accountLevel>
+                     <appliesTo>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</appliesTo>
+                     <defaultValue>Help</defaultValue>
+                     <storageType>SINGLE</storageType>
+                     <valueRequired>false</valueRequired>
+                     <versionable>false</versionable>
+                     <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+                     <listValues/>
+                  </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3"><con:configuration><token><![CDATA[                  <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
+                     <fieldType>LONG</fieldType>
+                     <accountLevel>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</accountLevel>
+                     <appliesTo>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</appliesTo>
+                     <defaultValue>17</defaultValue>
+                     <storageType>SINGLE</storageType>
+                     <valueRequired>false</valueRequired>
+                     <versionable>false</versionable>
+                     <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+                     <listValues/>
+                  </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update cei1" id="f4711aae-511b-4837-bf60-66fd766cb1d9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateCustomEntityInstance</con:operation><con:request name="Update cei1" id="772da35a-86be-4c3e-8c87-60d666cb4a64"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomEntityInstance>\r
+         <customEntityInstance code="${#TestSuite#ticket}_${#TestSuite#index}_CEI" description="CEI instance" cetCode="${#TestSuite#ticket}_${#TestSuite#index}_CET">\r
+            <disabled>false</disabled>\r
+            <customFields>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT3" description="CFT field 1">\r
+                  <stringValue>value four</stringValue>\r
+               </customField>\r
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="CFT field 2">\r
+                  <longValue>399</longValue>\r
+               </customField>\r
+            </customFields>\r
+         </customEntityInstance>\r
+      </ws:createOrUpdateCustomEntityInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a464ddf1-406f-414d-990c-6eba31007964"/><con:assertion type="Simple Contains" id="6497e272-e4fa-45cb-a133-8c80effd19fe" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find cei1 - 2" id="2e79e339-307a-4177-bbeb-71ea2b2b1dc8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCustomEntityInstance</con:operation><con:request name="Find cei1 - 2" id="bf44bacc-b356-436f-9883-35d1f45b4493"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomEntityInstance>
+         <cetCode>${#TestSuite#ticket}_${#TestSuite#index}_CET</cetCode>
+         <code>${#TestSuite#ticket}_${#TestSuite#index}_CEI</code>
+      </ws:findCustomEntityInstance>    
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="12a9b279-249e-442d-bde0-c43111aeadca"/><con:assertion type="Simple Contains" id="1aa10e7c-3ea9-4f74-bc31-26a9a046e854" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="26b8b38e-b32e-4b43-aca7-22edecc0c7b2" name="Contains 1"><con:configuration><token>&lt;customEntityInstance code="${#TestSuite#ticket}_${#TestSuite#index}_CEI" description="CEI instance" cetCode="${#TestSuite#ticket}_${#TestSuite#index}_CET"></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="ce5664b6-23bd-4e71-a62b-8348fb07bcc9" name="Contains 2"><con:configuration><token>                  &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT3" description="Custom field 1">
+                     &lt;stringValue>value four&lt;/stringValue>
+                  &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="d0eb358a-7ab1-4ab2-b982-6997c8c58284" name="Contains 3"><con:configuration><token>                  &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
+                     &lt;longValue>399&lt;/longValue>
+                  &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="53814666-2f76-4b6e-87ff-a18cdcbd6d65" name="Contains 4"><con:configuration><token>                  &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT1" description="Custom field 1">
+                     &lt;stringValue>value one&lt;/stringValue>
+                  &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT by field type" searchProperties="true" id="d810ab64-b19b-4807-9ddc-11e582b39553" disabled="true"><con:settings/><con:testStep type="request" name="Storage=Single, versioned=false" id="49026d37-d51b-49b4-ae0f-41f3b25b4e89"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Storage=Single, versioned=false" id="6b508b87-8014-4b1f-b1bd-ddd89ae847a5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@remove_empty_content">true</con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:createCustomFieldTemplate> 
@@ -25574,5 +26043,5 @@
          </customField>
       </ws:createCustomFieldTemplate>
    </soapenv:Body> 
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="112602db-0cd7-4c28-a357-e28f18bf2c7c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property><con:property><con:name>fieldType</con:name><con:value/></con:property><con:property><con:name>entityClazz</con:name><con:value/></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT by entity" searchProperties="true" id="b8c4b3e5-8b23-46fb-b102-34234cef0663" disabled="true"><con:settings/><con:testStep type="calltestcase" name="Create String CFT" id="2dba14c5-b8a5-4310-ac0d-88f597b82de4"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>STRING</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Long CFT" id="5001883f-fd13-4c1d-8b62-485d96397ff3"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>LONG</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Date CFT" id="a31db638-5c62-4446-8dc7-c6a537784e52"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DATE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Double CFT" id="afd5d3cd-b8c4-4d57-824a-3d300154661b"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DOUBLE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Entity CFT" id="6d9f0cad-3bd5-48b0-914f-31163603d365"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>ENTITY</con:value></con:property><con:property><con:name>entityClazz</con:name><con:value>org.meveo.model.catalog.Calendar</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>55</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="112602db-0cd7-4c28-a357-e28f18bf2c7c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property><con:property><con:name>fieldType</con:name><con:value/></con:property><con:property><con:name>entityClazz</con:name><con:value/></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT by entity" searchProperties="true" id="b8c4b3e5-8b23-46fb-b102-34234cef0663" disabled="true"><con:settings/><con:testStep type="calltestcase" name="Create String CFT" id="2dba14c5-b8a5-4310-ac0d-88f597b82de4"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>STRING</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Long CFT" id="5001883f-fd13-4c1d-8b62-485d96397ff3"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>LONG</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Date CFT" id="a31db638-5c62-4446-8dc7-c6a537784e52"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DATE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Double CFT" id="afd5d3cd-b8c4-4d57-824a-3d300154661b"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DOUBLE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Entity CFT" id="6d9f0cad-3bd5-48b0-914f-31163603d365"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>ENTITY</con:value></con:property><con:property><con:name>entityClazz</con:name><con:value>org.meveo.model.catalog.Calendar</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>77</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE">${#Project#meveoEndpoint}/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

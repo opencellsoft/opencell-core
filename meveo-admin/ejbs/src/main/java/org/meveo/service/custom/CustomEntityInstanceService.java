@@ -17,9 +17,9 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
 
     public CustomEntityInstance findByCodeByCet(String cetCode, String code, Provider provider) {
         QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null, provider);
-        qb.addCriterion("cet.cetCode", "=", cetCode, true);
-        qb.addCriterion("cet.code", "=", code, true);
-        qb.addCriterionEntity("cet.provider", provider);
+        qb.addCriterion("cei.cetCode", "=", cetCode, true);
+        qb.addCriterion("cei.code", "=", code, true);
+        qb.addCriterionEntity("cei.provider", provider);
 
         try {
             return (CustomEntityInstance) qb.getQuery(getEntityManager()).getSingleResult();

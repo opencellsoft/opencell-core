@@ -122,7 +122,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A list of custom field templates
      */
     public List<CustomFieldTemplate> getCFTForCache() {
-        return getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTForCache", CustomFieldTemplate.class).getResultList();
+        List<CustomFieldTemplate> cfts = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTForCache", CustomFieldTemplate.class).getResultList();
+
+        return cfts;
     }
 
     /**
@@ -187,6 +189,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         if (templates != null) {
             for (CustomFieldTemplate cf : templates) {
                 if (!allTemplates.contains(cf)) {
+                    log.debug("Create a missing CFT {} for {} entity", cf.getCode(), appliesTo);
                     create(cf, getCurrentUser(), provider);
                     allTemplates.add(cf);
                 }

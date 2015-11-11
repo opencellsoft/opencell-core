@@ -85,26 +85,13 @@ public class JobInstanceApi extends BaseApi {
         // Create any missing CFT for a given provider and job
         List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
         Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
-        if (jobCustomFields != null) {
-            customFieldTemplates = customFieldTemplateService.findByAppliesTo(jobInstance, provider);
-            if (customFieldTemplates != null && customFieldTemplates.size() != jobCustomFields.size()) {
-                for (CustomFieldTemplate cf : jobCustomFields.values()) {
-                    if (!customFieldTemplates.contains(cf)) {
-                        try {
-                            customFieldTemplateService.create(cf, currentUser);
-                            customFieldTemplates.add(cf);
-                        } catch (Exception e) {
-                            log.error("Failed  to init custom fields", e);
-                        }
-                    }
-                }
-            }
-        }
+        customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
+        
 
 		// Populate customFields
 		if (postData.getCustomFields() != null) {
 			try {
-				populateCustomFields(customFieldTemplates, postData.getCustomFields().getCustomField(), jobInstance, currentUser);
+				populateCustomFields(postData.getCustomFields().getCustomField(), jobInstance, currentUser);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				log.error("Failed to associate custom field instance to an entity", e);
 				throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -165,26 +152,12 @@ public class JobInstanceApi extends BaseApi {
             // Create any missing CFT for a given provider and job
             List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
             Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
-            if (jobCustomFields != null) {
-                customFieldTemplates = customFieldTemplateService.findByAppliesTo(jobInstance, provider);
-                if (customFieldTemplates != null && customFieldTemplates.size() != jobCustomFields.size()) {
-                    for (CustomFieldTemplate cf : jobCustomFields.values()) {
-                        if (!customFieldTemplates.contains(cf)) {
-                            try {
-                                customFieldTemplateService.create(cf, currentUser);
-                                customFieldTemplates.add(cf);
-                            } catch (Exception e) {
-                                log.error("Failed  to init custom fields", e);
-                            }
-                        }
-                    }
-                }
-            }
+            customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
 
             // Populate customFields
 			if (postData.getCustomFields() != null) {
 				try {
-					populateCustomFields(customFieldTemplates, postData.getCustomFields().getCustomField(), jobInstance, currentUser);
+					populateCustomFields(postData.getCustomFields().getCustomField(), jobInstance, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");

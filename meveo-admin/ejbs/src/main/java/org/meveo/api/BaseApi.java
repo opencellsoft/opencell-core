@@ -106,28 +106,12 @@ public abstract class BaseApi {
      * @param customFieldDtos Custom field values
      * @param entity Entity
      * @param currentUser User that authenticated for API
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     * @throws MissingParameterException
-     */
-    protected void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, User currentUser)
-            throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
-        populateCustomFields(customFieldTemplates, customFieldDtos, entity, currentUser, true);
-    }
-
-    /**
-     * Populate custom field values from DTO
-     * 
-     * @param customFieldTemplates Custom field templates
-     * @param customFieldDtos Custom field values
-     * @param entity Entity
-     * @param currentUser User that authenticated for API
      * @param checkCustomField Should a check be made if CF field is required
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      * @throws MissingParameterException
      */
-    protected void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, User currentUser,
+    private void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, User currentUser,
             boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
 
         // check if any templates are applicable

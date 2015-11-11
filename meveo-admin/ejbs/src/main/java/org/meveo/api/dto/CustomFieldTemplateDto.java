@@ -18,182 +18,181 @@ import org.meveo.model.crm.CustomFieldTemplate;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomFieldTemplateDto {
 
-	@XmlAttribute(required = true)
-	protected String code;
+    @XmlAttribute(required = true)
+    protected String code;
 
-	@XmlAttribute(required = true)
-	protected String description;
+    @XmlAttribute(required = true)
+    protected String description;
 
-	@XmlElement(required = true)
-	protected String fieldType;
+    @XmlElement(required = true)
+    protected String fieldType;
 
-	@XmlElement(required = false)
-	@Deprecated
-	protected String accountLevel;
-	
+    @XmlElement(required = false)
+    @Deprecated
+    protected String accountLevel;
+
     @XmlElement(required = false)
     protected String appliesTo;
 
-	@XmlElement
-	protected String defaultValue;
+    @XmlElement
+    protected String defaultValue;
 
-	@XmlElement(required = true)
-	protected String storageType;
+    @XmlElement(required = true)
+    protected String storageType;
 
-	@XmlElement
-	protected boolean valueRequired;
+    @XmlElement
+    protected boolean valueRequired;
 
-	@XmlElement
-	protected boolean versionable;
+    @XmlElement
+    protected boolean versionable;
 
-	@XmlElement
-	protected boolean triggerEndPeriodEvent;
+    @XmlElement
+    protected boolean triggerEndPeriodEvent;
 
-	@XmlElement
-	protected String calendar;
-	
-	@XmlElement
-	protected String entityClazz;
-	
-	@XmlElement
-	protected Map<String, String> listValues = new HashMap<String, String>();
-	
-	public CustomFieldTemplateDto() {
-		
-	}
+    @XmlElement
+    protected String calendar;
 
-	public CustomFieldTemplateDto(CustomFieldTemplate cf) {
-		code = cf.getCode();
-		description = cf.getDescription();
-		fieldType = cf.getFieldType().name();
-		accountLevel = cf.getAppliesTo();
-		appliesTo = cf.getAppliesTo();
-		defaultValue = cf.getDefaultValue();
-		storageType = cf.getStorageType().name();
-		valueRequired = cf.isValueRequired();
-		versionable = cf.isVersionable();
-		triggerEndPeriodEvent = cf.isTriggerEndPeriodEvent();
-		entityClazz = cf.getEntityClazz();
-		if (cf.getCalendar() != null) {
-			calendar = cf.getCalendar().getCode();
-		}
-	}
+    @XmlElement
+    protected String entityClazz;
 
-	public String getCode() {
-		return code;
-	}
+    @XmlElement
+    protected Map<String, String> listValues = new HashMap<String, String>();
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public CustomFieldTemplateDto() {
 
-	public String getDescription() {
-		return description;
-	}
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public CustomFieldTemplateDto(CustomFieldTemplate cf) {
+        code = cf.getCode();
+        description = cf.getDescription();
+        fieldType = cf.getFieldType().name();
+        accountLevel = cf.getAppliesTo();
+        appliesTo = cf.getAppliesTo();
+        defaultValue = cf.getDefaultValue();
+        storageType = cf.getStorageType().name();
+        valueRequired = cf.isValueRequired();
+        versionable = cf.isVersionable();
+        triggerEndPeriodEvent = cf.isTriggerEndPeriodEvent();
+        entityClazz = cf.getEntityClazz();
+        if (cf.getCalendar() != null) {
+            calendar = cf.getCalendar().getCode();
+        }
+    }
 
-	public String getFieldType() {
-		return fieldType;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setFieldType(String fieldType) {
-		this.fieldType = fieldType;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getAccountLevel() {
-		return accountLevel;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setAccountLevel(String accountLevel) {
-		this.accountLevel = accountLevel;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getAppliesTo() {
+    public String getFieldType() {
+        return fieldType;
+    }
+
+    public void setFieldType(String fieldType) {
+        this.fieldType = fieldType;
+    }
+
+    public String getAccountLevel() {
+        return accountLevel;
+    }
+
+    public void setAccountLevel(String accountLevel) {
+        this.accountLevel = accountLevel;
+    }
+
+    public String getAppliesTo() {
         return appliesTo;
     }
-	
-	public void setAppliesTo(String appliesTo) {
+
+    public void setAppliesTo(String appliesTo) {
         this.appliesTo = appliesTo;
     }
-	
-	public String getDefaultValue() {
-		return defaultValue;
-	}
 
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
+    public String getDefaultValue() {
+        return defaultValue;
+    }
 
-	public String getStorageType() {
-		return storageType;
-	}
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
 
-	public void setStorageType(String storageType) {
-		this.storageType = storageType;
-	}
+    public String getStorageType() {
+        return storageType;
+    }
 
-	public boolean isVersionable() {
-		return versionable;
-	}
+    public void setStorageType(String storageType) {
+        this.storageType = storageType;
+    }
 
-	public void setVersionable(boolean versionable) {
-		this.versionable = versionable;
-	}
+    public boolean isVersionable() {
+        return versionable;
+    }
 
-	public boolean isTriggerEndPeriodEvent() {
-		return triggerEndPeriodEvent;
-	}
+    public void setVersionable(boolean versionable) {
+        this.versionable = versionable;
+    }
 
-	public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
-		this.triggerEndPeriodEvent = triggerEndPeriodEvent;
-	}
+    public boolean isTriggerEndPeriodEvent() {
+        return triggerEndPeriodEvent;
+    }
 
-	public String getCalendar() {
-		return calendar;
-	}
+    public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
+        this.triggerEndPeriodEvent = triggerEndPeriodEvent;
+    }
 
-	public void setCalendar(String calendar) {
-		this.calendar = calendar;
-	}
+    public String getCalendar() {
+        return calendar;
+    }
 
-	public boolean isValueRequired() {
-		return valueRequired;
-	}
+    public void setCalendar(String calendar) {
+        this.calendar = calendar;
+    }
 
-	public void setValueRequired(boolean valueRequired) {
-		this.valueRequired = valueRequired;
-	}
+    public boolean isValueRequired() {
+        return valueRequired;
+    }
 
-	@Override
-	public String toString() {
-		return "CustomFieldTemplateDto [code=" + code + ", description=" + description + ", fieldType=" + fieldType
-				+ ", accountLevel=" + accountLevel + ", appliesTo=" + appliesTo + ", defaultValue=" + defaultValue + ", storageType=" + storageType
-				+ ", valueRequired=" + valueRequired + ", versionable=" + versionable + ", triggerEndPeriodEvent="
-				+ triggerEndPeriodEvent + ", calendar=" + calendar + ", entityClazz=" + entityClazz + "]";
-	}
+    public void setValueRequired(boolean valueRequired) {
+        this.valueRequired = valueRequired;
+    }
 
-	public String getEntityClazz() {
-		return entityClazz;
-	}
+    @Override
+    public String toString() {
+        return "CustomFieldTemplateDto [code=" + code + ", description=" + description + ", fieldType=" + fieldType + ", accountLevel=" + accountLevel + ", appliesTo=" + appliesTo
+                + ", defaultValue=" + defaultValue + ", storageType=" + storageType + ", valueRequired=" + valueRequired + ", versionable=" + versionable
+                + ", triggerEndPeriodEvent=" + triggerEndPeriodEvent + ", calendar=" + calendar + ", entityClazz=" + entityClazz + "]";
+    }
 
-	public void setEntityClazz(String entityClazz) {
-		this.entityClazz = entityClazz;
-	}
+    public String getEntityClazz() {
+        return entityClazz;
+    }
 
-	/**
-	 * @return the listValues
-	 */
-	public Map<String, String> getListValues() {
-		return listValues;
-	}
+    public void setEntityClazz(String entityClazz) {
+        this.entityClazz = entityClazz;
+    }
 
-	/**
-	 * @param listValues the listValues to set
-	 */
-	public void setListValues(Map<String, String> listValues) {
-		this.listValues = listValues;
-	}
+    /**
+     * @return the listValues
+     */
+    public Map<String, String> getListValues() {
+        return listValues;
+    }
+
+    /**
+     * @param listValues the listValues to set
+     */
+    public void setListValues(Map<String, String> listValues) {
+        this.listValues = listValues;
+    }
 }

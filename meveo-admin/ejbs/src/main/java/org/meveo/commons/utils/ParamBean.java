@@ -299,17 +299,17 @@ public class ParamBean {
 		return result;
 	}
 
-	public String getProperty(String key, String defaultValue) {
-		String result = null;
-		if (properties.containsKey(key)) {
-			result = properties.getProperty(key);
-		} else {
-			result = defaultValue;
-			properties.put(key, defaultValue);
-			saveProperties();
-		}
-		return result;
-	}
+    public String getProperty(String key, String defaultValue) {
+        String result = null;
+        if (properties.containsKey(key)) {
+            result = properties.getProperty(key);
+        } else if (defaultValue != null) {
+            result = defaultValue;
+            properties.put(key, defaultValue);
+            saveProperties();
+        }
+        return result;
+    }
 
 	public static void reload(String propertiesName) {
 		// log.info("Reload");

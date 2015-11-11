@@ -26,6 +26,9 @@ import org.infinispan.manager.CacheContainer;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
+import org.meveo.model.catalog.CalendarDaily;
+import org.meveo.model.catalog.CalendarInterval;
+import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -34,6 +37,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.util.PersistenceUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 
@@ -111,6 +115,17 @@ public class CustomFieldsCacheContainerProvider {
         List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForCache();
         for (CustomFieldTemplate cft : cfts) {
 
+            if (cft.getCalendar() != null) {
+                cft.setCalendar(PersistenceUtils.initializeAndUnproxy(cft.getCalendar()));
+                if (cft.getCalendar() instanceof CalendarDaily) {
+                    ((CalendarDaily) cft.getCalendar()).setHours(PersistenceUtils.initializeAndUnproxy(((CalendarDaily) cft.getCalendar()).getHours()));
+                } else if (cft.getCalendar() instanceof CalendarYearly) {
+                    ((CalendarYearly) cft.getCalendar()).setDays(PersistenceUtils.initializeAndUnproxy(((CalendarYearly) cft.getCalendar()).getDays()));
+                } else if (cft.getCalendar() instanceof CalendarInterval) {
+                    ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
+                }
+            }
+            
             customFieldTemplateService.detach(cft);
 
             String cacheKeyByAppliesTo = getCFTCacheKeyByAppliesTo(cft);
@@ -612,6 +627,16 @@ public class CustomFieldsCacheContainerProvider {
             cftsByAppliesTo.put(cacheKeyByAppliesTo, new ArrayList<CustomFieldTemplate>());
         } else {
             cftsByAppliesTo.get(cacheKeyByAppliesTo).remove(cft);
+        }
+        if (cft.getCalendar() != null) {
+            cft.setCalendar(PersistenceUtils.initializeAndUnproxy(cft.getCalendar()));
+            if (cft.getCalendar() instanceof CalendarDaily) {
+                ((CalendarDaily) cft.getCalendar()).setHours(PersistenceUtils.initializeAndUnproxy(((CalendarDaily) cft.getCalendar()).getHours()));
+            } else if (cft.getCalendar() instanceof CalendarYearly) {
+                ((CalendarYearly) cft.getCalendar()).setDays(PersistenceUtils.initializeAndUnproxy(((CalendarYearly) cft.getCalendar()).getDays()));
+            } else if (cft.getCalendar() instanceof CalendarInterval) {
+                ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
+            }
         }
         cftsByAppliesTo.get(cacheKeyByAppliesTo).add(cft);
 

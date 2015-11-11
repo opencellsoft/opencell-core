@@ -29,7 +29,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customFieldTemplateApi.create(postData, getCurrentUser());
+			customFieldTemplateApi.create(postData, getCurrentUser(), null);
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -49,7 +49,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customFieldTemplateApi.update(postData, getCurrentUser());
+			customFieldTemplateApi.update(postData, getCurrentUser(), null);
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -110,7 +110,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customFieldTemplateApi.createOrUpdate(postData, getCurrentUser());
+			customFieldTemplateApi.createOrUpdate(postData, getCurrentUser(), null);
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -16,6 +16,7 @@ import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
@@ -31,7 +32,7 @@ public class CustomFieldTemplateApi extends BaseApi {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
-    public void create(CustomFieldTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void create(CustomFieldTemplateDto postData, User currentUser, CustomEntityTemplate cet) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -39,7 +40,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (StringUtils.isBlank(postData.getDescription())) {
             missingParameters.add("description");
         }
-        if (StringUtils.isBlank(postData.getAccountLevel()) && StringUtils.isBlank(postData.getAppliesTo())) {
+        if (cet == null && StringUtils.isBlank(postData.getAccountLevel()) && StringUtils.isBlank(postData.getAppliesTo())) {
             missingParameters.add("appliesTo");
         }
         if (StringUtils.isBlank(postData.getFieldType())) {
@@ -53,52 +54,24 @@ public class CustomFieldTemplateApi extends BaseApi {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
 
+        if (cet != null) {
+            postData.setAppliesTo(cet.getCFTPrefix());
+        }
         String appliesTo = postData.getAppliesTo();
         // Support for old API
-        if (postData.getAccountLevel() != null) {
+        if (postData.getAppliesTo() == null && postData.getAccountLevel() != null) {
             appliesTo = postData.getAccountLevel();
         }
         if (customFieldTemplateService.findByCodeAndAppliesTo(postData.getCode(), appliesTo, currentUser.getProvider()) != null) {
             throw new EntityAlreadyExistsException(CustomFieldTemplate.class, postData.getCode());
         }
 
-        CustomFieldTemplate cf = new CustomFieldTemplate();
-        cf.setCode(postData.getCode());
-        cf.setDescription(postData.getDescription());
-        cf.setAppliesTo(appliesTo);
-        try {
-            cf.setFieldType(CustomFieldTypeEnum.valueOf(postData.getFieldType()));
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValue(CustomFieldTypeEnum.class.getName(), postData.getFieldType());
-        }
-
-        cf.setDefaultValue(postData.getDefaultValue());
-        try {
-            cf.setStorageType(CustomFieldStorageTypeEnum.valueOf(postData.getStorageType()));
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValue(CustomFieldStorageTypeEnum.class.getName(), postData.getStorageType());
-        }
-        cf.setValueRequired(postData.isValueRequired());
-        cf.setVersionable(postData.isVersionable());
-        cf.setTriggerEndPeriodEvent(postData.isTriggerEndPeriodEvent());
-        cf.setEntityClazz(org.apache.commons.lang3.StringUtils.trimToNull(postData.getEntityClazz()));
-
-        if (cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-            cf.setListValues(postData.getListValues());
-        }
-
-        if (!StringUtils.isBlank(postData.getCalendar())) {
-            Calendar calendar = calendarService.findByCode(postData.getCalendar(), currentUser.getProvider());
-            if (calendar != null) {
-                cf.setCalendar(calendar);
-            }
-        }
-
-        customFieldTemplateService.create(cf, currentUser, currentUser.getProvider());
+        CustomFieldTemplate cft = fromDTO(postData, currentUser, cet, null);
+        customFieldTemplateService.create(cft, currentUser, currentUser.getProvider());
 
     }
 
-    public void update(CustomFieldTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void update(CustomFieldTemplateDto postData, User currentUser, CustomEntityTemplate cet) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -106,7 +79,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (StringUtils.isBlank(postData.getDescription())) {
             missingParameters.add("description");
         }
-        if (StringUtils.isBlank(postData.getAccountLevel()) && StringUtils.isBlank(postData.getAppliesTo())) {
+        if (cet == null && StringUtils.isBlank(postData.getAccountLevel()) && StringUtils.isBlank(postData.getAppliesTo())) {
             missingParameters.add("appliesTo");
         }
         if (StringUtils.isBlank(postData.getFieldType())) {
@@ -120,54 +93,26 @@ public class CustomFieldTemplateApi extends BaseApi {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
 
+        if (cet != null) {
+            postData.setAppliesTo(cet.getCFTPrefix());
+        }
         String appliesTo = postData.getAppliesTo();
         // Support for old API
         if (postData.getAccountLevel() != null) {
             appliesTo = postData.getAccountLevel();
         }
 
-        CustomFieldTemplate cf = customFieldTemplateService.findByCodeAndAppliesTo(postData.getCode(), appliesTo, currentUser.getProvider());
-        if (cf == null) {
+        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(postData.getCode(), appliesTo, currentUser.getProvider());
+        if (cft == null) {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, postData.getCode());
         }
 
-        cf.setDescription(postData.getDescription());
-        cf.setAppliesTo(appliesTo);
-        try {
-            cf.setFieldType(CustomFieldTypeEnum.valueOf(postData.getFieldType()));
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValue(CustomFieldTypeEnum.class.getName(), postData.getFieldType());
-        }
-        try {
-            cf.setStorageType(CustomFieldStorageTypeEnum.valueOf(postData.getStorageType()));
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValue(CustomFieldStorageTypeEnum.class.getName(), postData.getStorageType());
-        }
-
-        cf.setDefaultValue(postData.getDefaultValue());
-        cf.setValueRequired(postData.isValueRequired());
-        cf.setVersionable(postData.isVersionable());
-        cf.setTriggerEndPeriodEvent(postData.isTriggerEndPeriodEvent());
-        if (!StringUtils.isBlank(postData.getEntityClazz())) {
-            cf.setEntityClazz(postData.getEntityClazz());
-        }
-
-        if (!StringUtils.isBlank(postData.getCalendar())) {
-            Calendar calendar = calendarService.findByCode(postData.getCalendar(), currentUser.getProvider());
-            if (calendar != null) {
-                cf.setCalendar(calendar);
-            }
-        }
-
-        if (cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-            cf.setListValues(postData.getListValues());
-        }
-
-        customFieldTemplateService.update(cf, currentUser);
+        cft = fromDTO(postData, currentUser, cet, cft);
+        customFieldTemplateService.update(cft, currentUser);
 
     }
 
-    public void remove(String code, String appliesTo, Provider provider) throws InvalidEnumValue, EntityDoesNotExistsException, MissingParameterException {
+    public void remove(String code, String appliesTo, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -177,14 +122,16 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (!missingParameters.isEmpty()) {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
-        
+
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
         if (cft != null) {
             customFieldTemplateService.remove(cft);
+        } else {
+            throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
         }
     }
 
-    public CustomFieldTemplateDto find(String code, String appliesTo, Provider provider) throws InvalidEnumValue, EntityDoesNotExistsException, MissingParameterException {
+    public CustomFieldTemplateDto find(String code, String appliesTo, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -203,12 +150,59 @@ public class CustomFieldTemplateApi extends BaseApi {
         return new CustomFieldTemplateDto(cft);
     }
 
-    public void createOrUpdate(CustomFieldTemplateDto postData, User currentUser) throws MeveoApiException {
+    public void createOrUpdate(CustomFieldTemplateDto postData, User currentUser, CustomEntityTemplate cet) throws MeveoApiException {
         CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
         if (customFieldTemplate == null) {
-            create(postData, currentUser);
+            create(postData, currentUser, cet);
         } else {
-            update(postData, currentUser);
+            update(postData, currentUser, cet);
         }
+    }
+
+    protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, User currentUser, CustomEntityTemplate cet, CustomFieldTemplate cftToUpdate) throws InvalidEnumValue {
+        CustomFieldTemplate cft = new CustomFieldTemplate();
+        if (cftToUpdate != null) {
+            cft = cftToUpdate;
+        }
+        cft.setCode(dto.getCode());
+        cft.setDescription(dto.getDescription());
+        String appliesTo = dto.getAppliesTo();
+        // Support for old API
+        if (dto.getAccountLevel() != null) {
+            appliesTo = dto.getAccountLevel();
+        }
+        if (cet != null) {
+            cft.setAppliesTo(cet.getCFTPrefix());
+        } else {
+            cft.setAppliesTo(appliesTo);
+        }
+        try {
+            cft.setFieldType(CustomFieldTypeEnum.valueOf(dto.getFieldType()));
+        } catch (IllegalArgumentException e) {
+            throw new InvalidEnumValue(CustomFieldTypeEnum.class.getName(), dto.getFieldType());
+        }
+
+        cft.setDefaultValue(dto.getDefaultValue());
+        try {
+            cft.setStorageType(CustomFieldStorageTypeEnum.valueOf(dto.getStorageType()));
+        } catch (IllegalArgumentException e) {
+            throw new InvalidEnumValue(CustomFieldStorageTypeEnum.class.getName(), dto.getStorageType());
+        }
+        cft.setValueRequired(dto.isValueRequired());
+        cft.setVersionable(dto.isVersionable());
+        cft.setTriggerEndPeriodEvent(dto.isTriggerEndPeriodEvent());
+        cft.setEntityClazz(org.apache.commons.lang3.StringUtils.trimToNull(dto.getEntityClazz()));
+
+        if (cft.getFieldType() == CustomFieldTypeEnum.LIST) {
+            cft.setListValues(dto.getListValues());
+        }
+
+        if (!StringUtils.isBlank(dto.getCalendar())) {
+            Calendar calendar = calendarService.findByCode(dto.getCalendar(), currentUser.getProvider());
+            if (calendar != null) {
+                cft.setCalendar(calendar);
+            }
+        }
+        return cft;
     }
 }

@@ -25,11 +25,11 @@ public class CustomEntityTemplate extends BusinessEntity implements Comparable<C
     private static final long serialVersionUID = 8281478284763353310L;
 
     @Column(name = "name", length = 100, nullable = false)
-    public String name;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "PERMISSION_ID")
-    public Permission permission;
+    private Permission permission;
 
     public String getName() {
         return name;
