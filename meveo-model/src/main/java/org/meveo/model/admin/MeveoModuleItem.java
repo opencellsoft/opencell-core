@@ -10,9 +10,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ExportIdentifier;
 
 @Entity
 @Table(name = "MEVEO_MODULE_ITEM")
+@ExportIdentifier({"entity_name","clazz_name","item_type","item_id","item_code"})
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_MODULE_ITEM_SEQ")
 public class MeveoModuleItem extends BaseEntity {
 
@@ -140,14 +142,10 @@ public class MeveoModuleItem extends BaseEntity {
 				return true;
 			}
 		}
+		if (getItemId() != null && other.getItemId() != null && getItemId() == other.getItemId()) {
+			return true;
+		}
 
-		// if (itemId == null) {
-		// if (other.getItemId() != null) {
-		// return false;
-		// }
-		// } else if (!itemId.equals(other.getItemId())) {
-		// return false;
-		// }
 		return false;
 	}
 

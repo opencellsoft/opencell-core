@@ -3,7 +3,9 @@ package org.meveo.admin.action.admin;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,14 +36,17 @@ import org.meveo.export.RemoteImportException;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.admin.MeveoModule;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldFields;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.admin.impl.MeveoModuleService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -79,6 +84,8 @@ public class EntityExportImportBean implements Serializable {
     @Inject
     @CurrentUser
     protected User currentUser;
+    @Inject
+    private MeveoModuleService meveoModuleService;
 
     private ParamBean param = ParamBean.getInstance();
 
@@ -104,6 +111,8 @@ public class EntityExportImportBean implements Serializable {
     private MeveoInstance remoteMeveoInstance;
 
     private ImportExportResponseDto remoteImportResult;
+    
+    private MeveoModule meveoModule;
 
     public boolean isRequireFK() {
         return requireFK;
@@ -373,6 +382,42 @@ public class EntityExportImportBean implements Serializable {
         if (exportParameters.get("provider") == null) {
             exportParameters.put("provider", currentProvider);
         }
+        if(this.selectedExportTemplate.getName().equals("MeveoModule")){
+        	if(meveoModule!=null){
+        		log.debug("meveo module is {}",meveoModule);
+        		meveoModule=meveoModuleService.refreshOrRetrieve(meveoModule);
+        		dataModelToExport=new DataModel<MeveoModule>() {
+        			@Override
+        			public boolean isRowAvailable() {
+        				return false;
+        			}
+        			@Override
+        			public int getRowCount() {
+        				return 1;
+        			}
+        			@Override
+        			public MeveoModule getRowData() {
+        				return null;
+        			}
+        			@Override
+        			public int getRowIndex() {
+        				return 0;
+        			}
+        			@Override
+        			public void setRowIndex(int rowIndex) {
+        			}
+        			@Override
+        			public Object getWrappedData() {
+        				return Arrays.asList(new MeveoModule[]{meveoModule});
+        			}
+        			@Override
+        			public void setWrappedData(Object data) {
+        			}
+        		};
+        	}else{
+        		dataModelToExport=null;
+        	}
+        }
 
         try {
 
@@ -387,6 +432,7 @@ public class EntityExportImportBean implements Serializable {
         }
 
         exportParameters = initExportParameters();
+        meveoModule=null;
     }
 
     /**
@@ -466,4 +512,13 @@ public class EntityExportImportBean implements Serializable {
             log.error("Failed to access export execution result", e);
         }
     }
+
+	public MeveoModule getMeveoModule() {
+		return meveoModule;
+	}
+
+	public void setMeveoModule(MeveoModule meveoModule) {
+		this.meveoModule = meveoModule;
+	}
+    
 }

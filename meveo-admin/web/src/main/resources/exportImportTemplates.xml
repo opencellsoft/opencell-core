@@ -363,5 +363,16 @@
                 </classesToExportAsFull>
             </template>
         </groupedTemplates>
-    </template>    
+    </template>
+    <template name="MeveoModule" entityToExport="org.meveo.model.admin.MeveoModule">
+        <parameters>
+            <entry>
+                <string>provider</string>
+                <string>provider</string>
+            </entry>
+        </parameters>
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.admin.MeveoModuleItem</java-class>
+        </classesToExportAsFull>
+    </template>
 </list>

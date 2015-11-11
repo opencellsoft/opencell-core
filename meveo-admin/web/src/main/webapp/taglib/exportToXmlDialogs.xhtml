@@ -34,7 +34,6 @@
                                 <s:objectConverter />
                             </p:selectOneMenu>
                         </hftl:decorateFormField>
-
                         <hftl:decorateFormField label="#{messages['export.exportCriteria.'.concat(parameter.key)]}" rendered="#{parameter.value eq 'dateRange'}">
                             <h:panelGrid columns="4">
                                 <h:outputText value="#{messages['commons.dateFrom']}" style="padding-right:5px" />
@@ -56,6 +55,13 @@
                     <p:selectOneMenu value="#{entityExportImportBean.exportParameters['remoteInstance']}">
                         <f:selectItem />
                         <f:selectItems value="#{meveoInstanceBean.listAll}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
+                        <s:objectConverter />
+                    </p:selectOneMenu>
+                </hftl:decorateFormField>
+                <hftl:decorateFormField label="#{messages['export.module']}" rendered="#{entityExportImportBean.selectedExportTemplate.name eq 'MeveoModule'}">
+                     <p:selectOneMenu value="#{entityExportImportBean.meveoModule}" id="meveoModule">
+                     	<f:selectItem itemValue="#{null}" itemLabel="#{messages['export.moduleAll']}" />
+                        <f:selectItems value="#{meveoModuleBean.listAll}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}"/>
                         <s:objectConverter />
                     </p:selectOneMenu>
                 </hftl:decorateFormField>
