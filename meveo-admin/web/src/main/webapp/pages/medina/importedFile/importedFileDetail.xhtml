@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
+					<p:menuitem outcome="importedFiles"
+						value="#{messages['menu.importedFiles']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<hftl:formPanel id="formPanel" formId="importedFilesFormId"
+			label="#{messages['menu.importedFiles']}" edit="false" showEditButton="false"
+			backingBean="#{importedFileBean}">
+			<hftl:formField label="#{messages['importedFile.code']}" field="code" edit="false" />
+			<hftl:formField label="#{messages['importedFile.description']}" field="description" edit="false" />
+			<hftl:formField label="#{messages['importedFile.uri']}" field="uri"
+				required="true" textArea="true" maxlength="2000" cols="120" edit="false"/>
+			<hftl:formField label="#{messages['importedFile.size']}" field="size"
+				newLine="true" edit="false"/>
+			<hftl:formField label="#{messages['importedFile.lastModified']}"
+				field="lastModified" isDate="true" edit="false"/>
+		</hftl:formPanel>
+	</ui:define>
+
+</ui:composition>

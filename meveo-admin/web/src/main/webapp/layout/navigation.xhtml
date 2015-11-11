@@ -36,6 +36,7 @@
 	<p:tooltip for="billingAccounts">#{help['menu.billingAccounts']}</p:tooltip>
 	<p:tooltip for="userAccounts">#{help['menu.userAccounts']}</p:tooltip>
 	<p:tooltip for="subscriptions">#{help['menu.subscriptions']}</p:tooltip>
+    <p:tooltip for="importedFiles">#{help['menu.importedFiles']}</p:tooltip>
     <c:set var="cetIndex" value="0"/>
     <c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
         <c:if test="#{cet.permission == null or identity.hasPermission(cet.permissionResource, cet.permissionAction) }">
@@ -43,7 +44,7 @@
             <c:set var="cetIndex" value="#{cetIndex + 1}"/>
         </c:if>
     </c:forEach>
-
+    
 	<p:menubar rendered="#{identity.loggedIn}">
 		<p:submenu id="admin" label="#{messages['menu.configuration']}"
 			rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
@@ -238,6 +239,7 @@
 		<p:submenu id="mediation" label="#{messages['menu.mediation']}"
 			rendered="#{identity.hasPermission('billing','billingVisualization')}">
 			<p:menuitem id="edr" outcome="edr" value="#{messages['menu.edr']}" />
+			<p:menuitem id="importedFiles" outcome="importedFiles" value="#{messages['menu.importedFiles']}" />
 		</p:submenu>
 
 		<p:submenu id="rating" label="#{messages['menu.rating']}"

@@ -309,6 +309,31 @@
 			<artifactId>xstream-hibernate</artifactId>
 			<version>1.4.8</version>
 		</dependency>
+		<!--sftp-->
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+		</dependency>
+		<!-- ftp -->
+		<dependency>
+			<groupId>org.apache.ftpserver</groupId>
+			<artifactId>ftpserver-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
 
 		<!-- For testing -->
 		<dependency>
@@ -331,7 +356,7 @@
 			</exclusions>
 		</dependency>
 
-		<!-- <dependency> -->
+		<!--<dependency> -->
 		<!-- <groupId>dom4j</groupId> -->
 		<!-- <artifactId>dom4j</artifactId> -->
 		<!-- </dependency> -->

@@ -12,7 +12,11 @@ REJECTED_CDR(8,"enum.notificationEventTypeEnum.REJECTED_CDR"),
 LOGGED_IN(9,"enum.notificationEventTypeEnum.LOGGED_IN"),
 INBOUND_REQ(10,"enum.notificationEventTypeEnum.INBOUND_REQ"),
 ENABLED(11,"enum.notificationEventTypeEnum.ENABLED"),
-LOW_BALANCE(11,"enum.notificationEventTypeEnum.LOW_BALANCE");
+LOW_BALANCE(12,"enum.notificationEventTypeEnum.LOW_BALANCE"),
+FILE_UPLOAD(13,"enum.notificationEventTypeEnum.FILE_UPLOAD"),
+FILE_DOWNLOAD(14,"enum.notificationEventTypeEnum.FILE_DOWNLOAD"),
+FILE_RENAME(15,"enum.notificationEventTypeEnum.FILE_RENAME"),
+FILE_DELETE(16,"enum.notificationEventTypeEnum.FILE_DELETE"),;
 
 private Integer id;
 private String label;

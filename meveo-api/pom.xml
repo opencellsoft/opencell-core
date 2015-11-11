@@ -16,10 +16,10 @@
 	<name>MEVEO API</name>
 
 	<repositories>
-		<repository>
-			<id>codehaus</id>
-			<url>http://repository.codehaus.org/org/codehaus</url>
-		</repository>
+<!-- 		<repository> -->
+<!-- 			<id>codehaus</id> -->
+<!-- 			<url>http://repository.codehaus.org/org/codehaus</url> -->
+<!-- 		</repository> -->
 	</repositories>
 
 	<dependencies>
@@ -64,7 +64,11 @@
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-ejbs</artifactId>
 		</dependency>
-
+		<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-tmforum</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>

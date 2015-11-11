@@ -44,5 +44,10 @@ public class PermissionService extends PersistenceService<Permission> {
         return qb.getQuery(getEntityManager()).getResultList();
         }
 	 
+	 public Permission findByPermission(String permission){
+		 QueryBuilder qb=new QueryBuilder(Permission.class,"q");
+		 qb.addCriterion("permission", "=", permission,true);
+		 return (Permission) qb.getQuery(getEntityManager()).getSingleResult();
+	 }
 
 }

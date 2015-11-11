@@ -11,6 +11,7 @@
 
 	<modules>
 		<module>meveo-model</module>
+		<module>meveo-tmforum</module>
 		<module>meveo-admin</module>
 		<module>meveo-api</module>
 	</modules>
@@ -138,6 +139,11 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-tmforum</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.infinispan</groupId>
 				<artifactId>infinispan-core</artifactId>
 				<version>${version.org.infinispan}</version>		
@@ -202,7 +208,28 @@
                 <artifactId>gson</artifactId>
                 <version>2.2.4</version>
             </dependency>
-            
+            <!-- sftp -->
+            <dependency>
+				<groupId>commons-httpclient</groupId>
+				<artifactId>commons-httpclient</artifactId>
+				<version>3.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-net</groupId>
+				<artifactId>commons-net</artifactId>
+				<version>3.3</version>
+			</dependency>
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch</artifactId>
+				<version>0.1.53</version>
+			</dependency>
+			<!-- ftp -->
+			<dependency>
+				<groupId>org.apache.ftpserver</groupId>
+				<artifactId>ftpserver-core</artifactId>
+				<version>1.0.6</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

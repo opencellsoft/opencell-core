@@ -37,5 +37,26 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
         return history;
 
     }
+    public NotificationHistory createNotificationByAuditable(Notification notification, IEntity e, String result, NotificationHistoryStatusEnum status) throws BusinessException {
+        NotificationHistory history = new NotificationHistory();
+        Auditable auditable = new Auditable();
+        if (e instanceof IAuditable) {
+            auditable.setCreated(new Date());
+            if(((IAuditable) e).getAuditable()!=null){
+            	auditable.setCreator(((IAuditable) e).getAuditable().getCreator());
+            }
+            history.setAuditable(auditable);
+        }
+        history.setNotification(notification);
+        history.setEntityClassName(e.getClass().getName());
+        history.setSerializedEntity(e.getId() == null ? e.toString() : e.getId().toString());
+        history.setResult(result);
+        history.setStatus(status);
+        history.setProvider(notification.getProvider());
+        super.create(history,auditable.getCreator(),history.getProvider());
+
+        return history;
+
+    }
 
 }
