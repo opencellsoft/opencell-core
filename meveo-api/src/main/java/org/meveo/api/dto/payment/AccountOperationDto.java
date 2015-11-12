@@ -189,10 +189,6 @@ public class AccountOperationDto extends BaseDto {
 		this.rejectedPayment = rejectedPayment;
 	}
 
-	public void addMatchingAmounts(MatchingAmountDto matchingAmountDto) {
-		matchingAmounts.getMatchingAmount().add(matchingAmountDto);
-	}
-
 	public Long getId() {
 		return id;
 	}

@@ -240,7 +240,7 @@ public class AccountOperationApi extends BaseApi {
 				accountOperationDto.setOccDescription(accountOp.getOccDescription());
 
 				List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
-				MatchingAmountDto matchingAmountDto;
+				MatchingAmountDto matchingAmountDto=null;
 				MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
 				for (MatchingAmount matchingAmount : matchingAmounts) {
 					matchingAmountDto= new MatchingAmountDto();
