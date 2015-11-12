@@ -275,9 +275,21 @@ public class ImportCustomersJobBean {
 		if (seller != null) {
 			nbSellersUpdated++;
 			seller.setDescription(sell.getDescription());
-			seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(), provider));
-			seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(), provider));
-			seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(), provider));
+            if (!StringUtils.isBlank(sell.getTradingCountryCode())) {
+                seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(), provider));
+            } else {
+                seller.setTradingCountry(null);
+            }
+            if (!StringUtils.isBlank(sell.getTradingCurrencyCode())) {
+                seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(), provider));
+            } else {
+                seller.setTradingCurrency(null);
+            }
+            if (!StringUtils.isBlank(sell.getTradingLanguageCode())) {
+                seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(), provider));
+            } else {
+                seller.setTradingLanguage(null);
+            }
 			seller.updateAudit(currentUser);
 			customerImportService.updateSeller(seller);
 			log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Updated");
@@ -288,9 +300,15 @@ public class ImportCustomersJobBean {
 			seller = new org.meveo.model.admin.Seller();
 			seller.setCode(sell.getCode());
 			seller.setDescription(sell.getDescription());
-			seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(), provider));
-			seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(), provider));
-			seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(), provider));
+            if (!StringUtils.isBlank(sell.getTradingCountryCode())) {
+                seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(), provider));
+            }
+            if (!StringUtils.isBlank(sell.getTradingCurrencyCode())) {
+                seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(), provider));
+            }
+            if (!StringUtils.isBlank(sell.getTradingLanguageCode())) {
+                seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(), provider));
+            }
 			seller.setProvider(provider);
 			customerImportService.createSeller(seller, currentUser, provider);
 		}
@@ -524,21 +542,6 @@ public class ImportCustomersJobBean {
 	private boolean sellerCheckError(org.meveo.model.jaxb.customer.Seller sell) {
 		if (StringUtils.isBlank(sell.getCode())) {
 			createSellerError(sell, "Code is null.");
-			return true;
-		}
-
-		if (StringUtils.isBlank(sell.getTradingCountryCode())) {
-			createSellerError(sell, "TradingCountryCode is null.");
-			return true;
-		}
-
-		if (StringUtils.isBlank(sell.getTradingCurrencyCode())) {
-			createSellerError(sell, "TradingCurrencyCode is null.");
-			return true;
-		}
-
-		if (StringUtils.isBlank(sell.getTradingLanguageCode())) {
-			createSellerError(sell, "TradingLanguageCode is null.");
 			return true;
 		}
 
