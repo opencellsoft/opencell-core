@@ -27,8 +27,8 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
+import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
@@ -860,11 +860,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 	}
 	
 	@Override
-	public ActionStatus matchOperations(String customerAccountCode,AccountOperationsDto accountOperationsDto) {
+	public ActionStatus matchOperations(MatchOperationRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			accountOperationApi.matchOperations(customerAccountCode, accountOperationsDto, getCurrentUser());
+			accountOperationApi.matchOperations(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
