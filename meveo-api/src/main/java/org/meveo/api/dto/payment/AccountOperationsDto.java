@@ -34,4 +34,5 @@ public class AccountOperationsDto implements Serializable {
 	public String toString() {
 		return "AccountOperationsDto [accountOperation=" + accountOperation + "]";
 	}
+
 }

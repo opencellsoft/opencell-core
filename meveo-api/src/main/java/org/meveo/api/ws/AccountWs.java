@@ -18,8 +18,8 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
+import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
@@ -220,8 +220,7 @@ public interface AccountWs extends IBaseWs {
 			@WebParam(name = "customerAccountCode") String customerAccountCode);
 	
 	@WebMethod
-	ActionStatus matchOperations(@WebParam(name = "customerAccountCode") String customerAccountCode,
-			@WebParam(name = "accountOperations") AccountOperationsDto accountOperationsDto);
+	ActionStatus matchOperations(@WebParam(name = "matchOperationRequest") MatchOperationRequestDto postData);
 
 	// dunning
 

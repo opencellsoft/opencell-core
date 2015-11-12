@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AccountEntity;
+import org.meveo.model.Auditable;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -101,8 +102,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         try {
             CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity, user.getProvider());
 
+			Auditable auditable = new Auditable(user);        
             if (cft == null) {
                 cft = new CustomFieldTemplate();
+                cft.setAuditable(auditable);
                 cft.setCode(code);
                 cft.setAppliesTo(cfTemplateService.calculateAppliesToValue(entity));
                 cft.setActive(true);
@@ -114,6 +117,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
 
             CustomFieldInstance cfi = new CustomFieldInstance();
+            cfi.setAuditable(auditable);
             cfi.setCode(code);
             cfi.setStringValue(value.toString());
 

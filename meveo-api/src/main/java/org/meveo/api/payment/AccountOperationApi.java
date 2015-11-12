@@ -11,7 +11,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.AccountOperationsDto;
+import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
@@ -255,27 +255,30 @@ public class AccountOperationApi extends BaseApi {
 		}
 	}
 	
-	public void matchOperations(String customerAccountCode, AccountOperationsDto accountOperationsDto, User currentUser) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
-		if (StringUtils.isBlank(customerAccountCode)) {
+	public void matchOperations(MatchOperationRequestDto postData, User currentUser) throws BusinessException,
+			NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
+		if (StringUtils.isBlank(postData.getCustomerAccount())) {
 			missingParameters.add("customerAccountCode");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-		if(accountOperationsDto == null || accountOperationsDto.getAccountOperation() == null || accountOperationsDto.getAccountOperation().isEmpty()){			
-			throw new BusinessException("no account operations");
-		}
-		List<Long> operationsId = new ArrayList<Long>();
-		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, currentUser.getProvider());
-		if (customerAccount == null) {
-			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
-		}
-		for(AccountOperationDto accountOperation:accountOperationsDto.getAccountOperation()){
-			AccountOperation accountOp=accountOperationService.findById(accountOperation.getId(), currentUser.getProvider());
-			if (accountOp == null) {
-				throw new EntityDoesNotExistsException(AccountOperation.class, accountOperation.getId());
+		} else {
+			List<Long> operationsId = new ArrayList<Long>();
+			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount(),
+					currentUser.getProvider());
+			if (customerAccount == null) {
+				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
 			}
-			operationsId.add(accountOp.getId());
+
+			if (postData.getAccountOperations() != null) {
+				for (AccountOperationDto accountOperation : postData.getAccountOperations().getAccountOperation()) {
+					AccountOperation accountOp = accountOperationService.findById(accountOperation.getId(),
+							currentUser.getProvider());
+					operationsId.add(accountOp.getId());
+				}
+
+				matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(), operationsId,
+						null, currentUser);
+			}
 		}
-		matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(),operationsId, null,currentUser);
 	}
 
 }

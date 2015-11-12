@@ -37,6 +37,7 @@ public class AccountOperationsGenerationJobBean {
 	@Inject
 	private AccOpGenerationAsync accOpGenerationAsync;
 
+	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, User currentUser, JobInstance jobInstance) {

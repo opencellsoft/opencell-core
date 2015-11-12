@@ -7,7 +7,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.AccountOperationsDto;
+import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -66,10 +66,10 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 	}
 	
 	@Override
-    public ActionStatus matchOperations(String customerAccountCode,AccountOperationsDto accountOperationsDto){
+    public ActionStatus matchOperations(MatchOperationRequestDto postData){
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			accountOperationApi.matchOperations(customerAccountCode, accountOperationsDto,getCurrentUser());
+			accountOperationApi.matchOperations(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

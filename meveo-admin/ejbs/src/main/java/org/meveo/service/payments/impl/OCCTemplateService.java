@@ -107,6 +107,19 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 	}
 	
 	public OCCTemplate findByCode(String code, Provider provider) {
-		return findByCode(code, provider.getCode());
+		OCCTemplate occTemplate = null;
+		log.debug("start of find {} by code (code={}) ..", "OCCTemplate", code);
+		try {
+			QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
+			qb.addCriterion("c.code", "=", code, true);
+			qb.addCriterionEntity("c.provider", provider);
+			occTemplate = (OCCTemplate) qb.getQuery(getEntityManager()).getSingleResult();
+			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "OCCTemplate", code,
+					occTemplate != null });
+		} catch (Exception e) {
+			return null;
+		}
+
+		return occTemplate;
 	}
 }
