@@ -1,7 +1,5 @@
 package org.meveo.api.job;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -83,10 +81,10 @@ public class JobInstanceApi extends BaseApi {
         }         
 
         // Create any missing CFT for a given provider and job
-        List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
-        Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
-        customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
-        
+		Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+		if (jobCustomFields != null) {
+			customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
+		}
 
 		// Populate customFields
 		if (postData.getCustomFields() != null) {
@@ -150,9 +148,10 @@ public class JobInstanceApi extends BaseApi {
             }
 			
             // Create any missing CFT for a given provider and job
-            List<CustomFieldTemplate> customFieldTemplates = new ArrayList<CustomFieldTemplate>();
-            Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
-            customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
+			Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
+			if (jobCustomFields != null) {
+				customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
+			}
 
             // Populate customFields
 			if (postData.getCustomFields() != null) {
