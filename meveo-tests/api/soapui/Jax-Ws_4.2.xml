@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="1d31c684-a44c-4964-8716-6418692bd614" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+<con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="1d31c684-a44c-4964-8716-6418692bd614" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -590,7 +590,6 @@
       <xs:element name="GetCustomerResponse" type="tns:getCustomerResponseDto"/>
       <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponseDto"/>
       <xs:element name="Invoice" type="tns:invoiceDto"/>
-      <xs:element name="MatchOperationRequest" type="tns:matchOperationRequestDto"/>
       <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
       <xs:element name="MatchingAmounts" type="tns:matchingAmountsDto"/>
       <xs:element name="MatchingCode" type="tns:matchingCodeDto"/>
@@ -1357,12 +1356,7 @@
       </xs:complexType>
       <xs:complexType name="matchOperations">
         <xs:sequence>
-          <xs:element minOccurs="0" name="matchOperationRequest" type="tns:matchOperationRequestDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="matchOperationRequestDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
+          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
           <xs:element minOccurs="0" name="accountOperations" type="tns:accountOperationsDto"/>
         </xs:sequence>
       </xs:complexType>
@@ -1929,10 +1923,6 @@
               <xs:element minOccurs="0" name="parentSeller" type="xs:string"/>
               <xs:element minOccurs="0" name="provider" type="xs:string"/>
               <xs:element minOccurs="0" name="invoiceSequenceSize" type="xs:int"/>
-              <xs:element minOccurs="0" name="invoiceAdjustmentSequenceSize" type="xs:int"/>
-              <xs:element minOccurs="0" name="invoiceAdjustmentPrefix" type="xs:string"/>
-              <xs:element minOccurs="0" name="currentInvoiceNb" type="xs:long"/>
-              <xs:element minOccurs="0" name="currentInvoiceAdjustmentNb" type="xs:long"/>
               <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
               <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
@@ -12201,7 +12191,7 @@
          </matchOperationRequest>\r
       </ws:matchOperations>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/matchOperations"/></con:call></con:operation><con:operation id="0499b4e6-8758-4e22-8973-a34dab5b3d24" isOneWay="false" action="" name="createOrUpdateCustomerBrand" bindingOperationName="createOrUpdateCustomerBrand" type="Request-Response" outputName="createOrUpdateCustomerBrandResponse" inputName="createOrUpdateCustomerBrand" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c4f3f8e0-5f30-4382-9837-1d673d2b1df6" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/matchOperations"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="0499b4e6-8758-4e22-8973-a34dab5b3d24" isOneWay="false" action="" name="createOrUpdateCustomerBrand" bindingOperationName="createOrUpdateCustomerBrand" type="Request-Response" outputName="createOrUpdateCustomerBrandResponse" inputName="createOrUpdateCustomerBrand" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c4f3f8e0-5f30-4382-9837-1d673d2b1df6" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomerBrand>\r
@@ -27801,26 +27791,24 @@ for( testCase in testSuite.getTestCaseList() ) {
          </accountOperation>
       </ws:createAccountOperation>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="match operations" id="18eb2bd3-035e-4557-aa1b-9f500c1a6fd9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>matchOperations</con:operation><con:request name="match operations" id="ad678f10-3ede-41eb-8e8e-af11ae132e12"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:matchOperations>\r
-         <!--Optional:-->\r
-         <matchOperationRequest>\r
-            <!--Optional:-->\r
-            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>\r
-            <!--Optional:-->\r
-            <accountOperations>\r
-               <!--Zero or more repetitions:-->\r
-               <accountOperation>\r
-                  <!--Optional:-->\r
-                  <id>1</id>\r
-               </accountOperation>\r
-            </accountOperations>\r
-         </matchOperationRequest>\r
-      </ws:matchOperations>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6fa80f8b-6cbc-41dd-a6c4-b2e06787c6ef"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1236</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="match operations" id="18eb2bd3-035e-4557-aa1b-9f500c1a6fd9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>matchOperations</con:operation><con:request name="match operations" id="ad678f10-3ede-41eb-8e8e-af11ae132e12"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:matchOperations>
+         <matchOperationRequest>
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <accountOperations> 
+               <accountOperation>
+                  <id>9</id>
+               </accountOperation>
+                <accountOperation>
+                  <id>10</id>
+               </accountOperation>
+            </accountOperations>
+         </matchOperationRequest>
+      </ws:matchOperations>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6fa80f8b-6cbc-41dd-a6c4-b2e06787c6ef"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1236_00</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();
