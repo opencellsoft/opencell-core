@@ -30,10 +30,25 @@ import org.meveo.model.crm.Provider;
 public abstract class BusinessService<P extends BusinessEntity> extends
 		PersistenceService<P> {
 
+    /**
+     * Find entity by code - strict match
+     * 
+     * @param code Code to match
+     * @param provider Provider
+     * @return A single entity matching code for a given provider
+     */
 	public P findByCode(String code, Provider provider) {
-		return findByCode(getEntityManager(), code, provider);
+		return findByCode(code, provider, null);
 	}
 
+    /**
+     * Find entity by code - strict match
+     * 
+     * @param code Code to match
+     * @param provider Provider
+     * @param fetchFields Fields to fetch
+     * @return A single entity matching code for a given provider
+     */
     @SuppressWarnings("unchecked")
     public P findByCode(String code, Provider provider, List<String> fetchFields) {
         QueryBuilder qb = new QueryBuilder(getEntityClass(), "be", fetchFields, provider);

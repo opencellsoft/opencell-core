@@ -27,11 +27,11 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
 @Stateless
-public class CustomEntityTemplateService extends PersistenceService<CustomEntityTemplate> {
+public class CustomEntityTemplateService extends BusinessService<CustomEntityTemplate> {
 
     @Inject
     CustomFieldTemplateService customFieldTemplateService;
