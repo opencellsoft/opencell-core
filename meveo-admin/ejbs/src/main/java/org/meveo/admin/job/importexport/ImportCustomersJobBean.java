@@ -328,7 +328,7 @@ public class ImportCustomersJobBean {
 			log.debug("customer found code={}", cust.getCode());
 
 			try {
-				customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller"), provider);
+				customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller", "customFields"), provider);
 			} catch (Exception e) {
 				log.warn("failed to find custom by code and fetch ",e);
 			}
@@ -381,7 +381,7 @@ public class ImportCustomersJobBean {
 		CustomerAccount customerAccountTmp = null;
 
 		try {
-			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider(), Arrays.asList("customer"));
+			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), currentUser.getProvider(), Arrays.asList("customer","customFields"));
 		} catch (Exception e) {
 			log.error("failed to create customer account",e);
 		}
