@@ -632,7 +632,7 @@ public class InvoiceApi extends BaseApi {
 			throws FileNotFoundException, MissingParameterException,
 			EntityDoesNotExistsException, BusinessException, InvalidEnumValue {
 		log.debug("getXMLInvoice  invoiceNumber:{}", invoiceNumber);
-		if (invoiceNumber == null) {
+		if (StringUtils.isBlank(invoiceNumber)) {
 			missingParameters.add("invoiceNumber");
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
@@ -678,7 +678,7 @@ public class InvoiceApi extends BaseApi {
 	public byte[] getPdfInvoince(String invoiceNumber, String invoiceType, User currentUser)
 			throws MissingParameterException, EntityDoesNotExistsException, Exception {
 		log.debug("getPdfInvoince  invoiceNumber:{}", invoiceNumber);
-		if (invoiceNumber == null) {
+		if (StringUtils.isBlank(invoiceNumber)) {
 			missingParameters.add("invoiceNumber");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
