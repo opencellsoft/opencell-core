@@ -42,7 +42,7 @@ public class MeveoMinaFTPListener {
 			port=Integer.parseInt(portStr);
 		}catch(Exception e){}
 		if(port==null){
-			log.debug("meveo ftp server doesn't start");
+			log.info("meveo ftp server doesn't start with port {}",portStr);
 			return;
 		}
 		log.debug("start mina ftp server ...");

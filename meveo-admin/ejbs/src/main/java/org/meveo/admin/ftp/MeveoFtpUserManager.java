@@ -32,7 +32,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
 	private static final String ADMINISTRATOR="administrateur";
 
 	private Logger log = LoggerFactory.getLogger(MeveoFtpUserManager.class);
-	private static final String PREFIX = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveoftp");
+	private static final String PREFIX = ParamBean.getInstance().getProperty("providers.rootDir", "/opt/jboss/files/meveo");
 
 	private UserService userService;
 
