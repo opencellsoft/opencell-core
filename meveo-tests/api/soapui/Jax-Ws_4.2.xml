@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="1d31c684-a44c-4964-8716-6418692bd614" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+<con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="1d31c684-a44c-4964-8716-6418692bd614" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -138,12 +138,30 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="matchOperations">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="matchOperations">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="matchOperationsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeCustomer">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeCustomer">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeCustomerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomerBrand">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCustomerBrand">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCustomerBrandResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -174,12 +192,30 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomerCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCustomerCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCustomerCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createCustomer">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createCustomer">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createCustomerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCreditCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCreditCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCreditCategoryResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -282,33 +318,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateCustomer">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateCustomer">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateCustomerResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateCustomer">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateCustomer">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateCustomerResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateUserAccount">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateUserAccount">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateUserAccountResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="listAccess">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="listAccess">
@@ -327,12 +336,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="customerHierarchyUpdate">
+    <wsdl:operation name="updateCustomerCategory">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="customerHierarchyUpdate">
+      <wsdl:input name="updateCustomerCategory">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="customerHierarchyUpdateResponse">
+      <wsdl:output name="updateCustomerCategoryResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -363,6 +372,123 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeCustomerBrand">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeCustomerBrand">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeCustomerBrandResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCRMAccountHierarchy">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCRMAccountHierarchy">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCRMAccountHierarchyResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createAccountOperation">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createAccountOperation">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createAccountOperationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBillingAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createBillingAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createBillingAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeTitle">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeTitle">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeTitleResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findTitle">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findTitle">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findTitleResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listByCustomerAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listByCustomerAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listByCustomerAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomerBrand">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCustomerBrand">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCustomerBrandResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCustomer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCustomerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomer">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateCustomer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateCustomerResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateUserAccount">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateUserAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateUserAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="customerHierarchyUpdate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="customerHierarchyUpdate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="customerHierarchyUpdateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCreditCategory">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCreditCategory">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCreditCategoryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="listByCustomer">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="listByCustomer">
@@ -381,30 +507,21 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="dunningInclusionExclusion">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="dunningInclusionExclusion">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="dunningInclusionExclusionResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeCustomerBrand">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeCustomerBrand">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeCustomerBrandResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="updateCustomerAccount">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateCustomerAccount">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="updateCustomerAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="dunningInclusionExclusion">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="dunningInclusionExclusion">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="dunningInclusionExclusionResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -426,57 +543,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createBillingAccount">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createBillingAccount">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createBillingAccountResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createAccountOperation">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createAccountOperation">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createAccountOperationResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeTitle">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeTitle">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeTitleResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findCustomer">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findCustomer">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findCustomerResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findTitle">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findTitle">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findTitleResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="listByCustomerAccount">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="listByCustomerAccount">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="listByCustomerAccountResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -511,17 +583,21 @@
       <xs:element name="CustomerListResponse" type="tns:customerListResponse"/>
       <xs:element name="CustomersResponse" type="tns:customersResponseDto"/>
       <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
-      <xs:element name="FindAccountHierarchyResponse" type="tns:findAccountHierarchyResponseDto"/>
+      <xs:element name="FindAccountHierarchyResponse" type="tns:getAccountHierarchyResponseDto"/>
       <xs:element name="GetAccessResponse" type="tns:getAccessResponseDto"/>
       <xs:element name="GetBillingAccountResponse" type="tns:getBillingAccountResponseDto"/>
       <xs:element name="GetCustomerAccountResponse" type="tns:getCustomerAccountResponseDto"/>
       <xs:element name="GetCustomerResponse" type="tns:getCustomerResponseDto"/>
       <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponseDto"/>
+      <xs:element name="Invoice" type="tns:invoiceDto"/>
+      <xs:element name="MatchOperationRequest" type="tns:matchOperationRequestDto"/>
       <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
       <xs:element name="MatchingAmounts" type="tns:matchingAmountsDto"/>
       <xs:element name="MatchingCode" type="tns:matchingCodeDto"/>
       <xs:element name="MatchingCodes" type="tns:matchingCodesDto"/>
       <xs:element name="Name" type="tns:nameDto"/>
+      <xs:element name="RatedTransaction" type="tns:ratedTransactionDto"/>
+      <xs:element name="SubCategoryInvoiceAgregate" type="tns:subCategoryInvoiceAgregateDto"/>
       <xs:element name="Title" type="tns:titleDto"/>
       <xs:element name="TitleResponse" type="tns:titleResponseDto"/>
       <xs:element name="UserAccountsResponse" type="tns:userAccountsResponseDto"/>
@@ -551,9 +627,17 @@
       <xs:element name="createOrUpdateAccountHierarchyResponse" type="tns:createOrUpdateAccountHierarchyResponse"/>
       <xs:element name="createOrUpdateBillingAccount" type="tns:createOrUpdateBillingAccount"/>
       <xs:element name="createOrUpdateBillingAccountResponse" type="tns:createOrUpdateBillingAccountResponse"/>
+      <xs:element name="createOrUpdateCRMAccountHierarchy" type="tns:createOrUpdateCRMAccountHierarchy"/>
+      <xs:element name="createOrUpdateCRMAccountHierarchyResponse" type="tns:createOrUpdateCRMAccountHierarchyResponse"/>
+      <xs:element name="createOrUpdateCreditCategory" type="tns:createOrUpdateCreditCategory"/>
+      <xs:element name="createOrUpdateCreditCategoryResponse" type="tns:createOrUpdateCreditCategoryResponse"/>
       <xs:element name="createOrUpdateCustomer" type="tns:createOrUpdateCustomer"/>
       <xs:element name="createOrUpdateCustomerAccount" type="tns:createOrUpdateCustomerAccount"/>
       <xs:element name="createOrUpdateCustomerAccountResponse" type="tns:createOrUpdateCustomerAccountResponse"/>
+      <xs:element name="createOrUpdateCustomerBrand" type="tns:createOrUpdateCustomerBrand"/>
+      <xs:element name="createOrUpdateCustomerBrandResponse" type="tns:createOrUpdateCustomerBrandResponse"/>
+      <xs:element name="createOrUpdateCustomerCategory" type="tns:createOrUpdateCustomerCategory"/>
+      <xs:element name="createOrUpdateCustomerCategoryResponse" type="tns:createOrUpdateCustomerCategoryResponse"/>
       <xs:element name="createOrUpdateCustomerResponse" type="tns:createOrUpdateCustomerResponse"/>
       <xs:element name="createOrUpdateTitle" type="tns:createOrUpdateTitle"/>
       <xs:element name="createOrUpdateTitleResponse" type="tns:createOrUpdateTitleResponse"/>
@@ -597,6 +681,8 @@
       <xs:element name="listByCustomerResponse" type="tns:listByCustomerResponse"/>
       <xs:element name="listCustomerWithFilter" type="tns:listCustomerWithFilter"/>
       <xs:element name="listCustomerWithFilterResponse" type="tns:listCustomerWithFilterResponse"/>
+      <xs:element name="matchOperations" type="tns:matchOperations"/>
+      <xs:element name="matchOperationsResponse" type="tns:matchOperationsResponse"/>
       <xs:element name="removeAccess" type="tns:removeAccess"/>
       <xs:element name="removeAccessResponse" type="tns:removeAccessResponse"/>
       <xs:element name="removeBillingAccount" type="tns:removeBillingAccount"/>
@@ -623,9 +709,15 @@
       <xs:element name="updateBillingAccountResponse" type="tns:updateBillingAccountResponse"/>
       <xs:element name="updateCRMAccountHierarchy" type="tns:updateCRMAccountHierarchy"/>
       <xs:element name="updateCRMAccountHierarchyResponse" type="tns:updateCRMAccountHierarchyResponse"/>
+      <xs:element name="updateCreditCategory" type="tns:updateCreditCategory"/>
+      <xs:element name="updateCreditCategoryResponse" type="tns:updateCreditCategoryResponse"/>
       <xs:element name="updateCustomer" type="tns:updateCustomer"/>
       <xs:element name="updateCustomerAccount" type="tns:updateCustomerAccount"/>
       <xs:element name="updateCustomerAccountResponse" type="tns:updateCustomerAccountResponse"/>
+      <xs:element name="updateCustomerBrand" type="tns:updateCustomerBrand"/>
+      <xs:element name="updateCustomerBrandResponse" type="tns:updateCustomerBrandResponse"/>
+      <xs:element name="updateCustomerCategory" type="tns:updateCustomerCategory"/>
+      <xs:element name="updateCustomerCategoryResponse" type="tns:updateCustomerCategoryResponse"/>
       <xs:element name="updateCustomerResponse" type="tns:updateCustomerResponse"/>
       <xs:element name="updateTitle" type="tns:updateTitle"/>
       <xs:element name="updateTitleResponse" type="tns:updateTitleResponse"/>
@@ -708,6 +800,11 @@
               <xs:element minOccurs="0" name="email" type="xs:string"/>
               <xs:element minOccurs="0" name="bankCoordinates" type="tns:bankCoordinatesDto"/>
               <xs:element minOccurs="0" name="uaStatus" type="xs:string"/>
+              <xs:element minOccurs="0" name="cfToAdd" type="tns:customFieldDto"/>
+              <xs:element minOccurs="0" name="cfMapToAdd" type="tns:customFieldDto"/>
+              <xs:element minOccurs="0" name="offerCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="serviceCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="access" type="xs:string"/>
               <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
           </xs:extension>
@@ -756,11 +853,6 @@
           <xs:element minOccurs="0" name="issuerNumber" type="xs:string"/>
           <xs:element minOccurs="0" name="issuerName" type="xs:string"/>
           <xs:element minOccurs="0" name="ics" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="customFieldsDto">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="customFieldDto">
@@ -814,6 +906,11 @@
         <xs:sequence/>
         <xs:attribute name="classname" type="xs:string" use="required"/>
         <xs:attribute name="code" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="customFieldsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
+        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCRMAccountHierarchyResponse">
         <xs:sequence>
@@ -876,6 +973,7 @@
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
               <xs:element minOccurs="0" name="email" type="xs:string"/>
               <xs:element minOccurs="0" name="bankCoordinates" type="tns:bankCoordinatesDto"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="invoices" nillable="true" type="tns:invoiceDto"/>
               <xs:element minOccurs="0" name="userAccounts" type="tns:UserAccounts"/>
             </xs:sequence>
           </xs:extension>
@@ -892,6 +990,65 @@
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="invoiceDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="billingAccountCode" type="xs:string"/>
+              <xs:element name="dueDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="invoiceNumber" type="xs:string"/>
+              <xs:element minOccurs="0" name="invoiceDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="discount" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="paymentMathod" type="xs:string"/>
+              <xs:element name="PDFpresent" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="subCategoryInvoiceAgregates" nillable="true" type="tns:subCategoryInvoiceAgregateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="subCategoryInvoiceAgregateDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="type" type="xs:string"/>
+          <xs:element minOccurs="0" name="itemNumber" type="xs:int"/>
+          <xs:element minOccurs="0" name="accountingCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element minOccurs="0" name="taxPercent" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="discount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="invoiceSubCategoryCode" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="taxesCodes" nillable="true" type="xs:string"/>
+          <xs:element minOccurs="0" name="userAccountCode" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="ratedTransactions" nillable="true" type="tns:ratedTransactionDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ratedTransactionDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="usageDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="unitAmountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="unitAmountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="code" type="xs:string"/>
+              <xs:element minOccurs="0" name="description" type="xs:string"/>
+              <xs:element minOccurs="0" name="unityDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="priceplanCode" type="xs:string"/>
+              <xs:element name="doNotTriggerInvoicing" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="UserAccounts">
         <xs:sequence>
@@ -1121,10 +1278,10 @@
       </xs:complexType>
       <xs:complexType name="findAccountHierarchy2Response">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:findAccountHierarchyResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:getAccountHierarchyResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="findAccountHierarchyResponseDto">
+      <xs:complexType name="getAccountHierarchyResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
@@ -1198,128 +1355,16 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateAccess">
+      <xs:complexType name="matchOperations">
         <xs:sequence>
-          <xs:element minOccurs="0" name="access" type="tns:Access"/>
+          <xs:element minOccurs="0" name="matchOperationRequest" type="tns:matchOperationRequestDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateAccessResponse">
+      <xs:complexType name="matchOperationRequestDto">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
+          <xs:element minOccurs="0" name="accountOperations" type="tns:accountOperationsDto"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateCustomerAccount">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="customerAccount" type="tns:CustomerAccount"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateCustomerAccountResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateAccountHierarchy">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="accountHierarchy" type="tns:accountHierarchyDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateAccountHierarchyResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createCustomer">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createCustomerResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createCustomerBrand">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="customerBrand" type="tns:customerBrandDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="customerBrandDto">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="code" type="xs:string"/>
-          <xs:element minOccurs="0" name="description" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createCustomerBrandResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeUserAccount">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="userAccountCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeUserAccountResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="listCustomerWithFilter">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="listCustomerWithFilterResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:customersResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="customersResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="findAccountHierarchy">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="accountHierarchy" type="tns:accountHierarchyDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findAccountHierarchyResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:customerListResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="customerListResponse">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="listAccountOperations">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="listAccountOperationsResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:accountOperationsResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="accountOperationsResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="accountOperations" type="tns:accountOperationsDto"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="accountOperationsDto">
         <xs:sequence>
@@ -1330,6 +1375,7 @@
         <xs:complexContent>
           <xs:extension base="tns:baseDto">
             <xs:sequence>
+              <xs:element minOccurs="0" name="id" type="xs:long"/>
               <xs:element minOccurs="0" name="dueDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="type" type="xs:string"/>
               <xs:element minOccurs="0" name="transactionDate" type="xs:dateTime"/>
@@ -1424,6 +1470,171 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="matchOperationsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerBrand">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerBrand" type="tns:customerBrandDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerBrandDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerBrandResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateAccess">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="access" type="tns:Access"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateAccessResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerAccount" type="tns:CustomerAccount"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerCategory" type="tns:customerCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerCategoryDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+          <xs:element name="exoneratedFromTaxes" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateAccountHierarchy">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="accountHierarchy" type="tns:accountHierarchyDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateAccountHierarchyResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCreditCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="creditCategory" type="tns:creditCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCreditCategoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomerBrand">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerBrand" type="tns:customerBrandDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createCustomerBrandResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeUserAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="userAccountCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeUserAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listCustomerWithFilter">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listCustomerWithFilterResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:customersResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customersResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="findAccountHierarchy">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="accountHierarchy" type="tns:accountHierarchyDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findAccountHierarchyResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:customerListResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerListResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="listAccountOperations">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listAccountOperationsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:accountOperationsResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="accountOperationsResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="accountOperations" type="tns:accountOperationsDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
       <xs:complexType name="createUserAccount">
         <xs:sequence>
           <xs:element minOccurs="0" name="userAccount" type="tns:UserAccount"/>
@@ -1491,36 +1702,6 @@
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateCustomer">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateCustomerResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateCustomer">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateCustomerResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateUserAccount">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="userAccount" type="tns:UserAccount"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateUserAccountResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="listAccess">
         <xs:sequence>
           <xs:element minOccurs="0" name="subscriptionCode" type="xs:string"/>
@@ -1540,60 +1721,22 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="customerHierarchyUpdate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="customerHierarchy" type="tns:customerHierarchyDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="customerHierarchyDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element name="sellers" type="tns:Sellers"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="Sellers">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="seller" nillable="true" type="tns:Seller"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="Seller">
-        <xs:complexContent>
-          <xs:extension base="tns:baseDto">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="invoicePrefix" type="xs:string"/>
-              <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
-              <xs:element minOccurs="0" name="countryCode" type="xs:string"/>
-              <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
-              <xs:element minOccurs="0" name="parentSeller" type="xs:string"/>
-              <xs:element minOccurs="0" name="provider" type="xs:string"/>
-              <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
-            </xs:sequence>
-            <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="customerHierarchyUpdateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="createCustomerCategory">
         <xs:sequence>
           <xs:element minOccurs="0" name="customerCategory" type="tns:customerCategoryDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="customerCategoryDto">
+      <xs:complexType name="createCustomerCategoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="code" type="xs:string"/>
-          <xs:element minOccurs="0" name="description" type="xs:string"/>
-          <xs:element name="exoneratedFromTaxes" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createCustomerCategoryResponse">
+      <xs:complexType name="updateCustomerCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerCategory" type="tns:customerCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCustomerCategoryResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -1624,6 +1767,191 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createAccountHierarchyResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeCustomerBrand">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="brandCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeCustomerBrandResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCRMAccountHierarchy">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="crmAccountHierarchy" type="tns:crmAccountHierarchyDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCRMAccountHierarchyResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createAccountOperation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="accountOperation" type="tns:accountOperationDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createAccountOperationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBillingAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="billingAccount" type="tns:BillingAccount"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBillingAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeTitle">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="titleCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeTitleResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listByCustomerAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listByCustomerAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:billingAccountsResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="billingAccountsResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="billingAccounts" type="tns:BillingAccounts"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="findTitle">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="titleCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findTitleResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:titleResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="titleResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="titleDto" type="tns:titleDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updateCustomerBrand">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerBrand" type="tns:customerBrandDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCustomerBrandResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCustomer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCustomerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomer">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateCustomerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateUserAccount">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="userAccount" type="tns:UserAccount"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateUserAccountResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerHierarchyUpdate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerHierarchy" type="tns:customerHierarchyDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customerHierarchyDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="sellers" type="tns:Sellers"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Sellers">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="seller" nillable="true" type="tns:Seller"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Seller">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="invoicePrefix" type="xs:string"/>
+              <xs:element minOccurs="0" name="currencyCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="countryCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="parentSeller" type="xs:string"/>
+              <xs:element minOccurs="0" name="provider" type="xs:string"/>
+              <xs:element minOccurs="0" name="invoiceSequenceSize" type="xs:int"/>
+              <xs:element minOccurs="0" name="invoiceAdjustmentSequenceSize" type="xs:int"/>
+              <xs:element minOccurs="0" name="invoiceAdjustmentPrefix" type="xs:string"/>
+              <xs:element minOccurs="0" name="currentInvoiceNb" type="xs:long"/>
+              <xs:element minOccurs="0" name="currentInvoiceAdjustmentNb" type="xs:long"/>
+              <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="customerHierarchyUpdateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCreditCategory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="creditCategory" type="tns:creditCategoryDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCreditCategoryResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -1664,16 +1992,6 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCustomerAccountResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeCustomerBrand">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="brandCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeCustomerBrandResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
         </xs:sequence>
@@ -1727,36 +2045,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="createAccountOperation">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="accountOperation" type="tns:accountOperationDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createAccountOperationResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createBillingAccount">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="billingAccount" type="tns:BillingAccount"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createBillingAccountResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeTitle">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="titleCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="removeTitleResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="findCustomer">
         <xs:sequence>
           <xs:element minOccurs="0" name="customerCode" type="xs:string"/>
@@ -1772,44 +2060,6 @@
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
               <xs:element minOccurs="0" name="customer" type="tns:Customer"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="listByCustomerAccount">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="listByCustomerAccountResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:billingAccountsResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="billingAccountsResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="billingAccounts" type="tns:BillingAccounts"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="findTitle">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="titleCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findTitleResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:titleResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="titleResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="titleDto" type="tns:titleDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
@@ -1852,11 +2102,11 @@
   <wsdl:message name="updateBillingAccountResponse">
     <wsdl:part element="ns1:updateBillingAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeCreditCategoryResponse">
-    <wsdl:part element="ns1:removeCreditCategoryResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeAccess">
     <wsdl:part element="ns1:removeAccess" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCreditCategoryResponse">
+    <wsdl:part element="ns1:removeCreditCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createAccountOperationResponse">
     <wsdl:part element="ns1:createAccountOperationResponse" name="parameters"></wsdl:part>
@@ -1870,11 +2120,11 @@
   <wsdl:message name="findTitle">
     <wsdl:part element="ns1:findTitle" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findTitleResponse">
-    <wsdl:part element="ns1:findTitleResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateAccessResponse">
     <wsdl:part element="ns1:updateAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findTitleResponse">
+    <wsdl:part element="ns1:findTitleResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeCustomerResponse">
     <wsdl:part element="ns1:removeCustomerResponse" name="parameters"></wsdl:part>
@@ -1906,6 +2156,9 @@
   <wsdl:message name="removeCustomerCategoryResponse">
     <wsdl:part element="ns1:removeCustomerCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCRMAccountHierarchy">
+    <wsdl:part element="ns1:createOrUpdateCRMAccountHierarchy" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createCustomerAccountResponse">
     <wsdl:part element="ns1:createCustomerAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1920,6 +2173,9 @@
   </wsdl:message>
   <wsdl:message name="createCustomer">
     <wsdl:part element="ns1:createCustomer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomerCategoryResponse">
+    <wsdl:part element="ns1:updateCustomerCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="customerHierarchyUpdate">
     <wsdl:part element="ns1:customerHierarchyUpdate" name="parameters"></wsdl:part>
@@ -1945,6 +2201,12 @@
   <wsdl:message name="createOrUpdateCustomer">
     <wsdl:part element="ns1:createOrUpdateCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCRMAccountHierarchyResponse">
+    <wsdl:part element="ns1:createOrUpdateCRMAccountHierarchyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomerBrand">
+    <wsdl:part element="ns1:createOrUpdateCustomerBrand" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findCustomer">
     <wsdl:part element="ns1:findCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1957,8 +2219,14 @@
   <wsdl:message name="createOrUpdateCustomerAccountResponse">
     <wsdl:part element="ns1:createOrUpdateCustomerAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomerCategory">
+    <wsdl:part element="ns1:createOrUpdateCustomerCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeCustomerBrandResponse">
     <wsdl:part element="ns1:removeCustomerBrandResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCreditCategoryResponse">
+    <wsdl:part element="ns1:createOrUpdateCreditCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createBillingAccountResponse">
     <wsdl:part element="ns1:createBillingAccountResponse" name="parameters"></wsdl:part>
@@ -1972,14 +2240,17 @@
   <wsdl:message name="index">
     <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateCustomer">
-    <wsdl:part element="ns1:updateCustomer" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateUserAccount">
     <wsdl:part element="ns1:updateUserAccount" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateCustomer">
+    <wsdl:part element="ns1:updateCustomer" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="dunningInclusionExclusionResponse">
     <wsdl:part element="ns1:dunningInclusionExclusionResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="matchOperationsResponse">
+    <wsdl:part element="ns1:matchOperationsResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createTitle">
     <wsdl:part element="ns1:createTitle" name="parameters"></wsdl:part>
@@ -1987,11 +2258,11 @@
   <wsdl:message name="removeBillingAccount">
     <wsdl:part element="ns1:removeBillingAccount" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="listCustomerWithFilterResponse">
-    <wsdl:part element="ns1:listCustomerWithFilterResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateAccountHierarchyResponse">
     <wsdl:part element="ns1:updateAccountHierarchyResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listCustomerWithFilterResponse">
+    <wsdl:part element="ns1:listCustomerWithFilterResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeTitle">
     <wsdl:part element="ns1:removeTitle" name="parameters"></wsdl:part>
@@ -2007,6 +2278,9 @@
   </wsdl:message>
   <wsdl:message name="createAccessResponse">
     <wsdl:part element="ns1:createAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="matchOperations">
+    <wsdl:part element="ns1:matchOperations" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCreditCategoryResponse">
     <wsdl:part element="ns1:createCreditCategoryResponse" name="parameters"></wsdl:part>
@@ -2026,11 +2300,17 @@
   <wsdl:message name="removeCreditCategory">
     <wsdl:part element="ns1:removeCreditCategory" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateCustomerBrand">
+    <wsdl:part element="ns1:updateCustomerBrand" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeCustomerCategory">
     <wsdl:part element="ns1:removeCustomerCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listByCustomer">
     <wsdl:part element="ns1:listByCustomer" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCreditCategory">
+    <wsdl:part element="ns1:createOrUpdateCreditCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findUserAccount">
     <wsdl:part element="ns1:findUserAccount" name="parameters"></wsdl:part>
@@ -2053,11 +2333,14 @@
   <wsdl:message name="findCustomerResponse">
     <wsdl:part element="ns1:findCustomerResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeAccessResponse">
+    <wsdl:part element="ns1:removeAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findAccountHierarchy">
     <wsdl:part element="ns1:findAccountHierarchy" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeAccessResponse">
-    <wsdl:part element="ns1:removeAccessResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateCustomerCategoryResponse">
+    <wsdl:part element="ns1:createOrUpdateCustomerCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createBillingAccount">
     <wsdl:part element="ns1:createBillingAccount" name="parameters"></wsdl:part>
@@ -2101,32 +2384,47 @@
   <wsdl:message name="findAccountHierarchyResponse">
     <wsdl:part element="ns1:findAccountHierarchyResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateCustomerBrandResponse">
+    <wsdl:part element="ns1:createOrUpdateCustomerBrandResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createOrUpdateCustomerAccount">
     <wsdl:part element="ns1:createOrUpdateCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomerCategory">
+    <wsdl:part element="ns1:updateCustomerCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listAccess">
     <wsdl:part element="ns1:listAccess" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeCustomerAccount">
-    <wsdl:part element="ns1:removeCustomerAccount" name="parameters"></wsdl:part>
+  <wsdl:message name="updateCreditCategoryResponse">
+    <wsdl:part element="ns1:updateCreditCategoryResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateUserAccountResponse">
     <wsdl:part element="ns1:updateUserAccountResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeCustomerAccount">
+    <wsdl:part element="ns1:removeCustomerAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeCustomerBrand">
     <wsdl:part element="ns1:removeCustomerBrand" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCustomerBrandResponse">
+    <wsdl:part element="ns1:updateCustomerBrandResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createAccountOperation">
     <wsdl:part element="ns1:createAccountOperation" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateCreditCategory">
+    <wsdl:part element="ns1:updateCreditCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createOrUpdateTitle">
     <wsdl:part element="ns1:createOrUpdateTitle" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateBillingAccount">
-    <wsdl:part element="ns1:updateBillingAccount" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="listByBillingAccount">
     <wsdl:part element="ns1:listByBillingAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBillingAccount">
+    <wsdl:part element="ns1:updateBillingAccount" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findCustomerAccount">
     <wsdl:part element="ns1:findCustomerAccount" name="parameters"></wsdl:part>
@@ -2205,6 +2503,14 @@
       <wsdl:input message="ns1:removeCustomer" name="removeCustomer"></wsdl:input>
       <wsdl:output message="ns1:removeCustomerResponse" name="removeCustomerResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="matchOperations">
+      <wsdl:input message="ns1:matchOperations" name="matchOperations"></wsdl:input>
+      <wsdl:output message="ns1:matchOperationsResponse" name="matchOperationsResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomerBrand">
+      <wsdl:input message="ns1:createOrUpdateCustomerBrand" name="createOrUpdateCustomerBrand"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCustomerBrandResponse" name="createOrUpdateCustomerBrandResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateAccess">
       <wsdl:input message="ns1:updateAccess" name="updateAccess"></wsdl:input>
       <wsdl:output message="ns1:updateAccessResponse" name="updateAccessResponse"></wsdl:output>
@@ -2213,6 +2519,10 @@
       <wsdl:input message="ns1:createOrUpdateCustomerAccount" name="createOrUpdateCustomerAccount"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateCustomerAccountResponse" name="createOrUpdateCustomerAccountResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomerCategory">
+      <wsdl:input message="ns1:createOrUpdateCustomerCategory" name="createOrUpdateCustomerCategory"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCustomerCategoryResponse" name="createOrUpdateCustomerCategoryResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateAccountHierarchy">
       <wsdl:input message="ns1:createOrUpdateAccountHierarchy" name="createOrUpdateAccountHierarchy"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateAccountHierarchyResponse" name="createOrUpdateAccountHierarchyResponse"></wsdl:output>
@@ -2220,6 +2530,10 @@
     <wsdl:operation name="createCustomer">
       <wsdl:input message="ns1:createCustomer" name="createCustomer"></wsdl:input>
       <wsdl:output message="ns1:createCustomerResponse" name="createCustomerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCreditCategory">
+      <wsdl:input message="ns1:createOrUpdateCreditCategory" name="createOrUpdateCreditCategory"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCreditCategoryResponse" name="createOrUpdateCreditCategoryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCustomerBrand">
       <wsdl:input message="ns1:createCustomerBrand" name="createCustomerBrand"></wsdl:input>
@@ -2265,29 +2579,17 @@
       <wsdl:input message="ns1:createCustomerAccount" name="createCustomerAccount"></wsdl:input>
       <wsdl:output message="ns1:createCustomerAccountResponse" name="createCustomerAccountResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateCustomer">
-      <wsdl:input message="ns1:updateCustomer" name="updateCustomer"></wsdl:input>
-      <wsdl:output message="ns1:updateCustomerResponse" name="updateCustomerResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateCustomer">
-      <wsdl:input message="ns1:createOrUpdateCustomer" name="createOrUpdateCustomer"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateCustomerResponse" name="createOrUpdateCustomerResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateUserAccount">
-      <wsdl:input message="ns1:updateUserAccount" name="updateUserAccount"></wsdl:input>
-      <wsdl:output message="ns1:updateUserAccountResponse" name="updateUserAccountResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="listAccess">
       <wsdl:input message="ns1:listAccess" name="listAccess"></wsdl:input>
       <wsdl:output message="ns1:listAccessResponse" name="listAccessResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="customerHierarchyUpdate">
-      <wsdl:input message="ns1:customerHierarchyUpdate" name="customerHierarchyUpdate"></wsdl:input>
-      <wsdl:output message="ns1:customerHierarchyUpdateResponse" name="customerHierarchyUpdateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createCustomerCategory">
       <wsdl:input message="ns1:createCustomerCategory" name="createCustomerCategory"></wsdl:input>
       <wsdl:output message="ns1:createCustomerCategoryResponse" name="createCustomerCategoryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomerCategory">
+      <wsdl:input message="ns1:updateCustomerCategory" name="updateCustomerCategory"></wsdl:input>
+      <wsdl:output message="ns1:updateCustomerCategoryResponse" name="updateCustomerCategoryResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOrUpdateUserAccount">
       <wsdl:input message="ns1:createOrUpdateUserAccount" name="createOrUpdateUserAccount"></wsdl:input>
@@ -2301,33 +2603,13 @@
       <wsdl:input message="ns1:createAccountHierarchy" name="createAccountHierarchy"></wsdl:input>
       <wsdl:output message="ns1:createAccountHierarchyResponse" name="createAccountHierarchyResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="listByCustomer">
-      <wsdl:input message="ns1:listByCustomer" name="listByCustomer"></wsdl:input>
-      <wsdl:output message="ns1:listByCustomerResponse" name="listByCustomerResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeAccess">
-      <wsdl:input message="ns1:removeAccess" name="removeAccess"></wsdl:input>
-      <wsdl:output message="ns1:removeAccessResponse" name="removeAccessResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateCustomerAccount">
-      <wsdl:input message="ns1:updateCustomerAccount" name="updateCustomerAccount"></wsdl:input>
-      <wsdl:output message="ns1:updateCustomerAccountResponse" name="updateCustomerAccountResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeCustomerBrand">
       <wsdl:input message="ns1:removeCustomerBrand" name="removeCustomerBrand"></wsdl:input>
       <wsdl:output message="ns1:removeCustomerBrandResponse" name="removeCustomerBrandResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="dunningInclusionExclusion">
-      <wsdl:input message="ns1:dunningInclusionExclusion" name="dunningInclusionExclusion"></wsdl:input>
-      <wsdl:output message="ns1:dunningInclusionExclusionResponse" name="dunningInclusionExclusionResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="removeCustomerCategory">
-      <wsdl:input message="ns1:removeCustomerCategory" name="removeCustomerCategory"></wsdl:input>
-      <wsdl:output message="ns1:removeCustomerCategoryResponse" name="removeCustomerCategoryResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="listByBillingAccount">
-      <wsdl:input message="ns1:listByBillingAccount" name="listByBillingAccount"></wsdl:input>
-      <wsdl:output message="ns1:listByBillingAccountResponse" name="listByBillingAccountResponse"></wsdl:output>
+    <wsdl:operation name="createOrUpdateCRMAccountHierarchy">
+      <wsdl:input message="ns1:createOrUpdateCRMAccountHierarchy" name="createOrUpdateCRMAccountHierarchy"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCRMAccountHierarchyResponse" name="createOrUpdateCRMAccountHierarchyResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createAccountOperation">
       <wsdl:input message="ns1:createAccountOperation" name="createAccountOperation"></wsdl:input>
@@ -2341,10 +2623,6 @@
       <wsdl:input message="ns1:removeTitle" name="removeTitle"></wsdl:input>
       <wsdl:output message="ns1:removeTitleResponse" name="removeTitleResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findCustomer">
-      <wsdl:input message="ns1:findCustomer" name="findCustomer"></wsdl:input>
-      <wsdl:output message="ns1:findCustomerResponse" name="findCustomerResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="listByCustomerAccount">
       <wsdl:input message="ns1:listByCustomerAccount" name="listByCustomerAccount"></wsdl:input>
       <wsdl:output message="ns1:listByCustomerAccountResponse" name="listByCustomerAccountResponse"></wsdl:output>
@@ -2352,6 +2630,58 @@
     <wsdl:operation name="findTitle">
       <wsdl:input message="ns1:findTitle" name="findTitle"></wsdl:input>
       <wsdl:output message="ns1:findTitleResponse" name="findTitleResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomerBrand">
+      <wsdl:input message="ns1:updateCustomerBrand" name="updateCustomerBrand"></wsdl:input>
+      <wsdl:output message="ns1:updateCustomerBrandResponse" name="updateCustomerBrandResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomer">
+      <wsdl:input message="ns1:updateCustomer" name="updateCustomer"></wsdl:input>
+      <wsdl:output message="ns1:updateCustomerResponse" name="updateCustomerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateCustomer">
+      <wsdl:input message="ns1:createOrUpdateCustomer" name="createOrUpdateCustomer"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateCustomerResponse" name="createOrUpdateCustomerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateUserAccount">
+      <wsdl:input message="ns1:updateUserAccount" name="updateUserAccount"></wsdl:input>
+      <wsdl:output message="ns1:updateUserAccountResponse" name="updateUserAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="customerHierarchyUpdate">
+      <wsdl:input message="ns1:customerHierarchyUpdate" name="customerHierarchyUpdate"></wsdl:input>
+      <wsdl:output message="ns1:customerHierarchyUpdateResponse" name="customerHierarchyUpdateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCreditCategory">
+      <wsdl:input message="ns1:updateCreditCategory" name="updateCreditCategory"></wsdl:input>
+      <wsdl:output message="ns1:updateCreditCategoryResponse" name="updateCreditCategoryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listByCustomer">
+      <wsdl:input message="ns1:listByCustomer" name="listByCustomer"></wsdl:input>
+      <wsdl:output message="ns1:listByCustomerResponse" name="listByCustomerResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeAccess">
+      <wsdl:input message="ns1:removeAccess" name="removeAccess"></wsdl:input>
+      <wsdl:output message="ns1:removeAccessResponse" name="removeAccessResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCustomerAccount">
+      <wsdl:input message="ns1:updateCustomerAccount" name="updateCustomerAccount"></wsdl:input>
+      <wsdl:output message="ns1:updateCustomerAccountResponse" name="updateCustomerAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="dunningInclusionExclusion">
+      <wsdl:input message="ns1:dunningInclusionExclusion" name="dunningInclusionExclusion"></wsdl:input>
+      <wsdl:output message="ns1:dunningInclusionExclusionResponse" name="dunningInclusionExclusionResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCustomerCategory">
+      <wsdl:input message="ns1:removeCustomerCategory" name="removeCustomerCategory"></wsdl:input>
+      <wsdl:output message="ns1:removeCustomerCategoryResponse" name="removeCustomerCategoryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listByBillingAccount">
+      <wsdl:input message="ns1:listByBillingAccount" name="listByBillingAccount"></wsdl:input>
+      <wsdl:output message="ns1:listByBillingAccountResponse" name="listByBillingAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findCustomer">
+      <wsdl:input message="ns1:findCustomer" name="findCustomer"></wsdl:input>
+      <wsdl:output message="ns1:findCustomerResponse" name="findCustomerResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint></con:endpoints><con:operation id="527f61cb-5670-43e7-9fc5-3a176c6ec208" isOneWay="false" action="" name="createAccess" bindingOperationName="createAccess" type="Request-Response" outputName="createAccessResponse" inputName="createAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="17c3e183-e601-4004-a560-e1a7933dfc2c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
@@ -10603,7 +10933,1619 @@
          </userAccount>\r
       </ws:updateUserAccount>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateUserAccount"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="632a46fe-429d-4ad9-bfcf-17d3bfc7e0da" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateUserAccount"/></con:call></con:operation><con:operation id="87f85e48-ae91-460f-80f4-15ebfd604cd2" isOneWay="false" action="" name="matchOperations" bindingOperationName="matchOperations" type="Request-Response" outputName="matchOperationsResponse" inputName="matchOperations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="823c082c-174a-4bda-a8dd-212206e2f506" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:matchOperations>\r
+         <!--Optional:-->\r
+         <matchOperationRequest>\r
+            <!--Optional:-->\r
+            <customerAccount>?</customerAccount>\r
+            <!--Optional:-->\r
+            <accountOperations>\r
+               <!--Optional:-->\r
+               <customerAccountCode>?</customerAccountCode>\r
+               <!--Zero or more repetitions:-->\r
+               <accountOperation>\r
+                  <!--Optional:-->\r
+                  <id>?</id>\r
+                  <!--Optional:-->\r
+                  <dueDate>?</dueDate>\r
+                  <!--Optional:-->\r
+                  <type>?</type>\r
+                  <!--Optional:-->\r
+                  <transactionDate>?</transactionDate>\r
+                  <!--Optional:-->\r
+                  <transactionCategory>?</transactionCategory>\r
+                  <!--Optional:-->\r
+                  <reference>?</reference>\r
+                  <!--Optional:-->\r
+                  <accountCode>?</accountCode>\r
+                  <!--Optional:-->\r
+                  <accountCodeClientSide>?</accountCodeClientSide>\r
+                  <!--Optional:-->\r
+                  <amount>?</amount>\r
+                  <!--Optional:-->\r
+                  <matchingAmount>?</matchingAmount>\r
+                  <!--Optional:-->\r
+                  <unMatchingAmount>?</unMatchingAmount>\r
+                  <!--Optional:-->\r
+                  <matchingStatus>?</matchingStatus>\r
+                  <!--Optional:-->\r
+                  <occCode>?</occCode>\r
+                  <!--Optional:-->\r
+                  <occDescription>?</occDescription>\r
+                  <!--Optional:-->\r
+                  <customerAccount>?</customerAccount>\r
+                  <!--Optional:-->\r
+                  <excludedFromDunning>?</excludedFromDunning>\r
+                  <!--Optional:-->\r
+                  <matchingAmounts>\r
+                     <!--Zero or more repetitions:-->\r
+                     <matchingAmount>\r
+                        <!--Optional:-->\r
+                        <matchingCode>?</matchingCode>\r
+                        <!--Optional:-->\r
+                        <matchingAmount>?</matchingAmount>\r
+                        <!--Optional:-->\r
+                        <matchingCodes>\r
+                           <!--Zero or more repetitions:-->\r
+                           <matchingCode>\r
+                              <!--Optional:-->\r
+                              <code>?</code>\r
+                              <!--Optional:-->\r
+                              <matchingType>?</matchingType>\r
+                              <!--Optional:-->\r
+                              <matchingDate>?</matchingDate>\r
+                              <!--Optional:-->\r
+                              <matchingAmountCredit>?</matchingAmountCredit>\r
+                              <!--Optional:-->\r
+                              <matchingAmountDebit>?</matchingAmountDebit>\r
+                           </matchingCode>\r
+                        </matchingCodes>\r
+                     </matchingAmount>\r
+                  </matchingAmounts>\r
+                  <!--Optional:-->\r
+                  <otherCreditAndCharge>\r
+                     <!--Optional:-->\r
+                     <id>?</id>\r
+                     <!--Optional:-->\r
+                     <dueDate>?</dueDate>\r
+                     <!--Optional:-->\r
+                     <type>?</type>\r
+                     <!--Optional:-->\r
+                     <transactionDate>?</transactionDate>\r
+                     <!--Optional:-->\r
+                     <transactionCategory>?</transactionCategory>\r
+                     <!--Optional:-->\r
+                     <reference>?</reference>\r
+                     <!--Optional:-->\r
+                     <accountCode>?</accountCode>\r
+                     <!--Optional:-->\r
+                     <accountCodeClientSide>?</accountCodeClientSide>\r
+                     <!--Optional:-->\r
+                     <amount>?</amount>\r
+                     <!--Optional:-->\r
+                     <matchingAmount>?</matchingAmount>\r
+                     <!--Optional:-->\r
+                     <unMatchingAmount>?</unMatchingAmount>\r
+                     <!--Optional:-->\r
+                     <matchingStatus>?</matchingStatus>\r
+                     <!--Optional:-->\r
+                     <occCode>?</occCode>\r
+                     <!--Optional:-->\r
+                     <occDescription>?</occDescription>\r
+                     <!--Optional:-->\r
+                     <customerAccount>?</customerAccount>\r
+                     <!--Optional:-->\r
+                     <excludedFromDunning>?</excludedFromDunning>\r
+                     <!--Optional:-->\r
+                     <matchingAmounts>\r
+                        <!--Zero or more repetitions:-->\r
+                        <matchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingCode>?</matchingCode>\r
+                           <!--Optional:-->\r
+                           <matchingAmount>?</matchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingCodes>\r
+                              <!--Zero or more repetitions:-->\r
+                              <matchingCode>\r
+                                 <!--Optional:-->\r
+                                 <code>?</code>\r
+                                 <!--Optional:-->\r
+                                 <matchingType>?</matchingType>\r
+                                 <!--Optional:-->\r
+                                 <matchingDate>?</matchingDate>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmountCredit>?</matchingAmountCredit>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmountDebit>?</matchingAmountDebit>\r
+                              </matchingCode>\r
+                           </matchingCodes>\r
+                        </matchingAmount>\r
+                     </matchingAmounts>\r
+                     <!--Optional:-->\r
+                     <otherCreditAndCharge/>\r
+                     <!--Optional:-->\r
+                     <recordedInvoice>\r
+                        <!--Optional:-->\r
+                        <id>?</id>\r
+                        <!--Optional:-->\r
+                        <dueDate>?</dueDate>\r
+                        <!--Optional:-->\r
+                        <type>?</type>\r
+                        <!--Optional:-->\r
+                        <transactionDate>?</transactionDate>\r
+                        <!--Optional:-->\r
+                        <transactionCategory>?</transactionCategory>\r
+                        <!--Optional:-->\r
+                        <reference>?</reference>\r
+                        <!--Optional:-->\r
+                        <accountCode>?</accountCode>\r
+                        <!--Optional:-->\r
+                        <accountCodeClientSide>?</accountCodeClientSide>\r
+                        <!--Optional:-->\r
+                        <amount>?</amount>\r
+                        <!--Optional:-->\r
+                        <matchingAmount>?</matchingAmount>\r
+                        <!--Optional:-->\r
+                        <unMatchingAmount>?</unMatchingAmount>\r
+                        <!--Optional:-->\r
+                        <matchingStatus>?</matchingStatus>\r
+                        <!--Optional:-->\r
+                        <occCode>?</occCode>\r
+                        <!--Optional:-->\r
+                        <occDescription>?</occDescription>\r
+                        <!--Optional:-->\r
+                        <customerAccount>?</customerAccount>\r
+                        <!--Optional:-->\r
+                        <excludedFromDunning>?</excludedFromDunning>\r
+                        <!--Optional:-->\r
+                        <matchingAmounts>\r
+                           <!--Zero or more repetitions:-->\r
+                           <matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCode>?</matchingCode>\r
+                              <!--Optional:-->\r
+                              <matchingAmount>?</matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCodes>\r
+                                 <!--Zero or more repetitions:-->\r
+                                 <matchingCode>\r
+                                    <!--Optional:-->\r
+                                    <code>?</code>\r
+                                    <!--Optional:-->\r
+                                    <matchingType>?</matchingType>\r
+                                    <!--Optional:-->\r
+                                    <matchingDate>?</matchingDate>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountCredit>?</matchingAmountCredit>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountDebit>?</matchingAmountDebit>\r
+                                 </matchingCode>\r
+                              </matchingCodes>\r
+                           </matchingAmount>\r
+                        </matchingAmounts>\r
+                        <!--Optional:-->\r
+                        <otherCreditAndCharge/>\r
+                        <!--Optional:-->\r
+                        <recordedInvoice/>\r
+                        <!--Optional:-->\r
+                        <rejectedPayment>\r
+                           <!--Optional:-->\r
+                           <id>?</id>\r
+                           <!--Optional:-->\r
+                           <dueDate>?</dueDate>\r
+                           <!--Optional:-->\r
+                           <type>?</type>\r
+                           <!--Optional:-->\r
+                           <transactionDate>?</transactionDate>\r
+                           <!--Optional:-->\r
+                           <transactionCategory>?</transactionCategory>\r
+                           <!--Optional:-->\r
+                           <reference>?</reference>\r
+                           <!--Optional:-->\r
+                           <accountCode>?</accountCode>\r
+                           <!--Optional:-->\r
+                           <accountCodeClientSide>?</accountCodeClientSide>\r
+                           <!--Optional:-->\r
+                           <amount>?</amount>\r
+                           <!--Optional:-->\r
+                           <matchingAmount>?</matchingAmount>\r
+                           <!--Optional:-->\r
+                           <unMatchingAmount>?</unMatchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingStatus>?</matchingStatus>\r
+                           <!--Optional:-->\r
+                           <occCode>?</occCode>\r
+                           <!--Optional:-->\r
+                           <occDescription>?</occDescription>\r
+                           <!--Optional:-->\r
+                           <customerAccount>?</customerAccount>\r
+                           <!--Optional:-->\r
+                           <excludedFromDunning>?</excludedFromDunning>\r
+                           <!--Optional:-->\r
+                           <matchingAmounts>\r
+                              <!--Zero or more repetitions:-->\r
+                              <matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCode>?</matchingCode>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmount>?</matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCodes>\r
+                                    <!--Zero or more repetitions:-->\r
+                                    <matchingCode>\r
+                                       <!--Optional:-->\r
+                                       <code>?</code>\r
+                                       <!--Optional:-->\r
+                                       <matchingType>?</matchingType>\r
+                                       <!--Optional:-->\r
+                                       <matchingDate>?</matchingDate>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountCredit>?</matchingAmountCredit>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountDebit>?</matchingAmountDebit>\r
+                                    </matchingCode>\r
+                                 </matchingCodes>\r
+                              </matchingAmount>\r
+                           </matchingAmounts>\r
+                           <!--Optional:-->\r
+                           <otherCreditAndCharge/>\r
+                           <!--Optional:-->\r
+                           <recordedInvoice/>\r
+                           <!--Optional:-->\r
+                           <rejectedPayment/>\r
+                           <!--Optional:-->\r
+                           <rejectedType>?</rejectedType>\r
+                           <!--Optional:-->\r
+                           <bankLot>?</bankLot>\r
+                           <!--Optional:-->\r
+                           <bankReference>?</bankReference>\r
+                           <!--Optional:-->\r
+                           <rejectedDate>?</rejectedDate>\r
+                           <!--Optional:-->\r
+                           <rejectedDescription>?</rejectedDescription>\r
+                           <!--Optional:-->\r
+                           <rejectedCode>?</rejectedCode>\r
+                        </rejectedPayment>\r
+                        <!--Optional:-->\r
+                        <productionDate>?</productionDate>\r
+                        <!--Optional:-->\r
+                        <invoiceDate>?</invoiceDate>\r
+                        <!--Optional:-->\r
+                        <amountWithoutTax>?</amountWithoutTax>\r
+                        <!--Optional:-->\r
+                        <taxAmount>?</taxAmount>\r
+                        <!--Optional:-->\r
+                        <netToPay>?</netToPay>\r
+                        <!--Optional:-->\r
+                        <paymentMethod>?</paymentMethod>\r
+                        <!--Optional:-->\r
+                        <paymentInfo>?</paymentInfo>\r
+                        <!--Optional:-->\r
+                        <paymentInfo1>?</paymentInfo1>\r
+                        <!--Optional:-->\r
+                        <paymentInfo2>?</paymentInfo2>\r
+                        <!--Optional:-->\r
+                        <paymentInfo3>?</paymentInfo3>\r
+                        <!--Optional:-->\r
+                        <paymentInfo4>?</paymentInfo4>\r
+                        <!--Optional:-->\r
+                        <paymentInfo5>?</paymentInfo5>\r
+                        <!--Optional:-->\r
+                        <paymentInfo6>?</paymentInfo6>\r
+                        <!--Optional:-->\r
+                        <billingAccountName>?</billingAccountName>\r
+                     </recordedInvoice>\r
+                     <!--Optional:-->\r
+                     <rejectedPayment>\r
+                        <!--Optional:-->\r
+                        <id>?</id>\r
+                        <!--Optional:-->\r
+                        <dueDate>?</dueDate>\r
+                        <!--Optional:-->\r
+                        <type>?</type>\r
+                        <!--Optional:-->\r
+                        <transactionDate>?</transactionDate>\r
+                        <!--Optional:-->\r
+                        <transactionCategory>?</transactionCategory>\r
+                        <!--Optional:-->\r
+                        <reference>?</reference>\r
+                        <!--Optional:-->\r
+                        <accountCode>?</accountCode>\r
+                        <!--Optional:-->\r
+                        <accountCodeClientSide>?</accountCodeClientSide>\r
+                        <!--Optional:-->\r
+                        <amount>?</amount>\r
+                        <!--Optional:-->\r
+                        <matchingAmount>?</matchingAmount>\r
+                        <!--Optional:-->\r
+                        <unMatchingAmount>?</unMatchingAmount>\r
+                        <!--Optional:-->\r
+                        <matchingStatus>?</matchingStatus>\r
+                        <!--Optional:-->\r
+                        <occCode>?</occCode>\r
+                        <!--Optional:-->\r
+                        <occDescription>?</occDescription>\r
+                        <!--Optional:-->\r
+                        <customerAccount>?</customerAccount>\r
+                        <!--Optional:-->\r
+                        <excludedFromDunning>?</excludedFromDunning>\r
+                        <!--Optional:-->\r
+                        <matchingAmounts>\r
+                           <!--Zero or more repetitions:-->\r
+                           <matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCode>?</matchingCode>\r
+                              <!--Optional:-->\r
+                              <matchingAmount>?</matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCodes>\r
+                                 <!--Zero or more repetitions:-->\r
+                                 <matchingCode>\r
+                                    <!--Optional:-->\r
+                                    <code>?</code>\r
+                                    <!--Optional:-->\r
+                                    <matchingType>?</matchingType>\r
+                                    <!--Optional:-->\r
+                                    <matchingDate>?</matchingDate>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountCredit>?</matchingAmountCredit>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountDebit>?</matchingAmountDebit>\r
+                                 </matchingCode>\r
+                              </matchingCodes>\r
+                           </matchingAmount>\r
+                        </matchingAmounts>\r
+                        <!--Optional:-->\r
+                        <otherCreditAndCharge/>\r
+                        <!--Optional:-->\r
+                        <recordedInvoice>\r
+                           <!--Optional:-->\r
+                           <id>?</id>\r
+                           <!--Optional:-->\r
+                           <dueDate>?</dueDate>\r
+                           <!--Optional:-->\r
+                           <type>?</type>\r
+                           <!--Optional:-->\r
+                           <transactionDate>?</transactionDate>\r
+                           <!--Optional:-->\r
+                           <transactionCategory>?</transactionCategory>\r
+                           <!--Optional:-->\r
+                           <reference>?</reference>\r
+                           <!--Optional:-->\r
+                           <accountCode>?</accountCode>\r
+                           <!--Optional:-->\r
+                           <accountCodeClientSide>?</accountCodeClientSide>\r
+                           <!--Optional:-->\r
+                           <amount>?</amount>\r
+                           <!--Optional:-->\r
+                           <matchingAmount>?</matchingAmount>\r
+                           <!--Optional:-->\r
+                           <unMatchingAmount>?</unMatchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingStatus>?</matchingStatus>\r
+                           <!--Optional:-->\r
+                           <occCode>?</occCode>\r
+                           <!--Optional:-->\r
+                           <occDescription>?</occDescription>\r
+                           <!--Optional:-->\r
+                           <customerAccount>?</customerAccount>\r
+                           <!--Optional:-->\r
+                           <excludedFromDunning>?</excludedFromDunning>\r
+                           <!--Optional:-->\r
+                           <matchingAmounts>\r
+                              <!--Zero or more repetitions:-->\r
+                              <matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCode>?</matchingCode>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmount>?</matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCodes>\r
+                                    <!--Zero or more repetitions:-->\r
+                                    <matchingCode>\r
+                                       <!--Optional:-->\r
+                                       <code>?</code>\r
+                                       <!--Optional:-->\r
+                                       <matchingType>?</matchingType>\r
+                                       <!--Optional:-->\r
+                                       <matchingDate>?</matchingDate>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountCredit>?</matchingAmountCredit>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountDebit>?</matchingAmountDebit>\r
+                                    </matchingCode>\r
+                                 </matchingCodes>\r
+                              </matchingAmount>\r
+                           </matchingAmounts>\r
+                           <!--Optional:-->\r
+                           <otherCreditAndCharge/>\r
+                           <!--Optional:-->\r
+                           <recordedInvoice/>\r
+                           <!--Optional:-->\r
+                           <rejectedPayment/>\r
+                           <!--Optional:-->\r
+                           <productionDate>?</productionDate>\r
+                           <!--Optional:-->\r
+                           <invoiceDate>?</invoiceDate>\r
+                           <!--Optional:-->\r
+                           <amountWithoutTax>?</amountWithoutTax>\r
+                           <!--Optional:-->\r
+                           <taxAmount>?</taxAmount>\r
+                           <!--Optional:-->\r
+                           <netToPay>?</netToPay>\r
+                           <!--Optional:-->\r
+                           <paymentMethod>?</paymentMethod>\r
+                           <!--Optional:-->\r
+                           <paymentInfo>?</paymentInfo>\r
+                           <!--Optional:-->\r
+                           <paymentInfo1>?</paymentInfo1>\r
+                           <!--Optional:-->\r
+                           <paymentInfo2>?</paymentInfo2>\r
+                           <!--Optional:-->\r
+                           <paymentInfo3>?</paymentInfo3>\r
+                           <!--Optional:-->\r
+                           <paymentInfo4>?</paymentInfo4>\r
+                           <!--Optional:-->\r
+                           <paymentInfo5>?</paymentInfo5>\r
+                           <!--Optional:-->\r
+                           <paymentInfo6>?</paymentInfo6>\r
+                           <!--Optional:-->\r
+                           <billingAccountName>?</billingAccountName>\r
+                        </recordedInvoice>\r
+                        <!--Optional:-->\r
+                        <rejectedPayment/>\r
+                        <!--Optional:-->\r
+                        <rejectedType>?</rejectedType>\r
+                        <!--Optional:-->\r
+                        <bankLot>?</bankLot>\r
+                        <!--Optional:-->\r
+                        <bankReference>?</bankReference>\r
+                        <!--Optional:-->\r
+                        <rejectedDate>?</rejectedDate>\r
+                        <!--Optional:-->\r
+                        <rejectedDescription>?</rejectedDescription>\r
+                        <!--Optional:-->\r
+                        <rejectedCode>?</rejectedCode>\r
+                     </rejectedPayment>\r
+                     <!--Optional:-->\r
+                     <operationDate>?</operationDate>\r
+                  </otherCreditAndCharge>\r
+                  <!--Optional:-->\r
+                  <recordedInvoice>\r
+                     <!--Optional:-->\r
+                     <id>?</id>\r
+                     <!--Optional:-->\r
+                     <dueDate>?</dueDate>\r
+                     <!--Optional:-->\r
+                     <type>?</type>\r
+                     <!--Optional:-->\r
+                     <transactionDate>?</transactionDate>\r
+                     <!--Optional:-->\r
+                     <transactionCategory>?</transactionCategory>\r
+                     <!--Optional:-->\r
+                     <reference>?</reference>\r
+                     <!--Optional:-->\r
+                     <accountCode>?</accountCode>\r
+                     <!--Optional:-->\r
+                     <accountCodeClientSide>?</accountCodeClientSide>\r
+                     <!--Optional:-->\r
+                     <amount>?</amount>\r
+                     <!--Optional:-->\r
+                     <matchingAmount>?</matchingAmount>\r
+                     <!--Optional:-->\r
+                     <unMatchingAmount>?</unMatchingAmount>\r
+                     <!--Optional:-->\r
+                     <matchingStatus>?</matchingStatus>\r
+                     <!--Optional:-->\r
+                     <occCode>?</occCode>\r
+                     <!--Optional:-->\r
+                     <occDescription>?</occDescription>\r
+                     <!--Optional:-->\r
+                     <customerAccount>?</customerAccount>\r
+                     <!--Optional:-->\r
+                     <excludedFromDunning>?</excludedFromDunning>\r
+                     <!--Optional:-->\r
+                     <matchingAmounts>\r
+                        <!--Zero or more repetitions:-->\r
+                        <matchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingCode>?</matchingCode>\r
+                           <!--Optional:-->\r
+                           <matchingAmount>?</matchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingCodes>\r
+                              <!--Zero or more repetitions:-->\r
+                              <matchingCode>\r
+                                 <!--Optional:-->\r
+                                 <code>?</code>\r
+                                 <!--Optional:-->\r
+                                 <matchingType>?</matchingType>\r
+                                 <!--Optional:-->\r
+                                 <matchingDate>?</matchingDate>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmountCredit>?</matchingAmountCredit>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmountDebit>?</matchingAmountDebit>\r
+                              </matchingCode>\r
+                           </matchingCodes>\r
+                        </matchingAmount>\r
+                     </matchingAmounts>\r
+                     <!--Optional:-->\r
+                     <otherCreditAndCharge>\r
+                        <!--Optional:-->\r
+                        <id>?</id>\r
+                        <!--Optional:-->\r
+                        <dueDate>?</dueDate>\r
+                        <!--Optional:-->\r
+                        <type>?</type>\r
+                        <!--Optional:-->\r
+                        <transactionDate>?</transactionDate>\r
+                        <!--Optional:-->\r
+                        <transactionCategory>?</transactionCategory>\r
+                        <!--Optional:-->\r
+                        <reference>?</reference>\r
+                        <!--Optional:-->\r
+                        <accountCode>?</accountCode>\r
+                        <!--Optional:-->\r
+                        <accountCodeClientSide>?</accountCodeClientSide>\r
+                        <!--Optional:-->\r
+                        <amount>?</amount>\r
+                        <!--Optional:-->\r
+                        <matchingAmount>?</matchingAmount>\r
+                        <!--Optional:-->\r
+                        <unMatchingAmount>?</unMatchingAmount>\r
+                        <!--Optional:-->\r
+                        <matchingStatus>?</matchingStatus>\r
+                        <!--Optional:-->\r
+                        <occCode>?</occCode>\r
+                        <!--Optional:-->\r
+                        <occDescription>?</occDescription>\r
+                        <!--Optional:-->\r
+                        <customerAccount>?</customerAccount>\r
+                        <!--Optional:-->\r
+                        <excludedFromDunning>?</excludedFromDunning>\r
+                        <!--Optional:-->\r
+                        <matchingAmounts>\r
+                           <!--Zero or more repetitions:-->\r
+                           <matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCode>?</matchingCode>\r
+                              <!--Optional:-->\r
+                              <matchingAmount>?</matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCodes>\r
+                                 <!--Zero or more repetitions:-->\r
+                                 <matchingCode>\r
+                                    <!--Optional:-->\r
+                                    <code>?</code>\r
+                                    <!--Optional:-->\r
+                                    <matchingType>?</matchingType>\r
+                                    <!--Optional:-->\r
+                                    <matchingDate>?</matchingDate>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountCredit>?</matchingAmountCredit>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountDebit>?</matchingAmountDebit>\r
+                                 </matchingCode>\r
+                              </matchingCodes>\r
+                           </matchingAmount>\r
+                        </matchingAmounts>\r
+                        <!--Optional:-->\r
+                        <otherCreditAndCharge/>\r
+                        <!--Optional:-->\r
+                        <recordedInvoice/>\r
+                        <!--Optional:-->\r
+                        <rejectedPayment>\r
+                           <!--Optional:-->\r
+                           <id>?</id>\r
+                           <!--Optional:-->\r
+                           <dueDate>?</dueDate>\r
+                           <!--Optional:-->\r
+                           <type>?</type>\r
+                           <!--Optional:-->\r
+                           <transactionDate>?</transactionDate>\r
+                           <!--Optional:-->\r
+                           <transactionCategory>?</transactionCategory>\r
+                           <!--Optional:-->\r
+                           <reference>?</reference>\r
+                           <!--Optional:-->\r
+                           <accountCode>?</accountCode>\r
+                           <!--Optional:-->\r
+                           <accountCodeClientSide>?</accountCodeClientSide>\r
+                           <!--Optional:-->\r
+                           <amount>?</amount>\r
+                           <!--Optional:-->\r
+                           <matchingAmount>?</matchingAmount>\r
+                           <!--Optional:-->\r
+                           <unMatchingAmount>?</unMatchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingStatus>?</matchingStatus>\r
+                           <!--Optional:-->\r
+                           <occCode>?</occCode>\r
+                           <!--Optional:-->\r
+                           <occDescription>?</occDescription>\r
+                           <!--Optional:-->\r
+                           <customerAccount>?</customerAccount>\r
+                           <!--Optional:-->\r
+                           <excludedFromDunning>?</excludedFromDunning>\r
+                           <!--Optional:-->\r
+                           <matchingAmounts>\r
+                              <!--Zero or more repetitions:-->\r
+                              <matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCode>?</matchingCode>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmount>?</matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCodes>\r
+                                    <!--Zero or more repetitions:-->\r
+                                    <matchingCode>\r
+                                       <!--Optional:-->\r
+                                       <code>?</code>\r
+                                       <!--Optional:-->\r
+                                       <matchingType>?</matchingType>\r
+                                       <!--Optional:-->\r
+                                       <matchingDate>?</matchingDate>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountCredit>?</matchingAmountCredit>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountDebit>?</matchingAmountDebit>\r
+                                    </matchingCode>\r
+                                 </matchingCodes>\r
+                              </matchingAmount>\r
+                           </matchingAmounts>\r
+                           <!--Optional:-->\r
+                           <otherCreditAndCharge/>\r
+                           <!--Optional:-->\r
+                           <recordedInvoice/>\r
+                           <!--Optional:-->\r
+                           <rejectedPayment/>\r
+                           <!--Optional:-->\r
+                           <rejectedType>?</rejectedType>\r
+                           <!--Optional:-->\r
+                           <bankLot>?</bankLot>\r
+                           <!--Optional:-->\r
+                           <bankReference>?</bankReference>\r
+                           <!--Optional:-->\r
+                           <rejectedDate>?</rejectedDate>\r
+                           <!--Optional:-->\r
+                           <rejectedDescription>?</rejectedDescription>\r
+                           <!--Optional:-->\r
+                           <rejectedCode>?</rejectedCode>\r
+                        </rejectedPayment>\r
+                        <!--Optional:-->\r
+                        <operationDate>?</operationDate>\r
+                     </otherCreditAndCharge>\r
+                     <!--Optional:-->\r
+                     <recordedInvoice/>\r
+                     <!--Optional:-->\r
+                     <rejectedPayment>\r
+                        <!--Optional:-->\r
+                        <id>?</id>\r
+                        <!--Optional:-->\r
+                        <dueDate>?</dueDate>\r
+                        <!--Optional:-->\r
+                        <type>?</type>\r
+                        <!--Optional:-->\r
+                        <transactionDate>?</transactionDate>\r
+                        <!--Optional:-->\r
+                        <transactionCategory>?</transactionCategory>\r
+                        <!--Optional:-->\r
+                        <reference>?</reference>\r
+                        <!--Optional:-->\r
+                        <accountCode>?</accountCode>\r
+                        <!--Optional:-->\r
+                        <accountCodeClientSide>?</accountCodeClientSide>\r
+                        <!--Optional:-->\r
+                        <amount>?</amount>\r
+                        <!--Optional:-->\r
+                        <matchingAmount>?</matchingAmount>\r
+                        <!--Optional:-->\r
+                        <unMatchingAmount>?</unMatchingAmount>\r
+                        <!--Optional:-->\r
+                        <matchingStatus>?</matchingStatus>\r
+                        <!--Optional:-->\r
+                        <occCode>?</occCode>\r
+                        <!--Optional:-->\r
+                        <occDescription>?</occDescription>\r
+                        <!--Optional:-->\r
+                        <customerAccount>?</customerAccount>\r
+                        <!--Optional:-->\r
+                        <excludedFromDunning>?</excludedFromDunning>\r
+                        <!--Optional:-->\r
+                        <matchingAmounts>\r
+                           <!--Zero or more repetitions:-->\r
+                           <matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCode>?</matchingCode>\r
+                              <!--Optional:-->\r
+                              <matchingAmount>?</matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCodes>\r
+                                 <!--Zero or more repetitions:-->\r
+                                 <matchingCode>\r
+                                    <!--Optional:-->\r
+                                    <code>?</code>\r
+                                    <!--Optional:-->\r
+                                    <matchingType>?</matchingType>\r
+                                    <!--Optional:-->\r
+                                    <matchingDate>?</matchingDate>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountCredit>?</matchingAmountCredit>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountDebit>?</matchingAmountDebit>\r
+                                 </matchingCode>\r
+                              </matchingCodes>\r
+                           </matchingAmount>\r
+                        </matchingAmounts>\r
+                        <!--Optional:-->\r
+                        <otherCreditAndCharge>\r
+                           <!--Optional:-->\r
+                           <id>?</id>\r
+                           <!--Optional:-->\r
+                           <dueDate>?</dueDate>\r
+                           <!--Optional:-->\r
+                           <type>?</type>\r
+                           <!--Optional:-->\r
+                           <transactionDate>?</transactionDate>\r
+                           <!--Optional:-->\r
+                           <transactionCategory>?</transactionCategory>\r
+                           <!--Optional:-->\r
+                           <reference>?</reference>\r
+                           <!--Optional:-->\r
+                           <accountCode>?</accountCode>\r
+                           <!--Optional:-->\r
+                           <accountCodeClientSide>?</accountCodeClientSide>\r
+                           <!--Optional:-->\r
+                           <amount>?</amount>\r
+                           <!--Optional:-->\r
+                           <matchingAmount>?</matchingAmount>\r
+                           <!--Optional:-->\r
+                           <unMatchingAmount>?</unMatchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingStatus>?</matchingStatus>\r
+                           <!--Optional:-->\r
+                           <occCode>?</occCode>\r
+                           <!--Optional:-->\r
+                           <occDescription>?</occDescription>\r
+                           <!--Optional:-->\r
+                           <customerAccount>?</customerAccount>\r
+                           <!--Optional:-->\r
+                           <excludedFromDunning>?</excludedFromDunning>\r
+                           <!--Optional:-->\r
+                           <matchingAmounts>\r
+                              <!--Zero or more repetitions:-->\r
+                              <matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCode>?</matchingCode>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmount>?</matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCodes>\r
+                                    <!--Zero or more repetitions:-->\r
+                                    <matchingCode>\r
+                                       <!--Optional:-->\r
+                                       <code>?</code>\r
+                                       <!--Optional:-->\r
+                                       <matchingType>?</matchingType>\r
+                                       <!--Optional:-->\r
+                                       <matchingDate>?</matchingDate>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountCredit>?</matchingAmountCredit>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountDebit>?</matchingAmountDebit>\r
+                                    </matchingCode>\r
+                                 </matchingCodes>\r
+                              </matchingAmount>\r
+                           </matchingAmounts>\r
+                           <!--Optional:-->\r
+                           <otherCreditAndCharge/>\r
+                           <!--Optional:-->\r
+                           <recordedInvoice/>\r
+                           <!--Optional:-->\r
+                           <rejectedPayment/>\r
+                           <!--Optional:-->\r
+                           <operationDate>?</operationDate>\r
+                        </otherCreditAndCharge>\r
+                        <!--Optional:-->\r
+                        <recordedInvoice/>\r
+                        <!--Optional:-->\r
+                        <rejectedPayment/>\r
+                        <!--Optional:-->\r
+                        <rejectedType>?</rejectedType>\r
+                        <!--Optional:-->\r
+                        <bankLot>?</bankLot>\r
+                        <!--Optional:-->\r
+                        <bankReference>?</bankReference>\r
+                        <!--Optional:-->\r
+                        <rejectedDate>?</rejectedDate>\r
+                        <!--Optional:-->\r
+                        <rejectedDescription>?</rejectedDescription>\r
+                        <!--Optional:-->\r
+                        <rejectedCode>?</rejectedCode>\r
+                     </rejectedPayment>\r
+                     <!--Optional:-->\r
+                     <productionDate>?</productionDate>\r
+                     <!--Optional:-->\r
+                     <invoiceDate>?</invoiceDate>\r
+                     <!--Optional:-->\r
+                     <amountWithoutTax>?</amountWithoutTax>\r
+                     <!--Optional:-->\r
+                     <taxAmount>?</taxAmount>\r
+                     <!--Optional:-->\r
+                     <netToPay>?</netToPay>\r
+                     <!--Optional:-->\r
+                     <paymentMethod>?</paymentMethod>\r
+                     <!--Optional:-->\r
+                     <paymentInfo>?</paymentInfo>\r
+                     <!--Optional:-->\r
+                     <paymentInfo1>?</paymentInfo1>\r
+                     <!--Optional:-->\r
+                     <paymentInfo2>?</paymentInfo2>\r
+                     <!--Optional:-->\r
+                     <paymentInfo3>?</paymentInfo3>\r
+                     <!--Optional:-->\r
+                     <paymentInfo4>?</paymentInfo4>\r
+                     <!--Optional:-->\r
+                     <paymentInfo5>?</paymentInfo5>\r
+                     <!--Optional:-->\r
+                     <paymentInfo6>?</paymentInfo6>\r
+                     <!--Optional:-->\r
+                     <billingAccountName>?</billingAccountName>\r
+                  </recordedInvoice>\r
+                  <!--Optional:-->\r
+                  <rejectedPayment>\r
+                     <!--Optional:-->\r
+                     <id>?</id>\r
+                     <!--Optional:-->\r
+                     <dueDate>?</dueDate>\r
+                     <!--Optional:-->\r
+                     <type>?</type>\r
+                     <!--Optional:-->\r
+                     <transactionDate>?</transactionDate>\r
+                     <!--Optional:-->\r
+                     <transactionCategory>?</transactionCategory>\r
+                     <!--Optional:-->\r
+                     <reference>?</reference>\r
+                     <!--Optional:-->\r
+                     <accountCode>?</accountCode>\r
+                     <!--Optional:-->\r
+                     <accountCodeClientSide>?</accountCodeClientSide>\r
+                     <!--Optional:-->\r
+                     <amount>?</amount>\r
+                     <!--Optional:-->\r
+                     <matchingAmount>?</matchingAmount>\r
+                     <!--Optional:-->\r
+                     <unMatchingAmount>?</unMatchingAmount>\r
+                     <!--Optional:-->\r
+                     <matchingStatus>?</matchingStatus>\r
+                     <!--Optional:-->\r
+                     <occCode>?</occCode>\r
+                     <!--Optional:-->\r
+                     <occDescription>?</occDescription>\r
+                     <!--Optional:-->\r
+                     <customerAccount>?</customerAccount>\r
+                     <!--Optional:-->\r
+                     <excludedFromDunning>?</excludedFromDunning>\r
+                     <!--Optional:-->\r
+                     <matchingAmounts>\r
+                        <!--Zero or more repetitions:-->\r
+                        <matchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingCode>?</matchingCode>\r
+                           <!--Optional:-->\r
+                           <matchingAmount>?</matchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingCodes>\r
+                              <!--Zero or more repetitions:-->\r
+                              <matchingCode>\r
+                                 <!--Optional:-->\r
+                                 <code>?</code>\r
+                                 <!--Optional:-->\r
+                                 <matchingType>?</matchingType>\r
+                                 <!--Optional:-->\r
+                                 <matchingDate>?</matchingDate>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmountCredit>?</matchingAmountCredit>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmountDebit>?</matchingAmountDebit>\r
+                              </matchingCode>\r
+                           </matchingCodes>\r
+                        </matchingAmount>\r
+                     </matchingAmounts>\r
+                     <!--Optional:-->\r
+                     <otherCreditAndCharge>\r
+                        <!--Optional:-->\r
+                        <id>?</id>\r
+                        <!--Optional:-->\r
+                        <dueDate>?</dueDate>\r
+                        <!--Optional:-->\r
+                        <type>?</type>\r
+                        <!--Optional:-->\r
+                        <transactionDate>?</transactionDate>\r
+                        <!--Optional:-->\r
+                        <transactionCategory>?</transactionCategory>\r
+                        <!--Optional:-->\r
+                        <reference>?</reference>\r
+                        <!--Optional:-->\r
+                        <accountCode>?</accountCode>\r
+                        <!--Optional:-->\r
+                        <accountCodeClientSide>?</accountCodeClientSide>\r
+                        <!--Optional:-->\r
+                        <amount>?</amount>\r
+                        <!--Optional:-->\r
+                        <matchingAmount>?</matchingAmount>\r
+                        <!--Optional:-->\r
+                        <unMatchingAmount>?</unMatchingAmount>\r
+                        <!--Optional:-->\r
+                        <matchingStatus>?</matchingStatus>\r
+                        <!--Optional:-->\r
+                        <occCode>?</occCode>\r
+                        <!--Optional:-->\r
+                        <occDescription>?</occDescription>\r
+                        <!--Optional:-->\r
+                        <customerAccount>?</customerAccount>\r
+                        <!--Optional:-->\r
+                        <excludedFromDunning>?</excludedFromDunning>\r
+                        <!--Optional:-->\r
+                        <matchingAmounts>\r
+                           <!--Zero or more repetitions:-->\r
+                           <matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCode>?</matchingCode>\r
+                              <!--Optional:-->\r
+                              <matchingAmount>?</matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCodes>\r
+                                 <!--Zero or more repetitions:-->\r
+                                 <matchingCode>\r
+                                    <!--Optional:-->\r
+                                    <code>?</code>\r
+                                    <!--Optional:-->\r
+                                    <matchingType>?</matchingType>\r
+                                    <!--Optional:-->\r
+                                    <matchingDate>?</matchingDate>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountCredit>?</matchingAmountCredit>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountDebit>?</matchingAmountDebit>\r
+                                 </matchingCode>\r
+                              </matchingCodes>\r
+                           </matchingAmount>\r
+                        </matchingAmounts>\r
+                        <!--Optional:-->\r
+                        <otherCreditAndCharge/>\r
+                        <!--Optional:-->\r
+                        <recordedInvoice>\r
+                           <!--Optional:-->\r
+                           <id>?</id>\r
+                           <!--Optional:-->\r
+                           <dueDate>?</dueDate>\r
+                           <!--Optional:-->\r
+                           <type>?</type>\r
+                           <!--Optional:-->\r
+                           <transactionDate>?</transactionDate>\r
+                           <!--Optional:-->\r
+                           <transactionCategory>?</transactionCategory>\r
+                           <!--Optional:-->\r
+                           <reference>?</reference>\r
+                           <!--Optional:-->\r
+                           <accountCode>?</accountCode>\r
+                           <!--Optional:-->\r
+                           <accountCodeClientSide>?</accountCodeClientSide>\r
+                           <!--Optional:-->\r
+                           <amount>?</amount>\r
+                           <!--Optional:-->\r
+                           <matchingAmount>?</matchingAmount>\r
+                           <!--Optional:-->\r
+                           <unMatchingAmount>?</unMatchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingStatus>?</matchingStatus>\r
+                           <!--Optional:-->\r
+                           <occCode>?</occCode>\r
+                           <!--Optional:-->\r
+                           <occDescription>?</occDescription>\r
+                           <!--Optional:-->\r
+                           <customerAccount>?</customerAccount>\r
+                           <!--Optional:-->\r
+                           <excludedFromDunning>?</excludedFromDunning>\r
+                           <!--Optional:-->\r
+                           <matchingAmounts>\r
+                              <!--Zero or more repetitions:-->\r
+                              <matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCode>?</matchingCode>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmount>?</matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCodes>\r
+                                    <!--Zero or more repetitions:-->\r
+                                    <matchingCode>\r
+                                       <!--Optional:-->\r
+                                       <code>?</code>\r
+                                       <!--Optional:-->\r
+                                       <matchingType>?</matchingType>\r
+                                       <!--Optional:-->\r
+                                       <matchingDate>?</matchingDate>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountCredit>?</matchingAmountCredit>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountDebit>?</matchingAmountDebit>\r
+                                    </matchingCode>\r
+                                 </matchingCodes>\r
+                              </matchingAmount>\r
+                           </matchingAmounts>\r
+                           <!--Optional:-->\r
+                           <otherCreditAndCharge/>\r
+                           <!--Optional:-->\r
+                           <recordedInvoice/>\r
+                           <!--Optional:-->\r
+                           <rejectedPayment/>\r
+                           <!--Optional:-->\r
+                           <productionDate>?</productionDate>\r
+                           <!--Optional:-->\r
+                           <invoiceDate>?</invoiceDate>\r
+                           <!--Optional:-->\r
+                           <amountWithoutTax>?</amountWithoutTax>\r
+                           <!--Optional:-->\r
+                           <taxAmount>?</taxAmount>\r
+                           <!--Optional:-->\r
+                           <netToPay>?</netToPay>\r
+                           <!--Optional:-->\r
+                           <paymentMethod>?</paymentMethod>\r
+                           <!--Optional:-->\r
+                           <paymentInfo>?</paymentInfo>\r
+                           <!--Optional:-->\r
+                           <paymentInfo1>?</paymentInfo1>\r
+                           <!--Optional:-->\r
+                           <paymentInfo2>?</paymentInfo2>\r
+                           <!--Optional:-->\r
+                           <paymentInfo3>?</paymentInfo3>\r
+                           <!--Optional:-->\r
+                           <paymentInfo4>?</paymentInfo4>\r
+                           <!--Optional:-->\r
+                           <paymentInfo5>?</paymentInfo5>\r
+                           <!--Optional:-->\r
+                           <paymentInfo6>?</paymentInfo6>\r
+                           <!--Optional:-->\r
+                           <billingAccountName>?</billingAccountName>\r
+                        </recordedInvoice>\r
+                        <!--Optional:-->\r
+                        <rejectedPayment/>\r
+                        <!--Optional:-->\r
+                        <operationDate>?</operationDate>\r
+                     </otherCreditAndCharge>\r
+                     <!--Optional:-->\r
+                     <recordedInvoice>\r
+                        <!--Optional:-->\r
+                        <id>?</id>\r
+                        <!--Optional:-->\r
+                        <dueDate>?</dueDate>\r
+                        <!--Optional:-->\r
+                        <type>?</type>\r
+                        <!--Optional:-->\r
+                        <transactionDate>?</transactionDate>\r
+                        <!--Optional:-->\r
+                        <transactionCategory>?</transactionCategory>\r
+                        <!--Optional:-->\r
+                        <reference>?</reference>\r
+                        <!--Optional:-->\r
+                        <accountCode>?</accountCode>\r
+                        <!--Optional:-->\r
+                        <accountCodeClientSide>?</accountCodeClientSide>\r
+                        <!--Optional:-->\r
+                        <amount>?</amount>\r
+                        <!--Optional:-->\r
+                        <matchingAmount>?</matchingAmount>\r
+                        <!--Optional:-->\r
+                        <unMatchingAmount>?</unMatchingAmount>\r
+                        <!--Optional:-->\r
+                        <matchingStatus>?</matchingStatus>\r
+                        <!--Optional:-->\r
+                        <occCode>?</occCode>\r
+                        <!--Optional:-->\r
+                        <occDescription>?</occDescription>\r
+                        <!--Optional:-->\r
+                        <customerAccount>?</customerAccount>\r
+                        <!--Optional:-->\r
+                        <excludedFromDunning>?</excludedFromDunning>\r
+                        <!--Optional:-->\r
+                        <matchingAmounts>\r
+                           <!--Zero or more repetitions:-->\r
+                           <matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCode>?</matchingCode>\r
+                              <!--Optional:-->\r
+                              <matchingAmount>?</matchingAmount>\r
+                              <!--Optional:-->\r
+                              <matchingCodes>\r
+                                 <!--Zero or more repetitions:-->\r
+                                 <matchingCode>\r
+                                    <!--Optional:-->\r
+                                    <code>?</code>\r
+                                    <!--Optional:-->\r
+                                    <matchingType>?</matchingType>\r
+                                    <!--Optional:-->\r
+                                    <matchingDate>?</matchingDate>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountCredit>?</matchingAmountCredit>\r
+                                    <!--Optional:-->\r
+                                    <matchingAmountDebit>?</matchingAmountDebit>\r
+                                 </matchingCode>\r
+                              </matchingCodes>\r
+                           </matchingAmount>\r
+                        </matchingAmounts>\r
+                        <!--Optional:-->\r
+                        <otherCreditAndCharge>\r
+                           <!--Optional:-->\r
+                           <id>?</id>\r
+                           <!--Optional:-->\r
+                           <dueDate>?</dueDate>\r
+                           <!--Optional:-->\r
+                           <type>?</type>\r
+                           <!--Optional:-->\r
+                           <transactionDate>?</transactionDate>\r
+                           <!--Optional:-->\r
+                           <transactionCategory>?</transactionCategory>\r
+                           <!--Optional:-->\r
+                           <reference>?</reference>\r
+                           <!--Optional:-->\r
+                           <accountCode>?</accountCode>\r
+                           <!--Optional:-->\r
+                           <accountCodeClientSide>?</accountCodeClientSide>\r
+                           <!--Optional:-->\r
+                           <amount>?</amount>\r
+                           <!--Optional:-->\r
+                           <matchingAmount>?</matchingAmount>\r
+                           <!--Optional:-->\r
+                           <unMatchingAmount>?</unMatchingAmount>\r
+                           <!--Optional:-->\r
+                           <matchingStatus>?</matchingStatus>\r
+                           <!--Optional:-->\r
+                           <occCode>?</occCode>\r
+                           <!--Optional:-->\r
+                           <occDescription>?</occDescription>\r
+                           <!--Optional:-->\r
+                           <customerAccount>?</customerAccount>\r
+                           <!--Optional:-->\r
+                           <excludedFromDunning>?</excludedFromDunning>\r
+                           <!--Optional:-->\r
+                           <matchingAmounts>\r
+                              <!--Zero or more repetitions:-->\r
+                              <matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCode>?</matchingCode>\r
+                                 <!--Optional:-->\r
+                                 <matchingAmount>?</matchingAmount>\r
+                                 <!--Optional:-->\r
+                                 <matchingCodes>\r
+                                    <!--Zero or more repetitions:-->\r
+                                    <matchingCode>\r
+                                       <!--Optional:-->\r
+                                       <code>?</code>\r
+                                       <!--Optional:-->\r
+                                       <matchingType>?</matchingType>\r
+                                       <!--Optional:-->\r
+                                       <matchingDate>?</matchingDate>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountCredit>?</matchingAmountCredit>\r
+                                       <!--Optional:-->\r
+                                       <matchingAmountDebit>?</matchingAmountDebit>\r
+                                    </matchingCode>\r
+                                 </matchingCodes>\r
+                              </matchingAmount>\r
+                           </matchingAmounts>\r
+                           <!--Optional:-->\r
+                           <otherCreditAndCharge/>\r
+                           <!--Optional:-->\r
+                           <recordedInvoice/>\r
+                           <!--Optional:-->\r
+                           <rejectedPayment/>\r
+                           <!--Optional:-->\r
+                           <operationDate>?</operationDate>\r
+                        </otherCreditAndCharge>\r
+                        <!--Optional:-->\r
+                        <recordedInvoice/>\r
+                        <!--Optional:-->\r
+                        <rejectedPayment/>\r
+                        <!--Optional:-->\r
+                        <productionDate>?</productionDate>\r
+                        <!--Optional:-->\r
+                        <invoiceDate>?</invoiceDate>\r
+                        <!--Optional:-->\r
+                        <amountWithoutTax>?</amountWithoutTax>\r
+                        <!--Optional:-->\r
+                        <taxAmount>?</taxAmount>\r
+                        <!--Optional:-->\r
+                        <netToPay>?</netToPay>\r
+                        <!--Optional:-->\r
+                        <paymentMethod>?</paymentMethod>\r
+                        <!--Optional:-->\r
+                        <paymentInfo>?</paymentInfo>\r
+                        <!--Optional:-->\r
+                        <paymentInfo1>?</paymentInfo1>\r
+                        <!--Optional:-->\r
+                        <paymentInfo2>?</paymentInfo2>\r
+                        <!--Optional:-->\r
+                        <paymentInfo3>?</paymentInfo3>\r
+                        <!--Optional:-->\r
+                        <paymentInfo4>?</paymentInfo4>\r
+                        <!--Optional:-->\r
+                        <paymentInfo5>?</paymentInfo5>\r
+                        <!--Optional:-->\r
+                        <paymentInfo6>?</paymentInfo6>\r
+                        <!--Optional:-->\r
+                        <billingAccountName>?</billingAccountName>\r
+                     </recordedInvoice>\r
+                     <!--Optional:-->\r
+                     <rejectedPayment/>\r
+                     <!--Optional:-->\r
+                     <rejectedType>?</rejectedType>\r
+                     <!--Optional:-->\r
+                     <bankLot>?</bankLot>\r
+                     <!--Optional:-->\r
+                     <bankReference>?</bankReference>\r
+                     <!--Optional:-->\r
+                     <rejectedDate>?</rejectedDate>\r
+                     <!--Optional:-->\r
+                     <rejectedDescription>?</rejectedDescription>\r
+                     <!--Optional:-->\r
+                     <rejectedCode>?</rejectedCode>\r
+                  </rejectedPayment>\r
+               </accountOperation>\r
+            </accountOperations>\r
+         </matchOperationRequest>\r
+      </ws:matchOperations>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/matchOperations"/></con:call></con:operation><con:operation id="0499b4e6-8758-4e22-8973-a34dab5b3d24" isOneWay="false" action="" name="createOrUpdateCustomerBrand" bindingOperationName="createOrUpdateCustomerBrand" type="Request-Response" outputName="createOrUpdateCustomerBrandResponse" inputName="createOrUpdateCustomerBrand" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c4f3f8e0-5f30-4382-9837-1d673d2b1df6" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomerBrand>\r
+         <!--Optional:-->\r
+         <customerBrand>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+         </customerBrand>\r
+      </ws:createOrUpdateCustomerBrand>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomerBrand"/></con:call></con:operation><con:operation id="8cc34716-5229-4367-845d-2fecf1ef77cc" isOneWay="false" action="" name="createOrUpdateCustomerCategory" bindingOperationName="createOrUpdateCustomerCategory" type="Request-Response" outputName="createOrUpdateCustomerCategoryResponse" inputName="createOrUpdateCustomerCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8729cbea-ace7-46b9-80c7-9783dafa8386" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomerCategory>\r
+         <!--Optional:-->\r
+         <customerCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <exoneratedFromTaxes>?</exoneratedFromTaxes>\r
+         </customerCategory>\r
+      </ws:createOrUpdateCustomerCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCustomerCategory"/></con:call></con:operation><con:operation id="cef43a36-b27f-4177-8d26-7961e83abd81" isOneWay="false" action="" name="createOrUpdateCreditCategory" bindingOperationName="createOrUpdateCreditCategory" type="Request-Response" outputName="createOrUpdateCreditCategoryResponse" inputName="createOrUpdateCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="612adab2-5bf7-4be3-a8ef-ad24b4317f2e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCreditCategory>\r
+         <!--Optional:-->\r
+         <creditCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+         </creditCategory>\r
+      </ws:createOrUpdateCreditCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCreditCategory"/></con:call></con:operation><con:operation id="f7a23680-bfb8-4f33-a1b3-f7f76f54f916" isOneWay="false" action="" name="updateCustomerCategory" bindingOperationName="updateCustomerCategory" type="Request-Response" outputName="updateCustomerCategoryResponse" inputName="updateCustomerCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="90f6915b-2999-4a1a-973d-f816e87cdc2e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateCustomerCategory>\r
+         <!--Optional:-->\r
+         <customerCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <exoneratedFromTaxes>?</exoneratedFromTaxes>\r
+         </customerCategory>\r
+      </ws:updateCustomerCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomerCategory"/></con:call></con:operation><con:operation id="a07c8228-a21f-4568-afbb-2f4003604113" isOneWay="false" action="" name="createOrUpdateCRMAccountHierarchy" bindingOperationName="createOrUpdateCRMAccountHierarchy" type="Request-Response" outputName="createOrUpdateCRMAccountHierarchyResponse" inputName="createOrUpdateCRMAccountHierarchy" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="cca1c7e5-9dec-4df5-80e6-360177bbe28c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCRMAccountHierarchy>\r
+         <!--Optional:-->\r
+         <crmAccountHierarchy>\r
+            <!--Optional:-->\r
+            <crmAccountType>?</crmAccountType>\r
+            <!--Optional:-->\r
+            <crmParentCode>?</crmParentCode>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <!--Optional:-->\r
+            <externalRef1>?</externalRef1>\r
+            <!--Optional:-->\r
+            <externalRef2>?</externalRef2>\r
+            <!--Optional:-->\r
+            <name>\r
+               <!--Optional:-->\r
+               <title>?</title>\r
+               <!--Optional:-->\r
+               <firstName>?</firstName>\r
+               <lastName>?</lastName>\r
+            </name>\r
+            <!--Optional:-->\r
+            <address>\r
+               <!--Optional:-->\r
+               <address1>?</address1>\r
+               <!--Optional:-->\r
+               <address2>?</address2>\r
+               <!--Optional:-->\r
+               <address3>?</address3>\r
+               <!--Optional:-->\r
+               <zipCode>?</zipCode>\r
+               <!--Optional:-->\r
+               <city>?</city>\r
+               <!--Optional:-->\r
+               <country>?</country>\r
+               <!--Optional:-->\r
+               <state>?</state>\r
+            </address>\r
+            <!--Optional:-->\r
+            <contactInformation>\r
+               <!--Optional:-->\r
+               <email>?</email>\r
+               <!--Optional:-->\r
+               <phone>?</phone>\r
+               <!--Optional:-->\r
+               <mobile>?</mobile>\r
+               <!--Optional:-->\r
+               <fax>?</fax>\r
+            </contactInformation>\r
+            <!--Optional:-->\r
+            <language>?</language>\r
+            <!--Optional:-->\r
+            <paymentMethod>?</paymentMethod>\r
+            <!--Optional:-->\r
+            <terminationReason>?</terminationReason>\r
+            <!--Optional:-->\r
+            <subscriptionDate>?</subscriptionDate>\r
+            <!--Optional:-->\r
+            <terminationDate>?</terminationDate>\r
+            <!--Optional:-->\r
+            <customerCategory>?</customerCategory>\r
+            <!--Optional:-->\r
+            <customerBrand>?</customerBrand>\r
+            <!--Optional:-->\r
+            <seller>?</seller>\r
+            <!--Optional:-->\r
+            <mandateIdentification>?</mandateIdentification>\r
+            <!--Optional:-->\r
+            <mandateDate>?</mandateDate>\r
+            <!--Optional:-->\r
+            <currency>?</currency>\r
+            <!--Optional:-->\r
+            <caStatus>?</caStatus>\r
+            <!--Optional:-->\r
+            <creditCategory>?</creditCategory>\r
+            <!--Optional:-->\r
+            <dateStatus>?</dateStatus>\r
+            <!--Optional:-->\r
+            <dateDunningLevel>?</dateDunningLevel>\r
+            <!--Optional:-->\r
+            <dunningLevel>?</dunningLevel>\r
+            <!--Optional:-->\r
+            <billingCycle>?</billingCycle>\r
+            <!--Optional:-->\r
+            <country>?</country>\r
+            <!--Optional:-->\r
+            <nextInvoiceDate>?</nextInvoiceDate>\r
+            <!--Optional:-->\r
+            <paymentTerms>?</paymentTerms>\r
+            <!--Optional:-->\r
+            <electronicBilling>?</electronicBilling>\r
+            <!--Optional:-->\r
+            <baStatus>?</baStatus>\r
+            <!--Optional:-->\r
+            <email>?</email>\r
+            <!--Optional:-->\r
+            <bankCoordinates>\r
+               <!--Optional:-->\r
+               <bankCode>?</bankCode>\r
+               <!--Optional:-->\r
+               <branchCode>?</branchCode>\r
+               <!--Optional:-->\r
+               <accountNumber>?</accountNumber>\r
+               <!--Optional:-->\r
+               <key>?</key>\r
+               <!--Optional:-->\r
+               <iban>?</iban>\r
+               <!--Optional:-->\r
+               <bic>?</bic>\r
+               <!--Optional:-->\r
+               <accountOwner>?</accountOwner>\r
+               <!--Optional:-->\r
+               <bankName>?</bankName>\r
+               <!--Optional:-->\r
+               <bankId>?</bankId>\r
+               <!--Optional:-->\r
+               <issuerNumber>?</issuerNumber>\r
+               <!--Optional:-->\r
+               <issuerName>?</issuerName>\r
+               <!--Optional:-->\r
+               <ics>?</ics>\r
+            </bankCoordinates>\r
+            <!--Optional:-->\r
+            <uaStatus>?</uaStatus>\r
+            <!--Optional:-->\r
+            <cfToAdd code="?" description="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+               <!--Optional:-->\r
+               <stringValue>?</stringValue>\r
+               <!--Optional:-->\r
+               <dateValue>?</dateValue>\r
+               <!--Optional:-->\r
+               <longValue>?</longValue>\r
+               <!--Optional:-->\r
+               <doubleValue>?</doubleValue>\r
+               <!--Optional:-->\r
+               <listValue>\r
+                  <!--Zero or more repetitions:-->\r
+                  <value>\r
+                     <!--You have a CHOICE of the next 5 items at this level-->\r
+                     <dateValue>?</dateValue>\r
+                     <doubleValue>?</doubleValue>\r
+                     <longValue>?</longValue>\r
+                     <stringValue>?</stringValue>\r
+                     <entityReferenceValue classname="?" code="?"/>\r
+                  </value>\r
+               </listValue>\r
+               <mapValue>\r
+                  <!--Zero or more repetitions:-->\r
+                  <entry>\r
+                     <!--Optional:-->\r
+                     <key>?</key>\r
+                     <!--Optional:-->\r
+                     <value>\r
+                        <!--You have a CHOICE of the next 5 items at this level-->\r
+                        <dateValue>?</dateValue>\r
+                        <doubleValue>?</doubleValue>\r
+                        <longValue>?</longValue>\r
+                        <stringValue>?</stringValue>\r
+                        <entityReferenceValue classname="?" code="?"/>\r
+                     </value>\r
+                  </entry>\r
+               </mapValue>\r
+               <!--Optional:-->\r
+               <entityReferenceValue classname="?" code="?"/>\r
+            </cfToAdd>\r
+            <!--Optional:-->\r
+            <cfMapToAdd code="?" description="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+               <!--Optional:-->\r
+               <stringValue>?</stringValue>\r
+               <!--Optional:-->\r
+               <dateValue>?</dateValue>\r
+               <!--Optional:-->\r
+               <longValue>?</longValue>\r
+               <!--Optional:-->\r
+               <doubleValue>?</doubleValue>\r
+               <!--Optional:-->\r
+               <listValue>\r
+                  <!--Zero or more repetitions:-->\r
+                  <value>\r
+                     <!--You have a CHOICE of the next 5 items at this level-->\r
+                     <dateValue>?</dateValue>\r
+                     <doubleValue>?</doubleValue>\r
+                     <longValue>?</longValue>\r
+                     <stringValue>?</stringValue>\r
+                     <entityReferenceValue classname="?" code="?"/>\r
+                  </value>\r
+               </listValue>\r
+               <mapValue>\r
+                  <!--Zero or more repetitions:-->\r
+                  <entry>\r
+                     <!--Optional:-->\r
+                     <key>?</key>\r
+                     <!--Optional:-->\r
+                     <value>\r
+                        <!--You have a CHOICE of the next 5 items at this level-->\r
+                        <dateValue>?</dateValue>\r
+                        <doubleValue>?</doubleValue>\r
+                        <longValue>?</longValue>\r
+                        <stringValue>?</stringValue>\r
+                        <entityReferenceValue classname="?" code="?"/>\r
+                     </value>\r
+                  </entry>\r
+               </mapValue>\r
+               <!--Optional:-->\r
+               <entityReferenceValue classname="?" code="?"/>\r
+            </cfMapToAdd>\r
+            <!--Optional:-->\r
+            <offerCode>?</offerCode>\r
+            <!--Optional:-->\r
+            <serviceCode>?</serviceCode>\r
+            <!--Optional:-->\r
+            <access>?</access>\r
+            <!--Optional:-->\r
+            <customFields>\r
+               <!--Zero or more repetitions:-->\r
+               <customField code="?" description="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                  <!--Optional:-->\r
+                  <stringValue>?</stringValue>\r
+                  <!--Optional:-->\r
+                  <dateValue>?</dateValue>\r
+                  <!--Optional:-->\r
+                  <longValue>?</longValue>\r
+                  <!--Optional:-->\r
+                  <doubleValue>?</doubleValue>\r
+                  <!--Optional:-->\r
+                  <listValue>\r
+                     <!--Zero or more repetitions:-->\r
+                     <value>\r
+                        <!--You have a CHOICE of the next 5 items at this level-->\r
+                        <dateValue>?</dateValue>\r
+                        <doubleValue>?</doubleValue>\r
+                        <longValue>?</longValue>\r
+                        <stringValue>?</stringValue>\r
+                        <entityReferenceValue classname="?" code="?"/>\r
+                     </value>\r
+                  </listValue>\r
+                  <mapValue>\r
+                     <!--Zero or more repetitions:-->\r
+                     <entry>\r
+                        <!--Optional:-->\r
+                        <key>?</key>\r
+                        <!--Optional:-->\r
+                        <value>\r
+                           <!--You have a CHOICE of the next 5 items at this level-->\r
+                           <dateValue>?</dateValue>\r
+                           <doubleValue>?</doubleValue>\r
+                           <longValue>?</longValue>\r
+                           <stringValue>?</stringValue>\r
+                           <entityReferenceValue classname="?" code="?"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+                  <!--Optional:-->\r
+                  <entityReferenceValue classname="?" code="?"/>\r
+               </customField>\r
+            </customFields>\r
+         </crmAccountHierarchy>\r
+      </ws:createOrUpdateCRMAccountHierarchy>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/createOrUpdateCRMAccountHierarchy"/></con:call></con:operation><con:operation id="822cc005-cb9f-4c74-9c94-61baea235f46" isOneWay="false" action="" name="updateCustomerBrand" bindingOperationName="updateCustomerBrand" type="Request-Response" outputName="updateCustomerBrandResponse" inputName="updateCustomerBrand" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="9a8c2f0c-4601-447f-adf7-a57b0cb1fd3f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateCustomerBrand>\r
+         <!--Optional:-->\r
+         <customerBrand>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+         </customerBrand>\r
+      </ws:updateCustomerBrand>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCustomerBrand"/></con:call></con:operation><con:operation id="aab57b52-14b6-494f-abd1-69a4538acbf5" isOneWay="false" action="" name="updateCreditCategory" bindingOperationName="updateCreditCategory" type="Request-Response" outputName="updateCreditCategoryResponse" inputName="updateCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1e2634d6-56bb-4950-8132-6a7d7317a51d" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateCreditCategory>\r
+         <!--Optional:-->\r
+         <creditCategory>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+         </creditCategory>\r
+      </ws:updateCreditCategory>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCreditCategory"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="632a46fe-429d-4ad9-bfcf-17d3bfc7e0da" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SettingsWsSoapBinding" type="ns1:SettingsWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -25696,7 +27638,7 @@ for( testCase in testSuite.getTestCaseList() ) {
                <invoiceAdjustmentPrefix>1194_IAP_NEW</invoiceAdjustmentPrefix>
                <currentInvoiceAdjustmentNb>119411223</currentInvoiceAdjustmentNb>
                <invoiceAdjustmentSequenceSize>7</invoiceAdjustmentSequenceSize>
-]]></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1194</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#1236_matchOperations"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_accountOperation" searchProperties="true" id="834552f6-99f9-4c99-a931-7004f9509bf2"><con:settings/><con:testStep type="request" name="Create customer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+]]></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1194</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#1236_matchOperations" id="1d4c6269-288f-4ee5-bbc1-03844e06bd71"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_accountOperation" searchProperties="true" id="834552f6-99f9-4c99-a931-7004f9509bf2"><con:settings/><con:testStep type="request" name="Create customer" id="a70dad98-c970-4407-a9e1-bc27f07d73ff"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomer>
@@ -25728,7 +27670,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customer>
       </ws:createCustomer>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="55b8930b-1b3a-4bfd-bd1d-945c2a1ec1ef"/><con:assertion type="Simple Contains" name="Contains" id="17cc4dab-1942-4905-8a29-7f8167b1741c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer account" id="5b86eb1a-8e12-4716-9451-a8c5b3dcef6d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="55b8930b-1b3a-4bfd-bd1d-945c2a1ec1ef"/><con:assertion type="Simple Contains" name="Contains" id="17cc4dab-1942-4905-8a29-7f8167b1741c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer account" id="f9f32dc7-4b88-44de-b8ca-a751935b08de"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer account" id="5b86eb1a-8e12-4716-9451-a8c5b3dcef6d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomerAccount>
@@ -25756,7 +27698,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </customerAccount>
       </ws:createCustomerAccount>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="7bf3a6dc-9e8e-494c-9c41-8d2e35b72086"/><con:assertion type="Simple Contains" name="Contains" id="b7d8a98f-d958-457f-8f49-94def576a262"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_accountOperation1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="create_accountOperation1" id="16fa4f4f-0979-4f8a-aba4-8cf30658b5e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="7bf3a6dc-9e8e-494c-9c41-8d2e35b72086"/><con:assertion type="Simple Contains" name="Contains" id="b7d8a98f-d958-457f-8f49-94def576a262"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_accountOperation1" id="8d67c7c8-e8be-4a30-9f70-8f29d015f21a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="create_accountOperation1" id="16fa4f4f-0979-4f8a-aba4-8cf30658b5e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createAccountOperation>
@@ -25795,7 +27737,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          </accountOperation>
       </ws:createAccountOperation>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_accountOperation2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="create_accountOperation2" id="16fa4f4f-0979-4f8a-aba4-8cf30658b5e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_accountOperation2" id="c694e880-5ef0-4ea4-b1af-302e311b5afa"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="create_accountOperation2" id="16fa4f4f-0979-4f8a-aba4-8cf30658b5e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createAccountOperation>
@@ -25859,24 +27801,26 @@ for( testCase in testSuite.getTestCaseList() ) {
          </accountOperation>
       </ws:createAccountOperation>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="matchOperations"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="matchOperations" id="16fa4f4f-0979-4f8a-aba4-8cf30658b5e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:matchOperations>
-         <!--Optional:-->
-         <customerAccountCode>${#TestSuite#ticket}_CA</customerAccountCode>
-         <!--Optional:-->
-         <accountOperations>
-            <accountOperation>
-               <id>6</id>
-            </accountOperation>
-	          <accountOperation>
-	          <id>7</id>
-	       </accountOperation>
-         </accountOperations>
-      </ws:matchOperations>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token> &lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1236</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="match operations" id="18eb2bd3-035e-4557-aa1b-9f500c1a6fd9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>matchOperations</con:operation><con:request name="match operations" id="ad678f10-3ede-41eb-8e8e-af11ae132e12"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:matchOperations>\r
+         <!--Optional:-->\r
+         <matchOperationRequest>\r
+            <!--Optional:-->\r
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>\r
+            <!--Optional:-->\r
+            <accountOperations>\r
+               <!--Zero or more repetitions:-->\r
+               <accountOperation>\r
+                  <!--Optional:-->\r
+                  <id>1</id>\r
+               </accountOperation>\r
+            </accountOperations>\r
+         </matchOperationRequest>\r
+      </ws:matchOperations>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6fa80f8b-6cbc-41dd-a6c4-b2e06787c6ef"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1236</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();
