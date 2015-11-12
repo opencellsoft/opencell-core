@@ -152,6 +152,9 @@ public class SellerApiService extends BaseApi {
 				}
 
 				seller.setTradingCurrency(tradingCurrency);
+				
+			} else {
+			    seller.setTradingCurrency(null);
 			}
 
 			if (!StringUtils.isBlank(postData.getCountryCode())) {
@@ -161,6 +164,9 @@ public class SellerApiService extends BaseApi {
 				}
 
 				seller.setTradingCountry(tradingCountry);
+				
+			} else {
+			    seller.setTradingCountry(null);
 			}
 
 			if (!StringUtils.isBlank(postData.getLanguageCode())) {
@@ -170,6 +176,9 @@ public class SellerApiService extends BaseApi {
 				}
 
 				seller.setTradingLanguage(tradingLanguage);
+				
+			} else {
+			    seller.setTradingLanguage(null);
 			}
 
 			// check parent seller
