@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -39,13 +40,16 @@ public abstract class BusinessService<P extends BusinessEntity> extends
         qb.addCriterion("be.code", "=", code, true);
         qb.addCriterionEntity("be.provider", provider);
 
-        try {
-            return (P) qb.getQuery(getEntityManager()).getSingleResult();
+		try {
+			return (P) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
-            log.warn("No {} of code {} for provider {} found", getEntityClass().getSimpleName(), code, provider.getId());
+            log.debug("No {} of code {} for provider {} found", getEntityClass().getSimpleName(), code, provider.getId());
+            return null;
+        } catch (NonUniqueResultException e) {
+            log.error("More than one entity of type {} with code {} and provider {} found", entityClass, code, provider);
             return null;
         }
-    }
+	}
 
 	@SuppressWarnings("unchecked")
 	public P findByCode(EntityManager em, String code, Provider provider) {
