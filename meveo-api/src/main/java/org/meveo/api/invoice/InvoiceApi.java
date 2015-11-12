@@ -576,10 +576,9 @@ public class InvoiceApi extends BaseApi {
 			throws FileNotFoundException, MissingParameterException,
 			EntityDoesNotExistsException, BusinessException, InvalidEnumValue {
 		log.debug("getXMLInvoice  invoiceNumber:{}", invoiceNumber);
-		if (invoiceNumber == null) {
+		if (StringUtils.isBlank(invoiceNumber)) {
 			missingParameters.add("invoiceNumber");
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 		
 		InvoiceTypeEnum invoiceTypeEnum = InvoiceTypeEnum.COMMERCIAL;
@@ -621,8 +620,8 @@ public class InvoiceApi extends BaseApi {
 
 	public byte[] getPdfInvoince(String invoiceNumber, String invoiceType, User currentUser)
 			throws MissingParameterException, EntityDoesNotExistsException, Exception {
-		log.debug("getPdfInvoince  invoiceNumber:{}", invoiceNumber);
-		if (invoiceNumber == null) {
+		log.debug("getPdfInvoince  invoiceNumber:"+invoiceNumber);
+		if (StringUtils.isBlank(invoiceNumber)) {
 			missingParameters.add("invoiceNumber");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
@@ -634,18 +633,16 @@ public class InvoiceApi extends BaseApi {
 			throw new InvalidEnumValue(InvoiceTypeEnum.class.getName(), invoiceType);
 		}
 
-		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceTypeEnum,
-				currentUser.getProvider());
+		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceTypeEnum,currentUser.getProvider());
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
 		}
 		if (invoice.getPdf() == null) {
-			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(),
-					currentUser.getProvider());
+			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(),currentUser.getProvider());
 			invoiceService.producePdf(parameters, currentUser);
 		}
 		invoiceService.findById(invoice.getId(), true);
-		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);
+		log.debug("getPdfInvoince invoiceNumber:{} done.", invoiceNumber);
 		return invoice.getPdf();
 	}
 
