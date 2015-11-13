@@ -36,7 +36,7 @@ public abstract class BaseApi {
 			missingParameters = new ArrayList<String>();
 		}
 
-		StringBuilder sb = new StringBuilder("The following parameters are required ");
+		StringBuilder sb = new StringBuilder("The following parameters are required :");
 		List<String> missingFields = new ArrayList<String>();
 
 		if (missingParameters != null) {
@@ -45,12 +45,14 @@ public abstract class BaseApi {
 			}
 		}
 
-		if (missingFields.size() > 1) {
-			sb.append(org.apache.commons.lang.StringUtils.join(missingFields.toArray(), ", "));
-		} else {
-			sb.append(missingFields.get(0));
+		if(!missingFields.isEmpty()){
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
 		}
-		sb.append(".");
 
 		missingParameters = new ArrayList<String>();
 

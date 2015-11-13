@@ -12,6 +12,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidEnumValue;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -38,8 +39,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 @Stateless
 public class PaymentApi extends BaseApi {
 
-	private static final java.util.logging.Logger log = java.util.logging.Logger
-			.getLogger(PaymentApi.class.getName());
+	private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(PaymentApi.class.getName());
 
 	@Inject
 	AutomatedPaymentService automatedPaymentService;
@@ -59,78 +59,75 @@ public class PaymentApi extends BaseApi {
 	@Inject
 	OCCTemplateService oCCTemplateService;
 
-	public void createPayment(PaymentDto paymentDto, User currentUser)
-			throws Exception {
-		log.info("create payment for amount:" + paymentDto.getAmount()
-				+ " paymentMethodEnum:" + paymentDto.getPaymentMethod()
-				+ " isToMatching:" + paymentDto.isToMatching()
-				+ "  customerAccount:" + paymentDto.getCustomerAccountCode()
-				+ "...");
+	public void createPayment(PaymentDto paymentDto, User currentUser) throws Exception {
+		log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching() + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
 
+		if (StringUtils.isBlank(paymentDto.getAmount())) {
+			missingParameters.add("amount");
+		}
+		if (StringUtils.isBlank(paymentDto.getCustomerAccountCode())) {
+			missingParameters.add("CustomerAccountCode");
+		}
+		if (StringUtils.isBlank(paymentDto.getOccTemplateCode())) {
+			missingParameters.add("OccTemplateCode");
+		}
+		if (StringUtils.isBlank(paymentDto.getReference())) {
+			missingParameters.add("Reference");
+		}
+		if (StringUtils.isBlank(paymentDto.getPaymentMethod())) {
+			missingParameters.add("PaymentMethod");
+		}
+		if (!missingParameters.isEmpty()) {
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+		
+		PaymentMethodEnum paymentMethod = null;
+		try {
+			PaymentMethodEnum.valueOf(paymentDto.getPaymentMethod());
+		} catch (Exception e) {
+			throw new InvalidEnumValue(PaymentMethodEnum.class.getName(), paymentDto.getPaymentMethod());
+		}
 
+		Provider provider = currentUser.getProvider();
+		CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode(), provider);
+		if (customerAccount == null) {
+			throw new BusinessException("Cannot find customer account with code=" + paymentDto.getCustomerAccountCode());
+		}
 
-		if (!StringUtils.isBlank(paymentDto.getAmount())
-				&& !StringUtils.isBlank(paymentDto.getPaymentMethod())
-				&& !StringUtils.isBlank(paymentDto.getCustomerAccountCode())
-				&& !StringUtils.isBlank(paymentDto.getOccTemplateCode())
-				&& !StringUtils.isBlank(paymentDto.getReference())) {
-			
-			Provider provider = currentUser.getProvider();
-			CustomerAccount customerAccount = customerAccountService.findByCode(
-					paymentDto.getCustomerAccountCode(), provider);
-			if (customerAccount == null) {
-				throw new BusinessException(
-						"Cannot find customer account with code="
-								+ paymentDto.getCustomerAccountCode());
-			}
+		OCCTemplate occTemplate = oCCTemplateService.findByCode(paymentDto.getOccTemplateCode(), provider.getCode());
+		if (occTemplate == null) {
+			throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
+		}
 
-			OCCTemplate occTemplate = oCCTemplateService.findByCode(
-					paymentDto.getOccTemplateCode(), provider.getCode());
-			if (occTemplate == null) {
-				throw new BusinessException("Cannot find OCC Template with code="
-						+ paymentDto.getOccTemplateCode());
-			}
-			
-			AutomatedPayment automatedPayment = new AutomatedPayment();
-			automatedPayment.setProvider(provider);
-			automatedPayment.setPaymentMethod(PaymentMethodEnum
-					.valueOf(paymentDto.getPaymentMethod()));
-			automatedPayment.setAmount(paymentDto.getAmount());
-			automatedPayment.setUnMatchingAmount(paymentDto.getAmount());
-			automatedPayment.setMatchingAmount(BigDecimal.ZERO);
-			automatedPayment.setAccountCode(occTemplate.getAccountCode());
-			automatedPayment.setOccCode(occTemplate.getCode());
-			automatedPayment.setOccDescription(occTemplate.getDescription());
-			automatedPayment.setTransactionCategory(occTemplate
-					.getOccCategory());
-			automatedPayment.setAccountCodeClientSide(occTemplate
-					.getAccountCodeClientSide());
-			automatedPayment.setCustomerAccount(customerAccount);
-			automatedPayment.setReference(paymentDto.getReference());
-			automatedPayment.setDueDate(paymentDto.getDueDate());
-			automatedPayment
-					.setTransactionDate(paymentDto.getTransactionDate());
-			automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
-			automatedPaymentService.create(automatedPayment, currentUser,
-					provider);
+		AutomatedPayment automatedPayment = new AutomatedPayment();
+		automatedPayment.setProvider(provider);
+		automatedPayment.setPaymentMethod(paymentMethod);
+		automatedPayment.setAmount(paymentDto.getAmount());
+		automatedPayment.setUnMatchingAmount(paymentDto.getAmount());
+		automatedPayment.setMatchingAmount(BigDecimal.ZERO);
+		automatedPayment.setAccountCode(occTemplate.getAccountCode());
+		automatedPayment.setOccCode(occTemplate.getCode());
+		automatedPayment.setOccDescription(occTemplate.getDescription());
+		automatedPayment.setTransactionCategory(occTemplate.getOccCategory());
+		automatedPayment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
+		automatedPayment.setCustomerAccount(customerAccount);
+		automatedPayment.setReference(paymentDto.getReference());
+		automatedPayment.setDueDate(paymentDto.getDueDate());
+		automatedPayment.setTransactionDate(paymentDto.getTransactionDate());
+		automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
+		automatedPaymentService.create(automatedPayment, currentUser, provider);
 
-			if (paymentDto.isToMatching()) {
-				MatchingCode matchingCode = new MatchingCode();
-				BigDecimal amountToMatch = BigDecimal.ZERO;
-				for (int i = 0; i < paymentDto.getListOCCReferenceforMatching()
-						.size(); i++) {
-					RecordedInvoice accountOperation = recordedInvoiceService
-							.getRecordedInvoice(paymentDto
-									.getListOCCReferenceforMatching().get(i),
-									provider);
+		if (paymentDto.isToMatching()) {
+			MatchingCode matchingCode = new MatchingCode();
+			BigDecimal amountToMatch = BigDecimal.ZERO;
+			if(paymentDto.getListOCCReferenceforMatching() !=null){
+				for (int i = 0; i < paymentDto.getListOCCReferenceforMatching().size(); i++) {
+					RecordedInvoice accountOperation = recordedInvoiceService.getRecordedInvoice(paymentDto.getListOCCReferenceforMatching().get(i), provider);
 					amountToMatch = accountOperation.getUnMatchingAmount();
-					accountOperation.setMatchingAmount(accountOperation
-							.getMatchingAmount().add(amountToMatch));
-					accountOperation.setUnMatchingAmount(accountOperation
-							.getUnMatchingAmount().subtract(amountToMatch));
+					accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
+					accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
 					accountOperation.setMatchingStatus(MatchingStatusEnum.L);
-					recordedInvoiceService
-							.update(accountOperation, currentUser);
+					recordedInvoiceService.update(accountOperation, currentUser);
 					MatchingAmount matchingAmount = new MatchingAmount();
 					matchingAmount.setProvider(accountOperation.getProvider());
 					matchingAmount.setAccountOperation(accountOperation);
@@ -139,43 +136,23 @@ public class PaymentApi extends BaseApi {
 					accountOperation.getMatchingAmounts().add(matchingAmount);
 					matchingCode.getMatchingAmounts().add(matchingAmount);
 				}
-
-				matchingCode.setMatchingAmountDebit(paymentDto.getAmount());
-				matchingCode.setMatchingAmountCredit(paymentDto.getAmount());
-				matchingCode.setMatchingDate(new Date());
-				matchingCode.setMatchingType(MatchingTypeEnum.A);
-				matchingCode.setProvider(provider);
-				matchingCodeService.create(matchingCode, currentUser, provider);
-				log.info("matching created  for 1 automatedPayment and "
-						+ (paymentDto.getListOCCReferenceforMatching().size() - 1)
-						+ " occ");
-			} else {
-				log.info("no matching created ");
 			}
-			log.info("automatedPayment created for amount:"
-					+ automatedPayment.getAmount());
+
+			matchingCode.setMatchingAmountDebit(paymentDto.getAmount());
+			matchingCode.setMatchingAmountCredit(paymentDto.getAmount());
+			matchingCode.setMatchingDate(new Date());
+			matchingCode.setMatchingType(MatchingTypeEnum.A);
+			matchingCode.setProvider(provider);
+			matchingCodeService.create(matchingCode, currentUser, provider);
+			log.info("matching created  for 1 automatedPayment and " + (paymentDto.getListOCCReferenceforMatching().size() - 1) + " occ");
 		} else {
-			if (StringUtils.isBlank(paymentDto.getAmount())) {
-				missingParameters.add("amount");
-			}
-			if (StringUtils.isBlank(paymentDto.getCustomerAccountCode())) {
-				missingParameters.add("CustomerAccountCode");
-			}
-			if (StringUtils.isBlank(paymentDto.getOccTemplateCode())) {
-				missingParameters.add("OccTemplateCode");
-			}
-			if (StringUtils.isBlank(paymentDto.getReference())) {
-				missingParameters.add("Reference");
-			}
-
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			log.info("no matching created ");
 		}
+		log.info("automatedPayment created for amount:" + automatedPayment.getAmount());
 
 	}
 
-	public List<PaymentDto> getPaymentList(String customerAccountCode,
-			User currentUser) throws Exception {
+	public List<PaymentDto> getPaymentList(String customerAccountCode, User currentUser) throws Exception {
 		List<PaymentDto> result = new ArrayList<PaymentDto>();
 
 		if (currentUser == null) {
@@ -183,12 +160,10 @@ public class PaymentApi extends BaseApi {
 		}
 		Provider provider = currentUser.getProvider();
 
-		CustomerAccount customerAccount = customerAccountService.findByCode(
-				customerAccountCode, provider);
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
 
 		if (customerAccount == null) {
-			throw new EntityDoesNotExistsException(CustomerAccount.class,
-					customerAccountCode);
+			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
 		}
 
 		customerAccountService.getEntityManager().refresh(customerAccount);
@@ -207,8 +182,7 @@ public class PaymentApi extends BaseApi {
 				paymentDto.setTransactionDate(p.getTransactionDate());
 				if (p instanceof AutomatedPayment) {
 					AutomatedPayment ap = (AutomatedPayment) p;
-					paymentDto
-							.setBankCollectionDate(ap.getBankCollectionDate());
+					paymentDto.setBankCollectionDate(ap.getBankCollectionDate());
 					paymentDto.setBankLot(ap.getBankLot());
 					paymentDto.setDepositDate(ap.getDepositDate());
 				}
@@ -229,14 +203,11 @@ public class PaymentApi extends BaseApi {
 		return result;
 	}
 
-	public double getBalance(String customerAccountCode, User currentUser)
-			throws BusinessException {
+	public double getBalance(String customerAccountCode, User currentUser) throws BusinessException {
 		Provider provider = currentUser.getProvider();
-		CustomerAccount customerAccount = customerAccountService.findByCode(
-				customerAccountCode, provider);
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
 
-		return customerAccountService.customerAccountBalanceDue(
-				customerAccount, new Date()).doubleValue();
+		return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
 	}
 
 }
