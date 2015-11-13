@@ -8,7 +8,8 @@ public class PersistenceUtils {
     @SuppressWarnings("unchecked")
     public static <T> T initializeAndUnproxy(T entity) {
         if (entity == null) {
-            throw new NullPointerException("Entity passed for initialization is null");
+            return null;
+//            throw new NullPointerException("Entity passed for initialization is null");
         }
 
         Hibernate.initialize(entity);

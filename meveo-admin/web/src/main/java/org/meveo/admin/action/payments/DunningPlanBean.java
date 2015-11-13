@@ -35,6 +35,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.ActionPlanItemService;
 import org.meveo.service.payments.impl.DunningPlanService;
 import org.meveo.service.payments.impl.DunningPlanTransitionService;
+import org.meveo.util.PersistenceUtils;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -77,6 +78,13 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 	public DunningPlanBean() {
 		super(DunningPlan.class);
 	}	
+	
+	@Override
+	public DunningPlan initEntity() {
+	    super.initEntity();
+	    PersistenceUtils.initializeAndUnproxy(entity.getActions());
+	    return entity;
+	}
 
     public DunningPlanTransition getDunningPlanTransition() {
         return dunningPlanTransition;
@@ -196,7 +204,7 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
+		return Arrays.asList("provider","transitions");
 	}
 
 	@Override
