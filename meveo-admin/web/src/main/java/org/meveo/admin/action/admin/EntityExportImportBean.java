@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -383,36 +381,35 @@ public class EntityExportImportBean implements Serializable {
             exportParameters.put("provider", currentProvider);
         }
         if(this.selectedExportTemplate.getName().equals("MeveoModule")){
-        	if(meveoModule!=null){
-        		log.debug("meveo module is {}",meveoModule);
-        		meveoModule=meveoModuleService.refreshOrRetrieve(meveoModule);
+        	if(filters.get("meveoModule")!=null){
+        		meveoModule=meveoModuleService.refreshOrRetrieve((MeveoModule) filters.get("meveoModule"));
         		dataModelToExport=new DataModel<MeveoModule>() {
-        			@Override
-        			public boolean isRowAvailable() {
-        				return false;
-        			}
-        			@Override
-        			public int getRowCount() {
-        				return 1;
-        			}
-        			@Override
-        			public MeveoModule getRowData() {
-        				return null;
-        			}
-        			@Override
-        			public int getRowIndex() {
-        				return 0;
-        			}
-        			@Override
-        			public void setRowIndex(int rowIndex) {
-        			}
-        			@Override
-        			public Object getWrappedData() {
-        				return Arrays.asList(new MeveoModule[]{meveoModule});
-        			}
-        			@Override
-        			public void setWrappedData(Object data) {
-        			}
+					@Override
+					public boolean isRowAvailable() {
+						return true;
+					}
+					@Override
+					public int getRowCount() {
+						return 1;
+					}
+					@Override
+					public MeveoModule getRowData() {
+						return meveoModule;
+					}
+					@Override
+					public int getRowIndex() {
+						return 0;
+					}
+					@Override
+					public void setRowIndex(int rowIndex) {
+					}
+					@Override
+					public Object getWrappedData() {
+						return Arrays.asList(new MeveoModule[]{meveoModule});
+					}
+					@Override
+					public void setWrappedData(Object data) {
+					}
         		};
         	}else{
         		dataModelToExport=null;
@@ -432,7 +429,6 @@ public class EntityExportImportBean implements Serializable {
         }
 
         exportParameters = initExportParameters();
-        meveoModule=null;
     }
 
     /**
@@ -512,13 +508,4 @@ public class EntityExportImportBean implements Serializable {
             log.error("Failed to access export execution result", e);
         }
     }
-
-	public MeveoModule getMeveoModule() {
-		return meveoModule;
-	}
-
-	public void setMeveoModule(MeveoModule meveoModule) {
-		this.meveoModule = meveoModule;
-	}
-    
 }

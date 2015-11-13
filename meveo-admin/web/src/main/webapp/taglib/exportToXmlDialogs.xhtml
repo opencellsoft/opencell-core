@@ -59,7 +59,7 @@
                     </p:selectOneMenu>
                 </hftl:decorateFormField>
                 <hftl:decorateFormField label="#{messages['export.module']}" rendered="#{entityExportImportBean.selectedExportTemplate.name eq 'MeveoModule'}">
-                     <p:selectOneMenu value="#{entityExportImportBean.meveoModule}" id="meveoModule">
+                     <p:selectOneMenu value="#{entityExportImportBean.filters['meveoModule']}" id="meveoModule">
                      	<f:selectItem itemValue="#{null}" itemLabel="#{messages['export.moduleAll']}" />
                         <f:selectItems value="#{meveoModuleBean.listAll}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}"/>
                         <s:objectConverter />
