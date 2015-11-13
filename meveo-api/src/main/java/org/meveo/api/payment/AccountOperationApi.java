@@ -296,9 +296,11 @@ public class AccountOperationApi extends BaseApi {
 		public void unMatchingOperations(UnMatchingOperationRequestDto postData, User currentUser) throws BusinessException,Exception {
 			if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
 				missingParameters.add("customerAccountCode");
+				throw new MissingParameterException(getMissingParametersExceptionMessage());
 			}
-			if (postData.getAccountOperationId() == null) {
+			if (StringUtils.isBlank(postData.getAccountOperationId())) {
 				missingParameters.add("accountOperationId");
+				throw new MissingParameterException(getMissingParametersExceptionMessage());
 			}
 			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode(),
 					currentUser.getProvider());
