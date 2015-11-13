@@ -21,7 +21,7 @@ import javax.inject.Named;
 
 @Named
 @ConversationScoped
-public class ImportedFileListBean extends ImportedFileBean {
+public class FtpImportedFileListBean extends FtpImportedFileBean {
 
 	/**
 	 * 

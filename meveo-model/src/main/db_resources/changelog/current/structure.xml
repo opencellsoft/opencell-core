@@ -519,52 +519,7 @@
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_permission" />
     </changeSet>
-
-	<changeSet author="TyshanShi" id="#1188_20151026_1">
-        <createSequence sequenceName="medina_importedfile_seq" startValue="1" />
-    </changeSet>
-	<changeSet author="TyshanShi" id="#1188_20151026_2">
-		<createTable tableName="medina_importedfile">
-			<column name="id" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="version" type="INT4" />
-			<column name="disabled" type="BOOL">
-				<constraints nullable="false" />
-			</column>
-			<column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
-				<constraints nullable="false" />
-			</column>
-			<column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
-			<column name="provider_id" type="BIGINT" />
-			<column name="creator_id" type="BIGINT" />
-			<column name="updater_id" type="BIGINT" />
-			<column name="code" type="VARCHAR(60)">
-				<constraints nullable="false" />
-			</column>
-			<column name="description" type="VARCHAR(100)" />
-			<column name="uri" type="VARCHAR(2000)">
-				<constraints nullable="false" />
-			</column>
-			<column name="size" type="BIGINT"/>
-			<column name="last_modified" type="TIMESTAMP WITHOUT TIME ZONE"/>
-		</createTable>
-		<addPrimaryKey columnNames="id" constraintName="medina_importedfile_pkey"
-			tableName="medina_importedfile" />
-		<addForeignKeyConstraint baseColumnNames="provider_id"
-			baseTableName="medina_importedfile" constraintName="fk_medina_importedfile_crm_provider"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-		<addForeignKeyConstraint baseColumnNames="creator_id"
-			baseTableName="medina_importedfile" constraintName="fk_creator_medina_importedfile_adm_user"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-		
-		<addForeignKeyConstraint baseColumnNames="updater_id"
-			baseTableName="medina_importedfile" constraintName="fk_updater_medina_importedfile_adm_user"
-			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-	</changeSet>
+    
       <changeSet author="TyshanShi" id="#1103_20151108">
 		<createTable tableName="meveo_module">
 		<column name="id" type="BIGINT">
@@ -629,4 +584,52 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_module" />
 		<createSequence sequenceName="meveo_module_item_seq" startValue="1"/>
 	</changeSet>
+    <changeSet author="anasseh" id="#1221_20151109">
+        <createSequence sequenceName="FTP_IMPORTED_FILE_SEQ" startValue="1" />
+    </changeSet>
+    
+    <changeSet author="anasseh" id="#1221_20151109_1">
+        <createTable tableName="FTP_IMPORTED_FILE">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="INT4" />
+            <column name="disabled" type="BOOL">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="provider_id" type="BIGINT" />
+            <column name="creator_id" type="BIGINT" />
+            <column name="updater_id" type="BIGINT" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+            <column name="URI" type="VARCHAR(2000)">
+                <constraints nullable="false" />
+            </column>
+            <column name="SIZE" type="BIGINT"/>            
+            <column name="IMPORT_DATE" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="LAST_MODIFICATION" type="TIMESTAMP WITHOUT TIME ZONE"/>
+
+        </createTable>
+        <addPrimaryKey columnNames="id" constraintName="Ftp_Imported_File_pkey"
+            tableName="FTP_IMPORTED_FILE" />
+        <addForeignKeyConstraint baseColumnNames="provider_id"
+            baseTableName="FTP_IMPORTED_FILE" constraintName="fk_Ftp_Imported_File_crm_provider"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+        <addForeignKeyConstraint baseColumnNames="creator_id"
+            baseTableName="FTP_IMPORTED_FILE" constraintName="fk_creator_Ftp_Imported_File_adm_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+
+        <addForeignKeyConstraint baseColumnNames="updater_id"
+            baseTableName="FTP_IMPORTED_FILE" constraintName="fk_updater_Ftp_Imported_File_adm_user"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+    </changeSet>		
 </databaseChangeLog>

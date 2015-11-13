@@ -23,14 +23,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.mediation.ImportedFile;
+import org.meveo.model.jobs.FtpImportedFile;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.medina.impl.ImportedFileService;
+import org.meveo.service.job.FtpImportedFileService;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * Standard backing bean for {@link ImportedFile} (extends {@link BaseBean} that
+ * Standard backing bean for {@link FtpImportedFile} (extends {@link BaseBean} that
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
@@ -39,7 +39,7 @@ import org.omnifaces.cdi.ViewScoped;
  */
 @Named
 @ViewScoped
-public class ImportedFileBean extends BaseBean<ImportedFile> {
+public class FtpImportedFileBean extends BaseBean<FtpImportedFile> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -47,22 +47,22 @@ public class ImportedFileBean extends BaseBean<ImportedFile> {
 	 * Injected @{link PriceCode} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
-	private ImportedFileService importedFileService;
+	private FtpImportedFileService ftpImportedFileService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
-	public ImportedFileBean() {
-		super(ImportedFile.class);
+	public FtpImportedFileBean() {
+		super(FtpImportedFile.class);
 	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
-	protected IPersistenceService<ImportedFile> getPersistenceService() {
-		return importedFileService;
+	protected IPersistenceService<FtpImportedFile> getPersistenceService() {
+		return ftpImportedFileService;
 	}
 
 	@Override

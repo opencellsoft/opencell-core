@@ -14,14 +14,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.medina.impl;
+package org.meveo.service.job;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
-import org.meveo.model.mediation.ImportedFile;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.FtpImportedFile;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class ImportedFileService extends PersistenceService<ImportedFile> {
-  
+public class FtpImportedFileService extends PersistenceService<FtpImportedFile> {
+
+    public FtpImportedFile findByCode(String code, Provider provider) {
+            QueryBuilder qb = new QueryBuilder(FtpImportedFile.class, "t");
+            qb.addCriterion("t.code", "=", code, true);
+            qb.addCriterionEntity("provider", provider);
+            try {
+                return (FtpImportedFile) qb.getQuery(getEntityManager()).getSingleResult();
+            } catch (NoResultException e) {
+                return null;
+            }
+        }
 }

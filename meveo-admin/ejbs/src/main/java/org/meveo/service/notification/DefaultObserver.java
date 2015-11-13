@@ -42,7 +42,6 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.mediation.ImportedFile;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
