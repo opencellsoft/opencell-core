@@ -265,7 +265,7 @@ public class AccountOperationApi extends BaseApi {
 
 	public void matchOperations(MatchOperationRequestDto postData, User currentUser) throws BusinessException,
 	    NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
-		if (StringUtils.isBlank(postData.getCustomerAccount())) {
+		if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
 			missingParameters.add("customerAccount");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
@@ -273,10 +273,10 @@ public class AccountOperationApi extends BaseApi {
 			throw new BusinessException("no account operations");
 		}
 			List<Long> operationsId = new ArrayList<Long>();
-			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount(),
+			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode(),
 					currentUser.getProvider());
 			if (customerAccount == null) {
-				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
+				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
 			}
 			if (postData.getAccountOperations() != null) {
 				for (AccountOperationDto accountOperation : postData.getAccountOperations().getAccountOperation()) {
@@ -293,12 +293,17 @@ public class AccountOperationApi extends BaseApi {
 		
 	    }
 	
-	public void unMatchingOperations(UnMatchingOperationRequestDto postData, User currentUser) throws BusinessException,Exception {
-		if (!StringUtils.isBlank(postData.getCustomerAccount()) && !StringUtils.isBlank(postData.getAccountOperationId())) {
-			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount(),
+		public void unMatchingOperations(UnMatchingOperationRequestDto postData, User currentUser) throws BusinessException,Exception {
+			if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
+				missingParameters.add("customerAccountCode");
+			}
+			if (postData.getAccountOperationId() == null) {
+				missingParameters.add("accountOperationId");
+			}
+			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode(),
 					currentUser.getProvider());
 			if (customerAccount == null) {
-				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
+				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
 			}
 			AccountOperation accountOperation = accountOperationService.findById(postData.getAccountOperationId(),currentUser.getProvider());
 			if (accountOperation == null) {
@@ -319,13 +324,7 @@ public class AccountOperationApi extends BaseApi {
 			}
 			for(Long matchingCodeId : matchingCodesToUnmatch){
 				matchingCodeService.unmatching(matchingCodeId,currentUser);
-			}
-		}else{
-			missingParameters.add("customerAccountCode");
-			missingParameters.add("accountOperationId");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+			}	
 		}
-
-	}
 
 }

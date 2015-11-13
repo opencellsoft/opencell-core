@@ -1297,7 +1297,7 @@
       </xs:complexType>
       <xs:complexType name="unMatchingOperationRequestDto">
         <xs:sequence>
-          <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
+          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
           <xs:element minOccurs="0" name="accountOperationId" type="xs:long"/>
         </xs:sequence>
       </xs:complexType>
@@ -1420,7 +1420,7 @@
       </xs:complexType>
       <xs:complexType name="matchOperationRequestDto">
         <xs:sequence>
-          <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
+          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
           <xs:element minOccurs="0" name="accountOperations" type="tns:accountOperationsDto"/>
         </xs:sequence>
       </xs:complexType>
@@ -12499,7 +12499,7 @@
          <!--Optional:-->
          <unMatchingOperationRequest>
             <!--Optional:-->
-            <customerAccount>?</customerAccount>
+            <customerAccountCode>?</customerAccountCode>
             <!--Optional:-->
             <accountOperationId>?</accountOperationId>
          </unMatchingOperationRequest>
@@ -33886,7 +33886,7 @@ From=2015-07-01 To=2015-12-30</con:description><con:settings/><con:config xsi:ty
    <soapenv:Body>
       <ws:matchOperations>
          <matchOperationRequest>
-            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <customerAccountCode>${#TestSuite#ticket}_CA</customerAccountCode>
             <accountOperations> 
                <accountOperation>
                   <id>34</id>
@@ -34293,13 +34293,13 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>
       <ws:matchOperations>
          <matchOperationRequest>
-            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <customerAccountCode>${#TestSuite#ticket}_CA</customerAccountCode>
             <accountOperations> 
                <accountOperation>
-                  <id>70</id>
+                  <id>72</id>
                </accountOperation>
                 <accountOperation>
-                  <id>71</id>
+                  <id>73</id>
                </accountOperation>
             </accountOperations>
          </matchOperationRequest>
@@ -34312,9 +34312,9 @@ for( testCase in testSuite.getTestCaseList() ) {
          <!--Optional:-->
          <unMatchingOperationRequest>
             <!--Optional:-->
-            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <customerAccountCode>${#TestSuite#ticket}_CA</customerAccountCode>
             <!--Optional:-->
-            <accountOperationId>70</accountOperationId>
+            <accountOperationId>71</accountOperationId>
          </unMatchingOperationRequest>
       </ws:unMatchingOperations>
    </soapenv:Body>

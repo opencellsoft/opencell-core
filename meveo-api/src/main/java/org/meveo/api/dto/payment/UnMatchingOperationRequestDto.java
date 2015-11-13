@@ -9,14 +9,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UnMatchingOperationRequestDto {
 
-	private String customerAccount;
+	private String customerAccountCode;
 	private Long accountOperationId;
 	
-	public String getCustomerAccount() {
-		return customerAccount;
+	public String getCustomerAccountCode() {
+		return customerAccountCode;
 	}
-	public void setCustomerAccount(String customerAccount) {
-		this.customerAccount = customerAccount;
+	public void setCustomerAccountCode(String customerAccountCode) {
+		this.customerAccountCode = customerAccountCode;
 	}
 	public Long getAccountOperationId() {
 		return accountOperationId;

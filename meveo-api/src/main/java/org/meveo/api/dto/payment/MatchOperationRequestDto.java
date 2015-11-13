@@ -11,15 +11,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MatchOperationRequestDto {
 
-	private String customerAccount;
+	private String customerAccountCode;
 	private AccountOperationsDto accountOperations;
 
-	public String getCustomerAccount() {
-		return customerAccount;
+
+
+	public String getCustomerAccountCode() {
+		return customerAccountCode;
 	}
 
-	public void setCustomerAccount(String customerAccount) {
-		this.customerAccount = customerAccount;
+	public void setCustomerAccountCode(String customerAccountCode) {
+		this.customerAccountCode = customerAccountCode;
 	}
 
 	public AccountOperationsDto getAccountOperations() {
