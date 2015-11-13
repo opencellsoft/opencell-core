@@ -43,8 +43,8 @@ public class FtpAdapterJobBean {
 		log.debug("start ftpClient...");
 		FTPClient ftpClient = new FTPClient();
 		OutputStream outputStream = null;
-		try {
-			int reply;
+		int reply,cpOk=0,cpKo=0,cpAll=0,cpWarn=0;
+		try {			
 			ftpClient.connect(remoteServer, remotePort);
 			ftpClient.login(ftpUsername, ftpPassword);
 			reply = ftpClient.getReplyCode();
@@ -61,7 +61,8 @@ public class FtpAdapterJobBean {
 			}
 			ftpClient.changeWorkingDirectory(ftpInputDirectory);
 			String[] listNames = ftpClient.listNames();
-			log.debug("nb remote files : " + listNames.length);
+			cpAll = listNames.length;
+			log.debug("nb remote files : " + cpAll);
 			for (String fileName : listNames) {
 				log.debug("fileName : " + fileName);
 				try {
@@ -120,8 +121,13 @@ public class FtpAdapterJobBean {
 							ftpClient.deleteFile(fileName);
 							log.debug("deleting remote file done");
 						}
+						cpOk++;
+					}else{
+						log.warn("cant retrieve file");
+						cpWarn++;
 					}
 				} catch (Exception e) {
+					cpKo++;
 					log.error("Exception on file iteration", e);
 				}
 			}
@@ -139,6 +145,11 @@ public class FtpAdapterJobBean {
 			} catch (IOException ioe) {
 			}
 		}
+		result.setDone(true);
+		result.setNbItemsToProcess(cpAll);
+		result.setNbItemsProcessedWithError(cpKo);
+		result.setNbItemsProcessedWithWarning(cpWarn);
+		result.setNbItemsCorrectlyProcessed(cpOk);		
 	}
 
 	/**
