@@ -7,7 +7,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{importedFileListBean.preRenderView}" />
+				listener="#{ftpImportedFileListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -24,18 +24,18 @@
 			<hftl:searchField label="#{messages['importedFile.uri']}" field="uri" />
 			<hftl:searchField label="#{messages['importedFile.description']}" field="description" />
 			<hftl:searchField label="#{messages['importedFile.lastModified']}"
-				field="lastModified" />
+				field="lastModification" />
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['importedFile.title']}"
-			backingBean="#{importedFileListBean}" sortBy="lastModified" sortOrder="DESCENDING">
+			backingBean="#{ftpImportedFileListBean}" sortBy="importDate" sortOrder="DESCENDING">
 			<hftl:column label="#{messages['importedFile.importDate']}" field="importDate"/>
 			<hftl:column label="#{messages['importedFile.code']}" field="code"/>
 			<hftl:column label="#{messages['importedFile.description']}" field="description"/>
 			<hftl:column label="#{messages['importedFile.uri']}" field="uri"/>
 			<hftl:column label="#{messages['importedFile.size']}" field="size" />
 			<hftl:column label="#{messages['importedFile.lastModified']}"
-				field="lastModified" isDate="true" />
+				field="lastModification" isDate="true" />
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
