@@ -1,9 +1,9 @@
 package org.meveo.model.admin;
 
 public enum ModuleItemTypeEnum {
-	CET(1, "meveoModuleItemType.CET"), CFT(2, "meveoModuleItemType.cft"), FILTER(3,
+	CET(1, "meveoModuleItemType.CET"), CFT(2, "meveoModuleItemType.CFT"), FILTER(3,
 			"meveoModuleItemType.fliter"), SCRIPT(4, "meveoModuleItemType.script"), JOBINSTANCE(5,
-					"meveoModuelItemType.jobInstance"), NOTIFICATION(6, "meveoModuleItemtype.notification");
+					"meveoModuleItemType.jobInstance"), NOTIFICATION(6, "meveoModuleItemtype.notification");
 
 	private Integer id;
 	private String label;

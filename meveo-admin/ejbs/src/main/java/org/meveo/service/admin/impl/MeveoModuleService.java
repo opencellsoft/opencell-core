@@ -19,9 +19,8 @@ package org.meveo.service.admin.impl;
 import javax.ejb.Stateless;
 
 import org.meveo.model.admin.MeveoModule;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 @Stateless
-public class MeveoModuleService extends PersistenceService<MeveoModule> {
-
+public class MeveoModuleService extends BusinessService<MeveoModule> {
 }

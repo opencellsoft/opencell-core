@@ -10,11 +10,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
-import org.meveo.model.ExportIdentifier;
 
 @Entity
 @Table(name = "MEVEO_MODULE_ITEM")
-@ExportIdentifier({"entity_name","clazz_name","item_type","item_id","item_code"})
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_MODULE_ITEM_SEQ")
 public class MeveoModuleItem extends BaseEntity {
 
@@ -25,33 +23,27 @@ public class MeveoModuleItem extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "MODULE_ID")
 	private MeveoModule meveoModule;
-	@Column(name = "ENTITY_NAME")
-	private String entityName;
-	@Column(name = "CLAZZ_NAME")
-	private String clazzName;
+	@Column(name = "APPLIES_TO",length=100)
+	private String appliesTo;
 	@Enumerated(EnumType.STRING)
-	@Column(name = "ITEM_TYPE",length=20)
+	@Column(name = "ITEM_TYPE", length = 20,nullable=false)
 	private ModuleItemTypeEnum itemType;
-	@Column(name = "ITEM_ID")
-	private Long itemId;
-	@Column(name = "ITEM_CODE", length = 100)
+	@Column(name = "ITEM_CODE", length = 60,nullable=false)
 	private String itemCode;
-
+	
 	public MeveoModuleItem() {
 	}
 
-	public MeveoModuleItem(String entityName,String clazzName,ModuleItemTypeEnum itemType, String itemCode, Long itemId) {
-		this.entityName=entityName;
-		this.clazzName = clazzName;
+	public MeveoModuleItem(String itemCode,ModuleItemTypeEnum itemType) {
 		this.itemType = itemType;
 		this.itemCode = itemCode;
-		this.itemId = itemId;
 	}
 
-//	public MeveoModuleItem(String entityName, ModuleItemTypeEnum itemType) {
-//		this.entityName = entityName;
-//		this.itemType = itemType;
-//	}
+	public MeveoModuleItem(String itemCode, String applyTo,ModuleItemTypeEnum itemType) {
+		this.itemCode = itemCode;
+		this.appliesTo = applyTo;
+		this.itemType = itemType;
+	}
 
 	public MeveoModule getMeveoModule() {
 		return meveoModule;
@@ -59,14 +51,6 @@ public class MeveoModuleItem extends BaseEntity {
 
 	public void setMeveoModule(MeveoModule meveoModule) {
 		this.meveoModule = meveoModule;
-	}
-
-	public String getEntityName() {
-		return entityName;
-	}
-
-	public void setEntityName(String entityName) {
-		this.entityName = entityName;
 	}
 
 	public ModuleItemTypeEnum getItemType() {
@@ -77,14 +61,6 @@ public class MeveoModuleItem extends BaseEntity {
 		this.itemType = itemType;
 	}
 
-	public Long getItemId() {
-		return itemId;
-	}
-
-	public void setItemId(Long itemId) {
-		this.itemId = itemId;
-	}
-
 	public String getItemCode() {
 		return itemCode;
 	}
@@ -93,25 +69,21 @@ public class MeveoModuleItem extends BaseEntity {
 		this.itemCode = itemCode;
 	}
 
-	public String getClazzName() {
-		return clazzName;
+	public String getAppliesTo() {
+		return appliesTo;
 	}
 
-	public void setClazzName(String clazzName) {
-		this.clazzName = clazzName;
+	public void setAppliesTo(String applyTo) {
+		this.appliesTo = applyTo;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((itemId == null) ? 0 : itemId.hashCode());
-		if (ModuleItemTypeEnum.CET.equals(itemType)) {
-			result = ((itemCode == null) ? 0 : itemCode.hashCode());
-		}
-		if (ModuleItemTypeEnum.CFT.equals(itemType)) {
-			result += (clazzName == null ? 0 : clazzName.hashCode());
-		}
+		int result = prime * 1;// super.hashCode();
+		result += itemType != null ? itemType.hashCode() : 0;
+		result += itemCode != null ? itemCode.hashCode() : 0;
+		result += appliesTo != null ? appliesTo.hashCode() : 0;
 		return result;
 	}
 
@@ -128,24 +100,15 @@ public class MeveoModuleItem extends BaseEntity {
 
 		MeveoModuleItem other = (MeveoModuleItem) obj;
 
-		if (getId() != null && other.getId() != null && getId() == other.getId()) {
-			return true;
-		}
-
-		if (ModuleItemTypeEnum.CET.equals(itemType)) {
-			if (itemCode != null && itemCode.equals(other.getItemCode())) {
+		if (itemType == ModuleItemTypeEnum.CFT){
+			if(itemType.equals(other.getItemType())&& itemCode != null && itemCode.equalsIgnoreCase(other.getItemCode())
+				&& appliesTo.equalsIgnoreCase(other.getAppliesTo())) {
 				return true;
 			}
-		}
-		if (ModuleItemTypeEnum.CFT.equals(itemType)) {
-			if (entityName != null && entityName.equals(other.getEntityName())) {
-				return true;
-			}
-		}
-		if (getItemId() != null && other.getItemId() != null && getItemId() == other.getItemId()) {
+		}else if (itemType.equals(other.getItemType()) && itemCode != null
+				&& itemCode.equalsIgnoreCase(other.getItemCode())) {
 			return true;
 		}
-
 		return false;
 	}
 

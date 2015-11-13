@@ -30,65 +30,10 @@
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />
-			<hftl:column label="#{messages['commons.status']}"
-				isMessage="true" field="status.label" />
+			<hftl:column label="#{messages['enableEntity.disabled']}"
+				isMessage="true" field="disabled" />
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}">
-				<o:importConstants type="org.meveo.model.admin.ModuleStatusEnum" />
-				<p:commandButton id="activatelink" icon="ui-icon-circle-check"
-					rendered="#{entity.status==ModuleStatusEnum.DEACTIVATE}"
-					oncomplete="PF('confirmActivateWidget').show()">
-					<f:setPropertyActionListener target="#{meveoModuleBean.entity}"
-						value="#{entity}" />
-				</p:commandButton>
-				<p:tooltip for="activatelink"
-					rendered="#{entity.status==ModuleStatusEnum.DEACTIVATE}"
-					value="#{messages['meveoModule.activate']}" showEffect="slide"
-					hideEffect="slide" />
-				<p:confirmDialog id="confirmActivateDialog"
-					styleClass="confirm-dialog"
-					message="#{messages['meveoModule.confirmActivate']}"
-					header="#{messages['meveoModule.activate']}"
-					rendered="#{entity.status==ModuleStatusEnum.DEACTIVATE}"
-					severity="alert" widgetVar="confirmActivateWidget"
-					appendTo="@(body)">
-					<p:panel styleClass="confirm-dialog-content">
-						<p:commandButton id="activateOk"
-							value="#{messages['commons.yes']}"
-							oncomplete="PF('confirmActivateWidget').hide()" process="@this"
-							action="#{meveoModuleBean.activate}" update="@form" />
-						<p:commandButton id="activateKo" value="#{messages['commons.no']}"
-							onclick="PF('confirmActivateWidget').hide()" type="button" />
-					</p:panel>
-				</p:confirmDialog>
-
-				<p:commandButton id="deactivatelink" icon="ui-icon-circle-close"
-					rendered="#{entity.status==ModuleStatusEnum.ACTIVATE}"
-					oncomplete="PF('confirmDeactivateWidget').show()">
-					<f:setPropertyActionListener target="#{meveoModuleBean.entity}"
-						value="#{entity}" />
-				</p:commandButton>
-				<p:tooltip for="deactivatelink"
-					rendered="#{entity.status==ModuleStatusEnum.ACTIVATE}"
-					value="#{messages['meveoModule.deactivate']}" showEffect="slide"
-					hideEffect="slide" />
-				<p:confirmDialog id="confirmDeactivateDialog"
-					styleClass="confirm-dialog"
-					message="#{messages['meveoModule.confirmDeactivate']}"
-					header="#{messages['meveoModule.deactivate']}"
-					rendered="#{entity.status==ModuleStatusEnum.ACTIVATE}"
-					severity="alert" widgetVar="confirmDeactivateWidget"
-					appendTo="@(body)">
-					<p:panel styleClass="confirm-dialog-content">
-						<p:commandButton id="deactivateOk"
-							value="#{messages['commons.yes']}"
-							oncomplete="PF('confirmDeactivateWidget').hide()" process="@this"
-							action="#{meveoModuleBean.deactivate}" update="@form" />
-						<p:commandButton id="deactivateKo"
-							value="#{messages['commons.no']}"
-							onclick="PF('confirmDeactivateWidget').hide()" type="button" />
-					</p:panel>
-				</p:confirmDialog>
+				permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="true">
 			</hftl:actionsColumn>
 		</hftl:dataList>
 	</ui:define>

@@ -22,17 +22,18 @@
 			column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" selection="#{meveoModuleBean.customEntity}"
-			updateField="moduleFormId:customEntities">
+			updateField="moduleFormId:moduleItems">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchCustomField"
 			header="#{messages['customField.popup.header']}"
-			dataModel="#{meveoModuleListBean.allCustomFields}"
-			backingBean="#{meveoModuleListBean}"
+			backingBean="#{customFieldTemplateListBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="entityName"
-			selection="#{meveoModuleBean.customizedEntity}"
+			searchField1="code"
+			selection="#{meveoModuleBean.customField}"
 			column1Label="#{messages['businessEntity.code']}"
-			column1="entityName" updateField="moduleFormId:customFields">
+			column1="code" column2Label="#{messages['businessEntity.description']}"
+			column2="description" column3Label="#{messages['meveoModuleItem.appliesTo']}"
+			column3="appliesTo" updateField="moduleFormId:moduleItems">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchFilter"
 			header="#{messages['filter.popup.header']}"
@@ -42,7 +43,7 @@
 			column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" selection="#{meveoModuleBean.filter}"
-			updateField="moduleFormId:filters">
+			updateField="moduleFormId:moduleItems">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchScript"
 			header="#{messages['scriptInstance.popup.header']}"
@@ -52,7 +53,7 @@
 			column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" selection="#{meveoModuleBean.script}"
-			updateField="moduleFormId:scripts">
+			updateField="moduleFormId:moduleItems">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchJob"
 			header="#{messages['jobInstance.popup.header']}"
@@ -62,7 +63,7 @@
 			column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" selection="#{meveoModuleBean.job}"
-			updateField="moduleFormId:jobs">
+			updateField="moduleFormId:moduleItems">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchNotification"
 			header="#{messages['notification.popup.header']}"
@@ -72,7 +73,7 @@
 			column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" selection="#{meveoModuleBean.notification}"
-			updateField="moduleFormId:notifications">
+			updateField="moduleFormId:moduleItems">
 		</hftl:entityPopup>
 		<p:panel>
 			<h:form id="crumbmenuForm">
@@ -84,164 +85,59 @@
 			</h:form>
 		</p:panel>
 		<hftl:formPanel formId="moduleFormId" ajaxSubmit="true"
-			label="#{messages['meveoModule.title']}"
+			label="#{messages['meveoModule.title']}" showEnableDisableButton="true"
 			backingBean="#{meveoModuleBean}">
 			<hftl:formField label="#{messages['businessEntity.code']}"
 				field="code" maxlength="35" required="true" />
 			<hftl:formField label="#{messages['businessEntity.description']}"
 				field="description" id="description" maxlength="100" />
+			<hftl:formField label="#{messages['enableEntity.disabled']}" field="disabled"
+				doNotShowOnNew="true" allowEdit="false" isMessage="true"/>
 			<hftl:decorateFormField
-				label="#{messages['meveoModule.customEntities']}"
-				componentWidth="100" displayOneLine="false">
-				<p:dataTable id="customEntities" lazy="false"
-					value="#{meveoModuleBean.customEntities}" var="e" reflow="false"
+				label="#{messages['meveoModule.items']}" 
+				componentWidth="100" displayOneLine="false" newLine="true">
+				<p:treeTable id="moduleItems" lazy="false"
+					value="#{meveoModuleBean.root}" var="r" reflow="false"
 					resizableColumns="true" rowIndexVar="rowIndex">
 					<p:column headerText="#{messages['businessEntity.code']}">
-						<h:outputText value="#{e.code}" styleClass="field-value" />
+						<h:outputText value="#{r.code}" styleClass="field-value" />
 					</p:column>
 					<p:column headerText="#{messages['businessEntity.description']}">
-						<h:outputText value="#{e.description}" styleClass="field-value" />
+						<h:outputText value="#{r.description}" styleClass="field-value" />
+					</p:column>
+					<p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
+						<h:outputText value="#{r.appliesTo}" styleClass="field-value" />
+					</p:column>
+					<p:column headerText="#{messages['meveoModuleItemType.type']}">
+						<h:outputText value="#{messages[r.type.label]}" styleClass="field-value" />
 					</p:column>
 					<p:column headerText="#{messages['commons.actions']}" width="15%">
 						<p:commandButton icon="ui-icon-minus" partialSubmit="true"
-							process="@this" update="customEntities"
-							action="#{meveoModuleBean.removeCustomEntity(e)}" />
+							process="@this" update="moduleItems" rendered="#{not empty r.type}"
+							action="#{meveoModuleBean.removeTreeNode(r)}" />
 					</p:column>
 					<f:facet name="footer" layout="block">
-						<p:commandButton value="#{messages['commons.addNew']}"
+						<p:commandButton value="#{messages['meveoModuleItem.addCE']}"
 							partialSubmit="true" process="@this"
 							oncomplete="PF('dlg_searchCustomEntity').show()" />
-					</f:facet>
-				</p:dataTable>
-			</hftl:decorateFormField>
-			<hftl:decorateFormField
-				label="#{messages['meveoModule.customFields']}" componentWidth="100"
-				displayOneLine="false">
-				<p:dataTable id="customFields" lazy="false"
-					value="#{meveoModuleBean.customizedEntities}" var="e"
-					reflow="false" resizableColumns="true" rowIndexVar="rowIndex">
-					<p:column headerText="#{messages['businessEntity.code']}">
-						<h:outputText value="#{e.entityName}" styleClass="field-value" />
-					</p:column>
-					<p:column headerText="#{messages['commons.actions']}" width="15%">
-						<p:commandButton icon="ui-icon-minus" partialSubmit="true"
-							process="@this" update="customFields"
-							action="#{meveoModuleBean.removeCustomizedEntity(e)}" />
-					</p:column>
-					<f:facet name="footer" layout="block">
-						<p:commandButton value="#{messages['commons.addNew']}"
+						<p:commandButton value="#{messages['meveoModuleItem.addCF']}"
 							partialSubmit="true" process="@this"
 							oncomplete="PF('dlg_searchCustomField').show()" />
-					</f:facet>
-				</p:dataTable>
-			</hftl:decorateFormField>
-			<hftl:decorateFormField label="#{messages['meveoModule.filters']}"
-				componentWidth="100" displayOneLine="false">
-				<p:dataTable id="filters" lazy="false"
-					value="#{meveoModuleBean.allFilters}" var="e" reflow="false"
-					resizableColumns="true" rowIndexVar="rowIndex">
-					<p:column headerText="#{messages['businessEntity.code']}">
-						<h:outputText value="#{e.code}" styleClass="field-value" />
-					</p:column>
-					<p:column headerText="#{messages['businessEntity.description']}">
-						<h:outputText value="#{e.description}" styleClass="field-value" />
-					</p:column>
-					<p:column headerText="#{messages['commons.actions']}" width="15%">
-						<p:commandButton icon="ui-icon-minus" partialSubmit="true"
-							process="@this" update="filters"
-							action="#{meveoModuleBean.removeFilter(e)}" />
-					</p:column>
-					<f:facet name="footer" layout="block">
-						<p:commandButton value="#{messages['commons.addNew']}"
+						<p:commandButton value="#{messages['meveoModuleItem.addFilter']}"
 							partialSubmit="true" process="@this"
 							oncomplete="PF('dlg_searchFilter').show()" />
-					</f:facet>
-				</p:dataTable>
-			</hftl:decorateFormField>
-			<hftl:decorateFormField
-				label="#{messages['meveoModule.scriptInstances']}"
-				componentWidth="100" displayOneLine="false">
-				<p:dataTable id="scripts" lazy="false"
-					value="#{meveoModuleBean.scripts}" var="e" reflow="false"
-					resizableColumns="true" rowIndexVar="rowIndex">
-					<p:column headerText="#{messages['businessEntity.code']}">
-						<h:outputText value="#{e.code}" styleClass="field-value" />
-					</p:column>
-					<p:column headerText="#{messages['businessEntity.description']}">
-						<h:outputText value="#{e.description}" styleClass="field-value" />
-					</p:column>
-					<p:column headerText="#{messages['commons.actions']}" width="15%">
-						<p:commandButton icon="ui-icon-minus" partialSubmit="true"
-							process="@this" update="scripts"
-							action="#{meveoModuleBean.removeScript(e)}" />
-					</p:column>
-					<f:facet name="footer" layout="block">
-						<p:commandButton value="#{messages['commons.addNew']}"
-							partialSubmit="true" process="@this"
-							oncomplete="PF('dlg_searchScript').show()" />
-					</f:facet>
-				</p:dataTable>
-			</hftl:decorateFormField>
-			<hftl:decorateFormField
-				label="#{messages['meveoModule.jobInstances']}" componentWidth="100"
-				displayOneLine="false">
-				<p:dataTable id="jobs" lazy="false" value="#{meveoModuleBean.jobs}"
-					var="e" reflow="false" resizableColumns="true"
-					rowIndexVar="rowIndex">
-					<p:column headerText="#{messages['businessEntity.code']}">
-						<h:outputText value="#{e.code}" styleClass="field-value" />
-					</p:column>
-					<p:column headerText="#{messages['businessEntity.description']}">
-						<h:outputText value="#{e.description}" styleClass="field-value" />
-					</p:column>
-					<p:column headerText="#{messages['commons.actions']}" width="15%">
-						<p:commandButton icon="ui-icon-minus" partialSubmit="true"
-							process="@this" update="jobs"
-							action="#{meveoModuleBean.removeJob(e)}" />
-					</p:column>
-					<f:facet name="footer" layout="block">
-						<p:commandButton value="#{messages['commons.addNew']}"
+						<p:commandButton value="#{messages['meveoModuleItem.addJob']}"
 							partialSubmit="true" process="@this"
 							oncomplete="PF('dlg_searchJob').show()" />
-					</f:facet>
-				</p:dataTable>
-			</hftl:decorateFormField>
-			<hftl:decorateFormField
-				label="#{messages['meveoModule.notifications']}"
-				componentWidth="100" displayOneLine="false">
-				<p:dataTable id="notifications" lazy="false"
-					value="#{meveoModuleBean.notifications}" var="e" reflow="false"
-					resizableColumns="true" rowIndexVar="rowIndex">
-					<p:column headerText="#{messages['businessEntity.code']}">
-						<h:outputText value="#{e.code}" styleClass="field-value" />
-					</p:column>
-					<p:column headerText="#{messages['businessEntity.description']}">
-						<h:outputText value="#{e.description}" styleClass="field-value" />
-					</p:column>
-					<p:column headerText="#{messages['commons.actions']}" width="15%">
-						<p:commandButton icon="ui-icon-minus" partialSubmit="true"
-							process="@this" update="notifications"
-							action="#{meveoModuleBean.removeNotification(e)}" />
-					</p:column>
-					<f:facet name="footer" layout="block">
-						<p:commandButton value="#{messages['commons.addNew']}"
+						<p:commandButton value="#{messages['meveoModuleItem.addScript']}"
+							partialSubmit="true" process="@this"
+							oncomplete="PF('dlg_searchScript').show()" />
+						<p:commandButton value="#{messages['meveoModuleItem.addNotification']}"
 							partialSubmit="true" process="@this"
 							oncomplete="PF('dlg_searchNotification').show()" />
 					</f:facet>
-				</p:dataTable>
+				</p:treeTable>
 			</hftl:decorateFormField>
-			<hftl:formField label="#{messages['commons.status']}" field="status"
-				doNotShowOnNew="true" allowEdit="false" isMessage="true" />
-			<ui:param name="buttons" value="true" />
-			<ui:define name="buttons">
-				<o:importConstants type="org.meveo.model.admin.ModuleStatusEnum" />
-				<p:commandButton value="#{messages['meveoModule.activate']}"
-					rendered="#{not empty meveoModuleBean.entity.id and meveoModuleBean.entity.status==ModuleStatusEnum.DEACTIVATE}"
-					action="#{meveoModuleBean.activate()}" update="@form" />
-				<p:commandButton value="#{messages['meveoModule.deactivate']}"
-					rendered="#{not empty meveoModuleBean.entity.id and meveoModuleBean.entity.status==ModuleStatusEnum.ACTIVATE}"
-					action="#{meveoModuleBean.deactivate()}" update="@form" />
-			</ui:define>
 		</hftl:formPanel>
 	</ui:define>
 

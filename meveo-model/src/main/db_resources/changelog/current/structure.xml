@@ -632,4 +632,21 @@
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>		
+	<changeSet author="TyshanShi" id="#1103_20151113_1">
+		<dropColumn tableName="meveo_module" columnName="module_status"/>
+		<dropColumn tableName="meveo_module_item" columnName="clazz_name"/>
+		<dropColumn tableName="meveo_module_item" columnName="entity_name"/>
+		<dropColumn tableName="meveo_module_item" columnName="item_id"/>
+		<dropColumn tableName="meveo_module_item" columnName="item_type"/>
+		<dropColumn tableName="meveo_module_item" columnName="item_code"/>
+		<addColumn tableName="meveo_module_item">
+			<column name="applies_to" type="VARCHAR(100)"/>
+			<column name="item_type" type="VARCHAR(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="item_code" type="VARCHAR(60)">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
