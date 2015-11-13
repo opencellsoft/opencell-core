@@ -132,6 +132,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="unMatchingOperations">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="unMatchingOperations">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="unMatchingOperationsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createCreditCategory">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createCreditCategory">
@@ -620,6 +629,7 @@
       <xs:element name="GetCustomerResponse" type="tns:getCustomerResponseDto"/>
       <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponseDto"/>
       <xs:element name="Invoice" type="tns:invoiceDto"/>
+      <xs:element name="MatchOperationRequest" type="tns:matchOperationRequestDto"/>
       <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
       <xs:element name="MatchingAmounts" type="tns:matchingAmountsDto"/>
       <xs:element name="MatchingCode" type="tns:matchingCodeDto"/>
@@ -629,6 +639,7 @@
       <xs:element name="SubCategoryInvoiceAgregate" type="tns:subCategoryInvoiceAgregateDto"/>
       <xs:element name="Title" type="tns:titleDto"/>
       <xs:element name="TitleResponse" type="tns:titleResponseDto"/>
+      <xs:element name="UnMatchingOperationRequest" type="tns:unMatchingOperationRequestDto"/>
       <xs:element name="UserAccountsResponse" type="tns:userAccountsResponseDto"/>
       <xs:element name="createAccess" type="tns:createAccess"/>
       <xs:element name="createAccessResponse" type="tns:createAccessResponse"/>
@@ -730,6 +741,8 @@
       <xs:element name="removeTitleResponse" type="tns:removeTitleResponse"/>
       <xs:element name="removeUserAccount" type="tns:removeUserAccount"/>
       <xs:element name="removeUserAccountResponse" type="tns:removeUserAccountResponse"/>
+      <xs:element name="unMatchingOperations" type="tns:unMatchingOperations"/>
+      <xs:element name="unMatchingOperationsResponse" type="tns:unMatchingOperationsResponse"/>
       <xs:element name="updateAccess" type="tns:updateAccess"/>
       <xs:element name="updateAccessResponse" type="tns:updateAccessResponse"/>
       <xs:element name="updateAccountHierarchy" type="tns:updateAccountHierarchy"/>
@@ -1277,6 +1290,22 @@
           <xs:element maxOccurs="unbounded" minOccurs="0" name="billingAccount" nillable="true" type="tns:BillingAccount"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="unMatchingOperations">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="unMatchingOperationRequest" type="tns:unMatchingOperationRequestDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="unMatchingOperationRequestDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
+          <xs:element minOccurs="0" name="accountOperationId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="unMatchingOperationsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createCreditCategory">
         <xs:sequence>
           <xs:element minOccurs="0" name="creditCategory" type="tns:creditCategoryDto"/>
@@ -1386,7 +1415,12 @@
       </xs:complexType>
       <xs:complexType name="matchOperations">
         <xs:sequence>
-          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="matchOperationRequest" type="tns:matchOperationRequestDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchOperationRequestDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerAccount" type="xs:string"/>
           <xs:element minOccurs="0" name="accountOperations" type="tns:accountOperationsDto"/>
         </xs:sequence>
       </xs:complexType>
@@ -1953,6 +1987,10 @@
               <xs:element minOccurs="0" name="parentSeller" type="xs:string"/>
               <xs:element minOccurs="0" name="provider" type="xs:string"/>
               <xs:element minOccurs="0" name="invoiceSequenceSize" type="xs:int"/>
+              <xs:element minOccurs="0" name="invoiceAdjustmentSequenceSize" type="xs:int"/>
+              <xs:element minOccurs="0" name="invoiceAdjustmentPrefix" type="xs:string"/>
+              <xs:element minOccurs="0" name="currentInvoiceNb" type="xs:long"/>
+              <xs:element minOccurs="0" name="currentInvoiceAdjustmentNb" type="xs:long"/>
               <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
               <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
@@ -2140,14 +2178,17 @@
   <wsdl:message name="findTitle">
     <wsdl:part element="ns1:findTitle" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateAccessResponse">
-    <wsdl:part element="ns1:updateAccessResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findTitleResponse">
     <wsdl:part element="ns1:findTitleResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateAccessResponse">
+    <wsdl:part element="ns1:updateAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeCustomerResponse">
     <wsdl:part element="ns1:removeCustomerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="unMatchingOperations">
+    <wsdl:part element="ns1:unMatchingOperations" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateAccountHierarchy">
     <wsdl:part element="ns1:updateAccountHierarchy" name="parameters"></wsdl:part>
@@ -2329,17 +2370,20 @@
   <wsdl:message name="listByCustomer">
     <wsdl:part element="ns1:listByCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateCreditCategory">
-    <wsdl:part element="ns1:createOrUpdateCreditCategory" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findUserAccount">
     <wsdl:part element="ns1:findUserAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCreditCategory">
+    <wsdl:part element="ns1:createOrUpdateCreditCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listAccountOperationsResponse">
     <wsdl:part element="ns1:listAccountOperationsResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCreditCategory">
     <wsdl:part element="ns1:createCreditCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="unMatchingOperationsResponse">
+    <wsdl:part element="ns1:unMatchingOperationsResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCRMAccountHierarchyResponse">
     <wsdl:part element="ns1:updateCRMAccountHierarchyResponse" name="parameters"></wsdl:part>
@@ -2502,6 +2546,10 @@
     <wsdl:operation name="findCustomerAccount">
       <wsdl:input message="ns1:findCustomerAccount" name="findCustomerAccount"></wsdl:input>
       <wsdl:output message="ns1:findCustomerAccountResponse" name="findCustomerAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="unMatchingOperations">
+      <wsdl:input message="ns1:unMatchingOperations" name="unMatchingOperations"></wsdl:input>
+      <wsdl:output message="ns1:unMatchingOperationsResponse" name="unMatchingOperationsResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCreditCategory">
       <wsdl:input message="ns1:createCreditCategory" name="createCreditCategory"></wsdl:input>
@@ -12444,7 +12492,20 @@
          </accountOperations>
       </ws:matchOperations>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/matchOperations"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="bb6c0ef8-f2f7-4cde-b781-f1579f08c1ff" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/matchOperations"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="unMatchingOperations" bindingOperationName="unMatchingOperations" type="Request-Response" outputName="unMatchingOperationsResponse" inputName="unMatchingOperations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:unMatchingOperations>
+         <!--Optional:-->
+         <unMatchingOperationRequest>
+            <!--Optional:-->
+            <customerAccount>?</customerAccount>
+            <!--Optional:-->
+            <accountOperationId>?</accountOperationId>
+         </unMatchingOperationRequest>
+      </ws:unMatchingOperations>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/unMatchingOperations"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="bb6c0ef8-f2f7-4cde-b781-f1579f08c1ff" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SettingsWsSoapBinding" type="ns1:SettingsWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -34021,6 +34082,243 @@ for( testCase in testSuite.getTestCaseList() ) {
       </ws:listAccountOperations>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token> &lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1254</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
+import com.eviware.soapui.support.types.*;
+
+StringToStringMap headers = new StringToStringMap();
+headers.put("Authorization","Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=");
+
+for( testCase in testSuite.getTestCaseList() ) {
+    log.info("Setting basic auth for all WSDL test requests in test case ["+testCase.getLabel()+"]")
+    for( testStep in testCase.getTestStepList() ) {
+        testStep.getTestRequest().setPreemptive(true);
+        testStep.getTestRequest().setRequestHeaders(headers);
+    }
+}</con:setupScript></con:testSuite><con:testSuite name="#1259_unMatchingOperations"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_accountOperation" searchProperties="true"><con:settings/><con:testStep type="request" name="Create customer"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="${#TestSuite#ticket}_CUST" description="${#TestCase#ticket}_CUST">
+            <name>
+               <title>M</title>
+               <firstName>Mbarek</firstName>
+               <lastName>Ait</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <mandateIdentification>650000MAI27082015</mandateIdentification>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="55b8930b-1b3a-4bfd-bd1d-945c2a1ec1ef"/><con:assertion type="Simple Contains" name="Contains" id="17cc4dab-1942-4905-8a29-7f8167b1741c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer account"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer account" id="5b86eb1a-8e12-4716-9451-a8c5b3dcef6d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerAccount>
+         <customerAccount code="${#TestSuite#ticket}_CA" description="${#TestCase#ticket}_CA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>MBAREK</firstName>
+               <lastName>Ait</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customer>${#TestSuite#ticket}_CUST</customer>
+            <currency>EUR</currency>
+            <paymentMethod>DIRECTDEBIT</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <language>FRA</language>
+         </customerAccount>
+      </ws:createCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="7bf3a6dc-9e8e-494c-9c41-8d2e35b72086"/><con:assertion type="Simple Contains" name="Contains" id="b7d8a98f-d958-457f-8f49-94def576a262"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_accountOperation1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="create_accountOperation1" id="16fa4f4f-0979-4f8a-aba4-8cf30658b5e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createAccountOperation>
+         <!--Optional:-->
+         <accountOperation>
+            <!--Optional:-->
+            <dueDate>2015-06-01</dueDate>
+            <!--Optional:-->
+            <type>OCC</type>
+            <!--Optional:-->
+            <transactionDate>2015-06-15</transactionDate>
+            <!--Optional:-->
+            <transactionCategory>CREDIT</transactionCategory> 
+            <!--Optional:-->
+            <accountCode>1234</accountCode>
+            <!--Optional:-->
+            <accountCodeClientSide>1234</accountCodeClientSide>
+            <!--Optional:-->
+            <amount>1000</amount>
+            <!--Optional:-->
+            <matchingAmount>200</matchingAmount>
+            <!--Optional:-->
+            <unMatchingAmount>600</unMatchingAmount>
+            <!--Optional:-->
+            <matchingStatus>O</matchingStatus>
+            <!--Optional:-->
+            <occCode>OD_ODC</occCode>
+            <!--Optional:-->
+            <occDescription>Crédit porté directement sur compte client</occDescription>
+            <!--Optional:-->
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <!--Optional:--> 
+            <otherCreditAndCharge>
+            	<operationDate>2015-06-15</operationDate>
+            </otherCreditAndCharge>
+              <matchingAmounts>\r
+               <!--Zero or more repetitions:-->\r
+               <matchingAmount>\r
+                  <!--Optional:-->\r
+                  <matchingCode>matchCode1</matchingCode>\r
+                  <!--Optional:-->\r
+                  <matchingAmount>400</matchingAmount>\r
+                  <!--Optional:-->\r
+                  <matchingCodes>\r
+                     <!--Zero or more repetitions:-->\r
+                     <matchingCode>\r
+                        <!--Optional:-->\r
+                        <code>matchinCode_odc</code>\r
+                        <!--Optional:-->\r
+                        <matchingType>A</matchingType>\r
+                        <!--Optional:-->\r
+                        <matchingDate>2015-06-15</matchingDate>\r
+                        <!--Optional:-->\r
+                        <matchingAmountCredit>200</matchingAmountCredit>\r
+                        <!--Optional:-->\r
+                        <matchingAmountDebit>600</matchingAmountDebit>\r
+                     </matchingCode>\r
+                  </matchingCodes>\r
+               </matchingAmount>\r
+            </matchingAmounts>\r
+         </accountOperation>
+      </ws:createAccountOperation>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_accountOperation2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="create_accountOperation2" id="16fa4f4f-0979-4f8a-aba4-8cf30658b5e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createAccountOperation>
+         <!--Optional:-->
+         <accountOperation>
+            <!--Optional:-->
+            <dueDate>2015-06-01</dueDate>
+            <!--Optional:-->
+            <type>OCC</type>
+            <!--Optional:-->
+            <transactionDate>2015-06-15</transactionDate>
+            <!--Optional:-->
+            <transactionCategory>DEBIT</transactionCategory> 
+            <!--Optional:-->
+            <accountCode>1234</accountCode>
+            <!--Optional:-->
+            <accountCodeClientSide>1234</accountCodeClientSide>
+            <!--Optional:-->
+            <amount>2000</amount>
+            <!--Optional:-->
+            <matchingAmount>400</matchingAmount>
+            <!--Optional:-->
+            <unMatchingAmount>400</unMatchingAmount>
+            <!--Optional:-->
+            <matchingStatus>P</matchingStatus>
+            <!--Optional:-->
+            <occCode>OD_ODD</occCode>
+            <!--Optional:-->
+            <occDescription>Débit porté directement sur compte client</occDescription>
+            <!--Optional:-->
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <!--Optional:--> 
+            <otherCreditAndCharge>
+            	<operationDate>2015-06-15</operationDate>
+            </otherCreditAndCharge>
+		  <matchingAmounts>\r
+               <!--Zero or more repetitions:-->\r
+               <matchingAmount>\r
+                  <!--Optional:-->\r
+                  <matchingCode>matchCode2</matchingCode>\r
+                  <!--Optional:-->\r
+                  <matchingAmount>400</matchingAmount>\r
+                  <!--Optional:-->\r
+                  <matchingCodes>\r
+                     <!--Zero or more repetitions:-->\r
+                     <matchingCode>\r
+                        <!--Optional:-->\r
+                        <code>matchCode_odd</code>\r
+                        <!--Optional:-->\r
+                        <matchingType>A</matchingType>\r
+                        <!--Optional:-->\r
+                        <matchingDate>2015-06-15</matchingDate>\r
+                        <!--Optional:-->\r
+                        <matchingAmountCredit>500</matchingAmountCredit>\r
+                        <!--Optional:-->\r
+                        <matchingAmountDebit>200</matchingAmountDebit>\r
+                     </matchingCode>\r
+                  </matchingCodes>\r
+               </matchingAmount>\r
+            </matchingAmounts>\r
+         </accountOperation>
+      </ws:createAccountOperation>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="account_operations_list"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="account_operations_list" id="16fa4f4f-0979-4f8a-aba4-8cf30658b5e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:listAccountOperations>
+         <customerAccountCode>${#TestSuite#ticket}_CA</customerAccountCode>
+      </ws:listAccountOperations>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token> &lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="matchOperations"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="matchOperations" id="16fa4f4f-0979-4f8a-aba4-8cf30658b5e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:matchOperations>
+         <matchOperationRequest>
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <accountOperations> 
+               <accountOperation>
+                  <id>70</id>
+               </accountOperation>
+                <accountOperation>
+                  <id>71</id>
+               </accountOperation>
+            </accountOperations>
+         </matchOperationRequest>
+      </ws:matchOperations>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token> &lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="unMatchOperations"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOneShotChargeTemplate</con:operation><con:request name="unMatchOperations" id="16fa4f4f-0979-4f8a-aba4-8cf30658b5e2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:unMatchingOperations>
+         <!--Optional:-->
+         <unMatchingOperationRequest>
+            <!--Optional:-->
+            <customerAccount>${#TestSuite#ticket}_CA</customerAccount>
+            <!--Optional:-->
+            <accountOperationId>70</accountOperationId>
+         </unMatchingOperationRequest>
+      </ws:unMatchingOperations>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/><con:assertion type="Simple Contains" name="Contains"><con:configuration><token> &lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1259</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
 StringToStringMap headers = new StringToStringMap();

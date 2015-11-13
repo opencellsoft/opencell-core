@@ -1,6 +1,7 @@
 package org.meveo.api.payment;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -15,6 +16,7 @@ import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingAmountsDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
+import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -264,7 +266,7 @@ public class AccountOperationApi extends BaseApi {
 	public void matchOperations(MatchOperationRequestDto postData, User currentUser) throws BusinessException,
 	    NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
 		if (StringUtils.isBlank(postData.getCustomerAccount())) {
-			missingParameters.add("customerAccountCode");
+			missingParameters.add("customerAccount");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 		if(postData.getAccountOperations() == null || postData.getAccountOperations().getAccountOperation() == null || postData.getAccountOperations().getAccountOperation().isEmpty()){			
@@ -289,6 +291,41 @@ public class AccountOperationApi extends BaseApi {
 						null, currentUser);
 			}
 		
+	    }
+	
+	public void unMatchingOperations(UnMatchingOperationRequestDto postData, User currentUser) throws BusinessException,Exception {
+		if (!StringUtils.isBlank(postData.getCustomerAccount()) && !StringUtils.isBlank(postData.getAccountOperationId())) {
+			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount(),
+					currentUser.getProvider());
+			if (customerAccount == null) {
+				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
+			}
+			AccountOperation accountOperation = accountOperationService.findById(postData.getAccountOperationId(),currentUser.getProvider());
+			if (accountOperation == null) {
+				throw new EntityDoesNotExistsException(AccountOperation.class, postData.getAccountOperationId());
+			}
+			if(!customerAccount.getAccountOperations().contains(accountOperation)){
+				throw new BusinessException("The operationId " + postData.getAccountOperationId()
+						+ " is not for the customerAccount "+customerAccount.getCode());
+			}
+			List<Long> matchingCodesToUnmatch = new ArrayList<Long>();
+			Iterator<MatchingAmount> iterator = accountOperation.getMatchingAmounts().iterator();
+			while(iterator.hasNext()) {
+				MatchingAmount matchingAmount=iterator.next();
+				MatchingCode matchingCode = matchingAmount.getMatchingCode();
+				if(matchingCode!=null){
+					matchingCodesToUnmatch.add(matchingCode.getId());
+				}
+			}
+			for(Long matchingCodeId : matchingCodesToUnmatch){
+				matchingCodeService.unmatching(matchingCodeId,currentUser);
+			}
+		}else{
+			missingParameters.add("customerAccountCode");
+			missingParameters.add("accountOperationId");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+
 	}
 
 }

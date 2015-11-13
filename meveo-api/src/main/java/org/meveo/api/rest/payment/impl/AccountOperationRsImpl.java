@@ -8,6 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
+import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -78,6 +79,25 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 			log.error("error generated while matching account operation ",e);
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+    public ActionStatus unMatchingOperations(UnMatchingOperationRequestDto postData){
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			accountOperationApi.unMatchingOperations(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error occurred while unMatching account operation ",e);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error generated while unMatching account operation ",e);
 		}
 
 		log.debug("RESPONSE={}", result);
