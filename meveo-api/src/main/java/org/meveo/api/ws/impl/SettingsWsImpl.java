@@ -16,7 +16,9 @@ import org.meveo.api.InvoiceSubCategoryCountryApi;
 import org.meveo.api.LanguageApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.OccTemplateApi;
+import org.meveo.api.PermissionApi;
 import org.meveo.api.ProviderApi;
+import org.meveo.api.RoleApi;
 import org.meveo.api.ScriptInstanceApi;
 import org.meveo.api.TaxApi;
 import org.meveo.api.UserApi;
@@ -35,6 +37,7 @@ import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.UserDto;
@@ -54,10 +57,12 @@ import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
+import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -119,6 +124,12 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
 	@Inject
 	private OccTemplateApi occTemplateApi;
+	
+	@Inject 
+	private PermissionApi permissionApi;
+	
+	@Inject
+	private RoleApi roleApi;
 
 	@Override
 	public ActionStatus createCountry(CountryDto countryDto) {
@@ -1749,4 +1760,115 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         log.debug("RESPONSE={}", result);
         return result;
     }
+
+	@Override
+	public PermissionResponseDto listPermissions() {
+		PermissionResponseDto result = new PermissionResponseDto();
+		try {
+			result.setPermissionsDto(permissionApi.list(getCurrentUser().getProvider()));
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(
+					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createRole(RoleDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			roleApi.create(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateRole(RoleDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			roleApi.update(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus removeRole(String name) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			roleApi.remove(name);
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public GetRoleResponse findRole(String name) {
+		GetRoleResponse result = new GetRoleResponse();
+		try {
+			result.setRoleDto(roleApi.find(name));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createOrUpdateRole(RoleDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			roleApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 }

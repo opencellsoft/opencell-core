@@ -18,6 +18,7 @@ import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.UserDto;
@@ -37,10 +38,12 @@ import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
+import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
 
@@ -338,4 +341,25 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     ActionStatus createOrUpdateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
 
+    // permission
+    
+    @WebMethod
+    PermissionResponseDto listPermissions();
+    
+ // role
+	
+ 	@WebMethod
+ 	public ActionStatus createRole(@WebParam(name = "role") RoleDto postData);
+ 	
+ 	@WebMethod
+ 	public ActionStatus updateRole(@WebParam(name = "role") RoleDto postData);
+ 	
+ 	@WebMethod
+ 	public ActionStatus removeRole(@WebParam(name = "role") String name);
+ 	
+ 	@WebMethod
+ 	public GetRoleResponse findRole(@WebParam(name = "roleName") String name);
+ 	
+ 	@WebMethod
+ 	public ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);
 }
