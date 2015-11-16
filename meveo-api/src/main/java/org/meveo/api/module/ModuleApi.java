@@ -1,7 +1,6 @@
 package org.meveo.api.module;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -166,8 +165,8 @@ public class ModuleApi extends BaseApi {
 			}
 			meveoModule.setDescription(moduleDto.getDescription());
 			meveoModule.setDisabled(moduleDto.getDiabled());
-			Set<MeveoModuleItem> items = new HashSet<MeveoModuleItem>();
-			if (!StringUtils.isBlank(moduleDto.getModuleItems())) {
+			meveoModule.clearItems();
+			if (!StringUtils.isBlank(moduleDto.getModuleItems())&&moduleDto.getModuleItems().size()>0) {
 				MeveoModuleItem moduleItem = null;
 				for (ModuleItemDto itemDto : moduleDto.getModuleItems()) {
 					if (StringUtils.isBlank(itemDto.getItemType())) {
@@ -175,18 +174,9 @@ public class ModuleApi extends BaseApi {
 						throw new MissingParameterException(getMissingParametersExceptionMessage());
 					}
 					moduleItem=getModuleItemFromDto(itemDto, provider);
-					if (meveoModule.getModuleItems().contains(moduleItem)) {
-						for (MeveoModuleItem temp : meveoModule.getModuleItems()) {
-							if (temp.equals(moduleItem)) {
-								moduleItem = temp;
-								break;
-							}
-						}
-					}
-					items.add(moduleItem);
+					meveoModule.addModuleItem(moduleItem);
 				}
 			}
-			meveoModule.setModuleItems(items);
 			meveoModuleService.update(meveoModule, currentUser);
 		}
 	}

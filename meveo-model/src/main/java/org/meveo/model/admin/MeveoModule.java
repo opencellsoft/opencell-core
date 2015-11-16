@@ -39,7 +39,7 @@ public class MeveoModule extends BusinessEntity implements Serializable {
 		return moduleItems;
 	}
 	public void setModuleItems(Set<MeveoModuleItem> moduleItems) {
-		this.moduleItems = moduleItems;
+		this.moduleItems=moduleItems;
 	}
 	public void addModuleItem(MeveoModuleItem moduleItem){
 		this.moduleItems.add(moduleItem);
@@ -48,6 +48,14 @@ public class MeveoModule extends BusinessEntity implements Serializable {
 	public void removeItem(MeveoModuleItem item) {
 		this.moduleItems.remove(item);
 		item.setMeveoModule(null);
+	}
+	public void clearItems(){
+		if(this.moduleItems!=null){
+			for(MeveoModuleItem item:moduleItems){
+				item.setMeveoModule(null);
+				this.moduleItems.remove(item);
+			}
+		}
 	}
 	
 }

@@ -5,21 +5,21 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
  *
  */
-@XmlRootElement(name = "ModuleInfo")
+@XmlRootElement(name = "Module")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ModuleDto implements Serializable{
 
 	private static final long serialVersionUID = 6955822636724508496L;
 	
-	@XmlAttribute(required=true)
+	@XmlElement(required=true)
 	private String code;
 	@XmlElement(required=true)
 	private String description;
@@ -50,4 +50,10 @@ public class ModuleDto implements Serializable{
 	public void setModuleItems(List<ModuleItemDto> moduleItems) {
 		this.moduleItems = moduleItems;
 	}
+	@Override
+	public String toString() {
+		return "ModuleDto [code=" + code + ", description=" + description + ", diabled=" + diabled + ", moduleItems="
+				+ moduleItems + "]";
+	}
+	
 }
