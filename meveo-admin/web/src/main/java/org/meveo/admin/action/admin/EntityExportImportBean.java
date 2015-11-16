@@ -3,7 +3,6 @@ package org.meveo.admin.action.admin;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,14 +34,12 @@ import org.meveo.export.RemoteImportException;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.MeveoModule;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldFields;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.admin.impl.MeveoModuleService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -82,8 +79,6 @@ public class EntityExportImportBean implements Serializable {
     @Inject
     @CurrentUser
     protected User currentUser;
-    @Inject
-    private MeveoModuleService meveoModuleService;
 
     private ParamBean param = ParamBean.getInstance();
 
@@ -110,8 +105,6 @@ public class EntityExportImportBean implements Serializable {
 
     private ImportExportResponseDto remoteImportResult;
     
-    private MeveoModule meveoModule;
-
     public boolean isRequireFK() {
         return requireFK;
     }
@@ -381,37 +374,7 @@ public class EntityExportImportBean implements Serializable {
             exportParameters.put("provider", currentProvider);
         }
         if(this.selectedExportTemplate.getName().equals("MeveoModule")){
-        	if(filters.get("meveoModule")!=null){
-        		meveoModule=meveoModuleService.refreshOrRetrieve((MeveoModule) filters.get("meveoModule"));
-        		dataModelToExport=new DataModel<MeveoModule>() {
-					@Override
-					public boolean isRowAvailable() {
-						return true;
-					}
-					@Override
-					public int getRowCount() {
-						return 1;
-					}
-					@Override
-					public MeveoModule getRowData() {
-						return meveoModule;
-					}
-					@Override
-					public int getRowIndex() {
-						return 0;
-					}
-					@Override
-					public void setRowIndex(int rowIndex) {
-					}
-					@Override
-					public Object getWrappedData() {
-						return Arrays.asList(new MeveoModule[]{meveoModule});
-					}
-					@Override
-					public void setWrappedData(Object data) {
-					}
-        		};
-        	}else{
+        	if(exportParameters.get("meveoModule")!=null){
         		dataModelToExport=null;
         	}
         }
