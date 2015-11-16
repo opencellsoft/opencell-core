@@ -63,17 +63,17 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>id=userAccountPopuppopupForm:searchField1</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>id=userAccountPopuppopupForm:searchField1</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>id=userAccountPopuppopupForm:searchField1</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
 	<td>${UserAccount}</td>
 </tr>
 <tr>
@@ -138,7 +138,7 @@
 </tr>
 <tr>
 	<td>waitForValue</td>
-	<td>id=subscriptionTab:subscriptionFormId:informationTab:userSelectId</td>
+	<td>id=subscriptionTab:subscriptionFormPanel:formId:informationTab:userSelectId:entityFieldSingle:userAccount_entity</td>
 	<td>${UserAccount}</td>
 </tr>
 <tr>
@@ -168,12 +168,12 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SubDescription}</td>
+	<td>${descriptionText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${SubDescription}</td>
+	<td>${descriptionText}</td>
 	<td>${Description}</td>
 </tr>
 <tr>

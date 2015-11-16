@@ -63,17 +63,17 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>id=customerAccountPopuppopupForm:searchField1</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>id=customerAccountPopuppopupForm:searchField1</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>id=customerAccountPopuppopupForm:searchField1</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
 	<td>${CustomerAccount}</td>
 </tr>
 <tr>
@@ -138,7 +138,7 @@
 </tr>
 <tr>
 	<td>waitForValue</td>
-	<td>id=parentTab:formId:childTab:customerSelectId</td>
+	<td>id=parentTab:formBillingAccountPanel:formId:childTab:customerSelectId:entityFieldSingle:customerAccount_entity</td>
 	<td>${CustomerAccount}</td>
 </tr>
 <tr>
@@ -178,12 +178,12 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${BillAccDescription}</td>
+	<td>${descriptionText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${BillAccDescription}</td>
+	<td>${descriptionText}</td>
 	<td>${Description}</td>
 </tr>
 <tr>
@@ -598,7 +598,7 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>id=parentTab:formId:childTab:paymentMethod_enum_label</td>
+	<td>id=parentTab:formBillingAccountPanel:formId:childTab:paymentMethod_label</td>
 	<td>${PaymentMethodValue}</td>
 </tr>
 <tr>
@@ -650,11 +650,6 @@
 	<td>click</td>
 	<td>${ElectronicBilling}</td>
 	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//label[contains(@for, 'email')]/span</td>
-	<td>exact:*</td>
 </tr>
 <tr>
 	<td>endIf</td>
