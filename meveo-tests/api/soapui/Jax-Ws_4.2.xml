@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="1d31c684-a44c-4964-8716-6418692bd614" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+<con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="1d31c684-a44c-4964-8716-6418692bd614" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -99,6 +99,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="updateBillingAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="unMatchingOperations">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="unMatchingOperations">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="unMatchingOperationsResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -590,6 +599,7 @@
       <xs:element name="GetCustomerResponse" type="tns:getCustomerResponseDto"/>
       <xs:element name="GetUserAccountResponse" type="tns:getUserAccountResponseDto"/>
       <xs:element name="Invoice" type="tns:invoiceDto"/>
+      <xs:element name="MatchOperationRequest" type="tns:matchOperationRequestDto"/>
       <xs:element name="MatchingAmount" type="tns:matchingAmountDto"/>
       <xs:element name="MatchingAmounts" type="tns:matchingAmountsDto"/>
       <xs:element name="MatchingCode" type="tns:matchingCodeDto"/>
@@ -599,6 +609,7 @@
       <xs:element name="SubCategoryInvoiceAgregate" type="tns:subCategoryInvoiceAgregateDto"/>
       <xs:element name="Title" type="tns:titleDto"/>
       <xs:element name="TitleResponse" type="tns:titleResponseDto"/>
+      <xs:element name="UnMatchingOperationRequest" type="tns:unMatchingOperationRequestDto"/>
       <xs:element name="UserAccountsResponse" type="tns:userAccountsResponseDto"/>
       <xs:element name="createAccess" type="tns:createAccess"/>
       <xs:element name="createAccessResponse" type="tns:createAccessResponse"/>
@@ -700,6 +711,8 @@
       <xs:element name="removeTitleResponse" type="tns:removeTitleResponse"/>
       <xs:element name="removeUserAccount" type="tns:removeUserAccount"/>
       <xs:element name="removeUserAccountResponse" type="tns:removeUserAccountResponse"/>
+      <xs:element name="unMatchingOperations" type="tns:unMatchingOperations"/>
+      <xs:element name="unMatchingOperationsResponse" type="tns:unMatchingOperationsResponse"/>
       <xs:element name="updateAccess" type="tns:updateAccess"/>
       <xs:element name="updateAccessResponse" type="tns:updateAccessResponse"/>
       <xs:element name="updateAccountHierarchy" type="tns:updateAccountHierarchy"/>
@@ -1247,6 +1260,22 @@
           <xs:element maxOccurs="unbounded" minOccurs="0" name="billingAccount" nillable="true" type="tns:BillingAccount"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="unMatchingOperations">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="unMatchingOperationRequest" type="tns:unMatchingOperationRequestDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="unMatchingOperationRequestDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="accountOperationId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="unMatchingOperationsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createCreditCategory">
         <xs:sequence>
           <xs:element minOccurs="0" name="creditCategory" type="tns:creditCategoryDto"/>
@@ -1355,6 +1384,11 @@
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="matchOperations">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="matchOperationRequest" type="tns:matchOperationRequestDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="matchOperationRequestDto">
         <xs:sequence>
           <xs:element minOccurs="0" name="customerAccountCode" type="xs:string"/>
           <xs:element minOccurs="0" name="accountOperations" type="tns:accountOperationsDto"/>
@@ -1923,6 +1957,10 @@
               <xs:element minOccurs="0" name="parentSeller" type="xs:string"/>
               <xs:element minOccurs="0" name="provider" type="xs:string"/>
               <xs:element minOccurs="0" name="invoiceSequenceSize" type="xs:int"/>
+              <xs:element minOccurs="0" name="invoiceAdjustmentSequenceSize" type="xs:int"/>
+              <xs:element minOccurs="0" name="invoiceAdjustmentPrefix" type="xs:string"/>
+              <xs:element minOccurs="0" name="currentInvoiceNb" type="xs:long"/>
+              <xs:element minOccurs="0" name="currentInvoiceAdjustmentNb" type="xs:long"/>
               <xs:element minOccurs="0" name="customers" type="tns:Customers"/>
               <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
@@ -2110,14 +2148,17 @@
   <wsdl:message name="findTitle">
     <wsdl:part element="ns1:findTitle" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateAccessResponse">
-    <wsdl:part element="ns1:updateAccessResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findTitleResponse">
     <wsdl:part element="ns1:findTitleResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateAccessResponse">
+    <wsdl:part element="ns1:updateAccessResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeCustomerResponse">
     <wsdl:part element="ns1:removeCustomerResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="unMatchingOperations">
+    <wsdl:part element="ns1:unMatchingOperations" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateAccountHierarchy">
     <wsdl:part element="ns1:updateAccountHierarchy" name="parameters"></wsdl:part>
@@ -2299,17 +2340,20 @@
   <wsdl:message name="listByCustomer">
     <wsdl:part element="ns1:listByCustomer" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateCreditCategory">
-    <wsdl:part element="ns1:createOrUpdateCreditCategory" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findUserAccount">
     <wsdl:part element="ns1:findUserAccount" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCreditCategory">
+    <wsdl:part element="ns1:createOrUpdateCreditCategory" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listAccountOperationsResponse">
     <wsdl:part element="ns1:listAccountOperationsResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCreditCategory">
     <wsdl:part element="ns1:createCreditCategory" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="unMatchingOperationsResponse">
+    <wsdl:part element="ns1:unMatchingOperationsResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateCRMAccountHierarchyResponse">
     <wsdl:part element="ns1:updateCRMAccountHierarchyResponse" name="parameters"></wsdl:part>
@@ -2472,6 +2516,10 @@
     <wsdl:operation name="findCustomerAccount">
       <wsdl:input message="ns1:findCustomerAccount" name="findCustomerAccount"></wsdl:input>
       <wsdl:output message="ns1:findCustomerAccountResponse" name="findCustomerAccountResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="unMatchingOperations">
+      <wsdl:input message="ns1:unMatchingOperations" name="unMatchingOperations"></wsdl:input>
+      <wsdl:output message="ns1:unMatchingOperationsResponse" name="unMatchingOperationsResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCreditCategory">
       <wsdl:input message="ns1:createCreditCategory" name="createCreditCategory"></wsdl:input>
@@ -12535,7 +12583,20 @@
          </creditCategory>\r
       </ws:updateCreditCategory>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCreditCategory"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="632a46fe-429d-4ad9-bfcf-17d3bfc7e0da" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/updateCreditCategory"/></con:call></con:operation><con:operation isOneWay="false" action="" name="unMatchingOperations" bindingOperationName="unMatchingOperations" type="Request-Response" outputName="unMatchingOperationsResponse" inputName="unMatchingOperations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:unMatchingOperations>
+         <!--Optional:-->
+         <unMatchingOperationRequest>
+            <!--Optional:-->
+            <customerAccountCode>?</customerAccountCode>
+            <!--Optional:-->
+            <accountOperationId>?</accountOperationId>
+         </unMatchingOperationRequest>
+      </ws:unMatchingOperations>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountWs/unMatchingOperations"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="632a46fe-429d-4ad9-bfcf-17d3bfc7e0da" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/SettingsWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/SettingsWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="SettingsWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/SettingsWs?wsdl=SettingsWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="SettingsWsSoapBinding" type="ns1:SettingsWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

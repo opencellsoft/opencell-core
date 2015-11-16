@@ -4,32 +4,29 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * @author Edward P. Legaspi
- **/
-@XmlRootElement(name = "MatchOperationRequest")
+
+@XmlRootElement(name = "UnMatchingOperationRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MatchOperationRequestDto {
+public class UnMatchingOperationRequestDto {
 
 	private String customerAccountCode;
-	private AccountOperationsDto accountOperations;
-
-
-
+	private Long accountOperationId;
+	
 	public String getCustomerAccountCode() {
 		return customerAccountCode;
 	}
-
 	public void setCustomerAccountCode(String customerAccountCode) {
 		this.customerAccountCode = customerAccountCode;
 	}
-
-	public AccountOperationsDto getAccountOperations() {
-		return accountOperations;
+	public Long getAccountOperationId() {
+		return accountOperationId;
 	}
-
-	public void setAccountOperations(AccountOperationsDto accountOperations) {
-		this.accountOperations = accountOperations;
+	public void setAccountOperationId(Long accountOperationId) {
+		this.accountOperationId = accountOperationId;
 	}
+	
+	
+	
+
 
 }
