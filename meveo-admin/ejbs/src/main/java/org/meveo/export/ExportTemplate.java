@@ -34,6 +34,8 @@ public class ExportTemplate {
      */
     private List<Class<? extends IEntity>> classesToIgnoreFKNotFound = new ArrayList<Class<? extends IEntity>>();
 
+    private List<RelatedEntityToExport> relatedEntities;
+
     /**
      * Other export/import templates grouped under this template
      */
@@ -117,5 +119,13 @@ public class ExportTemplate {
 
     public void setCanDeleteAfterExport(boolean canDeleteAfterExport) {
         this.canDeleteAfterExport = canDeleteAfterExport;
+    }
+
+    public List<RelatedEntityToExport> getRelatedEntities() {
+        return relatedEntities;
+    }
+
+    public void setRelatedEntities(List<RelatedEntityToExport> relatedEntities) {
+        this.relatedEntities = relatedEntities;
     }
 }

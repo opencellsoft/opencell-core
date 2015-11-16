@@ -86,7 +86,7 @@ public class CustomEntityApi extends BaseApi {
         cet = CustomEntityTemplateDto.fromDTO(dto, cet);
         cet = customEntityTemplateService.update(cet, currentUser);
 
-        List<CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCFTPrefix(), currentUser.getProvider());
+        List<CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
 
         // Create, update or remove fields as necessary
         if (dto.getFields() != null && !dto.getFields().isEmpty()) {
@@ -148,7 +148,7 @@ public class CustomEntityApi extends BaseApi {
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
-        List<CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCFTPrefix(), provider);
+        List<CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), provider);
 
         return CustomEntityTemplateDto.toDTO(cet, cetFields);
     }

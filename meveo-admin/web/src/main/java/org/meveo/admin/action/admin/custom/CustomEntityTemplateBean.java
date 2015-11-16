@@ -177,7 +177,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             return cetPrefix;
 
         } else if (entity != null && entity.getCode() != null) {
-            cetPrefix = entity.getCFTPrefix();
+            cetPrefix = entity.getCftPrefix();
             return cetPrefix;
         }
         return null;

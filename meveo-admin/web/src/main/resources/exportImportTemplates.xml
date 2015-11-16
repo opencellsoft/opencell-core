@@ -364,6 +364,32 @@
             </template>
         </groupedTemplates>
     </template>
+    <template name="CustomEntityTemplate" entityToExport="org.meveo.model.customEntities.CustomEntityTemplate">
+        <parameters>
+            <entry>
+                <string>provider</string>
+                <string>provider</string>
+            </entry>
+        </parameters>
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.crm.CustomFieldTemplate</java-class>
+        </classesToExportAsFull>
+        <relatedEntities>
+            <relatedEntity>
+                <selection>select cft from CustomFieldTemplate cft where cft.disabled=false and cft.appliesTo=:cftPrefix and cft.provider=:provider</selection>
+                <parameters>
+                    <entry>
+                        <string>cftPrefix</string>
+                        <string>#{entity.cftPrefix}</string>
+                    </entry>
+                    <entry>
+                        <string>provider</string>
+                        <string>#{entity.provider}</string>
+                    </entry>
+                </parameters>
+            </relatedEntity>
+        </relatedEntities>
+    </template>    
     <template name="MeveoModule" entityToExport="org.meveo.model.admin.MeveoModule">
         <parameters>
             <entry>

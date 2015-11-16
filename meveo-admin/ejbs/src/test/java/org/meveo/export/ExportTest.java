@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.Assert;
+
+import org.eclipse.jetty.util.log.Log;
+import org.junit.Test;
 import org.meveo.export.EntityExportImportService.ReusingReferenceByIdMarshallingStrategy;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
@@ -37,14 +41,26 @@ public class ExportTest {
         XStream xstream = new XStream();
 
         xstream.alias("exportTemplate", ExportTemplate.class);
+        xstream.alias("relatedEntity", RelatedEntityToExport.class);
         xstream.useAttributeFor(ExportTemplate.class, "name");
         xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
         xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
 
         ExportTemplate template = new ExportTemplate();
         template.setName("Template One");
+        template.setRelatedEntities(new ArrayList<RelatedEntityToExport>());
+        RelatedEntityToExport relent = new RelatedEntityToExport();
+        relent.setSelection("select a from b where b=:b");
+        relent.setParameters(new HashMap<String, String>());
+        relent.getParameters().put("param1", "#{entity.ku}");
+        template.getRelatedEntities().add(relent);
         xstream.marshal(template, writer);
-
+        Assert.fail(xstream.toXML(template));
+        Assert.fail(buffer.toString());
+        
+        if (1 / 1 == 1) {
+            return;
+        }
         writer.startNode("data");
         exportEntities("1", writer, template);
         exportEntities("2", writer, template);

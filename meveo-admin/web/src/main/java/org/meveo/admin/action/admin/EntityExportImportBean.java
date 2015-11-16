@@ -29,6 +29,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportImportStatistics;
 import org.meveo.export.ExportTemplate;
+import org.meveo.export.RelatedEntityToExport;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.export.RemoteImportException;
 import org.meveo.model.BaseEntity;
@@ -270,6 +271,7 @@ public class EntityExportImportBean implements Serializable {
         // Retrieve complex export template definitions from configuration
         XStream xstream = new XStream();
         xstream.alias("template", ExportTemplate.class);
+        xstream.alias("relatedEntity", RelatedEntityToExport.class);
         xstream.useAttributeFor(ExportTemplate.class, "name");
         xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
         xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
@@ -294,6 +296,7 @@ public class EntityExportImportBean implements Serializable {
         // Check for a match by a classname in complex export template definitions from configuration
         XStream xstream = new XStream();
         xstream.alias("template", ExportTemplate.class);
+        xstream.alias("relatedEntity", RelatedEntityToExport.class);
         xstream.useAttributeFor(ExportTemplate.class, "name");
         xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
         xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");

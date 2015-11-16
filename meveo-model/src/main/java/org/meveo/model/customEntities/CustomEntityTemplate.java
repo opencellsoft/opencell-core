@@ -61,7 +61,7 @@ public class CustomEntityTemplate extends BusinessEntity implements Comparable<C
         return null;
     }
 
-    public String getCFTPrefix() {
+    public String getCftPrefix() {
         return "CE_" + getCode();
     }
 

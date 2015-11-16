@@ -55,7 +55,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         if (cet != null) {
-            postData.setAppliesTo(cet.getCFTPrefix());
+            postData.setAppliesTo(cet.getCftPrefix());
         }
         String appliesTo = postData.getAppliesTo();
         // Support for old API
@@ -94,7 +94,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         if (cet != null) {
-            postData.setAppliesTo(cet.getCFTPrefix());
+            postData.setAppliesTo(cet.getCftPrefix());
         }
         String appliesTo = postData.getAppliesTo();
         // Support for old API
@@ -172,7 +172,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             appliesTo = dto.getAccountLevel();
         }
         if (cet != null) {
-            cft.setAppliesTo(cet.getCFTPrefix());
+            cft.setAppliesTo(cet.getCftPrefix());
         } else {
             cft.setAppliesTo(appliesTo);
         }

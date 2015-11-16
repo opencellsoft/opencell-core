@@ -83,7 +83,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
-//import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -96,6 +96,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 import org.primefaces.model.LazyDataModel;
@@ -166,8 +167,8 @@ public class EntityExportImportService implements Serializable {
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
 
-    // @Inject
-    // private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
+    @Inject
+    private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
 
     private Map<Class<? extends IEntity>, String[]> exportIdMapping;
 
@@ -443,6 +444,8 @@ public class EntityExportImportService implements Serializable {
                 xstream.useAttributeFor(ExportTemplate.class, "name");
                 xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
                 xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
+                xstream.omitField(ExportTemplate.class, "parameters");
+                xstream.omitField(ExportTemplate.class, "relatedEntities");
                 // Add custom converters
                 xstream.registerConverter(new IEntityHibernateProxyConverter(exportImportConfig), XStream.PRIORITY_VERY_HIGH);
                 xstream.registerConverter(new IEntityExportIdentifierConverter(exportImportConfig), XStream.PRIORITY_NORMAL);
@@ -1548,6 +1551,7 @@ public class EntityExportImportService implements Serializable {
     @SuppressWarnings({ "unchecked" })
     private List<? extends IEntity> getEntitiesToExport(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport, int from,
             int pageSize) {
+        List<? extends IEntity> entities = null;
 
         // Retrieve next pageSize number of entities from iterator
         if (dataModelToExport != null) {
@@ -1556,11 +1560,11 @@ public class EntityExportImportService implements Serializable {
             }
 
             if (dataModelToExport instanceof LazyDataModel) {
-                return ((LazyDataModel<? extends IEntity>) dataModelToExport).load(from, pageSize, null, null, null);
+                entities = ((LazyDataModel<? extends IEntity>) dataModelToExport).load(from, pageSize, null, null, null);
 
             } else {
                 List<? extends IEntity> modelData = (List<? extends IEntity>) dataModelToExport.getWrappedData();
-                return modelData.subList(from, Math.min(from + pageSize, modelData.size()));
+                entities = modelData.subList(from, Math.min(from + pageSize, modelData.size()));
 
             }
 
@@ -1614,9 +1618,36 @@ public class EntityExportImportService implements Serializable {
                     query.setParameter(param.getKey(), param.getValue());
                 }
             }
-            List<IEntity> entities = query.getResultList();
-            return entities;
+            entities = query.getResultList();
         }
+
+        List<IEntity> entitiesWRelated = new ArrayList<IEntity>(entities);
+
+        // Retrieve related entities if applicable
+        if (exportTemplate.getRelatedEntities() != null && !exportTemplate.getRelatedEntities().isEmpty()) {
+            for (IEntity entity : entities) {
+                Map<Object, Object> elContext = new HashMap<Object, Object>();
+                elContext.put("entity", entity);
+                for (RelatedEntityToExport relatedEntityInfo : exportTemplate.getRelatedEntities()) {
+                    String lastElExpr = null;
+                    TypedQuery<IEntity> query = getEntityManager().createQuery(relatedEntityInfo.getSelection(), IEntity.class);
+                    try {
+                        for (Entry<String, String> param : relatedEntityInfo.getParameters().entrySet()) {
+                            lastElExpr = param.getValue(); // Just for debugging purpose remember the last EL evaluated
+                            Object paramValue = ValueExpressionWrapper.evaluateExpression(param.getValue(), elContext, Object.class);
+                            query.setParameter(param.getKey(), paramValue);
+                        }
+                        List<? extends IEntity> relatedEntities = query.getResultList();
+                        entitiesWRelated.addAll(relatedEntities);
+
+                    } catch (Exception e) {
+                        log.error("Could not evaluate expression {} for exportTemplate {} given entity {}", lastElExpr, exportTemplate.getName(), entity, e);
+                    }
+                }
+
+            }
+        }
+        return entitiesWRelated;
     }
 
     public static class ExportInfo {
@@ -1708,7 +1739,7 @@ public class EntityExportImportService implements Serializable {
         cdrEdrProcessingCacheContainerProvider.refreshCache(null);
         notificationCacheContainerProvider.refreshCache(null);
         ratingCacheContainerProvider.refreshCache(null);
-        // customFieldsCacheContainerProvider.refreshCache(null);
+        customFieldsCacheContainerProvider.refreshCache(null);
     }
 
     /**
