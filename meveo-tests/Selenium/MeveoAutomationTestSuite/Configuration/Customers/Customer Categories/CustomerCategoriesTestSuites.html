@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+  <title>Test Suite</title>
+</head>
+<!--
+
+Description Test Case 1: 
+Actions : Make a first search by filling the fields "Code and Description" then click on the button "search".
+Expected Results : The result of research gives the items matching with the fields filled bellow
+
+Description Test Case 2: 
+Actions : Make sure that the fields are not empty before cleaning the filter, then click on the button "Clean filters".
+Expected Results : The fileds (Code and Description) become empty.
+
+Description Test Case 3: 
+Actions : Click on the button "New" in order to add a new Customer Categories
+Expected Results : A list of empty items are showed.
+
+Description Test Case 4:
+Actions : Don't fill any field then click on "save".
+Expected Results : A new Customer Categories can not be created, an alert appears to mention that "Code and Description" are required to create the Customer Categories
+
+Description Test Case 5:
+Actions : Click on "reset".
+Expected Results : The field code become empty.
+
+Description Test Case 6:
+Actions : Fill only the field "Code" then click on "save".
+Expected Results : A new Customer Categories can not be created, an alert appears to mention that Description is required to create the Customer Categories.
+
+Description Test Case 7: 
+Actions : Fill only the field "Description" then click on "save".
+Expected Results : A new Customer Categories can not be created, an alert appears to mention that Code is required to create the Customer Categories.
+
+Description Test Case 8: 
+Actions : Let the required field "Code and Description" not filled and fill (No Tax Applied) field and click on "save".
+Expected Results : A new Titles and Civilities can not be created, an alert appears to mention that Code and Description are required to create the Titles and Civilities
+
+Description Test Case 9:
+Actions : Click on "back".
+Expected Results : Return to the previous page. 
+
+Description Test Case 10:
+Actions : Fill the required fields (Code and Description) then and fill (No Tax Applied) field and click on "save".
+Expected Results : A new Customer Categories is created.
+
+Description Test Case 11: 
+Actions : Make a search by filling the field "Code" then click on the button "search".
+Expected Results : The result of research gives the items which are matching with the chosen Customer Categories
+
+Description Test Case 12: 
+Actions : Click on the link in the datatable to modify the Customer category just created, fill all the fields and click "save".
+Expected Results : The Customer category is updated with the new record.
+
+Description Test Case 13:
+Actions : Make a search by filling the field "Description" then click on the button "search".
+Expected Results : The result of research gives the items which are matching with the chosen Customer Categories
+
+Description Test Case 14: 
+Actions : Pick a line from the table then click on the icon "delete ".
+Expected Results : An alert appears in order to make sure that you really you want to delete the Customer Categories
+
+Description Test Case 15: 
+Actions : Click on "No" to confirm that you don't want to delete the Customer Categories
+Expected Results : The picked Customer Categories is not deleted.
+
+Description Test Case 16: 
+Actions : Click on "yes" to confirm that you want to delete the Customer Categories
+Expected Results : The picked Customer Categories is deleted.
+
+Description Test Case 17:
+Actions : Pick one or more lines from the table then click on the button "Export to Excel"
+Expected Results : The picked lines are exported on an Excel file
+
+Description Test Case 18: 
+Actions : Click on the button "Export to excel", without picking any line from the table
+Expected Results : All the lines from the table are been exported on an excel file
+
+Description Test Case 19: 
+Actions : Click on the button "Delete multiple" wihout picking any line from the table.
+Expected Results : Nothing happened.
+
+Description Test Case 20: 
+Actions : Pick more than one line from the table then click on the button "Delete multiple"
+Expected Results : The picked lines are erased
+
+Description Test Case 21:
+Actions : From the dropdown list in the table choose the number of line per page you want to have, choose '15'
+Expected Results : The table shows 15 lines per page 
+
+Description Test Case 22: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '20'
+Expected Results : The table shows 20 lines per page 
+
+Description Test Case 23: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '50'
+Expected Results : The table shows 50 lines per page 
+
+Description Test Case 24: 
+Actions :  From the dropdown list in the table choose the number of line per page you want to have, choose '10'
+Expected Results : The table shows 10 lines per page 
+
+Description Test Case 25: 
+Actions : Click on the button to move to the next page 
+Expected Results : The next page is displayed
+
+Description Test Case 26: 
+Actions : Click on the button to move to the last page 
+Expected Results :The last page is displayed
+
+Description Test Case 27: 
+Actions : Click on the button to move to the previous page
+Expected Results :The previous page is displayed
+
+Description Test Case 28: 
+Actions : In each column from the table (Code, Description and No Tax Applied) there is a filter, click on the filter in column "Code" in order to refine your search in an ascending/descending order.
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 29: 
+Actions : Click on the filter in column "Description" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+Description Test Case 30: 
+Actions : Click on the filter in column "No Tax Applied" in order to refine your search in an ascending/descending order
+Expected Results : The lines become ordered in an ascending/descending order
+
+-->
+<body>
+<table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
+<tr><td><b>Test Suite</b></td></tr>
+<tr><td><a href="../../../VariablesGlobales.html">VariablesGlobales</a></td></tr>
+<tr><td><a href="Variables.html">Variables</a></td></tr>
+<tr><td><a href="SearchWithCodeDescriptionTestCase.html">SearchWithCodeDescriptionTestCase</a></td></tr>
+<tr><td><a href="CleanFiltersTestCase.html">CleanFiltersTestCase</a></td></tr>
+<tr><td><a href="NewCustomerCategoriesTestCase.html">NewCustomerCategoriesTestCase</a></td></tr>
+<tr><td><a href="EmptyCustomerCategoriesTestCase.html">EmptyCustomerCategoriesTestCase</a></td></tr>
+<tr><td><a href="ResetButtonTestCase.html">ResetButtonTestCase</a></td></tr>
+<tr><td><a href="FillOnlyCodeTestCase.html">FillOnlyCodeTestCase</a></td></tr>
+<tr><td><a href="FillOnlyDescriptionTestCase.html">FillOnlyDescriptionTestCase</a></td></tr>
+<tr><td><a href="FillNotRequiredFieldsTestCase.html">FillNotRequiredFieldsTestCase</a></td></tr>
+<tr><td><a href="BackButtonTestCase.html">BackButtonTestCase</a></td></tr>
+<tr><td><a href="SuccessCustomerCategoriesTestCase.html">SuccessCustomerCategoriesTestCase</a></td></tr>
+<tr><td><a href="SearchWithCodeTestCase.html">SearchWithCodeTestCase</a></td></tr>
+<tr><td><a href="UpdateCustomerCategoriesTestCase.html">UpdateCustomerCategoriesTestCase</a></td></tr>
+<tr><td><a href="SearchWithDescriptionTestCase.html">SearchWithDescriptionTestCase</a></td></tr>
+<tr><td><a href="DeleteCustomerCategoriesWithClickNoTestCase.html">DeleteCustomerCategoriesWithClickNoTestCase</a></td></tr>
+<tr><td><a href="ExportWithPickLineTestCase.html">ExportWithPickLineTestCase</a></td></tr>
+<tr><td><a href="ExportWithoutPickAnyLineTestCase.html">ExportWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithoutPickAnyLineTestCase.html">DeleteMultipleWithoutPickAnyLineTestCase</a></td></tr>
+<tr><td><a href="DeleteMultipleWithPickLineTestCase.html">DeleteMultipleWithPickLineTestCase</a></td></tr>
+<tr><td><a href="DropdownWith15TestCase.html">DropdownWith15TestCase</a></td></tr>
+<tr><td><a href="DropdownWith20TestCase.html">DropdownWith20TestCase</a></td></tr>
+<tr><td><a href="DropdownWith50TestCase.html">DropdownWith50TestCase</a></td></tr>
+<tr><td><a href="DropdownWith10TestCase.html">DropdownWith10TestCase</a></td></tr>
+<tr><td><a href="NextPageTestCase.html">NextPageTestCase</a></td></tr>
+<tr><td><a href="LastPageTestCase.html">LastPageTestCase</a></td></tr>
+<tr><td><a href="PreviousPageTestCase.html">PreviousPageTestCase</a></td></tr>
+<tr><td><a href="FilterWithCodeTestCase.html">FilterWithCodeTestCase</a></td></tr>
+<tr><td><a href="FilterWithDescriptionTestCase.html">FilterWithDescriptionTestCase</a></td></tr>
+<tr><td><a href="FilterWithNoTaxAppliedTestCase.html">FilterWithNoTaxAppliedTestCase</a></td></tr>
+<tr><td><a href="LogoutTestCase.html">LogoutTestCase</a></td></tr>
+</tbody></table>
+</body>
+</html>
