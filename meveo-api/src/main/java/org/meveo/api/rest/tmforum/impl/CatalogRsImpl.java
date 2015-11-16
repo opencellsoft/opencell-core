@@ -1,4 +1,4 @@
-package org.meveo.api.tmforum.rest.impl;
+package org.meveo.api.rest.tmforum.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.catalog.CatalogApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.tmforum.rest.CatalogRs;
+import org.meveo.api.rest.tmforum.CatalogRs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.category.Category;

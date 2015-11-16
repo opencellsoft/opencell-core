@@ -1,4 +1,4 @@
-package org.meveo.api.tmforum.rest;
+package org.meveo.api.rest.tmforum;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;

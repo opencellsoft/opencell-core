@@ -1,4 +1,4 @@
-package org.meveo.api.tmforum.rest.impl;
+package org.meveo.api.rest.tmforum.impl;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -11,7 +11,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.tmforum.rest.OrderRs;
+import org.meveo.api.rest.tmforum.OrderRs;
 import org.slf4j.Logger;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 
