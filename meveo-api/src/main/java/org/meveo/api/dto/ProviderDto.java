@@ -34,12 +34,14 @@ public class ProviderDto extends BaseDto {
 	private boolean enterprise;
 	private String invoicePrefix;
 	private Long currentInvoiceNb;
-	private Boolean displaySubscriptions;
-	private Boolean displayServices;
-	private Boolean displayOffers;
-	private Boolean displayEdrs;
-	private Boolean displayProvider;
+	private Boolean displaySubscriptions = false;
+	private Boolean displayServices = false;
+	private Boolean displayOffers = false;
+	private Boolean displayEdrs = false;
+	private Boolean displayProvider = false;
 	private boolean displayFreeTransacInInvoice;
+	private Boolean displayDetail = true;
+	
 	
 	private String invoiceAdjustmentPrefix;
 	private Long currentInvoiceAdjustmentNb;
@@ -283,6 +285,14 @@ public class ProviderDto extends BaseDto {
 		this.invoiceAdjustmentSequenceSize = invoiceAdjustmentSequenceSize;
 	}
 
+	public Boolean getDisplayDetail() {
+		return displayDetail;
+	}
+
+	public void setDisplayDetail(Boolean displayDetail) {
+		this.displayDetail = displayDetail;
+	}
+
 	@Override
 	public String toString() {
 		return "ProviderDto [code=" + code + ", description=" + description
@@ -298,7 +308,8 @@ public class ProviderDto extends BaseDto {
 				+ displayOffers + ", displayEdrs=" + displayEdrs
 				+ ", displayProvider=" + displayProvider
 				+ ", displayFreeTransacInInvoice="
-				+ displayFreeTransacInInvoice + ", invoiceAdjustmentPrefix="
+				+ displayFreeTransacInInvoice + ", displayDetail="
+				+ displayDetail + ", invoiceAdjustmentPrefix="
 				+ invoiceAdjustmentPrefix + ", currentInvoiceAdjustmentNb="
 				+ currentInvoiceAdjustmentNb
 				+ ", invoiceAdjustmentSequenceSize="
