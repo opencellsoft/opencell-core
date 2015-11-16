@@ -26,4 +26,9 @@ public class MeveoModuleDtoResponse extends BaseResponse{
 	public void setModuleDto(ModuleDto moduleDto) {
 		this.moduleDto = moduleDto;
 	}
+	@Override
+	public String toString() {
+		return "MeveoModuleDtoResponse [moduleDto=" + moduleDto + "]";
+	}
+	
 }

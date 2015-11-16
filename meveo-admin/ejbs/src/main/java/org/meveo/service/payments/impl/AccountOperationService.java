@@ -71,7 +71,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 			return null;
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public List<AccountOperation> listAccountOperationByCustomerAccount(CustomerAccount ca, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(AccountOperation.class, "a", null, provider);

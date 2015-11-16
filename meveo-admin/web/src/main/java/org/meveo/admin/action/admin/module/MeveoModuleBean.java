@@ -107,7 +107,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 		cftnode.setExpanded(true);
 		filternode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.filters"),null,null),root);
 		filternode.setExpanded(true);
-		scriptnode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.scriptInsances"),null,null),root);
+		scriptnode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.scriptInstances"),null,null),root);
 		scriptnode.setExpanded(true);
 		jobnode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.jobInstances"),null,null),root);
 		jobnode.setExpanded(true);

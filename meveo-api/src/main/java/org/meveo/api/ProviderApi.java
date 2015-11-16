@@ -29,6 +29,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
@@ -197,7 +198,11 @@ public class ProviderApi extends BaseApi {
 			invoiceConfiguration.setDisplayServices(true);
 			invoiceConfiguration.setDisplaySubscriptions(true);
 			invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
-
+			invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
+			
+			Auditable auditable = new Auditable(currentUser);
+			invoiceConfiguration.setAuditable(auditable);
+			
 			provider.setInvoiceConfiguration(invoiceConfiguration);
 			
 			// populate customFields
@@ -218,10 +223,7 @@ public class ProviderApi extends BaseApi {
 			}
 			
 			providerService.create(provider, currentUser);
-			
-			invoiceConfiguration.setProvider(provider);
-			invoiceConfigurationService.create(invoiceConfiguration, currentUser);
-			
+						
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -321,6 +323,7 @@ public class ProviderApi extends BaseApi {
 				invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
 				invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
 				invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
+				invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
 			}
 			
 			if (postData.getInvoiceSequenceSize() != null) {

@@ -35,5 +35,10 @@ public class MeveoModuleDtosResponse extends BaseResponse{
 	public void setModuleDtoList(List<ModuleDto> moduleDtoList) {
 		this.moduleDtoList = moduleDtoList;
 	}
+
+	@Override
+	public String toString() {
+		return "MeveoModuleDtosResponse [moduleDtoList=" + moduleDtoList + "]";
+	}
 	
 }

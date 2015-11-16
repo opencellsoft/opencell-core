@@ -14,7 +14,7 @@ import org.meveo.model.admin.ModuleItemTypeEnum;
  * @author Tyshan Shi(tyshan@manaty.net)
  *
 **/
-@XmlRootElement
+@XmlRootElement(name="ModuleItem")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ModuleItemDto implements Serializable {
 	private static final long serialVersionUID = -2237671803222827809L;
@@ -55,5 +55,8 @@ public class ModuleItemDto implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+	@Override
+	public String toString() {
+		return "ModuleItemDto [itemType=" + itemType + ", appliesTo=" + appliesTo + ", itemCode=" + itemCode + "]";
+	}
 }
