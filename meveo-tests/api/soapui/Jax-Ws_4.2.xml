@@ -28134,27 +28134,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          <providerCode>${#TestSuite#ticket}_PROV_CODE_02</providerCode>
       </ws:findProvider>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="883230ce-55c2-48cf-8f39-aa612092e952"/><con:assertion type="Simple Contains" id="4aa4321a-0d07-453a-b6d9-e136f82e4ea1" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="e9f7e640-2a49-422d-93a0-a3a6304d71c3" name="new_fields"><con:configuration><token><![CDATA[<description>1194_PROV_CODE_DESC</description>
-               <currency>USD</currency>
-               <country>US</country>
-               <language>ENG</language>
-               <multiCurrency>false</multiCurrency>
-               <multiCountry>false</multiCountry>
-               <multiLanguage>false</multiLanguage>
-               <invoiceSequenceSize>5</invoiceSequenceSize>
-               <enterprise>true</enterprise>
-               <invoicePrefix>1194_INV_PREF_NEW</invoicePrefix>
-               <currentInvoiceNb>11940000002</currentInvoiceNb>
-               <displaySubscriptions>true</displaySubscriptions>
-               <displayServices>true</displayServices>
-               <displayOffers>true</displayOffers>
-               <displayEdrs>false</displayEdrs>
-               <displayProvider>false</displayProvider>
-               <displayFreeTransacInInvoice>true</displayFreeTransacInInvoice>
-               <invoiceAdjustmentPrefix>1194_IAP</invoiceAdjustmentPrefix>
-               <currentInvoiceAdjustmentNb>119411222</currentInvoiceAdjustmentNb>
-               <invoiceAdjustmentSequenceSize>5</invoiceAdjustmentSequenceSize>
-]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update_Provider" id="ec0a8b21-2ae0-43b5-9f4d-f501ea89934d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateProvider</con:operation><con:request name="update_Provider" id="485baff7-ab92-4c3f-820e-3ade8537b04d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="883230ce-55c2-48cf-8f39-aa612092e952"/><con:assertion type="Simple Contains" id="4aa4321a-0d07-453a-b6d9-e136f82e4ea1" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update_Provider" id="ec0a8b21-2ae0-43b5-9f4d-f501ea89934d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateProvider</con:operation><con:request name="update_Provider" id="485baff7-ab92-4c3f-820e-3ade8537b04d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateProvider>
@@ -28195,27 +28175,7 @@ for( testCase in testSuite.getTestCaseList() ) {
          <providerCode>${#TestSuite#ticket}_PROV_CODE_02</providerCode>
       </ws:findProvider>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="883230ce-55c2-48cf-8f39-aa612092e952"/><con:assertion type="Simple Contains" id="4aa4321a-0d07-453a-b6d9-e136f82e4ea1" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="e9f7e640-2a49-422d-93a0-a3a6304d71c3" name="new_fields"><con:configuration><token><![CDATA[<description>1194_PROV_CODE_05_NEW_DESC</description>
-               <currency>USD</currency>
-               <country>US</country>
-               <language>ENG</language>
-               <multiCurrency>false</multiCurrency>
-               <multiCountry>false</multiCountry>
-               <multiLanguage>false</multiLanguage>
-               <invoiceSequenceSize>7</invoiceSequenceSize>
-               <enterprise>true</enterprise>
-               <invoicePrefix>1194_INV_PREF_NEW</invoicePrefix>
-               <currentInvoiceNb>11940000002</currentInvoiceNb>
-               <displaySubscriptions>false</displaySubscriptions>
-               <displayServices>false</displayServices>
-               <displayOffers>false</displayOffers>
-               <displayEdrs>true</displayEdrs>
-               <displayProvider>true</displayProvider>
-               <displayFreeTransacInInvoice>true</displayFreeTransacInInvoice>
-               <invoiceAdjustmentPrefix>1194_IAP_NEW</invoiceAdjustmentPrefix>
-               <currentInvoiceAdjustmentNb>119411223</currentInvoiceAdjustmentNb>
-               <invoiceAdjustmentSequenceSize>7</invoiceAdjustmentSequenceSize>
-]]></token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1194</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#1236_matchOperations" id="1d4c6269-288f-4ee5-bbc1-03844e06bd71"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_accountOperation" searchProperties="true" id="834552f6-99f9-4c99-a931-7004f9509bf2"><con:settings/><con:testStep type="request" name="Create customer" id="a70dad98-c970-4407-a9e1-bc27f07d73ff"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="883230ce-55c2-48cf-8f39-aa612092e952"/><con:assertion type="Simple Contains" id="4aa4321a-0d07-453a-b6d9-e136f82e4ea1" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1194</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#1236_matchOperations" id="1d4c6269-288f-4ee5-bbc1-03844e06bd71"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_accountOperation" searchProperties="true" id="834552f6-99f9-4c99-a931-7004f9509bf2"><con:settings/><con:testStep type="request" name="Create customer" id="a70dad98-c970-4407-a9e1-bc27f07d73ff"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer" id="56f5513d-9503-4dec-b787-5761e57ded5a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCustomer>

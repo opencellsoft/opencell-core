@@ -204,7 +204,7 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
 
-    @OneToOne(mappedBy = "provider")
+    @OneToOne(mappedBy = "provider", cascade= CascadeType.ALL)
     private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 	
 	@Column(name = "INVOICE_SEQUENCE_SIZE")
