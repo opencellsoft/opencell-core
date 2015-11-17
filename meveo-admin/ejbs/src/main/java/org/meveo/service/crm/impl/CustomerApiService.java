@@ -6,16 +6,17 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomersDto;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
@@ -272,22 +273,23 @@ public class CustomerApiService extends AccountApiService {
 		}
 	}
 
-	public void remove(String customerCode, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(customerCode)) {
-			Customer customer = customerService.findByCode(customerCode,
-					provider);
-			if (customer == null) {
-				throw new EntityDoesNotExistsException(Customer.class,
-						customerCode);
-			}
-
-			customerService.remove(customer);
-		} else {
+	public void remove(String customerCode, Provider provider) throws MeveoApiException {
+		if (StringUtils.isBlank(customerCode)) {
 			missingParameters.add("customerCode");
-
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+		Customer customer = customerService.findByCode(customerCode, provider);
+		if (customer == null) {
+			throw new EntityDoesNotExistsException(Customer.class, customerCode);
+		}
+        try{
+        	customerService.remove(customer);
+        	customerService.commit();
+		} catch (Exception e) {
+			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+				throw new DeleteReferencedEntityException(Customer.class, customerCode);
+			}
+			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Cannot delete entity");
 		}
 	}
 
@@ -473,41 +475,44 @@ public class CustomerApiService extends AccountApiService {
 		}
 	}
 
-	public void removeBrand(String code, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			CustomerBrand customerBrand = customerBrandService.findByCode(code,
-					provider);
-			if (customerBrand == null) {
-				throw new EntityDoesNotExistsException(CustomerBrand.class,
-						code);
-			}
-
-			customerBrandService.remove(customerBrand);
-		} else {
+	public void removeBrand(String code, Provider provider) throws MeveoApiException {
+		if (StringUtils.isBlank(code)) {
 			missingParameters.add("brandCode");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+		CustomerBrand customerBrand = customerBrandService.findByCode(code, provider);
+		if (customerBrand == null) {
+			throw new EntityDoesNotExistsException(CustomerBrand.class, code);
+		}
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+		try {
+			customerBrandService.remove(customerBrand);
+			customerBrandService.commit();
+		} catch (Exception e) {
+			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+				throw new DeleteReferencedEntityException(CustomerBrand.class, code);
+			}
+			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Cannot delete entity");
 		}
 	}
 
-	public void removeCategory(String code, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			CustomerCategory customerCategory = customerCategoryService
-					.findByCode(code, provider);
-			if (customerCategory == null) {
-				throw new EntityDoesNotExistsException(CustomerCategory.class,
-						code);
-			}
-
-			customerCategoryService.remove(customerCategory);
-		} else {
+	public void removeCategory(String code, Provider provider) throws MeveoApiException {
+		if (StringUtils.isBlank(code)) {
 			missingParameters.add("categoryCode");
-
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+		CustomerCategory customerCategory = customerCategoryService.findByCode(code, provider);
+		if (customerCategory == null) {
+			throw new EntityDoesNotExistsException(CustomerCategory.class, code);
+		}
+		try {
+			customerCategoryService.remove(customerCategory);
+			customerCategoryService.commit();
+		} catch (Exception e) {
+			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+				throw new DeleteReferencedEntityException(CustomerCategory.class, code);
+			}
+			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Cannot delete entity");
 		}
 	}
 

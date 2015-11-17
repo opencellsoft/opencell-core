@@ -7,9 +7,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.SellersDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -215,19 +217,22 @@ public class SellerApiService extends BaseApi {
 	}
 
 	public void remove(String sellerCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(sellerCode)) {
-			Seller seller = sellerService.findByCode(sellerCode, provider);
-			if (seller == null) {
-				throw new EntityDoesNotExistsException(Seller.class, sellerCode);
-			}
-
-			sellerService.remove(seller);
-		} else {
-			if (StringUtils.isBlank(sellerCode)) {
-				missingParameters.add("sellerCode");
-			}
-
+		if (StringUtils.isBlank(sellerCode)) {
+			missingParameters.add("sellerCode");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+		Seller seller = sellerService.findByCode(sellerCode, provider);
+		if (seller == null) {
+			throw new EntityDoesNotExistsException(Seller.class, sellerCode);
+		}
+		try {
+			sellerService.remove(seller);
+			sellerService.commit();
+		} catch (Exception e) {
+			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+				throw new DeleteReferencedEntityException(Seller.class, sellerCode);
+			}
+			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Cannot delete entity");
 		}
 	}
 

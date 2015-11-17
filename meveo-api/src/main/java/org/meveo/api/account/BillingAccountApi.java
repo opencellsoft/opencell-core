@@ -92,8 +92,7 @@ public class BillingAccountApi {
 	 * @param provider
 	 * @throws MeveoApiException
 	 */
-	public void remove(String billingAccountCode, Provider provider)
-			throws MeveoApiException {
+	public void remove(String billingAccountCode, Provider provider)throws MeveoApiException {
 		billingAccountApiService.remove(billingAccountCode, provider);
 	}
 

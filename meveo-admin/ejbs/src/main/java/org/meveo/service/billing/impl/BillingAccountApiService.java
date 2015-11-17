@@ -11,6 +11,7 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -454,23 +455,24 @@ public class BillingAccountApiService extends AccountApiService {
 		}
 	}
 
-	public void remove(String billingAccountCode, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(billingAccountCode)) {
-			BillingAccount billingAccount = billingAccountService.findByCode(
-					billingAccountCode, provider);
-			if (billingAccount == null) {
-				throw new EntityDoesNotExistsException(BillingAccount.class,
-						billingAccountCode);
-			}
-
-			billingAccountService.remove(billingAccount);
-		} else {
+	public void remove(String billingAccountCode, Provider provider)throws MeveoApiException {		
+		if (StringUtils.isBlank(billingAccountCode)) {
 			missingParameters.add("billingAccountCode");
-
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}				
+		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, provider);
+		if (billingAccount == null) {
+			throw new EntityDoesNotExistsException(BillingAccount.class,billingAccountCode);
 		}
+		try{			
+			billingAccountService.remove(billingAccount);
+			billingAccountService.commit();
+		}catch(Exception e){			
+			if(e.getMessage().indexOf("ConstraintViolationException") > -1){
+				throw new DeleteReferencedEntityException(BillingAccount.class,billingAccountCode);
+			}
+			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION,"Cannot delete entity");			
+		}			
 	}
 
 	public BillingAccountsDto listByCustomerAccount(String customerAccountCode,

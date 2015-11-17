@@ -16,12 +16,12 @@ import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.AccountEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -382,23 +382,25 @@ public class CustomerAccountApiService extends AccountApiService {
 		return customerAccountDto;
 	}
 
-	public void remove(String customerAccountCode, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(customerAccountCode)) {
-			CustomerAccount customerAccount = customerAccountService
-					.findByCode(customerAccountCode, provider);
-			if (customerAccount == null) {
-				throw new EntityDoesNotExistsException(CustomerAccount.class,
-						customerAccountCode);
-			}
-
-			customerAccountService.remove(customerAccount);
-		} else {
+	public void remove(String customerAccountCode, Provider provider) throws MeveoApiException {
+		if (StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountCode");
-
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+		if (customerAccount == null) {
+			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+		}
+		try {
+			customerAccountService.remove(customerAccount);
+			customerAccountService.commit();
+		} catch (Exception e) {
+			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+				throw new DeleteReferencedEntityException(CustomerAccount.class, customerAccountCode);
+			}
+			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+		}
+
 	}
 
 	public CustomerAccountsDto listByCustomer(String customerCode,
@@ -563,22 +565,23 @@ public class CustomerAccountApiService extends AccountApiService {
 
 	}
 
-	public void removeCreditCategory(String code, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			CreditCategory creditCategory = creditCategoryService.findByCode(
-					code, provider);
-			if (creditCategory == null) {
-				throw new EntityDoesNotExistsException(CreditCategory.class,
-						code);
-			}
-
-			creditCategoryService.remove(creditCategory);
-		} else {
+	public void removeCreditCategory(String code, Provider provider) throws MeveoApiException {
+		if (StringUtils.isBlank(code)) {
 			missingParameters.add("creditCategoryCode");
-
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+		CreditCategory creditCategory = creditCategoryService.findByCode(code, provider);
+		if (creditCategory == null) {
+			throw new EntityDoesNotExistsException(CreditCategory.class, code);
+		}
+		try {
+			creditCategoryService.remove(creditCategory);
+			creditCategoryService.commit();
+		} catch (Exception e) {
+			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+				throw new DeleteReferencedEntityException(CreditCategory.class, code);
+			}
+			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Cannot delete entity");
 		}
 	}
 
