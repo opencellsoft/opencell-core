@@ -22,14 +22,19 @@
 	<td>30000</td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${ScriptInstanceTextArea}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${ScriptInstanceTextArea}</td>
-	<td>public class Bicycle { public int cadence; public int gear; public int speed;}</td>
+	<td>package org.meveo.service.script;&nbsp;&nbsp;import java.util.List; import java.util.Map;&nbsp;&nbsp;import org.meveo.admin.exception.BusinessException; import org.meveo.cache.CdrEdrProcessingCacheContainerProvider; import org.meveo.model.crm.Provider; import org.meveo.model.mediation.Access; import org.meveo.service.script.Script; import org.slf4j.Logger; import org.slf4j.LoggerFactory;&nbsp;&nbsp;public class Mediation_RoutingSub extends Script {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;private static final Logger log = LoggerFactory.getLogger(Mediation_RoutingSub.class);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider = (CdrEdrProcessingCacheContainerProvider) getServiceInterface(&quot;CdrEdrProcessingCacheContainerProvider&quot;);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public void execute(Map&lt;String, Object&gt; initContext,Provider provider)throws BusinessException {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;log.debug(&quot;Execute...&quot;);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String accessUserId = (String) initContext.get(&quot;accessUserId&quot;);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;Access&gt; accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(provider.getId(), accessUserId);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;initContext.put(&quot;accesses&quot;, accesses);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;log.info(&quot;Execute accesses size:&quot;+((accesses == null)?&quot;null&quot;:accesses.size()));&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} }</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>Description for 01</td>
+	<td>Routing to Subscriptions</td>
 </tr>
 <tr>
 	<td>click</td>

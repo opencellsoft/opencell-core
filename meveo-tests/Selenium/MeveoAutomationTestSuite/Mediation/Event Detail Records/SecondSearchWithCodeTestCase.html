@@ -17,7 +17,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>click</td>
 	<td>${SearchWithSelectCode}</td>
 	<td></td>
 </tr>
@@ -27,13 +27,48 @@
 	<td></td>
 </tr>
 <tr>
-	<td>typeAndWait</td>
-	<td>${InputCode}</td>
-	<td>01</td>
+	<td>waitForText</td>
+	<td>id=searchEdrPopup_title</td>
+	<td>Search</td>
 </tr>
 <tr>
-	<td>clickAtAndWait</td>
+	<td>assertText</td>
+	<td>id=searchEdrPopup_title</td>
+	<td>Search</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${InputCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${InputCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${InputCode}</td>
+	<td>sub</td>
+</tr>
+<tr>
+	<td>click</td>
 	<td>${SearchCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=searchEdrPopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SearchWithSelectCode}</td>
 	<td></td>
 </tr>
 <tr>

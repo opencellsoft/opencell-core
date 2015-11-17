@@ -42,13 +42,23 @@
 	<td>Shmeveo2015</td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>assertText</td>
+	<td>${UserRole}</td>
+	<td>administrateur</td>
+</tr>
+<tr>
+	<td>doubleClick</td>
 	<td>${UserRole}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${AddOneUserRole}</td>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//*[contains(@id, 'roles_list')]/div[3]/ul/li[text() = 'administrateur']</td>
 	<td></td>
 </tr>
 <tr>
