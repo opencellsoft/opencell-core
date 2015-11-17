@@ -16,7 +16,7 @@
         	cache: false,
         	crossDomain: true,
          	dataType: "json",
-         	url: "http://localhost:8080/meveo/api/rest/country/version",
+         	url: "http://192.168.1.138:8080/meveo/api/rest/country/version",
          	type: "GET",
          	success: function( jsonObj, textStatus, xhr ) {
              	var htmlContent = $( "#logMsgDiv" ).html( ) + "<p>" + jsonObj.message + "</p>";

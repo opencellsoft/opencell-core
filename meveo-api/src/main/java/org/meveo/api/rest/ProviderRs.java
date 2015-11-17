@@ -8,14 +8,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ProviderDto;
-import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
-import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
-import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
-import org.meveo.api.dto.response.GetProviderResponse;
-import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
@@ -37,7 +32,7 @@ public interface ProviderRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/")
-	ActionStatus create(ProviderDto postData);
+	Response create(ProviderDto postData);
 
 	/**
 	 * Search for provider with a given code.
@@ -47,7 +42,7 @@ public interface ProviderRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	GetProviderResponse find(@QueryParam("providerCode") String providerCode);
+	Response find(@QueryParam("providerCode") String providerCode);
 
 	/**
 	 * Update provider.
@@ -57,25 +52,25 @@ public interface ProviderRs extends IBaseRs {
 	 */
 	@PUT
 	@Path("/")
-	ActionStatus update(ProviderDto postData);
+	Response update(ProviderDto postData);
 
 	@GET
 	@Path("/getTradingConfiguration")
-	GetTradingConfigurationResponseDto findTradingConfiguration();
+	Response findTradingConfiguration();
 
 	@GET
 	@Path("/getInvoicingConfiguration")
-	GetInvoicingConfigurationResponseDto findInvoicingConfiguration();
+	Response findInvoicingConfiguration();
 
 	@GET
 	@Path("/getCustomerConfiguration")
-	GetCustomerConfigurationResponseDto findCustomerConfiguration();
+	Response findCustomerConfiguration();
 
 	@GET
 	@Path("/getCustomerAccountConfiguration")
-	GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration();
+	Response findCustomerAccountConfiguration();
 	
 	@POST
 	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(ProviderDto postData);
+	Response createOrUpdate(ProviderDto postData);
 }
