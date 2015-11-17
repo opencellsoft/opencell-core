@@ -9,6 +9,7 @@ public class MeveoApiErrorCode {
 	// General API Errors 1xxx
 	public static String ENTITY_DOES_NOT_EXISTS_EXCEPTION = "ENTITY_DOES_NOT_EXISTS_EXCEPTION";
 	public static String ENTITY_ALREADY_EXISTS_EXCEPTION = "ENTITY_ALREADY_EXISTS_EXCEPTION";
+	public static String DELETE_REFERENCED_ENTITY_EXCEPTION = "DELETE_REFERENCED_ENTITY_EXCEPTION";
 
 	// Validation Errors 2xxx
 	/**

@@ -1,5 +1,8 @@
 package org.meveo.api.rest.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -24,12 +27,14 @@ import org.meveo.api.rest.ProviderRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/provider")
 public class ProviderRsImpl extends BaseRs implements ProviderRs {
 
 	@Inject
 	private ProviderApi providerApi;
 
 	@Override
+	@ApiOperation(value = "Create a provider")
 	public ActionStatus create(ProviderDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -50,6 +55,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Find provider by providerCode")
 	public GetProviderResponse find(@QueryParam("providerCode") String providerCode) {
 		GetProviderResponse result = new GetProviderResponse();
 
@@ -69,7 +75,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 		return result;
 	}
 
-	@Override
+	@ApiOperation(value = "Update a provider given a code")
 	public ActionStatus update(ProviderDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -90,6 +96,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Returns list of trading countries, currencies and languages")
 	public GetTradingConfigurationResponseDto findTradingConfiguration() {
 		GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
@@ -110,6 +117,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Returns list of invoicing configuration (calendars, taxes, invoice categories, invoice sub categories, billing cycles and termination reasons")
 	public GetInvoicingConfigurationResponseDto findInvoicingConfiguration() {
 		GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
@@ -130,6 +138,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Returns list of customer brands, categories and titles")
 	public GetCustomerConfigurationResponseDto findCustomerConfiguration() {
 		GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
@@ -150,6 +159,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Returns list of payment method and credit categories")
 	public GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration() {
 		GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
@@ -168,11 +178,12 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "Create or update a provider if it doesn't exists")
 	public ActionStatus createOrUpdate(ProviderDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			providerApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {

@@ -56,7 +56,6 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.BillingCycleService;
-import org.meveo.service.billing.impl.InvoiceConfigurationService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -76,9 +75,6 @@ import org.meveo.service.payments.impl.CreditCategoryService;
  **/
 @Stateless
 public class ProviderApi extends BaseApi {
-
-	@Inject
-	private InvoiceConfigurationService invoiceConfigurationService;
 
 	@Inject
 	private ProviderService providerService;
@@ -144,7 +140,7 @@ public class ProviderApi extends BaseApi {
 			provider.setMulticountryFlag(postData.isMultiCountry());
 			provider.setMulticurrencyFlag(postData.isMultiCurrency());
 			provider.setMultilanguageFlag(postData.isMultiLanguage());
-			
+
 			provider.setEntreprise(postData.isEnterprise());
 			provider.setInvoicePrefix(postData.getInvoicePrefix());
 			provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
@@ -199,31 +195,31 @@ public class ProviderApi extends BaseApi {
 			invoiceConfiguration.setDisplaySubscriptions(true);
 			invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
 			invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
-			
+
 			Auditable auditable = new Auditable(currentUser);
 			invoiceConfiguration.setAuditable(auditable);
-			
+
 			provider.setInvoiceConfiguration(invoiceConfiguration);
-			
+
 			// populate customFields
 			if (postData.getCustomFields() != null) {
 				try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), provider, currentUser);
+					populateCustomFields(postData.getCustomFields().getCustomField(), provider, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");
 				}
 			}
-			
+
 			provider.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
 			provider.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
-			
+
 			if (postData.getInvoiceAdjustmentSequenceSize() != null) {
 				provider.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
 			}
-			
+
 			providerService.create(provider, currentUser);
-						
+
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -247,7 +243,7 @@ public class ProviderApi extends BaseApi {
 				missingParameters.add("providerCode");
 			}
 
-			throw new MeveoApiException(getMissingParametersExceptionMessage());
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -300,22 +296,22 @@ public class ProviderApi extends BaseApi {
 				UserAccount ua = userAccountService.findByCode(postData.getUserAccount(), currentUser.getProvider());
 				provider.setUserAccount(ua);
 			}
-			
+
 			// populate customFields
 			if (postData.getCustomFields() != null) {
 				try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), provider, currentUser);
+					populateCustomFields(postData.getCustomFields().getCustomField(), provider, currentUser);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					log.error("Failed to associate custom field instance to an entity", e);
 					throw new MeveoApiException("Failed to associate custom field instance to an entity");
 				}
 			}
-			
+
 			provider.setDisplayFreeTransacInInvoice(postData.isDisplayFreeTransacInInvoice());
 			provider.setEntreprise(postData.isEnterprise());
 			provider.setInvoicePrefix(postData.getInvoicePrefix());
 			provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
-			
+
 			InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
 			if (invoiceConfiguration != null) {
 				invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
@@ -325,23 +321,23 @@ public class ProviderApi extends BaseApi {
 				invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
 				invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
 			}
-			
+
 			if (postData.getInvoiceSequenceSize() != null) {
 				provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());
 			}
-			
+
 			if (postData.getInvoiceAdjustmentPrefix() != null) {
 				provider.setInvoiceAdjustmentPrefix(postData.getInvoiceAdjustmentPrefix());
 			}
-			
+
 			if (postData.getCurrentInvoiceAdjustmentNb() != null) {
 				provider.setCurrentInvoiceAdjustmentNb(postData.getCurrentInvoiceAdjustmentNb());
 			}
-			
+
 			if (postData.getInvoiceAdjustmentSequenceSize() != null) {
 				provider.setInvoiceAdjustmentSequenceSize(postData.getInvoiceAdjustmentSequenceSize());
 			}
-			
+
 			providerService.update(provider, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
@@ -496,23 +492,23 @@ public class ProviderApi extends BaseApi {
 
 		return result;
 	}
-	
-	
+
 	/**
 	 * Create or update Provider based on provider code
+	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
 	 */
 	public void createOrUpdate(ProviderDto postData, User currentUser) throws MeveoApiException {
 		Provider provider = providerService.findByCode(postData.getCode());
-		
+
 		if (provider == null) {
 			create(postData, currentUser);
 		} else {
 			update(postData, currentUser);
 		}
-		
+
 	}
-	
+
 }

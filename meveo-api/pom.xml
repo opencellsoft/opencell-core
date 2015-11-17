@@ -28,7 +28,6 @@
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
-			<version>5.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
@@ -67,7 +66,6 @@
 		<dependency>
 				<groupId>org.manaty</groupId>
 				<artifactId>meveo-tmforum</artifactId>
-				<version>${project.version}</version>
 			</dependency>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
@@ -111,15 +109,15 @@
 			<artifactId>arquillian-rest-client-impl-3x</artifactId>
 			<version>1.0.0.Alpha3</version>
 		</dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-multipart-provider</artifactId>
-        </dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jackson-provider</artifactId>
-			<scope>test</scope>
-		</dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.jboss.resteasy</groupId> -->
+<!--             <artifactId>resteasy-multipart-provider</artifactId> -->
+<!--         </dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.jboss.resteasy</groupId> -->
+<!-- 			<artifactId>resteasy-jackson-provider</artifactId> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.jboss.arquillian.extension</groupId>
@@ -138,7 +136,12 @@
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
-			<version>1.1.0.Final</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-jaxrs</artifactId>
+			<version>1.5.4</version>
 		</dependency>
 	</dependencies>
 
