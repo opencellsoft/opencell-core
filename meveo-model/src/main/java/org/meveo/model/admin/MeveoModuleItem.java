@@ -76,40 +76,4 @@ public class MeveoModuleItem extends BaseEntity {
 	public void setAppliesTo(String applyTo) {
 		this.appliesTo = applyTo;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = prime * 1;// super.hashCode();
-		result += itemType != null ? itemType.hashCode() : 0;
-		result += itemCode != null ? itemCode.hashCode() : 0;
-		result += appliesTo != null ? appliesTo.hashCode() : 0;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		} else if (!(obj instanceof MeveoModuleItem)) {
-			return false;
-		}
-
-		MeveoModuleItem other = (MeveoModuleItem) obj;
-
-		if (itemType == ModuleItemTypeEnum.CFT){
-			if(itemType.equals(other.getItemType())&& itemCode != null && itemCode.equalsIgnoreCase(other.getItemCode())
-				&& appliesTo.equalsIgnoreCase(other.getAppliesTo())) {
-				return true;
-			}
-		}else if (itemType.equals(other.getItemType()) && itemCode != null
-				&& itemCode.equalsIgnoreCase(other.getItemCode())) {
-			return true;
-		}
-		return false;
-	}
-
 }

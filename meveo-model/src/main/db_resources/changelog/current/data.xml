@@ -31,5 +31,7 @@
             <column name="permission_id" valueNumeric="16" />
         </insert>
 	</changeSet>
-
+	<changeSet id="#1103_20151117" author="TyshanShi">
+		<sql>DELETE FROM MEVEO_MODULE_ITEM</sql>
+	</changeSet>
 </databaseChangeLog>
