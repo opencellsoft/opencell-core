@@ -116,12 +116,14 @@ public class PaymentApi extends BaseApi {
 		automatedPayment.setTransactionDate(paymentDto.getTransactionDate());
 		automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
 		automatedPaymentService.create(automatedPayment, currentUser, provider);
+		int nbOccMatched = 0;
 
 		if (paymentDto.isToMatching()) {
 			MatchingCode matchingCode = new MatchingCode();
 			BigDecimal amountToMatch = BigDecimal.ZERO;
 			if(paymentDto.getListOCCReferenceforMatching() !=null){
-				for (int i = 0; i < paymentDto.getListOCCReferenceforMatching().size(); i++) {
+				nbOccMatched = paymentDto.getListOCCReferenceforMatching().size();
+				for (int i = 0; i < nbOccMatched; i++) {
 					RecordedInvoice accountOperation = recordedInvoiceService.getRecordedInvoice(paymentDto.getListOCCReferenceforMatching().get(i), provider);
 					amountToMatch = accountOperation.getUnMatchingAmount();
 					accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
@@ -144,7 +146,7 @@ public class PaymentApi extends BaseApi {
 			matchingCode.setMatchingType(MatchingTypeEnum.A);
 			matchingCode.setProvider(provider);
 			matchingCodeService.create(matchingCode, currentUser, provider);
-			log.info("matching created  for 1 automatedPayment and " + (paymentDto.getListOCCReferenceforMatching().size() - 1) + " occ");
+			log.info("matching created  for 1 automatedPayment and " + (nbOccMatched - 1) + " occ");
 		} else {
 			log.info("no matching created ");
 		}

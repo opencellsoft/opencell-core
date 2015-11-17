@@ -73,6 +73,7 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 	public MatchingAmount findByCode(String matchingCode, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(MatchingAmount.class, "m", null, provider);
 		qb.addCriterion("matchingCode", "=", matchingCode, true);
+		qb.addCriterionEntity("m.provider", provider);
 
 		try {
 			return (MatchingAmount) qb.getQuery(getEntityManager()).getSingleResult();
