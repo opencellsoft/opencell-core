@@ -90,7 +90,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		matchingCode.setMatchingAmountCredit(amount);
 		matchingCode.setMatchingDate(new Date());
 		matchingCode.setMatchingType(matchingTypeEnum);
-		create(matchingCode, user);
+		create(matchingCode, user,user.getProvider());
 
 	}
 
@@ -242,6 +242,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		// log.info("matchOperations successful  customerAccountId:{}  customerAccountCode:{} operationIds:{} user:{}",
 		// customerAccountId, customerAccountCode,
 		// operationIds, user == null ? "null" : user.getName());
+		log.debug("matchingReturnObject.getPartialMatchingOcc().size:"+(matchingReturnObject.getPartialMatchingOcc() == null ? null : matchingReturnObject.getPartialMatchingOcc().size()));
 
 		return matchingReturnObject;
 	}
