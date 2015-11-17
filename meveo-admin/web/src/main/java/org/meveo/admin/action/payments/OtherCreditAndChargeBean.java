@@ -23,6 +23,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -193,10 +194,18 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 	 * @param customerAccountId
 	 * @return
 	 */
-	public String loadFromTemplatePaymentCheck(Long customerAccountId) {
-		return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplatePaymentCheck"
-				+ "&edit=true&faces-redirect=true&includeViewParams=true";
-	}
+	public String loadFromTemplatePaymentCheck(Long customerAccountId){  
+		String occTemplatePaymentCode = paramBean.getProperty("occ.templatePaymentCheckCode", "RG_CHQ");
+		OCCTemplate occ = occTemplateService.findByCode(
+				occTemplatePaymentCode, getCurrentProvider().getCode());
+		if(occ==null){
+			messages.error(new BundleKey("messages", "accountOperation.occTemplatePaymentCheckNotFound"));
+			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+			+ customerAccountId + "&edit=true&mainTab=1&faces-redirect=true";
+		}  
+	return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplatePaymentCheck"
+			+ "&edit=true&faces-redirect=true&includeViewParams=true";
+}
 
 	/**
 	 * @param customerAccountId
