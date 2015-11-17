@@ -27,8 +27,23 @@
 	<td>meveoTest@opencell.fr</td>
 </tr>
 <tr>
+	<td>assertText</td>
+	<td>xpath=(//a[contains(text(),'Change password')])[2]</td>
+	<td>Change password</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>xpath=(//a[contains(text(),'Change password')])[2]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${ClickToChangePassword}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>${Password}</td>
 	<td></td>
 </tr>
 <tr>
@@ -40,16 +55,6 @@
 	<td>type</td>
 	<td>${repeatPassword}</td>
 	<td>Shmeveo2015</td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${UserRole}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${AddOneUserRole}</td>
-	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
