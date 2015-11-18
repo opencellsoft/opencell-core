@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="CF"/>
@@ -21942,7 +21942,344 @@
          <jobInstanceCode>?</jobInstanceCode>\r
       </ws:removeJobInstance>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/removeJobInstance"/></con:call></con:operation></con:interface><con:testSuite id="217182c9-4237-4dff-af63-8cad8b3874de" name="CF"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT for all entities" searchProperties="true" id="5b439f67-d207-4c93-bb38-f1f1887d7706"><con:settings/><con:testStep type="calltestcase" name="Create CFT for customer" id="050be43f-fda0-42f2-acc2-7ccaac82557d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CUST</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for customer account" id="145e0c5a-c6f9-4d1d-a1a1-c7963c66dc74"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for billing account" id="305f83e3-a058-4444-a420-c3cb13390241"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>BA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for user account" id="1a538fca-7032-4bbb-87a9-03a8ea56d9bf"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>UA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for subscription" id="571fe5cb-11f3-4c2f-bcc3-46314a5e9a09"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SUB</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for access" id="4c9308f2-2df1-4435-8645-0116fafdc018"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>ACC</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for provider" id="3acd3ae8-a220-4487-b534-aac056c39e42"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>PROVIDER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for service template" id="5346204a-1592-412f-b66c-7c2f5cfeb5fb"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SERVICE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for offer template" id="ba1027f1-331f-4918-9cb2-da0d4e3f90fc"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>OFFER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for charge template" id="74d70e84-d8b5-4b30-a79d-c8b450dec95d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CHARGE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for seller" id="ffa7550a-5947-40c4-88dd-b9428f635afe"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SELLER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="070f7c5f-8c18-4bca-893b-27e7d9d95e77" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Provider" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="93a89f39-24ba-4640-973a-a7e0c01627c5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createProvider</con:operation><con:request name="create" id="fed3e654-710d-40df-9ccd-cb9e29c803b7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/JobWs/removeJobInstance"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="5743e09d-ca6e-4338-8a49-6b2f9740fab1" wsaVersion="NONE" name="ModuleWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ModuleWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/ModuleWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/ModuleWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/ModuleWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ModuleWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/ModuleWs?wsdl=ModuleWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+  <wsdl:binding name="ModuleWsSoapBinding" type="ns1:ModuleWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="get">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="get">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="delete">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="delete">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="deleteResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="list">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="list">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="create">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="create">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="index">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="indexResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="update">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ModuleWs">
+    <wsdl:port binding="tns:ModuleWsSoapBinding" name="ModuleWsImplPort">
+      <soap:address location="http://localhost:8080/meveo/ModuleWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/ModuleWs?wsdl=ModuleWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ModuleWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
+      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="MeveoModuleDtoResponse" type="tns:meveoModuleDtoResponse"/>
+      <xs:element name="MeveoModuleDtosResponse" type="tns:meveoModuleDtosResponse"/>
+      <xs:element name="Module" type="tns:moduleDto"/>
+      <xs:element name="ModuleItem" type="tns:moduleItemDto"/>
+      <xs:element name="create" type="tns:create"/>
+      <xs:element name="createResponse" type="tns:createResponse"/>
+      <xs:element name="delete" type="tns:delete"/>
+      <xs:element name="deleteResponse" type="tns:deleteResponse"/>
+      <xs:element name="get" type="tns:get"/>
+      <xs:element name="getResponse" type="tns:getResponse"/>
+      <xs:element name="index" type="tns:index"/>
+      <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="list" type="tns:list"/>
+      <xs:element name="listResponse" type="tns:listResponse"/>
+      <xs:element name="update" type="tns:update"/>
+      <xs:element name="updateResponse" type="tns:updateResponse"/>
+      <xs:complexType name="get">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:meveoModuleDtoResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="meveoModuleDtoResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="moduleDto" type="tns:moduleDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="moduleDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="diabled" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="moduleItems">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:ModuleItem"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="moduleItemDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="appliesTo" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="itemType" type="tns:moduleItemTypeEnum" use="required"/>
+        <xs:attribute name="itemCode" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:complexType name="actionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="delete">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="deleteResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="list">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="listResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:meveoModuleDtosResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="meveoModuleDtosResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="moduleDtoList" nillable="true" type="tns:moduleDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="create">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="module" type="tns:moduleDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="index">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="indexResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="update">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="module" type="tns:moduleDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="moduleItemTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="CET"/>
+          <xs:enumeration value="CFT"/>
+          <xs:enumeration value="FILTER"/>
+          <xs:enumeration value="SCRIPT"/>
+          <xs:enumeration value="JOBINSTANCE"/>
+          <xs:enumeration value="NOTIFICATION"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="actionStatusEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESS"/>
+          <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="deleteResponse">
+    <wsdl:part element="ns1:deleteResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="indexResponse">
+    <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="get">
+    <wsdl:part element="ns1:get" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getResponse">
+    <wsdl:part element="ns1:getResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="delete">
+    <wsdl:part element="ns1:delete" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="list">
+    <wsdl:part element="ns1:list" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listResponse">
+    <wsdl:part element="ns1:listResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateResponse">
+    <wsdl:part element="ns1:updateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="create">
+    <wsdl:part element="ns1:create" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createResponse">
+    <wsdl:part element="ns1:createResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="update">
+    <wsdl:part element="ns1:update" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ModuleWs">
+    <wsdl:operation name="get">
+      <wsdl:input message="ns1:get" name="get"></wsdl:input>
+      <wsdl:output message="ns1:getResponse" name="getResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="delete">
+      <wsdl:input message="ns1:delete" name="delete"></wsdl:input>
+      <wsdl:output message="ns1:deleteResponse" name="deleteResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="list">
+      <wsdl:input message="ns1:list" name="list"></wsdl:input>
+      <wsdl:output message="ns1:listResponse" name="listResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="create">
+      <wsdl:input message="ns1:create" name="create"></wsdl:input>
+      <wsdl:output message="ns1:createResponse" name="createResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="index">
+      <wsdl:input message="ns1:index" name="index"></wsdl:input>
+      <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <wsdl:input message="ns1:update" name="update"></wsdl:input>
+      <wsdl:output message="ns1:updateResponse" name="updateResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint></con:endpoints><con:operation id="9ffe4e9d-9f36-449f-9b9d-3eded2e17733" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="064a8e9d-8afd-483d-87a7-ffa2909715dc" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <!--Optional:-->
+         <module>
+            <code>?</code>
+            <description>?</description>
+            <!--Optional:-->
+            <diabled>?</diabled>
+            <!--Zero or more repetitions:-->
+            <moduleItems>
+               <itemType>?</itemType>
+               <!--Optional:-->
+               <appliesTo>?</appliesTo>
+               <itemCode>?</itemCode>
+            </moduleItems>
+         </module>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/create"/></con:call></con:operation><con:operation id="af7f7acd-b7df-4ea7-a64d-82b7c2144be4" isOneWay="false" action="" name="delete" bindingOperationName="delete" type="Request-Response" outputName="deleteResponse" inputName="delete" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a176a617-2ffe-4f04-b4e1-b34abb05eca9" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:delete>
+         <!--Optional:-->
+         <code>?</code>
+      </ws:delete>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/delete"/></con:call></con:operation><con:operation id="cc2d6c67-b71e-40a0-8d41-18ff20f1886c" isOneWay="false" action="" name="get" bindingOperationName="get" type="Request-Response" outputName="getResponse" inputName="get" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="0cdee6e4-9b5b-47d6-b357-4e2f2105af6e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:get>
+         <!--Optional:-->
+         <code>?</code>
+      </ws:get>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/get"/></con:call></con:operation><con:operation id="8c60be5f-e2f1-4985-9446-962da45963fb" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e5f4f04f-baa6-4201-a600-101e60eb9200" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:index/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/index"/></con:call></con:operation><con:operation id="7476cbec-66eb-412b-9bb8-acd39104b4cd" isOneWay="false" action="" name="list" bindingOperationName="list" type="Request-Response" outputName="listResponse" inputName="list" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e61ba9e8-a5b7-4b21-94ac-a1544fe22624" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:list/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/list"/></con:call></con:operation><con:operation id="eec0701a-b489-49c2-a65c-6229a84b25b2" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="19b0f993-8ba7-4db7-aea5-b33726782294" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:update>
+         <!--Optional:-->
+         <module>
+            <code>?</code>
+            <description>?</description>
+            <!--Optional:-->
+            <diabled>?</diabled>
+            <!--Zero or more repetitions:-->
+            <moduleItems>
+               <itemType>?</itemType>
+               <!--Optional:-->
+               <appliesTo>?</appliesTo>
+               <itemCode>?</itemCode>
+            </moduleItems>
+         </module>
+      </ws:update>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/ModuleWs/update"/></con:call></con:operation></con:interface><con:testSuite id="217182c9-4237-4dff-af63-8cad8b3874de" name="CF"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT for all entities" searchProperties="true" id="5b439f67-d207-4c93-bb38-f1f1887d7706"><con:settings/><con:testStep type="calltestcase" name="Create CFT for customer" id="050be43f-fda0-42f2-acc2-7ccaac82557d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CUST</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for customer account" id="145e0c5a-c6f9-4d1d-a1a1-c7963c66dc74"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for billing account" id="305f83e3-a058-4444-a420-c3cb13390241"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>BA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for user account" id="1a538fca-7032-4bbb-87a9-03a8ea56d9bf"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>UA</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for subscription" id="571fe5cb-11f3-4c2f-bcc3-46314a5e9a09"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SUB</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for access" id="4c9308f2-2df1-4435-8645-0116fafdc018"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>ACC</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for provider" id="3acd3ae8-a220-4487-b534-aac056c39e42"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>PROVIDER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for service template" id="5346204a-1592-412f-b66c-7c2f5cfeb5fb"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SERVICE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for offer template" id="ba1027f1-331f-4918-9cb2-da0d4e3f90fc"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>OFFER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for charge template" id="74d70e84-d8b5-4b30-a79d-c8b450dec95d"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>CHARGE</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create CFT for seller" id="ffa7550a-5947-40c4-88dd-b9428f635afe"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>SELLER</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="070f7c5f-8c18-4bca-893b-27e7d9d95e77" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Provider" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="93a89f39-24ba-4640-973a-a7e0c01627c5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createProvider</con:operation><con:request name="create" id="fed3e654-710d-40df-9ccd-cb9e29c803b7"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createProvider>
@@ -26043,5 +26380,135 @@
          </customField>
       </ws:createCustomFieldTemplate>
    </soapenv:Body> 
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="112602db-0cd7-4c28-a357-e28f18bf2c7c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property><con:property><con:name>fieldType</con:name><con:value/></con:property><con:property><con:name>entityClazz</con:name><con:value/></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT by entity" searchProperties="true" id="b8c4b3e5-8b23-46fb-b102-34234cef0663" disabled="true"><con:settings/><con:testStep type="calltestcase" name="Create String CFT" id="2dba14c5-b8a5-4310-ac0d-88f597b82de4"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>STRING</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Long CFT" id="5001883f-fd13-4c1d-8b62-485d96397ff3"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>LONG</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Date CFT" id="a31db638-5c62-4446-8dc7-c6a537784e52"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DATE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Double CFT" id="afd5d3cd-b8c4-4d57-824a-3d300154661b"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DOUBLE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Entity CFT" id="6d9f0cad-3bd5-48b0-914f-31163603d365"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>ENTITY</con:value></con:property><con:property><con:name>entityClazz</con:name><con:value>org.meveo.model.catalog.Calendar</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>77</con:value></con:property></con:properties><con:setupScript>
-testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE">${#Project#meveoEndpoint}/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="112602db-0cd7-4c28-a357-e28f18bf2c7c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property><con:property><con:name>fieldType</con:name><con:value/></con:property><con:property><con:name>entityClazz</con:name><con:value/></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT by entity" searchProperties="true" id="b8c4b3e5-8b23-46fb-b102-34234cef0663" disabled="true"><con:settings/><con:testStep type="calltestcase" name="Create String CFT" id="2dba14c5-b8a5-4310-ac0d-88f597b82de4"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>STRING</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Long CFT" id="5001883f-fd13-4c1d-8b62-485d96397ff3"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>LONG</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Date CFT" id="a31db638-5c62-4446-8dc7-c6a537784e52"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DATE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Double CFT" id="afd5d3cd-b8c4-4d57-824a-3d300154661b"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DOUBLE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Entity CFT" id="6d9f0cad-3bd5-48b0-914f-31163603d365"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>ENTITY</con:value></con:property><con:property><con:name>entityClazz</con:name><con:value>org.meveo.model.catalog.Calendar</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property></con:properties></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>80</con:value></con:property></con:properties><con:setupScript>
+testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite id="3145d9d8-9b51-45d5-bfde-12f25671904f" name="Module"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="9e6bed12-8271-4377-8f02-204d865f7440" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Init items" searchProperties="true"><con:settings/><con:testStep type="request" name="Create CET1" id="8e909282-1ee7-4b91-8fd3-2abda96d6ef1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateCustomEntityTemplate</con:operation><con:request name="Create CET1" id="68717aba-9e3c-422e-b154-b9cc71705266"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCustomEntityTemplate>
+         <!--Optional:-->
+         <customEntityTemplate code="${#TestSuite#ticket}_CET_code2" name="${#TestSuite#ticket}_CET_name2" description="${#TestSuite#ticket}_CET_description2"/>
+      </ws:createOrUpdateCustomEntityTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d90636dc-f670-4124-a192-559ce81f22e1"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT" id="8244921c-5c94-410e-bf50-380eaa01deb8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT" id="e32cdd30-4327-4eb6-92cf-4710ac0a6f3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomFieldTemplate>
+         <!--Optional:-->
+         <customField code="${#TestSuite#ticket}_CFT_code" description="${#TestSuite#ticket}_CFT_description">
+            <fieldType>STRING</fieldType>
+            <storageType>SINGLE</storageType>
+            <appliesTo>CUST</appliesTo>
+         </customField>
+      </ws:createCustomFieldTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="860e0daa-f2b5-4c3a-900e-c6d07778ee4e"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CET2" id="8149a898-7617-4dce-9991-3a013db723d0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateCustomEntityTemplate</con:operation><con:request name="Create CET2" id="68717aba-9e3c-422e-b154-b9cc71705266"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateCustomEntityTemplate>
+         <!--Optional:-->
+         <customEntityTemplate code="${#TestSuite#ticket}_CET_code1" name="${#TestSuite#ticket}_CET_name1" description="${#TestSuite#ticket}_CET_description1"/>
+      </ws:createOrUpdateCustomEntityTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="d90636dc-f670-4124-a192-559ce81f22e1"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="68444d86-5b6f-4a22-adb5-feba88068787" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Module" searchProperties="true"><con:settings/><con:testStep type="request" name="Create" id="fe3a56e6-90f1-4716-8ee4-11eae28a9963"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create" id="26fadc13-9fcd-4022-a898-007cee426e83"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <!--Optional:-->
+         <module code="${#TestSuite#ticket}_Module_code" description="${#TestSuite#ticket}_Module_description">
+            <!--Optional:-->
+            <moduleItems>
+            	<ModuleItem itemType="CET" itemCode="${#TestSuite#ticket}_CET_code1"/>
+               <ModuleItem itemType="CET" itemCode="${#TestSuite#ticket}_CET_code2"/>
+               <!--Zero or more repetitions:-->
+               <ModuleItem itemType="CFT" itemCode="${#TestSuite#ticket}_CFT_code">
+                  <!--Optional:-->
+                  <appliesTo>CUST</appliesTo>
+               </ModuleItem>
+            </moduleItems>
+         </module>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="65819703-e5bc-48b6-8b33-c3bb09e028bc"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update" id="85721352-572e-4730-8b9c-14072cd4c908"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update" id="3506c20e-cc8c-4ac9-b0f6-6ad6ad94f6aa"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:update>
+         <!--Optional:-->
+         <module code="${#TestSuite#ticket}_Module_code" description="${#TestSuite#ticket}_Module_description_update">
+            <!--Optional:-->
+            <diabled>true</diabled>
+            <!--Optional:-->
+            <moduleItems>
+               <!--Zero or more repetitions:-->
+               <ModuleItem itemType="CET" itemCode="${#TestSuite#ticket}_CET_code1"/>
+               <ModuleItem itemType="CFT" itemCode="${#TestSuite#ticket}_CFT_code">
+               	<appliesTo>CUST</appliesTo>
+               </ModuleItem>
+            </moduleItems>
+         </module>
+      </ws:update>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="779952b8-98ef-4d00-87c7-1cf6676b2904"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Get" id="41c9f512-4845-4dfb-b269-20bb1973d131"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>get</con:operation><con:request name="Get" id="fff83a35-c78b-4dfc-9465-f3fdd4155d18"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:get><!--Optional:-->
+         <code>${#TestSuite#ticket}_Module_code</code>
+      </ws:get>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="3382c6c6-3e45-4ded-8818-ff872c56f22a"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="List" id="e6602969-f603-4f11-9afc-1dd80fe3e569"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>list</con:operation><con:request name="List" id="e41cc5f6-e897-44aa-ab71-9c6a41ef5e5d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:list/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9b66e124-744d-42d5-96d3-9d4061d931a3"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete" id="c3fe5cc6-27fc-4be4-a9fa-d1b633721b15"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>delete</con:operation><con:request name="Delete" id="5e65d7c2-5466-4f69-b07b-872a0f27ce3e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:delete><!--Optional:-->
+         <code>${#TestSuite#ticket}_Module_code</code>
+      </ws:delete>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="138d8ba5-7068-4031-8a5d-faa697dc6aaf"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Copy of Create" id="3d130cde-82c1-4786-8aa3-b51ce441b6fd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Copy of Create" id="26fadc13-9fcd-4022-a898-007cee426e83"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <!--Optional:-->
+         <module code="${#TestSuite#ticket}_Module_code" description="${#TestSuite#ticket}_Module_description">
+            <!--Optional:-->
+            <moduleItems>
+            	<ModuleItem itemType="CET" itemCode="${#TestSuite#ticket}_CET_code1"/>
+               <ModuleItem itemType="CET" itemCode="${#TestSuite#ticket}_CET_code2"/>
+               <!--Zero or more repetitions:-->
+               <ModuleItem itemType="CFT" itemCode="${#TestSuite#ticket}_CFT_code">
+                  <!--Optional:-->
+                  <appliesTo>CUST</appliesTo>
+               </ModuleItem>
+            </moduleItems>
+         </module>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="65819703-e5bc-48b6-8b33-c3bb09e028bc"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="d8af7dd8-96ad-4d82-a950-8f521abbd89f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Clean" searchProperties="true"><con:settings/><con:testStep type="request" name="Delete CET1" id="b9f39a2a-a003-416e-869b-d7f1d2ca4afd"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeCustomEntityTemplate</con:operation><con:request name="Delete CET1" id="04d81923-afb4-4147-9829-63bed0745cfd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeCustomEntityTemplate>
+         <!--Optional:-->
+         <code>${#TestSuite#ticket}_CET_code2</code>
+      </ws:removeCustomEntityTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e8ac783d-aa45-4924-bcb1-d79c57949d1e"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete CFT" id="76a21de0-646d-4c32-9fa0-e2fc8a7cf094"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeCustomFieldTemplate</con:operation><con:request name="Delete CFT" id="179c0536-597d-44d9-95df-1489e4ae9132"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeCustomFieldTemplate>
+         <!--Optional:-->
+         <customFieldTemplateCode>${#TestSuite#ticket}_CFT_code</customFieldTemplateCode>
+         <!--Optional:-->
+         <accountLevel>CUST</accountLevel>
+      </ws:removeCustomFieldTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6f292af6-90f1-471a-bf26-37b0e39c195c"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete CET2" id="41ab7128-ca9a-4902-86c1-e179e858a865"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeCustomEntityTemplate</con:operation><con:request name="Delete CET2" id="04d81923-afb4-4147-9829-63bed0745cfd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeCustomEntityTemplate>
+         <!--Optional:-->
+         <code>${#TestSuite#ticket}_CET_code1</code>
+      </ws:removeCustomEntityTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e8ac783d-aa45-4924-bcb1-d79c57949d1e"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_Module</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE">${#Project#meveoEndpoint}/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

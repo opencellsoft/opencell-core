@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -18,10 +18,10 @@ import org.meveo.model.admin.ModuleItemTypeEnum;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ModuleItemDto implements Serializable {
 	private static final long serialVersionUID = -2237671803222827809L;
-	@XmlElement(required=true)
+	@XmlAttribute(required=true)
 	private ModuleItemTypeEnum itemType;
 	private String appliesTo;
-	@XmlElement(required=true)
+	@XmlAttribute(required=true)
 	private String itemCode;
 	@XmlTransient
 	private String description;

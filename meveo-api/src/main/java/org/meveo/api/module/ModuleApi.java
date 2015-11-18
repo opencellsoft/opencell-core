@@ -1,6 +1,7 @@
 package org.meveo.api.module;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -165,7 +166,7 @@ public class ModuleApi extends BaseApi {
 			}
 			meveoModule.setDescription(moduleDto.getDescription());
 			meveoModule.setDisabled(moduleDto.getDiabled());
-			meveoModule.clearItems();
+			List<MeveoModuleItem> temps=new ArrayList<MeveoModuleItem>();
 			if (!StringUtils.isBlank(moduleDto.getModuleItems())&&moduleDto.getModuleItems().size()>0) {
 				MeveoModuleItem moduleItem = null;
 				for (ModuleItemDto itemDto : moduleDto.getModuleItems()) {
@@ -174,7 +175,18 @@ public class ModuleApi extends BaseApi {
 						throw new MissingParameterException(getMissingParametersExceptionMessage());
 					}
 					moduleItem=getModuleItemFromDto(itemDto, provider);
-					meveoModule.addModuleItem(moduleItem);
+					if(!meveoModule.getModuleItems().contains(moduleItem)){
+						meveoModule.addModuleItem(moduleItem);
+					}
+					temps.add(moduleItem);
+				}
+			}
+			Iterator<MeveoModuleItem> it=meveoModule.getModuleItems().iterator();
+			while(it.hasNext()){
+				MeveoModuleItem i=it.next();
+				if(!temps.contains(i)){
+					i.setMeveoModule(null);
+					it.remove();
 				}
 			}
 			meveoModuleService.update(meveoModule, currentUser);
@@ -200,7 +212,7 @@ public class ModuleApi extends BaseApi {
 			moduleDto.setCode(meveoModule.getCode());
 			moduleDto.setDescription(meveoModule.getDescription());
 			moduleDto.setDiabled(meveoModule.isDisabled());
-			Set<MeveoModuleItem> moduleItems=meveoModule.getModuleItems();
+			List<MeveoModuleItem> moduleItems=meveoModule.getModuleItems();
 			if(moduleItems!=null&&moduleItems.size()>0){
 				List<ModuleItemDto> itemDtos=new ArrayList<ModuleItemDto>();
 				ModuleItemDto itemDto=null;
@@ -224,7 +236,7 @@ public class ModuleApi extends BaseApi {
 		moduleDto.setCode(meveoModule.getCode());
 		moduleDto.setDescription(meveoModule.getDescription());
 		moduleDto.setDiabled(meveoModule.isDisabled());
-		Set<MeveoModuleItem> moduleItems=meveoModule.getModuleItems();
+		List<MeveoModuleItem> moduleItems=meveoModule.getModuleItems();
 		if(moduleItems!=null&&moduleItems.size()>0){
 			List<ModuleItemDto> itemDtos=new ArrayList<ModuleItemDto>();
 			ModuleItemDto itemDto=null;

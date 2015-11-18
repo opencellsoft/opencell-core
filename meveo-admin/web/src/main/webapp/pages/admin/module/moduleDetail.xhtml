@@ -88,7 +88,7 @@
 			label="#{messages['meveoModule.title']}" showEnableDisableButton="true"
 			backingBean="#{meveoModuleBean}">
 			<hftl:formField label="#{messages['businessEntity.code']}"
-				field="code" maxlength="35" required="true" />
+				field="code" maxlength="35" required="true" validateUnique="true"/>
 			<hftl:formField label="#{messages['businessEntity.description']}"
 				field="description" id="description" maxlength="100" />
 			<hftl:formField label="#{messages['enableEntity.active']}" field="active"

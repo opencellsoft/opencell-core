@@ -122,8 +122,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			for (MeveoModuleItem item : module.getModuleItems()) {
 				switch (item.getItemType()) {
 				case CET:
-					CustomEntityTemplate cet = customEntityTemplateService.findByCode(item.getItemCode().substring(item.getItemCode().indexOf("_")+1),
-							getCurrentProvider());
+					CustomEntityTemplate cet = customEntityTemplateService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(cet!=null){
 						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(cet.getCode(),cet.getDescription(), ModuleItemTypeEnum.CET),cetnode);
 					}

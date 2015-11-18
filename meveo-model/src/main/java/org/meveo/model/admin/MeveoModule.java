@@ -1,8 +1,8 @@
 package org.meveo.model.admin;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -34,11 +34,11 @@ public class MeveoModule extends BusinessEntity implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	@OneToMany(mappedBy="meveoModule",cascade={CascadeType.ALL},orphanRemoval=true,fetch=FetchType.EAGER)
-	private Set<MeveoModuleItem> moduleItems=new HashSet<MeveoModuleItem>();
-	public Set<MeveoModuleItem> getModuleItems() {
+	private List<MeveoModuleItem> moduleItems=new ArrayList<MeveoModuleItem>();
+	public List<MeveoModuleItem> getModuleItems() {
 		return moduleItems;
 	}
-	public void setModuleItems(Set<MeveoModuleItem> moduleItems) {
+	public void setModuleItems(List<MeveoModuleItem> moduleItems) {
 		this.moduleItems=moduleItems;
 	}
 	public void addModuleItem(MeveoModuleItem moduleItem){
@@ -49,13 +49,4 @@ public class MeveoModule extends BusinessEntity implements Serializable {
 		this.moduleItems.remove(item);
 		item.setMeveoModule(null);
 	}
-	public void clearItems(){
-		if(this.moduleItems!=null){
-			for(MeveoModuleItem item:moduleItems){
-				item.setMeveoModule(null);
-				this.moduleItems.remove(item);
-			}
-		}
-	}
-	
 }
