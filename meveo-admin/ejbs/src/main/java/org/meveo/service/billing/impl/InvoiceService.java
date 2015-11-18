@@ -598,7 +598,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		log.debug(writer.getBuffer().toString().replaceAll("\n|\r", ""));
 
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		XPathExpression expr = xPath.compile("/invoice/detail");
+		XPathExpression expr = xPath.compile("/invoice");
 		Object result = expr.evaluate(xmlDocument, XPathConstants.NODE);
 		Node node = (Node) result;
 
@@ -606,10 +606,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 		if (node != null) {
 			dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()),
-					"/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory");
+					"/invoice");
 		} else {
 			dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes()),
-					"/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory");
+					"/invoice");
 		}
 
 		JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
