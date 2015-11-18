@@ -12,29 +12,89 @@
 <tr><td rowspan="1" colspan="3">UpdatePrepaidWalletTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>${codeIdMessageLink}</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>Code_01</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>Description for Code_01</td>
+	<td>${Description}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${LowBalanceLevelBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${BalanceLevelNumber}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${BalanceLevelNumber}</td>
-	<td>00</td>
+	<td>${LowBalanceLevelValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>

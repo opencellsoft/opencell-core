@@ -13,38 +13,108 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${EmailTemplates}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>Email-Temp_01</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Subject}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Subject}</td>
-	<td>Meveo Test</td>
+	<td>${SubjectValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${HTMLContentBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${HTMLContent}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${HTMLContent}</td>
-	<td>&lt;p&gt;Test HTML Content&lt;/p&gt;</td>
+	<td>${HTMLContentValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${TextContentBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${TextContent}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${TextContent}</td>
-	<td>This is the content of the Email Subject</td>
+	<td>${TextContentValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${SubjectValue}')]</td>
+	<td>${SubjectValue}</td>
 </tr>
 </tbody></table>
 </body>

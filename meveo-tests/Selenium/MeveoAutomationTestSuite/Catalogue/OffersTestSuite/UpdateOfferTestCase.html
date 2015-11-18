@@ -4,16 +4,26 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessTestCase</title>
+<title>UpdateOfferTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateOfferTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>${AccountOperationsType}</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -22,13 +32,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${buttonNew}</td>
+	<td>assertText</td>
+	<td>${Informations}</td>
+	<td>Informations</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Informations}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>click</td>
+	<td>${Informations}</td>
 	<td></td>
 </tr>
 <tr>
@@ -49,56 +64,11 @@
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>${DescriptionValue}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${AccountCode}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${AccountCode}</td>
-	<td>${AccountCodeValue}</td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${AccountCodeCustomerSideBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${AccountCodeCustomerSide}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${AccountCodeCustomerSide}</td>
-	<td>${AccountCodeCustomerSideValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${Category}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${Category}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${CreditCategoryValue}</td>
-	<td></td>
+	<td>${Description}</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${saveButtonWhenCreate}</td>
+	<td>${saveButtonWhenUpdateAjax}</td>
 	<td></td>
 </tr>
 <tr>
@@ -121,6 +91,7 @@
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
 </tr>
+
 </tbody></table>
 </body>
 </html>

@@ -12,28 +12,93 @@
 <tr><td rowspan="1" colspan="3">ModifiedContactTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CurCode}')]</td>
+	<td>${CurCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${CurCode}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>id=datatable_results:0:currency_currencyCode_id_message_link</td>
+	<td>//a[contains(text(),'${CurCode}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${UpdateCurrencyCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${UpdateCurrencyCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionCurr}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${UpdateCurrencyCode}</td>
-	<td>AED</td>
+	<td>${descriptionCurr}</td>
+	<td>${Description}</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${descriptionCurr}</td>
-	<td>Dirham des émirats arabes unis</td>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ExchangeRateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ExchangeRate}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ExchangeRate}</td>
-	<td>1.00000</td>
+	<td>${ExchangeRateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

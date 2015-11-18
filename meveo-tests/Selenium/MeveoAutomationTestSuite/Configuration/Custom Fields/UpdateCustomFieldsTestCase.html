@@ -12,19 +12,49 @@
 <tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>id=datatable_results:0:code_id_message_link</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${updateCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${updateCode}</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${FieldLabel}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${updateCode}</td>
-	<td>cf_01</td>
+	<td>${FieldLabel}</td>
+	<td>${FieldLabelValue}</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${FieldLabel}</td>
-	<td>CF_Label</td>
+	<td>assertElementPresent</td>
+	<td>${DataEntryType}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -33,7 +63,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Double&quot;)</td>
+	<td>css=li:contains(&quot;${DataEntryTypeValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ApplyTo}</td>
 	<td></td>
 </tr>
 <tr>
@@ -43,13 +78,33 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[38]/div/ul/li[6]</td>
+	<td>${ApplyToValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DefaultvalueBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${DefaultValue}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${DefaultValue}</td>
-	<td>00</td>
+	<td>${DefaultvalueValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${StorageType}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -58,12 +113,37 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Single value&quot;)</td>
+	<td>css=li:contains(&quot;${StorageTypeValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MandatoryFieldBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${MandatoryField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${MandatoryField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${VersionableBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Versionable}</td>
 	<td></td>
 </tr>
 <tr>
@@ -73,12 +153,62 @@
 </tr>
 <tr>
 	<td>click</td>
+	<td>${Calendar}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;MONTHLY&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${CacheTheValueForPassedThePeriodEnd}</td>
+	<td>15</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${TriggerEndPeriodEventBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
 	<td>${TriggerEndPeriodEvent}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${TriggerEndPeriodEvent}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

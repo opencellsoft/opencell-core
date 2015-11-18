@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>UpdateRecurringChargeTestCase</title>
+<title>UpdateUsageTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">UpdateRecurringChargeTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateUsageTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>assertText</td>
@@ -43,18 +43,18 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${AgreementExtensionMonthBool}==true</td>
+	<td>${DescriptionBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${AgreementExtensionMonth}</td>
+	<td>${descriptionText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${AgreementExtensionMonth}</td>
-	<td>${AgreementExtensionMonthValue}</td>
+	<td>${descriptionText}</td>
+	<td>${Description}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -63,37 +63,17 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${ProratedAtSubscriptionBool}==true</td>
+	<td>${IsAmountOverridableBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${ProratedAtSubscription}</td>
+	<td>${IsAmountOverridable}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${ProratedAtSubscription}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ProratedAtTerminationBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${ProratedAtTermination}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ProratedAtTermination}</td>
+	<td>${IsAmountOverridable}</td>
 	<td></td>
 </tr>
 <tr>
@@ -103,43 +83,18 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${CycleForwardBool}==true</td>
+	<td>${PriorityBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${CycleForward}</td>
+	<td>${Priority}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${CycleForward}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${LevelOfChargeSharingBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${ChooseLevelOfChargeSharing}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ChooseLevelOfChargeSharing}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${LevelOfChargeSharingValue}&quot;)</td>
-	<td></td>
+	<td>type</td>
+	<td>${Priority}</td>
+	<td>${PriorityValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -228,18 +183,98 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${DescriptionBool}==true</td>
+	<td>${Param1Bool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${descriptionText}</td>
+	<td>${Param1}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionText}</td>
-	<td>${Description}</td>
+	<td>${Param1}</td>
+	<td>${Param1Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Param2Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Param2}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Param2}</td>
+	<td>${Param2Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Param3Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Param3}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Param3}</td>
+	<td>${Param3Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Param4Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Param4}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Param4}</td>
+	<td>${Param4Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${FilterExpressionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${FilterExpression}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${FilterExpression}</td>
+	<td>${FilterExpressionValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -248,32 +283,17 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${ChooseSubcategory}</td>
+	<td>${SearchSubcategory}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${ChooseSubcategory}</td>
+	<td>${SearchSubcategory}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${SubcategorySelect}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${ChooseDateCalendar}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ChooseDateCalendar}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${DateCalendarValue}&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -294,26 +314,6 @@
 <tr>
 	<td>click</td>
 	<td>${AddOneTriggeredEDR}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${IsAmountOverridableBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${IsAmountOverridable}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${IsAmountOverridable}</td>
 	<td></td>
 </tr>
 <tr>
@@ -346,6 +346,7 @@
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
+
 </tbody></table>
 </body>
 </html>

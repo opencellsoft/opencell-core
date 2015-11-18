@@ -12,33 +12,103 @@
 <tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>id=datatable_results:0:code_id_message_link</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>TAX_12</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>12 Percent Tax</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Percentage}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Percentage}</td>
-	<td>12</td>
+	<td>${PercentageValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AccountingCodeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AccountingCode}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AccountingCode}</td>
-	<td>ac_12</td>
+	<td>${AccountingCodeValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

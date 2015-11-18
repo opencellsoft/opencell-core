@@ -12,23 +12,73 @@
 <tr><td rowspan="1" colspan="3">ModifiedContactTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CtryCode}')]</td>
+	<td>${CtryCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${CtryCode}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>id=datatable_results:0:country_countryCode_id_message_link</td>
+	<td>//a[contains(text(),'${CtryCode}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${UpdateCountryCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${UpdateCountryCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionCtry}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${UpdateCountryCode}</td>
-	<td>AF</td>
+	<td>${descriptionCtry}</td>
+	<td>${Description}</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${descriptionCtry}</td>
-	<td>Afghanistan</td>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>
