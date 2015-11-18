@@ -13,32 +13,92 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${UserRoles}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${NewUserRoles}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${UserRoleName}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${UserRoleName}</td>
-	<td>userrolename</td>
+	<td>${UserRoleNameValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${UserRoleDescription}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${UserRoleDescription}</td>
-	<td>UserRoleDescription</td>
+	<td>${UserRoleDescriptionValue}</td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${AddAllPermissions}</td>
+	<td>assertText</td>
+	<td>${PermissionIN}</td>
+	<td>${PermissionValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${PermissionIN}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>doubleClick</td>
+	<td>${PermissionIN}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${PermissionOUT}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${PermissionOUT}</td>
+	<td>${PermissionValue}</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

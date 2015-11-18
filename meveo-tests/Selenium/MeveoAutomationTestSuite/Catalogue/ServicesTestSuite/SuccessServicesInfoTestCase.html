@@ -411,6 +411,21 @@
 	<td>id=tabView:datatable_serviceUsageCharges_results:0:chargeTemplate_code_chargeTemplate_id_message_link</td>
 	<td>${UsageChargeCode}</td>
 </tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
 </tbody></table>
 </body>
 </html>

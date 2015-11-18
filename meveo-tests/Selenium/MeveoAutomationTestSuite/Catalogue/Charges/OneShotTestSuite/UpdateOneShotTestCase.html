@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>UpdateTriggeredEDRTestCase</title>
+<title>UpdateOneShotTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">UpdateTriggeredEDRTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateOneShotTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>assertText</td>
@@ -42,6 +42,116 @@
 	<td>${Code}</td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${ChooseType}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ChooseType}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${TypeValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${InputUnitDescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${InputUnitDescription}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${InputUnitDescription}</td>
+	<td>${InputUnitDescriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${RatingUnitDescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${RatingUnitDescription}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${RatingUnitDescription}</td>
+	<td>${RatingUnitDescriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${UnitMultiplicatorBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${UnitMultiplicator}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${UnitMultiplicator}</td>
+	<td>${UnitMultiplicatorValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${UnitNbDecimalBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${UnitNbDecimal}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${UnitNbDecimal}</td>
+	<td>${UnitNbDecimalvalue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectSubcategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectSubcategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${SubcategorySelect}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
 	<td>if</td>
 	<td>${DescriptionBool}==true</td>
 	<td></td>
@@ -63,48 +173,18 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${ConditionELBool}==true</td>
+	<td>${IsAmountOverridableBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${conditionEl}</td>
+	<td>${IsAmountOverridable}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${conditionEl}</td>
-	<td>${ConditionELValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
+	<td>click</td>
+	<td>${IsAmountOverridable}</td>
 	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${quantityElText}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${quantityElText}</td>
-	<td>${QuantityELValue}</td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${Param1ELBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${param1ElText}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${param1ElText}</td>
-	<td>${Param1ELValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -113,18 +193,18 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${Param2ELBool}==true</td>
+	<td>${InvoiceImmediatlyBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${param2ElText}</td>
+	<td>${InvoiceImmediatly}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${param2ElText}</td>
-	<td>${Param2ELValue}</td>
+	<td>click</td>
+	<td>${InvoiceImmediatly}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -133,18 +213,23 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${Param3ELBool}==true</td>
+	<td>${TriggeredEDRBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${param3ElText}</td>
+	<td>${ChooseTriggeredEDR}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${param3ElText}</td>
-	<td>${Param3ELValue}</td>
+	<td>click</td>
+	<td>${ChooseTriggeredEDR}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${AddOneTriggeredEDR}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -152,48 +237,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${Param4ELBool}==true</td>
+	<td>click</td>
+	<td>${saveButton}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>${param4ElText}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${param4ElText}</td>
-	<td>${Param4ELValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${SubscripCodeELBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${subscriptionCodeEl}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${subscriptionCodeEl}</td>
-	<td>${SubscripCodeELValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${saveButtonWhenUpdate}</td>
+	<td>click</td>
+	<td>//*[contains(@id, 'updateOkPartialSubmit')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -211,11 +261,7 @@
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
-</tr>
+
 </tbody></table>
 </body>
 </html>
