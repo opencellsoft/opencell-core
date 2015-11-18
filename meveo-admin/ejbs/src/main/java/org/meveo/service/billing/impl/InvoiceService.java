@@ -909,24 +909,47 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 		
 		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
+		List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
+		invoice.setAmountTax(null);
+		invoice.setAmountWithoutTax(null);
+		invoice.setAmountWithTax(null);
 
 		// update the aggregated subcat of an invoice
-		for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-			if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-				invoiceAgregate.resetAmounts();
-			} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-				TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
+		for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
+			if (invoiceAggregate instanceof CategoryInvoiceAgregate) {
+				invoiceAggregate.resetAmounts();
+			} else if (invoiceAggregate instanceof TaxInvoiceAgregate) {
+				TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAggregate;
 				taxInvoiceAgregateMap.put(taxInvoiceAgregate.getTax().getId(), taxInvoiceAgregate);
+			} else if (invoiceAggregate instanceof SubCategoryInvoiceAgregate) {
+				subCategoryInvoiceAgregates.add((SubCategoryInvoiceAgregate) invoiceAggregate);
 			}
+		}
+
+		for (TaxInvoiceAgregate taxInvoiceAgregate : taxInvoiceAgregateMap.values()) {
+			taxInvoiceAgregate.setAmountWithoutTax(new BigDecimal(0));
+			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
+				if (subCategoryInvoiceAgregate.getQuantity().signum() != 0) {
+					if (subCategoryInvoiceAgregate.getSubCategoryTaxes().contains(taxInvoiceAgregate.getTax())) {
+						taxInvoiceAgregate.addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+					}
+				}
+			}
+
+			taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountWithoutTax()
+					.multiply(taxInvoiceAgregate.getTaxPercent()).divide(new BigDecimal("100")));
+			// then round the tax
+			taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
+
+			taxInvoiceAgregate.setAmountWithTax(taxInvoiceAgregate.getAmountWithoutTax().add(
+					taxInvoiceAgregate.getAmountTax()));
 		}
 
 		// update the amount with and without tax of all the tax aggregates in
 		// each sub category aggregate
 		SubCategoryInvoiceAgregate biggestSubCat = null;
 		BigDecimal biggestAmount = new BigDecimal("-100000000");
-		
-		List<? extends InvoiceAgregate> subCategoryInvoiceAgregates = invoiceAgregateService.listByInvoiceAndType(
-				invoice, "F");
+
 		for (InvoiceAgregate invoiceAgregate : subCategoryInvoiceAgregates) {
 			SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = (SubCategoryInvoiceAgregate) invoiceAgregate;
 

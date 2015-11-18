@@ -70,6 +70,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	
 	@Transient
 	private BigDecimal oldAmountWithoutTax;
+	
+	@Transient
+	private BigDecimal oldAmountWithTax;
 
 	public SubCategoryInvoiceAgregate() {
 
@@ -173,6 +176,14 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
 	public void setOldAmountWithoutTax(BigDecimal oldAmountWithoutTax) {
 		this.oldAmountWithoutTax = oldAmountWithoutTax;
+	}
+
+	public BigDecimal getOldAmountWithTax() {
+		return oldAmountWithTax;
+	}
+
+	public void setOldAmountWithTax(BigDecimal oldAmountWithTax) {
+		this.oldAmountWithTax = oldAmountWithTax;
 	}
 
 }
