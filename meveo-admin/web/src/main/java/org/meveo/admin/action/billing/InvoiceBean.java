@@ -194,26 +194,30 @@ public class InvoiceBean extends BaseBean<Invoice> {
 										.getSubCategoryInvoiceAgregates()) {
 									SubCategoryInvoiceAgregate newSubCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate(
 											subCategoryInvoiceAgregate);
-									
+
 									newSubCategoryInvoiceAgregate.setInvoice(invoice);
 									newSubCategoryInvoiceAgregate.setAuditable(auditable);
 									newSubCategoryInvoiceAgregate.setOldAmountWithoutTax(subCategoryInvoiceAgregate
 											.getAmountWithoutTax());
-									newSubCategoryInvoiceAgregate.setAmountWithTax(new BigDecimal(0));
-									newSubCategoryInvoiceAgregate.setAmountTax(new BigDecimal(0));
+									newSubCategoryInvoiceAgregate.setOldAmountWithTax(subCategoryInvoiceAgregate
+											.getAmountWithTax());
+									newSubCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregate
+											.getAmountWithTax());
+									newSubCategoryInvoiceAgregate.setAmountTax(subCategoryInvoiceAgregate
+											.getAmountTax());
 									newSubCategoryInvoiceAgregate
 											.setCategoryInvoiceAgregate(newCategoryInvoiceAgregate);
 
 									newCategoryInvoiceAgregate
 											.addSubCategoryInvoiceAggregate(newSubCategoryInvoiceAgregate);
-									
+
 									if (subCategoryInvoiceAgregate.getSubCategoryTaxes() != null) {
 										for (Tax tax : subCategoryInvoiceAgregate.getSubCategoryTaxes()) {
 											newSubCategoryInvoiceAgregate.addSubCategoryTax(tax);
 										}
 									}
 
-									uiSubCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);									
+									uiSubCategoryInvoiceAgregates.add(newSubCategoryInvoiceAgregate);
 								}
 							}
 						} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
@@ -532,6 +536,28 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		return total;
 	}
 
+	public BigDecimal totalOldInvoiceAdjustmentAmountWithoutTax() {
+		BigDecimal total = new BigDecimal(0);
+		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
+			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+				total = total.add(subCategoryInvoiceAgregate.getOldAmountWithoutTax());
+			}
+		}
+
+		return total;
+	}
+
+	public BigDecimal totalOldInvoiceAdjustmentAmountWithTax() {
+		BigDecimal total = new BigDecimal(0);
+		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
+			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+				total = total.add(subCategoryInvoiceAgregate.getOldAmountWithTax());
+			}
+		}
+
+		return total;
+	}
+
 	/**
 	 * Detail invoice adjustments.
 	 */
@@ -591,8 +617,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		return total;
 	}
 
-	public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
-		invoiceService.recomputeSubCategoryAggregate(entity, currentUser);
+	public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate)
+			throws BusinessException {
+		// invoiceService.recomputeSubCategoryAggregate(entity, currentUser);
+		invoiceService.recomputeAggregates(entity, currentUser);
 	}
 
 	public void reComputeDetailedInvoiceAdjustment(RatedTransaction ratedTx) {
@@ -635,7 +663,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),
 					getCurrentUser(), true);
 		} else {
-			invoiceService.recomputeAggregates(entity, getCurrentUser());
+			if (entity.getAmountWithoutTax() == null) {
+				invoiceService.recomputeAggregates(entity, getCurrentUser());
+			}
 		}
 
 		invoiceService.updateInvoiceAdjustmentCurrentNb(entity);

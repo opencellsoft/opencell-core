@@ -114,6 +114,8 @@
 			<p:panel id="invoiceAdjustmentLinePanel"
 				header="#{messages['invoice.adjustment.line']}">
 
+
+
 				<h:form id="invoiceAdjustmentLinesForm">
 					<p:outputPanel rendered="#{invoiceBean.detailed == false}">
 						<p:dataTable id="resultsId_invoiceAdjustmentLines" var="entity"
@@ -121,34 +123,70 @@
 							<p:columnGroup type="header">
 								<p:row>
 									<p:column headerText="#{messages['charge.subCategory']}" />
+									<p:column headerText="#{messages['invoice.amountWithoutTax']}"
+										rendered="#{invoiceBean.entity.transient}" />
+									<p:column headerText="#{messages['invoice.amountWithTax']}"
+										rendered="#{invoiceBean.entity.transient}" />
 									<p:column headerText="#{messages['invoice.amountWithoutTax']}" />
-									<p:column headerText="#{messages['invoice.amountWithoutTax']}" />
+									<p:column headerText="#{messages['invoice.amountWithTax']}" />
 								</p:row>
 							</p:columnGroup>
 
 							<p:column>
 								<h:outputText value="#{entity.invoiceSubCategory.code}" />
 							</p:column>
-							<p:column>
-								<h:outputText
-									value="#{entity.oldAmountWithoutTax}"
+							<p:column rendered="#{invoiceBean.entity.transient}">
+								<h:outputText value="#{entity.oldAmountWithoutTax}"
 									converter="#{getConverter.forType(entity.oldAmountWithoutTax,'4digits')}" />
+							</p:column>
+							<p:column rendered="#{invoiceBean.entity.transient}">
+								<h:outputText value="#{entity.oldAmountWithTax}"
+									converter="#{getConverter.forType(entity.oldAmountWithTax,'4digits')}" />
 							</p:column>
 
 							<!-- // -->
 							<p:column>
-								<p:inputText value="#{entity.amountWithoutTax}">
+								<p:inputText value="#{entity.amountWithoutTax}"
+									readonly="#{not invoiceBean.entity.transient}">
 									<f:converter converterId="bigDecimal4DigitsConverter" />
 									<p:ajax event="change"
 										listener="#{invoiceBean.reComputeInvoiceAdjustment(entity)}"
-										update="resultsId_invoiceAdjustmentLines"></p:ajax>
+										update="resultsId_invoiceAdjustmentLines" />
+								</p:inputText>
+							</p:column>
+
+							<p:column>
+								<p:inputText value="#{entity.amountWithTax}"
+									readonly="#{not invoiceBean.entity.transient}">
+									<f:converter converterId="bigDecimal4DigitsConverter" />
+									<p:ajax event="change"
+										listener="#{invoiceBean.reComputeInvoiceAdjustment(entity)}"
+										update="resultsId_invoiceAdjustmentLines" />
 								</p:inputText>
 							</p:column>
 
 							<p:columnGroup type="footer">
 								<p:row>
 									<p:column footerText="#{messages['invoice.amount']}"
-										colspan="2" />
+										colspan="1" />
+
+									<p:column rendered="#{invoiceBean.entity.transient}">
+										<f:facet name="footer">
+											<h:outputText
+												value="#{invoiceBean.totalOldInvoiceAdjustmentAmountWithoutTax}"
+												converter="#{getConverter.forType(invoiceBean.totalOldInvoiceAdjustmentAmountWithoutTax,'4digits')}">
+											</h:outputText>
+										</f:facet>
+									</p:column>
+
+									<p:column rendered="#{invoiceBean.entity.transient}">
+										<f:facet name="footer">
+											<h:outputText
+												value="#{invoiceBean.totalOldInvoiceAdjustmentAmountWithTax}"
+												converter="#{getConverter.forType(invoiceBean.totalOldInvoiceAdjustmentAmountWithTax,'4digits')}">
+											</h:outputText>
+										</f:facet>
+									</p:column>
 
 									<p:column>
 										<f:facet name="footer">
@@ -157,7 +195,16 @@
 												converter="#{getConverter.forType(invoiceBean.totalInvoiceAdjustmentAmountWithoutTax,'4digits')}">
 											</h:outputText>
 										</f:facet>
-									</p:column>									
+									</p:column>
+
+									<p:column>
+										<f:facet name="footer">
+											<h:outputText
+												value="#{invoiceBean.totalInvoiceAdjustmentAmountWithTax}"
+												converter="#{getConverter.forType(invoiceBean.totalInvoiceAdjustmentAmountWithTax,'4digits')}">
+											</h:outputText>
+										</f:facet>
+									</p:column>
 								</p:row>
 							</p:columnGroup>
 
