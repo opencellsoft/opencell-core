@@ -12,13 +12,108 @@
 <tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>clickAndWait</td>
-	<td>id=datatable_results:0:code_id_message_link</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${NameValue}')]</td>
+	<td>${NameValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${NameValue}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
+	<td>//a[contains(text(),'${NameValue}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Name}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Name}</td>
+	<td>${NameValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${descriptionText}</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${PeriodLength}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${PeriodLength}</td>
+	<td>${PeriodLengthValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Unit}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${Unit}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${UnitValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${NumberOfPeriods}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${NumberOfPeriods}</td>
+	<td>${NumberOfPeriodsValue}</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

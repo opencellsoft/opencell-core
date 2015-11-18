@@ -13,27 +13,72 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${TerminationReasons}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>Test_Term_Reason_01</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>Description Termination Reasons 01</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ApplyChargesUpToAgreementDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ApplyChargesUpToAgreementDate}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${ApplyChargesUpToAgreementDate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${RefundRecurringChargesAppliedInAdvanceBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${RefundRecurringChargesAppliedInAdvance}</td>
 	<td></td>
 </tr>
 <tr>
@@ -42,14 +87,54 @@
 	<td></td>
 </tr>
 <tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ApplyChargeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ApplyCharge}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${ApplyCharge}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>

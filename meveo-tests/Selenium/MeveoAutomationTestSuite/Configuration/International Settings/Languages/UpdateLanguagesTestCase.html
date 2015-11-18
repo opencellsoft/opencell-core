@@ -12,23 +12,73 @@
 <tr><td rowspan="1" colspan="3">ModifiedContactTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${LangCode}')]</td>
+	<td>${LangCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${LangCode}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>id=datatable_results:0:language_languageCode_id_message_link</td>
+	<td>//a[contains(text(),'${LangCode}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${UpdateLanguageCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${UpdateLanguageCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionLang}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${UpdateLanguageCode}</td>
-	<td>ARA</td>
+	<td>${descriptionLang}</td>
+	<td>${Description}</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${descriptionLang}</td>
-	<td>Arabe</td>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>
