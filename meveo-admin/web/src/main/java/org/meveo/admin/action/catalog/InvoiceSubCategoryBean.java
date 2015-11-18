@@ -99,12 +99,31 @@ public class InvoiceSubCategoryBean extends
 							.update(invoiceSubcategoryCountry);
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
-					invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
-					invoiceSubCategoryCountryService
-							.create(invoiceSubcategoryCountry);
-					entity.getInvoiceSubcategoryCountries().add(
-							invoiceSubcategoryCountry);
-					messages.info(new BundleKey("messages", "save.successful"));
+					
+					List<InvoiceSubcategoryCountry> beanInvoiceSubcategoryCountries = 
+							entity.getInvoiceSubcategoryCountries();
+					boolean found = false;
+					if (beanInvoiceSubcategoryCountries != null && !beanInvoiceSubcategoryCountries.isEmpty()) {
+						
+						for (InvoiceSubcategoryCountry isc: beanInvoiceSubcategoryCountries) {
+							if (isc.getTax().getCode().equals(invoiceSubcategoryCountry.getTax().getCode()) &&
+									isc.getTradingCountry().getCountryCode().equals(invoiceSubcategoryCountry.getTradingCountry().getCountryCode())) {
+								found = true;
+								break;
+							}
+						}
+						
+						if (!found) {
+							invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
+							invoiceSubCategoryCountryService
+									.create(invoiceSubcategoryCountry);
+							entity.getInvoiceSubcategoryCountries().add(
+									invoiceSubcategoryCountry);
+							messages.info(new BundleKey("messages", "save.successful"));
+						} else {
+							messages.info(new BundleKey("messages", "save.unsuccessful.duplicate"));
+						}
+					}					
 				}
 
 				invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
