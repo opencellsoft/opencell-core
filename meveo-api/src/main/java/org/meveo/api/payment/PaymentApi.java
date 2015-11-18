@@ -32,6 +32,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.AutomatedPaymentService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -58,6 +59,11 @@ public class PaymentApi extends BaseApi {
 
 	@Inject
 	OCCTemplateService oCCTemplateService;
+	
+	@Inject
+	MatchingAmountService matchingAmountService;
+	
+	
 
 	public void createPayment(PaymentDto paymentDto, User currentUser) throws Exception {
 		log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching() + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
@@ -135,8 +141,10 @@ public class PaymentApi extends BaseApi {
 					matchingAmount.setAccountOperation(accountOperation);
 					matchingAmount.setMatchingCode(matchingCode);
 					matchingAmount.setMatchingAmount(amountToMatch);
+					matchingAmountService.create(matchingAmount, currentUser);
 					accountOperation.getMatchingAmounts().add(matchingAmount);
 					matchingCode.getMatchingAmounts().add(matchingAmount);
+					
 				}
 			}
 
