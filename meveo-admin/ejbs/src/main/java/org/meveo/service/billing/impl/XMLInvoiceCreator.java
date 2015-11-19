@@ -169,7 +169,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			invoiceTag.appendChild(header);
 			// log.debug("creating provider");
 			Provider provider = invoice.getProvider();
-			if (provider.getInvoiceConfiguration() != null && provider.getInvoiceConfiguration().getDisplayProvider() != null && provider.getInvoiceConfiguration().getDisplayProvider()) {
+			if (provider.getInvoiceConfiguration() != null
+					&& provider.getInvoiceConfiguration().getDisplayProvider() != null
+					&& provider.getInvoiceConfiguration().getDisplayProvider()) {
 				Element providerTag = doc.createElement("provider");
 				providerTag.setAttribute("code", provider.getCode() + "");
 				Element bankCoordinates = doc.createElement("bankCoordinates");
@@ -205,8 +207,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					: "");
 			customerTag.setAttribute("sellerCode", customer.getSeller().getCode() != null ? customer.getSeller()
 					.getCode() : "");
-			customerTag.setAttribute("brand", customer.getCustomerBrand() != null ? customer
-					.getCustomerBrand().getCode() : "");
+			customerTag.setAttribute("brand", customer.getCustomerBrand() != null ? customer.getCustomerBrand()
+					.getCode() : "");
 			customerTag.setAttribute("category", customer.getCustomerCategory() != null ? customer
 					.getCustomerCategory().getCode() : "");
 			if (PaymentMethodEnum.DIRECTDEBIT.equals(invoice.getBillingAccount().getPaymentMethod())) {
@@ -375,7 +377,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			Element detail = null;
 			boolean displayDetail = false;
-			if (provider.getInvoiceConfiguration()!=null && provider.getInvoiceConfiguration().getDisplayDetail() != null
+			if (provider.getInvoiceConfiguration() != null
+					&& provider.getInvoiceConfiguration().getDisplayDetail() != null
 					&& provider.getInvoiceConfiguration().getDisplayDetail() && invoice.isDetailedInvoice()) {
 				displayDetail = true;
 
@@ -870,6 +873,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					subCategory.setAttribute("code", invoiceSubCat.getCode());
 					subCategory.setAttribute("amountWithoutTax",
 							round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
+
+					if (!entreprise) {
+						subCategory.setAttribute("amountWithTax",
+								round(subCatInvoiceAgregate.getAmountWithTax(), rounding));
+					}
+
 					String taxesCode = "";
 					String taxesPercent = "";
 					String sep = "";
@@ -946,15 +955,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
 						line.appendChild(lineAmountWithoutTax);
 
-						// if (!enterprise) {
-						// Element lineAmountWithTax =
-						// doc.createElement("amountWithTax");
-						// Text lineAmountWithTaxTxt =
-						// doc.createTextNode(round(ratedTransaction.getAmountWithTax(),
-						// rounding));
-						// lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
-						// line.appendChild(lineAmountWithTax);
-						// }
+						if (!enterprise) {
+							Element lineAmountWithTax = doc.createElement("amountWithTax");
+							Text lineAmountWithTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithTax(),
+									rounding));
+							lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+							line.appendChild(lineAmountWithTax);
+						}
 
 						Element quantity = doc.createElement("quantity");
 						Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction
@@ -1220,10 +1227,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					}
 					subCategory.setAttribute("taxCode", taxesCode);
 					subCategory.setAttribute("taxPercent", taxesPercent);
-					// subCategory
-					// .setAttribute("amountWithTax",
-					// round(subCatInvoiceAgregate.getAmountWithTax(),
-					// rounding));
+
+					if (!entreprise) {
+						subCategory.setAttribute("amountWithTax",
+								round(subCatInvoiceAgregate.getAmountWithTax(), rounding));
+					}
+
 					subCategory.setAttribute("amountWithoutTax",
 							round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
 					// subCategory.setAttribute("taxAmount",
