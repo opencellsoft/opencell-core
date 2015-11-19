@@ -20,9 +20,11 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.service.base.PersistenceService;
 
@@ -33,28 +35,35 @@ import org.meveo.service.base.PersistenceService;
 public class RoleService extends PersistenceService<Role> {
 
     @SuppressWarnings("unchecked")
-    public List<Role> getAllRoles() {
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
+    public List<Role> getAllRoles(Provider provider) {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
         Query query = queryBuilder.getQuery(getEntityManager());
         return query.getResultList();
     }
 
-    public Role findByName(String role) {
-        QueryBuilder qb = new QueryBuilder(Role.class, "r");
+    public Role findByName(String role, Provider provider) {
+        QueryBuilder qb = new QueryBuilder(Role.class, "r", null, provider);
 
         try {
             qb.addCriterion("name", "=", role, true);
             return (Role) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
+        } catch (NoResultException | NonUniqueResultException e) {
+            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
             return null;
         }
     }
 
     /**
-     * Roles are not provider related
+     * Check entity provider if not super admin user
      */
     @Override
     protected void checkProvider(Role entity) {
-        return;
+        // Super administrator - don't care
+        if (identity.hasPermission("superAdmin", "superAdminManagement")) {
+            return;
+            // Other users - a regular check
+        } else {
+            super.checkProvider(entity);
+        }
     }
 }

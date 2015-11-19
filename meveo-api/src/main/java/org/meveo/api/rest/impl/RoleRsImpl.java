@@ -63,7 +63,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs{
 	public ActionStatus remove(String roleName) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			roleApi.remove(roleName);
+			roleApi.remove(roleName, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -82,7 +82,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs{
 	public GetRoleResponse find(String roleName) {
 		GetRoleResponse result = new GetRoleResponse();
 		try {
-			result.setRoleDto(roleApi.find(roleName));
+			result.setRoleDto(roleApi.find(roleName, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

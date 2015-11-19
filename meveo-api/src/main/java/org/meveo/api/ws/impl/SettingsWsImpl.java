@@ -68,6 +68,7 @@ import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.SettingsWs;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.SellerApiService;
 
 /**
@@ -1642,14 +1643,9 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setCustomEntityTemplate(customEntityTemplateApi.findEntityTemplate(code, getCurrentUser().getProvider()));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            super.processException(e, result.getActionStatus());
         }
 
         log.debug("RESPONSE={}", result);
@@ -1663,19 +1659,44 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             customEntityTemplateApi.removeEntityTemplate(code, getCurrentUser().getProvider());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            super.processException(e, result);
         }
 
         log.debug("RESPONSE={}", result);
         return result;
 
+    }
+    
+    @Override
+    public ActionStatus createCustomEntityTemplate(CustomEntityTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            customEntityTemplateApi.createEntityTemplate(postData, getCurrentUser());
+
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
+    
+    @Override
+    public ActionStatus updateCustomEntityTemplate(CustomEntityTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            customEntityTemplateApi.updateEntityTemplate(postData, getCurrentUser());
+
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
     }
 
     @Override
@@ -1684,14 +1705,9 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             customEntityTemplateApi.createOrUpdateEntityTemplate(postData, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            super.processException(e, result);
         }
 
         log.debug("RESPONSE={}", result);
@@ -1705,15 +1721,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCustomEntityInstance(customEntityTemplateApi.findEntityInstance(cetCode, code, getCurrentUser().getProvider()));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            result.setCustomEntityInstance(customEntityTemplateApi.findEntityInstance(cetCode, code,
+                getCurrentUser(CustomEntityTemplate.getPermissionResourceName(cetCode), "read").getProvider()));
+
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            super.processException(e, result.getActionStatus());
         }
 
         log.debug("RESPONSE={}", result);
@@ -1726,15 +1738,40 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.removeEntityInstance(cetCode, code, getCurrentUser().getProvider());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            customEntityTemplateApi.removeEntityInstance(cetCode, code, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(cetCode), "modify").getProvider());
+
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            super.processException(e, result);
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
+
+    @Override
+    public ActionStatus createCustomEntityInstance(CustomEntityInstanceDto dto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            customEntityTemplateApi.createEntityInstance(dto, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify"));
+            
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
+
+    @Override
+    public ActionStatus updateCustomEntityInstance(CustomEntityInstanceDto dto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            customEntityTemplateApi.updateEntityInstance(dto, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify"));
+            
+        } catch (Exception e) {
+            super.processException(e, result);
         }
 
         log.debug("RESPONSE={}", result);
@@ -1746,15 +1783,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.createOrUpdateEntityInstance(dto, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            customEntityTemplateApi.createOrUpdateEntityInstance(dto, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify"));
+            
         } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            super.processException(e, result);
         }
 
         log.debug("RESPONSE={}", result);
@@ -1819,7 +1851,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	public ActionStatus removeRole(String name) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			roleApi.remove(name);
+			roleApi.remove(name, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1838,7 +1870,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	public GetRoleResponse findRole(String name) {
 		GetRoleResponse result = new GetRoleResponse();
 		try {
-			result.setRoleDto(roleApi.find(name));
+			result.setRoleDto(roleApi.find(name, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

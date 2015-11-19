@@ -39,7 +39,7 @@
     <p:tooltip for="importedFiles">#{help['menu.importedFiles']}</p:tooltip>
     <c:set var="cetIndex" value="0"/>
     <c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
-        <c:if test="#{cet.permission == null or identity.hasPermission(cet.permissionResource, cet.permissionAction) }">
+        <c:if test="#{identity.hasPermission(cet.permissionResourceName, 'read') }">
             <p:tooltip for="cet_#{cetIndex}" value="#{cet.description}" />
             <c:set var="cetIndex" value="#{cetIndex + 1}"/>
         </c:if>
@@ -191,17 +191,6 @@
 				outcome="triggeredEdrTemplates"
 				value="#{messages['menu.triggeredEdrTemplates']}" />
 
-
-            <c:set var="cetIndex" value="0"/>
-            <c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
-                <c:if test="#{cet.permission == null or identity.hasPermission(cet.permissionResource, cet.permissionAction) }">
-                    <p:menuitem id="cet_#{cetIndex}" outcome="customEntities" value="#{cet.name}" >
-                        <f:param name="cet" value="#{cet.code}"></f:param>
-                    </p:menuitem>
-                    <c:set var="cetIndex" value="#{cetIndex + 1}"/>
-                </c:if>
-             </c:forEach>
-
 		</p:submenu>
 
 		<p:submenu id="crm" label="#{messages['menu.crm']}"
@@ -281,6 +270,22 @@
 			<p:menuitem id="ddrequestLots" outcome="ddrequestLots"
 				value="#{messages['menu.ddrequestLot']}" />
 		</p:submenu>
+
+
+        <p:submenu id="customEntites" label="#{messages['menu.customEntities']}"
+            rendered="#{!empty(customEntityTemplateBean.listAll())}">
+
+            <c:set var="cetIndex" value="0"/>
+            <c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
+                <c:if test="#{identity.hasPermission(cet.permissionResourceName, 'read') }">
+                    <p:menuitem id="cet_#{cetIndex}" outcome="customEntities" value="#{cet.name}" >
+                        <f:param name="cet" value="#{cet.code}"></f:param>
+                    </p:menuitem>
+                    <c:set var="cetIndex" value="#{cetIndex + 1}"/>
+                </c:if>
+             </c:forEach>
+
+        </p:submenu>
 
 		<p:submenu id="automation" label="#{messages['menu.admin']}"
 			rendered="#{identity.hasPermission('superAdmin','superAdminManagement') || identity.hasPermission('administration','administrationVisualization')}">

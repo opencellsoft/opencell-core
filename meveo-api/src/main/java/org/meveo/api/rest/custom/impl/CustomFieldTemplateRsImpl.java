@@ -1,4 +1,4 @@
-package org.meveo.api.rest.impl;
+package org.meveo.api.rest.custom.impl;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -12,7 +12,8 @@ import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.CustomFieldTemplateRs;
+import org.meveo.api.rest.custom.CustomFieldTemplateRs;
+import org.meveo.api.rest.impl.BaseRs;
 
 /**
  * @author Edward P. Legaspi

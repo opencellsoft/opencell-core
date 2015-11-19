@@ -50,7 +50,9 @@ public class UserRoleBean extends BaseBean<Role> {
     @Inject
     private PermissionService permissionService;
 
-    private DualListModel<Permission> perks;
+    private DualListModel<Permission> permissionsDM;
+
+    private DualListModel<Role> rolesDM;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -59,27 +61,46 @@ public class UserRoleBean extends BaseBean<Role> {
         super(Role.class);
     }
 
-    /**
-     * Standard method for custom component with listType="pickList".
-     */
-    public DualListModel<Permission> getDualListModel() {
-        if (perks == null) {
+    public DualListModel<Permission> getPermissionListModel() {
+        if (permissionsDM == null) {
             List<Permission> perksSource = permissionService.list();
             List<Permission> perksTarget = new ArrayList<Permission>();
             if (getEntity().getPermissions() != null) {
                 perksTarget.addAll(getEntity().getPermissions());
             }
             perksSource.removeAll(perksTarget);
-            perks = new DualListModel<Permission>(perksSource, perksTarget);
+            permissionsDM = new DualListModel<Permission>(perksSource, perksTarget);
         }
-        return perks;
+        return permissionsDM;
     }
 
-    public void setDualListModel(DualListModel<Permission> perks) {
-        getEntity().setPermissions(perks.getTarget());
-        this.perks = perks;
+    public void setPermissionListModel(DualListModel<Permission> perks) {
+        getEntity().getPermissions().clear();
+        getEntity().getPermissions().addAll(perks.getTarget());
+        this.permissionsDM = perks;
     }
 
+    public DualListModel<Role> getRoleListModel() {
+        if (rolesDM == null) {
+            List<Role> perksSource = userRoleService.list();
+            perksSource.remove(getEntity());
+            List<Role> perksTarget = new ArrayList<Role>();
+            if (getEntity().getRoles() != null) {
+                perksTarget.addAll(getEntity().getRoles());
+            }
+            perksSource.removeAll(perksTarget);
+            rolesDM = new DualListModel<Role>(perksSource, perksTarget);
+        }
+        return rolesDM;
+    }
+
+    public void setRoleListModel(DualListModel<Role> perks) {
+        getEntity().getRoles().clear();
+        getEntity().getRoles().addAll(perks.getTarget());
+        this.rolesDM = perks;
+    }
+
+    
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */

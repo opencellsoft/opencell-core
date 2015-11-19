@@ -14,6 +14,7 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.LoginException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.service.admin.impl.UserService;
@@ -46,6 +47,29 @@ public abstract class BaseWs {
 		return result;
 	}
 
+    /**
+     * Authenticate a user requiring a particular permission <permissionResource>/<permissionAction> apart of a standard permission required to access WS
+     * 
+     * @param permissionResource Resource of permission
+     * @param permissionAction Permission action of permission
+     * @return Authenticated user
+     * @throws LoginException In case a user does not have a required permission
+     */
+    protected User getCurrentUser(String permissionResource, String permissionAction) throws LoginException {
+        User user = getCurrentUser();
+        if (user.hasPermission(permissionResource, permissionAction)){
+            return user;
+        }
+        throw new LoginException("User does not have permission '" + permissionAction + "' on resource '" + permissionResource+"'");
+    }
+
+
+    /**
+     * Authenticate a user requiring a standard permission user/apiAccess to access WS
+     * 
+     * @return Authenticated user
+     * @throws LoginException In case a user does not have a required permission
+     */
 	@SuppressWarnings("unchecked")
 	protected User getCurrentUser() throws LoginException {
 		MessageContext messageContext = webServiceContext.getMessageContext();
@@ -98,4 +122,21 @@ public abstract class BaseWs {
 		return user;
 	}
 
+	/**
+	 * Process exception and update status of response
+	 * @param e Exception
+	 * @param status Status dto to update
+	 */
+    protected void processException(Exception e, ActionStatus status) {
+
+        if (e instanceof MeveoApiException) {
+            status.setErrorCode(((MeveoApiException) e).getErrorCode());
+            status.setStatus(ActionStatusEnum.FAIL);
+            status.setMessage(e.getMessage());
+        } else {
+            status.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            status.setStatus(ActionStatusEnum.FAIL);
+            status.setMessage(e.getMessage());
+        }
+    }
 }

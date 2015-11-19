@@ -23,10 +23,12 @@ import javax.inject.Inject;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
@@ -34,23 +36,44 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 public class CustomEntityTemplateService extends BusinessService<CustomEntityTemplate> {
 
     @Inject
-    CustomFieldTemplateService customFieldTemplateService;
+    private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private PermissionService permissionService;
 
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCache;
 
+    private ParamBean paramBean = ParamBean.getInstance();
+
     @Override
-    public void create(CustomEntityTemplate e, User creator, Provider provider) {
-        super.create(e, creator, provider);
-        customFieldsCache.addUpdateCustomEntityTemplate(e);
+    public void create(CustomEntityTemplate cet, User creator, Provider provider) {
+        super.create(cet, creator, provider);
+        customFieldsCache.addUpdateCustomEntityTemplate(cet);
+
+        try {
+            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), creator, paramBean.getProperty("role.modifyAllCET", "ModifyAllCET"));
+            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), creator, paramBean.getProperty("role.readAllCET", "ReadAllCET"));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public CustomEntityTemplate update(CustomEntityTemplate e, User updater) {
-        CustomEntityTemplate eUpdated = super.update(e, updater);
-        customFieldsCache.addUpdateCustomEntityTemplate(e);
+    public CustomEntityTemplate update(CustomEntityTemplate cet, User updater) {
+        CustomEntityTemplate cetUpdated = super.update(cet, updater);
+        customFieldsCache.addUpdateCustomEntityTemplate(cet);
 
-        return eUpdated;
+        try {
+            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), updater, paramBean.getProperty("role.modifyAllCET", "ModifyAllCET"));
+            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), updater, paramBean.getProperty("role.readAllCET", "ReadAllCET"));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return cetUpdated;
     }
 
     @Override
@@ -71,7 +94,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     @Override
     public List<CustomEntityTemplate> list(Provider provider, Boolean active) {
 
-        boolean useCache = true;
+        boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCET", "true"));
         if (useCache && (active == null || active)) {
             return customFieldsCache.getCustomEntityTemlates(provider);
         } else {
@@ -82,7 +105,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     @Override
     public List<CustomEntityTemplate> list(PaginationConfiguration config) {
 
-        boolean useCache = true;
+        boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCET", "true"));
         if (useCache) {
             return customFieldsCache.getCustomEntityTemlates(getCurrentProvider());
         } else {

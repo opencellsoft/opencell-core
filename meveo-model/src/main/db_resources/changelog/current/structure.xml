@@ -633,6 +633,7 @@
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>		
 	<changeSet author="TyshanShi" id="#1103_20151113_1">
+        <delete tableName="meveo_module_item"/>
 		<dropColumn tableName="meveo_module" columnName="module_status"/>
 		<dropColumn tableName="meveo_module_item" columnName="clazz_name"/>
 		<dropColumn tableName="meveo_module_item" columnName="entity_name"/>
@@ -649,4 +650,21 @@
 			</column>
 		</addColumn>
 	</changeSet>
+    <changeSet id="#1102_20151117" author="AndriusKarpavicius">
+        <dropColumn tableName="CUST_CET" columnName="permission_id"/>        
+    </changeSet>
+    <changeSet id="#1270_20151117" author="AndriusKarpavicius">
+        <createTable tableName="adm_role_role">
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="child_role_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <sql>insert into adm_role (id, version, role_name, role_description, provider_id) (select nextval('adm_role_seq'), 0, 'ModifyAllCET', 'Modify all custom entities', crm_provider.id from crm_provider) </sql>
+        <sql>insert into adm_role (id, version, role_name, role_description, provider_id) (select nextval('adm_role_seq'), 0, 'ReadAllCET', 'Read all custom entities', crm_provider.id from crm_provider) </sql>    
+        <sql>insert into adm_role_role (role_id, child_role_id) (select role_p.id, role_c.id from adm_role role_p join adm_role role_c on role_p.provider_id=role_c.provider_id and role_p.role_name='administrateur' and role_c.role_name='ModifyAllCET')</sql>
+        <sql>insert into adm_role_role (role_id, child_role_id) (select role_p.id, role_c.id from adm_role role_p join adm_role role_c on role_p.provider_id=role_c.provider_id and role_p.role_name='ModifyAllCET' and role_c.role_name='ReadAllCET')</sql>
+    </changeSet>    
 </databaseChangeLog>

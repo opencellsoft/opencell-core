@@ -120,7 +120,10 @@ public abstract class BaseApi {
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
             if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
                 log.error("No custom field templates defined while Custom field values were passed");
-                throw new MissingParameterException("No Custom field templates were found to match provided custom field values");
+              //in createCRMAccountHierarchy cft in dto can be used in any account level
+				//for instance if the current CFT not for  a customer then dont throw exception, because the current CFT can be used on billingAccount...
+				//TODO need to re think about this for a global fix
+				//throw new MissingParameterException("No Custom field templates were found to match provided custom field values");
             } else {
                 return;
             }

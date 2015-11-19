@@ -2,6 +2,7 @@ package org.meveo.api.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,7 +34,7 @@ public class RoleDto extends BaseDto{
 		this.setName(role.getName());
 		this.setDescription(role.getDescription());
 		
-		List<Permission> permissions = role.getPermissions();
+		Set<Permission> permissions = role.getPermissions();
 		
 		if (permissions!=null && !permissions.isEmpty()) {
 			List<PermissionDto> permissionDtos = new ArrayList<PermissionDto>();
