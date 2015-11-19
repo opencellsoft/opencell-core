@@ -540,7 +540,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
 			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+				if(subCategoryInvoiceAgregate.getOldAmountWithoutTax()!=null){
 				total = total.add(subCategoryInvoiceAgregate.getOldAmountWithoutTax());
+				}
 			}
 		}
 
@@ -551,7 +553,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
 			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+				if(subCategoryInvoiceAgregate.getOldAmountWithTax()!=null){
 				total = total.add(subCategoryInvoiceAgregate.getOldAmountWithTax());
+				}
 			}
 		}
 
