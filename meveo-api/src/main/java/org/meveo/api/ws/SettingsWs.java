@@ -327,6 +327,13 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     ActionStatus removeCustomEntityTemplate(@WebParam(name = "code") String code);
 
+
+    @WebMethod
+    ActionStatus createCustomEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
+    
+    @WebMethod
+    ActionStatus updateCustomEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
+    
     @WebMethod
     ActionStatus createOrUpdateCustomEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
 
@@ -338,6 +345,12 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     ActionStatus removeCustomEntityInstance(@WebParam(name = "cetCode") String cetCode, @WebParam(name = "code") String code);
 
+    @WebMethod
+    ActionStatus createCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
+    
+    @WebMethod
+    ActionStatus updateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
+    
     @WebMethod
     ActionStatus createOrUpdateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
 

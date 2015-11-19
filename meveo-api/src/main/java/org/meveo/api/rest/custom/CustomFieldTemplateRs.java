@@ -1,4 +1,4 @@
-package org.meveo.api.rest;
+package org.meveo.api.rest.custom;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
+import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
@@ -25,26 +26,23 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CustomFieldTemplateRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(CustomFieldTemplateDto postData);
+    @POST
+    @Path("/")
+    ActionStatus create(CustomFieldTemplateDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(CustomFieldTemplateDto postData);
+    @PUT
+    @Path("/")
+    ActionStatus update(CustomFieldTemplateDto postData);
 
-	@DELETE
-	@Path("/{customFieldTemplateCode}/{accountLevel}")
-	ActionStatus remove(@PathParam("customFieldTemplateCode") String customFieldTemplateCode,
-			@PathParam("accountLevel") String accountLevel);
+    @DELETE
+    @Path("/{customFieldTemplateCode}/{appliesTo}")
+    ActionStatus remove(@PathParam("customFieldTemplateCode") String customFieldTemplateCode, @PathParam("appliesTo") String appliesTo);
 
-	@GET
-	@Path("/")
-	GetCustomFieldTemplateReponseDto find(@QueryParam("customFieldTemplateCode") String customFieldTemplateCode,
-			@QueryParam("accountLevel") String accountLevel);
-	
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(CustomFieldTemplateDto postData);
+    @GET
+    @Path("/")
+    GetCustomFieldTemplateReponseDto find(@QueryParam("customFieldTemplateCode") String customFieldTemplateCode, @QueryParam("appliesTo") String appliesTo);
 
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(CustomFieldTemplateDto postData);
 }

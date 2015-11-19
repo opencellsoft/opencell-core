@@ -60,7 +60,7 @@ public class UserApi extends BaseApi {
 			}
 
 			// find role
-			Role role = roleService.findByName(postData.getRole());
+			Role role = roleService.findByName(postData.getRole(), currentUser.getProvider());
 			if (role == null) {
 				throw new EntityDoesNotExistsException(Role.class,
 						postData.getRole());
@@ -126,7 +126,7 @@ public class UserApi extends BaseApi {
 			}
 
 			// find role
-			Role role = roleService.findByName(postData.getRole());
+			Role role = roleService.findByName(postData.getRole(), currentUser.getProvider());
 			if (role == null) {
 				throw new EntityDoesNotExistsException(Role.class,
 						postData.getRole());

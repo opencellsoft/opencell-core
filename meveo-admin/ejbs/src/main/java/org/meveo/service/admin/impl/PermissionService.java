@@ -19,9 +19,15 @@ package org.meveo.service.admin.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
+import org.meveo.model.security.Role;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -30,24 +36,64 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class PermissionService extends PersistenceService<Permission> {
-	
 
-	 @SuppressWarnings("unchecked")
-	 @Override
-	 public List<Permission> list() { 
+    @Inject
+    private RoleService roleService;
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Permission> list() {
         QueryBuilder qb = new QueryBuilder("from Permission p");
         boolean superAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
-        if(!superAdmin){
-        	qb.addSqlCriterion("p.resource != :resource", "resource", "superAdmin");
-        	qb.addSqlCriterion("p.resource != :permission", "permission", "superAdminManagement");	
-        } 
-        return qb.getQuery(getEntityManager()).getResultList();
+        if (!superAdmin) {
+            qb.addSqlCriterion("p.resource != :resource", "resource", "superAdmin");
+            qb.addSqlCriterion("p.resource != :permission", "permission", "superAdminManagement");
         }
-	 
-	 public Permission findByPermission(String permission){
-		 QueryBuilder qb=new QueryBuilder(Permission.class,"q");
-		 qb.addCriterion("permission", "=", permission,true);
-		 return (Permission) qb.getQuery(getEntityManager()).getSingleResult();
-	 }
+        return qb.getQuery(getEntityManager()).getResultList();
+    }
 
+    public Permission findByPermissionAndResource(String resource, String permission) {
+
+        try {
+            Permission permissionEntity = getEntityManager().createNamedQuery("Permission.getPermission", Permission.class).setParameter("permission", permission)
+                .setParameter("resource", resource).getSingleResult();
+            return permissionEntity;
+
+        } catch (NoResultException | NonUniqueResultException e) {
+            log.trace("No permission {},{} was found. Reason {}", resource, permission, e.getClass().getSimpleName());
+            return null;
+        }
+
+    }
+
+    public Permission createIfAbsent(String permission, String resource, User currentUser, String... rolesToAddTo) throws BusinessException {
+
+        // Create permission if does not exist yet
+        Permission permissionEntity = findByPermissionAndResource(resource, permission);
+        if (permissionEntity == null) {
+            permissionEntity = new Permission();
+            permissionEntity.setName(resource + "-" + permission);
+            permissionEntity.setPermission(permission);
+            permissionEntity.setResource(resource);
+            this.create(permissionEntity);
+        }
+
+        // Add to a role, creating role first if does not exist yet
+        for (String roleName : rolesToAddTo) {
+            Role role = roleService.findByName(roleName, currentUser.getProvider());
+            if (role == null) {
+                role = new Role();
+                role.setName(roleName);
+                role.setDescription(roleName);
+                roleService.create(role, currentUser);
+            }
+
+            if (!role.getPermissions().contains(permissionEntity)) {
+                role.getPermissions().add(permissionEntity);
+                roleService.update(role);
+            }
+        }
+
+        return permissionEntity;
+    }
 }

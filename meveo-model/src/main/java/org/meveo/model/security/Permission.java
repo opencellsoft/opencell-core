@@ -8,9 +8,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
@@ -34,64 +37,84 @@ import org.meveo.model.IEntity;
 @ExportIdentifier("name")
 @Table(name = "ADM_PERMISSION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_PERMISSION_SEQ")
+@NamedQueries({ @NamedQuery(name = "Permission.getPermission", query = "select p from Permission p where p.resource=:resource and p.permission=:permission") })
 public class Permission implements IEntity, Serializable {
-	private static final long serialVersionUID = 2884657784984355718L;
+    private static final long serialVersionUID = 2884657784984355718L;
 
-	@Id
-	@GeneratedValue(generator = "ID_GENERATOR")
-	@Column(name = "ID")
+    @Id
+    @GeneratedValue(generator = "ID_GENERATOR")
+    @Column(name = "ID")
     @Access(AccessType.PROPERTY)
-	private Long id;
+    private Long id;
 
-	@Column(name = "RESSOURCE", nullable = false)
-	private String resource;
+    @Column(name = "RESSOURCE", nullable = false)
+    private String resource;
 
-	@Column(name = "PERMISSION", nullable = false)
-	private String permission;
+    @Column(name = "PERMISSION", nullable = false)
+    private String permission;
 
-	@Column(name = "name", nullable = false)
-	private String name;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getResource() {
-		return resource;
-	}
+    public String getResource() {
+        return resource;
+    }
 
-	public void setResource(String resource) {
-		this.resource = resource;
-	}
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
 
-	public String getPermission() {
-		return permission;
-	}
+    public String getPermission() {
+        return permission;
+    }
 
-	public void setPermission(String permission) {
-		this.permission = permission;
-	}
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String toString() {
-		return "Permission [name=" + name + ", resource=" + resource + ", permission=" + permission
-				+ "]";
-	}
+    @Override
+    public String toString() {
+        return "Permission [name=" + name + ", resource=" + resource + ", permission=" + permission + "]";
+    }
 
-	@Override
-	public boolean isTransient() {
-		return id == null;
-	}
+    @Override
+    public boolean isTransient() {
+        return id == null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Permission)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        Permission other = (Permission) obj;
+
+        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+            // return true;
+        }
+
+        return StringUtils.compare(this.getPermission(), other.getPermission()) == 0 && StringUtils.compare(this.getResource(), other.getResource()) == 0;
+    }
 }

@@ -76,12 +76,12 @@
         <c:if test="#{listType=='pickUpList'}">
 
             <c:if test="#{edit}">
-                <c:if test="#{empty dualListModel}">
-                    <c:set var="elements" value="#{backingBean.dualListModel}" />
-                </c:if>
-                <c:if test="#{!empty dualListModel}">
+<!--                 <c:if test="#{empty dualListModel}"> -->
+<!--                     <c:set var="elements" value="#{backingBean.dualListModel}" /> -->
+<!--                 </c:if> -->
+<!--                 <c:if test="#{!empty dualListModel}"> -->
                     <c:set var="elements" value="#{dualListModel}" />
-                </c:if>
+<!--                 </c:if> -->
                 <c:if test="#{not empty(valueLabelField2)}">
                     <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}" itemValue="#{elem}">
                         <s:objectConverter />

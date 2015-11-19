@@ -1,8 +1,7 @@
 package org.meveo.model.security;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,97 +24,102 @@ import org.meveo.model.ExportIdentifier;
 // org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Role extends BaseEntity {
 
-	private static final long serialVersionUID = -2309961042891712685L;
+    private static final long serialVersionUID = -2309961042891712685L;
 
-	public static final Comparator<Role> COMP_BY_ROLE_NAME = new Comparator<Role>() {
-		public int compare(Role o1, Role o2) {
-			int result = o1.getName().compareToIgnoreCase(o2.getName());
-			if (result == 0)
-				result = o1.getId().compareTo(o2.getId());
-			return result;
-		}
-	};
+    @Column(name = "ROLE_NAME", nullable = false)
+    private String name;
 
-	@Column(name = "ROLE_NAME", nullable = false)
-	private String name;
+    @Column(name = "ROLE_DESCRIPTION", nullable = false)
+    private String description;
 
-	@Column(name = "ROLE_DESCRIPTION", nullable = false)
-	private String description;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "ADM_ROLE_PERMISSION", joinColumns = @JoinColumn(name = "ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "PERMISSION_ID"))
+    private Set<Permission> permissions = new HashSet<Permission>();
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "ADM_ROLE_PERMISSION", joinColumns = @JoinColumn(name = "ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "PERMISSION_ID"))
-	private List<Permission> permissions = new ArrayList<Permission>();
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "ADM_ROLE_ROLE", joinColumns = @JoinColumn(name = "ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_ROLE_ID"))
+    private Set<Role> roles = new HashSet<Role>();
 
-	public Role() {
-	}
+    public Role() {
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String val) {
-		this.name = val;
-	}
+    public void setName(String val) {
+        this.name = val;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public List<Permission> getPermissions() {
-		return permissions;
-	}
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
 
-	public void setPermissions(List<Permission> permissions) {
-		this.permissions = permissions;
-	}
+    public void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
+    }
 
-	/**
-	 * Check if role as a following permision
-	 * 
-	 * @param resource
-	 *            Resource to match
-	 * @param permission
-	 *            Permission/action to match
-	 * @return
-	 */
-	public boolean hasPermission(String resource, String permission) {
-		for (Permission permissionObj : getPermissions()) {
-			if (permissionObj.getResource().equals(resource)
-					&& permissionObj.getPermission().equals(permission)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public Set<Role> getRoles() {
+        return roles;
+    }
 
-	@Override
-	public int hashCode() {
-		if (getId() == null)
-			return super.hashCode();
-		return getId().hashCode();
-	}
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    /**
+     * Check if role as a following permision
+     * 
+     * @param resource Resource to match
+     * @param permission Permission/action to match
+     * @return
+     */
+    public boolean hasPermission(String resource, String permission) {
+        for (Permission permissionObj : getPermissions()) {
+            if (permissionObj.getResource().equals(resource) && permissionObj.getPermission().equals(permission)) {
+                return true;
+            }
+        }
+        for (Role role : roles) {
+            if (role.hasPermission(resource, permission)){
+                return true;
+            }
+        }
+        return false;
+    }
 
-		if (this == obj) {
-			return true;
-		} else if (obj == null) {
-			return false;
-		} else if (!(obj instanceof Role)) {
-			return false;
-		}
-		final Role other = (Role) obj;
-		if (getId() == null) {
-			return false;
-		} else if (!getId().equals(other.getId()))
-			return false;
-		return true;
-	}
+    @Override
+    public int hashCode() {
+        if (getId() == null)
+            return super.hashCode();
+        return getId().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Role)) {
+            return false;
+        }
+        final Role other = (Role) obj;
+        if (getId() == null) {
+            return false;
+        } else if (!getId().equals(other.getId()))
+            return false;
+        return true;
+    }
 
     @Override
     public String toString() {

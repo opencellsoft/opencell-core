@@ -1,7 +1,8 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -20,155 +21,146 @@ import org.meveo.service.admin.impl.RoleService;
 @Stateless
 public class RoleApi extends BaseApi {
 
-	@Inject
-	private RoleService roleService;
-	
-	@Inject
-	private PermissionService permissionService;
+    @Inject
+    private RoleService roleService;
 
-	
-	/**
-	 * 
-	 * @param postData
-	 * @param currentUser
-	 * @throws MeveoApiException
-	 */
-	public void create(RoleDto postData, User currentUser)
-			throws MeveoApiException {
+    @Inject
+    private PermissionService permissionService;
 
-		String name = postData.getName();
-		if (name != null) {
-			Role role = new Role();
-			role.setName(name);
-			role.setDescription(postData.getDescription());
+    /**
+     * 
+     * @param postData
+     * @param currentUser
+     * @throws MeveoApiException
+     */
+    public void create(RoleDto postData, User currentUser) throws MeveoApiException {
 
-			List<PermissionDto> permissionDtos = postData.getPermission();
-			if (permissionDtos != null && !permissionDtos.isEmpty()) {
-				List<Permission> permissions = new ArrayList<Permission>();
-				
-				for (PermissionDto permissionDto : permissionDtos) {
-					boolean found = false;
-					
-					
-					List<Permission> permissionsFromDB = permissionService.list();
-					
-					Permission p = null;
-					for (Permission permission : permissionsFromDB) {
-						if (permission.getName().equals(permissionDto.getName())) {
-							found = true;
-							p = permission;
-							break;
-						}
-					}
-					
-					if (found) {
-						permissions.add(p);
-					} else {
-						throw new EntityDoesNotExistsException(Permission.class, permissionDto.getName(), "name");
-					}
-				}
-				role.setPermissions(permissions);
-			}
+        String name = postData.getName();
+        if (name != null) {
+            Role role = new Role();
+            role.setName(name);
+            role.setDescription(postData.getDescription());
 
-			roleService.create(role, currentUser);
-		} else {
-			missingParameters.add("name");
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
+            List<PermissionDto> permissionDtos = postData.getPermission();
+            if (permissionDtos != null && !permissionDtos.isEmpty()) {
+                Set<Permission> permissions = new HashSet<Permission>();
 
-	}
+                for (PermissionDto permissionDto : permissionDtos) {
+                    boolean found = false;
 
-	public void update(RoleDto postData, User currentUser)
-			throws MeveoApiException {
+                    List<Permission> permissionsFromDB = permissionService.list();
 
-		String name = postData.getName();
-		if (name != null) {
-			Role role = roleService.findByName(name);
+                    Permission p = null;
+                    for (Permission permission : permissionsFromDB) {
+                        if (permission.getName().equals(permissionDto.getName())) {
+                            found = true;
+                            p = permission;
+                            break;
+                        }
+                    }
 
-			if (role == null) {
-				throw new EntityDoesNotExistsException(Role.class, name, "name");
-			}
-			
-			role.setDescription(postData.getDescription());
-			
-			List<PermissionDto> permissionDtos = postData.getPermission();			
-			if (permissionDtos != null && !permissionDtos.isEmpty()) {
-				List<Permission> permissions = new ArrayList<Permission>();
-				
-				for (PermissionDto permissionDto : permissionDtos) {
-					boolean found = false;
-					
-					List<Permission> permissionsFromDB = permissionService.list();
-					
-					Permission p = null;
-					for (Permission permission : permissionsFromDB) {
-						if (permission.getName().equals(permissionDto.getName())) {
-							found = true;
-							p = permission;
-							break;
-						}
-					}
-					
-					if (found) {
-						permissions.add(p);
-					} else {
-						throw new EntityDoesNotExistsException(Permission.class, permissionDto.getName(), "name");
-					}
-				}
-				role.setPermissions(permissions);
-			}
+                    if (found) {
+                        permissions.add(p);
+                    } else {
+                        throw new EntityDoesNotExistsException(Permission.class, permissionDto.getName(), "name");
+                    }
+                }
+                role.setPermissions(permissions);
+            }
 
-			roleService.updateAudit(role, currentUser);
+            roleService.create(role, currentUser);
+        } else {
+            missingParameters.add("name");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-		} else {
-			missingParameters.add("name");
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
+    }
 
-	}
+    public void update(RoleDto postData, User currentUser) throws MeveoApiException {
 
-	public RoleDto find(String name) throws MeveoApiException {
-		RoleDto roleDto = null;
-		if (name != null) {
-			Role role = roleService.findByName(name);
-			if (role == null) {
-				throw new EntityDoesNotExistsException(Role.class, name, "name");
-			}
-			roleDto = new RoleDto(role);
-		}
-		return roleDto;
-	}
+        String name = postData.getName();
+        if (name != null) {
+            Role role = roleService.findByName(name, currentUser.getProvider());
 
-	public void remove(String name) throws MeveoApiException {
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, name, "name");
+            }
 
-		if (name != null) {
-			Role role = roleService.findByName(name);
-			if (role == null) {
-				throw new EntityDoesNotExistsException(Role.class, name, "name");
-			}
-			role.setPermissions(null);
-			roleService.remove(role);
-		}
-	}
+            role.setDescription(postData.getDescription());
 
-	public void createOrUpdate(RoleDto postData, User currentUser)
-			throws MeveoApiException {
+            List<PermissionDto> permissionDtos = postData.getPermission();
+            if (permissionDtos != null && !permissionDtos.isEmpty()) {
+                Set<Permission> permissions = new HashSet<Permission>();
 
-		String name = postData.getName();
-		if (name != null) {
-			Role role = roleService.findByName(name);
-			if (role == null) {
-				create(postData, currentUser);
-			} else {
-				update(postData, currentUser);
-			}
-		} else {
-			missingParameters.add("name");
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+                for (PermissionDto permissionDto : permissionDtos) {
+                    boolean found = false;
 
+                    List<Permission> permissionsFromDB = permissionService.list();
+
+                    Permission p = null;
+                    for (Permission permission : permissionsFromDB) {
+                        if (permission.getName().equals(permissionDto.getName())) {
+                            found = true;
+                            p = permission;
+                            break;
+                        }
+                    }
+
+                    if (found) {
+                        permissions.add(p);
+                    } else {
+                        throw new EntityDoesNotExistsException(Permission.class, permissionDto.getName(), "name");
+                    }
+                }
+                role.setPermissions(permissions);
+            }
+
+            roleService.updateAudit(role, currentUser);
+
+        } else {
+            missingParameters.add("name");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+    }
+
+    public RoleDto find(String name, User currentUser) throws MeveoApiException {
+        RoleDto roleDto = null;
+        if (name != null) {
+            Role role = roleService.findByName(name, currentUser.getProvider());
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, name, "name");
+            }
+            roleDto = new RoleDto(role);
+        }
+        return roleDto;
+    }
+
+    public void remove(String name, User currentUser) throws MeveoApiException {
+
+        if (name != null) {
+            Role role = roleService.findByName(name, currentUser.getProvider());
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, name, "name");
+            }
+            role.setPermissions(null);
+            roleService.remove(role);
+        }
+    }
+
+    public void createOrUpdate(RoleDto postData, User currentUser) throws MeveoApiException {
+
+        String name = postData.getName();
+        if (name != null) {
+            Role role = roleService.findByName(name, currentUser.getProvider());
+            if (role == null) {
+                create(postData, currentUser);
+            } else {
+                update(postData, currentUser);
+            }
+        } else {
+            missingParameters.add("name");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
 }

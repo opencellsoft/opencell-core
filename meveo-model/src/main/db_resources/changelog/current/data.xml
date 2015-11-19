@@ -29,9 +29,10 @@
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="1" />
             <column name="permission_id" valueNumeric="16" />
-        </insert>
+        </insert>        
 	</changeSet>
-	<changeSet id="#1103_20151117" author="TyshanShi">
-		<sql>DELETE FROM MEVEO_MODULE_ITEM</sql>
-	</changeSet>
+    <changeSet id="#1205_20151118" author="AndriusKarpavicius">
+        <!--         <alterSequence sequenceName="adm_permission_seq" startValue="17"/> -->
+        <sql>ALTER SEQUENCE adm_permission_seq RESTART WITH 18</sql>
+    </changeSet>
 </databaseChangeLog>

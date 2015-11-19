@@ -334,10 +334,7 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	/**
-	 * Check entity provider. If current provider is not same as entity provider
-	 * exception is thrown since different provider should not be allowed to
-	 * modify (update or delete) entity. Only in User management case, provider
-	 * attribute should be ignored as user can be tied to several providers.
+	 * Check entity provider if not super admin user
 	 */
 	@Override
 	protected void checkProvider(User entity) {

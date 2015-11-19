@@ -11,6 +11,7 @@ import javax.persistence.NoResultException;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -24,6 +25,8 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCache;
+
+    private ParamBean paramBean = ParamBean.getInstance();
 
     /**
      * Find a list of custom field templates corresponding to a given entity
@@ -51,7 +54,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     @SuppressWarnings("unchecked")
     public List<CustomFieldTemplate> findByAppliesTo(String appliesTo, Provider provider) {
-        boolean useCache = true;
+        boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFT", "true"));
         if (useCache) {
             return customFieldsCache.getCustomFieldTemplatesByAppliesTo(appliesTo, provider);
 

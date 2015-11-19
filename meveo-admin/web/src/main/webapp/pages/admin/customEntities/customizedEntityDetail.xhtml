@@ -22,7 +22,6 @@
                 <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" showOnlyOnNew="true" required="true"/>
                 <hftl:formField label="#{messages['customizedEntities.name']}" field="name" required="true"/>
                 <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
-                <hftl:formField label="#{messages['customizedEntities.permission']}" field="permission" valueLabelField="name" listElements="#{permissionService.list()}" />
             </hftl:formPanel>
         </h:panelGroup>
         <h:panelGroup rendered="#{! customEntityTemplateBean.customEntityTemplate}">
