@@ -4,26 +4,26 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessUserAccountTestCase</title>
+<title>UpdateBillingAccountsTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessUserAccountTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateBillingAccountsTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>clickAndWait</td>
-	<td>${UserAccounts}</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
-	<td>${buttonNew}</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -33,33 +33,33 @@
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>${UserAccount}</td>
-	<td>User account</td>
+	<td>xpath=(//a[contains(text(),'Billing account')])[2]</td>
+	<td>Billing account</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${UserAccount}</td>
+	<td>${BillingAccount}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SelectBillingAccount}</td>
+	<td>${SelectCustomerAccount}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectBillingAccount}</td>
+	<td>${SelectCustomerAccount}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>id=billingAccountPopup_title</td>
-	<td>Billing account search</td>
+	<td>id=customerAccountPopup_title</td>
+	<td>Customer account search</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=billingAccountPopup_title</td>
-	<td>Billing account search</td>
+	<td>id=customerAccountPopup_title</td>
+	<td>Customer account search</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -74,81 +74,81 @@
 <tr>
 	<td>type</td>
 	<td>//*[contains(@id, 'txt:code_text')]</td>
-	<td>${BillingAccount}</td>
+	<td>${CustomerAccount}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=billingAccountPopuppopupForm:buttonSearch</td>
+	<td>id=customerAccountPopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
-	<td>${BillingAccount}</td>
+	<td>//tbody[@id='customerAccountPopuppopupForm:customerAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>${CustomerAccount}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='customerAccountPopuppopupForm:customerAccountPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
-	<td>${BillingAccount}</td>
+	<td>${CustomerAccount}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>${BillingAccount}</td>
+	<td>${CustomerAccount}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=billingAccountPopuppopupForm:buttonSearch</td>
+	<td>id=customerAccountPopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
-	<td>${BillingAccount}</td>
+	<td>//tbody[@id='customerAccountPopuppopupForm:customerAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>${CustomerAccount}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='customerAccountPopuppopupForm:customerAccountPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForNotVisible</td>
-	<td>id=billingAccountPopup</td>
+	<td>id=customerAccountPopup</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectBillingAccount}</td>
+	<td>${SelectCustomerAccount}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='customerAccountPopuppopupForm:customerAccountPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='customerAccountPopuppopupForm:customerAccountPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForValue</td>
-	<td>id=userAccountFormPanel:formId:userAccountTab:billingAccountSelectId:entityFieldSingle:billingAccount_entity</td>
-	<td>${BillingAccount}</td>
+	<td>id=parentTab:formBillingAccountPanel:formId:childTab:customerSelectId:entityFieldSingle:customerAccount_entity</td>
+	<td>${CustomerAccount}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${UsAccCode}</td>
+	<td>${BillAccCode}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${UsAccCode}</td>
+	<td>${BillAccCode}</td>
 	<td>${Code}</td>
 </tr>
 <tr>
@@ -187,6 +187,66 @@
 	<td>${Description}</td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SelectBillingCycle}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectBillingCycle}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${BillingCycleValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DiscountPlanBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectDiscountPlan}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectDiscountPlan}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${DiscountPlanValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DontSendInvoiceBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${DontSendInvoice}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${DontSendInvoice}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
 	<td>if</td>
 	<td>${RefExt1Bool}==true</td>
 	<td></td>
@@ -213,17 +273,47 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${RefExt2}</td>
+	<td>${ExternalRef2}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${RefExt2}</td>
+	<td>${ExternalRef2}</td>
 	<td>${RefExt2Value}</td>
 </tr>
 <tr>
 	<td>endIf</td>
 	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCountry}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectCountry}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${CountryValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectLanguage}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectLanguage}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${LanguageValue}&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -283,6 +373,46 @@
 </tr>
 <tr>
 	<td>if</td>
+	<td>${NextInvoiceDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${NextInvoiceDate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${NextInvoiceDate}</td>
+	<td>${NextInvoiceDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${InitialAgreementDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${InitialAgreementDate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${InitialAgreementDate}</td>
+	<td>${InitialAgreementDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
 	<td>${DefaultBool}==true</td>
 	<td></td>
 </tr>
@@ -307,7 +437,7 @@
 	<td>Informations</td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
+	<td>assertElementPresent</td>
 	<td>${Informations}</td>
 	<td></td>
 </tr>
@@ -442,6 +572,116 @@
 	<td></td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${PaymentMethodBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${PaymentMethod}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${PaymentMethod}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${PaymentMethodValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=parentTab:formBillingAccountPanel:formId:childTab:paymentMethod_label</td>
+	<td>${PaymentMethodValue}</td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${PaymentMethodValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>${PaymentMethodValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PaymentTermsBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${PaymentTerms}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${PaymentTerms}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${PaymentTermsValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ElectronicBillingBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ElectronicBilling}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ElectronicBilling}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EmailBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Email}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Email}</td>
+	<td>${EmailValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Email}</td>
+	<td>${EmailValue}</td>
+</tr>
+<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td>Custom fields</td>
@@ -497,8 +737,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${saveButtonWhenCreateAjax}</td>
+	<td>click</td>
+	<td>${saveButtonWhenUpdateAjax}</td>
 	<td></td>
 </tr>
 <tr>
@@ -516,21 +756,7 @@
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${backButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${backButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
-</tr>
+
 </tbody></table>
 </body>
 </html>

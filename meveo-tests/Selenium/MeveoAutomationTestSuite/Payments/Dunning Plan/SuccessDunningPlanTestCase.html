@@ -13,13 +13,28 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${DunningPlan}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${NewDunningPlan}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${LinkDunningPlan}</td>
+	<td>Dunning plan</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -27,14 +42,29 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>01</td>
+	<td>${DuPCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>_dunning_plan_01</td>
+	<td>${DuPDescription}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCreditCategory}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -43,7 +73,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;NEWCUSTOMER&quot;)</td>
+	<td>css=li:contains(&quot;${CreditCategoryValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectPaymentMethod}</td>
 	<td></td>
 </tr>
 <tr>
@@ -53,7 +88,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Credt/Debit card&quot;)</td>
+	<td>${PaymentMethodValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectStatus}</td>
 	<td></td>
 </tr>
 <tr>
@@ -63,13 +103,43 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Active&quot;)</td>
+	<td>${StatusValue}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${DuPCode}')]</td>
+	<td>${DuPCode}</td>
 </tr>
 </tbody></table>
 </body>

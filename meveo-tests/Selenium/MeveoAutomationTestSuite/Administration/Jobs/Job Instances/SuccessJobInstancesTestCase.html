@@ -13,13 +13,28 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${JobInstances}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ChooseJobCategory}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -28,7 +43,22 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Wallet&quot;)</td>
+	<td>${JobCategoryValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${ChooseJobCategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${JobType}</td>
 	<td></td>
 </tr>
 <tr>
@@ -38,18 +68,48 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;WalletReservationJob&quot;)</td>
+	<td>${JobTypeValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>01</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>Description for 01</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${TimerBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -58,7 +118,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;code_9&quot;)</td>
+	<td>css=li:contains(&quot;${TimerValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ActiveBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -67,9 +137,29 @@
 	<td></td>
 </tr>
 <tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ParametresBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${Parametres}</td>
-	<td>1</td>
+	<td>${ParametresValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${NextJobBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -78,12 +168,32 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Subs_Job&quot;)</td>
+	<td>css=li:contains(&quot;${NextJobValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

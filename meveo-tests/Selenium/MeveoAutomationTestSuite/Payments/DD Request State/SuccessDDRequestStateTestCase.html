@@ -13,27 +13,62 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${DDRequestState}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${NewDDRequestState}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${FromDueDate}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${FromDueDate}</td>
-	<td>18/09/2015</td>
+	<td>${FromDueDateValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ToDueDate}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ToDueDate}</td>
-	<td>23/09/2015</td>
+	<td>${ToDueDateValue}</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

@@ -13,13 +13,28 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${DiscountPlans}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${NewDiscountPlan}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${Informations}</td>
+	<td>Informations</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -27,19 +42,59 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>assertElementPresent</td>
 	<td>${DiscountPlanCode}</td>
-	<td>code_01</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${Description}</td>
-	<td>_description_code_01</td>
+	<td>${DiscountPlanCode}</td>
+	<td>${DpCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${DPDescription}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${DPDescription}</td>
+	<td>${DpDescription}</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${DpCode}')]</td>
+	<td>${DpCode}</td>
 </tr>
 </tbody></table>
 </body>

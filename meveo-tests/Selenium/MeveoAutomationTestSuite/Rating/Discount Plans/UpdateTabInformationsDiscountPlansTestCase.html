@@ -12,9 +12,29 @@
 <tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>clickAndWait</td>
-	<td>id=datatable_results:0:code_id_message_link</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${DpCode}')]</td>
+	<td>${DpCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${DpCode}')]</td>
 	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//a[contains(text(),'${DpCode}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${Informations}</td>
+	<td>Informations</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -22,18 +42,43 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>assertElementPresent</td>
 	<td>${DiscountPlanCode}</td>
-	<td>Code_01</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${Description}</td>
-	<td>description_code_01</td>
+	<td>${DiscountPlanCode}</td>
+	<td>${DpCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${DPDescription}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${DPDescription}</td>
+	<td>${DpDescription}</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

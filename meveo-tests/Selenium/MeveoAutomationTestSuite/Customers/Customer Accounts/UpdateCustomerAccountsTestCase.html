@@ -4,26 +4,26 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessUserAccountTestCase</title>
+<title>UpdateCustomerAccountsTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessUserAccountTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateCustomerAccountsTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>clickAndWait</td>
-	<td>${UserAccounts}</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
-	<td>${buttonNew}</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -33,33 +33,33 @@
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>${UserAccount}</td>
-	<td>User account</td>
+	<td>xpath=(//a[contains(text(),'Customer account')])[2]</td>
+	<td>Customer account</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${UserAccount}</td>
+	<td>xpath=(//a[contains(text(),'Customer account')])[2]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SelectBillingAccount}</td>
+	<td>${SelectCustomer}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectBillingAccount}</td>
+	<td>${SelectCustomer}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>id=billingAccountPopup_title</td>
-	<td>Billing account search</td>
+	<td>id=searchCustomerPopup_title</td>
+	<td>Customer search</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=billingAccountPopup_title</td>
-	<td>Billing account search</td>
+	<td>id=searchCustomerPopup_title</td>
+	<td>Customer search</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -74,81 +74,81 @@
 <tr>
 	<td>type</td>
 	<td>//*[contains(@id, 'txt:code_text')]</td>
-	<td>${BillingAccount}</td>
+	<td>${Customer}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=billingAccountPopuppopupForm:buttonSearch</td>
+	<td>id=searchCustomerPopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
-	<td>${BillingAccount}</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
+	<td>${Customer}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
-	<td>${BillingAccount}</td>
+	<td>${Customer}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>${BillingAccount}</td>
+	<td>${Customer}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=billingAccountPopuppopupForm:buttonSearch</td>
+	<td>id=searchCustomerPopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
-	<td>${BillingAccount}</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
+	<td>${Customer}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForNotVisible</td>
-	<td>id=billingAccountPopup</td>
+	<td>id=searchCustomerPopup</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectBillingAccount}</td>
+	<td>${SelectCustomer}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForValue</td>
-	<td>id=userAccountFormPanel:formId:userAccountTab:billingAccountSelectId:entityFieldSingle:billingAccount_entity</td>
-	<td>${BillingAccount}</td>
+	<td>id=parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:customerSelectId:entityFieldSingle:customer_entity</td>
+	<td>${Customer}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${UsAccCode}</td>
+	<td>${CustAcCode}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${UsAccCode}</td>
+	<td>${CustAcCode}</td>
 	<td>${Code}</td>
 </tr>
 <tr>
@@ -227,6 +227,36 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCurrency}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectCurrency}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${CurrencyValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectLanguage}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectLanguage}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${LanguageValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
 	<td>if</td>
 	<td>${TitleBool}==true</td>
 	<td></td>
@@ -283,6 +313,56 @@
 </tr>
 <tr>
 	<td>if</td>
+	<td>${PaymentMethodBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectPaymentMethod}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectPaymentMethod}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${PaymentMethodValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CreditCategoryBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCreditCategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectCreditCategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${CreditCategoryValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
 	<td>${DefaultBool}==true</td>
 	<td></td>
 </tr>
@@ -307,13 +387,73 @@
 	<td>Informations</td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
+	<td>assertElementPresent</td>
 	<td>${Informations}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${Informations}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EmailBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Email}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Email}</td>
+	<td>${EmailValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PhoneBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Phone}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Phone}</td>
+	<td>${PhoneValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MobileBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Mobile}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Mobile}</td>
+	<td>${MobileValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -442,6 +582,46 @@
 	<td></td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${MandateIdentificationBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${MandateIdentification}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${MandateIdentification}</td>
+	<td>${MandateIdentificationValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${SignatureDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SignatureDate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${SignatureDate}</td>
+	<td>${SignatureDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'Custom fields')]</td>
 	<td>Custom fields</td>
@@ -497,8 +677,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${saveButtonWhenCreateAjax}</td>
+	<td>click</td>
+	<td>${saveButtonWhenUpdateAjax}</td>
 	<td></td>
 </tr>
 <tr>
@@ -516,21 +696,7 @@
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${backButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${backButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
-</tr>
+
 </tbody></table>
 </body>
 </html>

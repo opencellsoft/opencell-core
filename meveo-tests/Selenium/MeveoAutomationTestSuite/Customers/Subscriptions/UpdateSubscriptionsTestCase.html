@@ -12,73 +12,238 @@
 <tr><td rowspan="1" colspan="3">UpdateJobInstancesTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>id=datatable_results:0:code_id_message_link</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${Informations}</td>
+	<td>Informations</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${Informations}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectUserAccount}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectUserAccount}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>id=userAccountPopup_title</td>
+	<td>User account</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=userAccountPopup_title</td>
+	<td>User account</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${CodeText}</td>
-	<td>Code_01</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td>${UserAccount}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=userAccountPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>${UserAccount}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${UserAccount}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${UserAccount}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=userAccountPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>${UserAccount}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=userAccountPopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectUserAccount}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>id=subscriptionTab:subscriptionFormPanel:formId:informationTab:userSelectId:entityFieldSingle:userAccount_entity</td>
+	<td>${UserAccount}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectOffer}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${SelectOffer}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${OfferValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SubCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${SubCode}</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>Description for Code_ 01</td>
+	<td>${Description}</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${Hour}</td>
-	<td>*</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Minute}</td>
-	<td>0</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Second}</td>
-	<td>0</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Year}</td>
-	<td>*</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${Month}</td>
-	<td>*</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${DayOfMonth}</td>
-	<td>*</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${DayOfWeek}</td>
-	<td>*</td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${saveWithObjectId}</td>
+	<td>assertElementPresent</td>
+	<td>${InitialAgreementDate}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTitle</td>
-	<td>MEVEO | Open Source Billing Platform</td>
+	<td>type</td>
+	<td>${InitialAgreementDate}</td>
+	<td>${InitialAgreementDateValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EndAgreementDateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${EndAgreementDate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${EndAgreementDate}</td>
+	<td>${EndAgreementDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DefaultBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Default}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${Default}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveButtonWhenUpdateAjax}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

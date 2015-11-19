@@ -4,26 +4,26 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessUserAccountTestCase</title>
+<title>UpdateUserAccountTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessUserAccountTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateUserAccountTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>clickAndWait</td>
-	<td>${UserAccounts}</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
-	<td>${buttonNew}</td>
+	<td>//a[contains(text(),'${Code}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -497,8 +497,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${saveButtonWhenCreateAjax}</td>
+	<td>click</td>
+	<td>${saveButtonWhenUpdateAjax}</td>
 	<td></td>
 </tr>
 <tr>
@@ -516,21 +516,7 @@
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${backButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${backButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
-</tr>
+
 </tbody></table>
 </body>
 </html>

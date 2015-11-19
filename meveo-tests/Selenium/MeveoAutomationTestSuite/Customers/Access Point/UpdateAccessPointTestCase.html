@@ -4,26 +4,26 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessJobInstancesTestCase</title>
+<title>UpdateAccessPointTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessJobInstancesTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateAccessPointTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>clickAndWait</td>
-	<td>${Subscriptions}</td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${AccCode}')]</td>
+	<td>${AccCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${AccCode}')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
-	<td>${buttonNew}</td>
+	<td>//a[contains(text(),'${AccCode}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -43,23 +43,33 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SelectUserAccount}</td>
+	<td>${AccessPointCode}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${AccessPointCode}</td>
+	<td>${AccCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectSubscription}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectUserAccount}</td>
+	<td>${SelectSubscription}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>id=userAccountPopup_title</td>
-	<td>User account</td>
+	<td>id=searchSubscriptionPopup_title</td>
+	<td>Subscription</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=userAccountPopup_title</td>
-	<td>User account</td>
+	<td>id=searchSubscriptionPopup_title</td>
+	<td>Subscription</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -74,132 +84,87 @@
 <tr>
 	<td>type</td>
 	<td>//*[contains(@id, 'txt:code_text')]</td>
-	<td>${UserAccount}</td>
+	<td>${SubscriptionValue}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=userAccountPopuppopupForm:buttonSearch</td>
+	<td>id=searchSubscriptionPopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
-	<td>${UserAccount}</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
+	<td>${SubscriptionValue}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
-	<td>${UserAccount}</td>
+	<td>${SubscriptionValue}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>${UserAccount}</td>
+	<td>${SubscriptionValue}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=userAccountPopuppopupForm:buttonSearch</td>
+	<td>id=searchSubscriptionPopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
-	<td>${UserAccount}</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
+	<td>${SubscriptionValue}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForNotVisible</td>
-	<td>id=userAccountPopup</td>
+	<td>id=searchSubscriptionPopup</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectUserAccount}</td>
+	<td>${SelectSubscription}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td[1]</td>
+	<td>//tbody[@id='searchSubscriptionPopuppopupForm:searchSubscriptionPopupdatatable_data']/tr/td[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForValue</td>
-	<td>id=subscriptionTab:subscriptionFormPanel:formId:informationTab:userSelectId:entityFieldSingle:userAccount_entity</td>
-	<td>${UserAccount}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${SelectOffer}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectOffer}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${OfferValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${SubCode}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${SubCode}</td>
-	<td>${Code}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${descriptionText}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${descriptionText}</td>
-	<td>${Description}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${InitialAgreementDate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${InitialAgreementDate}</td>
-	<td>${InitialAgreementDateValue}</td>
+	<td>id=formPanel:formId:tabView:subscriptionId:entityFieldSingle:subscription_entity</td>
+	<td>${SubscriptionValue}</td>
 </tr>
 <tr>
 	<td>if</td>
-	<td>${EndAgreementDateBool}==true</td>
+	<td>${StartDateBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${EndAgreementDate}</td>
+	<td>${StartDate}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${EndAgreementDate}</td>
-	<td>${EndAgreementDateValue}</td>
+	<td>${StartDate}</td>
+	<td>${StartDateValue}</td>
 </tr>
 <tr>
 	<td>endIf</td>
@@ -208,17 +173,42 @@
 </tr>
 <tr>
 	<td>if</td>
-	<td>${DefaultBool}==true</td>
+	<td>${EndDateBool}==true</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${Default}</td>
+	<td>${EndDate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${EndDate}</td>
+	<td>${EndDateValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${TabCustomFieldBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
+	<td>Custom fields</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${Default}</td>
+	<td>//a[contains(text(),'Custom fields')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -227,8 +217,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${saveButtonWhenCreateAjax}</td>
+	<td>click</td>
+	<td>${saveButtonWhenUpdateAjax}</td>
 	<td></td>
 </tr>
 <tr>
@@ -246,21 +236,7 @@
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${backButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${backButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
-</tr>
+
 </tbody></table>
 </body>
 </html>
