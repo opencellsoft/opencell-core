@@ -73,7 +73,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;${CreditCategoryValue}&quot;)</td>
+	<td>${CreditCategoryValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PaymentMethodBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -89,6 +94,16 @@
 <tr>
 	<td>click</td>
 	<td>${PaymentMethodValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${SelectStatus}</td>
 	<td></td>
 </tr>
 <tr>

@@ -13,13 +13,28 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${ScriptInstances}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ScriptInstanceBool}==true</td>
+	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -29,12 +44,42 @@
 <tr>
 	<td>type</td>
 	<td>${ScriptInstanceTextArea}</td>
-	<td>package org.meveo.service.script;&nbsp;&nbsp;import java.util.List; import java.util.Map;&nbsp;&nbsp;import org.meveo.admin.exception.BusinessException; import org.meveo.cache.CdrEdrProcessingCacheContainerProvider; import org.meveo.model.crm.Provider; import org.meveo.model.mediation.Access; import org.meveo.service.script.Script; import org.slf4j.Logger; import org.slf4j.LoggerFactory;&nbsp;&nbsp;public class Mediation_RoutingSub extends Script {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;private static final Logger log = LoggerFactory.getLogger(Mediation_RoutingSub.class);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider = (CdrEdrProcessingCacheContainerProvider) getServiceInterface(&quot;CdrEdrProcessingCacheContainerProvider&quot;);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public void execute(Map&lt;String, Object&gt; initContext,Provider provider)throws BusinessException {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;log.debug(&quot;Execute...&quot;);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String accessUserId = (String) initContext.get(&quot;accessUserId&quot;);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;Access&gt; accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(provider.getId(), accessUserId);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;initContext.put(&quot;accesses&quot;, accesses);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;log.info(&quot;Execute accesses size:&quot;+((accesses == null)?&quot;null&quot;:accesses.size()));&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} }</td>
+	<td>${ScriptInstanceValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>Routing to Subscriptions</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${TypeBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ChooseType}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -43,12 +88,22 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${JavaType}</td>
+	<td>css=li:contains(&quot;${TypeValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
 	<td></td>
 </tr>
 </tbody></table>
