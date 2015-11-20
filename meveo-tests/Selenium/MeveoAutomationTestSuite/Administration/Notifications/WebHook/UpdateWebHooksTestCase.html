@@ -4,31 +4,31 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>SuccessJobInstancesTestCase</title>
+<title>UpdateWebHooksTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">SuccessJobInstancesTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateWebHooksTestCase</td></tr>
 </thead><tbody>
-<tr>
-	<td>clickAndWait</td>
-	<td>${webHooks}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
 <tr>
 	<td>if</td>
 	<td>${WebHooksBool}==true</td>
 	<td></td>
 </tr>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>${buttonNew}</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -313,7 +313,12 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${saveButtonWhenCreate}</td>
+	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
 	<td></td>
 </tr>
 <tr>
@@ -327,15 +332,11 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${CodeValue}')]</td>
-	<td>${CodeValue}</td>
-</tr>
-<tr>
 	<td>endIf</td>
 	<td></td>
 	<td></td>
 </tr>
+
 </tbody></table>
 </body>
 </html>

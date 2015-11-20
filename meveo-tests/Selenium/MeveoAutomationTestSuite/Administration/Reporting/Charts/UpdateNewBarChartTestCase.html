@@ -12,6 +12,11 @@
 <tr><td rowspan="1" colspan="3">UpdateNewBarChartTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>if</td>
+	<td>${ChartBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'bar_chart_01')]</td>
 	<td>bar_chart_01</td>
@@ -276,7 +281,11 @@
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>

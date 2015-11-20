@@ -13,23 +13,63 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${EmailNotifications}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EmailNotificationBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>01</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ClassnameFilterBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ClassnameFilter}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${ClassnameFilter}</td>
-	<td>org.meveo.model.billing.OneShotChargeInstance</td>
+	<td>${ClassnameFilterValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${EventTypeFilter}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -38,13 +78,38 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Created&quot;)</td>
+	<td>css=li:contains(&quot;${EventTypeFilterValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EventELFilterBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${EventELFilter}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${EventELFilter}</td>
-	<td>Test Event</td>
+	<td>${EventELFilterValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ScriptInstanceBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ScriptInstance}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -52,34 +117,184 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>id=scriptInstancePopup_title</td>
+	<td>Script instances</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>id=scriptInstancePopup_title</td>
+	<td>Script instances</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td>${ScriptInstanceValue}</td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>css=td</td>
+	<td>id=scriptInstancePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='scriptInstancePopuppopupForm:scriptInstancePopupdatatable_data']/tr/td[1]</td>
+	<td>${ScriptInstanceValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='scriptInstancePopuppopupForm:scriptInstancePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTextPresent</td>
+	<td>${ScriptInstanceValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${ScriptInstanceValue}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=scriptInstancePopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='scriptInstancePopuppopupForm:scriptInstancePopupdatatable_data']/tr/td[1]</td>
+	<td>${ScriptInstanceValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='scriptInstancePopuppopupForm:scriptInstancePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>id=scriptInstancePopup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ScriptInstance}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='scriptInstancePopuppopupForm:scriptInstancePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='scriptInstancePopuppopupForm:scriptInstancePopupdatatable_data']/tr/td[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SentFrom}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${SentFrom}</td>
-	<td>Meveo Test</td>
+	<td>${SentFromValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${SentToELBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SentToEL}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${SentToEL}</td>
-	<td>Send to El</td>
+	<td>${SentToELValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Subject}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Subject}</td>
-	<td>Test Meveo Application</td>
+	<td>${SubjectValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${TextBodyBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${TextBody}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${TextBody}</td>
-	<td>Hello text body</td>
+	<td>${TextBodyValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${HtmlBodyBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${HtmlBody}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${HtmlBody}</td>
-	<td>&lt;h1&gt; Testing Meveo &lt;/h1&gt;</td>
+	<td>${HtmlBodyValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CounterBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectCounter}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -87,13 +302,38 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>xpath=/html/body/div[1]/div[3]/div[1]/a/span</td>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 </tbody></table>
