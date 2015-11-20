@@ -16,15 +16,32 @@
  */
 package org.meveo.admin.action.admin.module;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.apache.commons.codec.binary.Base64;
+import org.jboss.resteasy.client.ClientResponse;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.module.ModuleDto;
+import org.meveo.api.dto.module.ModuleItemDto;
 import org.meveo.model.admin.MeveoModule;
 import org.meveo.model.admin.MeveoModuleItem;
 import org.meveo.model.admin.ModuleItemTypeEnum;
+import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.filter.Filter;
@@ -88,6 +105,8 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	private TreeNode scriptnode;
 	private TreeNode jobnode;
 	private TreeNode notificationnode;
+	
+	protected MeveoInstance meveoInstance;
 
 
 	/**
@@ -98,6 +117,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 		super(MeveoModule.class);
 
 	}
+	
 	@PostConstruct
 	public void init(){
 		root=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.title"),null, null));
@@ -113,6 +133,14 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 		jobnode.setExpanded(true);
 		notificationnode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.notifications"),null,null),root);
 		notificationnode.setExpanded(true);
+	}
+	
+	public MeveoInstance getMeveoInstance() {
+		return meveoInstance;
+	}
+
+	public void setMeveoInstance(MeveoInstance meveoInstance) {
+		this.meveoInstance = meveoInstance;
 	}
 
 	@Override
@@ -384,6 +412,42 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			default:
 			}
 		}
-		
+	}
+	public void exportModule(){
+		log.debug("export module {} to {}",entity,meveoInstance);
+		if(meveoInstance!=null){
+			try {
+				String url = String.format("%s/api/rest/module", meveoInstance.getUrl());
+				ResteasyClient client = new ResteasyClientBuilder().build();
+				ResteasyWebTarget target = client.target(url);
+				String encode = base64Encode(
+						String.format("%s:%s", meveoInstance.getAuthUsername(), meveoInstance.getAuthPassword()));
+				ModuleDto moduleDto=new ModuleDto(entity.getCode(),entity.getDescription(),entity.getLicense(),entity.isDisabled());
+				moduleDto.setModuleItems(new ArrayList<ModuleItemDto>());
+				ModuleItemDto itemDto=null;
+				for(MeveoModuleItem item:entity.getModuleItems()){
+					itemDto=new ModuleItemDto(item.getItemCode(),item.getAppliesTo(),item.getItemType());
+					moduleDto.getModuleItems().add(itemDto);
+				}
+				ActionStatus response = target.request().accept(MediaType.APPLICATION_XML)
+						.header("Authorization", String.format("Basic %s", encode)).post(Entity.entity(moduleDto, MediaType.APPLICATION_XML),ActionStatus.class);
+				log.debug("response {}",response);
+				if(ActionStatusEnum.SUCCESS==response.getStatus()){
+					messages.info(new BundleKey("messages", "meveoModule.exportSuccess"), moduleDto.getCode(),meveoInstance.getCode());
+				}else{
+					messages.error(new BundleKey("messages", "meveoModule.exportFailed"), entity.getCode(),response.getMessage());
+				}
+			} catch (Exception e) {
+				log.error("Error when export module {} to {}",entity.getCode(), meveoInstance,e);
+				messages.error(new BundleKey("messages", "meveoModule.exportException"),entity.getCode(), meveoInstance.getCode(),(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
+			}
+			
+		}
+	}
+	protected String base64Encode(String str) throws UnsupportedEncodingException {
+		Base64 base64 = new Base64();
+		byte[] b = str.getBytes("UTF-8");
+		b = base64.encode(b);
+		return new String(b, "UTF-8");
 	}
 }

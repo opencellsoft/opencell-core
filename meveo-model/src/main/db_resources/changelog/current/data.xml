@@ -35,4 +35,7 @@
         <!--         <alterSequence sequenceName="adm_permission_seq" startValue="17"/> -->
         <sql>ALTER SEQUENCE adm_permission_seq RESTART WITH 18</sql>
     </changeSet>
+	<changeSet id="#1103_20151119" author="TyshanShi">
+		<sql>UPDATE MEVEO_MODULE SET MODULE_LICENSE='GPL'</sql>
+	</changeSet>
 </databaseChangeLog>

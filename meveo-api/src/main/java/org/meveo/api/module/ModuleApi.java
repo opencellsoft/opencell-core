@@ -3,7 +3,6 @@ package org.meveo.api.module;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -58,12 +57,15 @@ public class ModuleApi extends BaseApi {
 	private NotificationService notificationService;
 
 	public void create(ModuleDto moduleDto, User currentUser) throws MeveoApiException {
-		if (StringUtils.isBlank(moduleDto.getCode()) || StringUtils.isBlank(moduleDto.getDescription())) {
+		if (StringUtils.isBlank(moduleDto.getCode()) || StringUtils.isBlank(moduleDto.getDescription())||StringUtils.isBlank(moduleDto.getLicense())) {
 			if (StringUtils.isBlank(moduleDto.getCode())) {
 				missingParameters.add("code");
 			}
 			if (StringUtils.isBlank(moduleDto.getDescription())) {
 				missingParameters.add("description");
+			}
+			if (StringUtils.isBlank(moduleDto.getLicense())) {
+				missingParameters.add("license");
 			}
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
@@ -75,6 +77,7 @@ public class ModuleApi extends BaseApi {
 		meveoModule.setCode(moduleDto.getCode());
 		meveoModule.setDescription(moduleDto.getDescription());
 		meveoModule.setActive(true);
+		meveoModule.setLicense(moduleDto.getLicense());
 		List<ModuleItemDto> itemDtos = moduleDto.getModuleItems();
 		if (itemDtos != null) {
 			MeveoModuleItem moduleItem = null;
@@ -147,15 +150,18 @@ public class ModuleApi extends BaseApi {
 	}
 	public void update(ModuleDto moduleDto, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(moduleDto.getCode()) && StringUtils.isBlank(moduleDto.getDescription())
-				|| StringUtils.isBlank(moduleDto.getDiabled())) {
+				|| StringUtils.isBlank(moduleDto.getDisabled())||StringUtils.isBlank(moduleDto.getLicense())) {
 			if (StringUtils.isBlank(moduleDto.getCode())) {
 				missingParameters.add("module code is null");
 			}
 			if (StringUtils.isBlank(moduleDto.getDescription())) {
 				missingParameters.add("module description is null");
 			}
-			if (StringUtils.isBlank(moduleDto.getDiabled())) {
+			if (StringUtils.isBlank(moduleDto.getDisabled())) {
 				missingParameters.add("module disabled is null");
+			}
+			if (StringUtils.isBlank(moduleDto.getLicense())) {
+				missingParameters.add("module license is null");
 			}
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		} else {
@@ -165,7 +171,8 @@ public class ModuleApi extends BaseApi {
 				throw new EntityDoesNotExistsException(MeveoModule.class, moduleDto.getCode());
 			}
 			meveoModule.setDescription(moduleDto.getDescription());
-			meveoModule.setDisabled(moduleDto.getDiabled());
+			meveoModule.setDisabled(moduleDto.getDisabled());
+			meveoModule.setLicense(moduleDto.getLicense());
 			List<MeveoModuleItem> temps=new ArrayList<MeveoModuleItem>();
 			if (!StringUtils.isBlank(moduleDto.getModuleItems())&&moduleDto.getModuleItems().size()>0) {
 				MeveoModuleItem moduleItem = null;
@@ -208,10 +215,7 @@ public class ModuleApi extends BaseApi {
 		List<ModuleDto> result=new ArrayList<ModuleDto>();
 		ModuleDto moduleDto=null;
 		for(MeveoModule meveoModule:meveoModules){
-			moduleDto=new ModuleDto();
-			moduleDto.setCode(meveoModule.getCode());
-			moduleDto.setDescription(meveoModule.getDescription());
-			moduleDto.setDiabled(meveoModule.isDisabled());
+			moduleDto=new ModuleDto(meveoModule.getCode(),meveoModule.getDescription(),meveoModule.getLicense(),meveoModule.isDisabled());
 			List<MeveoModuleItem> moduleItems=meveoModule.getModuleItems();
 			if(moduleItems!=null&&moduleItems.size()>0){
 				List<ModuleItemDto> itemDtos=new ArrayList<ModuleItemDto>();
@@ -232,10 +236,7 @@ public class ModuleApi extends BaseApi {
 		if (meveoModule == null) {
 			throw new EntityDoesNotExistsException(MeveoModule.class, code);
 		}
-		ModuleDto moduleDto=new ModuleDto();
-		moduleDto.setCode(meveoModule.getCode());
-		moduleDto.setDescription(meveoModule.getDescription());
-		moduleDto.setDiabled(meveoModule.isDisabled());
+		ModuleDto moduleDto=new ModuleDto(meveoModule.getCode(),meveoModule.getDescription(),meveoModule.getLicense(),meveoModule.isDisabled());
 		List<MeveoModuleItem> moduleItems=meveoModule.getModuleItems();
 		if(moduleItems!=null&&moduleItems.size()>0){
 			List<ModuleItemDto> itemDtos=new ArrayList<ModuleItemDto>();

@@ -1,9 +1,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:o="http://omnifaces.org/ui">
+	xmlns:o="http://omnifaces.org/ui" xmlns:s="http://jboss.org/seam/faces">
 
 	<f:metadata>
 		<f:event type="preRenderView"
@@ -23,6 +24,8 @@
 				label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:searchField label="#{messages['BusinessEntity.description']}"
 				field="description" />
+			<hftl:searchField label="#{messages['meveoModule.license']}"
+				field="license" />
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['meveoModule.title']}"
@@ -30,12 +33,133 @@
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />
+			<hftl:column label="#{messages['meveoModule.license']}"
+				field="license.label" isMessage="true" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				isMessage="true" field="active" />
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="true">
+				permission="#{identity.hasPermission('administration','administrationManagement')}"
+				renderEnableLink="true">
 			</hftl:actionsColumn>
+			<ui:define name="add-on-buttons">
+				<p:commandButton id="installMeveoModuleButton"
+					value="#{messages['meveoModule.installModule']}"
+					update=":#{p:component('meveoModulesDialog')}"
+					oncomplete="PF('meveoModulesDialog').show()">
+					<f:setPropertyActionListener value="#{null}" target="#{meveoModuleListBean.meveoInstance}"/>
+					<f:setPropertyActionListener value="#{null}" target="#{meveoModuleListBean.selectedModuleDto}"/>
+				</p:commandButton>
+			</ui:define>
 		</hftl:dataList>
+		<p:dialog id="meveoModulesDialog" styleClass="confirm-dialog"
+			header="#{messages['meveoModule.meveoModules']}"
+			widgetVar="meveoModulesDialog" width="750" modal="true">
+			<hftl:decorateFormPanel formId="modules">
+				<ui:define name="fields">
+					<hftl:decorateFormField
+						label="#{messages['meveoModule.meveoInstance']}">
+						<p:selectOneMenu value="#{meveoModuleListBean.meveoInstance}"
+							id="Meveoinstance" required="true">
+							<f:selectItem />
+							<f:selectItems value="#{meveoInstanceListBean.listAll()}"
+								var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
+							<s:objectConverter />
+							<p:ajax event="valueChange" update="@form"
+								listener="#{meveoModuleListBean.initMeveoInstance}"></p:ajax>
+						</p:selectOneMenu>
+					</hftl:decorateFormField>
+					<hftl:decorateFormField rendered="#{not empty meveoModuleListBean.meveoInstance}"
+						label="#{messages['meveoModule.meveoModules']}"
+						componentWidth="100" newLine="true">
+						<p:dataTable value="#{meveoModuleListBean.moduleDtos}"
+							paginator="true" rows="10" var="module"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+							rowsPerPageTemplate="10,20,50" lazy="false"
+							styleClass="custom-grid" rowIndexVar="rowIndex"
+							resizableColumns="true">
+							<p:column headerText="#{messages['businessEntity.code']}"
+								sortBy="#{module.code}">
+								<h:outputText value="#{module.code}" />
+							</p:column>
+							<p:column headerText="#{messages['businessEntity.description']}">
+								<h:outputText value="#{module.description}" />
+							</p:column>
+							<p:column headerText="#{messages['enableEntity.active']}">
+								<h:outputText
+									value="#{messages[meveoModuleListBean.selectedModuleDto.disabled.toString()=='false'?'commons.yes':'commons.no']}" />
+							</p:column>
+							<p:column headerText="#{messages['meveoModule.license']}">
+								<h:outputText value="#{messages[module.license.label]}" />
+							</p:column>
+							<p:column headerText="#{messages['accountOperation.actions']}">
+								<p:commandLink value="#{messages['meveoModule.install']}"
+									update=":#{p:component('meveoModuleDialog')}"
+									oncomplete="PF('meveoModulesDialog').hide();PF('meveoModuleDialog').show()">
+									<f:setPropertyActionListener value="#{module}"
+										target="#{meveoModuleListBean.selectedModuleDto}" />
+								</p:commandLink>
+							</p:column>
+						</p:dataTable>
+					</hftl:decorateFormField>
+				</ui:define>
+			</hftl:decorateFormPanel>
+		</p:dialog>
+		<p:dialog id="meveoModuleDialog" styleClass="confirm-dialog"
+			header="#{messages['meveoModule.title']}"
+			widgetVar="meveoModuleDialog" width="700" modal="true">
+			<hftl:decorateFormPanel formId="module"
+				rendered="#{not empty meveoModuleListBean.selectedModuleDto}">
+				<ui:define name="fields">
+					<hftl:decorateFormField label="#{messages['businessEntity.code']}">
+						<h:outputText
+							value="#{meveoModuleListBean.selectedModuleDto.code}" />
+					</hftl:decorateFormField>
+					<hftl:decorateFormField
+						label="#{messages['businessEntity.description']}">
+						<h:outputText
+							value="#{meveoModuleListBean.selectedModuleDto.description}" />
+					</hftl:decorateFormField>
+					<hftl:decorateFormField label="#{messages['enableEntity.active']}">
+						<h:outputText
+							value="#{messages[meveoModuleListBean.selectedModuleDto.disabled.toString()=='false'?'commons.yes':'commons.no']}" />
+					</hftl:decorateFormField>
+					<hftl:decorateFormField label="#{messages['meveoModule.license']}">
+						<h:outputText
+							value="#{messages[meveoModuleListBean.selectedModuleDto.license.label]}" />
+					</hftl:decorateFormField>
+					<hftl:decorateFormField label="#{messages['meveoModule.items']}"
+						componentWidth="100" newLine="true">
+						<p:dataTable styleClass="custom-grid" resizableColumns="true"
+							value="#{meveoModuleListBean.selectedModuleDto.moduleItems}"
+							var="item">
+							<p:column headerText="#{messages['businessEntity.code']}">
+								<h:outputText value="#{item.itemCode}" styleClass="field-value" />
+							</p:column>
+							<p:column headerText="#{messages['businessEntity.description']}">
+								<h:outputText value="#{item.description}"
+									styleClass="field-value" />
+							</p:column>
+							<p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
+								<h:outputText value="#{item.appliesTo}" styleClass="field-value" />
+							</p:column>
+							<p:column headerText="#{messages['meveoModuleItemType.type']}">
+								<h:outputText value="#{messages[item.itemType.label]}"
+									styleClass="field-value" />
+							</p:column>
+						</p:dataTable>
+					</hftl:decorateFormField>
+				</ui:define>
+				<ui:define name="buttons">
+					<p:commandButton id="confirmOk" value="#{messages['commons.yes']}"
+						oncomplete="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()"
+						process="@this" action="#{meveoModuleListBean.installModule}"
+						update=":#{p:component('meveoModuleDialog')}, :#{p:component('meveoModulesDialog')}">
+					</p:commandButton>
+					<p:commandButton id="confirmKo" value="#{messages['commons.no']}"
+						onclick="PF('meveoModuleDialog').hide();PF('meveoModulesDialog').show()"
+						type="button" />
+				</ui:define>
+			</hftl:decorateFormPanel>
+		</p:dialog>
 	</ui:define>
-
 </ui:composition>

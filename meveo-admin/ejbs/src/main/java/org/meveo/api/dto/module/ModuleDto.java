@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.admin.ModuleLicenseEnum;
+
 /**
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
@@ -24,11 +26,20 @@ public class ModuleDto implements Serializable{
 	@XmlAttribute(required=true)
 	private String code;
 	@XmlAttribute(required=true)
+	private ModuleLicenseEnum license;
+	@XmlAttribute(required=true)
 	private String description;
-	private Boolean diabled;
+	private Boolean disabled;
 	@XmlElementWrapper(name="moduleItems")
 	@XmlElement(name="ModuleItem")
 	private List<ModuleItemDto> moduleItems;
+	public ModuleDto(){}
+	public ModuleDto(String code,String description,ModuleLicenseEnum license,Boolean disabled){
+		this.code=code;
+		this.description=description;
+		this.license=license;
+		this.disabled=disabled;
+	}
 	public String getCode() {
 		return code;
 	}
@@ -42,11 +53,11 @@ public class ModuleDto implements Serializable{
 		this.description = description;
 	}
 	
-	public Boolean getDiabled() {
-		return diabled;
+	public Boolean getDisabled() {
+		return disabled;
 	}
-	public void setDiabled(Boolean diabled) {
-		this.diabled = diabled;
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
 	}
 	public List<ModuleItemDto> getModuleItems() {
 		return moduleItems;
@@ -54,9 +65,16 @@ public class ModuleDto implements Serializable{
 	public void setModuleItems(List<ModuleItemDto> moduleItems) {
 		this.moduleItems = moduleItems;
 	}
+	
+	public ModuleLicenseEnum getLicense() {
+		return license;
+	}
+	public void setLicense(ModuleLicenseEnum license) {
+		this.license = license;
+	}
 	@Override
 	public String toString() {
-		return "ModuleDto [code=" + code + ", description=" + description + ", diabled=" + diabled + ", moduleItems="
+		return "ModuleDto [code=" + code + ", description=" + description + ", diabled=" + disabled + ", license="+license+", moduleItems="
 				+ moduleItems + "]";
 	}
 	

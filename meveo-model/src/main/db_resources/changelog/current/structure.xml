@@ -667,4 +667,11 @@
         <sql>insert into adm_role_role (role_id, child_role_id) (select role_p.id, role_c.id from adm_role role_p join adm_role role_c on role_p.provider_id=role_c.provider_id and role_p.role_name='administrateur' and role_c.role_name='ModifyAllCET')</sql>
         <sql>insert into adm_role_role (role_id, child_role_id) (select role_p.id, role_c.id from adm_role role_p join adm_role role_c on role_p.provider_id=role_c.provider_id and role_p.role_name='ModifyAllCET' and role_c.role_name='ReadAllCET')</sql>
     </changeSet>    
+	<changeSet author="TyshanShi" id="#1103_20151119">
+		<addColumn tableName="meveo_module">
+			<column name="module_license" type="VARCHAR(20)">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

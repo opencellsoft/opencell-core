@@ -94,7 +94,7 @@
 			<h:panelGrid columns="2" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 			<h:panelGrid styleClass="panelGrid-column100">
 			<p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="chargeTemplate">
-			<p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructChargesWithNotPricePlan}" />>
+			<p:ajax event="tabChange" listener="#{configIssuesReportingBean.constructChargesWithNotPricePlan}" />
 			<p:tab>  	
 			 <f:facet name="title">
                <h:outputText value="#{messages['configIssuesReporting.chargesWithNotPricePlan']} : "/>

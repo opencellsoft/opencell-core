@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
@@ -84,15 +84,18 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hftl:formPanel formId="moduleFormId" ajaxSubmit="true"
+		<hftl:formPanel formId="moduleFormId" ajaxSubmit="true" buttons="true"
 			label="#{messages['meveoModule.title']}" showEnableDisableButton="true"
 			backingBean="#{meveoModuleBean}">
 			<hftl:formField label="#{messages['businessEntity.code']}"
 				field="code" maxlength="35" required="true" validateUnique="true"/>
 			<hftl:formField label="#{messages['businessEntity.description']}"
 				field="description" id="description" maxlength="100" />
-			<hftl:formField label="#{messages['enableEntity.active']}" field="active"
-				doNotShowOnNew="true" allowEdit="false" isMessage="true"/>
+			<hftl:formField label="#{messages['meveoModule.license']}" required="true"
+				field="license" id="license" isMessage="true"/>
+			<hftl:formField label="#{messages['enableEntity.disabled']}"
+				doNotShowOnNew="true" allowEdit="false" field="disabled"
+				isMessage="true" />
 			<hftl:decorateFormField
 				label="#{messages['meveoModule.items']}" 
 				componentWidth="100" displayOneLine="false" newLine="true">
@@ -138,7 +141,44 @@
 					</f:facet>
 				</p:treeTable>
 			</hftl:decorateFormField>
+			<ui:define name="buttons">
+				<p:commandButton id="exportModuleButton" update=":#{p:component('meveoModuleDialog')}"
+					value="#{messages['meveoModule.exportModule']}" rendered="#{not empty meveoModuleBean.objectId}"
+					oncomplete="PF('meveoModuleDialog').show()">
+					<f:setPropertyActionListener value="#{null}" target="#{meveoModuleBean.meveoInstance}"/>
+				</p:commandButton>
+			</ui:define>
 		</hftl:formPanel>
+		<p:dialog id="meveoModuleDialog" styleClass="confirm-dialog"
+			header="#{messages['meveoModule.exportModule']}"
+			widgetVar="meveoModuleDialog" width="700" modal="true">
+			<hftl:decorateFormPanel formId="module"
+				rendered="#{not empty meveoModuleBean.entity}">
+				<ui:define name="fields">
+					<hftl:decorateFormField
+						label="#{messages['meveoModule.meveoInstance']}">
+						<p:selectOneMenu value="#{meveoModuleBean.meveoInstance}"
+							id="meveoInstance" required="true">
+							<f:selectItem />
+							<f:selectItems value="#{meveoInstanceListBean.listAll()}"
+								var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
+							<s:objectConverter />
+							<p:ajax event="valueChange" update="@form"/>
+						</p:selectOneMenu>
+					</hftl:decorateFormField>
+				</ui:define>
+				<ui:define name="buttons">
+					<p:commandButton id="confirmOk" value="#{messages['commons.yes']}" partialSubmit="true"
+						oncomplete="if (args &amp;&amp; !args.validationFailed) PF('meveoModuleDialog').hide()"
+						process="@this meveoInstance" actionListener="#{meveoModuleBean.exportModule}"
+						update=":module:messages :#{p:component('moduleFormId')}">
+					</p:commandButton>
+					<p:commandButton id="confirmKo" value="#{messages['commons.no']}"
+						onclick="PF('meveoModuleDialog').hide()"
+						type="button" />
+				</ui:define>
+			</hftl:decorateFormPanel>
+		</p:dialog>
 	</ui:define>
 
 </ui:composition>
