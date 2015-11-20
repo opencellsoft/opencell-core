@@ -121,7 +121,7 @@ public class InvoiceSubCategoryBean extends
 									invoiceSubcategoryCountry);
 							messages.info(new BundleKey("messages", "save.successful"));
 						} else {
-							messages.info(new BundleKey("messages", "save.unsuccessful.duplicate"));
+							messages.error(new BundleKey("messages", "save.unsuccessful.duplicate"));
 						}
 					} else {
 						invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
