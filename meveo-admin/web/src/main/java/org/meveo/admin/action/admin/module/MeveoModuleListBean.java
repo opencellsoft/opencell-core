@@ -17,14 +17,17 @@
 package org.meveo.admin.action.admin.module;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
@@ -47,7 +50,7 @@ public class MeveoModuleListBean extends MeveoModuleBean {
 	@Inject
 	private MeveoModuleService meveoModuleService;
 
-	private List<ModuleDto> moduleDtos;
+	private List<ModuleDto> moduleDtos=null;
 	private ModuleDto selectedModuleDto;
 	
 	@Override
@@ -67,27 +70,43 @@ public class MeveoModuleListBean extends MeveoModuleBean {
 
 	public void setSelectedModuleDto(ModuleDto selectedModuleDto) {
 		this.selectedModuleDto = selectedModuleDto;
+		if(this.selectedModuleDto==null){
+			this.moduleDtos=null;
+		}
 	}
-
 	public void initMeveoInstance() throws UnsupportedEncodingException {
 		log.debug("start initMeveoInstance");
-		if (meveoInstance != null&&moduleDtos==null) {
-			try {
-				String url = String.format("%s/api/rest/module/list", meveoInstance.getUrl());
-				ResteasyClient client = new ResteasyClientBuilder().build();
-				ResteasyWebTarget target = client.target(url);
+		try {
+			ResteasyClient client = new ResteasyClientBuilder().build();
+			ResteasyWebTarget target = client.target(meveoInstance.getUrl());
+			
+			Invocation.Builder builder = target.request().accept(MediaType.APPLICATION_XML);
+			MeveoModuleDtosResponse response=null;
+			if(!StringUtils.isBlank(meveoInstance.getAuthUsername())||!StringUtils.isBlank(meveoInstance.getAuthPassword())){
 				String encode = base64Encode(
-						String.format("%s:%s", meveoInstance.getAuthUsername(), meveoInstance.getAuthPassword()));
-				MeveoModuleDtosResponse response = target.request(MediaType.APPLICATION_XML)
-						.header("Authorization", String.format("Basic %s", encode)).get(MeveoModuleDtosResponse.class);
+						String.format("%s:%s", (!StringUtils.isBlank(meveoInstance.getAuthUsername())?meveoInstance.getAuthUsername():""), 
+						(!StringUtils.isBlank(meveoInstance.getAuthPassword())?meveoInstance.getAuthPassword():"")));
+				response=builder.header("Authorization", String.format("Basic %s", encode)).get(MeveoModuleDtosResponse.class);
+			}else{
+				response=builder.get(MeveoModuleDtosResponse.class);
+			}
+			log.debug("response {}",response);
+			if(response!=null){
 				this.moduleDtos = response.getModuleDtoList();
-			} catch (Exception e) {
-				log.error("Error when retrieve modules from {}", meveoInstance.getCode(),e);
-				messages.error(new BundleKey("messages", "meveoModule.retrieveRemoteMeveoInstanceException"), meveoInstance.getCode(),e.getMessage());
 			}
-			if(this.moduleDtos==null){
-				this.moduleDtos=new ArrayList<ModuleDto>();
-			}
+			
+		} catch (Exception e) {
+			log.error("Error when retrieve modules from {}", meveoInstance.getCode(),e);
+			messages.error(new BundleKey("messages", "meveoModule.retrieveRemoteMeveoInstanceException"), meveoInstance.getCode(),e.getMessage());
+			this.moduleDtos=null;
+		}
+		if(this.moduleDtos!=null){
+			Collections.sort(moduleDtos, new Comparator<ModuleDto>() {
+				@Override
+				public int compare(ModuleDto dto1, ModuleDto dto2) {
+					return dto1.getCode().compareTo(dto2.getCode());
+				}
+			});
 		}
 	}
 

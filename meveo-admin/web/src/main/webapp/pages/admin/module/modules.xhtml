@@ -68,15 +68,10 @@
 								listener="#{meveoModuleListBean.initMeveoInstance}"></p:ajax>
 						</p:selectOneMenu>
 					</hftl:decorateFormField>
-					<hftl:decorateFormField rendered="#{not empty meveoModuleListBean.meveoInstance}"
-						label="#{messages['meveoModule.meveoModules']}"
+					<hftl:decorateFormField label="#{messages['meveoModule.meveoModules']}"
 						componentWidth="100" newLine="true">
-						<p:dataTable value="#{meveoModuleListBean.moduleDtos}"
-							paginator="true" rows="10" var="module"
-							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-							rowsPerPageTemplate="10,20,50" lazy="false"
-							styleClass="custom-grid" rowIndexVar="rowIndex"
-							resizableColumns="true">
+						<p:dataTable value="#{meveoModuleListBean.moduleDtos}" scrollable="true" scrollHeight="235" reflow="true"
+							var="module" lazy="false" styleClass="custom-grid" resizableColumns="true">
 							<p:column headerText="#{messages['businessEntity.code']}"
 								sortBy="#{module.code}">
 								<h:outputText value="#{module.code}" />
@@ -86,7 +81,7 @@
 							</p:column>
 							<p:column headerText="#{messages['enableEntity.active']}">
 								<h:outputText
-									value="#{messages[meveoModuleListBean.selectedModuleDto.disabled.toString()=='false'?'commons.yes':'commons.no']}" />
+									value="#{messages[meveoModuleListBean.selectedModuleDto.disabled.toString() eq 'true'?'commons.no':'commons.yes']}" />
 							</p:column>
 							<p:column headerText="#{messages['meveoModule.license']}">
 								<h:outputText value="#{messages[module.license.label]}" />

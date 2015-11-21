@@ -23,11 +23,11 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.codec.binary.Base64;
-import org.jboss.resteasy.client.ClientResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
@@ -417,11 +417,11 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 		log.debug("export module {} to {}",entity,meveoInstance);
 		if(meveoInstance!=null){
 			try {
-				String url = String.format("%s/api/rest/module", meveoInstance.getUrl());
 				ResteasyClient client = new ResteasyClientBuilder().build();
-				ResteasyWebTarget target = client.target(url);
-				String encode = base64Encode(
-						String.format("%s:%s", meveoInstance.getAuthUsername(), meveoInstance.getAuthPassword()));
+				ResteasyWebTarget target = client.target(meveoInstance.getUrl());
+				
+				Invocation.Builder builder = target.request().accept(MediaType.APPLICATION_XML);
+				ActionStatus response=null;
 				ModuleDto moduleDto=new ModuleDto(entity.getCode(),entity.getDescription(),entity.getLicense(),entity.isDisabled());
 				moduleDto.setModuleItems(new ArrayList<ModuleItemDto>());
 				ModuleItemDto itemDto=null;
@@ -429,10 +429,16 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 					itemDto=new ModuleItemDto(item.getItemCode(),item.getAppliesTo(),item.getItemType());
 					moduleDto.getModuleItems().add(itemDto);
 				}
-				ActionStatus response = target.request().accept(MediaType.APPLICATION_XML)
-						.header("Authorization", String.format("Basic %s", encode)).post(Entity.entity(moduleDto, MediaType.APPLICATION_XML),ActionStatus.class);
+				if(!StringUtils.isBlank(meveoInstance.getAuthUsername())||!StringUtils.isBlank(meveoInstance.getAuthPassword())){
+					String encode = base64Encode(
+							String.format("%s:%s", (!StringUtils.isBlank(meveoInstance.getAuthUsername())?meveoInstance.getAuthUsername():""), 
+							(!StringUtils.isBlank(meveoInstance.getAuthPassword())?meveoInstance.getAuthPassword():"")));
+					response=builder.header("Authorization", String.format("Basic %s", encode)).post(Entity.entity(moduleDto, MediaType.APPLICATION_XML),ActionStatus.class);
+				}else{
+					response=builder.post(Entity.entity(moduleDto, MediaType.APPLICATION_XML),ActionStatus.class);
+				}
 				log.debug("response {}",response);
-				if(ActionStatusEnum.SUCCESS==response.getStatus()){
+				if(response!=null&&ActionStatusEnum.SUCCESS==response.getStatus()){
 					messages.info(new BundleKey("messages", "meveoModule.exportSuccess"), moduleDto.getCode(),meveoInstance.getCode());
 				}else{
 					messages.error(new BundleKey("messages", "meveoModule.exportFailed"), entity.getCode(),response.getMessage());
