@@ -81,7 +81,7 @@
 							</p:column>
 							<p:column headerText="#{messages['enableEntity.active']}">
 								<h:outputText
-									value="#{messages[meveoModuleListBean.selectedModuleDto.disabled.toString() eq 'true'?'commons.no':'commons.yes']}" />
+									value="#{messages[(module.disabled eq 'true'?'commons.no':'commons.yes')]}" />
 							</p:column>
 							<p:column headerText="#{messages['meveoModule.license']}">
 								<h:outputText value="#{messages[module.license.label]}" />
