@@ -279,6 +279,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     private void updateFieldGuiPositionValue(SortedTreeNode nodeToUpdate) {
 
+        // Re-position current and child nodes
         List<TreeNode> nodes = nodeToUpdate.getChildren();
         if (!nodeToUpdate.getType().equals(GroupedCustomField.TYPE_ROOT)) {
             nodes = new ArrayList<TreeNode>();
@@ -305,6 +306,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                 if (sortedChildNode.getType().equals(GroupedCustomField.TYPE_FIELD)) {
                     String guiPosition = currentPosition + ";" + CustomFieldTemplate.POSITION_FIELD + ":" + sortedChildNode.getIndexInParent();
                     CustomFieldTemplate cft = (CustomFieldTemplate) sortedChildNode.getData();
+                    cft = customFieldTemplateService.refreshOrRetrieve(cft);
                     if (!guiPosition.equals(cft.getGuiPosition())) {
                         cft.setGuiPosition(guiPosition);
                         cft = customFieldTemplateService.update(cft);
@@ -318,6 +320,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                         SortedTreeNode sortedChildChildNode = (SortedTreeNode) childNode;
                         String guiPosition = childGroupPosition + ";" + CustomFieldTemplate.POSITION_FIELD + ":" + sortedChildChildNode.getIndexInParent();
                         CustomFieldTemplate cft = (CustomFieldTemplate) sortedChildChildNode.getData();
+                        cft = customFieldTemplateService.refreshOrRetrieve(cft);
                         if (!guiPosition.equals(cft.getGuiPosition())) {
                             cft.setGuiPosition(guiPosition);
                             cft = customFieldTemplateService.update(cft);

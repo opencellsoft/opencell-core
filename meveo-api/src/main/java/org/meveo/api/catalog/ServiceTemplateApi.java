@@ -264,15 +264,13 @@ public class ServiceTemplateApi extends BaseApi {
 			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
 			serviceTemplate.setProvider(provider);
 			
-			// populate customFields
-			if (postData.getCustomFields() != null) {
-				try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), serviceTemplate, currentUser);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					log.error("Failed to associate custom field instance to an entity", e);
-					throw new MeveoApiException("Failed to associate custom field instance to an entity");
-				}
-			}
+            // populate customFields
+            try {
+                populateCustomFields(postData.getCustomFields(), serviceTemplate, currentUser);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            }
 			
 			serviceTemplateService.create(serviceTemplate, currentUser, provider);
 
@@ -324,14 +322,12 @@ public class ServiceTemplateApi extends BaseApi {
 			setAllWalletTemplatesToNull(serviceTemplate);
 			
 			// populate customFields
-			if (postData.getCustomFields() != null) {
-                try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), serviceTemplate, currentUser);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					log.error("Failed to associate custom field instance to an entity", e);
-					throw new MeveoApiException("Failed to associate custom field instance to an entity");
-				}
-			}
+            try {
+                populateCustomFields(postData.getCustomFields(), serviceTemplate, currentUser);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            }
 
 			serviceTemplateService.update(serviceTemplate, currentUser);
 			serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, provider);

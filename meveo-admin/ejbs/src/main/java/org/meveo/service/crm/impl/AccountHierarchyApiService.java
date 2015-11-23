@@ -920,15 +920,13 @@ public class AccountHierarchyApiService extends BaseApi {
 					}
 
 					// populate customFields
-					if (sellerDto.getCustomFields() != null) {
-						try {
-                            populateCustomFields(sellerDto.getCustomFields().getCustomField(), seller, currentUser);
+                    try {
+                        populateCustomFields(sellerDto.getCustomFields(), seller, currentUser);
 
-						} catch (IllegalArgumentException | IllegalAccessException e) {
-							log.error("Failed to associate custom field instance to an entity", e);
-							throw new MeveoApiException("Failed to associate custom field instance to an entity");
-						}
-					}
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        log.error("Failed to associate custom field instance to an entity", e);
+                        throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                    }
 
 					if (seller.isTransient()) {
 						sellerService.create(seller, currentUser, provider);
@@ -1576,19 +1574,13 @@ public class AccountHierarchyApiService extends BaseApi {
 
 															// populate
 															// customFields
-															if (subscriptionDto.getCustomFields() != null) {
-																try {
-                                                                    populateCustomFields(subscriptionDto.getCustomFields().getCustomField(), subscription, currentUser);
-																} catch (IllegalArgumentException
-																		| IllegalAccessException e) {
-																	log.error(
-																			"Failed to associate custom field instance to a subscription {}",
-																			subscriptionDto.getCode(), e);
-																	throw new MeveoApiException(
-																			"Failed to associate custom field instance to a subscription "
-																					+ subscriptionDto.getCode());
-																}
-															}
+                                                            try {
+                                                                populateCustomFields(subscriptionDto.getCustomFields(), subscription, currentUser);
+                                                            } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                                log.error("Failed to associate custom field instance to a subscription {}", subscriptionDto.getCode(), e);
+                                                                throw new MeveoApiException("Failed to associate custom field instance to a subscription "
+                                                                        + subscriptionDto.getCode());
+                                                            }
 
 															if (subscription.isTransient()) {
 																subscriptionService.create(subscription, currentUser,
@@ -1627,19 +1619,13 @@ public class AccountHierarchyApiService extends BaseApi {
 
 																	// populate
 																	// customFields
-																	if (accessDto.getCustomFields() != null) {
-																		try {
-                                                                            populateCustomFields(accessDto.getCustomFields().getCustomField(), access, currentUser);
-																		} catch (IllegalArgumentException
-																				| IllegalAccessException e) {
-																			log.error(
-																					"Failed to associate custom field instance to an access {}",
-																					subscriptionDto.getCode(), e);
-																			throw new MeveoApiException(
-																					"Failed to associate custom field instance to an access "
-																							+ subscriptionDto.getCode());
-																		}
-																	}
+                                                                    try {
+                                                                        populateCustomFields(accessDto.getCustomFields(), access, currentUser);
+                                                                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                                        log.error("Failed to associate custom field instance to an access {}", subscriptionDto.getCode(), e);
+                                                                        throw new MeveoApiException("Failed to associate custom field instance to an access "
+                                                                                + subscriptionDto.getCode());
+                                                                    }
 
 																	if (access.isTransient()) {
 																		accessService.create(access, currentUser,
@@ -1876,16 +1862,13 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 
 		// Validate and populate customFields
-		if (accountDto.getCustomFields() != null) {
-			try {
-                populateCustomFields(accountDto.getCustomFields().getCustomField(), accountEntity, currentUser);
-                
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				log.error("Failed to associate custom field instance to an entity {}", accountDto.getCode(), e);
-				throw new MeveoApiException("Failed to associate custom field instance to an entity "
-						+ accountDto.getCode());
-			}
-		}
+        try {
+            populateCustomFields(accountDto.getCustomFields(), accountEntity, currentUser);
+
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity {}", accountDto.getCode(), e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity " + accountDto.getCode());
+        }
 	}
 
 	public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData,

@@ -109,15 +109,13 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setOffer(offerTemplate);
 
             // populate customFields
-            if (postData.getCustomFields() != null) {
-                try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), subscription, currentUser);
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    log.error("Failed to associate custom field instance to an entity", e);
-                    throw new MeveoApiException("Failed to associate custom field instance to an entity");
-                }
+            try {
+                populateCustomFields(postData.getCustomFields(), subscription, currentUser);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
-            
+
             subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
 
@@ -174,13 +172,11 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setTerminationDate(postData.getTerminationDate());
 
             // populate customFields
-            if (postData.getCustomFields() != null) {
-                try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), subscription, currentUser);
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    log.error("Failed to associate custom field instance to an entity", e);
-                    throw new MeveoApiException("Failed to associate custom field instance to an entity");
-                }
+            try {
+                populateCustomFields(postData.getCustomFields(), subscription, currentUser);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
 			subscriptionService.update(subscription, currentUser);

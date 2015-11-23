@@ -36,6 +36,7 @@
     <c:if test="${empty(prefix)}">
         <c:set var="prefix" value="cf" />
     </c:if>
+    <c:set var="newEntity" value="#{backingBean.entity.transient}" />
 
 
     <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
@@ -52,7 +53,7 @@
             <c:forEach items="${cfTab.children}" var="cfFieldOrFg">
                 <c:if test="#{cfFieldOrFg.type == 'field'}">
                     <c:set var="cft" value="#{cfFieldOrFg.data}" />
-                    <c:if test="#{(not cft.disabled) or (cft.disabled and not cft.instance.isValueEmptyForGui())}">
+                    <c:if test="#{((not cft.disabled) or (cft.disabled and not cft.instance.isValueEmptyForGui())) and (!newEntity or (newEntity and !cft.hideOnNew))}">
                         <hf:customField backingBean="#{backingBean}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" prefix="#{prefix}" />
                     </c:if>
                 </c:if>
@@ -60,7 +61,7 @@
                     <p:panel header="#{cfFieldOrFg.data}">
                         <c:forEach items="${cfFieldOrFg.children}" var="cfField">
                             <c:set var="cft" value="#{cfField.data}" />
-                            <c:if test="#{(not cft.disabled) or (cft.disabled and not cft.instance.isValueEmptyForGui())}">
+                            <c:if test="#{((not cft.disabled) or (cft.disabled and not cft.instance.isValueEmptyForGui())) and (!newEntity or (newEntity and !cft.hideOnNew))}">
                                 <hf:customField backingBean="#{backingBean}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" prefix="#{prefix}" />
                             </c:if>
                         </c:forEach>

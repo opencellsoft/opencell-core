@@ -52,13 +52,11 @@ public class AccessApi extends BaseApi {
             }
 
             // populate customFields
-            if (postData.getCustomFields() != null) {
-                try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), access, currentUser);
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    log.error("Failed to associate custom field instance to an entity", e);
-                    throw new MeveoApiException("Failed to associate custom field instance to an entity");
-                }
+            try {
+                populateCustomFields(postData.getCustomFields(), access, currentUser);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
             accessService.create(access, currentUser, provider);
@@ -93,13 +91,11 @@ public class AccessApi extends BaseApi {
             access.setEndDate(postData.getEndDate());
 
             // populate customFields
-            if (postData.getCustomFields() != null) {
-                try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), access, currentUser);
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    log.error("Failed to associate custom field instance to an entity", e);
-                    throw new MeveoApiException("Failed to associate custom field instance to an entity");
-                }
+            try {
+                populateCustomFields(postData.getCustomFields(), access, currentUser);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
             accessService.update(access, currentUser);

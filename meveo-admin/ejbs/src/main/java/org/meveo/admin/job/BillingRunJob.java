@@ -67,6 +67,7 @@ public class BillingRunJob extends Job {
         billingCycle.setDescription("billing cycle");
         billingCycle.setFieldType(CustomFieldTypeEnum.STRING);
         billingCycle.setValueRequired(true);
+        billingCycle.setMaxValue(50L);
         result.put("BillingRunJob_billingCycle", billingCycle);
 
         return result;

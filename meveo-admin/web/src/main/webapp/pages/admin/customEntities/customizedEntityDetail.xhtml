@@ -19,8 +19,8 @@
             <hftl:formPanel formId="cetForm"
                 label="#{messages['customizedEntities.detail'].concat(customEntityTemplateBean.entity.code!=null?(' - '.concat(customEntityTemplateBean.entity.getCode)):'')}"
                 backingBean="#{customEntityTemplateBean}">
-                <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" showOnlyOnNew="true" required="true"/>
-                <hftl:formField label="#{messages['customizedEntities.name']}" field="name" required="true"/>
+                <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" showOnlyOnNew="true" required="true" />
+                <hftl:formField label="#{messages['customizedEntities.name']}" field="name" required="true" />
                 <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
             </hftl:formPanel>
         </h:panelGroup>
@@ -281,53 +281,77 @@
 
         <p:dialog id="cftDialog" header="#{messages['customFieldTemplate.panel']}" modal="true" closeOnEscape="true" maximizable="true" widgetVar="cftDialog" width="90%">
 
-            <hftl:formPanel formId="cftForm" label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}" showFormButtons="false">
-                <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" />
-                <hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" maxlength="50" />
-                <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="20"
-                    listenerUpdate=":cftForm:listValuesField :cftForm:defaultValueField :cftForm:entityClazzField" />
-                <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
-                <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
-                <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" />
-                <h:panelGroup id="defaultValueField">
-                    <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
-                        rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE' and customFieldTemplateBean.entity.fieldType != 'ENTITY'}" />
-                </h:panelGroup>
-                <h:panelGroup id="entityClazzField">
-                    <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="60" maxlength="255"
-                        autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"
-                        rendered="#{customFieldTemplateBean.entity.fieldType == 'ENTITY'}" />
-                </h:panelGroup>
-                <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="15" newLine="true" />
+            <p:scrollPanel mode="native" style="max-height:600px">
 
-                <hftl:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15"
-                    listenerUpdate=":cftForm:versionableFields" />
-                <h:panelGroup id="versionableFields">
-                    <hftl:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}"
-                        rendered="#{customFieldTemplateBean.entity.versionable}" />
-                    <hftl:formField label="#{messages['customFieldTemplate.cacheTimeperiod']}" field="cacheValueTimeperiod" rendered="#{customFieldTemplateBean.entity.versionable}" />
-                </h:panelGroup>
-                <hftl:formField label="#{messages['customFieldTemplate.triggerEndPeriodEvent']}" field="triggerEndPeriodEvent" componentWidth="15" />
-                <h:panelGroup id="listValuesField">
-                    <hftl:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues" rendered="#{customFieldTemplateBean.entity.fieldType == 'LIST'}"
-                        mapKeyLabel="#{messages['commons.value']}" mapValueLabel="#{messages['commons.label']}" componentWidth="75" newLine="true" />
-                </h:panelGroup>
-                <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
-                <ui:param name="buttons" value="true" />
-                <ui:define name="buttons">
-                    <hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true"
-                        killConversationOnSave="false">
-                        <p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.active}"
-                            actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable}" update="@form :fieldsForm:fields" />
+                <hftl:formPanel formId="cftForm" label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}" showFormButtons="false">
 
-                        <p:commandButton value="#{messages['commons.enable']}" rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.disabled}"
-                            actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable}" update="@form :fieldsForm:fields" />
+                    <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="15" />
+                    <hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" maxlength="50"
+                        componentWidth="40" />
+                    <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="20"
+                        listenerUpdate=":cftForm:listValuesField :cftForm:defaultValueField :cftForm:entityClazzField validations" />
+                    <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
+                    <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
+                    <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" componentWidth="20" />
+                    <h:panelGroup id="defaultValueField">
+                        <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
+                            rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE' and customFieldTemplateBean.entity.fieldType != 'ENTITY'}" newLine="true" />
+                    </h:panelGroup>
+                    <h:panelGroup id="entityClazzField">
+                        <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="60" maxlength="255"
+                            autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" newLine="true"
+                            rendered="#{customFieldTemplateBean.entity.fieldType == 'ENTITY'}" />
+                    </h:panelGroup>
+                    <p:fieldset id="validations" legend="#{messages['customFieldTemplate.validations']}" styleClass="clearLeft">
+                        <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="15" />
+                        <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="15" />
+                        <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="15" />
 
-                        <p:commandButton value="#{messages['commons.close']}" onclick="PF('cftDialog').hide()" type="button" />
-                    </hf:formButtons>
+                        <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true"
+                            rendered="#{customFieldTemplateBean.entity.fieldType == 'LONG' or customFieldTemplateBean.entity.fieldType == 'DOUBLE'}" />
+                        <hftl:formField label="#{messages[customFieldTemplateBean.entity.fieldType == 'STRING'?'customFieldTemplate.maxValueTxt':'customFieldTemplate.maxValue']}"
+                            field="maxValue" required="#{customFieldTemplateBean.entity.fieldType == 'STRING'}"
+                            rendered="#{customFieldTemplateBean.entity.fieldType == 'LONG' or customFieldTemplateBean.entity.fieldType == 'DOUBLE' or customFieldTemplateBean.entity.fieldType == 'STRING'}" />
+                        <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == 'STRING'}" />
+                    </p:fieldset>
+                    <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearLeft">
+                        <hftl:formField label="#{messages['customFieldTemplate.cacheValue']}" field="cacheValue" isMessage="true" componentWidth="15" />
+                        <hftl:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15"
+                            listenerUpdate=":cftForm:versionableFields" />
+                        <h:panelGroup id="versionableFields">
+                            <hftl:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}"
+                                rendered="#{customFieldTemplateBean.entity.versionable}" />
+                            <hftl:formField label="#{messages['customFieldTemplate.cacheTimeperiod']}" field="cacheValueTimeperiod"
+                                rendered="#{customFieldTemplateBean.entity.versionable}" />
+                            <hftl:formField label="#{messages['customFieldTemplate.triggerEndPeriodEvent']}" field="triggerEndPeriodEvent"
+                                rendered="#{customFieldTemplateBean.entity.versionable}" componentWidth="15" />
+                        </h:panelGroup>
+                    </p:fieldset>
+                    <h:panelGroup id="listValuesField">
+                        <p:fieldset legend="#{messages['customFieldTemplate.listValues']}" styleClass="clearLeft" rendered="#{customFieldTemplateBean.entity.fieldType == 'LIST'}">
+                            <hftl:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues" mapKeyLabel="#{messages['commons.value']}"
+                                mapValueLabel="#{messages['commons.label']}" componentWidth="75" newLine="true" />
+                        </p:fieldset>
+                    </h:panelGroup>
+                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
+                    <ui:param name="buttons" value="true" />
+                    <ui:define name="buttons">
+                        <hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true"
+                            killConversationOnSave="false">
+                            <p:commandButton value="#{messages['commons.disable']}"
+                                rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.active}"
+                                actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.disable}" update="@form :fieldsForm:fields" />
 
-                </ui:define>
-            </hftl:formPanel>
+                            <p:commandButton value="#{messages['commons.enable']}"
+                                rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.disabled}"
+                                actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable}" update="@form :fieldsForm:fields" />
+
+                            <p:commandButton value="#{messages['commons.close']}" onclick="PF('cftDialog').hide()" type="button" />
+                        </hf:formButtons>
+
+                    </ui:define>
+                </hftl:formPanel>
+            </p:scrollPanel>
         </p:dialog>
 
     </ui:define>

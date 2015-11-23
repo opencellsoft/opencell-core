@@ -33,7 +33,11 @@
             <h:outputText value="#{field}" />
         </c:if>
         <c:if test="#{edit}">
-            <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}" />
+            <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}" size="30" maxlength="#{cft.maxValue}">
+                <c:if test="#{cft.regExp!=null}">
+                    <f:validateRegex pattern="#{cft.regExp}" />
+                </c:if>
+            </p:inputText>
         </c:if>
     </c:if>
     <c:if test="#{(cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA)}">
@@ -61,6 +65,15 @@
         <c:if test="#{edit}">
             <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}">
                 <f:convertNumber minFractionDigits="2" />
+                <c:if test="#{cft.minValue!=null and cft.maxValue!=null}">
+                    <f:validateLongRange minimum="#{cft.minValue}" maximum="#{cft.maxValue}" />
+                </c:if>
+                <c:if test="#{cft.minValue!=null and cft.maxValue==null}">
+                    <f:validateLongRange minimum="#{cft.minValue}" />
+                </c:if>
+                <c:if test="#{cft.minValue==null and cft.maxValue!=null}">
+                    <f:validateLongRange maximum="#{cft.maxValue}" />
+                </c:if>
             </p:inputText>
         </c:if>
     </c:if>
@@ -71,6 +84,15 @@
         <c:if test="#{edit}">
             <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}">
                 <f:convertNumber integerOnly="true" />
+                <c:if test="#{cft.minValue!=null and cft.maxValue!=null}">
+                    <f:validateLongRange minimum="#{cft.minValue}" maximum="#{cft.maxValue}" />
+                </c:if>
+                <c:if test="#{cft.minValue!=null and cft.maxValue==null}">
+                    <f:validateLongRange minimum="#{cft.minValue}" />
+                </c:if>
+                <c:if test="#{cft.minValue==null and cft.maxValue!=null}">
+                    <f:validateLongRange maximum="#{cft.maxValue}" />
+                </c:if>
             </p:inputText>
         </c:if>
     </c:if>

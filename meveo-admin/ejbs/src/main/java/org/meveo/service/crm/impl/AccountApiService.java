@@ -78,18 +78,12 @@ public abstract class AccountApiService extends BaseApi {
 		accountEntity.setName(name);
 
         // Validate and populate customFields
-		if (postData.getCustomFields() != null
-				&& !postData.getCustomFields().isEmpty()) {
-			try {
-                populateCustomFields(postData.getCustomFields().getCustomField(), accountEntity, currentUser, checkCustomField);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				log.error(
-						"Failed to associate custom field instance to an entity",
-						e);
-				throw new MeveoApiException(
-						"Failed to associate custom field instance to an entity");
-			}
-		}
+        try {
+            populateCustomFields(postData.getCustomFields(), accountEntity, currentUser, checkCustomField);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
 	}
 
 	public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser) throws MeveoApiException {
@@ -167,14 +161,12 @@ public abstract class AccountApiService extends BaseApi {
 		}
 
         // Validate and populate customFields
-        if (postData.getCustomFields() != null) {
-            try {
-                populateCustomFields(postData.getCustomFields().getCustomField(), accountEntity, currentUser, checkCustomFields);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
-            }
+        try {
+            populateCustomFields(postData.getCustomFields(), accountEntity, currentUser, checkCustomFields);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
-	}
+    }
 	
 }

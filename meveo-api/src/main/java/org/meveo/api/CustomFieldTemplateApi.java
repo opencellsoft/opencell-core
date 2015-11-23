@@ -62,6 +62,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (postData.getAppliesTo() == null && postData.getAccountLevel() != null) {
             appliesTo = postData.getAccountLevel();
         }
+
         if (customFieldTemplateService.findByCodeAndAppliesTo(postData.getCode(), appliesTo, currentUser.getProvider()) != null) {
             throw new EntityAlreadyExistsException(CustomFieldTemplate.class, postData.getCode());
         }
@@ -160,6 +161,12 @@ public class CustomFieldTemplateApi extends BaseApi {
     }
 
     protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, User currentUser, CustomEntityTemplate cet, CustomFieldTemplate cftToUpdate) throws InvalidEnumValue {
+
+        // Set default values
+        if (CustomFieldTypeEnum.STRING.name().equals(dto.getFieldType()) && dto.getMaxValue() == null) {
+            dto.setMaxValue(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING);
+        }
+
         CustomFieldTemplate cft = new CustomFieldTemplate();
         if (cftToUpdate != null) {
             cft = cftToUpdate;
@@ -192,6 +199,14 @@ public class CustomFieldTemplateApi extends BaseApi {
         cft.setVersionable(dto.isVersionable());
         cft.setTriggerEndPeriodEvent(dto.isTriggerEndPeriodEvent());
         cft.setEntityClazz(org.apache.commons.lang3.StringUtils.trimToNull(dto.getEntityClazz()));
+        cft.setAllowEdit(dto.isAllowEdit());
+        cft.setHideOnNew(dto.isHideOnNew());
+        cft.setMinValue(dto.getMinValue());
+        cft.setMaxValue(dto.getMaxValue());
+        cft.setCacheValue(dto.isCacheValue());
+        cft.setRegExp(dto.getRegExp());
+        cft.setCacheValueTimeperiod(dto.getCacheValueTimeperiod());
+        cft.setGuiPosition(dto.getGuiPosition());
 
         if (cft.getFieldType() == CustomFieldTypeEnum.LIST) {
             cft.setListValues(dto.getListValues());
