@@ -186,13 +186,11 @@ public class CustomEntityApi extends BaseApi {
         CustomEntityInstance cei = CustomEntityInstanceDto.fromDTO(dto, null);
 
         // populate customFields
-        if (dto.getCustomFields() != null) {
-            try {
-                populateCustomFields(dto.getCustomFields().getCustomField(), cei, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
-            }
+        try {
+            populateCustomFields(dto.getCustomFields(), cei, currentUser);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
 
         customEntityInstanceService.create(cei, currentUser, currentUser.getProvider());
@@ -224,13 +222,11 @@ public class CustomEntityApi extends BaseApi {
         cei = CustomEntityInstanceDto.fromDTO(dto, cei);
 
         // populate customFields
-        if (dto.getCustomFields() != null) {
-            try {
-                populateCustomFields(dto.getCustomFields().getCustomField(), cei, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
-            }
+        try {
+            populateCustomFields(dto.getCustomFields(), cei, currentUser);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
 
         cei = customEntityInstanceService.update(cei, currentUser);

@@ -85,6 +85,7 @@ public class FtpAdapterJob extends Job {
 		distDirectory.setDescription(resourceMessages.getString("FtpAdapter.distDirectory"));
 		distDirectory.setFieldType(CustomFieldTypeEnum.STRING);
 		distDirectory.setValueRequired(true);
+		distDirectory.setMaxValue(150L);
 		result.put("FtpAdapterJob_distDirectory", distDirectory);
 		
 
@@ -95,6 +96,7 @@ public class FtpAdapterJob extends Job {
 		remoteServer.setDescription(resourceMessages.getString("FtpAdapter.remoteServer"));
 		remoteServer.setFieldType(CustomFieldTypeEnum.STRING);
 		remoteServer.setValueRequired(true);
+		remoteServer.setMaxValue(150L);
 		result.put("FtpAdapterJob_remoteServer", remoteServer);
 
 		CustomFieldTemplate remotePort = new CustomFieldTemplate();
@@ -126,6 +128,7 @@ public class FtpAdapterJob extends Job {
 		ftpInputDirectory.setDescription(resourceMessages.getString("FtpAdapter.ftpInputDirectory"));
 		ftpInputDirectory.setFieldType(CustomFieldTypeEnum.STRING);
 		ftpInputDirectory.setValueRequired(true);
+		ftpInputDirectory.setMaxValue(100L);
 		result.put("FtpAdapterJob_ftpInputDirectory", ftpInputDirectory);
 
 		CustomFieldTemplate ftpUsername = new CustomFieldTemplate();
@@ -135,6 +138,7 @@ public class FtpAdapterJob extends Job {
 		ftpUsername.setDescription(resourceMessages.getString("FtpAdapter.ftpUsername"));
 		ftpUsername.setFieldType(CustomFieldTypeEnum.STRING);
 		ftpUsername.setValueRequired(true);
+		ftpUsername.setMaxValue(50L);
 		result.put("FtpAdapterJob_ftpUsername", ftpUsername);
 
 		CustomFieldTemplate ftpPassword = new CustomFieldTemplate();
@@ -144,6 +148,7 @@ public class FtpAdapterJob extends Job {
 		ftpPassword.setDescription(resourceMessages.getString("FtpAdapter.ftpPassword"));
 		ftpPassword.setFieldType(CustomFieldTypeEnum.STRING);
 		ftpPassword.setValueRequired(true);
+		ftpPassword.setMaxValue(50L);
 		result.put("FtpAdapterJob_ftpPassword", ftpPassword);
 
 		CustomFieldTemplate ftpExtension = new CustomFieldTemplate();
@@ -153,6 +158,7 @@ public class FtpAdapterJob extends Job {
 		ftpExtension.setDescription(resourceMessages.getString("FtpAdapter.fileExtension"));
 		ftpExtension.setFieldType(CustomFieldTypeEnum.STRING);
 		ftpExtension.setValueRequired(true);
+		ftpExtension.setMaxValue(50L);
 		result.put("FtpAdapterJob_fileExtension", ftpExtension);
 		
 		CustomFieldTemplate ftpProtocol = new CustomFieldTemplate();

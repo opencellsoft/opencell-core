@@ -102,6 +102,7 @@ public class FlatFileProcessingJob extends Job {
 		inputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
 		inputDirectoryCF.setDefaultValue(null);
 		inputDirectoryCF.setValueRequired(true);
+		inputDirectoryCF.setMaxValue(150L);
 		result.put("FlatFileProcessingJob_inputDir", inputDirectoryCF);
 
 		CustomFieldTemplate fileNameExtensionCF = new CustomFieldTemplate();
@@ -112,6 +113,7 @@ public class FlatFileProcessingJob extends Job {
 		fileNameExtensionCF.setFieldType(CustomFieldTypeEnum.STRING);
 		fileNameExtensionCF.setDefaultValue("csv");
 		fileNameExtensionCF.setValueRequired(true);
+		fileNameExtensionCF.setMaxValue(100L);
 		result.put("FlatFileProcessingJob_fileNameExtension", fileNameExtensionCF);
 
 		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
@@ -132,6 +134,7 @@ public class FlatFileProcessingJob extends Job {
 		scriptFlowCF.setFieldType(CustomFieldTypeEnum.STRING);
 		scriptFlowCF.setDefaultValue(null);
 		scriptFlowCF.setValueRequired(true);
+		scriptFlowCF.setMaxValue(50L);
 		result.put("FlatFileProcessingJob_scriptsFlow", scriptFlowCF);
 
 		CustomFieldTemplate variablesCF = new CustomFieldTemplate();
@@ -142,6 +145,7 @@ public class FlatFileProcessingJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
+		variablesCF.setMaxValue(50L);
 		result.put("FlatFileProcessingJob_variables", variablesCF);
 
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
@@ -152,6 +156,7 @@ public class FlatFileProcessingJob extends Job {
 		recordVariableName.setDescription("Record variable name");
 		recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
 		recordVariableName.setValueRequired(true);
+		recordVariableName.setMaxValue(50L);
 		result.put("FlatFileProcessingJob_recordVariableName", recordVariableName);
 
 		CustomFieldTemplate originFilename = new CustomFieldTemplate();
@@ -162,6 +167,7 @@ public class FlatFileProcessingJob extends Job {
 		originFilename.setDescription("Filename variable name");
 		originFilename.setFieldType(CustomFieldTypeEnum.STRING);
 		originFilename.setValueRequired(false);
+		originFilename.setMaxValue(100L);
 		result.put("FlatFileProcessingJob_originFilename", originFilename);
 
 		CustomFieldTemplate formatTransfo = new CustomFieldTemplate();

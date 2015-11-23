@@ -62,6 +62,7 @@ public class InternalNotificationJob extends Job {
         filterCode.setDescription("Filter (sql query)");
         filterCode.setFieldType(CustomFieldTypeEnum.STRING);
         filterCode.setValueRequired(true);
+        filterCode.setMaxValue(50L);
         result.put("InternalNotificationJob_filterCode", filterCode);
 
         CustomFieldTemplate notificationCode = new CustomFieldTemplate();
@@ -71,6 +72,7 @@ public class InternalNotificationJob extends Job {
         notificationCode.setDescription("Notification code");
         notificationCode.setFieldType(CustomFieldTypeEnum.STRING);
         notificationCode.setValueRequired(true);
+        notificationCode.setMaxValue(50L);
         result.put("InternalNotificationJob_notificationCode", notificationCode);
 
         return result;

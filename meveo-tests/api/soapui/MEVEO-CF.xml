@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF" resourceRoot="" soapui-version="5.1.2" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="CF"/>
@@ -5182,6 +5182,7 @@
           <xs:element name="versionable" type="xs:boolean"/>
           <xs:element name="triggerEndPeriodEvent" type="xs:boolean"/>
           <xs:element minOccurs="0" name="calendar" type="xs:string"/>
+          <xs:element minOccurs="0" name="cacheValueTimeperiod" type="xs:int"/>
           <xs:element minOccurs="0" name="entityClazz" type="xs:string"/>
           <xs:element name="listValues">
             <xs:complexType>
@@ -5197,6 +5198,13 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="allowEdit" type="xs:boolean"/>
+          <xs:element name="hideOnNew" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="maxValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="minValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="regExp" type="xs:string"/>
+          <xs:element name="cacheValue" type="xs:boolean"/>
+          <xs:element minOccurs="0" name="guiPosition" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string" use="required"/>
@@ -5869,7 +5877,7 @@
       <xs:complexType name="removeCustomFieldTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="customFieldTemplateCode" type="xs:string"/>
-          <xs:element minOccurs="0" name="accountLevel" type="xs:string"/>
+          <xs:element minOccurs="0" name="appliesTo" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCustomFieldTemplateResponse">
@@ -6052,7 +6060,7 @@
       <xs:complexType name="findCustomFieldTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="customFieldTemplateCode" type="xs:string"/>
-          <xs:element minOccurs="0" name="accountLevel" type="xs:string"/>
+          <xs:element minOccurs="0" name="appliesTo" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findCustomFieldTemplateResponse">
@@ -26746,6 +26754,10 @@
                      <versionable>false</versionable>
                      <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
                      <listValues/>
+                     <allowEdit>true</allowEdit>
+                     <hideOnNew>false</hideOnNew>
+                     <maxValue>50</maxValue>
+                     <cacheValue>false</cacheValue>
                   </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3"><con:configuration><token><![CDATA[                  <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
                      <fieldType>LONG</fieldType>
                      <accountLevel>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</accountLevel>
@@ -26756,6 +26768,9 @@
                      <versionable>false</versionable>
                      <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
                      <listValues/>
+                     <allowEdit>true</allowEdit>
+                     <hideOnNew>false</hideOnNew>
+                     <cacheValue>false</cacheValue>
                   </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create cei1" id="41714a47-dc1f-4e34-a048-9b361055249d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomEntityInstance</con:operation><con:request name="Create cei1" id="772da35a-86be-4c3e-8c87-60d666cb4a64"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -26855,6 +26870,10 @@
                      <versionable>false</versionable>
                      <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
                      <listValues/>
+                     <allowEdit>true</allowEdit>
+                     <hideOnNew>false</hideOnNew>
+                     <maxValue>50</maxValue>
+                     <cacheValue>false</cacheValue>
                   </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3"><con:configuration><token><![CDATA[                  <field code="${#TestSuite#ticket}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
                      <fieldType>LONG</fieldType>
                      <accountLevel>CE_${#TestSuite#ticket}_${#TestSuite#index}_CET</accountLevel>
@@ -26865,6 +26884,9 @@
                      <versionable>false</versionable>
                      <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
                      <listValues/>
+                     <allowEdit>true</allowEdit>
+                     <hideOnNew>false</hideOnNew>
+                     <cacheValue>false</cacheValue>
                   </field>]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update cei1" id="f4711aae-511b-4837-bf60-66fd766cb1d9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateCustomEntityInstance</con:operation><con:request name="Update cei1" id="772da35a-86be-4c3e-8c87-60d666cb4a64"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -27012,7 +27034,1004 @@
          </customField>
       </ws:createCustomFieldTemplate>
    </soapenv:Body> 
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="112602db-0cd7-4c28-a357-e28f18bf2c7c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property><con:property><con:name>fieldType</con:name><con:value/></con:property><con:property><con:name>entityClazz</con:name><con:value/></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT by entity" searchProperties="true" id="b8c4b3e5-8b23-46fb-b102-34234cef0663" disabled="true"><con:settings/><con:testStep type="calltestcase" name="Create String CFT" id="2dba14c5-b8a5-4310-ac0d-88f597b82de4"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>STRING</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Long CFT" id="5001883f-fd13-4c1d-8b62-485d96397ff3"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>LONG</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Date CFT" id="a31db638-5c62-4446-8dc7-c6a537784e52"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DATE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Double CFT" id="afd5d3cd-b8c4-4d57-824a-3d300154661b"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DOUBLE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Entity CFT" id="6d9f0cad-3bd5-48b0-914f-31163603d365"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>ENTITY</con:value></con:property><con:property><con:name>entityClazz</con:name><con:value>org.meveo.model.catalog.Calendar</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property></con:properties><con:reportParameters/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>89</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e7d3951b-b7c9-48cd-8a4f-b2804af6cf14"/><con:assertion type="Simple Contains" name="Contains" id="112602db-0cd7-4c28-a357-e28f18bf2c7c"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property><con:property><con:name>fieldType</con:name><con:value/></con:property><con:property><con:name>entityClazz</con:name><con:value/></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CFT by entity" searchProperties="true" id="b8c4b3e5-8b23-46fb-b102-34234cef0663" disabled="true"><con:settings/><con:testStep type="calltestcase" name="Create String CFT" id="2dba14c5-b8a5-4310-ac0d-88f597b82de4"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>STRING</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Long CFT" id="5001883f-fd13-4c1d-8b62-485d96397ff3"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>LONG</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Date CFT" id="a31db638-5c62-4446-8dc7-c6a537784e52"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DATE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Double CFT" id="afd5d3cd-b8c4-4d57-824a-3d300154661b"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>DOUBLE</con:value></con:property><con:property><con:name>entityClazz</con:name></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:testStep type="calltestcase" name="Create Entity CFT" id="6d9f0cad-3bd5-48b0-914f-31163603d365"><con:settings/><con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:targetTestCase>d810ab64-b19b-4807-9ddc-11e582b39553</con:targetTestCase><con:properties><con:property><con:name>cfType</con:name><con:value>${#TestCase#cfType}</con:value></con:property><con:property><con:name>fieldType</con:name><con:value>ENTITY</con:value></con:property><con:property><con:name>entityClazz</con:name><con:value>org.meveo.model.catalog.Calendar</con:value></con:property></con:properties><con:returnProperties/><con:runMode>PARALLELL</con:runMode></con:config></con:testStep><con:properties><con:property><con:name>cfType</con:name><con:value/></con:property></con:properties><con:reportParameters/></con:testCase><con:testCase id="2a4c3548-9820-4e9d-89c1-8149220532e1" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CF validation" searchProperties="true"><con:settings/><con:testStep type="request" name="Create CFT String required" id="e1b85c25-269d-4cfa-881e-754ba519b57a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT String required" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_REQUIRED" description="String required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <defaultValue>KUKU</defaultValue>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer String required" id="571de797-ba14-4cfa-b821-718cf9227c77"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer String required" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST2" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="cfdc5ee4-56b3-4e32-80e9-fbc78d7f2f13" name="Contains 1"><con:configuration><token>The following parameters are required : ${#TestSuite#ticket}_${#TestSuite#index}_STRING_REQUIRED.</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer String required OK" id="6dc66739-9523-49e7-92f4-fb34a349fbf1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer String required OK" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST1" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_REQUIRED">
+                  <stringValue>123456789132456789</stringValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer String required KO Maxvalue" id="7c632e51-d330-46cf-b5c8-dd2a6816ad62"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer String required KO Maxvalue" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST2" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_REQUIRED">
+                  <stringValue>12345678913245678988888888888888888888888888888888888888444444444444444444444444444444444444444</stringValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_STRING_REQUIRED value 12345678913245678988888888888888888888888888888888888888444444444444444444444444444444444444444 length is longer then 50 symbols&lt;/message></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete CFT String required" id="ab9db50a-9611-4949-9f9a-aa9300652543"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeCustomFieldTemplate</con:operation><con:request name="Delete CFT String required" id="4d7824f9-b675-4361-a1a7-a642a78a7cad"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomFieldTemplate>\r
+         <customFieldTemplateCode>${#TestSuite#ticket}_${#TestSuite#index}_STRING_REQUIRED</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/><con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT String maxValue" id="4cea87ef-6b58-4adc-94a6-0774aba9c54b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT String maxValue" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_MAXVALUE" description="String maxValue">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <defaultValue>KUKU</defaultValue>\r
+            <storageType>SINGLE</storageType>\r
+            <maxValue>15</maxValue>         
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="abac3549-965c-45c1-83cc-364dc63e1bb3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer String maxValue" id="ed1c8977-3b58-406b-a7f6-e161137603ee"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer String maxValue" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST3" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_MAXVALUE">
+                  <stringValue>123456789132456789</stringValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_STRING_MAXVALUE value 123456789132456789 length is longer then 15 symbols&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer String maxValue OK" id="52b318c3-2dee-4dfc-869f-42a8556eedb9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer String maxValue OK" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST4" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_MAXVALUE" >
+                  <stringValue>12345678913</stringValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT String regexp" id="8466521e-6e41-470a-8655-c2d1fc937e0d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT String regexp" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_REGEXP" description="String regExp">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <defaultValue>KUKU</defaultValue>\r
+            <storageType>SINGLE</storageType>\r
+            <regExp>c.*g</regExp>         
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="abac3549-965c-45c1-83cc-364dc63e1bb3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer String regExp" id="00ff6d1f-362b-44b5-a263-17236167e99d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer String regExp" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST5" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_REGEXP">
+                  <stringValue>aaaa</stringValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_STRING_REGEXP value aaaa does not match regular expression c.*g&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer String regExp OK" id="72e43a53-dbba-4b88-a649-6a16c52889f2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer String regExp OK" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST6" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_REGEXP" >
+                  <stringValue>cdefg</stringValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT Long minValue" id="6b95cd62-cacf-43aa-bf06-05d1cb719cc8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT Long minValue" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINVALUE" description="Long">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <minValue>-15</minValue>         
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="abac3549-965c-45c1-83cc-364dc63e1bb3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Long minValue" id="a2dee72a-66a1-4da1-850b-93e66005adfc"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Long minValue" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST10" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINVALUE">
+                  <longValue>-30</longValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINVALUE value -30 is smaller then -15. Allowed value range is from -15 to unspecified.&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Long minValue Ok" id="30aea331-2f67-4e3e-b550-57d967feb887"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Long minValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST8" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINVALUE">
+                  <longValue>-8</longValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT Long maxValue" id="3e8934ca-a199-47d6-a1ee-76d076de8392"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT Long maxValue" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_LONG_MAXVALUE" description="Long">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <maxValue>15</maxValue>         
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="abac3549-965c-45c1-83cc-364dc63e1bb3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Long maxValue" id="e67fa27a-6879-46ab-94ed-314c204b3965"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Long maxValue" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST11" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_LONG_MAXVALUE">
+                  <longValue>30</longValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_LONG_MAXVALUE value 30 is bigger then 15. Allowed value range is from unspecified to 15.&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Long maxValue Ok" id="57a6bdf2-44e3-4a6a-bb6e-0735c06b3c6b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Long maxValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST9" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_LONG_MAXVALUE">
+                  <longValue>-8</longValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT Long minmaxValue" id="29ff209a-1d64-4ebb-9f73-dbbb656531dc"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT Long minmaxValue" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINMAXVALUE" description="Long">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <minValue>-15</minValue>  
+            <maxValue>15</maxValue>         
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="abac3549-965c-45c1-83cc-364dc63e1bb3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Long minmaxValue" id="704589d8-35a7-4dd6-8481-d717ead59e21"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Long minmaxValue" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST13" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINMAXVALUE">
+                  <longValue>30</longValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINMAXVALUE value 30 is bigger then 15. Allowed value range is from -15 to 15.&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Long minmaxValue Ok" id="a616896e-2109-4452-b7b9-a4933de21a10"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Long minmaxValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST14" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_LONG_MINMAXVALUE">
+                  <longValue>8</longValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT Double minValue" id="f03a7f1e-2ad2-4b3f-9790-81549bd3d39a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT Double minValue" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINVALUE" description="Double">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <minValue>-15</minValue>         
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="abac3549-965c-45c1-83cc-364dc63e1bb3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double minValue" id="1a9ad40e-5a50-4e07-8e85-379d156bf5b7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double minValue" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST15" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINVALUE">
+                  <doubleValue>-30.78</doubleValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINVALUE value -30.78 is smaller then -15. Allowed value range is from -15 to unspecified.&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double minValue Ok" id="1b67ce64-dd0d-4148-bca7-c442f1a2279b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double minValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST16" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINVALUE">
+                  <doubleValue>-8.98</doubleValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT Double maxValue" id="fd8181a6-b340-4a6c-8dee-6b577daeec77"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT Double maxValue" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE" description="Double">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <maxValue>15</maxValue>         
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="abac3549-965c-45c1-83cc-364dc63e1bb3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double maxValue" id="6e7b4f91-d789-42a6-b872-5ae032758397"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double maxValue" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST17" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE">
+                  <doubleValue>30.79</doubleValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE value 30.79 is bigger then 15. Allowed value range is from unspecified to 15.&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double maxValue Ok" id="f86bdd3f-ee8e-42aa-82ec-a5a03619494b"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double maxValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST18" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE">
+                  <doubleValue>-8.98</doubleValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT Double minmaxValue" id="ee5dbf99-b988-4659-a6fd-e7840fb7934a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT Double minmaxValue" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINMAXVALUE" description="Double">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <minValue>-15</minValue>  
+            <maxValue>15</maxValue>         
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="abac3549-965c-45c1-83cc-364dc63e1bb3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double minmaxValue" id="f3b855e0-b0e1-43b1-b710-01feb8cea8f1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double minmaxValue" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST19" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINMAXVALUE">
+                  <doubleValue>30.97</doubleValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINMAXVALUE value 30.97 is bigger then 15. Allowed value range is from -15 to 15.&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double minmaxValue Ok" id="d611e8da-cb93-475e-9c1e-1bd16d6d270d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double minmaxValue Ok" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST21" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MINMAXVALUE">
+                  <doubleValue>14.99</doubleValue>
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT Double maxValue List" id="0cdedd23-02a3-460d-832f-0d33fac89f85"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT Double maxValue List" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE_LIST" description="Double">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>LIST</storageType>\r
+            <maxValue>15</maxValue>         
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="abac3549-965c-45c1-83cc-364dc63e1bb3" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double maxValue List" id="f2ca0645-4c55-4536-a7ef-2552ab0f7dad"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double maxValue List" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST22" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE_LIST">
+	            <listValue>
+                     <value>
+                        <doubleValue>10.04</doubleValue>
+                     </value>
+                     <value>
+                        <doubleValue>30.79</doubleValue>
+                     </value>
+                  </listValue>                  
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>FAIL&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="edf937b7-53eb-4ee8-b778-8eeec8226733" name="Contains 1"><con:configuration><token>&lt;message>Custom field ${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE_LIST value 30.79 is bigger then 15. Allowed value range is from unspecified to 15.&lt;/message>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer Double maxValue Ok List" id="3942b4c4-c1d2-45af-bc2c-29d33eace490"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer Double maxValue Ok List" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST23" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_DOUBLE_MAXVALUE_LIST">
+	            <listValue>
+                     <value>
+                        <doubleValue>10.04</doubleValue>
+                     </value>
+                     <value>
+                        <doubleValue>14.79</doubleValue>
+                     </value>
+                  </listValue>   
+               </customField>
+            </customFields>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT String hideOnNew" id="3b0ed820-dbc6-4e8f-be06-bd6a19a16b8f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT String hideOnNew" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_HIDEONNEW" description="String required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <defaultValue>KUKU</defaultValue>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>
+            <hideOnNew>true</hideOnNew>\r
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create CFT String notAllowEdit" id="c4b1f23e-0dce-47af-b995-70ece884bad7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="Create CFT String notAllowEdit" id="3753bce2-3fec-40e6-a41f-454620694710"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomFieldTemplate>\r
+         <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_NOTALLOWEDIT" description="String not allow edit">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <defaultValue>KUKU</defaultValue>\r
+            <storageType>SINGLE</storageType>\r
+            <allowEdit>false</allowEdit>\r
+         </customField>\r
+      </ws:createCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/><con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create customer String hideOnNew" id="2b400f80-a916-4502-90ca-f6af4e77e482"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create customer String hideOnNew" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST24" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_HIDEONNEW">
+                  <stringValue>hide me</stringValue>
+               </customField>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_NOTALLOWEDIT">
+                  <stringValue>old value</stringValue>
+               </customField>
+            </customFields>            
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find customer hideOnNew" id="7f6cf068-37f5-4b33-9dc7-2821cea47fcb"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find customer hideOnNew" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST24</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d"><con:configuration><token>                  &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_NOTALLOWEDIT" description="String not allow edit">
+                     &lt;stringValue>old value&lt;/stringValue>
+                  &lt;/customField>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple NotContains" id="2de8070b-d0e6-4e70-a1f1-74a2d38bfc10" name="Not Contains"><con:configuration><token>${#TestSuite#ticket}_${#TestSuite#index}_STRING_HIDEONNEW</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update customer String allowEdit" id="0f929aa3-9d4a-4ad2-9bff-29b27f66b0e6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>updateCustomer</con:operation><con:request name="Update customer String allowEdit" id="588c1141-f660-4afe-a599-13d7214b8e79"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateCustomer>
+         <customer code="${#TestSuite#ticket}_${#TestSuite#index}_CUST24" description="CUST">
+            <name>
+               <title>M</title>
+               <firstName>Edward</firstName>
+               <lastName>Legaspi</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2/>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>613@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+            <customFields>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_HIDEONNEW">
+                  <stringValue>new value</stringValue>
+               </customField>
+               <customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_NOTALLOWEDIT">
+                  <stringValue>new value</stringValue>
+               </customField>
+            </customFields>            
+         </customer>
+      </ws:updateCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/><con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find customer allowEdit" id="49192612-65e4-4f27-a40b-b684fbbbc9b7"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findCustomer</con:operation><con:request name="Find customer allowEdit" id="c86136db-6ca0-4125-9817-87936ab06776"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#TestSuite#ticket}_${#TestSuite#index}_CUST24</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/><con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" name="Contains 2" id="dd073d7d-ed57-428a-8c5c-bdb893d2c23d"><con:configuration><token>                  &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_NOTALLOWEDIT" description="String not allow edit">
+                     &lt;stringValue>old value&lt;/stringValue>
+                  &lt;/customField>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="1163a16f-67bd-40dd-b3c6-67d58c0066e2" name="Contains 3"><con:configuration><token>                  &lt;customField code="${#TestSuite#ticket}_${#TestSuite#index}_STRING_HIDEONNEW" description="String required">
+                     &lt;stringValue>new value&lt;/stringValue>
+                  &lt;/customField></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Delete CFT String hideOnNew" id="2a61ea03-4019-4719-8853-6208c6511e56"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeCustomFieldTemplate</con:operation><con:request name="Delete CFT String hideOnNew" id="4d7824f9-b675-4361-a1a7-a642a78a7cad"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomFieldTemplate>\r
+         <customFieldTemplateCode>${#TestSuite#ticket}_${#TestSuite#index}_STRING_HIDEONNEW</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/><con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>MEVEO_CF</con:value></con:property><con:property><con:name>subscription_date</con:name><con:value>2015-09-09</con:value></con:property><con:property><con:name>index</con:name><con:value>104</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript><con:reportParameters/></con:testSuite><con:testSuite id="86e39abe-3baa-44bc-841e-164cd93f1246" name="Module"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="a00b9dbb-ca67-467e-980a-a8e95e13359b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Init items" searchProperties="true"><con:settings/><con:testStep type="request" name="Create CET1" id="ffd67b02-9a4d-4160-bf39-a201968453c2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateCustomEntityTemplate</con:operation><con:request name="Create CET1" id="68717aba-9e3c-422e-b154-b9cc71705266"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>

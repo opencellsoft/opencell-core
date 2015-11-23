@@ -27,6 +27,7 @@
     <cc:attribute name="datePattern" required="true" />
     <cc:attribute name="messagesId" required="true" />
     <cc:attribute name="prefix" required="true" />
+    <cc:attribute name="disabled" default="#{!cc.attrs.backingBean.entity.transient and !cc.attrs.cft.allowEdit}" />
 </cc:interface>
 
 <cc:implementation>
@@ -40,13 +41,14 @@
     <c:if test="#{!cc.attrs.cft.versionable}">
         <c:if test="#{cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.SINGLE }">
             <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired?' *':''}" componentWidth="25" displayOneLine="false">
-                <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cft.instance.cfValue}" backingBean="#{cc.attrs.backingBean}" />
+                <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cft.instance.cfValue}" backingBean="#{cc.attrs.backingBean}"
+                    disabled="#{cc.attrs.disabled}" />
             </hftl:decorateFormField>
         </c:if>
 
         <c:if test="#{(cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MAP or cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.LIST) }">
             <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" backingBean="#{cc.attrs.backingBean}" field="#{cc.attrs.cft.instance.cfValue}"
-                messagesId="#{cc.attrs.messagesId}" />
+                messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}" />
         </c:if>
 
         <c:set var="inheritedValue" value="#{cc.attrs.backingBean.entity.getInheritedOnlyCFValue(cc.attrs.cft.code)}" />
@@ -61,7 +63,8 @@
         <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="false">
             <p:dataTable id="periodTable_omitFromSubmit" lazy="false" value="#{cc.attrs.cft.instance.valuePeriods}" var="period"
                 sortField="#{cc.attrs.cft.instance.calendar!=null?period.periodStartDate:period.priority}"
-                editable="#{cc.attrs.edit and cc.attrs.cft.storageType==CustomFieldStorageTypeEnum.SINGLE}" editMode="cell" resizableColumns="true" reflow="true">
+                editable="#{cc.attrs.edit and cc.attrs.cft.storageType==CustomFieldStorageTypeEnum.SINGLE and !cc.attrs.disabled}" editMode="cell" resizableColumns="true"
+                reflow="true">
 
                 <p:ajax event="cellEdit" update="#{cc.attrs.messagesId}" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
 
@@ -105,7 +108,7 @@
                 <f:facet name="footer">
                     <p:messages globalOnly="false" redisplay="false" />
 
-                    <hf:namingContainer id="addNewFields" rendered="#{cc.attrs.edit}">
+                    <hf:namingContainer id="addNewFields" rendered="#{cc.attrs.edit and !cc.attrs.disabled}">
 
                         <p:calendar id="period_date" showButtonPanel="true" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}"
                             value="#{cc.attrs.backingBean.customFieldNewValue[cc.attrs.cft.code.concat('_periodStartDate')]}" required="true"
@@ -132,7 +135,7 @@
                     </hf:namingContainer>
 
                     <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="periodTable_omitFromSubmit"
-                        action="#{cc.attrs.backingBean.addNewCustomFieldPeriod(cc.attrs.cft)}">
+                        action="#{cc.attrs.backingBean.addNewCustomFieldPeriod(cc.attrs.cft)}" rendered="#{cc.attrs.edit and !cc.attrs.disabled}">
                         <p:resetInput target="addNewFields" />
                     </p:commandButton>
 

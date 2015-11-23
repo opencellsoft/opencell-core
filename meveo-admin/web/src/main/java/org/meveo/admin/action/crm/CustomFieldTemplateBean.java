@@ -12,6 +12,7 @@ import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -23,6 +24,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     @Inject
     private CustomFieldTemplateService cftService;
+
+    @Inject
+    private CalendarService calendarService;
 
     public CustomFieldTemplateBean() {
         super(CustomFieldTemplate.class);
@@ -54,6 +58,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             return null;
         }
 
+        if (entity.getCalendar() != null) {
+            entity.setCalendar(calendarService.refreshOrRetrieve(entity.getCalendar()));
+        }
         return super.saveOrUpdate(killConversation);
     }
 

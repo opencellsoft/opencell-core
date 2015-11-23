@@ -124,14 +124,12 @@ public class RecurringChargeTemplateApi extends BaseApi {
 			}
 			
 			// populate customFields
-			if (postData.getCustomFields() != null) {
-                try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					log.error("Failed to associate custom field instance to an entity", e);
-					throw new MeveoApiException("Failed to associate custom field instance to an entity");
-				}
-			}
+            try {
+                populateCustomFields(postData.getCustomFields(), chargeTemplate, currentUser);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            }
 
 			recurringChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
@@ -245,14 +243,12 @@ public class RecurringChargeTemplateApi extends BaseApi {
 			}
 			
 			// populate customFields
-			if (postData.getCustomFields() != null) {
-				try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), chargeTemplate, currentUser);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					log.error("Failed to associate custom field instance to an entity", e);
-					throw new MeveoApiException("Failed to associate custom field instance to an entity");
-				}
-			}
+            try {
+                populateCustomFields(postData.getCustomFields(), chargeTemplate, currentUser);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            }
 
 			recurringChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {

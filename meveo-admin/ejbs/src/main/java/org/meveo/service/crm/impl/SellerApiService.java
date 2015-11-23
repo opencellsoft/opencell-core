@@ -105,14 +105,12 @@ public class SellerApiService extends BaseApi {
 			}
 
             // populate customFields
-            if (postData.getCustomFields() != null) {
-                try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), seller, currentUser);
+            try {
+                populateCustomFields(postData.getCustomFields(), seller, currentUser);
 
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    log.error("Failed to associate custom field instance to an entity", e);
-                    throw new MeveoApiException("Failed to associate custom field instance to an entity");
-                }
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
 			sellerService.create(seller, currentUser, provider);
@@ -194,14 +192,12 @@ public class SellerApiService extends BaseApi {
 			}
 			
             // populate customFields
-            if (postData.getCustomFields() != null) {
-                try {
-                    populateCustomFields(postData.getCustomFields().getCustomField(), seller, currentUser);
+            try {
+                populateCustomFields(postData.getCustomFields(), seller, currentUser);
 
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    log.error("Failed to associate custom field instance to an entity", e);
-                    throw new MeveoApiException("Failed to associate custom field instance to an entity");
-                }
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
 			sellerService.update(seller, currentUser);

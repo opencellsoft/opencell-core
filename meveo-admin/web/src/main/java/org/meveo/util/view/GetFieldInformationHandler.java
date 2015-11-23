@@ -31,6 +31,12 @@ import org.meveo.util.view.FieldInformation.FieldTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Tag handler to get meta information about an entity field
+ * 
+ * @author Andrius Karpavicius
+ * 
+ */
 public class GetFieldInformationHandler extends TagHandler {
 
     private static Logger log = LoggerFactory.getLogger(GetFieldInformationHandler.class);
@@ -41,6 +47,20 @@ public class GetFieldInformationHandler extends TagHandler {
     private String childFieldName;
     private String varName;
 
+    /**
+     * Tag configuration. Accepts the following attributes:
+     * <ul>
+     * <li>backingBean - BaseBean instance with entity field. Used to access "entity" if entity parameter is not passed</li>
+     * <li>entity - Entity object to read field metadata from</li>
+     * <li>fieldName - name of a field. Can contain "." in a name</li>
+     * <li>childFieldName - name of a secondary field.</li>
+     * <li>var - name of a variable to post information to</li>
+     * </ul>
+     * 
+     * In terms of field resolution the following is used: entity.fieldName.childFieldName
+     * 
+     * @param config Tag configuration
+     */
     public GetFieldInformationHandler(TagConfig config) {
         super(config);
 
@@ -61,6 +81,9 @@ public class GetFieldInformationHandler extends TagHandler {
 
     }
 
+    /**
+     * Tag resolution/application
+     */
     @SuppressWarnings("rawtypes")
     @Override
     public void apply(FaceletContext context, UIComponent parent) throws IOException {
@@ -94,7 +117,7 @@ public class GetFieldInformationHandler extends TagHandler {
         try {
             field = getBeanFieldThrowException(entityClass, fullFieldName);
         } catch (SecurityException | NoSuchFieldException | IllegalStateException e) {
-            //log.error("Not able to access field information for {} field of {} class backing bean {} entity {}", fullFieldName, entityClass.getName(), backingBean, entity);
+            // log.error("Not able to access field information for {} field of {} class backing bean {} entity {}", fullFieldName, entityClass.getName(), backingBean, entity);
             context.setAttribute(varName, new FieldInformation());
             return;
         }
@@ -228,7 +251,7 @@ public class GetFieldInformationHandler extends TagHandler {
         } else {
 
             try {
-            	log.debug("get declared field {}",fieldName);
+                // log.debug("get declared field {}",fieldName);
                 field = c.getDeclaredField(fieldName);
             } catch (NoSuchFieldException e) {
                 if (field == null && c.getSuperclass() != null) {

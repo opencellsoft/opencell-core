@@ -855,8 +855,9 @@ public class CustomFieldInstance extends ProviderlessEntity {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String.format("CustomFieldInstance [%s, cfFields=%s, versionable=%s, calendar=%s, valuePeriods=%s, value=%s]", super.toString(), cfFields.getId(), versionable,
-            calendar != null ? calendar.getCode() : null, valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null, cfValue);
+        return String.format("CustomFieldInstance [%s, cfFields=%s, versionable=%s, calendar=%s, valuePeriods=%s, value=%s]", super.toString(), cfFields != null ? cfFields.getId()
+                : null, versionable, calendar != null ? calendar.getCode() : null, valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null,
+            cfValue);
     }
 
     public String getCode() {

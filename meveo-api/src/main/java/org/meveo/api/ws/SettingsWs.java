@@ -309,12 +309,12 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeCustomFieldTemplate(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode,
-			@WebParam(name = "accountLevel") String accountLevel);
+			@WebParam(name = "appliesTo") String appliesTo);
 
 	@WebMethod
 	GetCustomFieldTemplateReponseDto findCustomFieldTemplate(
 			@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode,
-			@WebParam(name = "accountLevel") String accountLevel);
+			@WebParam(name = "appliesTo") String appliesTo);
 	
 	@WebMethod
 	ActionStatus createOrUpdateCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);

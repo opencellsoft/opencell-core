@@ -100,23 +100,23 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     @Override
-    public void create(CustomFieldTemplate e, User creator, Provider provider) {
-        super.create(e, creator, provider);
-        customFieldsCache.addUpdateCustomFieldTemplate(e);
+    public void create(CustomFieldTemplate cft, User creator, Provider provider) {
+        super.create(cft, creator, provider);
+        customFieldsCache.addUpdateCustomFieldTemplate(cft);
     }
 
     @Override
-    public CustomFieldTemplate update(CustomFieldTemplate e, User updater) {
-        CustomFieldTemplate eUpdated = super.update(e, updater);
-        customFieldsCache.addUpdateCustomFieldTemplate(e);
+    public CustomFieldTemplate update(CustomFieldTemplate cft, User updater) {
+        CustomFieldTemplate cftUpdated = super.update(cft, updater);
+        customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
 
-        return eUpdated;
+        return cftUpdated;
     }
 
     @Override
-    public void remove(CustomFieldTemplate e) {
-        super.remove(e);
-        customFieldsCache.removeCustomFieldTemplate(e);
+    public void remove(CustomFieldTemplate cft) {
+        super.remove(cft);
+        customFieldsCache.removeCustomFieldTemplate(cft);
     }
 
     /**

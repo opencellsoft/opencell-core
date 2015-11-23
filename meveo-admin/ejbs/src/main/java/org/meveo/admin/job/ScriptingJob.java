@@ -88,6 +88,7 @@ public class ScriptingJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
+		variablesCF.setMaxValue(100L);
 		result.put("ScriptingJob_variables", variablesCF); 
 		
 		return result;

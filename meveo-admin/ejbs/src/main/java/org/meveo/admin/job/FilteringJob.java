@@ -88,6 +88,7 @@ public class FilteringJob extends Job {
 		variablesCF.setFieldType(CustomFieldTypeEnum.STRING);
 		variablesCF.setStorageType(CustomFieldStorageTypeEnum.MAP);
 		variablesCF.setValueRequired(false);
+		variablesCF.setMaxValue(50L);
 		result.put("FilteringJob_variables", variablesCF); 
 
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
@@ -98,6 +99,7 @@ public class FilteringJob extends Job {
 		recordVariableName.setDescription("Record variable name");
 		recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
 		recordVariableName.setValueRequired(false);
+		recordVariableName.setMaxValue(50L);
 		result.put("FilteringJob_recordVariableName", recordVariableName);
 
 		return result;

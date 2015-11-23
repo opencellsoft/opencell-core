@@ -53,10 +53,34 @@ public class CustomFieldTemplateDto {
     protected String calendar;
 
     @XmlElement
+    protected Integer cacheValueTimeperiod;
+
+    @XmlElement
     protected String entityClazz;
 
     @XmlElement
     protected Map<String, String> listValues = new HashMap<String, String>();
+
+    @XmlElement
+    protected boolean allowEdit = true;
+
+    @XmlElement
+    protected boolean hideOnNew;
+
+    @XmlElement
+    protected Long maxValue;
+
+    @XmlElement
+    protected Long minValue;
+
+    @XmlElement
+    protected String regExp;
+
+    @XmlElement
+    protected boolean cacheValue;
+
+    @XmlElement
+    protected String guiPosition;
 
     public CustomFieldTemplateDto() {
 
@@ -77,6 +101,16 @@ public class CustomFieldTemplateDto {
         if (cf.getCalendar() != null) {
             calendar = cf.getCalendar().getCode();
         }
+        allowEdit = cf.isAllowEdit();
+        hideOnNew = cf.isHideOnNew();
+        minValue = cf.getMinValue();
+        maxValue = cf.getMaxValue();
+        regExp = cf.getRegExp();
+        cacheValue = cf.isCacheValue();
+        cacheValueTimeperiod = cf.getCacheValueTimeperiod();
+        guiPosition = cf.getGuiPosition();
+        listValues = cf.getListValues();
+
     }
 
     public String getCode() {
@@ -194,5 +228,69 @@ public class CustomFieldTemplateDto {
      */
     public void setListValues(Map<String, String> listValues) {
         this.listValues = listValues;
+    }
+
+    public boolean isAllowEdit() {
+        return allowEdit;
+    }
+
+    public void setAllowEdit(boolean allowEdit) {
+        this.allowEdit = allowEdit;
+    }
+
+    public boolean isHideOnNew() {
+        return hideOnNew;
+    }
+
+    public void setHideOnNew(boolean hideOnNew) {
+        this.hideOnNew = hideOnNew;
+    }
+
+    public Long getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(Long minValue) {
+        this.minValue = minValue;
+    }
+
+    public Long getMaxValue() {
+        return maxValue;
+    }
+
+    public void setMaxValue(Long maxValue) {
+        this.maxValue = maxValue;
+    }
+
+    public String getRegExp() {
+        return regExp;
+    }
+
+    public void setRegExp(String regExp) {
+        this.regExp = regExp;
+    }
+
+    public boolean isCacheValue() {
+        return cacheValue;
+    }
+
+    public void setCacheValue(boolean cacheValue) {
+        this.cacheValue = cacheValue;
+    }
+
+    public Integer getCacheValueTimeperiod() {
+        return cacheValueTimeperiod;
+    }
+
+    public void setCacheValueTimeperiod(Integer cacheValueTimeperiod) {
+        this.cacheValueTimeperiod = cacheValueTimeperiod;
+    }
+
+    public String getGuiPosition() {
+        return guiPosition;
+    }
+
+    public void setGuiPosition(String guiPosition) {
+        this.guiPosition = guiPosition;
     }
 }

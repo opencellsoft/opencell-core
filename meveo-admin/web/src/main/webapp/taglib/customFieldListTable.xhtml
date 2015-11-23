@@ -19,6 +19,7 @@
         messagesId - messages id tag to update for general errors
         popupWidgetVar - a name of a popup widget var if used inside a popup
         updateOnAddEdit - ids of controlls to update uppon data changes (value edit/create/delete)
+        disabled - is field non-editable
  -->
 
 <ui:composition>
@@ -32,8 +33,8 @@
     <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="false">
         <p:messages id="cfMessages" globalOnly="false" redisplay="false" />
 
-        <p:dataTable id="customFields_map_omitFromSubmit" lazy="false" value="#{field.mapValuesForGUI}" var="mapValues" editable="#{edit}" editMode="cell" reflow="false"
-            resizableColumns="true" rowIndexVar="rowIndex">
+        <p:dataTable id="customFields_map_omitFromSubmit" lazy="false" value="#{field.mapValuesForGUI}" var="mapValues" editable="#{edit and !disabled}" editMode="cell"
+            reflow="false" resizableColumns="true" rowIndexVar="rowIndex">
 
             <p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
             <p:column headerText="#{messages['commons.key']}" rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP}">
@@ -58,36 +59,35 @@
                     </f:facet>
                 </p:cellEditor>
             </p:column>
-            <p:column headerText="#{messages['commons.actions']}" rendered="#{edit}" width="15%">
+            <p:column headerText="#{messages['commons.actions']}" rendered="#{edit and !disabled}" width="15%">
                 <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this" update="#{updateOnAddEdit} customFields_map_omitFromSubmit"
                     action="#{field.mapValuesForGUI.remove(mapValues)}" />
             </p:column>
             <f:facet name="footer" layout="block">
                 <p:messages id="cfNewFieldsMessage" globalOnly="false" redisplay="false" />
-                <hf:namingContainer id="addNewFields" rendered="#{edit}">
+                <hf:namingContainer id="addNewFields" rendered="#{edit and !disabled}">
                     <p:inputText id="newKey" value="#{backingBean.customFieldNewValue[cft.code.concat('_key')]}" required="true" placeholder="#{messages['commons.key']}"
                         label="#{messages['commons.key']}" rendered="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP}" />
                     <hftl:customFieldValueMuteField id="newValue" edit="true" cft="#{cft}" field="#{backingBean.customFieldNewValue[cft.code.concat('_value')]}" required="true"
                         label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" backingBean="#{backingBean}" />
                 </hf:namingContainer>
 
-				<c:if test="#{!empty(popupWidgetVar)}">
-	                <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
-	                    action="#{backingBean.addValueToMap(field, cft)}" oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()"
-	                    rendered="#{!empty(popupWidgetVar)}">
-	                    <p:resetInput target="addNewFields" />
-	                </p:commandButton>
-                </c:if>
-				
-				<c:if test="#{empty(popupWidgetVar)}">
-	                <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
-	                    action="#{backingBean.addValueToMap(field, cft)}">
-	                    <p:resetInput target="addNewFields" />
-	                </p:commandButton>
+                <c:if test="#{!empty(popupWidgetVar) and !disabled}">
+                    <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
+                        action="#{backingBean.addValueToMap(field, cft)}" oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
+                        <p:resetInput target="addNewFields" />
+                    </p:commandButton>
                 </c:if>
 
-                <p:commandButton value="#{messages['commons.close']}" immediate="true" rendered="#{!empty(popupWidgetVar)}"
-                    update="@this #{updateOnAddEdit}" oncomplete="PF('#{popupWidgetVar}').hide()">
+                <c:if test="#{empty(popupWidgetVar) and !disabled}">
+                    <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
+                        action="#{backingBean.addValueToMap(field, cft)}">
+                        <p:resetInput target="addNewFields" />
+                    </p:commandButton>
+                </c:if>
+
+                <p:commandButton value="#{messages['commons.close']}" immediate="true" rendered="#{!empty(popupWidgetVar)}" update="@this #{updateOnAddEdit}"
+                    oncomplete="PF('#{popupWidgetVar}').hide()">
                 </p:commandButton>
 
 

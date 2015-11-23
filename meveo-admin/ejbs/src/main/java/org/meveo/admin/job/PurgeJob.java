@@ -50,6 +50,7 @@ public class PurgeJob extends Job {
         cft.setDescription("Purge job execution history: job name");
         cft.setFieldType(CustomFieldTypeEnum.STRING);
         cft.setValueRequired(false);
+        cft.setMaxValue(50L);
         result.put("PurgeJob_jobExecHistory_jobName", cft);
 
         cft = new CustomFieldTemplate();

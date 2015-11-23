@@ -674,4 +674,27 @@
 			</column>
 		</addColumn>
 	</changeSet>
+    <changeSet id="#1248_20151120" author="AndriusKarpavicius">
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="ALLOW_EDIT" type="BOOL" defaultValueBoolean="true">
+                <constraints nullable="false" />
+            </column>
+            <column name="HIDE_ON_NEW" type="BOOL" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+            <column name="MAX_VALUE" type="BIGINT" />
+            <column name="MIN_VALUE" type="BIGINT" />
+            <column name="REG_EXP" type="VARCHAR(80)" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="#1248_20151119" author="AndriusKarpavicius">
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="CACHE_VALUE" type="BOOL" defaultValueBoolean="true">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>    
+    <changeSet id="#1248_20151122" author="AndriusKarpavicius">
+        <sql>update CRM_CUSTOM_FIELD_TMPL set max_value=50 where max_value is null and field_type='STRING'</sql>
+    </changeSet>        
 </databaseChangeLog>

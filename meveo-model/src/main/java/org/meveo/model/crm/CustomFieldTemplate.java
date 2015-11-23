@@ -35,6 +35,8 @@ public class CustomFieldTemplate extends BusinessEntity {
     public static String POSITION_TAB = "tab";
     public static String POSITION_FIELD_GROUP = "fieldGroup";
     public static String POSITION_FIELD = "field";
+    
+    public static long DEFAULT_MAX_LENGTH_STRING = 50L; 
 
     @Column(name = "FIELD_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -75,6 +77,24 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Column(name = "GUI_POSITION", length = 100)
     private String guiPosition;
+
+    @Column(name = "ALLOW_EDIT")
+    private boolean allowEdit = true;
+
+    @Column(name = "HIDE_ON_NEW")
+    private boolean hideOnNew;
+
+    @Column(name = "MAX_VALUE")
+    private Long maxValue;
+
+    @Column(name = "MIN_VALUE")
+    private Long minValue;
+
+    @Column(name = "REG_EXP", length = 80)
+    private String regExp;
+
+    @Column(name = "CACHE_VALUE")
+    private boolean cacheValue;
 
     @Transient
     private CustomFieldInstance instance;
@@ -227,11 +247,61 @@ public class CustomFieldTemplate extends BusinessEntity {
         return parsedInfo;
     }
 
+    public boolean isAllowEdit() {
+        return allowEdit;
+    }
+
+    public void setAllowEdit(boolean allowEdit) {
+        this.allowEdit = allowEdit;
+    }
+
+    public boolean isHideOnNew() {
+        return hideOnNew;
+    }
+
+    public void setHideOnNew(boolean hideOnNew) {
+        this.hideOnNew = hideOnNew;
+    }
+
+    public Long getMaxValue() {
+        return maxValue;
+    }
+
+    public void setMaxValue(Long maxValue) {
+        this.maxValue = maxValue;
+    }
+
+    public Long getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(Long minValue) {
+        this.minValue = minValue;
+    }
+
+    public String getRegExp() {
+        return regExp;
+    }
+
+    public void setRegExp(String regExp) {
+        this.regExp = regExp;
+    }
+
+    public boolean isCacheValue() {
+        return cacheValue;
+    }
+
+    public void setCacheValue(boolean cacheValue) {
+        this.cacheValue = cacheValue;
+    }
+
     @Override
     public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
         }
+
         if (obj == null) {
             return false;
         } else if (!(obj instanceof CustomFieldTemplate)) { // Fails with proxed objects: getClass() != obj.getClass()){

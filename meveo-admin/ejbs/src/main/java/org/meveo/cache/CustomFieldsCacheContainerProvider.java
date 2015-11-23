@@ -112,6 +112,7 @@ public class CustomFieldsCacheContainerProvider {
         Map<String, Date> cfValueCacheTimeAsDate = new HashMap<String, Date>();
 
         cfValueCacheTime.clear();
+        cftsByAppliesTo.clear();
         List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForCache();
         for (CustomFieldTemplate cft : cfts) {
 
