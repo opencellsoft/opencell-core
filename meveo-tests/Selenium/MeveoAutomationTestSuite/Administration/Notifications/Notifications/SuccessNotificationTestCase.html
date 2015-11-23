@@ -57,14 +57,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>1000</td>
+	<td>sendKeys</td>
+	<td>${ClassnameFilter}</td>
+	<td>${TypeClassnameFilterValue}</td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>//*[contains(@id, 'classNameFilter_text_ac_panel')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${ClassnameFilter}</td>
-	<td>${ClassnameFilterValue}</td>
+	<td>click</td>
+	<td>css=li:contains(&quot;${ClassnameFilterValue}&quot;)</td>
+	<td></td>
 </tr>
 <tr>
 	<td>endIf</td>

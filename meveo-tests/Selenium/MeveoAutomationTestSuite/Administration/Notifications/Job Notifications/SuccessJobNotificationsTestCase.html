@@ -57,9 +57,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>sendKeys</td>
 	<td>${ClassnameFilter}</td>
-	<td>${ClassnameFilterValue}</td>
+	<td>${TypeClassnameFilterValue}</td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>//*[contains(@id, 'classNameFilter_text_ac_panel')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${ClassnameFilterValue}&quot;)</td>
+	<td></td>
 </tr>
 <tr>
 	<td>endIf</td>
