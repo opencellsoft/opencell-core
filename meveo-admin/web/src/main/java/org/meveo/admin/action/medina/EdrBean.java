@@ -35,15 +35,6 @@ public class EdrBean extends BaseBean<EDR> {
 		return "edrDetail";
 	}
 
-	@Override
-	public Map<String, Object> getFilters() {
-		filters = super.getFilters();
-
-		filters.put("status", EDRStatusEnum.REJECTED);
-
-		return filters;
-	}
-
 	public void updateStatus(EDR selectedEdr) {
 		selectedEdr.setStatus(EDRStatusEnum.OPEN);
 
