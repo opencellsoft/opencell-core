@@ -284,9 +284,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (!versionable) {
             setStringValue(value);
 
-        } else if (calendar == null) {
-            throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
-
         } else {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
@@ -345,9 +342,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
     public void setDateValue(Date value, Date valueDate) {
         if (!versionable) {
             setDateValue(value);
-
-        } else if (calendar == null) {
-            throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
 
         } else {
             // If value is null, don't create a new period -just nullify existing value if period exists already
@@ -408,9 +402,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (!versionable) {
             setLongValue(value);
 
-        } else if (calendar == null) {
-            throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
-
         } else {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
@@ -469,9 +460,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
     public void setDoubleValue(Double value, Date valueDate) {
         if (!versionable) {
             setDoubleValue(value);
-
-        } else if (calendar == null) {
-            throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
 
         } else {
             // If value is null, don't create a new period -just nullify existing value if period exists already
@@ -540,9 +528,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (!versionable) {
             setListValue(listValue);
 
-        } else if (calendar == null) {
-            throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
-
         } else {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, listValue != null);
@@ -610,9 +595,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
         if (!versionable) {
             setMapValue(mapValue);
 
-        } else if (calendar == null) {
-            throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
-
         } else {
             // If value is null, don't create a new period -just nullify existing value if period exists already
             CustomFieldPeriod period = getValuePeriod(valueDate, mapValue != null);
@@ -679,9 +661,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
     public void setEntityReferenceValue(EntityReferenceWrapper entityReference, Date valueDate) {
         if (!versionable) {
             setEntityReferenceValue(entityReference);
-
-        } else if (calendar == null) {
-            throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
 
         } else {
             // If value is null, don't create a new period -just nullify existing value if period exists already
@@ -778,9 +757,6 @@ public class CustomFieldInstance extends ProviderlessEntity {
     public void setValue(Object value, Date valueDate) {
         if (!versionable) {
             setValue(value);
-
-        } else if (calendar == null) {
-            throw new RuntimeException("Can not determine a period for Custom Field value if no calendar is provided");
 
         } else {
             // If value is null, don't create a new period -just nullify existing value if period exists already
