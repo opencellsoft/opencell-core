@@ -55,8 +55,8 @@ public class DiscountPlanItem extends AuditableEntity {
 	@Column(name = "ACCOUNTING_CODE", length = 255)
 	private String accountingCode;
 	
-	@Column(name = "EXPRESSION_EL", length = 1000)
-   	@Size(max = 1000)
+	@Column(name = "EXPRESSION_EL", length = 2000)
+   	@Size(max = 2000)
    	private String expressionEl;
 
 	public DiscountPlan getDiscountPlan() {

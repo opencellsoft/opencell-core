@@ -75,8 +75,8 @@ public class CounterTemplate extends BusinessEntity {
 	@Column(name = "COUNTER_LEVEL", nullable = false)
 	private CounterTemplateLevel counterLevel = CounterTemplateLevel.UA;
 	
-	@Column(name = "CEILING_EXPRESSION_EL", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "CEILING_EXPRESSION_EL", length = 2000)
+	@Size(max = 2000)
 	private String ceilingExpressionEl;
 
 	public CounterTypeEnum getCounterType() {

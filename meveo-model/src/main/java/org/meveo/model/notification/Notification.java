@@ -50,8 +50,8 @@ public class Notification extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private NotificationEventTypeEnum eventTypeFilter;
 
-    @Column(name = "EVENT_EXPRESSION_FILTER", length = 1000)
-    @Size(max = 1000)
+    @Column(name = "EVENT_EXPRESSION_FILTER", length = 2000)
+    @Size(max = 2000)
     private String elFilter;
 
     @OneToOne(fetch = FetchType.LAZY)
