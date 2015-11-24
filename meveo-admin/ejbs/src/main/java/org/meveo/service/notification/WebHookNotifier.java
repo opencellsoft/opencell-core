@@ -84,11 +84,6 @@ public class WebHookNotifier {
 			}
 			Map<String,String> params = evaluateMap(webHook.getWebhookParams(), e,context);
 			
-			String bodyEL = webHook.getBodyEL();
-            if (bodyEL != null && !StringUtils.isBlank(bodyEL)) {
-            	params.put("body", bodyEL);
-            }
-			
             String paramQuery="";
             String sep="";
             for(String paramKey:params.keySet()){
@@ -122,6 +117,11 @@ public class WebHookNotifier {
 			if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
 				conn.setRequestMethod("GET");
 			} else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
+				String bodyEL = webHook.getBodyEL();
+				bodyEL = evaluate(bodyEL, webHook, context);
+	            if (bodyEL != null && !StringUtils.isBlank(bodyEL)) {	            	
+	            	paramQuery += "body=" + bodyEL;
+	            }
 				conn.setRequestMethod("POST");
 			} else if (WebHookMethodEnum.HTTP_PUT == webHook.getHttpMethod()) {
 				conn.setRequestMethod("PUT");

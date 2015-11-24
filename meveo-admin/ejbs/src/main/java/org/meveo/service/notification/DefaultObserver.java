@@ -172,11 +172,6 @@ public class DefaultObserver {
             if (notif instanceof EmailNotification) {
                 emailNotifier.sendEmail((EmailNotification) notif, e,context);
             } else if (notif instanceof WebHook) {
-            	WebHook webhook = (WebHook) notif;
-            	if (!matchExpression(webhook.getBodyEL(), e)) {
-            		log.debug("Expression {} does not match", webhook.getBodyEL());
-            		return;
-            	}
                 webHookNotifier.sendRequest((WebHook) notif, e,context);
             } else if (notif instanceof InstantMessagingNotification) {
                 imNotifier.sendInstantMessage((InstantMessagingNotification) notif, e);
