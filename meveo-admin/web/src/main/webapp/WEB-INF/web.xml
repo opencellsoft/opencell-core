@@ -76,7 +76,7 @@
         </init-param>
         <init-param>
             <param-name>swagger.api.basepath</param-name>
-            <param-value>http://localhost:8080/api/rest</param-value>
+            <param-value>http://localhost:8080/meveo/api/rest</param-value>
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>

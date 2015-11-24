@@ -1,5 +1,9 @@
 package org.meveo.api.rest.invoice.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -25,19 +29,18 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.invoice.InvoiceRs;
 import org.meveo.model.billing.InvoiceTypeEnum;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/invoice", tags = "invoice")
 public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 
 	@Inject
 	private InvoiceApi invoiceApi;
 
 	@Override
-	public InvoiceCreationResponse create(InvoiceDto invoiceDto) {
+	@ApiOperation(value = "Creates an invoice", response = InvoiceCreationResponse.class, notes = "invoice number depends on invoice type")
+	public InvoiceCreationResponse create(
+			@ApiParam(value = "contains fields required for creating an invoice") InvoiceDto invoiceDto) {
 		InvoiceCreationResponse result = new InvoiceCreationResponse();
 
 		try {
@@ -58,7 +61,9 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 	}
 
 	@Override
-	public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode) {
+	@ApiOperation(value = "Finds an invoice", response = CustomerInvoicesResponse.class, responseContainer = "List", notes = "returns all the invoices of a billing account")
+	public CustomerInvoicesResponse find(
+			@ApiParam(value = "customer account code") @QueryParam("customerAccountCode") String customerAccountCode) {
 		CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
 		try {
@@ -77,25 +82,27 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 	}
 
 	@Override
-	public GenerateInvoiceResponseDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto) {
+	@ApiOperation(value = "This operation generates rated transaction given a billing account and invoicing date, updates billing account amounts and generates aggregates and invoice.", response = GenerateInvoiceResponseDto.class)
+	public GenerateInvoiceResponseDto generateInvoice(
+			@ApiParam(value = "contains the code of the billing account, invoicing and last transaction date") GenerateInvoiceRequestDto generateInvoiceRequestDto) {
 		GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
-		try{
+		try {
 
 			result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
-		}catch(MissingParameterException mpe){
+		} catch (MissingParameterException mpe) {
 			result.getActionStatus().setErrorCode(mpe.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(mpe.getMessage());
-		}catch (EntityDoesNotExistsException ednep) {
+		} catch (EntityDoesNotExistsException ednep) {
 			result.getActionStatus().setErrorCode(ednep.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(ednep.getMessage());
-		}catch (BusinessApiException bae) {
+		} catch (BusinessApiException bae) {
 			result.getActionStatus().setErrorCode(bae.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(bae.getMessage());			
+			result.getActionStatus().setMessage(bae.getMessage());
 		} catch (Exception e) {
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -104,32 +111,35 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 		log.info("generateInvoice Response={}", result);
 		return result;
 	}
-	
+
 	@Override
-	public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber) {
+	@ApiOperation(value = "Finds an invoice and return it as xml string", response = GetXmlInvoiceResponseDto.class)
+	public GetXmlInvoiceResponseDto findXMLInvoice(@ApiParam(value = "invoice number") String invoiceNumber) {
 		return findXMLInvoiceWithType(invoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
 	}
 
 	@Override
-	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(String invoiceNumber, String invoiceType) {
+	@ApiOperation(value = "Finds an invoice and return it as xml string", response = GetXmlInvoiceResponseDto.class)
+	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(@ApiParam(value = "invoice number") String invoiceNumber,
+			@ApiParam(value = "invoice type") String invoiceType) {
 		GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
-		try{
-			
+		try {
+
 			result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-			
-		}catch(MissingParameterException mpe){
+
+		} catch (MissingParameterException mpe) {
 			result.getActionStatus().setErrorCode(mpe.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(mpe.getMessage());
-		}catch (EntityDoesNotExistsException ednep) {
+		} catch (EntityDoesNotExistsException ednep) {
 			result.getActionStatus().setErrorCode(ednep.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(ednep.getMessage());
-		}catch (BusinessException bae) {
+		} catch (BusinessException bae) {
 			result.getActionStatus().setErrorCode("BusinessException");
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(bae.getMessage());			
+			result.getActionStatus().setMessage(bae.getMessage());
 		} catch (Exception e) {
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -138,28 +148,31 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 		log.info("getXMLInvoice Response={}", result);
 		return result;
 	}
-	
+
 	@Override
-	public GetPdfInvoiceResponseDto findPdfInvoice(String InvoiceNumber) {
+	@ApiOperation(value = "Finds an invoice and return it as pdf as byte []", response = GetPdfInvoiceResponseDto.class, notes = "invoice is not recreated, instead invoice stored as pdf in database is returned")
+	public GetPdfInvoiceResponseDto findPdfInvoice(@ApiParam(value = "invoice number") String InvoiceNumber) {
 		return findPdfInvoiceWithType(InvoiceNumber, InvoiceTypeEnum.COMMERCIAL.name());
 	}
 
 	@Override
-	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(String InvoiceNumber, String invoiceType) {
+	@ApiOperation(value = "Finds an invoice and return it as pdf as byte []", response = GetPdfInvoiceResponseDto.class, notes = "invoice is not recreated, instead invoice stored as pdf in database is returned")
+	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@ApiParam(value = "invoice number") String InvoiceNumber,
+			@ApiParam(value = "invoice type") String invoiceType) {
 		GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
 		try {
-			
+
 			result.setPdfContent(invoiceApi.getPdfInvoince(InvoiceNumber, invoiceType, getCurrentUser()));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-			
-		}catch(MissingParameterException mpe){
+
+		} catch (MissingParameterException mpe) {
 			result.getActionStatus().setErrorCode(mpe.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(mpe.getMessage());
-		}catch (EntityDoesNotExistsException ednep) {
+		} catch (EntityDoesNotExistsException ednep) {
 			result.getActionStatus().setErrorCode(ednep.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(ednep.getMessage());			
+			result.getActionStatus().setMessage(ednep.getMessage());
 		} catch (Exception e) {
 			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -169,5 +182,4 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 		return result;
 	}
 
-	
 }

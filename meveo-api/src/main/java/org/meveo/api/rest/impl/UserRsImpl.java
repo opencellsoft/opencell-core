@@ -1,5 +1,8 @@
 package org.meveo.api.rest.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -21,12 +24,14 @@ import org.meveo.api.rest.UserRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/user")
 public class UserRsImpl extends BaseRs implements UserRs {
 
 	@Inject
 	private UserApi userApi;
 
 	@Override
+	@ApiOperation(value = "Create a user")
 	public ActionStatus create(UserDto postData) {
 		ActionStatus result = new ActionStatus();
 
@@ -47,6 +52,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Update a user")
 	public ActionStatus update(UserDto postData) {
 		ActionStatus result = new ActionStatus();
 
@@ -105,11 +111,11 @@ public class UserRsImpl extends BaseRs implements UserRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdate(UserDto postData) {
 		ActionStatus result = new ActionStatus();
-		
+
 		try {
 			userApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
