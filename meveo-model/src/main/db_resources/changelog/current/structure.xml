@@ -702,5 +702,11 @@
         <addColumn tableName="ADM_NOTIF_WEBHOOKS">
             <column name="BODY_EL" type="VARCHAR(255)"/>        
         </addColumn>
-    </changeSet>        
+    </changeSet>
+    
+    <changeSet id="#1289_20151124" author="Mbarek">
+    <modifyDataType columnName="FILTER_EXPRESSION" newDataType="VARCHAR(2000)"
+			tableName="CAT_USAGE_CHARGE_TEMPLATE" />
+	</changeSet>
+            
 </databaseChangeLog>
