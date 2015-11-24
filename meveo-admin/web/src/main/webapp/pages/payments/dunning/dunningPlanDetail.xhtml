@@ -149,7 +149,7 @@
 									field="waitDuration" required="true"
 									edit="#{dunningPlanBean.edit}" />
 								<hf:formField label="#{messages['dunningPlan.conditionEl']}"
-									field="conditionEl" textArea="true" maxlength="1000"
+									field="conditionEl" textArea="true" maxlength="2000"
 									edit="#{dunningPlanBean.edit}" />
 								<f:facet name="buttons">
 									<p:commandButton rendered="#{dunningPlanTransition.id==null}"
@@ -287,7 +287,7 @@
 									</h:panelGroup>
 								</p:outputPanel>
 								<hf:formField label="#{messages['dunningPlan.conditionEl']}"
-									field="conditionEl" textArea="true" maxlength="1000"
+									field="conditionEl" textArea="true" maxlength="2000"
 									edit="#{dunningPlanBean.edit}" />
 								<f:facet name="buttons">
 									<p:commandButton rendered="#{actionPlanItem.id==null}"

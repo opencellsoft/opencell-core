@@ -704,9 +704,37 @@
         </addColumn>
     </changeSet>
     
-    <changeSet id="#1289_20151124" author="Mbarek">
+   <changeSet id="#1289-20151124" author="Mbarek">
     <modifyDataType columnName="FILTER_EXPRESSION" newDataType="VARCHAR(2000)"
 			tableName="CAT_USAGE_CHARGE_TEMPLATE" />
+	<modifyDataType columnName="CEILING_EXPRESSION_EL" newDataType="VARCHAR(2000)"
+			tableName="CAT_COUNTER_TEMPLATE" />
+	<modifyDataType columnName="EXPRESSION_EL" newDataType="VARCHAR(2000)"
+			tableName="CAT_DISCOUNT_PLAN_ITEM" />
+	<modifyDataType columnName="SUBSCRIPTION_EL" newDataType="VARCHAR(2000)"
+			tableName="CAT_TRIGGERED_EDR" />	
+	<modifyDataType columnName="CONDITION_EL" newDataType="VARCHAR(2000)"
+			tableName="CAT_TRIGGERED_EDR" />
+	<modifyDataType columnName="QUANTITY_EL" newDataType="VARCHAR(2000)"
+			tableName="CAT_TRIGGERED_EDR" />
+	<modifyDataType columnName="PARAM_1_EL" newDataType="VARCHAR(2000)"
+			tableName="CAT_TRIGGERED_EDR" />
+	<modifyDataType columnName="PARAM_2_EL" newDataType="VARCHAR(2000)"
+			tableName="CAT_TRIGGERED_EDR" />
+	<modifyDataType columnName="PARAM_3_EL" newDataType="VARCHAR(2000)"
+			tableName="CAT_TRIGGERED_EDR" />	
+	<modifyDataType columnName="PARAM_4_EL" newDataType="VARCHAR(2000)"
+			tableName="CAT_TRIGGERED_EDR" />	
+	<modifyDataType columnName="EMAIL_TO_EL" newDataType="VARCHAR(2000)"
+			tableName="ADM_NOTIF_EMAIL" />
+	<modifyDataType columnName="ID_EXPRESSION" newDataType="VARCHAR(2000)"
+			tableName="ADM_NOTIF_IM" />
+	<modifyDataType columnName="EVENT_EXPRESSION_FILTER" newDataType="VARCHAR(2000)"
+			tableName="ADM_NOTIFICATION" />
+	<modifyDataType columnName="CONDITION_EL" newDataType="VARCHAR(2000)"
+			tableName="AR_ACTION_PLAN_ITEM" />
+	<modifyDataType columnName="CONDITION_EL" newDataType="VARCHAR(2000)"
+			tableName="AR_DUNNING_PLAN_TRANSITION" />																														
 	</changeSet>
             
 </databaseChangeLog>

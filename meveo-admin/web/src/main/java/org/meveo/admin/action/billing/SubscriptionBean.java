@@ -253,18 +253,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public void saveOneShotChargeIns() {
         log.debug("saveOneShotChargeIns getObjectId={}, wallet {}", getObjectId(), selectedWalletTemplate);
-
-        if (selectedWalletTemplate == null) {
-            messages.error(new BundleKey("messages", "message.subscription.oneshot.wallet.required"));
-            return;
-        } else {
-            if (!StringUtils.isBlank(selectedWalletTemplateCode)) {
-                selectedWalletTemplate.setCode(selectedWalletTemplateCode);
-            } else {
+        if (selectedWalletTemplate == null){
                 selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
-            }
-        }
-
+        }      
         try {
             if (oneShotChargeInstance != null && oneShotChargeInstance.getId() != null) {
                 oneShotChargeInstanceService.update(oneShotChargeInstance);

@@ -25,8 +25,8 @@ public class InstantMessagingNotification extends Notification {
     @NotNull
     InstantMessagingProviderEnum imProvider;
 
-    @Column(name = "ID_EXPRESSION", length = 1000)
-    @Size(max = 1000)
+    @Column(name = "ID_EXPRESSION", length = 2000)
+    @Size(max = 2000)
     String idEl;
 
     @ElementCollection(fetch = FetchType.EAGER)
