@@ -696,5 +696,11 @@
     </changeSet>    
     <changeSet id="#1248_20151122" author="AndriusKarpavicius">
         <sql>update CRM_CUSTOM_FIELD_TMPL set max_value=50 where max_value is null and field_type='STRING'</sql>
+    </changeSet>
+    
+    <changeSet id="#1186_20151123" author="ManuLiwanag">
+        <addColumn tableName="ADM_NOTIF_WEBHOOKS">
+            <column name="BODY_EL" type="VARCHAR(255)"/>        
+        </addColumn>
     </changeSet>        
 </databaseChangeLog>

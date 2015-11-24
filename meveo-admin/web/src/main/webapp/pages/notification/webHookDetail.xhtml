@@ -64,6 +64,11 @@
 										valueLabelField="description" required="false" popup="true"
 										popupId="scriptInstancePopup" />
            <hf:formField label="#{messages['entity.notification.params']}" field="params"  />  
+           
+           	<hf:formField label="#{messages['entity.webHook.bodyEL']}"
+			        field="bodyEL" textArea="true" maxlength="2000"/>
+           
+           
 			<hf:formField label="#{messages['entity.webHook.host']}" field="host"
 				required="true" size="100" maxlength="255" />
 			<hf:formField label="#{messages['entity.webHook.port']}" field="port" maxValue="65535"/>

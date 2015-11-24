@@ -83,16 +83,24 @@ public class WebHookNotifier {
 				url += "/" + evaluate(webHook.getPage(), e,context);
 			}
 			Map<String,String> params = evaluateMap(webHook.getWebhookParams(), e,context);
+			
+			String bodyEL = webHook.getBodyEL();
+            if (bodyEL != null && !StringUtils.isBlank(bodyEL)) {
+            	params.put("body", bodyEL);
+            }
+			
             String paramQuery="";
             String sep="";
             for(String paramKey:params.keySet()){
             	paramQuery+=sep+URLEncoder.encode(paramKey, "UTF-8")+"="+URLEncoder.encode(params.get(paramKey), "UTF-8");
             	sep="&";
             }
+            
             if(WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()){
             	url+="?"+paramQuery;
             } else {
             	log.debug("paramQuery={}",paramQuery);
+            	
             }
 			log.debug("webhook url: {}", url);
 			URL obj = new URL(url);
@@ -108,6 +116,8 @@ public class WebHookNotifier {
 			for (String key : headers.keySet()) {
 		        conn.setRequestProperty(key, headers.get(key));
 			}
+			
+			
 			
 			if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
 				conn.setRequestMethod("GET");

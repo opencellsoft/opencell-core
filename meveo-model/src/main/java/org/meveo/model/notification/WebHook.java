@@ -54,6 +54,9 @@ public class WebHook extends Notification {
     @Size(max = 255)
     private String password;
 
+    @Column(name = "BODY_EL", length = 255)
+	private String bodyEL = null;
+    
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "ADM_NOTIF_WEBHOOK_HEADER")
     private Map<String, String> headers = new HashMap<String, String>();
@@ -184,4 +187,14 @@ public class WebHook extends Notification {
 			}
 		return params;
 	}
+
+	public String getBodyEL() {
+		return bodyEL;
+	}
+
+	public void setBodyEL(String bodyEL) {
+		this.bodyEL = bodyEL;
+	}
+
+	
 }
