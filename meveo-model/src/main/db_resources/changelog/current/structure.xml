@@ -1967,5 +1967,10 @@
 		<dropColumn tableName="billing_invoice_agregate"
 			columnName="sub_cat_invoice_agregate_id" />
 	</changeSet>
+	
+	<changeSet id="#1289_20151124" author="Mbarek">
+    <modifyDataType columnName="FILTER_EXPRESSION" newDataType="VARCHAR(2000)"
+			tableName="CAT_USAGE_CHARGE_TEMPLATE" />
+	</changeSet>
 
 </databaseChangeLog>
