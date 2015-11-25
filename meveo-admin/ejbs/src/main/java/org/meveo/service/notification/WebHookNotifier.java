@@ -93,10 +93,17 @@ public class WebHookNotifier {
             
             if(WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()){
             	url+="?"+paramQuery;
+            } else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
+            	String bodyEL = webHook.getBodyEL();
+				bodyEL = evaluate(bodyEL, webHook, context);
+	            if (bodyEL != null && !StringUtils.isBlank(bodyEL)) {	            	
+	            	paramQuery += "&body=" + bodyEL;
+	            }
             } else {
             	log.debug("paramQuery={}",paramQuery);
             	
             }
+            
 			log.debug("webhook url: {}", url);
 			URL obj = new URL(url);
 
@@ -117,11 +124,6 @@ public class WebHookNotifier {
 			if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
 				conn.setRequestMethod("GET");
 			} else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
-				String bodyEL = webHook.getBodyEL();
-				bodyEL = evaluate(bodyEL, webHook, context);
-	            if (bodyEL != null && !StringUtils.isBlank(bodyEL)) {	            	
-	            	paramQuery += "body=" + bodyEL;
-	            }
 				conn.setRequestMethod("POST");
 			} else if (WebHookMethodEnum.HTTP_PUT == webHook.getHttpMethod()) {
 				conn.setRequestMethod("PUT");
