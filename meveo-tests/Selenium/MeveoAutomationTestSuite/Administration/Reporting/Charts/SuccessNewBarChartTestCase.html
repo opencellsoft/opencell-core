@@ -37,9 +37,14 @@
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>bar_chart_01</td>
+	<td>${Code}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -74,7 +79,7 @@
 <tr>
 	<td>type</td>
 	<td>//*[contains(@id, 'txt:code_text')]</td>
-	<td>MQtt1</td>
+	<td>${MeasurableQuantityValue}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -84,7 +89,7 @@
 <tr>
 	<td>waitForText</td>
 	<td>//tbody[@id='searchMeasurableQuantitypopupForm:searchMeasurableQuantitydatatable_data']/tr/td[1]</td>
-	<td>MQtt1</td>
+	<td>${MeasurableQuantityValue}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -93,12 +98,12 @@
 </tr>
 <tr>
 	<td>waitForTextPresent</td>
-	<td>MQtt1</td>
+	<td>${MeasurableQuantityValue}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>MQtt1</td>
+	<td>${MeasurableQuantityValue}</td>
 	<td></td>
 </tr>
 <tr>
@@ -109,7 +114,7 @@
 <tr>
 	<td>waitForText</td>
 	<td>//tbody[@id='searchMeasurableQuantitypopupForm:searchMeasurableQuantitydatatable_data']/tr/td[1]</td>
-	<td>MQtt1</td>
+	<td>${MeasurableQuantityValue}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -154,7 +159,7 @@
 <tr>
 	<td>type</td>
 	<td>//*[contains(@id, 'name_text')]</td>
-	<td>administrateur</td>
+	<td>${RoleValue}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -172,18 +177,73 @@
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>if</td>
+	<td>${CSSstyleBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
 	<td>${CSSstyle}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
+	<td>${CSSstyle}</td>
+	<td>${CSSstyleValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CSSClassBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
 	<td>${CSSClass}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
+	<td>${CSSClass}</td>
+	<td>${CSSClassValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ExtenderJSBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
 	<td>${ExtenderJS}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${ExtenderJS}</td>
+	<td>${ExtenderJSValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${StackedBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Stacked}</td>
 	<td></td>
 </tr>
 <tr>
@@ -192,14 +252,59 @@
 	<td></td>
 </tr>
 <tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MinimumBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Minimum}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${Minimum}</td>
-	<td>2</td>
+	<td>${MinimumValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MaximumBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Maximum}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Maximum}</td>
-	<td>6</td>
+	<td>${MaximumValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${BreakOnNullBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${BreakOnNull}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -207,38 +312,158 @@
 	<td></td>
 </tr>
 <tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${XAxisLabelBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${XAxisLabel}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${XAxisLabel}</td>
-	<td>0</td>
+	<td>${XAxisLabelValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${YAxisLabelBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${YAxisLabel}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${YAxisLabel}</td>
-	<td>10</td>
+	<td>${YAxisLabelValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${XAxisAngleBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${XAxisAngle}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${XAxisAngle}</td>
-	<td>15</td>
+	<td>${XAxisAngleValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${YAxisAngleBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${YAxisAngle}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${YAxisAngle}</td>
-	<td>30</td>
+	<td>${YAxisAngleValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${LegendColumnsBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${LegendColumns}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${LegendColumns}</td>
-	<td>11</td>
+	<td>${LegendColumnsValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${LegendRowsBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${LegendRows}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${LegendRows}</td>
-	<td>5</td>
+	<td>${LegendRowsValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EnableZoomBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${EnableZoom}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${EnableZoom}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EnableAnimateBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${EnableAnimate}</td>
 	<td></td>
 </tr>
 <tr>
@@ -247,14 +472,49 @@
 	<td></td>
 </tr>
 <tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ShowDataTipBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ShowDataTip}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>${ShowDataTip}</td>
 	<td></td>
 </tr>
 <tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DataTipFormatBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${DataTipFormat}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>${DataTipFormat}</td>
-	<td>dd/mm/yyyy</td>
+	<td>${DataTipFormatValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -283,8 +543,8 @@
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>//a[contains(text(),'bar_chart_01')]</td>
-	<td>bar_chart_01</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 <tr>
 	<td>endIf</td>
