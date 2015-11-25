@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -49,6 +50,7 @@ import javax.enterprise.context.Conversation;
 import javax.faces.model.DataModel;
 import javax.inject.Inject;
 import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.NoResultException;
@@ -59,7 +61,6 @@ import javax.persistence.Query;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 import javax.persistence.Version;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -89,11 +90,16 @@ import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Auditable;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IVersionedEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.crm.CustomFieldFields;
+import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -184,12 +190,108 @@ public class EntityExportImportService implements Serializable {
     @EJB
     private EntityExportImportService entityExportImportService;
 
+    private Map<String, ExportTemplate> exportImportTemplates;
+
     @PostConstruct
     private void init() {
         loadExportIdentifierMappings();
         loadAtributesToOmit();
         loadNonCascadableFields();
         loadExportModelVersionChangesets();
+        loadExportImportTemplateDefinitions();
+    }
+
+    /**
+     * Load export/import template definitions from a configuration XML file and construct dynamically from class definitions
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void loadExportImportTemplateDefinitions() {
+
+        exportImportTemplates = new TreeMap<String, ExportTemplate>();
+
+        // Create definitions dynamically for each class in org.meveo.model package
+        Reflections reflections = new Reflections("org.meveo.model");
+        Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
+
+        for (Class clazz : classes) {
+
+            if (!clazz.isAnnotationPresent(Entity.class) || !IEntity.class.isAssignableFrom(clazz)) {
+                continue;
+            }
+
+            ExportTemplate exportTemplate = new ExportTemplate();
+
+            // Automatically add provider as filtering parameter
+            if (BaseEntity.class.isAssignableFrom(clazz)) {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("provider", "provider");
+                exportTemplate.setParameters(params);
+            }
+            // Automatically export custom fields for CF related entities
+            if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
+                exportTemplate.getClassesToExportAsFull().add(CustomFieldFields.class);
+                exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
+                exportTemplate.getClassesToExportAsFull().add(CustomFieldPeriod.class);
+            }
+            exportTemplate.setName(clazz.getSimpleName());
+            exportTemplate.setEntityToExport(clazz);
+            exportImportTemplates.put(exportTemplate.getName(), exportTemplate);
+        }
+
+        // Retrieve complex export template definitions from configuration xml file and replace over the previously dynamically created definitions
+        XStream xstream = new XStream();
+        xstream.alias("template", ExportTemplate.class);
+        xstream.alias("relatedEntity", RelatedEntityToExport.class);
+        xstream.useAttributeFor(ExportTemplate.class, "ref");
+        xstream.useAttributeFor(ExportTemplate.class, "name");
+        xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
+        xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
+
+        xstream.setMode(XStream.NO_REFERENCES);
+
+        List<ExportTemplate> templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
+
+        for (ExportTemplate exportTemplate : templatesFromXml) {
+            exportImportTemplates.put(exportTemplate.getName(), exportTemplate);
+        }
+
+        // Replace references to other templates
+        for (ExportTemplate exportTemplate : exportImportTemplates.values()) {
+            if (exportTemplate.getGroupedTemplates() == null || exportTemplate.getGroupedTemplates().isEmpty()) {
+                continue;
+            }
+
+            replaceReferencesToTemplates(exportTemplate);
+        }
+
+        log.info("Loaded {} export/import templates", exportImportTemplates.size());
+    }
+
+    /**
+     * Recursively replace references to other templates
+     * 
+     * @param groupedTemplates A list of templates to scann for references
+     */
+    private void replaceReferencesToTemplates(ExportTemplate exportTemplate) {
+
+        List<ExportTemplate> groupedTemplates = exportTemplate.getGroupedTemplates();
+        for (int i = groupedTemplates.size() - 1; i >= 0; i--) {
+            ExportTemplate groupedTemplate = groupedTemplates.get(i);
+            if (groupedTemplate.getRef() != null) {
+                ExportTemplate templateReferenced = exportImportTemplates.get(groupedTemplate.getRef());
+                if (templateReferenced == null) {
+                    log.error("Not found reference to {} export/import template", groupedTemplate.getRef());
+                    continue;
+                }
+                groupedTemplates.remove(i);
+                if (templateReferenced.isGroupedTemplate()) {
+                    replaceReferencesToTemplates(templateReferenced);
+                    groupedTemplates.addAll(i, templateReferenced.getGroupedTemplates());
+                } else {
+                    groupedTemplates.add(i, templateReferenced);
+                }
+            }
+        }
     }
 
     /**
@@ -319,6 +421,7 @@ public class EntityExportImportService implements Serializable {
             // Export from a provided data model applies only in cases on non-grouped templates as it has a single entity type
             if (exportTemplate.getGroupedTemplates() == null || exportTemplate.getGroupedTemplates().isEmpty()) {
                 entityExportImportService.serializeEntities(exportTemplate, parameters, dataModelToExport, exportStats, writer);
+
             } else {
                 for (ExportTemplate groupedExportTemplate : exportTemplate.getGroupedTemplates()) {
                     entityExportImportService.serializeEntities(groupedExportTemplate, parameters, null, exportStats, writer);
@@ -1898,7 +2001,7 @@ public class EntityExportImportService implements Serializable {
             GenericEntity<MultipartFormDataOutput> entity = new GenericEntity<MultipartFormDataOutput>(mdo) {
             };
 
-            Response response = target.request().post(Entity.entity(entity, MediaType.MULTIPART_FORM_DATA_TYPE));
+            Response response = target.request().post(javax.ws.rs.client.Entity.entity(entity, MediaType.MULTIPART_FORM_DATA_TYPE));
             if (response.getStatus() != HttpURLConnection.HTTP_OK) {
                 if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
                     throw new RemoteAuthenticationException(response.getStatusInfo().getReasonPhrase());
@@ -1961,5 +2064,36 @@ public class EntityExportImportService implements Serializable {
 
         return resultDto;
 
+    }
+
+    /**
+     * @return A map of templates with template name/class simple name as a key, and template as a value
+     */
+    public Map<String, ExportTemplate> getExportImportTemplates() {
+
+        return exportImportTemplates;
+    }
+
+    /**
+     * Get export template for a particular class
+     * 
+     * @param clazz Class
+     * @return Export/import template definition
+     */
+    @SuppressWarnings({ "rawtypes" })
+    public ExportTemplate getExportImportTemplate(Class clazz) {
+
+        if (exportImportTemplates.containsKey(clazz.getSimpleName())) {
+            return exportImportTemplates.get(clazz.getSimpleName());
+
+        } else {
+            for (ExportTemplate template : exportImportTemplates.values()) {
+                // Filter by a template name
+                if (template.getEntityToExport() != null && template.getEntityToExport().equals(clazz)) {
+                    return template;
+                }
+            }
+        }
+        return null;
     }
 }

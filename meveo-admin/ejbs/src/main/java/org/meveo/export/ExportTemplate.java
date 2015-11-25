@@ -1,6 +1,8 @@
 package org.meveo.export;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +14,8 @@ import org.meveo.model.IEntity;
  * @author Andrius Karpavicius
  */
 public class ExportTemplate {
+
+    private String ref;
 
     private String name;
 
@@ -127,5 +131,42 @@ public class ExportTemplate {
 
     public void setRelatedEntities(List<RelatedEntityToExport> relatedEntities) {
         this.relatedEntities = relatedEntities;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
+    public boolean isGroupedTemplate() {
+        return groupedTemplates != null && !groupedTemplates.isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        final int maxLen = 10;
+        return String
+            .format(
+                "ExportTemplate [ref=%s, name=%s, entityToExport=%s, parameters=%s, classesToExportAsFull=%s, classesToExportAsId=%s, classesToIgnoreFKNotFound=%s, relatedEntities=%s, groupedTemplates=%s, canDeleteAfterExport=%s]",
+                ref, name, entityToExport, parameters != null ? toString(parameters.entrySet(), maxLen) : null,
+                classesToExportAsFull != null ? toString(classesToExportAsFull, maxLen) : null, classesToExportAsId != null ? toString(classesToExportAsId, maxLen) : null,
+                classesToIgnoreFKNotFound != null ? toString(classesToIgnoreFKNotFound, maxLen) : null, relatedEntities != null ? toString(relatedEntities, maxLen) : null,
+                groupedTemplates != null ? toString(groupedTemplates, maxLen) : null, canDeleteAfterExport);
+    }
+
+    private String toString(Collection<?> collection, int maxLen) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        int i = 0;
+        for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
+            if (i > 0)
+                builder.append(", ");
+            builder.append(iterator.next());
+        }
+        builder.append("]");
+        return builder.toString();
     }
 }

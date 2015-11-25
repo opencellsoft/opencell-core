@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -17,7 +16,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.model.DataModel;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.Entity;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -29,25 +27,16 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportImportStatistics;
 import org.meveo.export.ExportTemplate;
-import org.meveo.export.RelatedEntityToExport;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.export.RemoteImportException;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.crm.CustomFieldFields;
-import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.Provider;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
-
-import com.thoughtworks.xstream.XStream;
 
 @Named
 @ViewScoped
@@ -105,7 +94,7 @@ public class EntityExportImportBean implements Serializable {
     private MeveoInstance remoteMeveoInstance;
 
     private ImportExportResponseDto remoteImportResult;
-    
+
     public boolean isRequireFK() {
         return requireFK;
     }
@@ -198,7 +187,7 @@ public class EntityExportImportBean implements Serializable {
 
             // final Map<String, Object> filters = inputFilters;
 
-            final Map<String, ExportTemplate> templates = loadExportImportTemplates(inputFilters);
+            final Map<String, ExportTemplate> templates = filterExportImportTemplates(inputFilters);
 
             exportTemplates = new LazyDataModelWSize() {
 
@@ -223,115 +212,38 @@ public class EntityExportImportBean implements Serializable {
         return exportTemplates;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Map<String, ExportTemplate> loadExportImportTemplates(Map<String, Object> inputFilters) {
+    /**
+     * Filter export/import templates by name and groupedTemplate [yes/no]
+     * 
+     * @param inputFilters A map of filter values
+     * @return A map of export templates with template naem as a key and export/import template as a value
+     */
+    private Map<String, ExportTemplate> filterExportImportTemplates(Map<String, Object> inputFilters) {
 
         Map<String, ExportTemplate> templates = new TreeMap<String, ExportTemplate>();
 
-        Reflections reflections = new Reflections("org.meveo.model");
-        Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
+        boolean groupedOnly = inputFilters.containsKey(FILTER_COMPLEX) && (boolean) inputFilters.get(FILTER_COMPLEX);
+        String templateName = inputFilters.get("templateName") != null ? ((String) inputFilters.get(FILTER_TEMPLATENAME)).toLowerCase() : null;
 
-        if (inputFilters.get(FILTER_TEMPLATENAME) != null) {
-            inputFilters.put(FILTER_TEMPLATENAME, ((String) inputFilters.get(FILTER_TEMPLATENAME)).toLowerCase());
-        }
-
-        // Don't loop through classes when only "complex" templates are of interest
-        if (!inputFilters.containsKey(FILTER_COMPLEX) || !(boolean) inputFilters.get(FILTER_COMPLEX)) {
-            for (Class clazz : classes) {
-
-                if (!clazz.isAnnotationPresent(Entity.class) || !IEntity.class.isAssignableFrom(clazz)) {
-                    continue;
-                }
-
-                // Filter by a template name
-                if (inputFilters.get(FILTER_TEMPLATENAME) != null && !clazz.getName().toLowerCase().contains((String) inputFilters.get(FILTER_TEMPLATENAME))) {
-                    continue;
-                }
-
-                ExportTemplate exportTemplate = new ExportTemplate();
-
-                // Automatically add provider as filtering parameter
-                if (BaseEntity.class.isAssignableFrom(clazz)) {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("provider", "provider");
-                    exportTemplate.setParameters(params);
-                }
-                // Automatically export custom fields for CF related entities
-                if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
-                    exportTemplate.getClassesToExportAsFull().add(CustomFieldFields.class);
-                    exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
-                    exportTemplate.getClassesToExportAsFull().add(CustomFieldPeriod.class);
-                }
-                exportTemplate.setName(clazz.getSimpleName());
-                exportTemplate.setEntityToExport(clazz);
-                templates.put(exportTemplate.getName(), exportTemplate);
+        for (ExportTemplate template : entityExportImportService.getExportImportTemplates().values()) {
+            if ((!groupedOnly || (groupedOnly && template.isGroupedTemplate()))
+                    && (templateName == null || (templateName != null && template.getName().toLowerCase().contains(templateName)))) {
+                templates.put(template.getName(), template);
             }
         }
 
-        // Retrieve complex export template definitions from configuration
-        XStream xstream = new XStream();
-        xstream.alias("template", ExportTemplate.class);
-        xstream.alias("relatedEntity", RelatedEntityToExport.class);
-        xstream.useAttributeFor(ExportTemplate.class, "name");
-        xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
-        xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
-
-        xstream.setMode(XStream.NO_REFERENCES);
-
-        List<ExportTemplate> templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
-
-        for (ExportTemplate exportTemplate : templatesFromXml) {
-            // Filter by a template name
-            if (inputFilters.get("templateName") != null && !exportTemplate.getName().toLowerCase().contains((String) inputFilters.get("templateName"))) {
-                continue;
-            }
-            templates.put(exportTemplate.getName(), exportTemplate);
-        }
         return templates;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    /**
+     * Get export template for a particular class
+     * 
+     * @param clazz Class
+     * @return Export/import template definition
+     */
+    @SuppressWarnings({ "rawtypes" })
     private ExportTemplate getExportImportTemplateForClass(Class clazz) {
-
-        // Check for a match by a classname in complex export template definitions from configuration
-        XStream xstream = new XStream();
-        xstream.alias("template", ExportTemplate.class);
-        xstream.alias("relatedEntity", RelatedEntityToExport.class);
-        xstream.useAttributeFor(ExportTemplate.class, "name");
-        xstream.useAttributeFor(ExportTemplate.class, "entityToExport");
-        xstream.useAttributeFor(ExportTemplate.class, "canDeleteAfterExport");
-
-        xstream.setMode(XStream.NO_REFERENCES);
-
-        List<ExportTemplate> templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
-
-        for (ExportTemplate exportTemplate : templatesFromXml) {
-            // Filter by a template name
-            if (exportTemplate.getName().equalsIgnoreCase(clazz.getSimpleName())
-                    || (exportTemplate.getEntityToExport() != null && exportTemplate.getEntityToExport().equals(clazz))) {
-                return exportTemplate;
-            }
-        }
-
-        // Create a default export template if not found
-        ExportTemplate exportTemplate = new ExportTemplate();
-
-        // Automatically add provider as filtering parameter
-        if (BaseEntity.class.isAssignableFrom(clazz)) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("provider", "provider");
-            exportTemplate.setParameters(params);
-        }
-        // Automatically export custom fields for CF related entities
-        if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
-            exportTemplate.getClassesToExportAsFull().add(CustomFieldFields.class);
-            exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
-            exportTemplate.getClassesToExportAsFull().add(CustomFieldPeriod.class);
-        }
-        exportTemplate.setName(clazz.getSimpleName());
-        exportTemplate.setEntityToExport(clazz);
-
-        return exportTemplate;
+        return entityExportImportService.getExportImportTemplate(clazz);
     }
 
     /**
@@ -376,10 +288,10 @@ public class EntityExportImportBean implements Serializable {
         if (exportParameters.get("provider") == null) {
             exportParameters.put("provider", currentProvider);
         }
-        if(this.selectedExportTemplate.getName().equals("MeveoModule")){
-        	if(exportParameters.get("meveoModule")!=null){
-        		dataModelToExport=null;
-        	}
+        if (this.selectedExportTemplate.getName().equals("MeveoModule")) {
+            if (exportParameters.get("meveoModule") != null) {
+                dataModelToExport = null;
+            }
         }
 
         try {

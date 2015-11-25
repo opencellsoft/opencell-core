@@ -141,6 +141,7 @@
 					</f:facet>
 				</p:treeTable>
 			</hftl:decorateFormField>
+            <ui:param name="buttons" value="true" />
 			<ui:define name="buttons">
 				<p:commandButton id="exportModuleButton" update=":#{p:component('meveoModuleDialog')}"
 					value="#{messages['meveoModule.exportModule']}" rendered="#{not empty meveoModuleBean.objectId}"
