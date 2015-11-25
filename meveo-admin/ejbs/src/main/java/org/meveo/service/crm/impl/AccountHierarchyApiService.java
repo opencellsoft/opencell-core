@@ -199,9 +199,6 @@ public class AccountHierarchyApiService extends BaseApi {
 	public static final int BA = 4;
 	public static final int UA = 8;
 
-	public static final String CRM_ACCOUNT_HIERARCHY_PARENT = "CRM_ACCOUNT_PARENT";
-	public static final String CRM_ACCOUNT_HIERARCHY_TYPE = "CRM_ACCOUNT_TYPE";
-
 	/**
 	 * 
 	 * Creates the customer heirarchy including : - Trading Country - Trading
@@ -2118,7 +2115,6 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerDto.setAddress(address);
 			customerDto.setContactInformation(contactInformation);
 			customerDto.setCustomFields(postData.getCustomFields());
-			setCRMAccountType(customerDto, postData.getCrmAccountType(), postData.getSeller());
 
 			customerApi.create(customerDto, currentUser, true);
 						}
@@ -2150,7 +2146,6 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerAccountDto.setAddress(address);
 			customerAccountDto.setContactInformation(contactInformation);
 			customerAccountDto.setCustomFields(postData.getCustomFields());
-			setCRMAccountType(customerAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			customerAccountApi.create(customerAccountDto, currentUser, true);
 						}
@@ -2198,7 +2193,6 @@ public class AccountHierarchyApiService extends BaseApi {
 			billingAccountDto.setName(name);
 			billingAccountDto.setAddress(address);
 			billingAccountDto.setCustomFields(postData.getCustomFields());
-			setCRMAccountType(billingAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			billingAccountApi.create(billingAccountDto, currentUser, true);
 						}
@@ -2222,7 +2216,6 @@ public class AccountHierarchyApiService extends BaseApi {
 			userAccountDto.setName(name);
 			userAccountDto.setAddress(address);
 			userAccountDto.setCustomFields(postData.getCustomFields());
-			setCRMAccountType(userAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			userAccountApi.create(userAccountDto, currentUser, true);
 						}
@@ -2310,7 +2303,6 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerDto.setAddress(address);
 			customerDto.setContactInformation(contactInformation);
 			customerDto.setCustomFields(postData.getCustomFields());
-			setCRMAccountType(customerDto, postData.getCrmAccountType(), postData.getSeller());
 
 			customerApi.update(customerDto, currentUser, true);
 						}
@@ -2342,7 +2334,6 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerAccountDto.setAddress(address);
 			customerAccountDto.setContactInformation(contactInformation);
 			customerAccountDto.setCustomFields(postData.getCustomFields());
-			setCRMAccountType(customerAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			customerAccountApi.update(customerAccountDto, currentUser, true);
 						}
@@ -2390,7 +2381,6 @@ public class AccountHierarchyApiService extends BaseApi {
 			billingAccountDto.setName(name);
 			billingAccountDto.setAddress(address);
 			billingAccountDto.setCustomFields(postData.getCustomFields());
-			setCRMAccountType(billingAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			billingAccountApi.update(billingAccountDto, currentUser, true);
 						}
@@ -2414,23 +2404,10 @@ public class AccountHierarchyApiService extends BaseApi {
 			userAccountDto.setName(name);
 			userAccountDto.setAddress(address);
 			userAccountDto.setCustomFields(postData.getCustomFields());
-			setCRMAccountType(userAccountDto, postData.getCrmAccountType(), postData.getCode());
 
 			userAccountApi.update(userAccountDto, currentUser, true);
         }
     }
-
-	private void setCRMAccountType(AccountDto accountDto, String crmAccountType, String parentCode) {
-		CustomFieldDto cfAccountType = new CustomFieldDto();
-		cfAccountType.setCode(CRM_ACCOUNT_HIERARCHY_TYPE);
-		cfAccountType.setStringValue(crmAccountType);
-		accountDto.getCustomFields().getCustomField().add(cfAccountType);
-
-		CustomFieldDto cfAccountParent = new CustomFieldDto();
-		cfAccountParent.setCode(CRM_ACCOUNT_HIERARCHY_PARENT);
-		cfAccountParent.setStringValue(parentCode);
-		accountDto.getCustomFields().getCustomField().add(cfAccountParent);
-	}
 
 	/**
 	 * Create or update Account Hierarchy based on code.
