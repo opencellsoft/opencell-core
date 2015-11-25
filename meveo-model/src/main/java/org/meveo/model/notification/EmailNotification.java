@@ -25,8 +25,8 @@ public class EmailNotification extends Notification {
 	@Size(max=1000)
 	private String emailFrom;
 	
-	@Column(name="EMAIL_TO_EL",length=1000)
-	@Size(max=1000)
+	@Column(name="EMAIL_TO_EL",length=2000)
+	@Size(max=2000)
 	private String emailToEl;
 	
 	@ElementCollection(fetch=FetchType.EAGER)

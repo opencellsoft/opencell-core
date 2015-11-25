@@ -63,7 +63,7 @@ public class UsageChargeTemplate extends ChargeTemplate {
 	@Column(name = "FILTER_PARAM_4", length = 20)
 	private String filterParam4 = WILCARD;
 
-	@Column(name = "FILTER_EXPRESSION", length = 255)
+	@Column(name = "FILTER_EXPRESSION", length = 2000)
 	private String filterExpression = null;
 
 	@Column(name = "PRIORITY", columnDefinition = "int default 1")

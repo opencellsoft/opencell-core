@@ -61,8 +61,8 @@ public class DunningPlanTransition extends AuditableEntity {
 	@JoinColumn(name = "DUNNING_PLAN_ID")
 	private DunningPlan dunningPlan;
 	
-	@Column(name = "CONDITION_EL", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "CONDITION_EL", length = 2000)
+	@Size(max = 2000)
 	private String conditionEl;
 
 	public DunningLevelEnum getDunningLevelFrom() {

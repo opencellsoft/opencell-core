@@ -19,32 +19,32 @@ import org.meveo.model.ObservableEntity;
 public class TriggeredEDRTemplate extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "SUBSCRIPTION_EL", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "SUBSCRIPTION_EL", length = 2000)
+	@Size(max = 2000)
 	private String subscriptionEl;
 
-	@Column(name = "CONDITION_EL", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "CONDITION_EL", length = 2000)
+	@Size(max = 2000)
 	private String conditionEl;
 
-	@Column(name = "QUANTITY_EL", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "QUANTITY_EL", length = 2000)
+	@Size(max = 2000)
 	private String quantityEl;
 
-	@Column(name = "PARAM_1_EL", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "PARAM_1_EL", length = 2000)
+	@Size(max = 2000)
 	private String param1El;
 
-	@Column(name = "PARAM_2_EL", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "PARAM_2_EL", length = 2000)
+	@Size(max = 2000)
 	private String param2El;
 
-	@Column(name = "PARAM_3_EL", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "PARAM_3_EL", length = 2000)
+	@Size(max = 2000)
 	private String param3El;
 
-	@Column(name = "PARAM_4_EL", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "PARAM_4_EL", length = 2000)
+	@Size(max = 2000)
 	private String param4El;
 
 	public String getSubscriptionEl() {
