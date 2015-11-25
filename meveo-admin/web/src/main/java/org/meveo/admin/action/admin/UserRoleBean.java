@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
@@ -75,8 +76,6 @@ public class UserRoleBean extends BaseBean<Role> {
     }
 
     public void setPermissionListModel(DualListModel<Permission> perks) {
-        getEntity().getPermissions().clear();
-        getEntity().getPermissions().addAll(perks.getTarget());
         this.permissionsDM = perks;
     }
 
@@ -95,12 +94,23 @@ public class UserRoleBean extends BaseBean<Role> {
     }
 
     public void setRoleListModel(DualListModel<Role> perks) {
-        getEntity().getRoles().clear();
-        getEntity().getRoles().addAll(perks.getTarget());
         this.rolesDM = perks;
     }
 
-    
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        // Update permissions
+        getEntity().getPermissions().addAll(permissionsDM.getTarget());
+        getEntity().getPermissions().removeAll(permissionsDM.getSource());
+
+        // Update roles
+        getEntity().getRoles().addAll(rolesDM.getTarget());
+        getEntity().getRoles().removeAll(rolesDM.getSource());
+
+        return super.saveOrUpdate(killConversation);
+    }
+
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
