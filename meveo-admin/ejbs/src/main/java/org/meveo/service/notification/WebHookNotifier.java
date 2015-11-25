@@ -95,7 +95,7 @@ public class WebHookNotifier {
             	url+="?"+paramQuery;
             } else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
             	String bodyEL = webHook.getBodyEL();
-				bodyEL = evaluate(bodyEL, webHook, context);
+				bodyEL = evaluate(bodyEL, e, context);
 	            if (bodyEL != null && !StringUtils.isBlank(bodyEL)) {	            	
 	            	paramQuery += "&body=" + bodyEL;
 	            }

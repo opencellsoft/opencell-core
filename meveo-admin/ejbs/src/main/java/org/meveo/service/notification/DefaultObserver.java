@@ -166,6 +166,13 @@ public class DefaultObserver {
 	            	ScriptInstance script = (ScriptInstance) scriptInstanceService.attach(notif.getScriptInstance());
 	                executeScript(script, e,notif.getParams(),context);
 	            }
+            } else {
+            	Map<Object, Object> userMap = new HashMap<Object, Object>();
+                userMap.put("event", e);
+                userMap.put("manager", manager);
+            	for (@SuppressWarnings("rawtypes") Map.Entry entry : notif.getParams().entrySet()) {
+            	    context.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression( (String)entry.getValue(), userMap, Object.class));
+            	}   
             }
             
             // then the notification itself
