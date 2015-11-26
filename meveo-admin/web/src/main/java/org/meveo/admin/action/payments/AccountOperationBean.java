@@ -43,6 +43,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
@@ -68,6 +69,9 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 
 	@Inject
 	private MatchingCodeService matchingCodeService;
+	
+	@Inject
+	private MatchingAmountService matchingAmountService;
 
 	private List<PartialMatchingOccToSelect> partialMatchingOps = new ArrayList<PartialMatchingOccToSelect>();
 
@@ -348,6 +352,18 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	@Override
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider", "customerAccount");
+	}
+	
+	@Override
+	public void deleteInlist() {
+		List<MatchingAmount> matchingAmounts=new ArrayList<MatchingAmount>();
+		matchingAmounts=entity.getMatchingAmounts();
+		if(matchingAmounts!=null && matchingAmounts.size()>0){
+			for(MatchingAmount matchingAmount:matchingAmounts){
+				matchingAmountService.remove(matchingAmount);
+			}
+		}
+		accountOperationService.remove(entity);
 	}
 
 }
