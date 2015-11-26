@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.Auditable;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.ProviderlessEntity;
@@ -924,6 +925,9 @@ public class CustomFieldInstance extends ProviderlessEntity {
         cfi.setDescription(cft.getDescription());
         cfi.setVersionable(cft.isVersionable());
         cfi.setCalendar(cft.getCalendar());
+        Auditable audit = new Auditable();
+        audit.setCreated(new Date());
+        cfi.setAuditable(audit);
         // Set a default value
         if (!cft.isVersionable()) {
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {

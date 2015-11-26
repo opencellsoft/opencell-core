@@ -63,6 +63,9 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
             } else {
                 cfi = new CustomFieldInstance();
                 cfi.setCode(cfCode);
+                Auditable audit = new Auditable();
+                audit.setCreated(new Date());
+                cfi.setAuditable(audit);
             }
 
             String relationshipFieldname = this.getClass().getAnnotation(CustomFieldEntity.class).accountLevel().getRelationFieldname();
