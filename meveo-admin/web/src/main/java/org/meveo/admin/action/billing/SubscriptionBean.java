@@ -31,7 +31,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -242,21 +241,23 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
 	public void newOneShotChargeInstance() {
-
 		this.oneShotChargeInstance = new OneShotChargeInstance();
 		selectedWalletTemplate = new WalletTemplate();
+		selectedWalletTemplateCode=null;
 	}
 
 	public void editOneShotChargeIns(OneShotChargeInstance oneShotChargeIns) {
-		this.oneShotChargeInstance = oneShotChargeInstanceService.attach(oneShotChargeIns);
+		this.oneShotChargeInstance = oneShotChargeInstanceService.attach(oneShotChargeIns); 
+		selectedWalletTemplate = new WalletTemplate();
+		selectedWalletTemplateCode=null;
 	}
 
     public void saveOneShotChargeIns() {
         log.debug("saveOneShotChargeIns getObjectId={}, wallet {}", getObjectId(), selectedWalletTemplate);
-        if (selectedWalletTemplate == null){
-                selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
-        }      
         try {
+        	if(selectedWalletTemplate.getCode()==null){
+        		selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
+        	}
             if (oneShotChargeInstance != null && oneShotChargeInstance.getId() != null) {
                 oneShotChargeInstanceService.update(oneShotChargeInstance);
             } else {
@@ -276,7 +277,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
                 oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
                 oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
-                oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), selectedWalletTemplate.getCode(),
+                oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),selectedWalletTemplate.getCode(),
                     oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
                     oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser(), true);
             }
@@ -754,6 +755,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	}
 
 	public String getSelectedWalletTemplateCode() {
+		if(selectedWalletTemplate!=null && selectedWalletTemplate.getCode()!=null){
+		selectedWalletTemplateCode=selectedWalletTemplate.getCode();
+		}
 		return selectedWalletTemplateCode;
 	}
 
