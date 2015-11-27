@@ -85,7 +85,7 @@ public class FlatFileProcessingJobBean {
 					ExcelToCsv excelToCsv = new ExcelToCsv();
 					excelToCsv.convertExcelToCSV(file.getAbsolutePath(), file.getParent(), ";");
 					file.delete();
-					file = new File(file.getAbsolutePath().replaceAll("xlsx", "csv"));
+					file = new File(file.getAbsolutePath().replaceAll(".xlsx", ".csv").replaceAll(".xls", ".csv"));					
 				}
 				currentFile = FileUtils.addExtension(file, ".processing");
 

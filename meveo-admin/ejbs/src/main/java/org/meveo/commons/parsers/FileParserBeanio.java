@@ -5,11 +5,9 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 import org.beanio.BeanReader;
-import org.beanio.InvalidRecordException;
-import org.beanio.MalformedRecordException;
 import org.beanio.StreamFactory;
-import org.beanio.UnexpectedRecordException;
-import org.beanio.UnidentifiedRecordException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FileParserBeanio implements IFileParser {
 	
@@ -20,6 +18,7 @@ public class FileParserBeanio implements IFileParser {
     private String streamName = null;
     private Object recordObject = null;
     private RecordRejectedException recordRejectedException=null;
+    private static final Logger log = LoggerFactory.getLogger(FileParserBeanio.class);
     
 	public FileParserBeanio(){
 		this.factory = StreamFactory.newInstance();
@@ -52,6 +51,7 @@ public class FileParserBeanio implements IFileParser {
 		try{
 			recordObject =  beanReader.read();
 		}catch(Exception e  ){
+			log.warn("cant parse record",e);
 			recordRejectedException =  new RecordRejectedException(e.getMessage());
 			return true;
 		}
