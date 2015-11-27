@@ -1,5 +1,9 @@
 package org.meveo.api.rest.catalog.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -20,12 +24,14 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/catalog/recurringChargeTemplate", tags = "recurringChargeTemplate")
 public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringChargeTemplateRs {
 
 	@Inject
 	private RecurringChargeTemplateApi recurringChargeTemplateApi;
 
 	@Override
+	@ApiOperation(value = "Function to create a recurring charge", response = ActionStatus.class)
 	public ActionStatus create(RecurringChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -46,7 +52,9 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
 	}
 
 	@Override
-	public GetRecurringChargeTemplateResponseDto find(String recurringChargeTemplateCode) {
+	@ApiOperation(value = "Function to search a recurring charge given a code", response = GetRecurringChargeTemplateResponseDto.class)
+	public GetRecurringChargeTemplateResponseDto find(
+			@ApiParam(value = "recurring charge template code") String recurringChargeTemplateCode) {
 		GetRecurringChargeTemplateResponseDto result = new GetRecurringChargeTemplateResponseDto();
 
 		try {
@@ -67,6 +75,7 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
 	}
 
 	@Override
+	@ApiOperation(value = "Function to update a recurring charge given a code", response = ActionStatus.class)
 	public ActionStatus update(RecurringChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -87,7 +96,8 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
 	}
 
 	@Override
-	public ActionStatus remove(String recurringChargeTemplateCode) {
+	@ApiOperation(value = "Function to remove a recurring charge given a code", response = ActionStatus.class)
+	public ActionStatus remove(@ApiParam(value = "recurring charge template code") String recurringChargeTemplateCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -107,6 +117,7 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
 	}
 
 	@Override
+	@ApiOperation(value = "Creates a recurring charge template or update if already exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(RecurringChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -125,4 +136,5 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+
 }

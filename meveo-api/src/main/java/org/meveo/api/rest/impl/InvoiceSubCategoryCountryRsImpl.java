@@ -1,5 +1,9 @@
 package org.meveo.api.rest.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -19,12 +23,14 @@ import org.meveo.api.rest.InvoiceSubCategoryCountryRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/invoiceSubCategoryCountry", tags = "invoiceSubCategoryCountry")
 public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSubCategoryCountryRs {
 
 	@Inject
 	private InvoiceSubCategoryCountryApi invoiceSubCategoryCountryApi;
 
 	@Override
+	@ApiOperation(value = "This function create a new invoice sub-category country", response = ActionStatus.class)
 	public ActionStatus create(InvoiceSubCategoryCountryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -45,6 +51,7 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
 	}
 
 	@Override
+	@ApiOperation(value = "This function update an invoice sub-category country for a given invoice sub category code and country", response = ActionStatus.class)
 	public ActionStatus update(InvoiceSubCategoryCountryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -65,7 +72,10 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
 	}
 
 	@Override
-	public GetInvoiceSubCategoryCountryResponse find(String invoiceSubCategoryCode, String country) {
+	@ApiOperation(value = "Find an invoice sub-category country for a given invoice sub category code and country", response = GetInvoiceSubCategoryCountryResponse.class)
+	public GetInvoiceSubCategoryCountryResponse find(
+			@ApiParam(value = "invoice sub category code") String invoiceSubCategoryCode,
+			@ApiParam(value = "country") String country) {
 		GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
 
 		try {
@@ -86,7 +96,9 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
 	}
 
 	@Override
-	public ActionStatus remove(String invoiceSubCategoryCode, String country) {
+	@ApiOperation(value = "Remove an invoice sub-category country for a given invoice sub category code and country", response = ActionStatus.class)
+	public ActionStatus remove(@ApiParam(value = "invoice sub category code") String invoiceSubCategoryCode,
+			@ApiParam(value = "country") String country) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -104,8 +116,9 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "This function create a new invoice sub-category country or update if it exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(InvoiceSubCategoryCountryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -124,4 +137,5 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+
 }

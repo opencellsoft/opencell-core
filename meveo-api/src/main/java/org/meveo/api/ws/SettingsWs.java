@@ -63,10 +63,10 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateProvider(@WebParam(name = "provider") ProviderDto postData);
-	
+
 	@WebMethod
 	public ActionStatus createOrUpdateProvider(@WebParam(name = "provider") ProviderDto postData);
-	
+
 	// user
 
 	@WebMethod
@@ -80,10 +80,10 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public GetUserResponse findUser(@WebParam(name = "username") String username);
-	
+
 	@WebMethod
 	public ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);
-	
+
 	// seller
 
 	@WebMethod
@@ -106,6 +106,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus createOrUpdateSeller(@WebParam(name = "seller") SellerDto postData);
+
 	// language
 
 	@WebMethod
@@ -119,7 +120,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateLanguage(@WebParam(name = "language") LanguageDto postData);
-	
+
 	@WebMethod
 	public ActionStatus createOrUpdateLanguage(@WebParam(name = "language") LanguageDto postData);
 
@@ -137,7 +138,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus updateCountry(@WebParam(name = "country") CountryDto countryDto);
-	
+
 	@WebMethod
 	ActionStatus createOrUpdateCountry(@WebParam(name = "country") CountryDto countryDto);
 
@@ -157,6 +158,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createOrUpdateCurrency(@WebParam(name = "currency") CurrencyDto postData);
+
 	// tax
 
 	@WebMethod
@@ -170,7 +172,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeTax(@WebParam(name = "taxCode") String taxCode);
-	
+
 	@WebMethod
 	public ActionStatus createOrUpdateTax(@WebParam(name = "tax") TaxDto postData);
 
@@ -188,10 +190,10 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeInvoiceCategory(@WebParam(name = "invoiceCategoryCode") String invoiceCategoryCode);
-	
+
 	@WebMethod
 	public ActionStatus createOrUpdateInvoiceCategory(@WebParam(name = "invoiceCategory") InvoiceCategoryDto postData);
-	
+
 	// invoice sub category
 
 	@WebMethod
@@ -199,7 +201,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus updateInvoiceSubCategory(@WebParam(name = "invoiceSubCategory") InvoiceSubCategoryDto postData);
-	
+
 	@WebMethod
 	ActionStatus createOrUpdateInvoiceSubCategory(@WebParam(name = "invoiceSubCategory") InvoiceSubCategoryDto postData);
 
@@ -230,11 +232,11 @@ public interface SettingsWs extends IBaseWs {
 	public ActionStatus removeInvoiceSubCategoryCountry(
 			@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
 			@WebParam(name = "country") String country);
-	
+
 	@WebMethod
 	public ActionStatus createOrUpdateInvoiceSubCategoryCountry(
 			@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
-	
+
 	// calendar
 
 	@WebMethod
@@ -248,7 +250,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeCalendar(@WebParam(name = "calendarCode") String calendarCode);
-	
+
 	@WebMethod
 	public ActionStatus createOrUpdateCalendar(@WebParam(name = "calendar") CalendarDto postData);
 
@@ -265,7 +267,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus removeBillingCycle(@WebParam(name = "billingCycleCode") String billingCycleCode);
-	
+
 	@WebMethod
 	public ActionStatus createOrUpdateBillingCycle(@WebParam(name = "billingCycle") BillingCycleDto postData);
 
@@ -296,7 +298,7 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus removeOccTemplate(@WebParam(name = "occTemplateCode") String occTemplateCode);
-	
+
 	@WebMethod
 	ActionStatus createOrUpdateOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
 
@@ -315,64 +317,66 @@ public interface SettingsWs extends IBaseWs {
 	GetCustomFieldTemplateReponseDto findCustomFieldTemplate(
 			@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode,
 			@WebParam(name = "appliesTo") String appliesTo);
-	
+
 	@WebMethod
 	ActionStatus createOrUpdateCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
 
-    // Custom entity templates
+	// Custom entity templates
 
-    @WebMethod
-    GetCustomEntityTemplateResponseDto findCustomEntityTemplate(@WebParam(name = "code") String code);
+	@WebMethod
+	GetCustomEntityTemplateResponseDto findCustomEntityTemplate(@WebParam(name = "code") String code);
 
-    @WebMethod
-    ActionStatus removeCustomEntityTemplate(@WebParam(name = "code") String code);
+	@WebMethod
+	ActionStatus removeCustomEntityTemplate(@WebParam(name = "code") String code);
 
+	@WebMethod
+	ActionStatus createCustomEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
 
-    @WebMethod
-    ActionStatus createCustomEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
-    
-    @WebMethod
-    ActionStatus updateCustomEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
-    
-    @WebMethod
-    ActionStatus createOrUpdateCustomEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
+	@WebMethod
+	ActionStatus updateCustomEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
 
-    // Custom entity instances
+	@WebMethod
+	ActionStatus createOrUpdateCustomEntityTemplate(
+			@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
 
-    @WebMethod
-    GetCustomEntityInstanceResponseDto findCustomEntityInstance(@WebParam(name = "cetCode") String cetCode, @WebParam(name = "code") String code);
+	// Custom entity instances
 
-    @WebMethod
-    ActionStatus removeCustomEntityInstance(@WebParam(name = "cetCode") String cetCode, @WebParam(name = "code") String code);
+	@WebMethod
+	GetCustomEntityInstanceResponseDto findCustomEntityInstance(@WebParam(name = "cetCode") String cetCode,
+			@WebParam(name = "code") String code);
 
-    @WebMethod
-    ActionStatus createCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
-    
-    @WebMethod
-    ActionStatus updateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
-    
-    @WebMethod
-    ActionStatus createOrUpdateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
+	@WebMethod
+	ActionStatus removeCustomEntityInstance(@WebParam(name = "cetCode") String cetCode,
+			@WebParam(name = "code") String code);
 
-    // permission
-    
-    @WebMethod
-    PermissionResponseDto listPermissions();
-    
- // role
-	
- 	@WebMethod
- 	public ActionStatus createRole(@WebParam(name = "role") RoleDto postData);
- 	
- 	@WebMethod
- 	public ActionStatus updateRole(@WebParam(name = "role") RoleDto postData);
- 	
- 	@WebMethod
- 	public ActionStatus removeRole(@WebParam(name = "role") String name);
- 	
- 	@WebMethod
- 	public GetRoleResponse findRole(@WebParam(name = "roleName") String name);
- 	
- 	@WebMethod
- 	public ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);
+	@WebMethod
+	ActionStatus createCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
+
+	@WebMethod
+	ActionStatus updateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
+
+	@WebMethod
+	ActionStatus createOrUpdateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
+
+	// permission
+
+	@WebMethod
+	PermissionResponseDto listPermissions();
+
+	// role
+
+	@WebMethod
+	public ActionStatus createRole(@WebParam(name = "role") RoleDto postData);
+
+	@WebMethod
+	public ActionStatus updateRole(@WebParam(name = "role") RoleDto postData);
+
+	@WebMethod
+	public ActionStatus removeRole(@WebParam(name = "role") String name);
+
+	@WebMethod
+	public GetRoleResponse findRole(@WebParam(name = "roleName") String name);
+
+	@WebMethod
+	public ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);
 }

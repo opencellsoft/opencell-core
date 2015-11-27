@@ -46,8 +46,7 @@ public interface LanguageRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
-	public GetLanguageResponse find(
-			@QueryParam("languageCode") String languageCode);
+	public GetLanguageResponse find(@QueryParam("languageCode") String languageCode);
 
 	/**
 	 * Remove language with a given code.
@@ -69,7 +68,6 @@ public interface LanguageRs extends IBaseRs {
 	@Path("/")
 	public ActionStatus update(LanguageDto postData);
 
-	
 	@POST
 	@Path("/createOrUpdate")
 	public ActionStatus createOrUpdate(LanguageDto postData);

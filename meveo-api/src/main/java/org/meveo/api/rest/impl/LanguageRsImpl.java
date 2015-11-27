@@ -1,5 +1,9 @@
 package org.meveo.api.rest.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -19,12 +23,14 @@ import org.meveo.api.rest.LanguageRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/language", tags = "tradingLanguage")
 public class LanguageRsImpl extends BaseRs implements LanguageRs {
 
 	@Inject
 	private LanguageApi languageApi;
 
 	@Override
+	@ApiOperation(value = "Creates tradingLanguage base on language code. If the language code does not exists, a language record is created.", response = ActionStatus.class)
 	public ActionStatus create(LanguageDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -45,7 +51,8 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
 	}
 
 	@Override
-	public GetLanguageResponse find(String languageCode) {
+	@ApiOperation(value = "Function use to find a language given a language code.", response = GetLanguageResponse.class)
+	public GetLanguageResponse find(@ApiParam(value = "language code") String languageCode) {
 		GetLanguageResponse result = new GetLanguageResponse();
 
 		try {
@@ -65,7 +72,8 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
 	}
 
 	@Override
-	public ActionStatus remove(String languageCode) {
+	@ApiOperation(value = "This function does not delete a language but the tradingLanguage associated to it.", response = ActionStatus.class)
+	public ActionStatus remove(@ApiParam(value = "language code") String languageCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -85,6 +93,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Function use to modify a language. Same input parameter as create. The language and trading Language are created if they don't exists. The operation fails if the tradingLanguage is null.", response = ActionStatus.class)
 	public ActionStatus update(LanguageDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -103,11 +112,12 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "Create or update a language if it doesn't exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(LanguageDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			languageApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
