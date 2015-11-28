@@ -16,28 +16,12 @@
  */
 package org.meveo.admin.action.admin.module;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.ResourceBundle;
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.module.ModuleDto;
-import org.meveo.api.dto.module.ModuleItemDto;
 import org.meveo.model.admin.MeveoModule;
 import org.meveo.model.admin.MeveoModuleItem;
 import org.meveo.model.admin.ModuleItemTypeEnum;
@@ -54,7 +38,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.notification.NotificationService;
+import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DefaultTreeNode;
@@ -86,11 +70,8 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	@Inject
 	private JobInstanceService jobInstanceService;
 	@Inject
-	private NotificationService notificationService;
+	private GenericNotificationService notificationService;
 	
-	@Inject
-	private ResourceBundle resourceBundle;
-
 	private CustomEntityTemplate customEntity;
 	private CustomFieldTemplate customField;
 	private Filter filter;
@@ -120,18 +101,18 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	
 	@PostConstruct
 	public void init(){
-		root=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.title"),null, null));
-		cetnode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.customEntities"),null,null),root);
+		root=new DefaultTreeNode(new CustomizedModuleItem("meveoModule.title",true));
+		cetnode=new DefaultTreeNode(new CustomizedModuleItem("meveoModule.customEntities",true),root);
 		cetnode.setExpanded(true);
-		cftnode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.customFields"),null,null),root);
+		cftnode=new DefaultTreeNode(new CustomizedModuleItem("meveoModule.customFields",true),root);
 		cftnode.setExpanded(true);
-		filternode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.filters"),null,null),root);
+		filternode=new DefaultTreeNode(new CustomizedModuleItem("meveoModule.filters",true),root);
 		filternode.setExpanded(true);
-		scriptnode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.scriptInstances"),null,null),root);
+		scriptnode=new DefaultTreeNode(new CustomizedModuleItem("meveoModule.scriptInstances",true),root);
 		scriptnode.setExpanded(true);
-		jobnode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.jobInstances"),null,null),root);
+		jobnode=new DefaultTreeNode(new CustomizedModuleItem("meveoModule.jobInstances",true),root);
 		jobnode.setExpanded(true);
-		notificationnode=new DefaultTreeNode(new CustomizedModuleItem(resourceBundle.getString("meveoModule.notifications"),null,null),root);
+		notificationnode=new DefaultTreeNode(new CustomizedModuleItem("meveoModule.notifications",true),root);
 		notificationnode.setExpanded(true);
 	}
 	
@@ -414,46 +395,16 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 		}
 	}
 	public void exportModule(){
-		log.debug("export module {} to {}",entity,meveoInstance);
+		log.debug("export module {} to {}",entity.getCode(),meveoInstance.getCode());
 		if(meveoInstance!=null){
-			try {
-				ResteasyClient client = new ResteasyClientBuilder().build();
-				ResteasyWebTarget target = client.target(meveoInstance.getUrl());
-				
-				Invocation.Builder builder = target.request().accept(MediaType.APPLICATION_XML);
-				ActionStatus response=null;
-				ModuleDto moduleDto=new ModuleDto(entity.getCode(),entity.getDescription(),entity.getLicense(),entity.isDisabled());
-				moduleDto.setModuleItems(new ArrayList<ModuleItemDto>());
-				ModuleItemDto itemDto=null;
-				for(MeveoModuleItem item:entity.getModuleItems()){
-					itemDto=new ModuleItemDto(item.getItemCode(),item.getAppliesTo(),item.getItemType());
-					moduleDto.getModuleItems().add(itemDto);
-				}
-				if(!StringUtils.isBlank(meveoInstance.getAuthUsername())||!StringUtils.isBlank(meveoInstance.getAuthPassword())){
-					String encode = base64Encode(
-							String.format("%s:%s", (!StringUtils.isBlank(meveoInstance.getAuthUsername())?meveoInstance.getAuthUsername():""), 
-							(!StringUtils.isBlank(meveoInstance.getAuthPassword())?meveoInstance.getAuthPassword():"")));
-					response=builder.header("Authorization", String.format("Basic %s", encode)).post(Entity.entity(moduleDto, MediaType.APPLICATION_XML),ActionStatus.class);
-				}else{
-					response=builder.post(Entity.entity(moduleDto, MediaType.APPLICATION_XML),ActionStatus.class);
-				}
-				log.debug("response {}",response);
-				if(response!=null&&ActionStatusEnum.SUCCESS==response.getStatus()){
-					messages.info(new BundleKey("messages", "meveoModule.exportSuccess"), moduleDto.getCode(),meveoInstance.getCode());
-				}else{
-					messages.error(new BundleKey("messages", "meveoModule.exportFailed"), entity.getCode(),response.getMessage());
-				}
+			try{
+				meveoModuleService.exportModule(entity, meveoInstance);
+				messages.info(new BundleKey("messages", "meveoModule.exportSuccess"), entity.getCode(),meveoInstance.getCode());
 			} catch (Exception e) {
 				log.error("Error when export module {} to {}",entity.getCode(), meveoInstance,e);
-				messages.error(new BundleKey("messages", "meveoModule.exportException"),entity.getCode(), meveoInstance.getCode(),(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
+				messages.error(new BundleKey("messages", "meveoModule.exportFailed"),entity.getCode(), meveoInstance.getCode(),(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
 			}
 			
 		}
-	}
-	protected String base64Encode(String str) throws UnsupportedEncodingException {
-		Base64 base64 = new Base64();
-		byte[] b = str.getBytes("UTF-8");
-		b = base64.encode(b);
-		return new String(b, "UTF-8");
 	}
 }

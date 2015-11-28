@@ -40,6 +40,9 @@
 	<c:if test="${empty eventBackingBean}">
 		<c:set var="eventBackingBean" value="#{backingBean}" />
 	</c:if>
+	<c:if test="${empty width}">
+		<c:set var="width" value="600" />
+	</c:if>
 	<c:if test="${empty dataModel}">
 		<c:set var="dataModel" value="#{backingBean.lazyDataModel}" />
 	</c:if>
@@ -62,7 +65,7 @@
 		value="#{getConverter.forParam(column7Converter)}"></c:set>
 
 	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}"
-		dynamic="true" modal="true" styleClass="form-dialog" closeOnEscape="true" width="500">
+		dynamic="true" modal="true" styleClass="form-dialog" closeOnEscape="true" width="#{width}">
 		<h:form id="#{id}popupForm">
             <c:if test="#{not empty searchField1}">
                 <h:panelGroup layout="block" styleClass="search-panel">

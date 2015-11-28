@@ -24,16 +24,18 @@
 			column2="description" selection="#{meveoModuleBean.customEntity}"
 			updateField="moduleFormId:moduleItems">
 		</hftl:entityPopup>
-		<hftl:entityPopup id="searchCustomField"
+		<hftl:entityPopup id="searchCustomField" width="750"
 			header="#{messages['customField.popup.header']}"
 			backingBean="#{customFieldTemplateListBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
 			searchField1="code"
+			searchField2Label="#{messages['meveoModuleItem.appliesTo']}"
+			searchField2="appliesTo"
 			selection="#{meveoModuleBean.customField}"
 			column1Label="#{messages['businessEntity.code']}"
 			column1="code" column2Label="#{messages['businessEntity.description']}"
 			column2="description" column3Label="#{messages['meveoModuleItem.appliesTo']}"
-			column3="appliesTo" updateField="moduleFormId:moduleItems">
+			column3="appliesTo" updateField="moduleFormId:moduleItems" column3Converter="customField">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchFilter"
 			header="#{messages['filter.popup.header']}"
@@ -67,7 +69,7 @@
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchNotification"
 			header="#{messages['notification.popup.header']}"
-			backingBean="#{notificationListBean}"
+			backingBean="#{genericNotificationListBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
 			searchField1="code" column1Label="#{messages['businessEntity.code']}"
 			column1="code"
@@ -100,24 +102,21 @@
 				label="#{messages['meveoModule.items']}" 
 				componentWidth="100" displayOneLine="false" newLine="true">
 				<p:treeTable id="moduleItems" lazy="false"
-					value="#{meveoModuleBean.root}" var="r" reflow="false"
+					value="#{meveoModuleBean.root}" var="e" reflow="false"
 					resizableColumns="true" rowIndexVar="rowIndex">
 					<p:column headerText="#{messages['businessEntity.code']}">
-						<h:outputText value="#{r.code}" styleClass="field-value" />
+						<h:outputText value="#{e.root?messages[e.code]:e.code}" styleClass="field-value" />
 					</p:column>
 					<p:column headerText="#{messages['businessEntity.description']}">
-						<h:outputText value="#{r.description}" styleClass="field-value" />
+						<h:outputText value="#{e.description}" styleClass="field-value" />
 					</p:column>
 					<p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
-						<h:outputText value="#{r.appliesTo}" styleClass="field-value" />
+						<h:outputText value="#{e.appliesTo}" styleClass="field-value" converter="customFieldConverter"/>
 					</p:column>
-					<p:column headerText="#{messages['meveoModuleItemType.type']}">
-						<h:outputText value="#{messages[r.type.label]}" styleClass="field-value" />
-					</p:column>
-					<p:column headerText="#{messages['commons.actions']}" width="15%">
+					<p:column headerText="#{messages['commons.actions']}">
 						<p:commandButton icon="ui-icon-minus" partialSubmit="true"
-							process="@this" update="moduleItems" rendered="#{not empty r.type}"
-							action="#{meveoModuleBean.removeTreeNode(r)}" />
+							process="@this" update="moduleItems" rendered="#{!e.root}"
+							action="#{meveoModuleBean.removeTreeNode(e)}" />
 					</p:column>
 					<f:facet name="footer" layout="block">
 						<p:commandButton value="#{messages['meveoModuleItem.addCE']}"
@@ -171,7 +170,7 @@
 				<ui:define name="buttons">
 					<p:commandButton id="confirmOk" value="#{messages['commons.yes']}" partialSubmit="true"
 						oncomplete="if (args &amp;&amp; !args.validationFailed) PF('meveoModuleDialog').hide()"
-						process="@this meveoInstance" actionListener="#{meveoModuleBean.exportModule}"
+						process="@this" actionListener="#{meveoModuleBean.exportModule}"
 						update=":module:messages :#{p:component('moduleFormId')}">
 					</p:commandButton>
 					<p:commandButton id="confirmKo" value="#{messages['commons.no']}"
