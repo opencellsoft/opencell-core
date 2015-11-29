@@ -116,7 +116,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 				}
 				ActionStatus actionStatus=response.readEntity(ActionStatus.class);
 				log.debug("response {}",actionStatus);
-				if(actionStatus!=null&&ActionStatusEnum.SUCCESS==actionStatus.getStatus()){
+				if(actionStatus==null||ActionStatusEnum.SUCCESS!=actionStatus.getStatus()){
 					throw new MeveoApiException("Fail to communicte "+meveoInstance.getCode()+". Error code "
 							+actionStatus.getErrorCode()+", message "+actionStatus.getMessage());
 				}
