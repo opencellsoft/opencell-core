@@ -52,7 +52,7 @@
 			</ui:define>
 		</hftl:dataList>
 		<p:dialog id="meveoModulesDialog" styleClass="confirm-dialog"
-			header="#{messages['meveoModule.meveoModules']}"
+			header="#{messages['meveoModule.installModules']}"
 			widgetVar="meveoModulesDialog" width="750" modal="true">
 			<hftl:decorateFormPanel formId="modules">
 				<ui:define name="fields">
@@ -70,8 +70,8 @@
 					</hftl:decorateFormField>
 					<hftl:decorateFormField label="#{messages['meveoModule.meveoModules']}"
 						componentWidth="100" newLine="true">
-						<p:dataTable value="#{meveoModuleListBean.moduleDtos}" scrollable="true" scrollHeight="235" reflow="true"
-							var="module" lazy="false" styleClass="custom-grid" resizableColumns="true">
+						<p:dataTable value="#{meveoModuleListBean.moduleDtos}" scrollable="true" reflow="true" scrollHeight="350"
+							var="module" lazy="false" styleClass="custom-grid" resizableColumns="true" >
 							<p:column headerText="#{messages['businessEntity.code']}"
 								sortBy="#{module.code}">
 								<h:outputText value="#{module.code}" />
@@ -100,7 +100,7 @@
 			</hftl:decorateFormPanel>
 		</p:dialog>
 		<p:dialog id="meveoModuleDialog" styleClass="confirm-dialog"
-			header="#{messages['meveoModule.title']}"
+			header="#{messages['meveoModule.installHeader']}"
 			widgetVar="meveoModuleDialog" width="700" modal="true">
 			<hftl:decorateFormPanel formId="module"
 				rendered="#{not empty meveoModuleListBean.selectedModuleDto}">
@@ -135,11 +135,7 @@
 									styleClass="field-value" />
 							</p:column>
 							<p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
-								<h:outputText value="#{item.appliesTo}" styleClass="field-value" />
-							</p:column>
-							<p:column headerText="#{messages['meveoModuleItemType.type']}">
-								<h:outputText value="#{messages[item.itemType.label]}"
-									styleClass="field-value" />
+								<h:outputText value="#{item.appliesTo}" styleClass="field-value" converter="customFieldConverter"/>
 							</p:column>
 						</p:dataTable>
 					</hftl:decorateFormField>

@@ -1,5 +1,9 @@
 package org.meveo.api.rest.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -19,12 +23,14 @@ import org.meveo.api.rest.InvoiceSubCategoryRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/invoiceSubCategory", tags = "invoiceSubCategory")
 public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCategoryRs {
 
 	@Inject
 	private InvoiceSubCategoryApi invoiceSubCategoryApi;
 
 	@Override
+	@ApiOperation(value = "This function create a new invoice sub-category. Description per language can be defined", response = ActionStatus.class)
 	public ActionStatus create(InvoiceSubCategoryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -45,6 +51,7 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
 	}
 
 	@Override
+	@ApiOperation(value = "This function update an invoice sub-category", response = ActionStatus.class)
 	public ActionStatus update(InvoiceSubCategoryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -65,7 +72,8 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
 	}
 
 	@Override
-	public GetInvoiceSubCategoryResponse find(String code) {
+	@ApiOperation(value = "Find an invoice sub-category given a code", response = GetInvoiceSubCategoryResponse.class)
+	public GetInvoiceSubCategoryResponse find(@ApiParam(value = "invoice sub category code") String code) {
 		GetInvoiceSubCategoryResponse result = new GetInvoiceSubCategoryResponse();
 
 		try {
@@ -85,7 +93,8 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
 	}
 
 	@Override
-	public ActionStatus remove(String invoiceSubCategoryCode) {
+	@ApiOperation(value = "Remove an invoice sub-category given a code", response = ActionStatus.class)
+	public ActionStatus remove(@ApiParam(value = "invoice sub category code") String invoiceSubCategoryCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -103,8 +112,9 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "Create or update a invoice sub category if it doesn't exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(InvoiceSubCategoryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -123,4 +133,5 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+
 }

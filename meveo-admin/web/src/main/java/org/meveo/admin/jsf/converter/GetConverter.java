@@ -163,7 +163,7 @@ public class GetConverter {
 			return (BigDecimal12DigitsConverter) beanManager.getReference(bean,
 					BigDecimal12DigitsConverter.class, ctx);
 
-		} else if ("date".equals("param")) {
+		} else if ("date".equals(param)) {
 
 			Bean<DateConverter> bean = (Bean<DateConverter>) beanManager
 					.getBeans(DateConverter.class).iterator().next();
@@ -172,6 +172,13 @@ public class GetConverter {
 			return (DateConverter) beanManager.getReference(bean,
 					DateConverter.class, ctx);
 
+		}else if("customField".equals(param)){
+			Bean<CustomFieldConverter> bean = (Bean<CustomFieldConverter>) beanManager
+					.getBeans(CustomFieldConverter.class).iterator().next();
+			CreationalContext<CustomFieldConverter> ctx = beanManager
+					.createCreationalContext(bean);
+			return (CustomFieldConverter) beanManager.getReference(bean,
+					CustomFieldConverter.class, ctx);
 		}
 		return null;
 	}

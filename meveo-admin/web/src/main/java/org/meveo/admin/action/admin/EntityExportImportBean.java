@@ -288,11 +288,7 @@ public class EntityExportImportBean implements Serializable {
         if (exportParameters.get("provider") == null) {
             exportParameters.put("provider", currentProvider);
         }
-        if (this.selectedExportTemplate.getName().equals("MeveoModule")) {
-            if (exportParameters.get("meveoModule") != null) {
-                dataModelToExport = null;
-            }
-        }
+
 
         try {
 

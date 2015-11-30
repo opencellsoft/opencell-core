@@ -1,5 +1,9 @@
 package org.meveo.api.rest.catalog.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -20,12 +24,14 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/catalog/serviceTemplate", tags = "serviceTemplate")
 public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 
 	@Inject
 	private ServiceTemplateApi serviceTemplateApi;
 
 	@Override
+	@ApiOperation(value = "Function to create a service template", response = ActionStatus.class)
 	public ActionStatus create(ServiceTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -46,6 +52,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Function to update a service template given a code", response = ActionStatus.class)
 	public ActionStatus update(ServiceTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -66,7 +73,8 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 	}
 
 	@Override
-	public GetServiceTemplateResponseDto find(String serviceTemplateCode) {
+	@ApiOperation(value = "Function to find a service template given a code", response = GetServiceTemplateResponseDto.class)
+	public GetServiceTemplateResponseDto find(@ApiParam("service template code") String serviceTemplateCode) {
 		GetServiceTemplateResponseDto result = new GetServiceTemplateResponseDto();
 
 		try {
@@ -86,7 +94,8 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 	}
 
 	@Override
-	public ActionStatus remove(String serviceTemplateCode) {
+	@ApiOperation(value = "Function to remove a service template given a code", response = ActionStatus.class)
+	public ActionStatus remove(@ApiParam("service template code") String serviceTemplateCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -104,8 +113,9 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "Creates a service template or update if already exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(ServiceTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -124,4 +134,5 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+
 }

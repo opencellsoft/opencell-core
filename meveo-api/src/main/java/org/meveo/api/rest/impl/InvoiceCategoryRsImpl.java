@@ -1,5 +1,9 @@
 package org.meveo.api.rest.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -19,12 +23,14 @@ import org.meveo.api.rest.InvoiceCategoryRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/invoiceCategory", tags = "invoiceCategory")
 public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 
 	@Inject
 	private InvoiceCategoryApi invoiceCategoryApi;
 
 	@Override
+	@ApiOperation(value = "This function create a new invoice category. Description per language can be defined", response = ActionStatus.class)
 	public ActionStatus create(InvoiceCategoryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -45,6 +51,7 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 	}
 
 	@Override
+	@ApiOperation(value = "This function update an invoice category", response = ActionStatus.class)
 	public ActionStatus update(InvoiceCategoryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -65,7 +72,8 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 	}
 
 	@Override
-	public GetInvoiceCategoryResponse find(String invoiceCategoryCode) {
+	@ApiOperation(value = "Find an invoice category given a code", response = GetInvoiceCategoryResponse.class)
+	public GetInvoiceCategoryResponse find(@ApiParam(value = "invoice category code") String invoiceCategoryCode) {
 		GetInvoiceCategoryResponse result = new GetInvoiceCategoryResponse();
 
 		try {
@@ -85,7 +93,8 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 	}
 
 	@Override
-	public ActionStatus remove(String invoiceCategoryCode) {
+	@ApiOperation(value = "Remove an invoice sub-category given a code", response = ActionStatus.class)
+	public ActionStatus remove(@ApiParam(value = "invoice category code") String invoiceCategoryCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -103,8 +112,9 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "Create or update a invoice category if it doesn't exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(InvoiceCategoryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -123,4 +133,5 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+
 }

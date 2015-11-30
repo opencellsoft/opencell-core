@@ -15,6 +15,11 @@ public class CustomizedModuleItem implements Serializable {
 	private String description;
 	private ModuleItemTypeEnum type;
 	private String appliesTo;
+	private boolean root=false;
+	public CustomizedModuleItem(String code,boolean root){
+		this.code=code;
+		this.root=root;
+	}
 	public CustomizedModuleItem(String code,String description,ModuleItemTypeEnum type){
 		this.code=code;
 		this.type=type;
@@ -47,6 +52,12 @@ public class CustomizedModuleItem implements Serializable {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public boolean isRoot() {
+		return root;
+	}
+	public void setRoot(boolean root) {
+		this.root = root;
 	}
 	
 }
