@@ -46,6 +46,7 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -355,9 +356,9 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	}
 	
 	@Override
-	public String deleteInlist() {
+	public void deleteInlist() {
 	accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
-	return super.deleteInlist();	
+	super.deleteInlist();	
 	}
 	
 	
