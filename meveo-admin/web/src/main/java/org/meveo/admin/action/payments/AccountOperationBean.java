@@ -356,14 +356,8 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	
 	@Override
 	public void deleteInlist() {
-		List<MatchingAmount> matchingAmounts=new ArrayList<MatchingAmount>();
-		matchingAmounts=entity.getMatchingAmounts();
-		if(matchingAmounts!=null && matchingAmounts.size()>0){
-			for(MatchingAmount matchingAmount:matchingAmounts){
-				matchingAmountService.remove(matchingAmount);
-			}
-		}
-		accountOperationService.remove(entity);
+	accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
+	super.deleteInlist();	
 	}
 
 }
