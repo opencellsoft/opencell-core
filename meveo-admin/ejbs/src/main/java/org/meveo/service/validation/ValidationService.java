@@ -52,10 +52,10 @@ public class ValidationService {
         String queryString = null;
         if (id == null) {
             queryString = String.format("select count(*) from %s where lower(%s)='%s' and provider.id = %s", className, fieldName,
-                (value != null && value instanceof String) ? ((String) value).toLowerCase() : value, provider.getId());
+                (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value, provider.getId());
         } else {
             queryString = String.format("select count(*) from %s where lower(%s)='%s' and provider.id = %s and id != %s", className, fieldName,
-                (value != null && value instanceof String) ? ((String) value).toLowerCase() : value, provider.getId(), id);
+                (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value, provider.getId(), id);
         }
         Query query = em.createQuery(queryString);
 		long count = (Long) query.getSingleResult();
