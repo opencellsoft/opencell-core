@@ -46,6 +46,7 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -356,15 +357,11 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	
 	@Override
 	public void deleteInlist() {
-		List<MatchingAmount> matchingAmounts=new ArrayList<MatchingAmount>();
-		matchingAmounts=entity.getMatchingAmounts();
-		if(matchingAmounts!=null && matchingAmounts.size()>0){
-			for(MatchingAmount matchingAmount:matchingAmounts){
-				matchingAmountService.remove(matchingAmount);
-			}
-		}
-		accountOperationService.remove(entity);
+	accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
+	super.deleteInlist();	
 	}
+	
+	
 
 	
 }
