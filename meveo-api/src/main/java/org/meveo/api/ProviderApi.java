@@ -200,7 +200,9 @@ public class ProviderApi extends BaseApi {
 			invoiceConfiguration.setAuditable(auditable);
 
 			provider.setInvoiceConfiguration(invoiceConfiguration);
-
+			
+			invoiceConfiguration.setProvider(provider);
+			
 			// populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), provider, currentUser);
@@ -307,7 +309,7 @@ public class ProviderApi extends BaseApi {
 			provider.setEntreprise(postData.isEnterprise());
 			provider.setInvoicePrefix(postData.getInvoicePrefix());
 			provider.setCurrentInvoiceNb(postData.getCurrentInvoiceNb());
-
+			
 			InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
 			if (invoiceConfiguration != null) {
 				invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
@@ -316,7 +318,7 @@ public class ProviderApi extends BaseApi {
 				invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
 				invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
 				invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
-			}
+			} 
 
 			if (postData.getInvoiceSequenceSize() != null) {
 				provider.setInvoiceSequenceSize(postData.getInvoiceSequenceSize());

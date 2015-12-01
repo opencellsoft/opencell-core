@@ -85,6 +85,7 @@ public class ProviderDto extends BaseDto {
 			this.setDisplayOffers(invoiceConfiguration.getDisplayOffers());
 			this.setDisplayEdrs(invoiceConfiguration.getDisplayEdrs());
 			this.setDisplayProvider(invoiceConfiguration.getDisplayProvider());
+			this.setDisplayDetail(invoiceConfiguration.getDisplayDetail());
 		}
 		
 		if (e.getInvoiceAdjustmentPrefix() != null) {
