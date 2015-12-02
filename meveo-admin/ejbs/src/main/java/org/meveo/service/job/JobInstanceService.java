@@ -208,15 +208,15 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 						} catch (Exception ex) {
 							log.info("cannot cancel timer {}", ex);
 						}
-
 					}
-
+					if(entity.getTimerEntity() == null){
+						entity.setActive(false);
+					}
 					super.update(entity);
 					if(entity.isActive()){
 						Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
 						log.info("Scheduling job {} : timer {}",job,entity.getId());
-						jobTimers.put(entity.getId(),
-								job.createTimer(entity.getTimerEntity().getScheduleExpression(), entity));
+						jobTimers.put(entity.getId(),job.createTimer(entity.getTimerEntity().getScheduleExpression(), entity));
 					}
 				} else {
 					throw new RuntimeException("cannot find job "+entity.getJobTemplate());
