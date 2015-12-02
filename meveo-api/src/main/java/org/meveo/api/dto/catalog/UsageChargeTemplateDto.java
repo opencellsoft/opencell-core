@@ -1,5 +1,6 @@
 package org.meveo.api.dto.catalog;
 
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,12 +16,21 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 
 	private static final long serialVersionUID = -192169359113319490L;
 
-	static String WILCARD = "";
-
+	static String WILCARD = null;
+	
+	@Size(min = 0, max = 255)
 	private String filterParam1 = WILCARD;
+	
+	@Size(min = 0, max = 255)
 	private String filterParam2 = WILCARD;
+	
+	@Size(min = 0, max = 255)
 	private String filterParam3 = WILCARD;
+	
+	@Size(min = 0, max = 255)
 	private String filterParam4 = WILCARD;
+	
+	@Size(max = 255)
 	private String filterExpression = null;
 	private int priority = 1;
 

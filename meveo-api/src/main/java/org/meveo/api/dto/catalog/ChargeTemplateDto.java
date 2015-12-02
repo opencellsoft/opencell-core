@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
@@ -22,7 +23,7 @@ import org.meveo.model.crm.CustomFieldInstance;
  **/
 @XmlRootElement(name = "ChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChargeTemplateDto implements Serializable {
+public class ChargeTemplateDto extends BaseDto implements Serializable {
 
 	private static final long serialVersionUID = -5143285194077662656L;
 

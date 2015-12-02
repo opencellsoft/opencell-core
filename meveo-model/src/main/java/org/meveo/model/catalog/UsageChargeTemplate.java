@@ -51,19 +51,19 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "FILTER_PARAM_1", length = 20)
+	@Column(name = "FILTER_PARAM_1", length = 255)
 	private String filterParam1 = WILCARD;
 
-	@Column(name = "FILTER_PARAM_2", length = 20)
+	@Column(name = "FILTER_PARAM_2", length = 255)
 	private String filterParam2 = WILCARD;
 
-	@Column(name = "FILTER_PARAM_3", length = 20)
+	@Column(name = "FILTER_PARAM_3", length = 255)
 	private String filterParam3 = WILCARD;
 
-	@Column(name = "FILTER_PARAM_4", length = 20)
+	@Column(name = "FILTER_PARAM_4", length = 255)
 	private String filterParam4 = WILCARD;
 
-	@Column(name = "FILTER_EXPRESSION", length = 2000)
+	@Column(name = "FILTER_EXPRESSION", length = 255)
 	private String filterExpression = null;
 
 	@Column(name = "PRIORITY", columnDefinition = "int default 1")
