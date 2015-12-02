@@ -26,6 +26,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -40,6 +41,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCountry;
@@ -566,5 +568,132 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 		}
 	}
 	 
-    
+	public boolean updateCellEdit(PricePlanMatrix entity) throws EntityExistsException{
+		boolean result=false;
+		PricePlanMatrix pricePlanMatrix=findById(entity.getId());
+		if(pricePlanMatrix!=null){
+			if(!equal(entity.getCode(),pricePlanMatrix.getCode())){
+				PricePlanMatrix existed=findByCode(entity.getCode(), getCurrentProvider());
+				if(existed!=null){
+					throw new EntityExistsException("Price plan "+entity.getCode()+" is existed!");
+				}else{
+					pricePlanMatrix.setCode(entity.getCode());
+					result=true;
+				}
+			}
+			if(!equal(entity.getDescription(),pricePlanMatrix.getDescription())){
+				pricePlanMatrix.setDescription(entity.getDescription());
+				result=true;
+			}
+			if(!equal(entity.getEventCode(),pricePlanMatrix.getEventCode())){
+				pricePlanMatrix.setEventCode(entity.getEventCode());
+				result=true;
+			}
+			if(!(equal(entity.getOfferTemplate(),pricePlanMatrix.getOfferTemplate()))){
+				pricePlanMatrix.setOfferTemplate(entity.getOfferTemplate());
+				result=true;
+			}
+			if(!equal(entity.getSeller(),pricePlanMatrix.getSeller())){
+				pricePlanMatrix.setSeller(entity.getSeller());
+				result=true;
+			}
+			if(!equal(entity.getAmountWithTax(),pricePlanMatrix.getAmountWithTax())){
+				pricePlanMatrix.setAmountWithTax(entity.getAmountWithTax());
+				result=true;
+			}
+			if(!equal(entity.getAmountWithoutTax(),pricePlanMatrix.getAmountWithoutTax())){
+				pricePlanMatrix.setAmountWithoutTax(entity.getAmountWithoutTax());
+				result=true;
+			}
+			if(!equal(entity.getAmountWithoutTaxEL(),pricePlanMatrix.getAmountWithoutTaxEL())){
+				pricePlanMatrix.setAmountWithoutTaxEL(entity.getAmountWithoutTaxEL());
+				result=true;
+			}
+			if(!equal(entity.getAmountWithTaxEL(),pricePlanMatrix.getAmountWithTaxEL())){
+				pricePlanMatrix.setAmountWithTaxEL(entity.getAmountWithTaxEL());
+				result=true;
+			}
+			if(!equal(entity.getStartRatingDate(),pricePlanMatrix.getStartRatingDate())){
+				pricePlanMatrix.setStartRatingDate(entity.getStartRatingDate());
+				result=true;
+			}
+			if(!equal(entity.getEndRatingDate(),pricePlanMatrix.getEndRatingDate())){
+				pricePlanMatrix.setEndRatingDate(entity.getEndRatingDate());
+				result=true;
+			}
+			if(!equal(entity.getCriteriaEL(),pricePlanMatrix.getCriteriaEL())){
+				pricePlanMatrix.setCriteriaEL(entity.getCriteriaEL());
+				result=true;
+			}
+			if(!equal(entity.getTradingCountry(),pricePlanMatrix.getTradingCountry())){
+				pricePlanMatrix.setTradingCountry(entity.getTradingCountry());
+				result=true;
+			}
+			if(!equal(entity.getTradingCurrency(),pricePlanMatrix.getTradingCurrency())){
+				pricePlanMatrix.setTradingCurrency(entity.getTradingCurrency());
+				result=true;
+			}
+			if(!equal(entity.getCriteria1Value(),pricePlanMatrix.getCriteria1Value())){
+				pricePlanMatrix.setCriteria1Value(entity.getCriteria1Value());
+				result=true;
+			}
+			if(!equal(entity.getCriteria2Value(),pricePlanMatrix.getCriteria2Value())){
+				pricePlanMatrix.setCriteria2Value(entity.getCriteria2Value());
+				result=true;
+			}
+			if(!equal(entity.getCriteria3Value(),pricePlanMatrix.getCriteria3Value())){
+				pricePlanMatrix.setCriteria3Value(entity.getCriteria3Value());
+				result=true;
+			}
+			if(!equal(entity.getPriority(),pricePlanMatrix.getPriority())){
+				pricePlanMatrix.setPriority(entity.getPriority());
+				result=true;
+			}
+			if(!equal(entity.getMinQuantity(),pricePlanMatrix.getMinQuantity())){
+				pricePlanMatrix.setMinQuantity(entity.getMinQuantity());
+				result=true;
+			}
+			if(!equal(entity.getMaxQuantity(),pricePlanMatrix.getMaxQuantity())){
+				pricePlanMatrix.setMaxQuantity(entity.getMaxQuantity());
+				result=true;
+			}
+			if(!equal(entity.getStartSubscriptionDate(),pricePlanMatrix.getStartSubscriptionDate())){
+				pricePlanMatrix.setStartSubscriptionDate(entity.getStartSubscriptionDate());
+				result=true;
+			}
+			if(!equal(entity.getEndSubscriptionDate(),pricePlanMatrix.getEndSubscriptionDate())){
+				pricePlanMatrix.setEndSubscriptionDate(entity.getEndSubscriptionDate());
+				result=true;
+			}
+			if(!equal(entity.getMaxSubscriptionAgeInMonth(),pricePlanMatrix.getMaxSubscriptionAgeInMonth())){
+				pricePlanMatrix.setMaxSubscriptionAgeInMonth(entity.getMaxSubscriptionAgeInMonth());
+				result=true;
+			}
+			if(!equal(entity.getMinSubscriptionAgeInMonth(),pricePlanMatrix.getMinSubscriptionAgeInMonth())){
+				pricePlanMatrix.setMinSubscriptionAgeInMonth(entity.getMinSubscriptionAgeInMonth());
+				result=true;
+			}
+			if(!equal(entity.getValidityCalendar(),pricePlanMatrix.getValidityCalendar())){
+				pricePlanMatrix.setValidityCalendar(entity.getValidityCalendar());
+				result=true;
+			}
+			if(result){
+				update(pricePlanMatrix);
+				this.ratingCacheContainerProvider.updatePricePlanInCache(pricePlanMatrix);
+			}
+		}
+		return result;
+	}
+	public boolean equal(Object obj1,Object obj2){
+		if(obj1==null&&obj2==null){
+			return true;
+		}
+		if(obj1 instanceof BusinessEntity){
+			BusinessEntity b1=(BusinessEntity)obj1;
+			BusinessEntity b2=(BusinessEntity)obj2;
+			return b1!=null?b1.getCode().equals(b2.getCode()):(obj2!=null?false:true);
+		}else{
+			return obj1!=null?obj1.equals(obj2):(obj2!=null?false:true);
+		}
+	}
 }

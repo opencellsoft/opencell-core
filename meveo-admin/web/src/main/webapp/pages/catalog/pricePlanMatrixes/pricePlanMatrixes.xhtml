@@ -111,13 +111,12 @@
 			</h:panelGroup>
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
+		<hftl:dataList label="#{messages['pricePlanMatrix.title']}" rowsPerPage="5,10"
 			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
 			exportButton="false" exportXlsxButton="true"
 			backingBean="#{pricePlanMatrixListBean}">
 
-			<p:ajax event="cellEdit"
-				listener="#{pricePlanMatrixListBean.onCellEdit(entity)}"
+			<p:ajax event="cellEdit" partialSubmit="true" process="@this" listener="#{pricePlanMatrixListBean.onCellEdit}"
 				update=":searchPanel:searchForm:search_messages datatable_results" />
 
 			<f:facet name="header">
