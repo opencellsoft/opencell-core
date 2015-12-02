@@ -20,8 +20,8 @@ import org.meveo.api.rest.security.RSSecured;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
-public interface RoleRs extends IBaseRs{
-	
+public interface RoleRs extends IBaseRs {
+
 	/**
 	 * Create role.
 	 * 
@@ -31,7 +31,7 @@ public interface RoleRs extends IBaseRs{
 	@POST
 	@Path("/")
 	public ActionStatus create(RoleDto postData);
-	
+
 	/**
 	 * Update role.
 	 * 
@@ -41,8 +41,7 @@ public interface RoleRs extends IBaseRs{
 	@PUT
 	@Path("/")
 	public ActionStatus update(RoleDto postData);
-	
-	
+
 	/**
 	 * Remove role.
 	 * 
@@ -52,7 +51,7 @@ public interface RoleRs extends IBaseRs{
 	@DELETE
 	@Path("/{roleName}")
 	public ActionStatus remove(@PathParam("roleName") String roleName);
-	
+
 	/**
 	 * Search role.
 	 * 
@@ -62,9 +61,10 @@ public interface RoleRs extends IBaseRs{
 	@GET
 	@Path("/")
 	public GetRoleResponse find(@QueryParam("roleName") String roleName);
-	
+
 	/**
 	 * Create or update role
+	 * 
 	 * @param postData
 	 * @return
 	 */

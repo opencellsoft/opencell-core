@@ -1,5 +1,8 @@
 package org.meveo.api.rest.custom.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -20,108 +23,115 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/customEntityTemplate", tags = "customEntityTemplate")
 public class CustomEntityTemplateRsImpl extends BaseRs implements CustomEntityTemplateRs {
 
-    @Inject
-    private CustomEntityApi customEntityApi;
+	@Inject
+	private CustomEntityApi customEntityApi;
 
-    @Override
-    public ActionStatus create(CustomEntityTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	@Override
+	@ApiOperation(value = "")
+	public ActionStatus create(CustomEntityTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            customEntityApi.createEntityTemplate(postData, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			customEntityApi.createEntityTemplate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
 
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 
-    @Override
-    public ActionStatus update(CustomEntityTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	@Override
+	@ApiOperation(value = "")
+	public ActionStatus update(CustomEntityTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            customEntityApi.updateEntityTemplate(postData, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			customEntityApi.updateEntityTemplate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
 
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 
-    @Override
-    public ActionStatus remove(String customEntityTemplateCode) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	@Override
+	@ApiOperation(value = "")
+	public ActionStatus remove(String customEntityTemplateCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            customEntityApi.removeEntityTemplate(customEntityTemplateCode, getCurrentUser().getProvider());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			customEntityApi.removeEntityTemplate(customEntityTemplateCode, getCurrentUser().getProvider());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
 
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 
-    @Override
-    public GetCustomEntityTemplateResponseDto find(String customEntityTemplateCode) {
-        GetCustomEntityTemplateResponseDto result = new GetCustomEntityTemplateResponseDto();
+	@Override
+	@ApiOperation(value = "")
+	public GetCustomEntityTemplateResponseDto find(String customEntityTemplateCode) {
+		GetCustomEntityTemplateResponseDto result = new GetCustomEntityTemplateResponseDto();
 
-        try {
-            result.setCustomEntityTemplate(customEntityApi.findEntityTemplate(customEntityTemplateCode, getCurrentUser().getProvider()));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
+		try {
+			result.setCustomEntityTemplate(customEntityApi.findEntityTemplate(customEntityTemplateCode,
+					getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
 
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 
-    @Override
-    public ActionStatus createOrUpdate(CustomEntityTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	@Override
+	@ApiOperation(value = "")
+	public ActionStatus createOrUpdate(CustomEntityTemplateDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-            customEntityApi.createOrUpdateEntityTemplate(postData, getCurrentUser());
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        } catch (Exception e) {
-            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-        }
+		try {
+			customEntityApi.createOrUpdateEntityTemplate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
 
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
 }

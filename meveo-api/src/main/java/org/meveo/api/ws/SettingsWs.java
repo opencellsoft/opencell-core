@@ -285,7 +285,7 @@ public interface SettingsWs extends IBaseWs {
 	@WebMethod
 	GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration();
 
-	// OccTemplate
+	// occ template
 
 	@WebMethod
 	ActionStatus createOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
@@ -303,6 +303,7 @@ public interface SettingsWs extends IBaseWs {
 	ActionStatus createOrUpdateOccTemplate(@WebParam(name = "occTemplate") OccTemplateDto postData);
 
 	// custom field
+
 	@WebMethod
 	ActionStatus createCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
 

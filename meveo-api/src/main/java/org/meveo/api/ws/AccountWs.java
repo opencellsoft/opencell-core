@@ -58,34 +58,38 @@ public interface AccountWs extends IBaseWs {
 	ActionStatus removeCustomer(@WebParam(name = "customerCode") String customerCode);
 
 	@WebMethod
+	ActionStatus createOrUpdateCustomer(@WebParam(name = "customer") CustomerDto postData);
+
+	@WebMethod
 	CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
+
+	// customer brand
 
 	@WebMethod
 	ActionStatus createCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
-	
+
 	@WebMethod
 	ActionStatus updateCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
-	
+
+	@WebMethod
+	ActionStatus removeCustomerBrand(@WebParam(name = "brandCode") String brandCode);
+
 	@WebMethod
 	ActionStatus createOrUpdateCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
+
+	// customer category
 
 	@WebMethod
 	ActionStatus createCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
 
 	@WebMethod
 	ActionStatus updateCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
-	
+
 	@WebMethod
 	ActionStatus createOrUpdateCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
-	
-	@WebMethod
-	ActionStatus removeCustomerBrand(@WebParam(name = "brandCode") String brandCode);
 
 	@WebMethod
 	ActionStatus removeCustomerCategory(@WebParam(name = "categoryCode") String categoryCode);
-
-	@WebMethod
-	ActionStatus createOrUpdateCustomer(@WebParam(name = "customer") CustomerDto postData);
 
 	// customer account
 
@@ -104,12 +108,14 @@ public interface AccountWs extends IBaseWs {
 	@WebMethod
 	CustomerAccountsResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);
 
+	// credit category
+
 	@WebMethod
 	ActionStatus createCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
-	
+
 	@WebMethod
 	ActionStatus updateCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
-	
+
 	@WebMethod
 	ActionStatus createOrUpdateCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
 
@@ -191,17 +197,24 @@ public interface AccountWs extends IBaseWs {
 			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
 
 	@WebMethod
+	GetAccountHierarchyResponseDto findAccountHierarchy2(
+			@WebParam(name = "findAccountHierachyRequest") FindAccountHierachyRequestDto postData);
+
+	@WebMethod
 	ActionStatus updateAccountHierarchy(@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
+
+	// crm account hierarchy
 
 	@WebMethod
 	ActionStatus createCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
 
 	@WebMethod
 	ActionStatus updateCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
-	
+
 	@WebMethod
-	ActionStatus createOrUpdateCRMAccountHierarchy(@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
-	
+	ActionStatus createOrUpdateCRMAccountHierarchy(
+			@WebParam(name = "crmAccountHierarchy") CRMAccountHierarchyDto postData);
+
 	@WebMethod
 	ActionStatus createOrUpdateAccountHierarchy(
 			@WebParam(name = "accountHierarchy") AccountHierarchyDto accountHierarchyDto);
@@ -219,22 +232,19 @@ public interface AccountWs extends IBaseWs {
 	@WebMethod
 	AccountOperationsResponseDto listAccountOperations(
 			@WebParam(name = "customerAccountCode") String customerAccountCode);
-	
+
 	@WebMethod
 	ActionStatus matchOperations(@WebParam(name = "matchOperationRequest") MatchOperationRequestDto postData);
-	
+
 	@WebMethod
-	ActionStatus unMatchingOperations(@WebParam(name = "unMatchingOperationRequest") UnMatchingOperationRequestDto postData);
+	ActionStatus unMatchingOperations(
+			@WebParam(name = "unMatchingOperationRequest") UnMatchingOperationRequestDto postData);
 
 	// dunning
 
 	@WebMethod
 	ActionStatus dunningInclusionExclusion(
 			@WebParam(name = "dunningInclusionExclusion") DunningInclusionExclusionDto dunningDto);
-
-	@WebMethod
-	GetAccountHierarchyResponseDto findAccountHierarchy2(
-			@WebParam(name = "findAccountHierachyRequest") FindAccountHierachyRequestDto postData);
 
 	// title
 

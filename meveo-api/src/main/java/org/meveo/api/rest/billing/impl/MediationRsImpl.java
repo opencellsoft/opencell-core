@@ -1,5 +1,8 @@
 package org.meveo.api.rest.billing.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -20,6 +23,7 @@ import org.meveo.api.rest.impl.BaseRs;
 
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/billing/mediation", tags = "mediation")
 public class MediationRsImpl extends BaseRs implements MediationRs {
 
 	@Inject
@@ -29,6 +33,7 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 	private HttpServletRequest httpServletRequest;
 
 	@Override
+	@ApiOperation(value = "Accepts a list of CDR line. This CDR is parsed and created as EDR.", notes = "CDR is same format use in mediation job")
 	public ActionStatus registerCdrList(CdrListDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -50,6 +55,7 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Same as registerCDR, but at the same process rate the edr created")
 	public ActionStatus chargeCdr(String cdr) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -70,6 +76,7 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Allows the user to reserve a cdr, this will create a new reservation entity attached to a wallet operation", notes = "A reservation has expiration limit save in the provider entity (PREPAID_RESRV_DELAY_MS)")
 	public CdrReservationResponseDto reserveCdr(String cdr) {
 		CdrReservationResponseDto result = new CdrReservationResponseDto();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
@@ -102,6 +109,7 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Confirms the reservation")
 	public ActionStatus confirmReservation(PrepaidReservationDto reservationDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -122,6 +130,7 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Cancels the reservation")
 	public ActionStatus cancelReservation(PrepaidReservationDto reservationDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

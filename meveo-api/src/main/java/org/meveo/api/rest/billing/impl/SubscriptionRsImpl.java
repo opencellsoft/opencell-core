@@ -1,5 +1,8 @@
 package org.meveo.api.rest.billing.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -26,12 +29,14 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/billing/subscription", tags = "subscription")
 public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
 	@Inject
 	private SubscriptionApi subscriptionApi;
 
 	@Override
+	@ApiOperation(value = "This function allows to create a subscription. It does not activate it.")
 	public ActionStatus create(SubscriptionDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -52,6 +57,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
+	@ApiOperation(value = "This function updates a subscription. It cannot update a subscription with status=RESILIATED.")
 	public ActionStatus update(SubscriptionDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -72,6 +78,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus instantiateServices(InstantiateServicesRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -92,6 +99,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Activate services. Subscription should not be in status (RESILIATED OR CANCELLED). This service allows to override the charge instance price before activation. This service is actually a 2 step process: service instantiation then activation. If service.subscriptionDate is not set a service is only instantiated else it's instantiated then activated.")
 	public ActionStatus activateServices(ActivateServicesRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -112,6 +120,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Apply one shot charge. Subscription should not be in status (RESILIATED OR CANCELLED).")
 	public ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -132,6 +141,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Terminate a subscription. If subscription status is RESILIATED, an error is thrown.")
 	public ActionStatus terminateSubscription(TerminateSubscriptionRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -152,6 +162,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Terminate a list of services. If a service is already TERMINATED, an error is thrown.")
 	public ActionStatus terminateServices(TerminateSubscriptionServicesRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -172,6 +183,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Return a list of subscriptions given a user account.", responseContainer = "List")
 	public SubscriptionsResponseDto listByUserAccount(String userAccountCode) {
 		SubscriptionsResponseDto result = new SubscriptionsResponseDto();
 
@@ -192,6 +204,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public GetSubscriptionResponseDto findSubscription(String subscriptionCode) {
 		GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
@@ -210,11 +223,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdate(SubscriptionDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			subscriptionApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {

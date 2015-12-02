@@ -1,5 +1,8 @@
 package org.meveo.api.rest.account.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -17,12 +20,14 @@ import org.meveo.api.rest.impl.BaseRs;
 
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/account/title", tags = "title")
 public class TitleRsImpl extends BaseRs implements TitleRs {
 
 	@Inject
 	private TitleApi titleApi;
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus create(TitleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -43,6 +48,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public TitleResponseDto find(String titleCode) {
 		TitleResponseDto result = new TitleResponseDto();
 
@@ -64,6 +70,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus update(TitleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -84,6 +91,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus remove(String titleCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -104,6 +112,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdate(TitleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

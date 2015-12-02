@@ -1,5 +1,8 @@
 package org.meveo.api.rest.account.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -23,12 +26,14 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/account/customer", tags = "customer")
 public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
 	@Inject
 	private CustomerApi customerApi;
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus create(CustomerDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -49,6 +54,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus update(CustomerDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -69,6 +75,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public GetCustomerResponseDto find(String customerCode) {
 		GetCustomerResponseDto result = new GetCustomerResponseDto();
 
@@ -89,6 +96,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus remove(String customerCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -109,6 +117,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Filters are: category, seller, brand and provider")
 	public CustomersResponseDto list(CustomerDto postData) {
 		CustomersResponseDto result = new CustomersResponseDto();
 
@@ -129,6 +138,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createBrand(CustomerBrandDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -149,6 +159,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createCategory(CustomerCategoryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -169,6 +180,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus updateCategory(CustomerCategoryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -187,8 +199,9 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdateCategory(CustomerCategoryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -207,8 +220,9 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus removeBrand(String brandCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -229,6 +243,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus removeCategory(String categoryCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -247,8 +262,9 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdate(CustomerDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -267,8 +283,9 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus updateBrand(CustomerBrandDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -287,8 +304,9 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdateBrand(CustomerBrandDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -307,4 +325,5 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+
 }

@@ -1,5 +1,8 @@
 package org.meveo.api.rest.account.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -25,12 +28,14 @@ import org.meveo.api.rest.impl.BaseRs;
  */
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/account/customerAccount", tags = "customerAccount")
 public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 
 	@Inject
 	private CustomerAccountApi customerAccountApi;
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus create(CustomerAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -51,6 +56,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus update(CustomerAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -71,6 +77,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode) {
 		GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
@@ -91,6 +98,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus remove(String customerAccountCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -111,6 +119,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public CustomerAccountsResponseDto listByCustomer(String customerCode) {
 		CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
 
@@ -131,6 +140,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "Performs dunning exclusion to customer account")
 	public ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto dunningDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
@@ -148,6 +158,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createCreditCategory(CreditCategoryDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -168,6 +179,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus removeCreditCategory(String creditCategoryCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -186,8 +198,9 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdate(CustomerAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -206,4 +219,5 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
+
 }

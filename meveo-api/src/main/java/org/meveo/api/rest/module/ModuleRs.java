@@ -23,7 +23,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
 public interface ModuleRs extends IBaseRs {
-	
+
 	@POST
 	@Path("/")
 	ActionStatus create(ModuleDto moduleDto);
@@ -32,16 +32,20 @@ public interface ModuleRs extends IBaseRs {
 	@Path("/")
 	ActionStatus update(ModuleDto moduleDto);
 
+	@POST
+	@Path("/createOrUpdate")
+	ActionStatus createOrUpdate(ModuleDto moduleDto);
+
 	@DELETE
 	@Path("/{code}")
 	ActionStatus delete(@PathParam("code") String code);
-	
+
 	@GET
 	@Path("/list")
 	MeveoModuleDtosResponse list();
-	
+
 	@GET
 	@Path("/")
-	MeveoModuleDtoResponse get(@QueryParam("code")String code);
+	MeveoModuleDtoResponse get(@QueryParam("code") String code);
 
 }

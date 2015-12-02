@@ -1,5 +1,8 @@
 package org.meveo.api.rest.notification.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -19,12 +22,14 @@ import org.meveo.api.rest.notification.EmailNotificationRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/notification/email", tags = "notif_email")
 public class EmailNotificationRsImpl extends BaseRs implements EmailNotificationRs {
 
 	@Inject
 	private EmailNotificationApi emailNotificationApi;
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus create(EmailNotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -34,11 +39,11 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error occurred while creating email notification ",e);
+			log.error("error occurred while creating email notification ", e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error generated while creating  email notification ",e);
+			log.error("error generated while creating  email notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -46,6 +51,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus update(EmailNotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -55,11 +61,11 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error occurred while updating email notification ",e);
+			log.error("error occurred while updating email notification ", e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error generated while updating email notification ",e);
+			log.error("error generated while updating email notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -67,6 +73,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public GetEmailNotificationResponseDto find(String notificationCode) {
 		GetEmailNotificationResponseDto result = new GetEmailNotificationResponseDto();
 
@@ -76,11 +83,11 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occurred while getting email notification ",e);
+			log.error("error occurred while getting email notification ", e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting email notification ",e);
+			log.error("error generated while getting email notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -88,6 +95,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus remove(String notificationCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -97,18 +105,19 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error occurred while removing email notification ",e);
+			log.error("error occurred while removing email notification ", e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error generated while removing email notification ",e);
+			log.error("error generated while removing email notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdate(EmailNotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -118,11 +127,11 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error occurred while creating email notification ",e);
+			log.error("error occurred while creating email notification ", e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error generated while creating  email notification ",e);
+			log.error("error generated while creating  email notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);

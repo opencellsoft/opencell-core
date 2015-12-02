@@ -67,6 +67,27 @@ public class SwaggerBootStrap extends HttpServlet {
 				.description(
 						"Billing cycle is use in billing account and is associated with a billing cycle type calendar")
 				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Settings")));
+		swagger.tag(new Tag().name("occTemplate").description("Operations about occ template")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Settings")));
+		swagger.tag(new Tag().name("customFieldTemplate").description("Operations about custom field template")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Settings")));
+		swagger.tag(new Tag().name("customEntityTemplate").description("Operations about custom entity template")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Settings")));
+		swagger.tag(new Tag().name("customEntityInstance").description("Operations about custom entity instance")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Settings")));
+		swagger.tag(new Tag().name("permission").description("Operations about permission")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Settings")));
+		swagger.tag(new Tag().name("role").description("Operations about role")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Settings")));
+
+		swagger.tag(new Tag()
+				.name("subscription")
+				.description("Operations about subscription")
+				.externalDocs(
+						new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Subscription")));
+
+		swagger.tag(new Tag().name("wallet").description("Operations about wallet")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Wallet")));
 
 		// catalog
 		swagger.tag(new Tag()
@@ -105,6 +126,81 @@ public class SwaggerBootStrap extends HttpServlet {
 				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Catalog")));
 		swagger.tag(new Tag().name("triggeredEdr").description("Operations about triggered edr")
 				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Catalog")));
+
+		swagger.tag(new Tag().name("customer").description("Operations about customer")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Accounts")));
+		swagger.tag(new Tag().name("customerAccount").description("Operations about customer account")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Accounts")));
+		swagger.tag(new Tag().name("billingAccount").description("Operations about billing account")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Accounts")));
+		swagger.tag(new Tag().name("userAccount").description("Operations about user account")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Accounts")));
+		swagger.tag(new Tag().name("access").description("Operations about access")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Accounts")));
+		swagger.tag(new Tag()
+				.name("accountHierarchy")
+				.description(
+						"<pre>"
+								+ "This API manage the same set of account hierarchy defined above, the only difference is it creates the entire hierarchy in one service."
+								+ "</pre>")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Accounts")));
+		swagger.tag(new Tag()
+				.name("customerHierarchy")
+				.description(
+						"What this service does: This service allows to create / update (if exist already) and close / terminate (if termination date is set) a list of customer, customer accounts, billing accounts, user accounts, subscriptions, services, and access in one transaction. It can activate and terminate subscription and service instance. Close customer account. Terminate billing and user account.")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Accounts")));
+		swagger.tag(new Tag().name("accountOperation").description("Operations about account operation")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Accounts")));
+		swagger.tag(new Tag().name("title").description("Operations about title")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Accounts")));
+
+		swagger.tag(new Tag()
+				.name("communication")
+				.description("Operations about communication")
+				.externalDocs(
+						new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Communications")));
+
+		swagger.tag(new Tag()
+				.name("filteredList")
+				.description("Operations about filtered list")
+				.externalDocs(
+						new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Filtered_List")));
+
+		swagger.tag(new Tag().name("job").description("Operations about job")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Job")));
+
+		swagger.tag(new Tag()
+				.name("mediation")
+				.description("Operations about mediation")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Mediation")));
+
+		swagger.tag(new Tag().name("module").description("Operations about module")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Module")));
+
+		swagger.tag(new Tag()
+				.name("notification")
+				.description("Operations about notification")
+				.externalDocs(
+						new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Notification")));
+		swagger.tag(new Tag()
+				.name("notif_webhook")
+				.description("Operations about webhook")
+				.externalDocs(
+						new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Notification")));
+		swagger.tag(new Tag()
+				.name("notif_email")
+				.description("Operations about email")
+				.externalDocs(
+						new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Notification")));
+
+		swagger.tag(new Tag().name("payment").description("Operations about payment")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Payment")));
+
+		swagger.tag(new Tag()
+				.name("Instance")
+				.description("Operations about scriptInstance")
+				.externalDocs(
+						new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Script_Instance")));
 
 		swagger.tag(new Tag()
 				.name("invoice")

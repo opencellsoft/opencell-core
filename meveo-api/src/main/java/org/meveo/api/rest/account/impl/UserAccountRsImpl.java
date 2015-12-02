@@ -1,5 +1,8 @@
 package org.meveo.api.rest.account.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -21,12 +24,14 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/account/userAccount", tags = "userAccount")
 public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 
 	@Inject
 	private UserAccountApi userAccountApi;
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus create(UserAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -47,6 +52,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus update(UserAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -67,6 +73,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public GetUserAccountResponseDto find(String userAccountCode) {
 		GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
@@ -87,6 +94,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus remove(String userAccountCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -107,6 +115,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public UserAccountsResponseDto listByBillingAccount(String billingAccountCode) {
 		UserAccountsResponseDto result = new UserAccountsResponseDto();
 
@@ -126,8 +135,9 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdate(UserAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

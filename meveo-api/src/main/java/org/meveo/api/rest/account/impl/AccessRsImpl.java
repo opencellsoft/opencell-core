@@ -1,5 +1,8 @@
 package org.meveo.api.rest.account.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -21,12 +24,14 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/account/access", tags = "access")
 public class AccessRsImpl extends BaseRs implements AccessRs {
 
 	@Inject
 	private AccessApi accessApi;
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus create(AccessDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -47,6 +52,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus update(AccessDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -67,6 +73,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public GetAccessResponseDto find(String accessCode, String subscriptionCode) {
 		GetAccessResponseDto result = new GetAccessResponseDto();
 
@@ -87,6 +94,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus remove(String accessCode, String subscriptionCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -107,6 +115,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public AccessesResponseDto listBySubscription(String subscriptionCode) {
 		AccessesResponseDto result = new AccessesResponseDto();
 
@@ -125,8 +134,9 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdate(AccessDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

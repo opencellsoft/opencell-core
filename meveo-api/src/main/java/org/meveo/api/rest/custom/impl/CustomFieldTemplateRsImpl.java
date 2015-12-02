@@ -1,5 +1,8 @@
 package org.meveo.api.rest.custom.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -20,12 +23,14 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/customFieldTemplate", tags = "customFieldTemplate")
 public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemplateRs {
 
 	@Inject
 	private CustomFieldTemplateApi customFieldTemplateApi;
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus create(CustomFieldTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -46,6 +51,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus update(CustomFieldTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -66,6 +72,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus remove(String customFieldTemplateCode, String appliesTo) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -86,6 +93,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public GetCustomFieldTemplateReponseDto find(String customFieldTemplateCode, String appliesTo) {
 		GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
@@ -105,8 +113,9 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdate(CustomFieldTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

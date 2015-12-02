@@ -57,7 +57,8 @@ public class ModuleApi extends BaseApi {
 	private NotificationService notificationService;
 
 	public void create(ModuleDto moduleDto, User currentUser) throws MeveoApiException {
-		if (StringUtils.isBlank(moduleDto.getCode()) || StringUtils.isBlank(moduleDto.getDescription())||StringUtils.isBlank(moduleDto.getLicense())) {
+		if (StringUtils.isBlank(moduleDto.getCode()) || StringUtils.isBlank(moduleDto.getDescription())
+				|| StringUtils.isBlank(moduleDto.getLicense())) {
 			if (StringUtils.isBlank(moduleDto.getCode())) {
 				missingParameters.add("code");
 			}
@@ -86,71 +87,74 @@ public class ModuleApi extends BaseApi {
 					missingParameters.add("module item type is null");
 					throw new MissingParameterException(getMissingParametersExceptionMessage());
 				}
-				moduleItem=getModuleItemFromDto(itemDto, provider);
+				moduleItem = getModuleItemFromDto(itemDto, provider);
 				meveoModule.addModuleItem(moduleItem);
 			}
 		}
 		meveoModuleService.create(meveoModule, currentUser, provider);
 	}
 
-	private MeveoModuleItem getModuleItemFromDto(ModuleItemDto itemDto,Provider provider) throws EntityDoesNotExistsException{
-		MeveoModuleItem result=null;
+	private MeveoModuleItem getModuleItemFromDto(ModuleItemDto itemDto, Provider provider)
+			throws EntityDoesNotExistsException {
+		MeveoModuleItem result = null;
 		switch (itemDto.getItemType()) {
-			case CET:
-				CustomEntityTemplate cet = customEntityTemplateService.findByCode(itemDto.getItemCode(),provider);
-				if(cet!=null){
-					result=new MeveoModuleItem(cet.getCode(), ModuleItemTypeEnum.CET);
-				}else{
-					throw new EntityDoesNotExistsException(CustomEntityTemplate.class,itemDto.getItemCode());
-				}
-				break;
-			case CFT:
-				CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(itemDto.getItemCode(),itemDto.getAppliesTo(),provider);
-				if(cft!=null){
-					result=new MeveoModuleItem(cft.getCode(),cft.getAppliesTo(),ModuleItemTypeEnum.CFT);
-				}else{
-					throw new EntityDoesNotExistsException(CustomFieldTemplate.class,itemDto.getItemCode());
-				}
-				break;
-			case FILTER:
-				Filter filter = filterService.findByCode(itemDto.getItemCode(),provider);
-				if(filter!=null){
-					result=new MeveoModuleItem(filter.getCode(),ModuleItemTypeEnum.FILTER);
-				}else{
-					throw new EntityDoesNotExistsException(Filter.class,itemDto.getItemCode());
-				}
-				break;
-			case SCRIPT:
-				ScriptInstance script = scriptInstanceService.findByCode(itemDto.getItemCode(),provider);
-				if(script!=null){
-					result=new MeveoModuleItem(itemDto.getItemCode(),ModuleItemTypeEnum.SCRIPT);
-				}else{
-					throw new EntityDoesNotExistsException(ScriptInstance.class,itemDto.getItemCode());
-				}
-				break;
-			case JOBINSTANCE:
-				JobInstance job=jobInstanceService.findByCode(itemDto.getItemCode(),provider);
-				if(job!=null){
-					result=new MeveoModuleItem(itemDto.getItemCode(),ModuleItemTypeEnum.JOBINSTANCE);
-				}else{
-					throw new EntityDoesNotExistsException(JobInstance.class,itemDto.getItemCode());
-				}
-				break;
-			case NOTIFICATION:
-				Notification notification=notificationService.findByCode(itemDto.getItemCode(),provider);
-				if(notification!=null){
-					result=new MeveoModuleItem(itemDto.getItemCode(), ModuleItemTypeEnum.NOTIFICATION);
-				}else{
-					throw new EntityDoesNotExistsException(Notification.class,itemDto.getItemCode());
-				}
-				break;
-			default:
+		case CET:
+			CustomEntityTemplate cet = customEntityTemplateService.findByCode(itemDto.getItemCode(), provider);
+			if (cet != null) {
+				result = new MeveoModuleItem(cet.getCode(), ModuleItemTypeEnum.CET);
+			} else {
+				throw new EntityDoesNotExistsException(CustomEntityTemplate.class, itemDto.getItemCode());
 			}
+			break;
+		case CFT:
+			CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(itemDto.getItemCode(),
+					itemDto.getAppliesTo(), provider);
+			if (cft != null) {
+				result = new MeveoModuleItem(cft.getCode(), cft.getAppliesTo(), ModuleItemTypeEnum.CFT);
+			} else {
+				throw new EntityDoesNotExistsException(CustomFieldTemplate.class, itemDto.getItemCode());
+			}
+			break;
+		case FILTER:
+			Filter filter = filterService.findByCode(itemDto.getItemCode(), provider);
+			if (filter != null) {
+				result = new MeveoModuleItem(filter.getCode(), ModuleItemTypeEnum.FILTER);
+			} else {
+				throw new EntityDoesNotExistsException(Filter.class, itemDto.getItemCode());
+			}
+			break;
+		case SCRIPT:
+			ScriptInstance script = scriptInstanceService.findByCode(itemDto.getItemCode(), provider);
+			if (script != null) {
+				result = new MeveoModuleItem(itemDto.getItemCode(), ModuleItemTypeEnum.SCRIPT);
+			} else {
+				throw new EntityDoesNotExistsException(ScriptInstance.class, itemDto.getItemCode());
+			}
+			break;
+		case JOBINSTANCE:
+			JobInstance job = jobInstanceService.findByCode(itemDto.getItemCode(), provider);
+			if (job != null) {
+				result = new MeveoModuleItem(itemDto.getItemCode(), ModuleItemTypeEnum.JOBINSTANCE);
+			} else {
+				throw new EntityDoesNotExistsException(JobInstance.class, itemDto.getItemCode());
+			}
+			break;
+		case NOTIFICATION:
+			Notification notification = notificationService.findByCode(itemDto.getItemCode(), provider);
+			if (notification != null) {
+				result = new MeveoModuleItem(itemDto.getItemCode(), ModuleItemTypeEnum.NOTIFICATION);
+			} else {
+				throw new EntityDoesNotExistsException(Notification.class, itemDto.getItemCode());
+			}
+			break;
+		default:
+		}
 		return result;
 	}
+
 	public void update(ModuleDto moduleDto, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(moduleDto.getCode()) && StringUtils.isBlank(moduleDto.getDescription())
-				|| StringUtils.isBlank(moduleDto.getDisabled())||StringUtils.isBlank(moduleDto.getLicense())) {
+				|| StringUtils.isBlank(moduleDto.getDisabled()) || StringUtils.isBlank(moduleDto.getLicense())) {
 			if (StringUtils.isBlank(moduleDto.getCode())) {
 				missingParameters.add("module code is null");
 			}
@@ -173,25 +177,25 @@ public class ModuleApi extends BaseApi {
 			meveoModule.setDescription(moduleDto.getDescription());
 			meveoModule.setDisabled(moduleDto.getDisabled());
 			meveoModule.setLicense(moduleDto.getLicense());
-			List<MeveoModuleItem> temps=new ArrayList<MeveoModuleItem>();
-			if (!StringUtils.isBlank(moduleDto.getModuleItems())&&moduleDto.getModuleItems().size()>0) {
+			List<MeveoModuleItem> temps = new ArrayList<MeveoModuleItem>();
+			if (!StringUtils.isBlank(moduleDto.getModuleItems()) && moduleDto.getModuleItems().size() > 0) {
 				MeveoModuleItem moduleItem = null;
 				for (ModuleItemDto itemDto : moduleDto.getModuleItems()) {
 					if (StringUtils.isBlank(itemDto.getItemType())) {
 						missingParameters.add("module item type is null");
 						throw new MissingParameterException(getMissingParametersExceptionMessage());
 					}
-					moduleItem=getModuleItemFromDto(itemDto, provider);
-					if(!meveoModule.getModuleItems().contains(moduleItem)){
+					moduleItem = getModuleItemFromDto(itemDto, provider);
+					if (!meveoModule.getModuleItems().contains(moduleItem)) {
 						meveoModule.addModuleItem(moduleItem);
 					}
 					temps.add(moduleItem);
 				}
 			}
-			Iterator<MeveoModuleItem> it=meveoModule.getModuleItems().iterator();
-			while(it.hasNext()){
-				MeveoModuleItem i=it.next();
-				if(!temps.contains(i)){
+			Iterator<MeveoModuleItem> it = meveoModule.getModuleItems().iterator();
+			while (it.hasNext()) {
+				MeveoModuleItem i = it.next();
+				if (!temps.contains(i)) {
 					i.setMeveoModule(null);
 					it.remove();
 				}
@@ -212,16 +216,18 @@ public class ModuleApi extends BaseApi {
 	public List<ModuleDto> list(User currentUser) throws EntityDoesNotExistsException {
 		Provider provider = currentUser.getProvider();
 		List<MeveoModule> meveoModules = meveoModuleService.list(provider);
-		List<ModuleDto> result=new ArrayList<ModuleDto>();
-		ModuleDto moduleDto=null;
-		for(MeveoModule meveoModule:meveoModules){
-			moduleDto=new ModuleDto(meveoModule.getCode(),meveoModule.getDescription(),meveoModule.getLicense(),meveoModule.isDisabled());
-			List<MeveoModuleItem> moduleItems=meveoModule.getModuleItems();
-			if(moduleItems!=null&&moduleItems.size()>0){
-				List<ModuleItemDto> itemDtos=new ArrayList<ModuleItemDto>();
-				ModuleItemDto itemDto=null;
-				for(MeveoModuleItem moduleItem:moduleItems){
-					itemDto=new ModuleItemDto(moduleItem.getItemCode(),moduleItem.getAppliesTo(),moduleItem.getItemType());
+		List<ModuleDto> result = new ArrayList<ModuleDto>();
+		ModuleDto moduleDto = null;
+		for (MeveoModule meveoModule : meveoModules) {
+			moduleDto = new ModuleDto(meveoModule.getCode(), meveoModule.getDescription(), meveoModule.getLicense(),
+					meveoModule.isDisabled());
+			List<MeveoModuleItem> moduleItems = meveoModule.getModuleItems();
+			if (moduleItems != null && moduleItems.size() > 0) {
+				List<ModuleItemDto> itemDtos = new ArrayList<ModuleItemDto>();
+				ModuleItemDto itemDto = null;
+				for (MeveoModuleItem moduleItem : moduleItems) {
+					itemDto = new ModuleItemDto(moduleItem.getItemCode(), moduleItem.getAppliesTo(),
+							moduleItem.getItemType());
 					itemDtos.add(itemDto);
 				}
 				moduleDto.setModuleItems(itemDtos);
@@ -230,23 +236,38 @@ public class ModuleApi extends BaseApi {
 		}
 		return result;
 	}
+
 	public ModuleDto get(String code, User currentUser) throws EntityDoesNotExistsException {
 		Provider provider = currentUser.getProvider();
 		MeveoModule meveoModule = meveoModuleService.findByCode(code, provider);
 		if (meveoModule == null) {
 			throw new EntityDoesNotExistsException(MeveoModule.class, code);
 		}
-		ModuleDto moduleDto=new ModuleDto(meveoModule.getCode(),meveoModule.getDescription(),meveoModule.getLicense(),meveoModule.isDisabled());
-		List<MeveoModuleItem> moduleItems=meveoModule.getModuleItems();
-		if(moduleItems!=null&&moduleItems.size()>0){
-			List<ModuleItemDto> itemDtos=new ArrayList<ModuleItemDto>();
-			ModuleItemDto itemDto=null;
-			for(MeveoModuleItem moduleItem:moduleItems){
-				itemDto=new ModuleItemDto(moduleItem.getItemCode(),moduleItem.getAppliesTo(),moduleItem.getItemType());
+		ModuleDto moduleDto = new ModuleDto(meveoModule.getCode(), meveoModule.getDescription(),
+				meveoModule.getLicense(), meveoModule.isDisabled());
+		List<MeveoModuleItem> moduleItems = meveoModule.getModuleItems();
+		if (moduleItems != null && moduleItems.size() > 0) {
+			List<ModuleItemDto> itemDtos = new ArrayList<ModuleItemDto>();
+			ModuleItemDto itemDto = null;
+			for (MeveoModuleItem moduleItem : moduleItems) {
+				itemDto = new ModuleItemDto(moduleItem.getItemCode(), moduleItem.getAppliesTo(),
+						moduleItem.getItemType());
 				itemDtos.add(itemDto);
 			}
 			moduleDto.setModuleItems(itemDtos);
 		}
 		return moduleDto;
+	}
+
+	public void createOrUpdate(ModuleDto postData, User currentUser) throws MeveoApiException {
+		MeveoModule meveoModule = meveoModuleService.findByCode(postData.getCode(), currentUser.getProvider());
+		if (meveoModule == null) {
+			// create
+			create(postData, currentUser);
+		} else {
+			// update
+			update(postData, currentUser);
+		}
+
 	}
 }

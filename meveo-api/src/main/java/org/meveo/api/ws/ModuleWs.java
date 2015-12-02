@@ -30,4 +30,7 @@ public interface ModuleWs extends IBaseWs {
 
 	@WebMethod
 	MeveoModuleDtoResponse get(@WebParam(name = "code") String code);
+
+	@WebMethod
+	ActionStatus createOrUpdate(@WebParam(name = "module") ModuleDto moduleDto);
 }

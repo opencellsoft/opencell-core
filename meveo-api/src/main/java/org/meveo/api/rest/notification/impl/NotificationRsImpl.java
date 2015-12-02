@@ -1,5 +1,8 @@
 package org.meveo.api.rest.notification.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -21,12 +24,14 @@ import org.meveo.api.rest.notification.NotificationRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/notification", tags = "notification")
 public class NotificationRsImpl extends BaseRs implements NotificationRs {
 
 	@Inject
 	private NotificationApi notificationApi;
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus create(NotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -36,11 +41,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error occurred while creating notification ",e);
+			log.error("error occurred while creating notification ", e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error generated while creating notification ",e);
+			log.error("error generated while creating notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -48,6 +53,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus update(NotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -57,11 +63,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error occurred while updating notification ",e);
+			log.error("error occurred while updating notification ", e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error generated while updating notification ",e);
+			log.error("error generated while updating notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -69,6 +75,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public GetNotificationResponseDto find(String notificationCode) {
 		GetNotificationResponseDto result = new GetNotificationResponseDto();
 
@@ -78,11 +85,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occurred while getting notification ",e);
+			log.error("error occurred while getting notification ", e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting notification ",e);
+			log.error("error generated while getting notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -90,6 +97,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus remove(String notificationCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -99,11 +107,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error occurred while removing notification ",e);
+			log.error("error occurred while removing notification ", e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error generated while removing notification ",e);
+			log.error("error generated while removing notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -111,6 +119,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
+	@ApiOperation(value = "", responseContainer = "List")
 	public NotificationHistoriesResponseDto listNotificationHistory() {
 		NotificationHistoriesResponseDto result = new NotificationHistoriesResponseDto();
 
@@ -120,11 +129,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occurred while getting list notification history",e);
+			log.error("error occurred while getting list notification history", e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting list notification history ",e);
+			log.error("error generated while getting list notification history ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
@@ -132,6 +141,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
+	@ApiOperation(value = "", responseContainer = "List")
 	public InboundRequestsResponseDto listInboundRequest() {
 		InboundRequestsResponseDto result = new InboundRequestsResponseDto();
 
@@ -141,18 +151,19 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occured while getting list inbound request response ",e);
+			log.error("error occured while getting list inbound request response ", e);
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting list inbound request response ",e);
+			log.error("error generated while getting list inbound request response ", e);
 		}
 
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdate(NotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -162,11 +173,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error occurred while creating notification ",e);
+			log.error("error occurred while creating notification ", e);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			log.error("error generated while creating notification ",e);
+			log.error("error generated while creating notification ", e);
 		}
 
 		log.debug("RESPONSE={}", result);

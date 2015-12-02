@@ -1,5 +1,7 @@
 package org.meveo.api.rest.filter.impl;
 
+import io.swagger.annotations.Api;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/filteredList", tags = "filteredList")
 public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
 
 	@Inject

@@ -1,5 +1,8 @@
 package org.meveo.api.rest.impl;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -15,9 +18,9 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.OccTemplateRs;
 import org.slf4j.Logger;
 
-
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
+@Api(value = "/occTemplate", tags = "occTemplate")
 public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
 
 	@Inject
@@ -27,6 +30,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
 	private OccTemplateApi occTemplateApi;
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus create(OccTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -47,6 +51,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus update(OccTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -67,6 +72,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public GetOccTemplateResponseDto find(String occTemplateCode) {
 		GetOccTemplateResponseDto result = new GetOccTemplateResponseDto();
 
@@ -87,6 +93,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
 	}
 
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus remove(String occTemplateCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -105,8 +112,9 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
+	@ApiOperation(value = "")
 	public ActionStatus createOrUpdate(OccTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
