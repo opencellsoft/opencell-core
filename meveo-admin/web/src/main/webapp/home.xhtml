@@ -477,15 +477,17 @@
 			</p:accordionPanel>
 			
 			<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
-		 <p:ajax event="tabChange" listener="#{configIssuesReportingBean.getJasperFiles}" />
+		 <p:ajax event="tabChange" listener="#{configIssuesReportingBean.getJasperFilesNotFound}" />
 			<p:tab>
 				<f:facet name="title">
 	               <h:outputText value="#{messages['configIssuesReporting.jasperFiles']} : "/>
-				   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir}" style="color:#3FCA21" rendered="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir!=0}"/>
-				   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir}" style="color:red" rendered="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir==0}"/>
+				   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir}" style="color:#3FCA21" rendered="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir==0}"/>
+				   <h:outputText value="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir}" style="color:red" rendered="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir!=0}"/>
 	            </f:facet> 
  
-			  <p:dataTable  var="jasper"  value="#{configIssuesReportingBean.jaspers}" id="jaspers_dataTable" style="width:900px;"  >		
+			  <p:dataTable  var="jasper"  value="#{configIssuesReportingBean.jaspers}" id="jaspers_dataTable" style="width:900px;" rows="10" paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15"  >		
 				<p:column>
 				<f:facet name="header">
 				<h:outputText value="#{messages['configIssuesReporting.jasperDirectory']}" />

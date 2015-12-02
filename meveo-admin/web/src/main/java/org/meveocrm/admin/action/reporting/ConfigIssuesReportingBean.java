@@ -169,8 +169,8 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
     	 scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError(currentProvider);
      } 
      
-     public void getJasperFiles(TabChangeEvent event){
-    	 jasperFilesList = invoiceService.getJasperFiles();
+     public void getJasperFilesNotFound(TabChangeEvent event){
+    	 jasperFilesList = invoiceService.getJasperFilesNotFound();
     	 if(jasperFilesList!=null && jasperFilesList.size()>0){
     		 jaspers = new ArrayList<>(jasperFilesList.entrySet());  
     	   }
@@ -190,7 +190,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity>{
 		    reportConfigDto.setNbrEdrOpen(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.OPEN, currentProvider).intValue());
 		    reportConfigDto.setNbrEdrRated(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.RATED, currentProvider).intValue());
 		    reportConfigDto.setNbrEdrRejected(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.REJECTED, currentProvider).intValue());
-		    reportConfigDto.setNbrJasperDir(invoiceService.getJasperFiles().size());
+		    reportConfigDto.setNbrJasperDir(invoiceService.getJasperFilesNotFound().size());
 	        }
 	        public Integer getNbrChargesWithNotPricePlan(){
 				return getNbrUsagesWithNotPricePlan()+getNbrRecurringWithNotPricePlan()+getNbrOneShotWithNotPricePlan();

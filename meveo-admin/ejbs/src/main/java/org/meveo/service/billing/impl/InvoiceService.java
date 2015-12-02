@@ -130,6 +130,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
+	
 
 	private String PDF_DIR_NAME = "pdf";
 	private String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
@@ -703,11 +704,40 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_PATERN);
 		return dateFormat.format(invoiceDate);
 	}
-
-	public  Map<String,List<String>> getJasperFiles(){
-	    return new HashMap<String, List<String>>();
-	   
-     }
+	public  Map<String,List<String>> getJasperFilesNotFound(){
+		List<String> jaspersNotFound =null; 
+		Map<String,List<String>> jasperFiles = new HashMap<String, List<String>>(); 
+		String[] filter ={"jasper"};
+		//get jasper files source
+		File sourceFileDir = new File(System.getProperty("jboss.home.dir")+ File.separator+"standalone"+ File.separator+"deployments"+ File.separator
+				+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+ ".war/WEB-INF/classes/jasper");
+		List<File> sourceFiles=(List<File>) FileUtils.listFiles(sourceFileDir,filter, true);  
+		
+		//check jaspers files
+		File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator+ getCurrentProvider().getCode() + File.separator+"jasper");
+		File[] foldersList = jasperDir.listFiles(); 
+		List<File> jasperList=null; 
+		List<String> filesName=null;
+		if (foldersList != null && foldersList.length >0) {
+			for (int i = 0; i < foldersList.length; i++) {
+				jaspersNotFound=new ArrayList<String>();
+				jasperList = (List<File>) FileUtils.listFiles(foldersList[i],filter, true); 
+				filesName=new ArrayList<String>();
+				for(File file :jasperList){
+					filesName.add(file.getName());
+				}
+				for(File f :sourceFiles){
+					if(!filesName.contains(f.getName())){
+						jaspersNotFound.add(f.getName());
+					}
+				}
+				if(jaspersNotFound!=null && jaspersNotFound.size()>0){	
+					jasperFiles.put(foldersList[i].getName(), jaspersNotFound);
+				}
+			}
+		}
+		return jasperFiles;
+	}
 
 	@SuppressWarnings("unchecked")
 	public void deleteInvoice(Invoice invoice) {
