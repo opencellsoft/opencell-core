@@ -49,7 +49,7 @@ public class BillingRunJob extends Job {
         lastTransactionDate.setActive(true);
         lastTransactionDate.setDescription("last transaction date");
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
-        lastTransactionDate.setValueRequired(true);
+        lastTransactionDate.setValueRequired(false);
         result.put("BillingRunJob_lastTransactionDate", lastTransactionDate);
 
         CustomFieldTemplate invoiceDate = new CustomFieldTemplate();
@@ -58,7 +58,7 @@ public class BillingRunJob extends Job {
         invoiceDate.setActive(true);
         invoiceDate.setDescription("invoice date");
         invoiceDate.setFieldType(CustomFieldTypeEnum.DATE);
-        invoiceDate.setValueRequired(true);
+        invoiceDate.setValueRequired(false);
         result.put("BillingRunJob_invoiceDate", invoiceDate);
 
         CustomFieldTemplate billingCycle = new CustomFieldTemplate();
