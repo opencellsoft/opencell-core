@@ -708,11 +708,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		List<String> jaspersNotFound =null; 
 		Map<String,List<String>> jasperFiles = new HashMap<String, List<String>>(); 
 		String[] filter ={"jasper"};
-		//get jasper files source
-		File sourceFileDir = new File(System.getProperty("jboss.home.dir")+ File.separator+"standalone"+ File.separator+"deployments"+ File.separator
-				+ParamBean.getInstance().getProperty("meveo.moduleName", "meveo")+ ".war/WEB-INF/classes/jasper");
-		List<File> sourceFiles=(List<File>) FileUtils.listFiles(sourceFileDir,filter, true);  
-		
+		//get jasper files source 
+		String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
+		File sourceFileDir = new File(sourcePath);
+		List<File> sourceFiles=(List<File>) FileUtils.listFiles(sourceFileDir,filter, true); 
 		//check jaspers files
 		File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator+ getCurrentProvider().getCode() + File.separator+"jasper");
 		File[] foldersList = jasperDir.listFiles(); 
