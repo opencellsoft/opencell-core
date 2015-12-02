@@ -1,11 +1,18 @@
 package org.meveo.api;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
+import javax.validation.Validator;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.ICustomFieldEntity;
@@ -27,7 +34,11 @@ public abstract class BaseApi {
 
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
-
+	
+	@Inject
+	private Validator validator;
+	
+	
 	protected List<String> missingParameters = new ArrayList<String>();
 
 	protected String getMissingParametersExceptionMessage() {
@@ -211,6 +222,20 @@ public abstract class BaseApi {
 
 		if (missingParameters.size() > 0) {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+	}
+	
+	/**
+	 * Validates the DTO based on its constraint annotations 
+	 * @param dto
+	 * @throws ConstraintViolationException
+	 * @throws ValidationException
+	 */
+	protected void validate(BaseDto dto) throws ConstraintViolationException, ValidationException {
+		
+		Set<ConstraintViolation<BaseDto>> violations = validator.validate(dto);
+		if (!violations.isEmpty()) {
+			throw new ConstraintViolationException(new HashSet<ConstraintViolation<BaseDto>>(violations));
 		}
 	}
 }
