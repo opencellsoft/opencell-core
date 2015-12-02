@@ -65,7 +65,7 @@ public abstract class Job {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
     
         if (!jobInstanceService.isJobRunning(jobInstance.getId()) && (jobInstance.isActive() || currentUser != null)) {
-            log.debug("Job {} of type {} execution start, info={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobInstance, currentUser);
+            log.debug("Job {} of type {} execution start, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser);
 
             try {            	            	
             	JobInstanceService.runningJobs.add(jobInstance.getId());
@@ -105,7 +105,7 @@ public abstract class Job {
 	@TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobInstance jobInstance, JobExecutionResultImpl result, User currentUser) {    
         if (!jobInstanceService.isJobRunning(jobInstance.getId()) && (jobInstance.isActive() || currentUser != null)) {
-            log.debug("Job {} of type {} execution start, info={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobInstance, currentUser);
+            log.debug("Job {} of type {} execution start, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser);
 
             try {
             	JobInstanceService.runningJobs.add(jobInstance.getId());
