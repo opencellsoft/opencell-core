@@ -28,6 +28,7 @@ import javax.naming.InitialContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -55,47 +56,47 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         }
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void persistResult(Job job, JobExecutionResult result, JobInstance jobInstance, User currentUser, JobCategoryEnum jobCategory) {
-        try {
-            log.info("JobExecutionService persistResult...");
-            JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(jobInstance, result);
-            if (!entity.isDone() || (entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity.getNbItemsProcessedWithWarning()) > 0) {
-                if (entity.isTransient()) {
-                    create(entity, currentUser, currentUser.getProvider());
-                } else {
-                    // search for job execution result
-                    JobExecutionResultImpl updateEntity = findById(result.getId());
-                    JobExecutionResultImpl.updateFromInterface(result, updateEntity);
-                }
-                result.setId(entity.getId());
-                log.info("PersistResult entity.isDone()=" + entity.isDone());
-                if (!entity.isDone()) {
-                    executeJob(job.getClass().getSimpleName(), jobInstance, currentUser, jobCategory);
-                } else if (jobInstance.getFollowingJob() != null) {
-                    try {
-                        executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(), currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
-                    } catch (Exception e) {
-                        log.warn("PersistResult cannot excute the following jobs.");
-                    }
-                }
-            } else {
-                log.info(job.getClass().getName() + ": nothing to do");
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void persistResult(Job job, JobExecutionResult result, JobInstance jobInstance, User currentUser, JobCategoryEnum jobCategory) {
+		try {
+			log.info("JobExecutionService persistResult...");
+			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(jobInstance, result);
+			boolean persistResult = false;
 
-                if (jobInstance.getFollowingJob() != null) {
-                    try {
-                        executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(), currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
-
-                    } catch (Exception e) {
-                        log.warn("PersistResult cannot excute the following jobs.");
-                    }
-                }
-            }
-        } catch (Exception e) {// FIXME:BusinessException e) {
-            log.error("error on persistResult", e);
-        }
-        log.info("JobExecutionService persistResult End");
-    }
+			if ((entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity.getNbItemsProcessedWithWarning()) > 0) {
+				log.info(job.getClass().getName() +entity.toString());
+				persistResult = true;
+			} else {
+				log.info(job.getClass().getName() + ": nothing to do");
+				persistResult = "true".equals(ParamBean.getInstance().getProperty("meveo.job.persistResult", "true"));
+			}
+			if (persistResult) {
+				if (entity.isTransient()) {
+					create(entity, currentUser, currentUser.getProvider());
+				} else {
+					// search for job execution result
+					JobExecutionResultImpl updateEntity = findById(result.getId());
+					if(updateEntity != null){
+						JobExecutionResultImpl.updateFromInterface(result, updateEntity);
+					}
+				}
+				result.setId(entity.getId());
+			}
+			log.info("PersistResult entity.isDone()=" + entity.isDone());
+			if (!entity.isDone()) {
+				executeJob(job.getClass().getSimpleName(), jobInstance, currentUser, jobCategory);
+			} else if (jobInstance.getFollowingJob() != null) {
+				try {
+					executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(), currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
+				} catch (Exception e) {
+					log.warn("PersistResult cannot excute the following jobs.");
+				}
+			}
+		} catch (Exception e) {// FIXME:BusinessException e) {
+			log.error("error on persistResult", e);
+		}
+		log.info("JobExecutionService persistResult End");
+	}
 
     private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {
         String sql = "select distinct t from JobExecutionResultImpl t";
