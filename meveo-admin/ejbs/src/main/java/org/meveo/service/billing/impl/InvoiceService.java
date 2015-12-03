@@ -705,39 +705,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return dateFormat.format(invoiceDate);
 	}
 	public  Map<String,List<String>> getJasperFilesNotFound(){
-		List<String> jaspersNotFound =null; 
 		Map<String,List<String>> jasperFiles = new HashMap<String, List<String>>(); 
-		String[] filter ={"jasper"};
-		
-		//get jasper files source 
-		String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
-		log.info("source.path :"+sourcePath);
-		File sourceFileDir = new File(sourcePath); 
-		log.info("sourceFileDir.absoluteFile :"+sourceFileDir.getAbsoluteFile());
-		List<File> sourceFiles=(List<File>) FileUtils.listFiles(sourceFileDir.getAbsoluteFile(),filter, true); 
-		//check jaspers files
-		File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator+ getCurrentProvider().getCode() + File.separator+"jasper");
-		File[] foldersList = jasperDir.listFiles(); 
-		List<File> jasperList=null; 
-		List<String> filesName=null;
-		if (foldersList != null && foldersList.length >0) {
-			for (int i = 0; i < foldersList.length; i++) {
-				jaspersNotFound=new ArrayList<String>();
-				jasperList = (List<File>) FileUtils.listFiles(foldersList[i].getAbsoluteFile(),filter, true); 
-				filesName=new ArrayList<String>();
-				for(File file :jasperList){
-					filesName.add(file.getName());
-				}
-				for(File f :sourceFiles){
-					if(!filesName.contains(f.getName())){
-						jaspersNotFound.add(f.getName());
-					}
-				}
-				if(jaspersNotFound!=null && jaspersNotFound.size()>0){	
-					jasperFiles.put(foldersList[i].getName(), jaspersNotFound);
-				}
-			}
-		}
 		return jasperFiles;
 	}
 
