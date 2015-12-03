@@ -43,6 +43,7 @@ import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
+import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -860,7 +861,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus matchOperations(MatchOperationRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -878,7 +879,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus unMatchingOperations(UnMatchingOperationRequestDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -1176,6 +1177,27 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public TitlesResponseDto listTitle() {
+		TitlesResponseDto result = new TitlesResponseDto();
+
+		try {
+			result.setTitles(titleApi.list(getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+			log.error(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+			log.error(e.getMessage());
 		}
 
 		log.debug("RESPONSE={}", result);
