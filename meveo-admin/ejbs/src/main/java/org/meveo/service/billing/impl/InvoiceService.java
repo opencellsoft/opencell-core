@@ -708,10 +708,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		List<String> jaspersNotFound =null; 
 		Map<String,List<String>> jasperFiles = new HashMap<String, List<String>>(); 
 		String[] filter ={"jasper"};
+		
 		//get jasper files source 
 		String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
-		File sourceFileDir = new File(sourcePath);
-		List<File> sourceFiles=(List<File>) FileUtils.listFiles(sourceFileDir,filter, true); 
+		log.info("source.path :"+sourcePath);
+		File sourceFileDir = new File(sourcePath); 
+		log.info("sourceFileDir.absoluteFile :"+sourceFileDir.getAbsoluteFile());
+		List<File> sourceFiles=(List<File>) FileUtils.listFiles(sourceFileDir.getAbsoluteFile(),filter, true); 
 		//check jaspers files
 		File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator+ getCurrentProvider().getCode() + File.separator+"jasper");
 		File[] foldersList = jasperDir.listFiles(); 
@@ -720,7 +723,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (foldersList != null && foldersList.length >0) {
 			for (int i = 0; i < foldersList.length; i++) {
 				jaspersNotFound=new ArrayList<String>();
-				jasperList = (List<File>) FileUtils.listFiles(foldersList[i],filter, true); 
+				jasperList = (List<File>) FileUtils.listFiles(foldersList[i].getAbsoluteFile(),filter, true); 
 				filesName=new ArrayList<String>();
 				for(File file :jasperList){
 					filesName.add(file.getName());
