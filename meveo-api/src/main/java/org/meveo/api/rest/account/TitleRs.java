@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
+import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -30,6 +31,10 @@ public interface TitleRs extends IBaseRs {
 	@GET
 	@Path("/")
 	TitleResponseDto find(@QueryParam("titleCode") String titleCode);
+
+	@GET
+	@Path("/list")
+	TitlesResponseDto list();
 
 	@PUT
 	@Path("/")

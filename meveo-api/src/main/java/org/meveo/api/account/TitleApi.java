@@ -1,9 +1,12 @@
 package org.meveo.api.account;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.response.TitleDto;
+import org.meveo.api.dto.response.TitlesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -129,5 +132,22 @@ public class TitleApi extends BaseApi {
 			// update
 			update(postData, currentUser);
 		}
+	}
+
+	public TitlesDto list(Provider provider) throws MeveoApiException {
+		TitlesDto titlesDto = new TitlesDto();
+		List<Title> titles = titleService.list(provider, true);
+
+		if (titles != null) {
+			for (Title title : titles) {
+				TitleDto titleDto = new TitleDto();
+				titleDto.setCode(title.getCode());
+				titleDto.setDescription(title.getDescription());
+				titleDto.setIsCompany(title.getIsCompany());
+				titlesDto.getTitle().add(titleDto);
+			}
+		}
+
+		return titlesDto;
 	}
 }

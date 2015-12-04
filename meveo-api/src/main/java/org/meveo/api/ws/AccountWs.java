@@ -34,6 +34,7 @@ import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
+import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 
@@ -262,5 +263,8 @@ public interface AccountWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createOrUpdateTitle(@WebParam(name = "title") TitleDto postData);
+
+	@WebMethod
+	TitlesResponseDto listTitle();
 
 }

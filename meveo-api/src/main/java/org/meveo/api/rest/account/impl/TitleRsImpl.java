@@ -13,6 +13,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
+import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.account.TitleRs;
@@ -126,6 +127,27 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
 			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public TitlesResponseDto list() {
+		TitlesResponseDto result = new TitlesResponseDto();
+
+		try {
+			result.setTitles(titleApi.list(getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+			log.error(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+			log.error(e.getMessage());
 		}
 
 		log.debug("RESPONSE={}", result);
