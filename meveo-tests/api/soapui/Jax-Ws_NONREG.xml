@@ -2,14 +2,21 @@
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:unMatchingOperations>
+      <ws:createInvoiceSubCategory>
          <!--Optional:-->
-         <unMatchingOperationRequest>
-            <!--Optional:-->
-            <customerAccountCode>${#TestSuite#ticket}_CA</customerAccountCode>
-            <!--Optional:-->
-            <accountOperationId>2</accountOperationId>
-         </unMatchingOperationRequest>
-      </ws:unMatchingOperations>
+         <invoiceSubCategory code="${#TestSuite#ticket}_ISC_2" description="${#TestSuite#ticket}_ISC_DESCRIPTION_2">
+            <invoiceCategory>CONSUMPTION</invoiceCategory>
+            <accountingCode>AC</accountingCode>
+            <country>
+             	<code>FR</code>
+             </country>
+             <tax>
+             	<code>TAX_05</code>
+             </tax>
+         </invoiceSubCategory>
+         <!-- <taxDescriptions></taxDescriptions> -->
+             
+        
+      </ws:createInvoiceSubCategory>
    </soapenv:Body>
 </soapenv:Envelope>
