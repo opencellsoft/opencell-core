@@ -170,7 +170,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	@Override
 	public Subscription initEntity() {
 		super.initEntity();
-		if (userAccountId != null) {
+		if (entity.getId() == null && userAccountId != null) {
 			UserAccount userAccount = userAccountService.findById(getUserAccountId());
 			populateAccounts(userAccount);
 
