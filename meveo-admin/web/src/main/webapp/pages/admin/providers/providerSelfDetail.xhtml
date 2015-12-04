@@ -16,7 +16,7 @@
     <ui:define name="body">  
 
         <hf:formPanel id="providerFormPanel" formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormPanel:providerFormId:tabView"
-            label="#{messages['provider.title']}" backingBean="#{providerBean}" showBackButton="false">
+            label="#{messages['provider.title']}" backingBean="#{providerBean}" showBackButton="false" showDeleteButton="false">
             <p:tabView id="tabView">
                 <p:tab title="#{messages['customer.tab.information']}">
 							<hf:formField label="#{messages['businessEntity.code']}"
