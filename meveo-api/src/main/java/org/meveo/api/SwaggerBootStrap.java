@@ -8,11 +8,13 @@ import io.swagger.models.Tag;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
 /**
  * @author Edward P. Legaspi
  **/
+@WebServlet
 public class SwaggerBootStrap extends HttpServlet {
 
 	private static final long serialVersionUID = 5397415749526330764L;
