@@ -62,7 +62,7 @@ public class WalletReservationService extends
 		}
 
 		return walletOperationService.getBalanceAmount(provider, seller, null,
-				null, userAccount.getBillingAccount(), null, startDate,
+				null,null, userAccount, startDate,
 				endDate, false, 1);
 	}
 
@@ -83,7 +83,7 @@ public class WalletReservationService extends
 		}
 
 		return walletOperationService.getBalanceAmount(provider, seller, null,
-				null, userAccount.getBillingAccount(), null, startDate,
+				null,null, userAccount, startDate,
 				endDate, true, 1);
 	}
 
@@ -104,7 +104,7 @@ public class WalletReservationService extends
 		}
 
 		return walletOperationService.getBalanceAmount(provider, seller, null,
-				null, userAccount.getBillingAccount(), null, startDate,
+				null, null, userAccount, startDate,
 				endDate, false, 2);
 	}
 
@@ -125,7 +125,7 @@ public class WalletReservationService extends
 		}
 
 		return walletOperationService.getBalanceAmount(provider, seller, null,
-				null, userAccount.getBillingAccount(), null, startDate,
+				null, null, userAccount, startDate,
 				endDate, true, 2);
 	}
 
@@ -146,7 +146,7 @@ public class WalletReservationService extends
 		}
 
 		return walletOperationService.getBalanceAmount(provider, seller, null,
-				null, userAccount.getBillingAccount(), null, startDate,
+				null,null, userAccount, startDate,
 				endDate, false, 3);
 	}
 
@@ -167,7 +167,7 @@ public class WalletReservationService extends
 		}
 
 		return walletOperationService.getBalanceAmount(provider, seller, null,
-				null, userAccount.getBillingAccount(), null, startDate,
+				null,null, userAccount, startDate,
 				endDate, true, 3);
 	}
 
