@@ -10,25 +10,26 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 
-@WebFilter(filterName="characterEncodingFilter",urlPatterns={"/*"})
-public class CharacterEncodingFilter implements Filter{
-	
+@WebFilter(filterName = "characterEncodingFilter", urlPatterns = { "/*" })
+public class CharacterEncodingFilter implements Filter {
+	private static final String ENCODING="UTF-8";
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
-		request.setCharacterEncoding("UTF-8");  
-        response.setCharacterEncoding("UTF-8");  
-        chain.doFilter(request, response);  
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		if (request.getCharacterEncoding() == null) {
+			request.setCharacterEncoding(ENCODING);
+		}
+		chain.doFilter(request, response);
 	}
 
 	@Override
 	public void destroy() {
-		
+
 	}
 
 }
