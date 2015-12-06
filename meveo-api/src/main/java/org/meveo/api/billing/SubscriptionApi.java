@@ -219,6 +219,10 @@ public class SubscriptionApi extends BaseApi {
 			// check if exists
 			List<ServiceToActivateDto> serviceToActivateDtos = new ArrayList<>();
 			for (ServiceToActivateDto serviceToActivateDto : postData.getServicesToActivateDto().getService()) {
+				if(StringUtils.isBlank(serviceToActivateDto.getSubscriptionDate())){					
+					missingParameters.add("SubscriptionDate");
+					throw new MissingParameterException(getMissingParametersExceptionMessage());
+				}
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode(), provider);
 				if (serviceTemplate == null) {
 					throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
