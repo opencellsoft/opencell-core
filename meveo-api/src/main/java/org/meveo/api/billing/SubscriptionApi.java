@@ -208,7 +208,7 @@ public class SubscriptionApi extends BaseApi {
 	}
 
 	public void activateServices(ActivateServicesRequestDto postData, User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getSubscription()) && postData.getServicesToActivateDto().getService() != null
+		if ( !StringUtils.isBlank(postData.getSubscription()) && postData.getServicesToActivateDto().getService() != null
 				&& postData.getServicesToActivateDto().getService().size() > 0) {
 			Provider provider = currentUser.getProvider();
 
@@ -223,12 +223,15 @@ public class SubscriptionApi extends BaseApi {
 
 			// check if exists
 			List<ServiceToActivateDto> serviceToActivateDtos = new ArrayList<>();
-			for (ServiceToActivateDto serviceToActivateDto : postData.getServicesToActivateDto().getService()) {
+			for (ServiceToActivateDto serviceToActivateDto : postData.getServicesToActivateDto().getService()) {				
+				if(StringUtils.isBlank(serviceToActivateDto.getSubscriptionDate())){					
+					missingParameters.add("SubscriptionDate");
+					throw new MissingParameterException(getMissingParametersExceptionMessage());
+				}
 				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode(), provider);
 				if (serviceTemplate == null) {
 					throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
 				}
-
 				serviceToActivateDto.setServiceTemplate(serviceTemplate);
 				serviceToActivateDtos.add(serviceToActivateDto);
 			}
