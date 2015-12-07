@@ -8,9 +8,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.meveo.model.admin.User;
 
 /**
  * @author Edward P. Legaspi
@@ -20,10 +17,7 @@ import org.meveo.model.admin.User;
 public class JobInstanceInfoDto implements Serializable {
 
 	private static final long serialVersionUID = -7091372162470026030L;
-
-	@XmlTransient
-	private User currentUser;
-
+	
 	@Deprecated
 	@XmlElement(required = false)
 	private String timerName;
@@ -34,10 +28,6 @@ public class JobInstanceInfoDto implements Serializable {
 	private Date lastTransactionDate;
 	private Date invoiceDate;
 	private String billingCycle;
-
-	public User getCurrentUser() {
-		return currentUser;
-	}
 
 	public Date getLastTransactionDate() {
 		return lastTransactionDate;
@@ -73,7 +63,7 @@ public class JobInstanceInfoDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "JobInstanceInfoDto [currentUser=" + currentUser + ", timerName=" + timerName + ", code=" + code
+		return "JobInstanceInfoDto [timerName=" + timerName + ", code=" + code
 				+ ", lastTransactionDate=" + lastTransactionDate + ", invoiceDate=" + invoiceDate + ", billingCycle="
 				+ billingCycle + "]";
 	}

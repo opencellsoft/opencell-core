@@ -1,5 +1,7 @@
 package org.meveo.api.dto.billing;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -32,6 +34,7 @@ public class ServiceToActivateDto implements Serializable {
 	private ChargeInstanceOverridesDto chargeInstanceOverrides;
 
 	@XmlTransient
+	@ApiModelProperty(hidden = true)
 	private ServiceTemplate serviceTemplate;
 
 	public String getCode() {
@@ -62,8 +65,9 @@ public class ServiceToActivateDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ServiceToActivateDto [code=" + code + ", quantity=" + quantity + ", subscriptionDate=" + subscriptionDate + ", chargeInstanceOverrides=" + chargeInstanceOverrides
-				+ ", serviceTemplate=" + serviceTemplate + "]";
+		return "ServiceToActivateDto [code=" + code + ", quantity=" + quantity + ", subscriptionDate="
+				+ subscriptionDate + ", chargeInstanceOverrides=" + chargeInstanceOverrides + ", serviceTemplate="
+				+ serviceTemplate + "]";
 	}
 
 	public ServiceTemplate getServiceTemplate() {
