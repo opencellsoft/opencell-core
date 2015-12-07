@@ -54,8 +54,8 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
 
-		return walletOperationService.getBalanceAmount(provider, seller, null, null, userAccount.getBillingAccount(),
-				null, startDate, endDate, false, 1);
+		return walletOperationService.getBalanceAmount(provider, seller, null, null,null,
+				userAccount, startDate, endDate, false, 1);
 	}
 
 	public BigDecimal getCurrentBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,
@@ -70,8 +70,8 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
 
-		return walletOperationService.getBalanceAmount(provider, seller, null, null, userAccount.getBillingAccount(),
-				null, startDate, endDate, true, 1);
+		return walletOperationService.getBalanceAmount(provider, seller, null, null,null,
+				userAccount, startDate, endDate, true, 1);
 	}
 
 	public BigDecimal getReservedBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
@@ -86,8 +86,8 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
 
-		return walletOperationService.getBalanceAmount(provider, seller, null, null, userAccount.getBillingAccount(),
-				null, startDate, endDate, false, 2);
+		return walletOperationService.getBalanceAmount(provider, seller, null, null,null,
+				userAccount, startDate, endDate, false, 2);
 	}
 
 	public BigDecimal getReservedBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,
@@ -102,8 +102,8 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
 
-		return walletOperationService.getBalanceAmount(provider, seller, null, null, userAccount.getBillingAccount(),
-				null, startDate, endDate, true, 2);
+		return walletOperationService.getBalanceAmount(provider, seller, null, null,null,
+				userAccount, startDate, endDate, true, 2);
 	}
 
 	public BigDecimal getOpenBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
@@ -118,8 +118,8 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
 
-		return walletOperationService.getBalanceAmount(provider, seller, null, null, userAccount.getBillingAccount(),
-				null, startDate, endDate, false, 3);
+		return walletOperationService.getBalanceAmount(provider, seller, null, null,null,
+				userAccount, startDate, endDate, false, 3);
 	}
 
 	public BigDecimal getOpenBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,
@@ -134,8 +134,8 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
 
-		return walletOperationService.getBalanceAmount(provider, seller, null, null, userAccount.getBillingAccount(),
-				null, startDate, endDate, true, 3);
+		return walletOperationService.getBalanceAmount(provider, seller, null, null,null,
+				userAccount, startDate, endDate, true, 3);
 	}
 
 	public BigDecimal getCurrentAmountWithoutTax() {

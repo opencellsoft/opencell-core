@@ -688,12 +688,6 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 		if(obj1==null&&obj2==null){
 			return true;
 		}
-		if(obj1 instanceof BusinessEntity){
-			BusinessEntity b1=(BusinessEntity)obj1;
-			BusinessEntity b2=(BusinessEntity)obj2;
-			return b1!=null?b1.getCode().equals(b2.getCode()):(obj2!=null?false:true);
-		}else{
-			return obj1!=null?obj1.equals(obj2):(obj2!=null?false:true);
-		}
+		return obj1!=null?obj1.equals(obj2):(obj2!=null?false:true);
 	}
 }
