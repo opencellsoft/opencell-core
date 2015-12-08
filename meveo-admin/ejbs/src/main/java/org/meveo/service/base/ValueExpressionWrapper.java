@@ -15,32 +15,30 @@ import javax.el.MapELResolver;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 
-import org.meveo.admin.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ValueExpressionWrapper {
 
     static ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
-    
+
     SimpleELResolver simpleELResolver;
     ELContext context;
     ValueExpression ve;
 
     static protected Logger log = LoggerFactory.getLogger(ValueExpressionWrapper.class);
-    
-    static HashMap<String,ValueExpressionWrapper> valueExpressionWrapperMap = new HashMap<String,ValueExpressionWrapper>();
-    
-    
-    public static Object evaluateExpression(String expression, Map<Object, Object> userMap,
-            @SuppressWarnings("rawtypes") Class resultClass) throws BusinessException {
+
+    static HashMap<String, ValueExpressionWrapper> valueExpressionWrapperMap = new HashMap<String, ValueExpressionWrapper>();
+
+    public static Object evaluateExpression(String expression, Map<Object, Object> userMap, @SuppressWarnings("rawtypes") Class resultClass) throws BusinessException {
         Object result = null;
         if (StringUtils.isBlank(expression)) {
             return null;
         }
         expression = StringUtils.trim(expression);
-        
+
         if (expression.indexOf("#{") < 0) {
             log.debug("the expression '{}' doesnt contain any EL", expression);
             if (resultClass.equals(String.class)) {
@@ -65,29 +63,29 @@ public class ValueExpressionWrapper {
         }
         return result;
     }
-    
-    private static Object getValue(String expression,Map<Object, Object> userMap,@SuppressWarnings("rawtypes") Class resultClass){
-        ValueExpressionWrapper result=null;
-        if(valueExpressionWrapperMap.containsKey(expression)){
-            result= valueExpressionWrapperMap.get(expression);
+
+    private static Object getValue(String expression, Map<Object, Object> userMap, @SuppressWarnings("rawtypes") Class resultClass) {
+        ValueExpressionWrapper result = null;
+        if (valueExpressionWrapperMap.containsKey(expression)) {
+            result = valueExpressionWrapperMap.get(expression);
         }
-        if(result==null){
-            result=new ValueExpressionWrapper(expression, userMap, resultClass);
+        if (result == null) {
+            result = new ValueExpressionWrapper(expression, userMap, resultClass);
         }
         return result.getValue(userMap);
     }
-    
-    private ValueExpressionWrapper(String expression,Map<Object, Object> userMap,@SuppressWarnings("rawtypes") Class resultClass){
+
+    private ValueExpressionWrapper(String expression, Map<Object, Object> userMap, @SuppressWarnings("rawtypes") Class resultClass) {
         simpleELResolver = new SimpleELResolver(userMap);
         final VariableMapper variableMapper = new SimpleVariableMapper();
-        final FunctionMapper functionMapper = new SimpleFunctionMapper();
+        final MeveoFunctionMapper functionMapper = new MeveoFunctionMapper();
         final CompositeELResolver compositeELResolver = new CompositeELResolver();
         compositeELResolver.add(simpleELResolver);
         compositeELResolver.add(new ArrayELResolver());
         compositeELResolver.add(new ListELResolver());
         compositeELResolver.add(new BeanELResolver());
         compositeELResolver.add(new MapELResolver());
-         context = new ELContext() {
+        context = new ELContext() {
             @Override
             public ELResolver getELResolver() {
                 return compositeELResolver;
@@ -105,7 +103,6 @@ public class ValueExpressionWrapper {
         };
         ve = expressionFactory.createValueExpression(context, expression, resultClass);
     }
- 
 
     private Object getValue(Map<Object, Object> userMap) {
         simpleELResolver.setUserMap(userMap);

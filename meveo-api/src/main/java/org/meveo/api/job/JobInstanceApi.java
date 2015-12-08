@@ -19,6 +19,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
@@ -35,6 +36,9 @@ public class JobInstanceApi extends BaseApi {
 
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
 	public void create(JobInstanceDto postData, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(postData.getJobTemplate()) || StringUtils.isBlank(postData.getCode())) {
@@ -86,15 +90,16 @@ public class JobInstanceApi extends BaseApi {
 			customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
 		}
 
+        jobInstanceService.create(jobInstance, currentUser, provider);
+        
 		// Populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), jobInstance, currentUser);
+            populateCustomFields(postData.getCustomFields(), jobInstance, true, currentUser);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
 
-		jobInstanceService.create(jobInstance, currentUser, provider);
 	}
 	
 	/**
@@ -150,15 +155,17 @@ public class JobInstanceApi extends BaseApi {
 				customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
 			}
 
+
+			jobInstance = jobInstanceService.update(jobInstance, currentUser);
+            
             // Populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), jobInstance, currentUser);
+                populateCustomFields(postData.getCustomFields(), jobInstance, false, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 			
-			jobInstanceService.update(jobInstance, currentUser);
 		}
 	}
 	
@@ -188,7 +195,7 @@ public class JobInstanceApi extends BaseApi {
 		if (!StringUtils.isBlank(code)) {
 			JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
 			if (jobInstance != null) {
-				JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance);
+				JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, customFieldInstanceService.getCustomFieldInstances(jobInstance));
 				return jobInstanceDto;
 			} 
 			

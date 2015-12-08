@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
@@ -39,7 +40,6 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Created;
@@ -61,6 +61,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 
@@ -109,9 +110,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@Inject
 	@Removed
 	protected Event<E> entityRemovedEventProducer;
-	
-	@Inject
-	private CustomFieldsCacheContainerProvider customFieldsCache;
+		
+	@EJB
+	private CustomFieldInstanceService customFieldInstanceService;
 
 	/**
 	 * Constructor.
@@ -159,10 +160,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		
 		E mergedEntity = getEntityManager().merge(e);
         
-		// Add/Update custom fields in cache if applicable 
-        if (e instanceof ICustomFieldEntity) {
-            customFieldsCache.addUpdateCustomFieldsInCache((ICustomFieldEntity) mergedEntity);
-        }
 		return mergedEntity;
 	}
 
@@ -357,7 +354,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		
 		// Remove custom field values from cache if applicable
         if (e instanceof ICustomFieldEntity) {
-            customFieldsCache.removeCustomFieldsFromCache((ICustomFieldEntity) e);
+            customFieldInstanceService.removeCFValues((ICustomFieldEntity) e);
         }
 		
 		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
@@ -400,31 +397,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 				((IAuditable) e).updateAudit(getCurrentUser());
 			}
 		}
-		checkProvider(e);
-		
-        // Set CFEntity.cfFields.provider value if not set yet
-        if (e instanceof ICustomFieldEntity) {
-            if (((ICustomFieldEntity) e).getCfFields() != null && ((ICustomFieldEntity) e).getCfFields().getProvider() == null) {
-                if (e instanceof IProvider) {
-                    ((ICustomFieldEntity) e).getCfFields().setProvider(((IProvider) e).getProvider());
-                } else if (e instanceof Provider) {
-                    ((ICustomFieldEntity) e).getCfFields().setProvider((Provider) e);
-                } else if (updater != null) {
-                    ((ICustomFieldEntity) e).getCfFields().setProvider(updater.getProvider());
-                }
-            }
-        }
-		
+		checkProvider(e);	
 		
 		e = getEntityManager().merge(e);
 		if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
 			entityUpdatedEventProducer.fire(e);
 		}
-		
-        // Add/Update custom fields in cache if applicable
-        if (e instanceof ICustomFieldEntity) {
-            customFieldsCache.addUpdateCustomFieldsInCache((ICustomFieldEntity) e);
-        }
 
 		log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
 		
@@ -455,29 +433,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		if (e instanceof IProvider && (((IProvider) e).getProvider() == null)) {
 			((BaseEntity) e).setProvider(provider);
 		}
-
-        // Set CFEntity.cfFields.provider value if not set yet
-        if (e instanceof ICustomFieldEntity) {
-            if (((ICustomFieldEntity) e).getCfFields() != null && ((ICustomFieldEntity) e).getCfFields().getProvider() == null) {
-                if (e instanceof IProvider) {
-                    ((ICustomFieldEntity) e).getCfFields().setProvider(((IProvider) e).getProvider());
-                } else if (e instanceof Provider) {
-                    ((ICustomFieldEntity) e).getCfFields().setProvider((Provider) e);
-                } else {
-                    ((ICustomFieldEntity) e).getCfFields().setProvider(provider);
-                }
-            }
-        }
 		
 		getEntityManager().persist(e);
 		if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
 			entityCreatedEventProducer.fire(e);
 		}
-		
-        // Add/Update custom fields in cache if applicable
-        if (e instanceof ICustomFieldEntity) {
-            customFieldsCache.addUpdateCustomFieldsInCache((ICustomFieldEntity) e);
-        }
 		
 		log.debug("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
 
@@ -929,5 +889,4 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public void commit() {
 		getEntityManager().flush();
 	}
-
 }

@@ -56,6 +56,6 @@ public class EntityReferenceWrapper implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("BusinessEntityWrapper [classname=%s, code=%s]", classname, code);
+        return String.format("EntityReferenceWrapper [classname=%s, code=%s]", classname, code);
     }
 }

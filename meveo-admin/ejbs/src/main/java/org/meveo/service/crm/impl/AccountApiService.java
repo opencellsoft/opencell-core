@@ -1,5 +1,6 @@
 package org.meveo.service.crm.impl;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -29,11 +30,10 @@ public abstract class AccountApiService extends BaseApi {
 	@Inject
 	private TitleService titleService;
 
-    public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser) throws MeveoApiException {
-        populate(postData, accountEntity, currentUser, true);
-    }
+    @EJB    
+    protected AccountHierarchyApiService accountHierarchyApiService;
 
-    public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser, boolean checkCustomField) throws MeveoApiException {
+    public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser) throws MeveoApiException {
 		Address address = new Address();
 		if (postData.getAddress() != null) {
 			// check country
@@ -77,13 +77,6 @@ public abstract class AccountApiService extends BaseApi {
 		accountEntity.setAddress(address);
 		accountEntity.setName(name);
 
-        // Validate and populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), accountEntity, currentUser, checkCustomField);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
-        }
 	}
 
 	public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser) throws MeveoApiException {
@@ -160,13 +153,6 @@ public abstract class AccountApiService extends BaseApi {
 			accountEntity.setExternalRef2(postData.getExternalRef2());
 		}
 
-        // Validate and populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), accountEntity, currentUser, checkCustomFields);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity");
-        }
     }
 	
 }

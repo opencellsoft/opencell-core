@@ -51,15 +51,15 @@ public class AccessApi extends BaseApi {
                 throw new MeveoApiException(MeveoApiErrorCode.DUPLICATE_ACCESS, "Duplicate subscription / access point pair.");
             }
 
+            accessService.create(access, currentUser, provider);
+            
             // populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), access, currentUser);
+                populateCustomFields(postData.getCustomFields(), access, true, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
-
-            accessService.create(access, currentUser, provider);
 
         } else {
             if (StringUtils.isBlank(postData.getCode())) {
@@ -90,15 +90,17 @@ public class AccessApi extends BaseApi {
             access.setStartDate(postData.getStartDate());
             access.setEndDate(postData.getEndDate());
 
+
+            access = accessService.update(access, currentUser);
+            
             // populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), access, currentUser);
+                populateCustomFields(postData.getCustomFields(), access, false, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
-            accessService.update(access, currentUser);
         } else {
             if (postData.getCode() == null) {
                 missingParameters.add("code");
@@ -123,7 +125,7 @@ public class AccessApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Access.class, accessCode);
             }
 
-            return new AccessDto(access);
+            return new AccessDto(access, customFieldInstanceService.getCustomFieldInstances(access));
         } else {
             if (StringUtils.isBlank(accessCode)) {
                 missingParameters.add("accessCode");
@@ -172,7 +174,7 @@ public class AccessApi extends BaseApi {
             List<Access> accesses = accessService.listBySubscription(subscription);
             if (accesses != null) {
                 for (Access ac : accesses) {
-                    result.getAccess().add(new AccessDto(ac));
+                    result.getAccess().add(new AccessDto(ac, customFieldInstanceService.getCustomFieldInstances(ac)));
                 }
             }
 

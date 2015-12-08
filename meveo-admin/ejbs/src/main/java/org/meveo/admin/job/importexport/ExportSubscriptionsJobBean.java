@@ -18,9 +18,16 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jaxb.customer.CustomFields;
+import org.meveo.model.jaxb.subscription.Accesses;
+import org.meveo.model.jaxb.subscription.Services;
+import org.meveo.model.jaxb.subscription.Status;
+import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -33,6 +40,9 @@ public class ExportSubscriptionsJobBean {
 
 	@Inject
 	private SubscriptionService subscriptionService;
+	
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
 	Subscriptions subscriptions;
 	ParamBean param = ParamBean.getInstance();
@@ -52,13 +62,40 @@ public class ExportSubscriptionsJobBean {
 
 		String timestamp = sdf.format(new Date());
 		List<org.meveo.model.billing.Subscription> subs = subscriptionService.list(provider);
-		subscriptions = new Subscriptions(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
+		subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
 		try {
 			JAXBUtils.marshaller(subscriptions, new File(dir + File.separator + "SUB_" + timestamp + ".xml"));
 		} catch (JAXBException e) {
 			log.error("Failed to export subscriptions job",e);
 		}
 
-	}
+    }
 
+    private Subscriptions subscriptionsToDto(List<org.meveo.model.billing.Subscription> subs, String dateFormat) {
+        Subscriptions dto = new Subscriptions();
+        if (subs != null) {
+            for (org.meveo.model.billing.Subscription sub : subs) {
+                dto.getSubscription().add(subscriptionToDto(sub, dateFormat));
+            }
+        }
+        return dto;
+    }
+    
+
+    private Subscription subscriptionToDto(org.meveo.model.billing.Subscription sub, String dateFormat) {
+        Subscription dto = new Subscription();
+        if (sub != null) {
+            dto.setSubscriptionDate ( sub.getSubscriptionDate() == null ? null : DateUtils.formatDateWithPattern(sub.getSubscriptionDate(), dateFormat));
+            dto.setEndAgreementDate ( sub.getEndAgrementDate() == null ? null : DateUtils.formatDateWithPattern(sub.getEndAgrementDate(), dateFormat));
+            dto.setDescription ( sub.getDescription());
+            dto.setCustomFields ( CustomFields.toDTO(customFieldInstanceService.getCustomFieldInstances(sub)));
+            dto.setCode ( sub.getCode());
+            dto.setUserAccountId ( sub.getUserAccount() == null ? null : sub.getUserAccount().getCode());
+            dto.setOfferCode ( sub.getOffer() == null ? null : sub.getOffer().getCode());
+            dto.setStatus ( new Status(sub, dateFormat));
+            dto.setServices ( new Services(sub, dateFormat));
+            dto.setAccesses ( new Accesses(sub, dateFormat));
+        }
+        return dto;
+    }
 }

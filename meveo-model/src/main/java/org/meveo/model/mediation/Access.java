@@ -17,8 +17,8 @@
 package org.meveo.model.mediation;
 
 import java.util.Date;
+import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +26,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -40,9 +39,6 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.CustomFieldFields;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Access linked to Subscription and Zone.
@@ -74,9 +70,8 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "SUBSCRIPTION_ID")
     private Subscription subscription;
 
-    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "CFF_ID")
-    private CustomFieldFields cfFields;
+    @Column(name = "UUID", nullable = false, updatable = false, length = 50)
+    private String uuid = UUID.randomUUID().toString();
 
     public Date getStartDate() {
         return startDate;
@@ -115,15 +110,21 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     }
 
     @Override
-    public CustomFieldFields getCfFields() {
-        return cfFields;
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
     
     @Override
-    public void initCustomFields() {
-        cfFields = new CustomFieldFields();
-    } 
-
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -151,70 +152,5 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @Override
     public ICustomFieldEntity getParentCFEntity() {
         return subscription;
-    }
-
-    @Override
-    public Object getCFValue(String cfCode) {
-        if (cfFields != null) {
-            return cfFields.getCFValue(cfCode);
-        }
-        return null;
-    }
-
-    @Override
-    public Object getCFValue(String cfCode, Date date) {
-        if (cfFields != null) {
-            return cfFields.getCFValue(cfCode, date);
-        }
-        return null;
-    }
-
-    @Override
-    public Object getInheritedOnlyCFValue(String cfCode) {
-        if (getParentCFEntity() != null) {
-            return getParentCFEntity().getInheritedCFValue(cfCode);
-        }
-        return null;
-    }
-
-    @Override
-    public Object getInheritedOnlyCFValue(String cfCode, Date date) {
-
-        if (getParentCFEntity() != null) {
-            return getParentCFEntity().getInheritedCFValue(cfCode, date);
-        }
-        return null;
-    }
-
-    @Override
-    public Object getInheritedCFValue(String cfCode) {
-
-        try {
-            if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
-                return cfFields.getCustomFields().get(cfCode).getValue();
-
-            } else if (getParentCFEntity() != null) {
-                return getParentCFEntity().getInheritedCFValue(cfCode);
-            }
-        } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("Failed to access inherited CF values", e);
-        }
-
-        return null;
-    }
-
-    @Override
-    public Object getInheritedCFValue(String cfCode, Date date) {
-
-        Object value = null;
-
-        if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
-            value = cfFields.getCustomFields().get(cfCode).getValue(date);
-        }
-        if (value == null && getParentCFEntity() != null) {
-            return getParentCFEntity().getInheritedCFValue(cfCode, date);
-        }
-        return null;
     }
 }

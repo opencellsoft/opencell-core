@@ -96,10 +96,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     /**
      * Get a list of templates matching job template name. Create new ones if job template defines new ones in code.
      * 
-     * @return A list of custom field templates
+     * @return A map of custom field templates with template code as a key
      */
     @Override
-    protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
+    protected Map<String, CustomFieldTemplate> getApplicateCustomFieldTemplates() {
 
         if (entity.getJobTemplate() == null) {
             return null;
@@ -116,7 +116,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         } else {
             jobTemplatesFromJob = jobCustomFields.values();
         }
-        List<CustomFieldTemplate> jobTemplates = customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentProvider());
+        Map<String, CustomFieldTemplate> jobTemplates = customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentProvider());
 
         return jobTemplates;
     }

@@ -1,5 +1,8 @@
 package org.meveo.api.dto.job;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -8,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.jobs.JobInstance;
 
 @XmlRootElement(name = "JobInstance")
@@ -46,10 +50,10 @@ public class JobInstanceDto extends BaseDto {
     public JobInstanceDto() {
     }
 
-    public JobInstanceDto(JobInstance jobInstance) {
+    public JobInstanceDto(JobInstance jobInstance, Map<String, List<CustomFieldInstance>> customFieldInstances) {
         this.code = jobInstance.getCode();
         this.active = jobInstance.isActive();
-        this.customFields = CustomFieldsDto.toDTO(jobInstance.getCfFields());
+        this.customFields = CustomFieldsDto.toDTO(customFieldInstances);
         this.description = jobInstance.getDescription();
         if (jobInstance.getFollowingJob() != null) {
             this.followingJob = jobInstance.getFollowingJob().getCode();

@@ -264,16 +264,16 @@ public class ServiceTemplateApi extends BaseApi {
 			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
 			serviceTemplate.setProvider(provider);
 			
+            serviceTemplateService.create(serviceTemplate, currentUser, provider);
+            
             // populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), serviceTemplate, currentUser);
+                populateCustomFields(postData.getCustomFields(), serviceTemplate, true, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 			
-			serviceTemplateService.create(serviceTemplate, currentUser, provider);
-
 			// check for recurring charges
 			createServiceChargeTemplateRecurring(postData, currentUser, serviceTemplate);
 
@@ -321,15 +321,17 @@ public class ServiceTemplateApi extends BaseApi {
 			
 			setAllWalletTemplatesToNull(serviceTemplate);
 			
+
+			serviceTemplate = serviceTemplateService.update(serviceTemplate, currentUser);
+            
 			// populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), serviceTemplate, currentUser);
+                populateCustomFields(postData.getCustomFields(), serviceTemplate, false, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
-			serviceTemplateService.update(serviceTemplate, currentUser);
 			serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate, provider);
 			serviceChargeTemplateSubscriptionService.removeByServiceTemplate(serviceTemplate, provider);
 			serviceChargeTemplateTerminationService.removeByServiceTemplate(serviceTemplate, provider);
@@ -364,7 +366,7 @@ public class ServiceTemplateApi extends BaseApi {
 			if (serviceTemplate == null) {
 				throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
 			}
-			ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate);
+			ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, customFieldInstanceService.getCustomFieldInstances(serviceTemplate));
 			return result;
 		} else {
 			missingParameters.add("serviceTemplateCode");

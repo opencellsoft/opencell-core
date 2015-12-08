@@ -1,6 +1,8 @@
 package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,6 +16,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -43,7 +46,7 @@ public class ServiceTemplateDto implements Serializable {
 	public ServiceTemplateDto() {
 	}
 
-	public ServiceTemplateDto(ServiceTemplate serviceTemplate) {
+	public ServiceTemplateDto(ServiceTemplate serviceTemplate, Map<String, List<CustomFieldInstance>> customFieldInstances) {
 		code = serviceTemplate.getCode();
 		description = serviceTemplate.getDescription();
 		invoicingCalendar=serviceTemplate.getInvoicingCalendar()==null?null:serviceTemplate.getInvoicingCalendar().getCode();
@@ -120,7 +123,7 @@ public class ServiceTemplateDto implements Serializable {
 			}
 		}
 		
-		customFields = CustomFieldsDto.toDTO(serviceTemplate.getCfFields());
+		customFields = CustomFieldsDto.toDTO(customFieldInstances);
 	}
 
 	public ServiceTemplateDto(String code) {

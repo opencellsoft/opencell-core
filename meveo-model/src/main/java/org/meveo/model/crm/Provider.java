@@ -18,8 +18,8 @@ package org.meveo.model.crm;
 
 import java.sql.Blob;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -194,9 +194,8 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
     private boolean displayFreeTransacInInvoice = false;
 
-    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "CFF_ID")
-    private CustomFieldFields cfFields;
+    @Column(name = "UUID", nullable = false, updatable = false, length = 50)
+    private String uuid = UUID.randomUUID().toString();
 
     @Column(name = "DISCOUNT_ACCOUNTING_CODE", length = 255)
     private String discountAccountingCode;
@@ -565,16 +564,6 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
         return String.format("Provider [code=%s]", code);
     }
 
-    @Override
-    public CustomFieldFields getCfFields() {
-        return cfFields;
-    }
-
-    @Override
-    public void initCustomFields() {
-        cfFields = new CustomFieldFields();
-    }
-
     public InvoiceConfiguration getInvoiceConfiguration() {
         return invoiceConfiguration;
     }
@@ -584,82 +573,10 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     }
 
     @Override
-    public Object getCFValue(String cfCode) {
-        if (cfFields != null) {
-            return cfFields.getCFValue(cfCode);
-        }
-        return null;
-    }
-
-    @Override
-    public Object getCFValue(String cfCode, Date date) {
-        if (cfFields != null) {
-            return cfFields.getCFValue(cfCode, date);
-        }
-        return null;
-    }
-    
-    public void setCFValue(String cfCode, Object value) {
-        setCFValue(cfCode, value, null);
-    }
-
-    public void setCFValue(String cfCode, Object value, CustomFieldTemplate cft) {
-
-        if (cfFields == null) {
-            initCustomFields();
-        }
-
-        cfFields.setCFValue(cfCode, value, cft);
-    }
-
-    public void setCFValue(String cfCode, Object value, Date valueDate, CustomFieldTemplate cft) {
-
-        if (cfFields == null) {
-            initCustomFields();
-        }
-
-        cfFields.setCFValue(cfCode, value, valueDate, cft);
-    }
-
-    public void setCFValue(String cfCode, Object value, Date valueDateFrom, Date valueDateTo, CustomFieldTemplate cft) {
-
-        if (cfFields == null) {
-            initCustomFields();
-        }
-
-        cfFields.setCFValue(cfCode, value, valueDateFrom, valueDateTo, cft);
-    }
-    
-
-    @Override
     public ICustomFieldEntity getParentCFEntity() {
         return null;
     }
 
-    @Override
-    public Object getInheritedOnlyCFValue(String cfCode) {
-
-        return null;
-    }
-    
-    @Override
-    public Object getInheritedOnlyCFValue(String cfCode, Date date) {
-
-        return null;
-    }
-
-    @Override
-    public Object getInheritedCFValue(String cfCode) {
-        // Nothing to inherit from
-        return getCFValue(cfCode);
-    }
-    
-    @Override
-    public Object getInheritedCFValue(String cfCode, Date date) {
-        // Nothing to inherit from
-        return getCFValue(cfCode, date);
-    }
-    
     public String getInvoiceAdjustmentPrefix() {
         return invoiceAdjustmentPrefix;
     }
@@ -690,4 +607,20 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	public void setInvoiceSequenceSize(Integer invoiceSequenceSize) {
 		this.invoiceSequenceSize = invoiceSequenceSize;
 	}
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    
+    @Override
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
 }

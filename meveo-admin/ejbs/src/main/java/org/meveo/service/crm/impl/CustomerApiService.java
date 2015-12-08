@@ -2,6 +2,7 @@ package org.meveo.service.crm.impl;
 
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -39,6 +40,9 @@ public class CustomerApiService extends AccountApiService {
 
 	@Inject
 	private CustomerBrandService customerBrandService;
+    
+    @EJB
+    private AccountHierarchyApiService accountHierarchyApiService;
 
 	@Inject
 	private SellerService sellerService;
@@ -49,7 +53,7 @@ public class CustomerApiService extends AccountApiService {
 	}
 
 	public void create(CustomerDto postData, User currentUser,
-			boolean checkCustomField) throws MeveoApiException,
+			boolean checkCustomFields) throws MeveoApiException,
 			DuplicateDefaultAccountException {
 		if (!StringUtils.isBlank(postData.getCode())
 				&& !StringUtils.isBlank(postData.getDescription())
@@ -88,7 +92,7 @@ public class CustomerApiService extends AccountApiService {
 			}
 
 			Customer customer = new Customer();
-			populate(postData, customer, currentUser, checkCustomField);
+			populate(postData, customer, currentUser);
 
 			customer.setCustomerCategory(customerCategory);
 			customer.setCustomerBrand(customerBrand);
@@ -110,6 +114,16 @@ public class CustomerApiService extends AccountApiService {
 
 			customerService.create(customer, currentUser,
 					currentUser.getProvider());
+			
+	         
+            // Validate and populate customFields
+            try {
+                populateCustomFields(postData.getCustomFields(), customer, true, currentUser, checkCustomFields);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            }
+            
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -225,6 +239,16 @@ public class CustomerApiService extends AccountApiService {
 			}
 
 			customerService.updateAudit(customer, currentUser);
+			
+	         
+            // Validate and populate customFields
+           try {
+               populateCustomFields(postData.getCustomFields(), customer, false, currentUser, checkCustomFields);
+           } catch (IllegalArgumentException | IllegalAccessException e) {
+               log.error("Failed to associate custom field instance to an entity", e);
+               throw new MeveoApiException("Failed to associate custom field instance to an entity");
+           }
+           
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -263,7 +287,8 @@ public class CustomerApiService extends AccountApiService {
 						customerCode);
 			}
 
-			return new CustomerDto(customer);
+			return accountHierarchyApiService.customerToDto(customer);
+			
 		} else {
 			missingParameters.add("customerCode");
 
@@ -328,7 +353,7 @@ public class CustomerApiService extends AccountApiService {
 				customerCategory, seller, customerBrand, provider);
 		if (customers != null) {
 			for (Customer c : customers) {
-				result.getCustomer().add(new CustomerDto(c));
+				result.getCustomer().add(accountHierarchyApiService.customerToDto(c));
 			}
 		}
 

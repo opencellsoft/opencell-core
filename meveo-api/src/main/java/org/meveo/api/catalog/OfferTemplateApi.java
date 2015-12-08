@@ -20,6 +20,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -32,6 +33,9 @@ public class OfferTemplateApi extends BaseApi {
 
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
 	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
@@ -63,16 +67,17 @@ public class OfferTemplateApi extends BaseApi {
 
 				offerTemplate.setServiceTemplates(serviceTemplates);
 			}
-			
+
+            offerTemplateService.create(offerTemplate, currentUser, provider);
+            
 			// populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), offerTemplate, currentUser);
+                populateCustomFields(postData.getCustomFields(), offerTemplate, true, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
-			offerTemplateService.create(offerTemplate, currentUser, provider);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -117,7 +122,7 @@ public class OfferTemplateApi extends BaseApi {
 			
 			// populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), offerTemplate, currentUser);
+                populateCustomFields(postData.getCustomFields(), offerTemplate, false, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
@@ -141,7 +146,7 @@ public class OfferTemplateApi extends BaseApi {
 				throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 			}
 
-			return new OfferTemplateDto(offerTemplate);
+			return new OfferTemplateDto(offerTemplate, customFieldInstanceService.getCustomFieldInstances(offerTemplate));
 		} else {
 			missingParameters.add("offerTemplateCode");
 

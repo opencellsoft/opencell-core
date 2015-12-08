@@ -122,16 +122,16 @@ public class RecurringChargeTemplateApi extends BaseApi {
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
-			
+
+            recurringChargeTemplateService.create(chargeTemplate, currentUser, provider);
+            
 			// populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), chargeTemplate, currentUser);
+                populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
-
-			recurringChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
 			// create cat messages
 			if (postData.getLanguageDescriptions() != null) {
@@ -241,16 +241,17 @@ public class RecurringChargeTemplateApi extends BaseApi {
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
-			
+
+			chargeTemplate = recurringChargeTemplateService.update(chargeTemplate, currentUser);
+            
 			// populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), chargeTemplate, currentUser);
+                populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
-			recurringChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -279,7 +280,7 @@ public class RecurringChargeTemplateApi extends BaseApi {
 				throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
 			}
 
-			result = new RecurringChargeTemplateDto(chargeTemplate);
+			result = new RecurringChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
 
 			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
 			for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {

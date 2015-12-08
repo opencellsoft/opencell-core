@@ -18,6 +18,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.CounterInstanceService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -34,6 +35,9 @@ public class PurgeJobBean implements Serializable {
 
     @Inject
     private JobExecutionService jobExecutionService;
+    
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     protected Logger log;
@@ -46,8 +50,8 @@ public class PurgeJobBean implements Serializable {
 
         try {
             // Purge job execution history
-            String jobname = (String) jobInstance.getCFValue("PurgeJob_jobExecHistory_jobName");
-            Long nbDays = (Long) jobInstance.getCFValue("PurgeJob_jobExecHistory_nbDays");
+            String jobname = (String) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_jobName", currentUser);
+            Long nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_nbDays", currentUser);
             if (jobname != null || nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date, currentProvider);
@@ -63,7 +67,7 @@ public class PurgeJobBean implements Serializable {
             }
 
             // Purge counter periods
-            nbDays = (Long) jobInstance.getCFValue("PurgeJob_counterPeriod_nbDays");
+            nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_counterPeriod_nbDays", currentUser);
             if (nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = counterInstanceService.countCounterPeriodsToDelete(date, currentProvider);

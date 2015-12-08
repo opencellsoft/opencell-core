@@ -10,8 +10,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.invoice.InvoiceDto;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.UserAccount;
 
 /**
  * @author Edward P. Legaspi
@@ -54,56 +52,6 @@ public class BillingAccountDto extends AccountDto {
 
 	public BillingAccountDto() {
 
-	}
-
-	public BillingAccountDto(BillingAccount e) {
-		initFromEntity(e);
-	}
-
-	public void initFromEntity(BillingAccount e) {
-		super.initFromEntity(e);
-
-		if (e.getCustomerAccount() != null) {
-			customerAccount = e.getCustomerAccount().getCode();
-		}
-		if (e.getBillingCycle() != null) {
-			billingCycle = e.getBillingCycle().getCode();
-		}
-		if (e.getTradingCountry() != null) {
-			country = e.getTradingCountry().getCountryCode();
-		}
-		if (e.getTradingLanguage() != null) {
-			language = e.getTradingLanguage().getLanguageCode();
-		}
-		if (e.getPaymentMethod() != null) {
-			paymentMethod = e.getPaymentMethod().name();
-		}
-		nextInvoiceDate = e.getNextInvoiceDate();
-		subscriptionDate = e.getSubscriptionDate();
-		terminationDate = e.getTerminationDate();
-		if (e.getPaymentTerm() != null) {
-			paymentTerms = e.getPaymentTerm().name();
-		}
-		electronicBilling = e.getElectronicBilling();
-		if (e.getStatus() != null) {
-			status = e.getStatus().name();
-		}
-		if (e.getTerminationReason() != null) {
-			terminationReason = e.getTerminationReason().getCode();
-		}
-		email = e.getEmail();
-
-		if (e.getBankCoordinates() != null) {
-			bankCoordinates = new BankCoordinatesDto(e.getBankCoordinates());
-		}
-		
-		if (!isLoaded() && e.getUsersAccounts() != null) {
-			for (UserAccount userAccount : e.getUsersAccounts()) {
-				userAccounts.getUserAccount().add(new UserAccountDto(userAccount));
-			}
-		}
-		
-		loaded = true;
 	}
 
 	public String getCustomerAccount() {

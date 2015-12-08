@@ -43,14 +43,14 @@ public class ScriptingJob extends Job {
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
 
-	    String scriptCode = ((EntityReferenceWrapper)jobInstance.getCFValue("ScriptingJob_script")).getCode();
+	    String scriptCode = ((EntityReferenceWrapper)customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_script", currentUser)).getCode();
         Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(),scriptCode);
     	if(scriptInterfaceClass==null){
     		result.registerError("cannot find script with code "+scriptCode);
     	} else {
     		try{
     			ScriptInterface scriptInterface=scriptInterfaceClass.newInstance();
-                Map<String, Object> context = (Map<String, Object>) jobInstance.getCFValue("ScriptingJob_variables");
+                Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_variables", currentUser);
                 if (context == null) {
                     context = new HashMap<String, Object>();
                 }

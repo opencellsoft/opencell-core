@@ -16,135 +16,32 @@
  */
 package org.meveo.model;
 
-import java.util.Date;
+import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
-
-import org.meveo.model.crm.CustomFieldFields;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @MappedSuperclass
 public abstract class BusinessCFEntity extends BusinessEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = -6054446440106807337L;
 
-    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "CFF_ID")
-    private CustomFieldFields cfFields;
+    @Column(name = "UUID", nullable = false, updatable = false, length = 50)
+    private String uuid = UUID.randomUUID().toString();
 
     @Override
-    public CustomFieldFields getCfFields() {
-        return cfFields;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setCfFields(CustomFieldFields cfFields) {
-        this.cfFields = cfFields;
-    }
-
-    @Override
-    public void initCustomFields() {
-        cfFields = new CustomFieldFields();
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Override
-    public Object getCFValue(String cfCode) {
-        if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
-            return cfFields.getCustomFields().get(cfCode).getValue();
-        }
-        return null;
-    }
-
-    @Override
-    public Object getCFValue(String cfCode, Date date) {
-        if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
-            return cfFields.getCustomFields().get(cfCode).getValue(date);
-        }
-        return null;
-    }
-
-    public void setCFValue(String cfCode, Object value) {
-        setCFValue(cfCode, value, null);
-    }
-
-    public void setCFValue(String cfCode, Object value, CustomFieldTemplate cft) {
-
-        if (cfFields == null) {
-            initCustomFields();
-        }
-
-        cfFields.setCFValue(cfCode, value, cft);
-    }
-
-    public void setCFValue(String cfCode, Object value, Date valueDate, CustomFieldTemplate cft) {
-
-        if (cfFields == null) {
-            initCustomFields();
-        }
-
-        cfFields.setCFValue(cfCode, value, valueDate, cft);
-    }
-
-    public void setCFValue(String cfCode, Object value, Date valueDateFrom, Date valueDateTo, CustomFieldTemplate cft) {
-
-        if (cfFields == null) {
-            initCustomFields();
-        }
-
-        cfFields.setCFValue(cfCode, value, valueDateFrom, valueDateTo, cft);
-    }
-
-    @Override
-    public Object getInheritedOnlyCFValue(String cfCode) {
-        if (getParentCFEntity() != null) {
-            return getParentCFEntity().getInheritedCFValue(cfCode);
-        }
-        return null;
-    }
-
-    @Override
-    public Object getInheritedOnlyCFValue(String cfCode, Date date) {
-
-        if (getParentCFEntity() != null) {
-            return getParentCFEntity().getInheritedCFValue(cfCode, date);
-        }
-        return null;
-    }
-
-    @Override
-    public Object getInheritedCFValue(String cfCode) {
-
-        try {
-            if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
-                return cfFields.getCustomFields().get(cfCode).getValue();
-
-            } else if (getParentCFEntity() != null) {
-                return getParentCFEntity().getInheritedCFValue(cfCode);
-            }
-        } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("Failed to access inherited CF values", e);
-        }
-
-        return null;
-    }
-
-    @Override
-    public Object getInheritedCFValue(String cfCode, Date date) {
-
-        Object value = null;
-
-        if (cfFields != null && cfFields.getCustomFields().containsKey(cfCode)) {
-            value = cfFields.getCustomFields().get(cfCode).getValue(date);
-        }
-        if (value == null && getParentCFEntity() != null) {
-            return getParentCFEntity().getInheritedCFValue(cfCode, date);
-        }
-        return null;
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
     }
 }

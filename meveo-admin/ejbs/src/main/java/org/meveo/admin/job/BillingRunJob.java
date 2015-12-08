@@ -15,6 +15,7 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -23,12 +24,15 @@ public class BillingRunJob extends Job {
 
     @Inject
     private BillingRunJobBean billingRunJobBean;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        String billingCycle = (String) jobInstance.getCFValue("BillingRunJob_billingCycle");
-        Date lastTransactionDate = (Date) jobInstance.getCFValue("BillingRunJob_lastTransactionDate");
-        Date invoiceDate = (Date) jobInstance.getCFValue("BillingRunJob_invoiceDate");
+        String billingCycle = (String) customFieldInstanceService.getCFValue(jobInstance, "BillingRunJob_billingCycle", currentUser);
+        Date lastTransactionDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "BillingRunJob_lastTransactionDate", currentUser);
+        Date invoiceDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "BillingRunJob_invoiceDate", currentUser);
 
         billingRunJobBean.execute(result, jobInstance.getParametres(), billingCycle, invoiceDate, lastTransactionDate, currentUser);
     }

@@ -16,44 +16,66 @@
         </meveoExport>
     </xsl:template>
 
-    <xsl:template match="//classesToExportAsFull">
+    <xsl:template match="//org.meveo.model.crm.CustomFieldInstance[not(valuePeriods/org.meveo.model.crm.CustomFieldPeriod)]">
         <xsl:copy>
-            <xsl:apply-templates select="@*|node()" />
-            <xsl:if test="not(java-class[.= 'org.meveo.model.crm.CustomFieldFields'])">
-                <java-class>org.meveo.model.crm.CustomFieldFields</java-class>
+            <xsl:apply-templates select="@*|id|version|disabled|auditable|code|cfValue" />
+            <xsl:if test="../../../provider[@xsId]">
+                <provider reference="{../../../provider/@xsId}" />
             </xsl:if>
+            <xsl:if test="../../../provider[@reference]">
+                <provider reference="{../../../provider/@reference}" />
+            </xsl:if>
+            <appliesToEntity>
+                <xsl:value-of select="concat(name(../../..),'_')" />
+                <xsl:value-of select="../../../id" />
+            </appliesToEntity>
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="//customFields[not(parent::cfFields)]">
-        <cfFields xsId="{@xsId}00001">
-            <xsl:if test="../provider[@xsId]">
-                <provider reference="{../provider/@xsId}" />
+    <xsl:template match="//org.meveo.model.crm.CustomFieldPeriod">
+        <org.meveo.model.crm.CustomFieldInstance xsId="{@xsId}">
+            <xsl:apply-templates select="id|version|periodStartDate|periodEndDate|priority|../../disabled|../../auditable|../../code|cfValue" />
+            <xsl:if test="../../../../../provider[@xsId]">
+                <provider reference="{../../../../../provider/@xsId}" />
             </xsl:if>
-            <xsl:if test="../provider[@reference]">
-                <provider reference="{../provider/@reference}" />
-            </xsl:if>            
-            <uuid>
-                <xsl:value-of select="name(..)" />_<xsl:value-of select="../id" />
-            </uuid>
-            <xsl:copy>
-                <xsl:apply-templates select="@*|node()" />
-            </xsl:copy>
-        </cfFields>
+            <xsl:if test="../../../../../provider[@reference]">
+                <provider reference="{../../../../../provider/@reference}" />
+            </xsl:if>
+            <appliesToEntity>
+                <xsl:value-of select="concat(name(../../../../..),'_')" />
+                <xsl:value-of select="../../../../../id" />
+            </appliesToEntity>
+        </org.meveo.model.crm.CustomFieldInstance>
     </xsl:template>
 
-    <xsl:template match="//org.meveo.model.crm.CustomFieldInstance[not(cfFields)]">
+    <xsl:template
+        match="//org.meveo.model.catalog.OfferTemplate|//org.meveo.model.mediation.Access|//org.meveo.model.billing.BillingAccount|//org.meveo.model.crm.Customer|//org.meveo.model.payments.CustomerAccount|//org.meveo.model.billing.UserAccount|//org.meveo.model.catalog.OneShotChargeTemplate|//org.meveo.model.catalog.RecurringChargeTemplate|//org.meveo.model.catalog.UsageChargeTemplate|//org.meveo.model.customEntities.CustomEntityInstance|//org.meveo.model.jobs.JobInstance|//org.meveo.model.admin.Seller|//org.meveo.model.catalog.ServiceTemplate|//org.meveo.model.billing.Subscription|//org.meveo.model.crm.Provider">
         <xsl:copy>
-            <xsl:apply-templates select="@*|node()" />
-            <cfFields reference="{../../@xsId}00001" />
+            <xsl:apply-templates select="@*|node()[not(self::customFields)]" />
+            <xsl:if test="not(uuid)">
+                <uuid>
+                    <xsl:value-of select="concat(name(.),'_')" />
+                    <xsl:value-of select="id" />
+                </uuid>
+            </xsl:if>
+        </xsl:copy>
+        <xsl:apply-templates select=".//org.meveo.model.crm.CustomFieldPeriod|.//org.meveo.model.crm.CustomFieldInstance[not(valuePeriods/org.meveo.model.crm.CustomFieldPeriod)]" />
+    </xsl:template>
+
+    <xsl:template match="//classesToExportAsFull">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()[not(self::java-class='org.meveo.model.crm.CustomFieldPeriod')]" />
         </xsl:copy>
     </xsl:template>
 
     <xsl:template match="//org.meveo.model.crm.CustomFieldTemplate[accountLevel]">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()[not(self::code)][not(self::accountLevel)]" />
+            <allowEdit>true</allowEdit>
             <xsl:if test="accountLevel[. = 'TIMER']">
-                    <appliesTo>JOB_<xsl:value-of select="substring-before(code,'_')" /></appliesTo>
+                <appliesTo>
+                    <xsl:value-of select="concat('JOB_',substring-before(code,'_'))" />
+                </appliesTo>
                 <xsl:choose>
                     <xsl:when test="contains(code, '_nbRuns')">
                         <code>nbRuns</code>
@@ -62,13 +84,19 @@
                         <code>waitingMillis</code>
                     </xsl:when>
                     <xsl:otherwise>
-                        <code><xsl:value-of select="code" /></code>
+                        <code>
+                            <xsl:value-of select="code" />
+                        </code>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:if>
             <xsl:if test="accountLevel[not(.= 'TIMER')]">
-                <appliesTo><xsl:value-of select="accountLevel" /></appliesTo>
-                <code><xsl:value-of select="code" /></code>
+                <appliesTo>
+                    <xsl:value-of select="accountLevel" />
+                </appliesTo>
+                <code>
+                    <xsl:value-of select="code" />
+                </code>
             </xsl:if>
             <xsl:if test="not(storageType)">
                 <storageType>SINGLE</storageType>

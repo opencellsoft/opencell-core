@@ -52,7 +52,7 @@ public class BillingAccountApiService extends AccountApiService {
 
 	@Inject
 	private CustomerAccountService customerAccountService;
-
+    
 	public void create(BillingAccountDto postData, User currentUser)
 			throws MeveoApiException, DuplicateDefaultAccountException {
 		create(postData, currentUser, true);
@@ -116,7 +116,7 @@ public class BillingAccountApiService extends AccountApiService {
 			}
 
 			BillingAccount billingAccount = new BillingAccount();
-			populate(postData, billingAccount, currentUser,  checkCustomFields);
+			populate(postData, billingAccount, currentUser);
 
 			billingAccount.setCustomerAccount(customerAccount);
 			billingAccount.setBillingCycle(billingCycle);
@@ -174,10 +174,18 @@ public class BillingAccountApiService extends AccountApiService {
 				billingAccount.getBankCoordinates().setIcs(
 						postData.getBankCoordinates().getIcs());
 			}
-			
-			
+						
 			billingAccountService.createBillingAccount(billingAccount,
-					currentUser, provider);
+					currentUser, provider);			
+
+	        // Validate and populate customFields
+	        try {
+	            populateCustomFields(postData.getCustomFields(), billingAccount, true, currentUser, checkCustomFields);
+	        } catch (IllegalArgumentException | IllegalAccessException e) {
+	            log.error("Failed to associate custom field instance to an entity", e);
+	            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+	        }
+	        
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -389,7 +397,16 @@ public class BillingAccountApiService extends AccountApiService {
 				billingAccount.setBankCoordinates(bankCoordinates);
 			}
 
-			billingAccountService.updateAudit(billingAccount, currentUser);
+			billingAccountService.updateAudit(billingAccount, currentUser);			
+
+	        // Validate and populate customFields
+	        try {
+	            populateCustomFields(postData.getCustomFields(), billingAccount, false, currentUser, checkCustomFields);
+	        } catch (IllegalArgumentException | IllegalAccessException e) {
+	            log.error("Failed to associate custom field instance to an entity", e);
+	            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+	        }
+			
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -428,7 +445,7 @@ public class BillingAccountApiService extends AccountApiService {
 						billingAccountCode);
 			}
 
-			return new BillingAccountDto(billingAccount);
+			return accountHierarchyApiService.billingAccountToDto(billingAccount);
 		} else {
 			missingParameters.add("billingAccountCode");
 
@@ -472,7 +489,7 @@ public class BillingAccountApiService extends AccountApiService {
 					.listByCustomerAccount(customerAccount);
 			if (billingAccounts != null) {
 				for (BillingAccount ba : billingAccounts) {
-					BillingAccountDto billingAccountDto = new BillingAccountDto(ba);
+					BillingAccountDto billingAccountDto = accountHierarchyApiService.billingAccountToDto(ba);
 					
 					List<Invoice> invoices = ba.getInvoices();
 					if (invoices != null && invoices.size() > 0) {

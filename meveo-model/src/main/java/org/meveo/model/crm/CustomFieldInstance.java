@@ -1,35 +1,41 @@
 package org.meveo.model.crm;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ProviderlessEntity;
-import org.meveo.model.catalog.Calendar;
+import org.meveo.model.ICustomFieldEntity;
 
 @Entity
-@ExportIdentifier({ "code", "cfFields.uuid", "cfFields.provider" })
-@Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "CFF_ID" }))
+@ExportIdentifier({ "appliesToEntity", "code", "periodStartDate", "periodEndDate", "provider" })
+@Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "APPLIES_TO_UUID", "CODE", "PERIOD_START_DATE", "PERIOD_END_DATE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
-public class CustomFieldInstance extends ProviderlessEntity {
+@NamedQueries({
+        @NamedQuery(name = "CustomFieldInstance.getCfiForCache", query = "select cfi from CustomFieldInstance cfi where cfi.disabled=false"),
+        @NamedQuery(name = "CustomFieldInstance.getCfiByCode", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code and cfi.provider=:provider"),
+        @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDate", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code and cfi.provider=:provider and ((cfi.periodStartDate<=:date and :date<cfi.periodEndDate) or (cfi.periodStartDate<=:date and cfi.periodEndDate IS NULL) or (cfi.periodStartDate IS NULL and :date<cfi.periodEndDate)) order by cfi.priority desc "),
+        @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDateRange", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code and cfi.provider=:provider and (cfi.periodStartDate=:dateFrom and cfi.periodEndDate=:dateTo)  order by cfi.priority desc "),
+        @NamedQuery(name = "CustomFieldInstance.getCfiByEntity", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.provider=:provider"),
+        @NamedQuery(name = "CustomFieldInstance.getCfiValueByCode", query = "select cfi.cfValue from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code and cfi.provider=:provider"),
+        @NamedQuery(name = "CustomFieldInstance.getCfiValueByCodeAndDate", query = "select cfi.cfValue from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code and cfi.provider=:provider and ((cfi.periodStartDate<=:date and :date<cfi.periodEndDate) or (cfi.periodStartDate<=:date and cfi.periodEndDate IS NULL) or (cfi.periodStartDate IS NULL and :date<cfi.periodEndDate)) order by cfi.priority desc ") })
+public class CustomFieldInstance extends AuditableEntity {
 
     private static final long serialVersionUID = 8691447585410651639L;
 
@@ -40,53 +46,77 @@ public class CustomFieldInstance extends ProviderlessEntity {
     @NotNull
     private String code;
 
-    @Column(name = "DESCRIPTION", nullable = true, length = 100)
-    @Size(max = 100)
-    private String description;
+    @Column(name = "APPLIES_TO_UUID", nullable = false, length = 50)
+    private String appliesToEntity;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "CFF_ID")
-    private CustomFieldFields cfFields;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "PERIOD_START_DATE")
+    private Date periodStartDate;
 
-    @Column(name = "VERSIONABLE")
-    private boolean versionable;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "PERIOD_END_DATE")
+    private Date periodEndDate;
+
+    @Column(name = "PRIORITY")
+    private int priority;
 
     @Embedded
     private CustomFieldValue cfValue;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CALENDAR_ID")
-    private Calendar calendar;
-
-    @OneToMany(mappedBy = "customFieldInstance", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<CustomFieldPeriod> valuePeriods = new ArrayList<CustomFieldPeriod>();
-
-    @Column(name = "DISABLED", nullable = false)
-    private boolean disabled;
-
-    @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
-    private boolean triggerEndPeriodEvent;
-
     public CustomFieldInstance() {
         super();
-        valuePeriods = new ArrayList<CustomFieldPeriod>();
         cfValue = new CustomFieldValue();
     }
 
-    public boolean isDisabled() {
-        return disabled;
+    public String getCode() {
+        return code;
     }
 
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public boolean isActive() {
-        return !disabled;
+    public CustomFieldValue getCfValue() {
+        if (cfValue == null) {
+            cfValue = new CustomFieldValue();
+        }
+        return cfValue;
     }
 
-    public void setActive(boolean active) {
-        setDisabled(!active);
+    public void setCfValue(CustomFieldValue cfValue) {
+        this.cfValue = cfValue;
+    }
+
+    public Date getPeriodStartDate() {
+        return periodStartDate;
+    }
+
+    public void setPeriodStartDate(Date periodStartDate) {
+        this.periodStartDate = periodStartDate;
+    }
+
+    public Date getPeriodEndDate() {
+        return periodEndDate;
+    }
+
+    public void setPeriodEndDate(Date periodEndDate) {
+        this.periodEndDate = periodEndDate;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public void setAppliesToEntity(String appliesToEntity) {
+        this.appliesToEntity = appliesToEntity;
+    }
+
+    public String getAppliesToEntity() {
+        return appliesToEntity;
     }
 
     public String getStringValue() {
@@ -121,315 +151,12 @@ public class CustomFieldInstance extends ProviderlessEntity {
         getCfValue().setDoubleValue(doubleValue);
     }
 
-    public List<CustomFieldPeriod> getValuePeriods() {
-        return valuePeriods;
-    }
-
-    public void setValuePeriods(List<CustomFieldPeriod> valuePeriods) {
-        this.valuePeriods = valuePeriods;
-    }
-
-    /**
-     * Get string value for a given date. If values are versioned, a matching period will be searched for.
-     * 
-     * @param valueDate Date
-     * @return A value or a versioned value
-     */
-    public String getStringValue(Date valueDate) {
-        if (versionable) {
-            CustomFieldPeriod period = getValuePeriod(valueDate, false);
-            if (period != null) {
-                return period.getCfValue().getStringValue();
-            }
-            return null;
-
-        } else {
-            return getStringValue();
-        }
-    }
-
-    /**
-     * Set string value for a given date. If value is versioned with a help of a calendar, a period will be created if does not exist yet.
-     * 
-     * @param value Value to set
-     * @param valueDate Date of a value
-     * @throws RuntimeException If versionable and calendar is not provided. A method setXX(value, dateFrom, dateTo) should be used.
-     */
-    public void setStringValue(String value, Date valueDate) {
-        if (!versionable) {
-            setStringValue(value);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
-            if (period != null) {
-                period.getCfValue().setStringValue(value);
-            }
-        }
-    }
-
-    /**
-     * Set string value for a given date period.
-     * 
-     * @param value Value to set
-     * @param valueDateFrom Period start date
-     * @param valueDateTo Period end date
-     */
-    public void setStringValue(String value, Date valueDateFrom, Date valueDateTo) {
-        if (!versionable) {
-            setStringValue(value);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
-            if (period != null) {
-                period.getCfValue().setStringValue(value);
-            }
-        }
-    }
-
-    /**
-     * Get date value for a given date. If values are versioned, a matching period will be searched for.
-     * 
-     * @param valueDate Date
-     * @return A value or a versioned value
-     */
-    public Date getDateValue(Date valueDate) {
-        if (versionable) {
-            CustomFieldPeriod period = getValuePeriod(valueDate, false);
-            if (period != null) {
-                return period.getCfValue().getDateValue();
-            }
-            return null;
-
-        } else {
-            return getDateValue();
-        }
-    }
-
-    /**
-     * Set date value for a given date. If value is versioned with a help of a calendar, a period will be created if does not exist yet.
-     * 
-     * @param value Value to set
-     * @param valueDate Date of a value
-     * @throws RuntimeException If versionable and calendar is not provided. A method setXX(value, dateFrom, dateTo) should be used.
-     */
-    public void setDateValue(Date value, Date valueDate) {
-        if (!versionable) {
-            setDateValue(value);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
-            if (period != null) {
-                period.getCfValue().setDateValue(value);
-            }
-        }
-    }
-
-    /**
-     * Set date value for a given date period.
-     * 
-     * @param value Value to set
-     * @param valueDateFrom Period start date
-     * @param valueDateTo Period end date
-     */
-    public void setDateValue(Date value, Date valueDateFrom, Date valueDateTo) {
-        if (!versionable) {
-            setDateValue(value);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
-            if (period != null) {
-                period.getCfValue().setDateValue(value);
-            }
-        }
-    }
-
-    /**
-     * Get long value for a given date. If values are versioned, a matching period will be searched for.
-     * 
-     * @param valueDate Date
-     * @return A value or a versioned value
-     */
-    public Long getLongValue(Date valueDate) {
-        if (versionable) {
-            CustomFieldPeriod period = getValuePeriod(valueDate, false);
-            if (period != null) {
-                return period.getCfValue().getLongValue();
-            }
-            return null;
-
-        } else {
-            return getLongValue();
-        }
-    }
-
-    /**
-     * Set long value for a given date. If value is versioned with a help of a calendar, a period will be created if does not exist yet.
-     * 
-     * @param value Value to set
-     * @param valueDate Date of a value
-     * @throws RuntimeException If versionable and calendar is not provided. A method setXX(value, dateFrom, dateTo) should be used.
-     */
-    public void setLongValue(Long value, Date valueDate) {
-        if (!versionable) {
-            setLongValue(value);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
-            if (period != null) {
-                period.getCfValue().setLongValue(value);
-            }
-        }
-    }
-
-    /**
-     * Set long value for a given date period.
-     * 
-     * @param value Value to set
-     * @param valueDateFrom Period start date
-     * @param valueDateTo Period end date
-     */
-    public void setLongValue(Long value, Date valueDateFrom, Date valueDateTo) {
-        if (!versionable) {
-            setLongValue(value);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
-            if (period != null) {
-                period.getCfValue().setLongValue(value);
-            }
-        }
-    }
-
-    /**
-     * Get double value for a given date. If values are versioned, a matching period will be searched for.
-     * 
-     * @param valueDate Date
-     * @return A value or a versioned value
-     */
-    public Double getDoubleValue(Date valueDate) {
-        if (versionable) {
-            CustomFieldPeriod period = getValuePeriod(valueDate, false);
-            if (period != null) {
-                return period.getCfValue().getDoubleValue();
-            }
-            return null;
-
-        } else {
-            return getDoubleValue();
-        }
-    }
-
-    /**
-     * Set double value for a given date. If value is versioned with a help of a calendar, a period will be created if does not exist yet.
-     * 
-     * @param value Value to set
-     * @param valueDate Date of a value
-     * @throws RuntimeException If versionable and calendar is not provided. A method setXX(value, dateFrom, dateTo) should be used.
-     */
-    public void setDoubleValue(Double value, Date valueDate) {
-        if (!versionable) {
-            setDoubleValue(value);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
-            if (period != null) {
-                period.getCfValue().setDoubleValue(value);
-            }
-        }
-    }
-
-    /**
-     * Set double value for a given date period.
-     * 
-     * @param value Value to set
-     * @param valueDateFrom Period start date
-     * @param valueDateTo Period end date
-     */
-    public void setDoubleValue(Double value, Date valueDateFrom, Date valueDateTo) {
-        if (!versionable) {
-            setDoubleValue(value);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
-            if (period != null) {
-                period.getCfValue().setDoubleValue(value);
-            }
-        }
-    }
-
     public List<Object> getListValue() {
         return getCfValue().getListValue();
     }
 
     public void setListValue(List<Object> listValue) {
         getCfValue().setListValue(listValue);
-    }
-
-    /**
-     * Get list value for a given date. If values are versioned, a matching period will be searched for.
-     * 
-     * @param valueDate Date
-     * @return A value or a versioned value
-     */
-    public List<Object> getListValue(Date valueDate) {
-        if (versionable) {
-            CustomFieldPeriod period = getValuePeriod(valueDate, false);
-            if (period != null) {
-                return period.getCfValue().getListValue();
-            }
-            return null;
-
-        } else {
-            return getListValue();
-        }
-    }
-
-    /**
-     * Set list value for a given date. If value is versioned with a help of a calendar, a period will be created if does not exist yet.
-     * 
-     * @param listValue Value to set
-     * @param valueDate Date of a value
-     * @throws RuntimeException If versionable and calendar is not provided. A method setXX(value, dateFrom, dateTo) should be used.
-     */
-    public void setListValue(List<Object> listValue, Date valueDate) {
-        if (!versionable) {
-            setListValue(listValue);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDate, listValue != null);
-            if (period != null) {
-                period.getCfValue().setListValue(listValue);
-            }
-        }
-    }
-
-    /**
-     * Set list value for a given date period.
-     * 
-     * @param listValue Value to set
-     * @param valueDateFrom Period start date
-     * @param valueDateTo Period end date
-     */
-    public void setListValue(List<Object> listValue, Date valueDateFrom, Date valueDateTo) {
-        if (!versionable) {
-            setListValue(listValue);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, listValue != null);
-            if (period != null) {
-                period.getCfValue().setListValue(listValue);
-            }
-        }
     }
 
     public Map<String, Object> getMapValue() {
@@ -440,172 +167,12 @@ public class CustomFieldInstance extends ProviderlessEntity {
         getCfValue().setMapValue(mapValue);
     }
 
-    /**
-     * Get map value for a given date. If values are versioned, a matching period will be searched for.
-     * 
-     * @param valueDate Date
-     * @return A value or a versioned value
-     */
-    public Map<String, Object> getMapValue(Date valueDate) {
-        if (versionable) {
-            CustomFieldPeriod period = getValuePeriod(valueDate, false);
-            if (period != null) {
-                return period.getCfValue().getMapValue();
-            }
-            return null;
-
-        } else {
-            return getMapValue();
-        }
-    }
-
-    /**
-     * Set map value for a given date. If value is versioned with a help of a calendar, a period will be created if does not exist yet.
-     * 
-     * @param mapValue Value to set
-     * @param valueDate Date of a value
-     * @throws RuntimeException If versionable and calendar is not provided. A method setXX(value, dateFrom, dateTo) should be used.
-     */
-    public void setMapValue(Map<String, Object> mapValue, Date valueDate) {
-        if (!versionable) {
-            setMapValue(mapValue);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDate, mapValue != null);
-            if (period != null) {
-                period.getCfValue().setMapValue(mapValue);
-            }
-        }
-    }
-
-    /**
-     * Set map value for a given date period.
-     * 
-     * @param mapValue Value to set
-     * @param valueDateFrom Period start date
-     * @param valueDateTo Period end date
-     */
-    public void setMapValue(Map<String, Object> mapValue, Date valueDateFrom, Date valueDateTo) {
-        if (!versionable) {
-            setMapValue(mapValue);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, mapValue != null);
-            if (period != null) {
-                period.getCfValue().setMapValue(mapValue);
-            }
-        }
-    }
-
     public EntityReferenceWrapper getEntityReferenceValue() {
         return getCfValue().getEntityReferenceValue();
     }
 
     public void setEntityReferenceValue(EntityReferenceWrapper entityReference) {
         getCfValue().setEntityReferenceValue(entityReference);
-    }
-
-    /**
-     * Get entity reference value for a given date. If values are versioned, a matching period will be searched for.
-     * 
-     * @param valueDate Date
-     * @return A value or a versioned value
-     */
-    public EntityReferenceWrapper getEntityReferenceValue(Date valueDate) {
-        if (versionable) {
-            CustomFieldPeriod period = getValuePeriod(valueDate, false);
-            if (period != null) {
-                return period.getCfValue().getEntityReferenceValue();
-            }
-            return null;
-
-        } else {
-            return getEntityReferenceValue();
-        }
-    }
-
-    /**
-     * Set entity reference value for a given date. If value is versioned with a help of a calendar, a period will be created if does not exist yet.
-     * 
-     * @param entityReference Value to set
-     * @param valueDate Date of a value
-     * @throws RuntimeException If versionable and calendar is not provided. A method setXX(value, dateFrom, dateTo) should be used.
-     */
-    public void setEntityReferenceValue(EntityReferenceWrapper entityReference, Date valueDate) {
-        if (!versionable) {
-            setEntityReferenceValue(entityReference);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDate, entityReference != null);
-            if (period != null) {
-                period.getCfValue().setEntityReferenceValue(entityReference);
-            }
-        }
-    }
-
-    /**
-     * Set entity reference value for a given date period.
-     * 
-     * @param entityReference Value to set
-     * @param valueDateFrom Period start date
-     * @param valueDateTo Period end date
-     */
-    public void setEntityReferenceValue(EntityReferenceWrapper entityReference, Date valueDateFrom, Date valueDateTo) {
-        if (!versionable) {
-            setEntityReferenceValue(entityReference);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, entityReference != null);
-            if (period != null) {
-                period.getCfValue().setEntityReferenceValue(entityReference);
-            }
-        }
-    }
-
-    public String toJson() {
-        String result = code + ":";
-        if (versionable) {
-
-        } else {
-            result += getCfValue().toJson(sdf);
-        }
-
-        return result;
-    }
-
-    /**
-     * Get value. A generic way to retrieve a value, not knowing of its type beforehand
-     * 
-     * @return A non-versioned value
-     */
-    public Object getValue() {
-        if (!versionable) {
-            return getCfValue().getValue();
-        }
-        return null;
-    }
-
-    /**
-     * Get value for a given date. If values are versioned, a matching period will be searched for.
-     * 
-     * @param valueDate Date
-     * @return A value or a versioned value
-     */
-    public Object getValue(Date valueDate) {
-        if (versionable) {
-            CustomFieldPeriod period = getValuePeriod(valueDate, false);
-            if (period != null) {
-                return period.getCfValue().getValue();
-            }
-            return null;
-
-        } else {
-            return getValue();
-        }
     }
 
     /**
@@ -621,192 +188,116 @@ public class CustomFieldInstance extends ProviderlessEntity {
         }
     }
 
-    /**
-     * Set value for a given date. If value is versioned with a help of a calendar, a period will be created if does not exist yet. A generic way to set a value. What field to
-     * populate determines by a value data type.
-     * 
-     * @param value Value to set
-     * @param valueDate Date of a value
-     * @throws RuntimeException If versionable and calendar is not provided. A method setXX(value, dateFrom, dateTo) should be used.
-     */
-    public void setValue(Object value, Date valueDate) {
-        if (!versionable) {
-            setValue(value);
+    public String toJson() {
+        String result = code + ":";
 
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDate, value != null);
-            if (period != null) {
-                period.getCfValue().setValue(value);
-            }
-        }
+        result += getCfValue().toJson(sdf);
+
+        return result;
     }
 
     /**
-     * Set value for a given date period. A generic way to set a value. What field to populate is determined by a value data type.
+     * Get value. A generic way to retrieve a value, not knowing of its type beforehand
      * 
-     * @param value Value to set
-     * @param valueDateFrom Period start date
-     * @param valueDateTo Period end date
+     * @return A non-versioned value
      */
-    public void setValue(Object value, Date valueDateFrom, Date valueDateTo) {
-        if (!versionable) {
-            setValue(value);
-
-        } else {
-            // If value is null, don't create a new period -just nullify existing value if period exists already
-            CustomFieldPeriod period = getValuePeriod(valueDateFrom, valueDateTo, true, value != null);
-            if (period != null) {
-                period.getCfValue().setValue(value);
-            }
-        }
+    public Object getValue() {
+        return getCfValue().getValue();
     }
 
     public String getValueAsString() {
-        if (versionable) {
-            return null;
-        } else {
-            return getCfValue().getValueAsString(sdf);
-        }
+        return getCfValue().getValueAsString(sdf);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (getClass() != obj.getClass())
+        }
+
+        if (obj == null) {
             return false;
+
+        } else if (!(obj instanceof CustomFieldTemplate)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
         CustomFieldInstance other = (CustomFieldInstance) obj;
-        if (getId() == null) {
-            if (other.getId() != null)
-                return false;
-        } else if (!getId().equals(other.getId()))
+
+        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+            return true;
+        }
+
+        if (code == null && other.getCode() != null) {
             return false;
-        return true;
-    }
-
-    public CustomFieldPeriod addValuePeriod(Date date) {
-        CustomFieldPeriod period = getValuePeriod(date, true);
-        return period;
-    }
-
-    public CustomFieldPeriod addValuePeriod(Date startDate, Date endDate) {
-        CustomFieldPeriod period = getValuePeriod(startDate, endDate, true, true);
-        return period;
-    }
-
-    /**
-     * Get a period corresponding to a given date. Calendar is used to determine period start/end dates if requested to create one if not found
-     * 
-     * @param date Date
-     * @param createIfNotFound Should period be created if not found
-     * @return Custom field period
-     */
-    public CustomFieldPeriod getValuePeriod(Date date, Boolean createIfNotFound) {
-        CustomFieldPeriod periodFound = null;
-        for (CustomFieldPeriod period : valuePeriods) {
-            if (period.isCorrespondsToPeriod(date)) {
-                // If calendar is used for versioning, then no periods can overlap
-                if (calendar != null) {
-                    periodFound = period;
-                    break;
-                    // Otherwise match the period with highest priority
-                } else if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
-                    periodFound = period;
-                }
-            }
+        } else if (!code.equals(other.getCode())) {
+            return false;
+        } else if (appliesToEntity == null && other.getAppliesToEntity() != null) {
+            return false;
+        } else if (!appliesToEntity.equals(other.getAppliesToEntity())) {
+            return false;
         }
 
-        if (periodFound == null && createIfNotFound && calendar != null) {
-            periodFound = new CustomFieldPeriod();
-            periodFound.setCustomFieldInstance(this);
-            periodFound.setPeriodEndDate(calendar.nextCalendarDate(date));
-            periodFound.setPeriodStartDate(calendar.previousCalendarDate(date));
-            valuePeriods.add(periodFound);
-
-        }
-        return periodFound;
-    }
-
-    /**
-     * Get a period corresponding to a given start and end date
-     * 
-     * @param date Date
-     * @param createIfNotFound Should period be created if not found
-     * @param calendar Calendar to determine period start/end dates when creating a new period
-     * @param strictMatch Should a match occur only if start and end dates match. Non-strict match would match when dates overlap
-     * @return Custom field period
-     */
-    public CustomFieldPeriod getValuePeriod(Date startDate, Date endDate, boolean strictMatch, Boolean createIfNotFound) {
-        CustomFieldPeriod periodFound = null;
-        for (CustomFieldPeriod period : valuePeriods) {
-            if (period.isCorrespondsToPeriod(startDate, endDate, strictMatch)) {
-                if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
-                    periodFound = period;
-                }
-            }
-        }
-        // Create a period if match not found
-        if (periodFound == null && createIfNotFound) {
-            periodFound = new CustomFieldPeriod();
-            periodFound.setCustomFieldInstance(this);
-            periodFound.setPeriodEndDate(endDate);
-            periodFound.setPeriodStartDate(startDate);
-            periodFound.setPriority(getNextPriority());
-            valuePeriods.add(periodFound);
-
-        }
-        return periodFound;
-    }
-
-    public void setVersionable(boolean versionable) {
-        this.versionable = versionable;
-    }
-
-    public boolean isVersionable() {
-        return versionable;
-    }
-
-    public Calendar getCalendar() {
-        return calendar;
-    }
-
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
-    }
-
-    private int getNextPriority() {
-        int maxPriority = 0;
-        for (CustomFieldPeriod period : valuePeriods) {
-            maxPriority = (period.getPriority() > maxPriority ? period.getPriority() : maxPriority);
-        }
-        return maxPriority + 1;
-    }
-
-    public void removeValuePeriod(CustomFieldPeriod period) {
-        valuePeriods.remove(period);
+        return isCorrespondsToPeriod(other.getPeriodStartDate(), other.getPeriodEndDate(), true);
     }
 
     /**
      * Instantiate a CustomFieldInstance from a template setting a default value if applicable
      * 
      * @param cft Custom field template
+     * @param entity Entity to which custom field aplies to
      * @return CustomFieldInstance object
      */
-    public static CustomFieldInstance fromTemplate(CustomFieldTemplate cft) {
+    public static CustomFieldInstance fromTemplate(CustomFieldTemplate cft, ICustomFieldEntity entity) {
         CustomFieldInstance cfi = new CustomFieldInstance();
         cfi.setCode(cft.getCode());
-        cfi.setDescription(cft.getDescription());
-        cfi.setVersionable(cft.isVersionable());
-        cfi.setCalendar(cft.getCalendar());
-        // Set a default value
-        if (!cft.isVersionable()) {
-            if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
-                cfi.getCfValue().setValue(cft.getDefaultValueConverted());
-            }
-        }
-        cfi.setTriggerEndPeriodEvent(cft.isTriggerEndPeriodEvent());
+        cfi.setAppliesToEntity(entity.getUuid());
 
+        // Set a default value
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
+            cfi.getCfValue().setValue(cft.getDefaultValueConverted());
+        }
+
+        return cfi;
+    }
+
+    /**
+     * Instantiate a CustomFieldInstance from a template setting period interval and a default value if applicable
+     * 
+     * @param cft Custom field template
+     * @param entity Entity to which custom field applies to
+     * @param valueDate Pariod validity date. Date range will be determiend from a calendar
+     * @return CustomFieldInstance object
+     */
+    public static CustomFieldInstance fromTemplate(CustomFieldTemplate cft, ICustomFieldEntity entity, Date valueDate) {
+        CustomFieldInstance cfi = CustomFieldInstance.fromTemplate(cft, entity);
+        if (cft.isVersionable() && cft.getCalendar() != null) {
+            cfi.setPeriodEndDate(cft.getCalendar().nextCalendarDate(valueDate));
+            cfi.setPeriodStartDate(cft.getCalendar().previousCalendarDate(valueDate));
+        } else if (cft.isVersionable() && cft.getCalendar() != null) {
+            cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDate, null, null);
+        }
+
+        return cfi;
+    }
+
+    /**
+     * Instantiate a CustomFieldInstance from a template setting period interval and a default value if applicable
+     * 
+     * @param cft Custom field template
+     * @param entity Entity to which custom field aplies to
+     * @param valueDateFrom Period validity date - from
+     * @param valueDateTo Period validity date - to
+     * @param valuePriority Value priority
+     * @return CustomFieldInstance object
+     */
+    public static CustomFieldInstance fromTemplate(CustomFieldTemplate cft, ICustomFieldEntity entity, Date valueDateFrom, Date valueDateTo, Integer valuePriority) {
+        CustomFieldInstance cfi = CustomFieldInstance.fromTemplate(cft, entity);
+        if (cft.isVersionable() && cft.getCalendar() == null) {
+            cfi.setPeriodEndDate(valueDateTo);
+            cfi.setPeriodStartDate(valueDateFrom);
+            cfi.setPriority(valuePriority == null ? 0 : valuePriority);
+        }
         return cfi;
     }
 
@@ -816,7 +307,7 @@ public class CustomFieldInstance extends ProviderlessEntity {
      * @return True is value is empty
      */
     public boolean isValueEmptyForGui() {
-        return (!isVersionable() && getCfValue().isValueEmptyForGui()) || (isVersionable() && valuePeriods.isEmpty());
+        return getCfValue().isValueEmptyForGui();
     }
 
     /**
@@ -825,58 +316,70 @@ public class CustomFieldInstance extends ProviderlessEntity {
      * @return True is value is empty
      */
     public boolean isValueEmpty() {
-        return (!isVersionable() && getCfValue().isValueEmpty()) || (isVersionable() && valuePeriods.isEmpty());
+        return getCfValue().isValueEmpty();
     }
 
-    @Override
-    public String toString() {
-        final int maxLen = 10;
-        return String.format("CustomFieldInstance [%s, cfFields=%s, versionable=%s, calendar=%s, valuePeriods=%s, value=%s]", super.toString(), cfFields != null ? cfFields.getId()
-                : null, versionable, calendar != null ? calendar.getCode() : null, valuePeriods != null ? valuePeriods.subList(0, Math.min(valuePeriods.size(), maxLen)) : null,
-            cfValue);
+    /**
+     * Check if date falls within period start and end dates
+     * 
+     * @param date Date to check
+     * @return True/false
+     */
+    public boolean isCorrespondsToPeriod(Date date) {
+        return (periodStartDate == null || date.compareTo(periodStartDate) >= 0) && (periodEndDate == null || date.before(periodEndDate));
     }
 
-    public String getCode() {
-        return code;
-    }
+    /**
+     * Check if dates match period start and end dates (strict match) or overlap period start and end dates (non-strict match)
+     * 
+     * @param startDate Period start date to check
+     * @param endDate Period end date to check
+     * @param strictMatch True If dates match period start and end dates (strict match) or False when overlap period start and end dates (non-strict match)
+     * @return True if current period object corresponds to give dates and strict matching type
+     */
+    public boolean isCorrespondsToPeriod(Date startDate, Date endDate, boolean strictMatch) {
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isTriggerEndPeriodEvent() {
-        return triggerEndPeriodEvent;
-    }
-
-    public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
-        this.triggerEndPeriodEvent = triggerEndPeriodEvent;
-    }
-
-    public CustomFieldValue getCfValue() {
-        if (cfValue == null) {
-            cfValue = new CustomFieldValue();
+        if (strictMatch) {
+            boolean match = (startDate == null && periodStartDate == null) || (startDate != null && periodStartDate != null && startDate.equals(periodStartDate));
+            match = match && ((endDate == null && periodEndDate == null) || (endDate != null && periodEndDate != null && endDate.equals(periodEndDate)));
+            return match;
         }
-        return cfValue;
-    }
+        // Check non-strict match case when dates overlap
+        if (startDate == null && endDate == null) {
+            return true;
+        }
 
-    public void setCfValue(CustomFieldValue cfValue) {
-        this.cfValue = cfValue;
-    }
+        // Period is not after dates being checked
+        if (startDate == null && (periodStartDate == null || periodStartDate.compareTo(endDate) < 0)) {
+            return true;
 
-    public CustomFieldFields getCfFields() {
-        return cfFields;
-    }
+            // Period is not before dates being checked
+        } else if (endDate == null && (periodEndDate == null || periodEndDate.compareTo(startDate) >= 0)) {
+            return true;
 
-    public void setCfFields(CustomFieldFields cfFields) {
-        this.cfFields = cfFields;
+            // Dates are not after period
+        } else if (periodStartDate == null && (startDate == null || startDate.compareTo(endDate) < 0)) {
+            return true;
+
+            // Dates are not before period
+        } else if (periodEndDate == null && (endDate == null || endDate.compareTo(startDate) >= 0)) {
+            return true;
+
+        } else if (startDate != null && endDate != null && periodStartDate != null && periodEndDate != null) {
+
+            // Dates end or start within the period
+            if ((endDate.compareTo(periodEndDate) <= 0 && endDate.compareTo(periodStartDate) > 0)
+                    || (startDate.compareTo(periodEndDate) < 0 && startDate.compareTo(periodStartDate) >= 0)) {
+                return true;
+            }
+
+            // Period end or start within the dates
+            if ((periodEndDate.compareTo(endDate) <= 0 && periodEndDate.compareTo(startDate) > 0)
+                    || (periodStartDate.compareTo(endDate) < 0 && periodStartDate.compareTo(startDate) >= 0)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // /**
@@ -902,18 +405,9 @@ public class CustomFieldInstance extends ProviderlessEntity {
         }
     }
 
-    /**
-     * Remove ids from entity and child entities, reconstruct new persistent collections
-     */
-    protected void clearForDuplication() {
-        id = null;
-        if (valuePeriods != null) {
-            List<CustomFieldPeriod> cfps = new ArrayList<CustomFieldPeriod>();
-            for (CustomFieldPeriod cfp : valuePeriods) {
-                cfp.setId(null);
-                cfps.add(cfp);
-            }
-            valuePeriods = cfps;
-        }
+    @Override
+    public String toString() {
+        return String.format("CustomFieldInstance [code=%s, appliesToEntity=%s, periodStartDate=%s, periodEndDate=%s, priority=%s, cfValue=%s, disabled=%s]", code,
+            appliesToEntity, periodStartDate, periodEndDate, priority, cfValue, isDisabled());
     }
 }

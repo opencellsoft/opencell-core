@@ -176,8 +176,8 @@ public class JobInstance extends BusinessCFEntity {
 
     @Override
     public String toString() {
-        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, active=%s, jobCategoryEnum=%s, customFields=%s, timerEntity=%s,  followingJob=%s]",
-            super.toString(), jobTemplate, parametres, active, jobCategoryEnum, getCfFields(), timerEntity,
+        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, active=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]",
+            super.toString(), jobTemplate, parametres, active, jobCategoryEnum, timerEntity,
             followingJob);
     }
 

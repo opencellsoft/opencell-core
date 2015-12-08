@@ -1,5 +1,8 @@
 package org.meveo.api.dto;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -7,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.InvoiceConfiguration;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 
 /**
@@ -55,7 +59,7 @@ public class ProviderDto extends BaseDto {
 
 	}
 
-	public ProviderDto(Provider e) {
+	public ProviderDto(Provider e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
 		code = e.getCode();
 		description = e.getDescription();
 		invoiceSequenceSize=e.getInvoiceSequenceSize();
@@ -72,7 +76,7 @@ public class ProviderDto extends BaseDto {
 		multiCountry = e.getMulticountryFlag();
 		multiLanguage = e.getMultilanguageFlag();
 		
-		customFields = CustomFieldsDto.toDTO(e.getCfFields());
+		customFields = CustomFieldsDto.toDTO(customFieldInstances);
 		
 		this.setEnterprise(e.isEntreprise());
 		this.setInvoicePrefix(e.getInvoicePrefix());

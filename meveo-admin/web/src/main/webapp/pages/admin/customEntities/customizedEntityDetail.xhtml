@@ -292,10 +292,12 @@
                         listenerUpdate=":cftForm:listValuesField :cftForm:defaultValueField :cftForm:entityClazzField validations" />
                     <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
                     <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
-                    <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" componentWidth="20" />
+                    <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" listenerUpdate=":cftForm:defaultValueField" required="true"
+                        componentWidth="20" />
                     <h:panelGroup id="defaultValueField">
                         <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
-                            rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE' and customFieldTemplateBean.entity.fieldType != 'ENTITY'}" newLine="true" />
+                            rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE' and customFieldTemplateBean.entity.fieldType != 'ENTITY' and customFieldTemplateBean.entity.storageType == 'SINGLE'}"
+                            newLine="true" />
                     </h:panelGroup>
                     <h:panelGroup id="entityClazzField">
                         <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="60" maxlength="255"

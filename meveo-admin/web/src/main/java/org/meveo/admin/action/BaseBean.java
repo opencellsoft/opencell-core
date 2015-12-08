@@ -17,8 +17,6 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +41,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.MultilanguageEntity;
@@ -234,18 +231,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             
             List<String> formFieldsToFetch = getFormFieldsToFetch();
 
-            // Add "custom fields" to a list of field to fetch
-            if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
-                if (formFieldsToFetch == null) {
-                    formFieldsToFetch = Arrays.asList("cfFields");
-
-                } else if (!formFieldsToFetch.contains("cfFields")) {
-                    List<String> ffToFetch = new ArrayList<String>();
-                    ffToFetch.add("cfFields");
-                    ffToFetch.addAll(formFieldsToFetch);
-                    formFieldsToFetch = ffToFetch;
-                }
-            }
             if (formFieldsToFetch == null) {
                 entity = (T) getPersistenceService().findById(getObjectId());
             } else {

@@ -1,6 +1,8 @@
 package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -35,7 +38,7 @@ public class OfferTemplateDto implements Serializable {
 
 	}
 
-	public OfferTemplateDto(OfferTemplate e) {
+	public OfferTemplateDto(OfferTemplate e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
 		code = e.getCode();
 		description = e.getDescription();
 		disabled = e.isDisabled();
@@ -46,7 +49,7 @@ public class OfferTemplateDto implements Serializable {
 			}
 		}
 
-		customFields = CustomFieldsDto.toDTO(e.getCfFields());
+		customFields = CustomFieldsDto.toDTO(customFieldInstances);
 	}
 
 	public String getCode() {

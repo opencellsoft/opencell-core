@@ -22,6 +22,7 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +46,9 @@ public abstract class Job {
     
     @Inject
     protected JobInstanceService jobInstanceService;
+    
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     protected UserService userService;

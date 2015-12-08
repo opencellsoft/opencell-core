@@ -126,7 +126,7 @@ public class CustomFieldTemplateApi extends BaseApi {
 
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, provider);
         if (cft != null) {
-            customFieldTemplateService.remove(cft);
+            customFieldTemplateService.remove(cft.getId());
         } else {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
         }

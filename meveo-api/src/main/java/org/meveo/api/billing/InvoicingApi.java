@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.BillingRunDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
@@ -29,6 +28,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.crm.impl.AccountHierarchyApiService;
 import org.meveo.util.MeveoParamBean;
 
 @Stateless
@@ -40,10 +40,14 @@ public class InvoicingApi extends BaseApi {
 
 	@Inject
 	BillingCycleService billingCycleService;
-
+    
+    @Inject    
+    private AccountHierarchyApiService accountHierarchyApiService;
+    
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
+	
 
 
 	public long createBillingRun(CreateBillingRunDto createBillingRunDto,User currentUser) throws BusinessApiException, MissingParameterException, EntityDoesNotExistsException {
@@ -112,7 +116,7 @@ public class InvoicingApi extends BaseApi {
 		List<BillingAccount> baEntities = billingRunEntity.getBillableBillingAccounts();
 		if(baEntities != null && !baEntities.isEmpty()){
 			for(BillingAccount baEntity : baEntities){
-				billingAccountsDtoResult.getBillingAccount().add(new BillingAccountDto(baEntity));
+				billingAccountsDtoResult.getBillingAccount().add(accountHierarchyApiService.billingAccountToDto(baEntity));
 			}
 		}
 		return billingAccountsDtoResult;

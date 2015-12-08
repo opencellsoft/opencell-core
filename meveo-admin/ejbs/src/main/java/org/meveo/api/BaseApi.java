@@ -18,6 +18,7 @@ import javax.validation.Validator;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -25,6 +26,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,9 @@ public abstract class BaseApi {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private Validator validator;
@@ -79,14 +84,16 @@ public abstract class BaseApi {
      * 
      * @param customFieldsDto Custom field values
      * @param entity Entity
+     * @param isNewEntity Is entity a newly saved entity
      * @param currentUser User that authenticated for API
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      * @throws MissingParameterException
+     * @throws BusinessApiException
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, User currentUser) throws IllegalArgumentException, IllegalAccessException,
-            MissingParameterException {
-        populateCustomFields(customFieldsDto, entity, currentUser, true);
+    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser) throws IllegalArgumentException, IllegalAccessException,
+            MissingParameterException, BusinessApiException {
+        populateCustomFields(customFieldsDto, entity, isNewEntity, currentUser, true);
     }
 
     /**
@@ -94,16 +101,18 @@ public abstract class BaseApi {
      * 
      * @param customFieldsDto Custom field values
      * @param entity Entity
+     * @param isNewEntity Is entity a newly saved entity
      * @param currentUser User that authenticated for API
      * @param checkCustomField Should a check be made if CF field is required
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      * @throws MissingParameterException
+     * @throws BusinessApiException
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, User currentUser, boolean checkCustomField)
-            throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
+    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser, boolean checkCustomField) throws IllegalArgumentException,
+            IllegalAccessException, MissingParameterException, BusinessApiException {
 
-        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentUser.getProvider());
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentUser.getProvider());
 
         List<CustomFieldDto> customFieldDtos = null;
         if (customFieldsDto != null) {
@@ -112,7 +121,7 @@ public abstract class BaseApi {
             customFieldDtos = new ArrayList<CustomFieldDto>();
         }
 
-        populateCustomFields(customFieldTemplates, customFieldDtos, entity, currentUser, checkCustomField);
+        populateCustomFields(customFieldTemplates, customFieldDtos, entity, isNewEntity, currentUser, checkCustomField);
     }
 
     /**
@@ -121,15 +130,17 @@ public abstract class BaseApi {
      * @param customFieldTemplates Custom field templates
      * @param customFieldDtos Custom field values
      * @param entity Entity
+     * @param isNewEntity Is entity a newly saved entity
      * @param currentUser User that authenticated for API
-     * @param checkCustomField Should a check be made if CF field is required
+     * @param checkCustomFields Should a check be made if CF field is required
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      * @throws MissingParameterException
+     * @throws BusinessApiException
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void populateCustomFields(List<CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, User currentUser,
-            boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException, MissingParameterException {
+    private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity, User currentUser,
+            boolean checkCustomFields) throws IllegalArgumentException, IllegalAccessException, MissingParameterException, BusinessApiException {
 
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
@@ -144,163 +155,150 @@ public abstract class BaseApi {
             }
         }
 
-        if (entity.getCfFields() == null && customFieldDtos != null && !customFieldDtos.isEmpty()) {
-            entity.initCustomFields();
-        }
-
         if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
             for (CustomFieldDto cfDto : customFieldDtos) {
-                boolean found = false;
-                for (CustomFieldTemplate cft : customFieldTemplates) {
+                CustomFieldTemplate cft = customFieldTemplates.get(cfDto.getCode());
 
-                    if (!cfDto.getCode().equals(cft.getCode())) {
-                        continue;
+                if (checkCustomFields && cft == null) {
+                    log.error("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
+                    throw new MissingParameterException("Custom field template with code " + cfDto.getCode() + " and provider " + currentUser.getProvider() + " not found.");
+                }
+
+                // Ignore the value when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false
+                if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())) {
+                    log.debug("Custom field value not applicable for this state of entity lifecycle: code={} for entity {} transient{}. Value will be ignored.", cfDto.getCode(),
+                        entity.getClass(), isNewEntity);
+                    continue;
+                }
+
+                // Validate that value is not empty when field is mandatory
+                boolean isEmpty = cfDto.isEmpty(cft.getFieldType(), cft.getStorageType());
+                if (cft.isValueRequired() && isEmpty) {
+                    missingParameters.add(cft.getCode());
+                    continue;
+
+                    // Validate that value is valid (min/max, regexp). When value is a list or a map, check separately each value
+                } else if (!isEmpty
+                        && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.LONG)) {
+
+                    List valuesToCheck = new ArrayList<>();
+
+                    Object valueConverted = cfDto.getValueConverted();
+                    if (valueConverted instanceof Map) {
+                        valuesToCheck.addAll(((Map) valueConverted).values());
+
+                    } else if (valueConverted instanceof List) {
+                        valuesToCheck.addAll((List) valueConverted);
+
+                    } else {
+                        valuesToCheck.add(valueConverted);
                     }
-                    found = true;
 
-                    // Ignore the value when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false
-                    if ((((IEntity) entity).isTransient() && cft.isHideOnNew()) || (!((IEntity) entity).isTransient() && !cft.isAllowEdit())) {
-                        log.debug("Custom field value not applicable for this state of entity lifecycle: code={} for entity {} transient{}. Value will be ignored.",
-                            cfDto.getCode(), entity.getClass(), ((IEntity) entity).isTransient());
-                        break;
-                    }
+                    for (Object valueToCheck : valuesToCheck) {
 
-                    // Validate that value is not empty when field is mandatory
-                    boolean isEmpty = cfDto.isEmpty(cft.getFieldType(), cft.getStorageType());
-                    if (cft.isValueRequired() && isEmpty) {
-                        log.error("AK empty {}", cfDto);
-                        missingParameters.add(cft.getCode());
-                        break;
+                        if (cft.getFieldType() == CustomFieldTypeEnum.STRING) {
+                            String stringValue = (String) valueToCheck;
 
-                        // Validate that value is valid (min/max, regexp). When value is a list or a map, check separately each value
-                    } else if (!isEmpty
-                            && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.LONG)) {
+                            if (cft.getMaxValue() == null) {
+                                cft.setMaxValue(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING);
+                            }
+                            // Validate String length
+                            if (stringValue.length() > cft.getMaxValue()) {
+                                throw new MissingParameterException("Custom field " + cft.getCode() + " value " + stringValue + " length is longer then " + cft.getMaxValue()
+                                        + " symbols");
 
-                        List valuesToCheck = new ArrayList<>();
-
-                        Object valueConverted = cfDto.getValueConverted();
-                        if (valueConverted instanceof Map) {
-                            valuesToCheck.addAll(((Map) valueConverted).values());
-
-                        } else if (valueConverted instanceof List) {
-                            valuesToCheck.addAll((List) valueConverted);
-
-                        } else {
-                            valuesToCheck.add(valueConverted);
-                        }
-
-                        for (Object valueToCheck : valuesToCheck) {
-
-                            if (cft.getFieldType() == CustomFieldTypeEnum.STRING) {
-                                String stringValue = (String) valueToCheck;
-
-                                if (cft.getMaxValue()==null){
-                                    cft.setMaxValue(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING);
-                                }
-                                // Validate String length
-                                if (stringValue.length() > cft.getMaxValue()) {
-                                    throw new MissingParameterException("Custom field " + cft.getCode() + " value " + stringValue + " length is longer then " + cft.getMaxValue()
-                                            + " symbols");
-
-                                    // Validate String regExp
-                                } else if (cft.getRegExp() != null) {
-                                    try {
-                                        Pattern pattern = Pattern.compile(cft.getRegExp());
-                                        Matcher matcher = pattern.matcher(stringValue);
-                                        if (!matcher.matches()) {
-                                            throw new MissingParameterException("Custom field " + cft.getCode() + " value " + stringValue + " does not match regular expression "
-                                                    + cft.getRegExp());
-                                        }
-                                    } catch (PatternSyntaxException pse) {
-                                        throw new MissingParameterException("Custom field " + cft.getCode() + " definition specifies an invalid regular expression "
+                                // Validate String regExp
+                            } else if (cft.getRegExp() != null) {
+                                try {
+                                    Pattern pattern = Pattern.compile(cft.getRegExp());
+                                    Matcher matcher = pattern.matcher(stringValue);
+                                    if (!matcher.matches()) {
+                                        throw new MissingParameterException("Custom field " + cft.getCode() + " value " + stringValue + " does not match regular expression "
                                                 + cft.getRegExp());
                                     }
+                                } catch (PatternSyntaxException pse) {
+                                    throw new MissingParameterException("Custom field " + cft.getCode() + " definition specifies an invalid regular expression " + cft.getRegExp());
                                 }
+                            }
 
-                            } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
-                                Long longValue = (Long) valueToCheck;
+                        } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+                            Long longValue = (Long) valueToCheck;
 
-                                if (cft.getMaxValue() != null && longValue.compareTo(cft.getMaxValue()) > 0) {
-                                    throw new MissingParameterException("Custom field " + cft.getCode() + " value " + longValue + " is bigger then " + cft.getMaxValue()
-                                            + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
-                                            + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
+                            if (cft.getMaxValue() != null && longValue.compareTo(cft.getMaxValue()) > 0) {
+                                throw new MissingParameterException("Custom field " + cft.getCode() + " value " + longValue + " is bigger then " + cft.getMaxValue()
+                                        + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
+                                        + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
 
-                                } else if (cft.getMinValue() != null && longValue.compareTo(cft.getMinValue()) < 0) {
-                                    throw new MissingParameterException("Custom field " + cft.getCode() + " value " + longValue + " is smaller then " + cft.getMinValue()
-                                            + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
-                                            + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
-                                }
-                            } else if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
-                                Double doubleValue = (Double) valueToCheck;
+                            } else if (cft.getMinValue() != null && longValue.compareTo(cft.getMinValue()) < 0) {
+                                throw new MissingParameterException("Custom field " + cft.getCode() + " value " + longValue + " is smaller then " + cft.getMinValue()
+                                        + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
+                                        + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
+                            }
+                        } else if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                            Double doubleValue = (Double) valueToCheck;
 
-                                if (cft.getMaxValue() != null && doubleValue.compareTo(cft.getMaxValue().doubleValue()) > 0) {
-                                    throw new MissingParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is bigger then " + cft.getMaxValue()
-                                            + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
-                                            + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
+                            if (cft.getMaxValue() != null && doubleValue.compareTo(cft.getMaxValue().doubleValue()) > 0) {
+                                throw new MissingParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is bigger then " + cft.getMaxValue()
+                                        + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
+                                        + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
 
-                                } else if (cft.getMinValue() != null && doubleValue.compareTo(cft.getMinValue().doubleValue()) < 0) {
-                                    throw new MissingParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is smaller then " + cft.getMinValue()
-                                            + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
-                                            + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
-                                }
+                            } else if (cft.getMinValue() != null && doubleValue.compareTo(cft.getMinValue().doubleValue()) < 0) {
+                                throw new MissingParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is smaller then " + cft.getMinValue()
+                                        + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
+                                        + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
                             }
                         }
                     }
-                    // Validate parameters
+                }
+                // Validate parameters
+                if (cft.isVersionable()) {
+                    if ((cfDto.getValueDate() == null && cft.getCalendar() != null)) {
+                        throw new MissingParameterException("Custom field " + cft.getCode() + " is versionable by calendar. Missing valueDate parameter.");
+
+                    } else if (cft.getCalendar() == null && (cfDto.getValuePeriodStartDate() == null || cfDto.getValuePeriodEndDate() == null)) {
+                        throw new MissingParameterException("Custom field " + cft.getCode()
+                                + " is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
+                    }
+                }
+
+                // Set the value
+                try {
                     if (cft.isVersionable()) {
-                        if ((cfDto.getValueDate() == null && cft.getCalendar() != null)) {
-                            throw new MissingParameterException("Custom field " + cft.getCode() + " is versionable by calendar. Missing valueDate parameter.");
-
-                        } else if (cft.getCalendar() == null && (cfDto.getValuePeriodStartDate() == null || cfDto.getValuePeriodEndDate() == null)) {
-                            throw new MissingParameterException("Custom field " + cft.getCode()
-                                    + " is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
-                        }
-                    }
-
-                    CustomFieldInstance cfi = entity.getCfFields().getCFI(cfDto.getCode());
-
-                    // Create an instance if does not exist yet
-                    if (cfi == null) {
-                        cfi = CustomFieldInstance.fromTemplate(cft);
-                    }
-
-                    // Update
-                    cfi.setActive(true);
-                    cfi.updateAudit(currentUser);
-
-                    if (cfi.isVersionable()) {
-                        if (cfi.getCalendar() != null) {
-                            cfi.setValue(cfDto.getValueConverted(), cfDto.getValueDate());
+                        if (cft.getCalendar() != null) {
+                            customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted(), cfDto.getValueDate(), currentUser);
 
                         } else {
-                            cfi.setValue(cfDto.getValueConverted(), cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate());
+                            customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted(), cfDto.getValuePeriodStartDate(),
+                                cfDto.getValuePeriodEndDate(), cfDto.getValuePeriodPriority(), currentUser);
                         }
 
                     } else {
-                        cfi.setValue(cfDto.getValueConverted());
+                        customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted(), currentUser);
                     }
-                    entity.getCfFields().addUpdateCFI(cfi);
 
-                    break;
-                }
-                if (checkCustomFields && !found) {
-                    log.error("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
-                    throw new MissingParameterException("Custom field template with code " + cfDto.getCode() + " and provider " + currentUser.getProvider() + " not found.");
+                } catch (Exception e) {
+                    log.error("Failed to set value {} on custom field {} for entity {}", cfDto.getValueConverted(), cfDto.getCode(), entity, e);
+                    throw new BusinessApiException("Failed to set value " + cfDto.getValueConverted() + " on custom field " + cfDto.getCode() + " for entity " + entity);
+
                 }
             }
         }
 
         // Validate that CustomField value is not empty when field is mandatory
-        for (CustomFieldTemplate cft : customFieldTemplates) {
-            if (cft.isDisabled() || !cft.isValueRequired() || (((IEntity) entity).isTransient() && cft.isHideOnNew())) {
+        Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances(entity);
+
+        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
+            if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew())) {
                 continue;
             }
-            if (entity.getCfFields() == null) {
+            if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {
                 missingParameters.add(cft.getCode());
             } else {
-                CustomFieldInstance cfi = entity.getCfFields().getCFI(cft.getCode());
-                if (cfi == null || cfi.isValueEmpty()) {
-                    missingParameters.add(cft.getCode());
+                for (CustomFieldInstance cfi : cfisAsMap.get(cft.getCode())) {
+                    if (cfi == null || cfi.isValueEmpty()) {
+                        missingParameters.add(cft.getCode());
+                        break;
+                    }
                 }
             }
         }

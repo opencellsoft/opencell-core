@@ -51,13 +51,13 @@ public class CachedCFPeriodValue implements Serializable {
         return (periodStartDate == null || date.compareTo(periodStartDate) >= 0) && (periodEndDate == null || date.before(periodEndDate));
     }
 
-    // public Date getPeriodStartDate() {
-    // return periodStartDate;
-    // }
-    //
-    // public Date getPeriodEndDate() {
-    // return periodEndDate;
-    // }
+    protected Date getPeriodStartDate() {
+        return periodStartDate;
+    }
+
+    protected Date getPeriodEndDate() {
+        return periodEndDate;
+    }
 
     public Object getValue() {
         return value;
@@ -89,7 +89,6 @@ public class CachedCFPeriodValue implements Serializable {
         Object valueFound = null;
         Map<String, Object> mapValue = (Map<String, Object>) value;
         for (int i = Math.min(keyToMatch.length(), maxKeyLength); i > 0; i--) {
-        	System.out.println("test "+keyToMatch.substring(0, i));
             valueFound = mapValue.get(keyToMatch.substring(0, i));
             if (valueFound != null) {
                 return valueFound;
@@ -109,5 +108,27 @@ public class CachedCFPeriodValue implements Serializable {
         } else {
             return String.format("CachedCFPeriodValue [value=%s]", value);
         }
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+
+        } else if (!(obj instanceof CachedCFPeriodValue)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        CachedCFPeriodValue other = (CachedCFPeriodValue) obj;
+
+        boolean match = (other.getPeriodStartDate() == null && periodStartDate == null)
+                || (other.getPeriodStartDate() != null && periodStartDate != null && other.getPeriodStartDate().equals(periodStartDate));
+        match = match
+                && ((other.getPeriodEndDate() == null && periodEndDate == null) || (other.getPeriodEndDate() != null && periodEndDate != null && other.getPeriodEndDate().equals(
+                    periodEndDate)));
+        return match;
     }
 }

@@ -35,7 +35,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
@@ -64,6 +64,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
+	
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
 	private DualListModel<ServiceTemplate> perks;
 	
@@ -135,22 +138,15 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         if (entity != null && entity.getId() != null) {
             
             entity = offerTemplateService.refreshOrRetrieve(entity);
-            
-		    // Lazy load related values first 
-		    if (entity.getCfFields() != null) {
-                entity.getCfFields().getUuid();
-                entity.setCfFields(PersistenceUtils.initializeAndUnproxy(entity.getCfFields()));
-		    }
+
+            // Lazy load related values first 
 			entity.getServiceTemplates().size();
 
 			// Detach and clear ids of entity and related entities
             offerTemplateService.detach(entity);
             entity.setId(null);
-            
-            if (entity.getCfFields() != null) {
-                entity.getCfFields().clearForDuplication();
-            }
-
+            String sourceAppliesToEntity = entity.clearUuid();
+                        
 			List<ServiceTemplate> serviceTemplates=entity.getServiceTemplates();
 			entity.setServiceTemplates(new ArrayList<ServiceTemplate>());
 			for(ServiceTemplate serviceTemplate:serviceTemplates){
@@ -160,7 +156,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			entity.setCode(entity.getCode()+"_copy");
 			
 			try {
-				offerTemplateService.create(entity);
+                offerTemplateService.create(entity);
+                customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+				
 			} catch (BusinessException e) {
 				log.error("error when duplicate offer#{0}:#{1}",entity.getCode(),e);
 			}			

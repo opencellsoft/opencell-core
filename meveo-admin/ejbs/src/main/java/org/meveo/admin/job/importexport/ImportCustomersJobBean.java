@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.ExceptionUtils;
 import org.meveo.commons.utils.FileUtils;
@@ -376,7 +377,7 @@ public class ImportCustomersJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void createCustomerAccount(String fileName, User currentUser, Customer customer, org.meveo.model.admin.Seller seller,
-			org.meveo.model.jaxb.customer.CustomerAccount custAcc, org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) {
+			org.meveo.model.jaxb.customer.CustomerAccount custAcc, org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) throws BusinessException {
 		nbCustomerAccounts++;
 		CustomerAccount customerAccountTmp = null;
 
@@ -396,6 +397,7 @@ public class ImportCustomersJobBean {
 			customerImportService.updateCustomerAccount(customerAccountTmp, currentUser, customer, seller, custAcc, cust, sell);
 			nbCustomerAccountsUpdated++;
 			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " code:" + custAcc.getCode() + ", status:Updated");
+			
 		} else {
 			customerImportService.createCustomerAccount(currentUser, customer, seller, custAcc, cust, sell);
 			nbCustomerAccountsCreated++;

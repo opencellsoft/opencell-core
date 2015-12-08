@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +77,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -100,6 +100,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	@Inject
 	private InvoiceAgregateService invoiceAgregateService;
+	
+	@Inject
+	private CustomFieldInstanceService customFieldInstanceService;
 
 	TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -215,9 +218,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				customerTag.setAttribute("mandateIdentification",
 						customer.getMandateIdentification() != null ? customer.getMandateIdentification() : "");
 			}
-			String json = customer.getCustomFieldsAsJson();
+			String json = customFieldInstanceService.getCFValuesAsJson(customer);
 			if (json!=null && json.length() > 0) {
-				customerTag.setAttribute("customFields", customer.getCustomFieldsAsJson());
+				customerTag.setAttribute("customFields", json);
 			}
 			header.appendChild(customerTag);
 			addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
@@ -243,9 +246,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						customerAccount.getMandateIdentification() != null ? customerAccount.getMandateIdentification()
 								: "");
 			}
-			json = customerAccount.getCustomFieldsAsJson();
+			json = customFieldInstanceService.getCFValuesAsJson(customerAccount);
 			if (json!=null && json.length() > 0) {
-				customerAccountTag.setAttribute("customFields", customerAccount.getCustomFieldsAsJson());
+				customerAccountTag.setAttribute("customFields", json);
 			}
 			header.appendChild(customerAccountTag);
 
@@ -287,9 +290,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					billingAccount.getExternalRef1() != null ? billingAccount.getExternalRef1() : "");
 			billingAccountTag.setAttribute("externalRef2",
 					billingAccount.getExternalRef2() != null ? billingAccount.getExternalRef2() : "");
-			json = billingAccount.getCustomFieldsAsJson();
+			json = customFieldInstanceService.getCFValuesAsJson(billingAccount);
 			if (json!=null && json.length() > 0) {
-				billingAccountTag.setAttribute("customFields", billingAccount.getCustomFieldsAsJson());
+				billingAccountTag.setAttribute("customFields", json);
 			}
 			header.appendChild(billingAccountTag);
 
@@ -443,9 +446,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			userAccountTag.setAttribute("code", userAccount.getCode() != null ? userAccount.getCode() : "");
 			userAccountTag.setAttribute("description",
 					userAccount.getDescription() != null ? userAccount.getDescription() : "");
-			String json = userAccount.getCustomFieldsAsJson();
+			String json = customFieldInstanceService.getCFValuesAsJson(userAccount);
 			if (json!=null && json.length() > 0) {
-				userAccountTag.setAttribute("customFields", userAccount.getCustomFieldsAsJson());
+				userAccountTag.setAttribute("customFields", json);
 			}
 
 			if (displayDetail) {
@@ -578,29 +581,28 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private void addCustomFields(Subscription subscription, Invoice invoice, Document doc, Element parent) {
 		
-	    if (subscription.getCfFields() == null || subscription.getCfFields().getCustomFields().isEmpty()) {
+	    Map<String, List<CustomFieldInstance>> customFields = customFieldInstanceService.getCustomFieldInstances(subscription);
+	    
+	    if (customFields == null || customFields.isEmpty()) {
 	        return;
 	    }
 	    
-	    Iterator<String> keys = subscription.getCfFields().getCustomFields().keySet().iterator();
-
 		Element customFieldsTag = doc.createElement("customFields");
 		parent.appendChild(customFieldsTag);
 
-		while (keys.hasNext()) {
-			String key = keys.next();
-			CustomFieldInstance cfi = subscription.getCfFields().getCustomFields().get(key);
+		for (List<CustomFieldInstance> cfis : customFields.values()) {
+            for (CustomFieldInstance cfi : cfis) {
+                if (!StringUtils.isBlank(cfi.getValueAsString()) && cfi.getPeriodStartDate() == null && cfi.getPeriodEndDate() == null) {
+                    Element customFieldTag = doc.createElement("customField");
+                    customFieldTag.setAttribute("id", cfi.getId() + "");
+                    customFieldTag.setAttribute("code", cfi.getCode() != null ? cfi.getCode() : "");
 
-			if (!StringUtils.isBlank(cfi.getValueAsString())) {
-				Element customFieldTag = doc.createElement("customField");
-				customFieldTag.setAttribute("id", cfi.getId() + "");
-				customFieldTag.setAttribute("code", cfi.getCode() != null ? cfi.getCode() : "");
+                    Text customFieldText = doc.createTextNode(cfi.getValueAsString());
+                    customFieldTag.appendChild(customFieldText);
 
-				Text customFieldText = doc.createTextNode(cfi.getValueAsString());
-				customFieldTag.appendChild(customFieldText);
-
-				customFieldsTag.appendChild(customFieldTag);
-			}
+                    customFieldsTag.appendChild(customFieldTag);
+                }
+            }
 		}
 	}
 

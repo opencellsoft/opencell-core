@@ -35,7 +35,7 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
@@ -66,6 +66,9 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 
 	@Inject
 	private TriggeredEDRTemplateService triggeredEDRTemplateService;
+	
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
 	
@@ -189,19 +192,12 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
             entity = oneShotChargeTemplateService.refreshOrRetrieve(entity);
             
 		    // Lazy load related values first 
-            if (entity.getCfFields() != null) {
-                entity.getCfFields().getUuid();
-                entity.setCfFields(PersistenceUtils.initializeAndUnproxy(entity.getCfFields()));
-            }
 			entity.getEdrTemplates().size();
 
             // Detach and clear ids of entity and related entities
 			oneShotChargeTemplateService.detach(entity);
 			entity.setId(null);
-			
-			if (entity.getCfFields() != null) {
-                entity.getCfFields().clearForDuplication();
-            }
+			String sourceAppliesToEntity = entity.clearUuid();
 			
 			List<TriggeredEDRTemplate> edrTemplates=entity.getEdrTemplates();
 			entity.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
@@ -214,11 +210,12 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 			entity.setChargeInstances(null);
 			entity.setCode(entity.getCode()+"_copy");
 			
-			try{
-				oneShotChargeTemplateService.create(entity);
-			}catch(Exception e){
-				log.error("error when duplicate recurringChargeTemplate#{0}:#{1}",entity.getCode(),e);
-			}
+            try {
+                oneShotChargeTemplateService.create(entity);
+                customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+            } catch (Exception e) {
+                log.error("error when duplicate recurringChargeTemplate#{0}:#{1}", entity.getCode(), e);
+            }
 		}
 	}
 	

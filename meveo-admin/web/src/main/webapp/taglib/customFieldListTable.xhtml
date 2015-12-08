@@ -86,8 +86,8 @@
                     </p:commandButton>
                 </c:if>
 
-                <p:commandButton value="#{messages['commons.close']}" immediate="true" rendered="#{!empty(popupWidgetVar)}" update="@this #{updateOnAddEdit}"
-                    oncomplete="PF('#{popupWidgetVar}').hide()">
+                <p:commandButton value="#{messages['commons.close']}" process="@this" rendered="#{!empty(popupWidgetVar)}" update="@this #{updateOnAddEdit}"
+                    oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{backingBean.populateCustomFieldNewValueDefaults(null)}">
                 </p:commandButton>
 
 

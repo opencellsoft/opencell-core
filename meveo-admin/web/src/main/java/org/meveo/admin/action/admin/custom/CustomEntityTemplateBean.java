@@ -86,6 +86,11 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return entityClassName == null || CustomEntityTemplate.class.getName().equals(entityClassName);
     }
 
+    /**
+     * Construct customizedEntity instance which is a representation of customizable class (e.g. Customer)
+     * @return
+     * @throws ClassNotFoundException
+     */
     @SuppressWarnings("unchecked")
     public CustomizedEntity getCustomizedEntity() throws ClassNotFoundException {
 
@@ -116,9 +121,9 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             return groupedFields;
         }
 
-        List<CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cetPrefix, getCurrentProvider());
+        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cetPrefix, getCurrentProvider());
 
-        GroupedCustomField groupedCFT = new GroupedCustomField(fields, CustomEntityTemplate.class.isAssignableFrom(entityClass) ? entity.getName() : "Custom fields", true);
+        GroupedCustomField groupedCFT = new GroupedCustomField(fields.values(), CustomEntityTemplate.class.isAssignableFrom(entityClass) ? entity.getName() : "Custom fields", true);
 
         groupedFields = new SortedTreeNode(groupedCFT.getType(), groupedCFT.getData(), null);
         groupedFields.setExpanded(true);

@@ -16,7 +16,9 @@
  */
 package org.meveo.service.custom;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -81,9 +83,9 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         CustomEntityTemplate cet = findById(id);
 
-        List<CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), cet.getProvider());
+        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), cet.getProvider());
 
-        for (CustomFieldTemplate cft : fields) {
+        for (CustomFieldTemplate cft : fields.values()) {
             customFieldTemplateService.remove(cft.getId());
         }
         super.remove(id);
@@ -96,7 +98,11 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCET", "true"));
         if (useCache && (active == null || active)) {
-            return customFieldsCache.getCustomEntityTemlates(provider);
+
+            List<CustomEntityTemplate> cets = new ArrayList<CustomEntityTemplate>();
+            cets.addAll(customFieldsCache.getCustomEntityTemplates(provider));
+            return cets;
+
         } else {
             return super.list(provider, active);
         }
@@ -107,7 +113,10 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCET", "true"));
         if (useCache) {
-            return customFieldsCache.getCustomEntityTemlates(getCurrentProvider());
+            List<CustomEntityTemplate> cets = new ArrayList<CustomEntityTemplate>();
+            cets.addAll(customFieldsCache.getCustomEntityTemplates(getCurrentProvider()));
+            return cets;
+
         } else {
             return super.list(config);
         }
