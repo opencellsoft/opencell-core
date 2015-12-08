@@ -44,7 +44,7 @@ public class ImportCustomersJob extends Job {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
             } catch (Exception e) {
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate());
+                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(),e);
             }
             List<Future<String>> futures = new ArrayList<Future<String>>();
             for (int i = 0; i < nbRuns.intValue(); i++) {

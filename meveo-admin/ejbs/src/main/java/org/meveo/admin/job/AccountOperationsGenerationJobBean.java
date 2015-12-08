@@ -59,7 +59,7 @@ public class AccountOperationsGenerationJobBean {
 			}catch(Exception e){
 				nbRuns = new Long(1);
 				waitingMillis = new Long(0);
-				log.warn("Cant get customFields for "+jobInstance.getJobTemplate());
+				log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e);
 			}
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 	    	SubListCreator subListCreator = new SubListCreator(ids,nbRuns.intValue());

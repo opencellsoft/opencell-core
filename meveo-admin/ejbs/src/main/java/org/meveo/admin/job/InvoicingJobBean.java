@@ -61,7 +61,7 @@ public class InvoicingJobBean {
 			}catch(Exception e){
 				nbRuns = new Long(1);
 				waitingMillis = new Long(0);
-				log.warn("Cant get customFields for "+jobInstance.getJobTemplate());
+				log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e);
 			}
 
 			for (BillingRun billingRun : billingRuns) {
