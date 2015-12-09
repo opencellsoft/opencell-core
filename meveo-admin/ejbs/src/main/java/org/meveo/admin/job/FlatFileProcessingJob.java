@@ -22,6 +22,7 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -33,6 +34,9 @@ public class FlatFileProcessingJob extends Job {
 
 	@Inject
 	private ResourceBundle resourceMessages;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
@@ -47,15 +51,15 @@ public class FlatFileProcessingJob extends Job {
 			String formatTransfo= null;
 			Map<String, Object> initContext = new HashMap<String, Object>();
 			try {
-				recordVariableName = (String) jobInstance.getCFValue("FlatFileProcessingJob_recordVariableName");
-				originFilename = (String) jobInstance.getCFValue("FlatFileProcessingJob_originFilename");							
-				mappingConf = (String) jobInstance.getCFValue("FlatFileProcessingJob_mappingConf");
-				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + currentUser.getProvider().getCode() + ((String)jobInstance.getCFValue("FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
-				fileNameExtension = (String) jobInstance.getCFValue("FlatFileProcessingJob_fileNameExtension");
-				scriptInstanceFlowCode = (String) jobInstance.getCFValue("FlatFileProcessingJob_scriptsFlow");
-				formatTransfo = (String) jobInstance.getCFValue("FlatFileProcessingJob_formatTransfo");
-				if(jobInstance.getCFValue("FlatFileProcessingJob_variables") != null){
-					initContext  = (Map<String, Object>) jobInstance.getCFValue("FlatFileProcessingJob_variables");
+				recordVariableName = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_recordVariableName", currentUser);
+				originFilename = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_originFilename", currentUser);							
+				mappingConf = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_mappingConf", currentUser);
+				inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + currentUser.getProvider().getCode() + ((String)customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_inputDir", currentUser)).replaceAll("\\..", "");
+				fileNameExtension = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_fileNameExtension", currentUser);
+				scriptInstanceFlowCode = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_scriptsFlow", currentUser);
+				formatTransfo = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_formatTransfo", currentUser);
+				if(customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_variables", currentUser) != null){
+					initContext  = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_variables", currentUser);
 				}
 			} catch (Exception e) {
 				log.warn("Cant get customFields for " + jobInstance.getJobTemplate(),e);

@@ -3,12 +3,12 @@ package org.meveo.api.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.crm.CustomFieldFields;
 import org.meveo.model.crm.CustomFieldInstance;
 
 /**
@@ -26,13 +26,15 @@ public class CustomFieldsDto implements Serializable {
 
     }
 
-    public static CustomFieldsDto toDTO(CustomFieldFields cff) {
-        if (cff == null || cff.getCustomFields() == null || cff.getCustomFields().isEmpty()) {
+    public static CustomFieldsDto toDTO(Map<String, List<CustomFieldInstance>> customFields) {
+        if (customFields == null || customFields.isEmpty()) {
             return null;
         }
         CustomFieldsDto dto = new CustomFieldsDto();
-        for (CustomFieldInstance cfi : cff.getCustomFields().values()) {
-            dto.getCustomField().addAll(CustomFieldDto.toDTO(cfi));
+        for (List<CustomFieldInstance> cfis : customFields.values()) {
+            for (CustomFieldInstance cfi : cfis) {
+                dto.getCustomField().add(CustomFieldDto.toDTO(cfi));
+            }
         }
         return dto;
     }
@@ -62,8 +64,9 @@ public class CustomFieldsDto implements Serializable {
     public String toString() {
         return "CustomFieldsDto [customField=" + customField + "]";
     }
-	public boolean isEmpty() {
-		return customField == null || customField.isEmpty();
-	}
+
+    public boolean isEmpty() {
+        return customField == null || customField.isEmpty();
+    }
 
 }

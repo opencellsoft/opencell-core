@@ -87,7 +87,6 @@ import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -95,7 +94,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.w3c.dom.Document;
@@ -128,8 +127,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	@Inject
 	private RejectedBillingAccountService rejectedBillingAccountService;
 	
-	@Inject
-	private CustomFieldTemplateService customFieldTemplateService;
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 	
 
 	private String PDF_DIR_NAME = "pdf";
@@ -308,20 +307,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 		if (seller != null) {
 			Date now = new Date();
-			if (seller.getCFValue(INVOICE_SEQUENCE, now) != null) {
-				CustomFieldTemplate cft = customFieldTemplateService.findByCode(INVOICE_SEQUENCE, seller.getProvider());
-				if(cft == null){
-					throw new RuntimeException("Cannot find template for INVOICE_SEQUENCE CustomField");
-				}
+			Object sequenceValObj = customFieldInstanceService.getCFValue(seller, INVOICE_SEQUENCE, now, currentUser);
+			if (sequenceValObj != null) {
 				Long sequenceVal = 1L;
 				try {
-					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_SEQUENCE, now).toString());
+					sequenceVal = Long.parseLong(sequenceValObj.toString());
 				} catch (NumberFormatException e) {
 					sequenceVal = 1L;
 				}
 
 				result = 1 + sequenceVal;
-				seller.setCFValue(InvoiceService.INVOICE_SEQUENCE, result, new Date(), cft);
+                try {
+                    customFieldInstanceService.setCFValue(seller, INVOICE_SEQUENCE, result, now, currentUser);
+                } catch (BusinessException e) {
+                    log.error("Failed to set custom field " + INVOICE_SEQUENCE + " value on provider", e);
+                }
 			} else if (seller.getCurrentInvoiceNb() != null) {
 				long currentInvoiceNbre = seller.getCurrentInvoiceNb();
 				result = 1 + currentInvoiceNbre;
@@ -339,20 +339,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 		Date now = new Date();
 		if (provider != null) {
-			if (provider.getCFValue(INVOICE_SEQUENCE, now) != null) {
-				CustomFieldTemplate cft = customFieldTemplateService.findByCode(INVOICE_SEQUENCE, provider);
-				if(cft == null){
-					throw new RuntimeException("Cannot find template for INVOICE_SEQUENCE CustomField");
-				}
+		    
+		    Object sequenceValObj = customFieldInstanceService.getCFValue(provider, INVOICE_SEQUENCE, now, currentUser);
+			if (sequenceValObj != null) {
 				Long sequenceVal = 1L;
 				try {
-					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_SEQUENCE, now).toString());
+					sequenceVal = Long.parseLong(sequenceValObj.toString());
 				} catch (NumberFormatException e) {
 					sequenceVal = 1L;
 				}
 
 				result = 1 + sequenceVal;
-				provider.setCFValue(InvoiceService.INVOICE_SEQUENCE, result, new Date(), cft);
+				try {
+                    customFieldInstanceService.setCFValue(provider, INVOICE_SEQUENCE, result, now, currentUser);
+                } catch (BusinessException e) {
+                    log.error("Failed to set custom field " + INVOICE_SEQUENCE + " value on provider", e);
+                }
 			} else {
 				long currentInvoiceNbre = provider.getCurrentInvoiceNb() != null ? provider.getCurrentInvoiceNb() : 0;
 				result = 1 + currentInvoiceNbre;
@@ -805,11 +807,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		long result = 0;
 
 		if (seller != null) {
-			Date now = new Date();
-			if (seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, now) != null) {
+		    Date now = new Date();
+            Object sequenceValObj = customFieldInstanceService.getCFValue(seller, INVOICE_ADJUSTMENT_SEQUENCE, now, currentUser);
+			if (sequenceValObj != null) {
 				Long sequenceVal = 1L;
 				try {
-					sequenceVal = Long.parseLong(seller.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, now).toString());
+					sequenceVal = Long.parseLong(sequenceValObj.toString());
 				} catch (NumberFormatException e) {
 					sequenceVal = 1L;
 				}
@@ -833,10 +836,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 		Date now = new Date();
 		if (provider != null) {
-			if (provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, now) != null) {
+		    Object sequenceValObj = customFieldInstanceService.getCFValue(provider, INVOICE_ADJUSTMENT_SEQUENCE, now, currentUser);
+			if (sequenceValObj != null) {
 				Long sequenceVal = 1L;
 				try {
-					sequenceVal = Long.parseLong(provider.getCFValue(INVOICE_ADJUSTMENT_SEQUENCE, now).toString());
+					sequenceVal = Long.parseLong(sequenceValObj.toString());
 				} catch (NumberFormatException e) {
 					sequenceVal = 1L;
 				}
@@ -1058,17 +1062,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		invoice.setNetToPay(netToPay);
 	}
 
-	public void updateInvoiceAdjustmentCurrentNb(Invoice invoice) {
+	public void updateInvoiceAdjustmentCurrentNb(Invoice invoice, User currentUser) {
 		// update seller or provider current invoice sequence value
 		if (invoice.getInvoiceAdjustmentCurrentSellerNb() != null) {
 			Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-			seller.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE,
-					invoice.getInvoiceAdjustmentCurrentSellerNb() + 1, new Date(), null);
+			try {
+                customFieldInstanceService.setCFValue(seller, INVOICE_ADJUSTMENT_SEQUENCE, invoice.getInvoiceAdjustmentCurrentSellerNb() + 1, new Date(), currentUser);
+            } catch (BusinessException e) {
+                log.error("Failed to set custom field " + INVOICE_ADJUSTMENT_SEQUENCE + " value on seller {}",seller, e);
+            }			
 			sellerService.update(seller, getCurrentUser());
 		} else if (invoice.getInvoiceAdjustmentCurrentProviderNb() != null) {
 			Provider provider = invoice.getProvider();
-			provider.setCFValue(InvoiceService.INVOICE_ADJUSTMENT_SEQUENCE,
-					invoice.getInvoiceAdjustmentCurrentProviderNb() + 1, new Date(), null);
+			try {
+                customFieldInstanceService.setCFValue(provider, INVOICE_ADJUSTMENT_SEQUENCE, invoice.getInvoiceAdjustmentCurrentProviderNb() + 1, new Date(), currentUser);
+            } catch (BusinessException e) {
+                log.error("Failed to set custom field " + INVOICE_ADJUSTMENT_SEQUENCE + " value on provider {}",provider, e);
+            }   
 			providerService.update(provider, getCurrentUser());
 		}
 	}

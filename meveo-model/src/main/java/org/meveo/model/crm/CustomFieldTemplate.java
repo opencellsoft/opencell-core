@@ -1,6 +1,7 @@
 package org.meveo.model.crm;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CollectionTable;
@@ -35,8 +36,8 @@ public class CustomFieldTemplate extends BusinessEntity {
     public static String POSITION_TAB = "tab";
     public static String POSITION_FIELD_GROUP = "fieldGroup";
     public static String POSITION_FIELD = "field";
-    
-    public static long DEFAULT_MAX_LENGTH_STRING = 50L; 
+
+    public static long DEFAULT_MAX_LENGTH_STRING = 50L;
 
     @Column(name = "FIELD_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -95,9 +96,6 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Column(name = "CACHE_VALUE")
     private boolean cacheValue;
-
-    @Transient
-    private CustomFieldInstance instance;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -180,14 +178,6 @@ public class CustomFieldTemplate extends BusinessEntity {
             }
         }
         return null;
-    }
-
-    public void setInstance(CustomFieldInstance instance) {
-        this.instance = instance;
-    }
-
-    public CustomFieldInstance getInstance() {
-        return instance;
     }
 
     public CustomFieldStorageTypeEnum getStorageType() {

@@ -124,7 +124,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	private List<SubCategoryInvoiceAgregate> uiSubCategoryInvoiceAgregates;
 	private List<RatedTransaction> uiRatedTransactions;
-
+    
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -364,7 +364,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 
 	public void generatePdf() {
 		try {
-			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(entity);
+			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(entity, getCurrentUser());
 			invoiceService.producePdf(parameters, getCurrentUser());
 			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
 		} catch (InvoiceXmlNotFoundException e) {
@@ -672,7 +672,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 			}
 		}
 
-		invoiceService.updateInvoiceAdjustmentCurrentNb(entity);
+		invoiceService.updateInvoiceAdjustmentCurrentNb(entity, getCurrentUser());
 
 		// create xml invoice adjustment
 		String invoicesDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");
@@ -683,8 +683,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		xmlInvoiceCreator.createXMLInvoiceAdjustment(entity.getId(), billingRundir);
 
 		// create pdf
-		Map<String, Object> parameters = pDFParametersConstruction.constructParameters(entity.getId(),
-				currentUser.getProvider());
+        Map<String, Object> parameters = pDFParametersConstruction.constructParameters(entity.getId(), currentUser, currentUser.getProvider());
 		invoiceService.produceInvoiceAdjustmentPdf(parameters, currentUser);
 
 		return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid="

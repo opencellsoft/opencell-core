@@ -458,7 +458,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		}
 		if(cfMapToAdd.getDoubleValue() != null){
 			CustomFieldValueDto cfValue = new CustomFieldValueDto(cfMapToAdd.getDoubleValue());
-			customFieldDto.getMapValue().put(cfMapToAdd.getDescription(),cfValue);
+			customFieldDto.getMapValue().put(cfMapToAdd.getCode(),cfValue);
 		}
 	}
 	

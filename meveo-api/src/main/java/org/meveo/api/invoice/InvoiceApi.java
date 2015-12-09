@@ -58,6 +58,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -105,6 +106,9 @@ public class InvoiceApi extends BaseApi {
 
 	@Inject
 	private PDFParametersConstruction pDFParametersConstruction;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
 	@Inject
 	@MeveoParamBean
@@ -191,7 +195,7 @@ public class InvoiceApi extends BaseApi {
 			invoiceService.create(invoice, currentUser, provider);
 			
 			if (invoiceTypeEnum.equals(InvoiceTypeEnum.CREDIT_NOTE_ADJUST)) {
-				invoiceService.updateInvoiceAdjustmentCurrentNb(invoice);
+				invoiceService.updateInvoiceAdjustmentCurrentNb(invoice, currentUser);
 			}
 			
 			List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
@@ -696,8 +700,7 @@ public class InvoiceApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber);
 		}
 		if (invoice.getPdf() == null) {
-			Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(),
-					currentUser.getProvider());
+            Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice.getId(), currentUser, currentUser.getProvider());
 			invoiceService.producePdf(parameters, currentUser);
 		}
 		invoiceService.findById(invoice.getId(), true);

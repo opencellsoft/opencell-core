@@ -29,28 +29,16 @@ public class AccountApi {
 		userAccountApiService.populate(postData, accountEntity, currentUser);
 	}
 
-	/**
-	 * 
-	 * @param postData
-	 * @param accountEntity
-	 * @param currentUser
-	 * @param checkCustomField
-	 * @throws MeveoApiException
-	 */
-	public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser, boolean checkCustomField) throws MeveoApiException {
-		userAccountApiService.populate(postData, accountEntity, currentUser, checkCustomField);
-	}
-
-	/**
-	 * 
-	 * @param accountEntity
-	 * @param postData
-	 * @param currentUser
-	 * @throws MeveoApiException
-	 */
-	public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser) throws MeveoApiException {
-		userAccountApiService.updateAccount(accountEntity, postData, currentUser);
-	}
+//	/**
+//	 * 
+//	 * @param accountEntity
+//	 * @param postData
+//	 * @param currentUser
+//	 * @throws MeveoApiException
+//	 */
+//	public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser) throws MeveoApiException {
+//		userAccountApiService.updateAccount(accountEntity, postData, currentUser);
+//	}
     
 	/**
 	 * 

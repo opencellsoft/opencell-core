@@ -62,16 +62,7 @@ public class CustomerAccounts {
 
     protected List<CustomerAccount> customerAccount;
     
-    public CustomerAccounts(){}
-    
-    public CustomerAccounts(List<org.meveo.model.payments.CustomerAccount> customerAccounts) {
-		if(customerAccounts!=null){
-			customerAccount=new ArrayList<CustomerAccount>(customerAccounts.size());
-			for(org.meveo.model.payments.CustomerAccount ca:customerAccounts){
-				customerAccount.add(new CustomerAccount(ca));
-			}
-		}
-	}
+    public CustomerAccounts(){}   
 
 	/**
      *  14 caracteres14 caracteres14 caracteres Gets the value of the customerAccount property.

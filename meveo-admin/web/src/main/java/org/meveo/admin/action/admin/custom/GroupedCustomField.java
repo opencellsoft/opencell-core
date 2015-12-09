@@ -2,6 +2,7 @@ package org.meveo.admin.action.admin.custom;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class GroupedCustomField implements Serializable {
 
     private int position;
 
-    private List<CustomFieldTemplate> fields = null;
+    private Collection<CustomFieldTemplate> fields = null;
 
     public GroupedCustomField(String type, Object data, GroupedCustomField parent, String position) {
         this.type = type;
@@ -43,7 +44,7 @@ public class GroupedCustomField implements Serializable {
         }
     }
 
-    public GroupedCustomField(List<CustomFieldTemplate> fields, String defaultTabLabel, boolean leaveDefaultTab) {
+    public GroupedCustomField(Collection<CustomFieldTemplate> fields, String defaultTabLabel, boolean leaveDefaultTab) {
 
         this(TYPE_ROOT, "Root", null, null);
 
@@ -152,7 +153,7 @@ public class GroupedCustomField implements Serializable {
         }
     }
 
-    public List<CustomFieldTemplate> getFields() {
+    public Collection<CustomFieldTemplate> getFields() {
         return fields;
     }
 

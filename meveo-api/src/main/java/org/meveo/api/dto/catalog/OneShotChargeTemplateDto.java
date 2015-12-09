@@ -1,11 +1,15 @@
 package org.meveo.api.dto.catalog;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -25,8 +29,8 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
 
 	}
 
-	public OneShotChargeTemplateDto(OneShotChargeTemplate e) {
-		super(e);
+	public OneShotChargeTemplateDto(OneShotChargeTemplate e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+		super(e, customFieldInstances);
 		oneShotChargeTemplateType = e.getOneShotChargeTemplateType().getId();
 		immediateInvoicing = e.getImmediateInvoicing();
 	}

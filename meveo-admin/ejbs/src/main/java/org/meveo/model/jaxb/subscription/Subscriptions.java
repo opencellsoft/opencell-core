@@ -75,19 +75,10 @@ public class Subscriptions {
     protected Errors errors;
     @XmlElement(required = true)
     protected Warnings warnings;
-    protected List<Subscription> subscription;
+    protected List<Subscription> subscription = new ArrayList<Subscription>();
 
     public Subscriptions(){}
     
-    public Subscriptions(List<org.meveo.model.billing.Subscription> subs,String dateFormat) {
-		if(subs!=null){
-			subscription = new ArrayList<Subscription>(subs.size());
-			for(org.meveo.model.billing.Subscription sub:subs){
-				subscription.add(new Subscription(sub,dateFormat));
-			}
-		}
-	}
-
 	/**
      * Gets the value of the errors property.
      * 

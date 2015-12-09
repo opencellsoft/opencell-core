@@ -155,10 +155,6 @@ public class AccountImportService extends ImportService{
 			billingAccount.setName(name);
 		}
 		
-        if (billAccount.getCustomFields() != null){
-            populateCustomFields(billAccount.getCustomFields().getCustomField(), billingAccount, userJob);
-        } 
-		
 		billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(
 				billAccount.getTradingCountryCode(), provider));
 		billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
@@ -167,7 +163,11 @@ public class AccountImportService extends ImportService{
 		billingAccount.setProvider(provider);
 
 		billingAccountService.create(billingAccount, userJob, provider);
-
+        
+        if (billAccount.getCustomFields() != null){
+            populateCustomFields(billAccount.getCustomFields().getCustomField(), billingAccount, userJob);
+        } 
+        
 		return billingAccount;
 	}
 
@@ -264,10 +264,6 @@ public class AccountImportService extends ImportService{
 			name.setTitle(titleService.findByCode(provider, billingAccountDto.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
-		
-        if (billingAccountDto.getCustomFields() != null){
-            populateCustomFields(billingAccountDto.getCustomFields().getCustomField(), billingAccount, userJob);
-        } 
 
 		billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(
 				billingAccountDto.getTradingCountryCode(), provider));
@@ -275,8 +271,12 @@ public class AccountImportService extends ImportService{
 				billingAccountDto.getTradingLanguageCode(), provider));
 		billingAccount.updateAudit(userJob);
 
-		billingAccountService.updateNoCheck(billingAccount);
+		billingAccount = billingAccountService.updateNoCheck(billingAccount);
 
+        if (billingAccountDto.getCustomFields() != null){
+            populateCustomFields(billingAccountDto.getCustomFields().getCustomField(), billingAccount, userJob);
+        } 
+		
 		return billingAccount;
 	}
 
@@ -313,16 +313,16 @@ public class AccountImportService extends ImportService{
 			userAccount.setName(nameUA);
 		}
 
-        if (uAccount.getCustomFields() != null){
-            populateCustomFields(uAccount.getCustomFields().getCustomField(), userAccount, userJob);
-        } 
-
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(new Date());
 		userAccount.setProvider(provider);
 
 		userAccountService.create(userAccount, userJob, provider);
 
+        if (uAccount.getCustomFields() != null){
+            populateCustomFields(uAccount.getCustomFields().getCustomField(), userAccount, userJob);
+        } 
+        
 		// create wallet
 		WalletInstance wallet = new WalletInstance();
 		wallet.setCode(WalletTemplate.PRINCIPAL);
@@ -372,15 +372,15 @@ public class AccountImportService extends ImportService{
 			userAccount.setName(nameUA);
 		}
 
-        if (userAccountDto.getCustomFields() != null) {
-            populateCustomFields(userAccountDto.getCustomFields().getCustomField(), userAccount, userJob);
-        }
-
 		// userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(new Date());
 		userAccount.updateAudit(userJob);
 
-		userAccountService.updateNoCheck(userAccount);
+		userAccount = userAccountService.updateNoCheck(userAccount);
+		
+        if (userAccountDto.getCustomFields() != null) {
+            populateCustomFields(userAccountDto.getCustomFields().getCustomField(), userAccount, userJob);
+        }
 	}
 
 	private boolean billingAccountCheckError(org.meveo.model.jaxb.account.BillingAccount billAccount)

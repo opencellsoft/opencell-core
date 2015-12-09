@@ -1,12 +1,15 @@
 package org.meveo.api.dto;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.customEntities.CustomEntityInstance;
 
 /**
@@ -86,7 +89,7 @@ public class CustomEntityInstanceDto implements Serializable {
      * @param cei CustomEntityInstance entity to convert
      * @return CustomEntityInstanceDto object
      */
-    public static CustomEntityInstanceDto toDTO(CustomEntityInstance cei) {
+    public static CustomEntityInstanceDto toDTO(CustomEntityInstance cei, Map<String, List<CustomFieldInstance>> customFieldInstances) {
         CustomEntityInstanceDto dto = new CustomEntityInstanceDto();
 
         dto.setCode(cei.getCode());
@@ -94,7 +97,7 @@ public class CustomEntityInstanceDto implements Serializable {
         dto.setDescription(cei.getDescription());
         dto.setDisabled(cei.isDisabled());
 
-        dto.setCustomFields(CustomFieldsDto.toDTO(cei.getCfFields()));
+        dto.setCustomFields(CustomFieldsDto.toDTO(customFieldInstances));
 
         return dto;
     }

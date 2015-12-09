@@ -10,10 +10,13 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
+import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
@@ -38,6 +41,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.mediation.Access;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -108,18 +112,19 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setUserAccount(userAccount);
 			subscription.setOffer(offerTemplate);
 
-            // populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), subscription, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
-            }
-
             subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
 
 			subscriptionService.create(subscription, currentUser, provider);
+			
+            // populate customFields
+            try {
+                populateCustomFields(postData.getCustomFields(), subscription, true, currentUser);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            }
+            
 		} else {
 			if (StringUtils.isBlank(postData.getUserAccount())) {
 				missingParameters.add("userAccount");
@@ -171,15 +176,16 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
 
+
+            subscription = subscriptionService.update(subscription, currentUser);
+            
             // populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), subscription, currentUser);
+                populateCustomFields(postData.getCustomFields(), subscription, false, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
-
-			subscriptionService.update(subscription, currentUser);
 			
 		} else {
 			if (StringUtils.isBlank(postData.getUserAccount())) {
@@ -590,7 +596,7 @@ public class SubscriptionApi extends BaseApi {
 			List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount);
 			if (subscriptions != null) {
 				for (Subscription s : subscriptions) {
-					result.getSubscription().add(new SubscriptionDto(s));
+					result.getSubscription().add(subscriptionToDto(s));
 				}
 			}
 
@@ -611,7 +617,7 @@ public class SubscriptionApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
 			}
 
-			result = new SubscriptionDto(subscription);
+			result = subscriptionToDto(subscription);
 		} else {
 			missingParameters.add("subscriptionCode");
 
@@ -634,4 +640,36 @@ public class SubscriptionApi extends BaseApi {
 			update(postData, currentUser);
 		}
 	}
+
+    public SubscriptionDto subscriptionToDto(Subscription subscription) {
+        SubscriptionDto dto = new SubscriptionDto();
+        dto.setCode ( subscription.getCode());
+        dto.setDescription ( subscription.getDescription());
+
+        if (subscription.getUserAccount() != null) {
+            dto.setUserAccount ( subscription.getUserAccount().getCode());
+        }
+
+        if (subscription.getOffer() != null) {
+            dto.setOfferTemplate ( subscription.getOffer().getCode());
+        }
+
+        dto.setSubscriptionDate ( subscription.getSubscriptionDate());
+        dto.setTerminationDate ( subscription.getTerminationDate());
+
+        if (subscription.getAccessPoints() != null) {
+            for (Access ac : subscription.getAccessPoints()) {
+                dto.getAccesses().getAccess().add(new AccessDto(ac, customFieldInstanceService.getCustomFieldInstances(ac)));
+            }
+        }
+
+        dto.setCustomFields ( CustomFieldsDto.toDTO(customFieldInstanceService.getCustomFieldInstances(subscription)));
+
+        if (subscription.getServiceInstances() != null) {
+            for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+                dto.getServices().getServiceInstance().add(new ServiceInstanceDto(serviceInstance));
+            }
+        }
+        return dto;
+    }
 }

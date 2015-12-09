@@ -10,11 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccessesDto;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.mediation.Access;
 
 /**
  * @author Edward P. Legaspi
@@ -56,36 +52,6 @@ public class SubscriptionDto extends BaseDto {
 
     public SubscriptionDto() {
 
-    }
-
-    public SubscriptionDto(Subscription e) {
-        code = e.getCode();
-        description = e.getDescription();
-
-        if (e.getUserAccount() != null) {
-            userAccount = e.getUserAccount().getCode();
-        }
-
-        if (e.getOffer() != null) {
-            offerTemplate = e.getOffer().getCode();
-        }
-
-        subscriptionDate = e.getSubscriptionDate();
-        terminationDate = e.getTerminationDate();
-
-        if (e.getAccessPoints() != null) {
-            for (Access ac : e.getAccessPoints()) {
-                accesses.getAccess().add(new AccessDto(ac));
-            }
-        }
-
-        customFields = CustomFieldsDto.toDTO(e.getCfFields());
-
-        if (e.getServiceInstances() != null) {
-            for (ServiceInstance serviceInstance : e.getServiceInstances()) {
-                services.getServiceInstance().add(new ServiceInstanceDto(serviceInstance));
-            }
-        }
     }
 
     public String getCode() {

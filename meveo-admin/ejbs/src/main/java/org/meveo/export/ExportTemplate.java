@@ -133,6 +133,13 @@ public class ExportTemplate {
         this.relatedEntities = relatedEntities;
     }
 
+    public void addRelatedEntity(String selection, Map<String, String> parameters) {
+        if (relatedEntities == null) {
+            relatedEntities = new ArrayList<RelatedEntityToExport>();
+        }
+        relatedEntities.add(new RelatedEntityToExport(selection, parameters)); 
+    }
+
     public String getRef() {
         return ref;
     }

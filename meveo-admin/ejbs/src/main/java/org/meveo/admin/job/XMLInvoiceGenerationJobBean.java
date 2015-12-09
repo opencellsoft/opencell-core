@@ -25,6 +25,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -41,6 +42,9 @@ public class XMLInvoiceGenerationJobBean {
 
 	@Inject
 	private XmlInvoiceAsync xmlInvoiceAsync;
+	
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
 	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -75,8 +79,8 @@ public class XMLInvoiceGenerationJobBean {
 				Long nbRuns = new Long(1);		
 				Long waitingMillis = new Long(0);
 				try{
-					nbRuns = (Long) jobInstance.getCFValue("nbRuns");  			
-					waitingMillis = (Long) jobInstance.getCFValue("waitingMillis");
+					nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns", currentUser);             
+	                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis", currentUser);
 					if(nbRuns == -1){
 						nbRuns = (long) Runtime.getRuntime().availableProcessors();
 					}

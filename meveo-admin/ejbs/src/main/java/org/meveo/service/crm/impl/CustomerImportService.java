@@ -8,6 +8,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -58,7 +59,7 @@ public class CustomerImportService extends ImportService {
     private CustomerAccountService customerAccountService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Customer createCustomer(User currentUser, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust) {
+    public Customer createCustomer(User currentUser, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust) throws BusinessException {
         Provider provider = currentUser.getProvider();
         Customer customer = null;
 
@@ -78,10 +79,11 @@ public class CustomerImportService extends ImportService {
             name.setLastName(cust.getName().getLastName());
             customer.setName(name);
 
+            customerService.create(customer, currentUser, provider);
+            
             if (cust.getCustomFields() != null) {
                 populateCustomFields(cust.getCustomFields().getCustomField(), customer, currentUser);
             }
-            customerService.create(customer, currentUser, provider);
         }
 
         return customer;
@@ -89,7 +91,7 @@ public class CustomerImportService extends ImportService {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createCustomerAccount(User currentUser, Customer customer, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
-            org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) {
+            org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
 
         Provider provider = currentUser.getProvider();
 
@@ -139,20 +141,20 @@ public class CustomerImportService extends ImportService {
             customerAccount.setName(name);
         }
 
-        if (custAcc.getCustomFields() != null) {
-            populateCustomFields(custAcc.getCustomFields().getCustomField(), customerAccount, currentUser);
-        }
-
         customerAccount.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode(), provider));
         customerAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(custAcc.getTradingLanguageCode(), provider));
         customerAccount.setProvider(provider);
         customerAccount.setCustomer(customer);
         customerAccountService.create(customerAccount, currentUser, provider);
+        
+        if (custAcc.getCustomFields() != null) {
+            populateCustomFields(custAcc.getCustomFields().getCustomField(), customerAccount, currentUser);
+        }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Customer updateCustomer(Customer customer, User currentUser, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell,
-            org.meveo.model.jaxb.customer.Customer cust) {
+            org.meveo.model.jaxb.customer.Customer cust) throws BusinessException {
         Provider provider = currentUser.getProvider();
 
         customer.setDescription(cust.getDesCustomer());
@@ -167,19 +169,19 @@ public class CustomerImportService extends ImportService {
         name.setLastName(cust.getName().getLastName());
         customer.setName(name);
 
+        customer.updateAudit(currentUser);
+        customer = customerService.updateNoCheck(customer);
+
         if (cust.getCustomFields() != null) {
             populateCustomFields(cust.getCustomFields().getCustomField(), customer, currentUser);
         }
-
-        customer.updateAudit(currentUser);
-        customerService.updateNoCheck(customer);
-
+        
         return customer;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateCustomerAccount(CustomerAccount customerAccount, User currentUser, Customer customer, Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
-            org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) {
+            org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
         Provider provider = currentUser.getProvider();
 
         customerAccount.setDescription(custAcc.getDescription());
@@ -232,15 +234,16 @@ public class CustomerImportService extends ImportService {
             customerAccount.setName(name);
         }
 
-        if (custAcc.getCustomFields() != null) {
-            populateCustomFields(custAcc.getCustomFields().getCustomField(), customerAccount, currentUser);
-        }
-
         customerAccount.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode(), provider));
         customerAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(custAcc.getTradingLanguageCode(), provider));
         customerAccount.setCustomer(customer);
         customerAccount.updateAudit(currentUser);
-        customerAccountService.updateNoCheck(customerAccount);
+        customerAccount = customerAccountService.updateNoCheck(customerAccount);
+        
+        if (custAcc.getCustomFields() != null) {
+            populateCustomFields(custAcc.getCustomFields().getCustomField(), customerAccount, currentUser);
+        }
+        
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

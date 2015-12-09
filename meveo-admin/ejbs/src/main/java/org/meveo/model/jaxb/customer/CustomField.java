@@ -1,6 +1,5 @@
 package org.meveo.model.jaxb.customer;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 
@@ -26,9 +24,6 @@ public class CustomField {
 
     @XmlAttribute(required = true)
     protected String code;
-
-    @XmlAttribute
-    protected String description;
 
     @XmlAttribute
     protected Date valueDate;
@@ -67,49 +62,26 @@ public class CustomField {
     public CustomField() {
     }
 
-    public static List<CustomField> toDTO(CustomFieldInstance cfi) {
-        List<CustomField> dtos = new ArrayList<CustomField>();
-        if (!cfi.isVersionable()) {
-            CustomField dto = new CustomField();
-            dto.setCode(cfi.getCode());
-            dto.setDescription(cfi.getDescription());
-            dto.setStringValue(cfi.getCfValue().getStringValue());
-            dto.setDateValue(cfi.getCfValue().getDateValue());
-            dto.setLongValue(cfi.getCfValue().getLongValue());
-            dto.setDoubleValue(cfi.getCfValue().getDoubleValue());
-            dto.setListValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getListValue()));
-            dto.setMapValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getMapValue()));
-            if (cfi.getCfValue().getEntityReferenceValue() != null) {
-                dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getCfValue().getEntityReferenceValue()));
-            }
-            dtos.add(dto);
+    public static CustomField toDTO(CustomFieldInstance cfi) {
 
-        } else {
-
-            for (CustomFieldPeriod period : cfi.getValuePeriods()) {
-                CustomField dto = new CustomField();
-                dto.setCode(cfi.getCode());
-                dto.setDescription(cfi.getDescription());
-                dto.setValuePeriodStartDate(period.getPeriodStartDate());
-                dto.setValuePeriodEndDate(period.getPeriodEndDate());
-                if (period.getPriority() > 0) {
-                    dto.setValuePeriodPriority(period.getPriority());
-                }
-                dto.setStringValue(period.getCfValue().getStringValue());
-                dto.setDateValue(period.getCfValue().getDateValue());
-                dto.setLongValue(period.getCfValue().getLongValue());
-                dto.setDoubleValue(period.getCfValue().getDoubleValue());
-                dto.setListValue(CustomFieldValueDto.toDTO(period.getCfValue().getListValue()));
-                dto.setMapValue(CustomFieldValueDto.toDTO(period.getCfValue().getMapValue()));
-                if (period.getCfValue().getEntityReferenceValue() != null) {
-                    dto.setEntityReferenceValue(new EntityReferenceDto(period.getCfValue().getEntityReferenceValue()));
-                }
-
-                dtos.add(dto);
-            }
+        CustomField dto = new CustomField();
+        dto.setCode(cfi.getCode());
+        dto.setValuePeriodStartDate(cfi.getPeriodStartDate());
+        dto.setValuePeriodEndDate(cfi.getPeriodEndDate());
+        if (cfi.getPriority() > 0) {
+            dto.setValuePeriodPriority(cfi.getPriority());
+        }
+        dto.setStringValue(cfi.getCfValue().getStringValue());
+        dto.setDateValue(cfi.getCfValue().getDateValue());
+        dto.setLongValue(cfi.getCfValue().getLongValue());
+        dto.setDoubleValue(cfi.getCfValue().getDoubleValue());
+        dto.setListValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getListValue()));
+        dto.setMapValue(CustomFieldValueDto.toDTO(cfi.getCfValue().getMapValue()));
+        if (cfi.getCfValue().getEntityReferenceValue() != null) {
+            dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getCfValue().getEntityReferenceValue()));
         }
 
-        return dtos;
+        return dto;
     }
 
     public String getCode() {
@@ -118,14 +90,6 @@ public class CustomField {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getStringValue() {
@@ -186,6 +150,10 @@ public class CustomField {
 
     public void setValuePeriodPriority(Integer valuePeriodPriority) {
         this.valuePeriodPriority = valuePeriodPriority;
+    }
+
+    public Integer getValuePeriodPriority() {
+        return valuePeriodPriority;
     }
 
     public List<CustomFieldValueDto> getListValue() {
@@ -324,10 +292,8 @@ public class CustomField {
 
     @Override
     public String toString() {
-        return String
-            .format(
-                "CustomField [code=%s, description=%s, valueDate=%s, valuePeriodStartDate=%s, valuePeriodEndDate=%s, valuePeriodPriority=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s,mapValue="
-                        + mapValue + "]", code, description, valueDate, valuePeriodStartDate, valuePeriodEndDate, valuePeriodPriority, stringValue, dateValue, longValue,
-                doubleValue);
+        return String.format(
+            "CustomField [code=%s, valueDate=%s, valuePeriodStartDate=%s, valuePeriodEndDate=%s, valuePeriodPriority=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s,mapValue="
+                    + mapValue + "]", code, valueDate, valuePeriodStartDate, valuePeriodEndDate, valuePeriodPriority, stringValue, dateValue, longValue, doubleValue);
     }
 }

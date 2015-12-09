@@ -104,16 +104,16 @@ public class SellerApiService extends BaseApi {
 				seller.setSeller(parentSeller);
 			}
 
+            sellerService.create(seller, currentUser, provider);
+            
             // populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), seller, currentUser);
+                populateCustomFields(postData.getCustomFields(), seller, true, currentUser);
 
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
-
-			sellerService.create(seller, currentUser, provider);
 
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
@@ -191,16 +191,17 @@ public class SellerApiService extends BaseApi {
 				seller.setSeller(parentSeller);
 			}
 			
+            seller = sellerService.update(seller, currentUser);
+            
             // populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), seller, currentUser);
+                populateCustomFields(postData.getCustomFields(), seller, false, currentUser);
 
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
-			sellerService.update(seller, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -222,7 +223,7 @@ public class SellerApiService extends BaseApi {
 				throw new EntityDoesNotExistsException(Seller.class, sellerCode);
 			}
 
-			result = new SellerDto(seller);
+			result = new SellerDto(seller, customFieldInstanceService.getCustomFieldInstances(seller));
 		} else {
 			if (StringUtils.isBlank(sellerCode)) {
 				missingParameters.add("sellerCode");
@@ -260,7 +261,7 @@ public class SellerApiService extends BaseApi {
 		List<Seller> sellers = sellerService.list(provider);
 		if (sellers != null) {
 			for (Seller seller : sellers) {
-				result.getSeller().add(new SellerDto(seller));
+				result.getSeller().add(new SellerDto(seller, customFieldInstanceService.getCustomFieldInstances(seller)));
 			}
 		}
 

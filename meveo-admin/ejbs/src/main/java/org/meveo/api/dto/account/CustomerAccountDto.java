@@ -8,9 +8,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.payments.CustomerAccount;
-
 @XmlType(name = "CustomerAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerAccountDto extends AccountDto {
@@ -49,63 +46,7 @@ public class CustomerAccountDto extends AccountDto {
 	public CustomerAccountDto() {
 		super();
 	}
-
-	public CustomerAccountDto(CustomerAccount e) {
-		initFromEntity(e);
-	}
-
-	public void initFromEntity(CustomerAccount e) {
-		super.initFromEntity(e);
-
-		if (e.getCustomer() != null) {
-			customer = e.getCustomer().getCode();
-		}
-
-		if (e.getTradingCurrency() != null) {
-			currency = e.getTradingCurrency().getCurrencyCode();
-		}
-
-		if (e.getTradingLanguage() != null) {
-			language = e.getTradingLanguage().getLanguageCode();
-		}
-
-		try {
-			status = e.getStatus().name();
-		} catch (NullPointerException ex) {
-		}
-		try {
-			paymentMethod = e.getPaymentMethod().name();
-		} catch (NullPointerException ex) {
-		}
-		try {
-			creditCategory = e.getCreditCategory().getCode();
-		} catch (NullPointerException ex) {
-		}
-		try {
-			dunningLevel = e.getDunningLevel().name();
-		} catch (NullPointerException ex) {
-		}
-
-		dateStatus = e.getDateStatus();
-		dateDunningLevel = e.getDateDunningLevel();
-		if (e.getContactInformation() != null) {
-			contactInformation = new ContactInformationDto(e.getContactInformation());
-		}
-		
-		mandateIdentification = e.getMandateIdentification();
-		mandateDate = e.getMandateDate();
-
-		if (!isLoaded() && e.getBillingAccounts() != null) {
-			billingAccounts = new BillingAccountsDto();
-
-			for (BillingAccount ba : e.getBillingAccounts()) {
-				billingAccounts.getBillingAccount().add(new BillingAccountDto(ba));
-			}
-		}
-		
-		loaded = true;
-	}
-
+	
 	public String getStatus() {
 		return status;
 	}

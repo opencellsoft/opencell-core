@@ -14,6 +14,15 @@ public class RelatedEntityToExport {
 
     private Map<String, String> parameters;
 
+    public RelatedEntityToExport() {
+        super();
+    }
+
+    public RelatedEntityToExport(String selection, Map<String, String> parameters) {
+        this.selection = selection;
+        this.parameters = parameters;
+    }
+
     public String getSelection() {
         return selection;
     }

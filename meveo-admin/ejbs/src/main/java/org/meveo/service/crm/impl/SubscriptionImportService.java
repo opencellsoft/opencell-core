@@ -126,10 +126,6 @@ public class SubscriptionImportService extends ImportService{
 		subscription.setCode(jaxbSubscription.getCode());
 		subscription.setDescription(jaxbSubscription.getDescription());
 		
-        if (jaxbSubscription.getCustomFields() != null) {
-            populateCustomFields(jaxbSubscription.getCustomFields().getCustomField(), subscription, currentUser);
-        }		
-		
 		subscription.setSubscriptionDate(DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),
 				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
 		subscription.setEndAgrementDate(DateUtils.parseDateWithPattern(jaxbSubscription.getEndAgreementDate(),
@@ -140,6 +136,10 @@ public class SubscriptionImportService extends ImportService{
 		subscription.setUserAccount(checkSubscription.userAccount);
 		subscriptionService.create(subscription, currentUser, provider);
 
+       if (jaxbSubscription.getCustomFields() != null) {
+            populateCustomFields(jaxbSubscription.getCustomFields().getCustomField(), subscription, currentUser);
+        }   
+       
 		log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode()
 				+ ", status:Created");
 

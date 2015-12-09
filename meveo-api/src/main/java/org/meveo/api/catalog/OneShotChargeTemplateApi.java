@@ -44,6 +44,7 @@ import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -77,6 +78,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
 	@Inject
 	private TriggeredEDRTemplateService triggeredEDRTemplateService;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
 	public void create(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getInvoiceSubCategory())
@@ -139,16 +143,16 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
-			
+
+            oneShotChargeTemplateService.create(chargeTemplate, currentUser, provider);
+            
 			// populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), chargeTemplate, currentUser);
+                populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
-
-			oneShotChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
 			// create cat messages
 			if (postData.getLanguageDescriptions() != null) {
@@ -250,16 +254,17 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
-			
+
+			chargeTemplate = oneShotChargeTemplateService.update(chargeTemplate, currentUser);
+            
 			// populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), chargeTemplate, currentUser);
+                populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 			
-			oneShotChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -288,7 +293,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
 			}
 
-			result = new OneShotChargeTemplateDto(chargeTemplate);
+			result = new OneShotChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
 
 			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
 			for (CatMessages msg : catMessagesService.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {

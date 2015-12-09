@@ -42,7 +42,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.util.PersistenceUtils;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
@@ -54,6 +54,9 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	
 	@Inject
 	private ServiceInstanceService serviceInstanceService;
+
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
 	private ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 
@@ -431,10 +434,6 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             entity = serviceTemplateService.refreshOrRetrieve(entity);
             
             // Lazy load related values first 
-            if (entity.getCfFields() != null) {
-                entity.getCfFields().getUuid();
-                entity.setCfFields(PersistenceUtils.initializeAndUnproxy(entity.getCfFields()));
-            }
 			entity.getServiceRecurringCharges().size();
 			entity.getServiceSubscriptionCharges().size();
 			entity.getServiceTerminationCharges().size();
@@ -443,10 +442,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             // Detach and clear ids of entity and related entities
 			serviceTemplateService.detach(entity);
 			entity.setId(null);
-
-            if (entity.getCfFields() != null) {
-                entity.getCfFields().clearForDuplication();
-            }
+            String sourceAppliesToEntity = entity.clearUuid();
             
 			List<ServiceChargeTemplateRecurring> recurrings=entity.getServiceRecurringCharges();
 			entity.setServiceRecurringCharges(new ArrayList<ServiceChargeTemplateRecurring>());
@@ -488,6 +484,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 			
 			try {
 				serviceTemplateService.create(entity);
+                customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
 			} catch (BusinessException e) {
 				log.error("error when duplicate service#{0}:#{1}",entity.getCode(),e);
 			}

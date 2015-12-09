@@ -94,22 +94,7 @@ public class Customer {
     protected String mandateIdentification;
     
 
-    public Customer(){}
-    
-    public Customer(org.meveo.model.crm.Customer cust) {
-    	if(cust!=null){
-	    	desCustomer=cust.getDescription();
-	    	code=cust.getCode();
-	    	customerCategory=cust.getCustomerCategory()==null?"":cust.getCustomerCategory().getCode();
-	    	customerBrand=cust.getCustomerBrand()==null?"":cust.getCustomerBrand().getCode();
-            customFields = CustomFields.toDTO(cust.getCfFields());
-	    	address=new Address(cust.getAddress());
-	    	name=new Name(cust.getName());
-	    	mandateDate=cust.getMandateDate();
-	    	mandateIdentification=cust.getMandateIdentification();
-	    	customerAccounts=new CustomerAccounts(cust.getCustomerAccounts());
-    	}
-	}
+    public Customer(){}    
 
 	/**
      * Gets the value of the desCustomer property.

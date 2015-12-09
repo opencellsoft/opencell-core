@@ -139,18 +139,4 @@ public abstract class AccountEntity extends BusinessCFEntity {
     public String getAccountType() {
         return accountType;
     }
-
-    public String getCustomFieldsAsJson() {
-        if (getCfFields() != null) {
-            return getCfFields().asJson();
-        }
-
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("AccountEntity [customFields=%s, code=%s, id=%s]", getCfFields(), code, id);
-    }
-
 }

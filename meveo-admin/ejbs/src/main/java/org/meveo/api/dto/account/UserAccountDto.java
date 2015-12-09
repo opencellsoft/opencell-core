@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.billing.SubscriptionsDto;
-import org.meveo.model.billing.UserAccount;
 
 /**
  * @author Edward P. Legaspi
@@ -34,27 +33,6 @@ public class UserAccountDto extends AccountDto {
 
 	public UserAccountDto() {
 		super();
-	}
-
-	public UserAccountDto(UserAccount e) {
-		initFromEntity(e);
-	}
-
-	public void initFromEntity(UserAccount e) {
-		super.initFromEntity(e);
-
-		if (e.getBillingAccount() != null) {
-			billingAccount = e.getBillingAccount().getCode();
-		}
-
-		subscriptionDate = e.getSubscriptionDate();
-		terminationDate = e.getTerminationDate();
-		try {
-			status = e.getStatus().name();
-		} catch (NullPointerException ex) {
-		}
-		
-		loaded = true;
 	}
 
 	@Override

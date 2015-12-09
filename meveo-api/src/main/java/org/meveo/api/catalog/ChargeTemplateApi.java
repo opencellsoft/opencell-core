@@ -12,6 +12,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -21,6 +22,9 @@ public class ChargeTemplateApi extends BaseApi {
 
 	@Inject
 	private ChargeTemplateServiceAll chargeTemplateService;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
 	public ChargeTemplateDto find(String chargeTemplateCode, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(chargeTemplateCode)) {
@@ -29,7 +33,7 @@ public class ChargeTemplateApi extends BaseApi {
 				throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeTemplateCode);
 			}
 
-			return new ChargeTemplateDto(chargeTemplate);
+			return new ChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
 		} else {
 			missingParameters.add("chargeTemplateCode");
 

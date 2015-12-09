@@ -119,28 +119,7 @@ public class CustomerAccount {
     protected String creditCategory;
     protected CustomFields customFields;
     
-    public CustomerAccount(){}
-    
-    public CustomerAccount(org.meveo.model.payments.CustomerAccount ca) {
-		if(ca!=null){
-			code=ca.getCode();
-			description=ca.getDescription();
-			externalRef1=ca.getExternalRef1();
-	        externalRef2=ca.getExternalRef2();
-	        name=new Name(ca.getName());
-	        address = new Address(ca.getAddress());
-	        tradingCurrencyCode=ca.getTradingCurrency()==null?null:ca.getTradingCurrency().getCurrencyCode();
-	        tradingLanguageCode=ca.getTradingLanguage()==null?null:ca.getTradingLanguage().getLanguageCode();
-            customFields = CustomFields.toDTO(ca.getCfFields());
-	        paymentMethod=ca.getPaymentMethod()==null?null:ca.getPaymentMethod().name();
-			creditCategory = ca.getCreditCategory() == null ? null : ca.getCreditCategory().getCode();
-	        if(ca.getContactInformation()!=null){
-	        	email=ca.getContactInformation().getEmail();
-	        	tel1=ca.getContactInformation().getPhone();
-	        	tel2=ca.getContactInformation().getMobile();
-	        }
-		}
-	}
+    public CustomerAccount(){}    
 
 	/**
      * Gets the value of the description property.

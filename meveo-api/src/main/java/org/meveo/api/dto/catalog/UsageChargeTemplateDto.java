@@ -1,11 +1,15 @@
 package org.meveo.api.dto.catalog;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.crm.CustomFieldInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -38,8 +42,8 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 
 	}
 
-	public UsageChargeTemplateDto(UsageChargeTemplate e) {
-		super(e);
+	public UsageChargeTemplateDto(UsageChargeTemplate e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
+		super(e, customFieldInstances);
 		filterParam1 = e.getFilterParam1();
 		filterParam2 = e.getFilterParam2();
 		filterParam3 = e.getFilterParam3();

@@ -449,7 +449,7 @@ public class CustomFieldValue implements Serializable {
     /**
      * Deserialize serializedValue field to a reference to an entity, list or map of values
      */
-    protected void deserializeValue() {
+    public void deserializeValue() {
         if (serializedValue == null) {
             return;
         }

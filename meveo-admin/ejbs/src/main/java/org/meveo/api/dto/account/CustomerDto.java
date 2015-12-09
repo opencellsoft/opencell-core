@@ -7,9 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
-
 /**
  * @author Edward P. Legaspi
  **/
@@ -40,40 +37,6 @@ public class CustomerDto extends AccountDto {
 
 	public CustomerDto() {
 		super();
-	}
-
-	public CustomerDto(Customer e) {
-		initFromEntity(e);
-	}
-
-	public void initFromEntity(Customer e) {
-		super.initFromEntity(e);
-		
-		if (e.getCustomerCategory() != null) {
-			customerCategory = e.getCustomerCategory().getCode();
-		}
-
-		if (e.getCustomerBrand() != null) {
-			customerBrand = e.getCustomerBrand().getCode();
-		}
-
-		if (e.getSeller() != null) {
-			seller = e.getSeller().getCode();
-		}
-
-		if (e.getContactInformation() != null) {
-			contactInformation = new ContactInformationDto(e.getContactInformation());
-		}
-
-		if (!isLoaded() && e.getCustomerAccounts() != null) {
-			customerAccounts = new CustomerAccountsDto();
-
-			for (CustomerAccount ca : e.getCustomerAccounts()) {
-				customerAccounts.getCustomerAccount().add(new CustomerAccountDto(ca));
-			}
-		}
-		
-		loaded = true;
 	}
 
 	public String getCustomerCategory() {

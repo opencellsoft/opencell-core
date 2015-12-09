@@ -1,9 +1,10 @@
 package org.meveo.service.crm.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -19,6 +20,8 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class CustomFieldTemplateService extends BusinessService<CustomFieldTemplate> {
@@ -33,15 +36,15 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * 
      * @param entity Entity that custom field templates apply to
      * @param provider Provider
-     * @return A list of custom field templates
+     * @return A list of custom field templates mapped by a template key
      */
-    public List<CustomFieldTemplate> findByAppliesTo(ICustomFieldEntity entity, Provider provider) {
+    public Map<String, CustomFieldTemplate> findByAppliesTo(ICustomFieldEntity entity, Provider provider) {
         try {
             return findByAppliesTo(calculateAppliesToValue(entity), provider);
 
         } catch (CustomFieldException e) {
             // Its ok, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
-            return new ArrayList<CustomFieldTemplate>();
+            return new HashMap<String, CustomFieldTemplate>();
         }
     }
 
@@ -50,20 +53,27 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @param provider Provider
-     * @return A list of custom field templates
+     * @return A list of custom field templates mapped by a template key
      */
     @SuppressWarnings("unchecked")
-    public List<CustomFieldTemplate> findByAppliesTo(String appliesTo, Provider provider) {
+    public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo, Provider provider) {
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFT", "true"));
         if (useCache) {
-            return customFieldsCache.getCustomFieldTemplatesByAppliesTo(appliesTo, provider);
+            return customFieldsCache.getCustomFieldTemplates(appliesTo, provider);
 
         } else {
 
             QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", Arrays.asList("calendar"), provider);
             qb.addCriterion("c.appliesTo", "=", appliesTo, true);
 
-            return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+            List<CustomFieldTemplate> values = (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+
+            Map<String, CustomFieldTemplate> cftMap = new HashMap<String, CustomFieldTemplate>();
+            for (CustomFieldTemplate cft : values) {
+                cftMap.put(cft.getCode(), cft);
+            }
+
+            return cftMap;
         }
     }
 
@@ -77,7 +87,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @throws CustomFieldException An exception when AppliesTo value can not be calculated
      */
     public CustomFieldTemplate findByCodeAndAppliesTo(String code, ICustomFieldEntity entity, Provider provider) throws CustomFieldException {
-        return findByCodeAndAppliesTo(code, calculateAppliesToValue(entity), provider);
+        return findByCodeAndAppliesTo(code, CustomFieldTemplateService.calculateAppliesToValue(entity), provider);
     }
 
     /**
@@ -89,13 +99,19 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return Custom field template
      */
     public CustomFieldTemplate findByCodeAndAppliesTo(String code, String appliesTo, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, provider);
-        qb.addCriterion("code", "=", code, true);
-        qb.addCriterion("appliesTo", "=", appliesTo, true);
-        try {
-            return (CustomFieldTemplate) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
+
+        boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFT", "true"));
+        if (useCache) {
+            return customFieldsCache.getCustomFieldTemplate(code, appliesTo, provider);
+        } else {
+            QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, provider);
+            qb.addCriterion("code", "=", code, true);
+            qb.addCriterion("appliesTo", "=", appliesTo, true);
+            try {
+                return (CustomFieldTemplate) qb.getQuery(getEntityManager()).getSingleResult();
+            } catch (NoResultException e) {
+                return null;
+            }
         }
     }
 
@@ -114,7 +130,8 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     @Override
-    public void remove(CustomFieldTemplate cft) {
+    public void remove(Long id) {
+        CustomFieldTemplate cft = findById(id);
         super.remove(cft);
         customFieldsCache.removeCustomFieldTemplate(cft);
     }
@@ -137,7 +154,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A appliesTo value
      * @throws CustomFieldException An exception when AppliesTo value can not be calculated. Occurs when value that is part of CFT.AppliesTo calculation is not set yet on entity
      */
-    public String calculateAppliesToValue(ICustomFieldEntity entity) throws CustomFieldException {
+    public static String calculateAppliesToValue(ICustomFieldEntity entity) throws CustomFieldException {
         CustomFieldEntity cfeAnnotation = entity.getClass().getAnnotation(CustomFieldEntity.class);
 
         String appliesTo = cfeAnnotation.cftCodePrefix();
@@ -150,6 +167,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                     }
                     appliesTo = appliesTo + "_" + fieldValue;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
+                    Logger log = LoggerFactory.getLogger(CustomFieldTemplateService.class);
                     log.error("Unable to access field {}.{}", entity.getClass().getSimpleName(), fieldName);
                     throw new RuntimeException("Unable to access field " + entity.getClass().getSimpleName() + "." + fieldName);
                 }
@@ -164,15 +182,15 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @param entity Entity that custom field templates apply to
      * @param templates A list of templates to check
      * @param provider Provider
-     * @return A complete list of templates for a given entity and provider
+     * @return A complete list of templates for a given entity and provider. Mapped by a custom field template key.
      */
-    public List<CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, Provider provider) {
+    public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, Provider provider) {
         try {
             return createMissingTemplates(calculateAppliesToValue(entity), templates, provider);
 
         } catch (CustomFieldException e) {
             // Its ok, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
-            return new ArrayList<CustomFieldTemplate>();
+            return new HashMap<String, CustomFieldTemplate>();
         }
     }
 
@@ -182,19 +200,19 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @param templates A list of templates to check
      * @param provider Provider
-     * @return A complete list of templates for a given entity and provider
+     * @return A complete list of templates for a given entity and provider. Mapped by a custom field template key.
      */
-    public List<CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, Provider provider) {
+    public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, Provider provider) {
 
         // Get templates corresponding to an entity type
-        List<CustomFieldTemplate> allTemplates = findByAppliesTo(appliesTo, provider);
+        Map<String, CustomFieldTemplate> allTemplates = findByAppliesTo(appliesTo, provider);
 
         if (templates != null) {
-            for (CustomFieldTemplate cf : templates) {
-                if (!allTemplates.contains(cf)) {
-                    log.debug("Create a missing CFT {} for {} entity", cf.getCode(), appliesTo);
-                    create(cf, getCurrentUser(), provider);
-                    allTemplates.add(cf);
+            for (CustomFieldTemplate cft : templates) {
+                if (!allTemplates.containsKey(cft.getCode())) {
+                    log.debug("Create a missing CFT {} for {} entity", cft.getCode(), appliesTo);
+                    create(cft, getCurrentUser(), provider);
+                    allTemplates.put(cft.getCode(), cft);
                 }
             }
         }

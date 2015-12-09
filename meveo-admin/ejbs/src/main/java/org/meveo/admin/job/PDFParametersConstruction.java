@@ -23,7 +23,6 @@ import java.net.URLClassLoader;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -33,6 +32,7 @@ import javax.inject.Inject;
 import net.sf.jasperreports.engine.JRParameter;
 
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -44,6 +44,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,9 @@ public class PDFParametersConstruction {
 	@Inject
 	protected CustomFieldTemplateService customFieldTemplateService;
     
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
+    
 	private  String TIP_PAYMENT_METHOD = "TIP";
 	private  String PDF_DIR_NAME = "pdf";
 	private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
@@ -71,12 +75,12 @@ public class PDFParametersConstruction {
 			new URL[] { PDFParametersConstruction.class.getClassLoader()
 					.getResource("reports/fonts.jar") });
 
-	public Map<String, Object> constructParameters(Invoice invoice) {
-		return constructParameters(invoice.getId(), invoice.getProvider());
+	public Map<String, Object> constructParameters(Invoice invoice, User currentUser) {
+		return constructParameters(invoice.getId(), currentUser, invoice.getProvider());
 	}
 	
 	@SuppressWarnings("deprecation")
-	public Map<String, Object> constructParameters(Long invoiceId, Provider provider) {
+	public Map<String, Object> constructParameters(Long invoiceId, User currentUser, Provider provider) {
 		try {
 			currencyFormat.setMinimumFractionDigits(2);
 			Invoice invoice = invoiceService.findById(invoiceId, provider);
@@ -169,7 +173,7 @@ public class PDFParametersConstruction {
 			parameters.put(PdfGeneratorConstants.CUSTOMER_ACCOUNT,
 					billingAccount.getCustomerAccount());
 			parameters.put(PdfGeneratorConstants.INVOICE, invoice);
-			Map<String, String> baCustomFields=getBACustomFields(billingAccount);
+			Map<String, String> baCustomFields=getBACustomFields(billingAccount, currentUser);
 			for(String key:baCustomFields.keySet()){
 				parameters.put(key,baCustomFields.get(key));
 			}
@@ -182,22 +186,18 @@ public class PDFParametersConstruction {
 		}
 	}
 	
-	private Map<String, String> getBACustomFields(
-			BillingAccount billingAccount) {
-        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(billingAccount, billingAccount.getProvider());
+    private Map<String, String> getBACustomFields(BillingAccount billingAccount, User currentUser) {
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(billingAccount, billingAccount.getProvider());
 		Map<String, String>  customFields = new HashMap<String, String> ();
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-			for (CustomFieldTemplate cf : customFieldTemplates) {
+			for (String cfCode : customFieldTemplates.keySet()) {
 
-//                CustomFieldInstance cfi = billingAccount.getCustomFields().get(cf.getCode());
-//                if (cfi != null) {
-                    Object cfValue = billingAccount.getInheritedCFValue(cf.getCode());
-                    if (cfValue != null && cfValue instanceof Date) {
-                        customFields.put(cf.getCode(), DateUtils.formatDateWithPattern((Date) cfValue, "MM-dd-yyyy"));
-                    } else if (cfValue != null) {
-                        customFields.put(cf.getCode(), String.valueOf(cfValue));
-                    }
-//                }
+                Object cfValue = customFieldInstanceService.getInheritedCFValue(billingAccount, cfCode, currentUser);
+                if (cfValue != null && cfValue instanceof Date) {
+                    customFields.put(cfCode, DateUtils.formatDateWithPattern((Date) cfValue, "MM-dd-yyyy"));
+                } else if (cfValue != null) {
+                    customFields.put(cfCode, String.valueOf(cfValue));
+                }
             }
         }
 		return customFields;

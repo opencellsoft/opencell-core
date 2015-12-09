@@ -26,6 +26,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -42,13 +43,15 @@ public class RecurringRatingJobBean implements Serializable {
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
-
 	@Inject
 	protected Logger log;
 
 	@Inject
 	@Rejected
 	Event<Serializable> rejectededChargeProducer;
+    
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
 	@SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -65,8 +68,8 @@ public class RecurringRatingJobBean implements Serializable {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			try{
-				nbRuns = (Long) jobInstance.getCFValue("nbRuns");  			
-				waitingMillis = (Long) jobInstance.getCFValue("waitingMillis");
+				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns", currentUser);              
+                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis", currentUser);
 				if(nbRuns == -1){
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}

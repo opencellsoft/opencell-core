@@ -18,6 +18,7 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
@@ -31,19 +32,22 @@ public class FilteringJob extends Job {
 
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
+	
+	@Inject
+	private CustomFieldInstanceService customFieldInstanceService;
 
 	@SuppressWarnings("unchecked")
     @Override
 	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser)
 			throws BusinessException {
-		String filterCode = ((EntityReferenceWrapper)jobInstance.getCFValue("FilteringJob_filter")).getCode();
-		String scriptCode =  ((EntityReferenceWrapper)jobInstance.getCFValue("FilteringJob_script")).getCode();
-		String recordVariableName = (String) jobInstance.getCFValue("FilteringJob_recordVariableName");
+        String filterCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_filter", currentUser)).getCode();
+        String scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_script", currentUser)).getCode();
+        String recordVariableName = (String) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_recordVariableName", currentUser);
         Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(),scriptCode);
     	if(scriptInterfaceClass==null){
     		result.registerError("cannot find script with code "+scriptCode);
     	} else {
-            Map<String, Object> context = (Map<String, Object>) jobInstance.getCFValue("FilteringJob_variables");
+            Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_variables", currentUser);
             if (context == null) {
                 context = new HashMap<String, Object>();
             }

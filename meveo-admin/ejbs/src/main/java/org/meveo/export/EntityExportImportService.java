@@ -97,9 +97,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IVersionedEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.crm.CustomFieldFields;
 import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -229,9 +227,15 @@ public class EntityExportImportService implements Serializable {
             }
             // Automatically export custom fields for CF related entities
             if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
-                exportTemplate.getClassesToExportAsFull().add(CustomFieldFields.class);
+
+                String cfSelect = "select cfi from CustomFieldInstance cfi where cfi.disabled=false and cfi.appliesToEntity=:uuid and cfi.provider=:provider";
+                Map<String, String> cfParameters = new HashMap<String, String>();
+                cfParameters.put("uuid", "#{entity.uuid}");
+                cfParameters.put("provider", "#{entity.provider}");
+
+                exportTemplate.addRelatedEntity(cfSelect, cfParameters);
+
                 exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
-                exportTemplate.getClassesToExportAsFull().add(CustomFieldPeriod.class);
             }
             exportTemplate.setName(clazz.getSimpleName());
             exportTemplate.setEntityToExport(clazz);

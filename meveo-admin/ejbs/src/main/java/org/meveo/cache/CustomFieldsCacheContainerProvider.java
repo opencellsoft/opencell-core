@@ -1,9 +1,8 @@
 package org.meveo.cache;
 
-import java.io.Serializable;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -11,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -24,21 +23,19 @@ import javax.inject.Inject;
 import org.infinispan.api.BasicCache;
 import org.infinispan.manager.CacheContainer;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldPeriod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.PersistenceUtils;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 
 /**
@@ -68,14 +65,15 @@ public class CustomFieldsCacheContainerProvider {
     private Map<String, Integer> cfValueCacheTime = new HashMap<String, Integer>();
 
     /**
-     * Group custom field templates applicable to the same entity type. Key format: <provider id>_<custom field template appliesTo code>. Value is a list of custom field templates
+     * Group custom field templates applicable to the same entity type. Key format: <provider id>_<custom field template appliesTo code>. Value is a map of custom field templates
+     * identified by a template code
      */
-    private Map<String, List<CustomFieldTemplate>> cftsByAppliesTo = new HashMap<String, List<CustomFieldTemplate>>();
+    private Map<String, Map<String, CustomFieldTemplate>> cftsByAppliesTo = new HashMap<String, Map<String, CustomFieldTemplate>>();
 
     /**
-     * Cache custom entity templates by provider. Key format: <provider id>. Value is a list of custom entity templates
+     * Cache custom entity templates by provider. Key format: <provider id>. Value is a map of custom entity templates identified by a template code
      */
-    private Map<String, List<CustomEntityTemplate>> cetsByProvider = new HashMap<String, List<CustomEntityTemplate>>();
+    private Map<String, Map<String, CustomEntityTemplate>> cetsByProvider = new HashMap<String, Map<String, CustomEntityTemplate>>();
 
     /**
      * Contains association between entity, and custom field value(s). Key format: <entity class>_<entity id>. Value is a map where key is CFI code and value is a list of values
@@ -106,6 +104,7 @@ public class CustomFieldsCacheContainerProvider {
      */
     private void populateCFValueCache() {
 
+        // Start to populate custom field value caching time and appliesTo cache
         log.debug("Start to populate custom field value caching time and appliesTo cache");
 
         // Calculate cache storage cuttoff time for each CFT
@@ -126,16 +125,16 @@ public class CustomFieldsCacheContainerProvider {
                     ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
                 }
             }
-            
+
             customFieldTemplateService.detach(cft);
 
             String cacheKeyByAppliesTo = getCFTCacheKeyByAppliesTo(cft);
             if (!cftsByAppliesTo.containsKey(cacheKeyByAppliesTo)) {
-                cftsByAppliesTo.put(cacheKeyByAppliesTo, new ArrayList<CustomFieldTemplate>());
+                cftsByAppliesTo.put(cacheKeyByAppliesTo, new TreeMap<String, CustomFieldTemplate>());
             } else {
-                cftsByAppliesTo.get(cacheKeyByAppliesTo).remove(cft);
+                cftsByAppliesTo.get(cacheKeyByAppliesTo).remove(cft.getCode());
             }
-            cftsByAppliesTo.get(cacheKeyByAppliesTo).add(cft);
+            cftsByAppliesTo.get(cacheKeyByAppliesTo).put(cft.getCode(), cft);
 
             // Remember custom field versionable value cache time
             if (cft.isVersionable() && cft.getCacheValueTimeperiod() != null) {
@@ -149,6 +148,7 @@ public class CustomFieldsCacheContainerProvider {
         }
         log.info("Custom field value caching time populated with {} values. appliesTo cache populated with {} values", cfValueCacheTime.size(), cfts.size());
 
+        // Start to populate custom entity template cache
         log.debug("Start to populate custom entity template cache");
 
         cetsByProvider.clear();
@@ -160,92 +160,125 @@ public class CustomFieldsCacheContainerProvider {
         for (CustomEntityTemplate cet : cets) {
 
             if (!cetsByProvider.containsKey(cet.getProvider().getId().toString())) {
-                cetsByProvider.put(cet.getProvider().getId().toString(), new ArrayList<CustomEntityTemplate>());
+                cetsByProvider.put(cet.getProvider().getId().toString(), new TreeMap<String, CustomEntityTemplate>());
             }
 
-            cetsByProvider.get(cet.getProvider().getId().toString()).add(cet);
+            cetsByProvider.get(cet.getProvider().getId().toString()).put(cet.getCode(), cet);
         }
 
         log.info("Custom entity template cache populated with {} values.", cets.size());
 
+        // Start to populate custom field value cache
         log.debug("Start to populate custom field value cache");
 
         customFieldValueCache.clear();
 
-        // Find custom field instances for each ICustomFieldEntity entity
-        Reflections reflections = new Reflections("org.meveo.model");
-        Set<Class<? extends ICustomFieldEntity>> classes = reflections.getSubTypesOf(ICustomFieldEntity.class);
-
         int cfiCount = 0;
-        for (Class<? extends ICustomFieldEntity> cfEntityClass : classes) {
-            if (Modifier.isAbstract(cfEntityClass.getModifiers())) {
-                continue;
-            }
 
-            // Get a list of entity id and CFI instances for a given entity class
-            List<Object[]> entityIdAndActiveCFIs = customFieldInstanceService.getCFIForCache(cfEntityClass);
+        // Get a list of entity id and CFI instances for a given entity class
+        List<CustomFieldInstance> cfis = customFieldInstanceService.getCFIForCache();
 
-            for (Object[] entityIdAndActiveCFI : entityIdAndActiveCFIs) {
+        for (CustomFieldInstance cfi : cfis) {
 
-                Long entityId = (Long) entityIdAndActiveCFI[0];
-                Long providerId = (Long) entityIdAndActiveCFI[1];
-                CustomFieldInstance cfi = (CustomFieldInstance) entityIdAndActiveCFI[2];
+            String cacheKey = getCacheKey(cfi);
 
-                String cacheKey = getCacheKey(cfEntityClass, entityId);
+            log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity uuid {}", cfi.getCode(), cacheKey);
 
-                log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
-
-                List<CachedCFPeriodValue> cfvValues = convertFromCFI(cfi, cfValueCacheTimeAsDate.get(providerId + "_" + cfi.getCode()));
-                if (!cfvValues.isEmpty()) {
-                    customFieldValueCache.putIfAbsent(cacheKey, new HashMap<String, List<CachedCFPeriodValue>>());
-                    customFieldValueCache.get(cacheKey).put(cfi.getCode(), cfvValues);
-                    cfiCount++;
+            CachedCFPeriodValue cfvValue = convertFromCFI(cfi, cfValueCacheTimeAsDate.get(cfi.getProvider().getId() + "_" + cfi.getCode()));
+            if (cfvValue != null) {
+                customFieldValueCache.putIfAbsent(cacheKey, new TreeMap<String, List<CachedCFPeriodValue>>());
+                if (!customFieldValueCache.get(cacheKey).containsKey(cfi.getCode())) {
+                    customFieldValueCache.get(cacheKey).put(cfi.getCode(), new ArrayList<CachedCFPeriodValue>());
                 }
+                customFieldValueCache.get(cacheKey).get(cfi.getCode()).add(cfvValue);
+                cfiCount++;
             }
         }
         log.info("Custom field value populated with {} values", cfiCount);
     }
 
     /**
-     * Add or update custom field instances for an entity in cache.
+     * Add or update custom field instance value for an entity in cache.
      * 
-     * @param entity Entity with custom fields
+     * @param cfi Entity with custom fields
      */
-    public void addUpdateCustomFieldsInCache(ICustomFieldEntity entity) {
+    public void addUpdateCustomFieldInCache(ICustomFieldEntity entity, CustomFieldInstance cfi) {
 
-        // Also removes previous values
-        String cacheKey = getCacheKey((IEntity) entity);
+        String cacheKey = getCacheKey(cfi);
+        CustomFieldTemplate cft = getCustomFieldTemplate(cfi.getCode(), entity);
+        Object value = cfi.getValue();
 
-        Map<String, List<CachedCFPeriodValue>> values = new HashMap<String, List<CachedCFPeriodValue>>();
+        // Do not store null values if no default value is provided (otherwise the next get will instantiate CF value again)
+        if (value == null && cft.getDefaultValue() == null) {
+            removeCustomFieldFromCache(entity, cfi.getCode());
 
-        if (entity.getCfFields() != null) {
-            for (CustomFieldInstance cfi : entity.getCfFields().getCustomFields().values()) {
-                List<CachedCFPeriodValue> cfvValues = convertFromCFI(cfi, calculateCutoffDate(cfi.getCode(), entity));
-                if (!cfvValues.isEmpty()) {
-                    values.put(cfi.getCode(), cfvValues);
-                }
-                log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity {}", cfi.getCode(), cacheKey);
-            }
-        }
-
-        if (!values.isEmpty()) {
-            customFieldValueCache.put(cacheKey, values);
         } else {
-            customFieldValueCache.remove(cacheKey);
+
+            // If value is still cacheable - update (remove and add) the value
+            CachedCFPeriodValue cfvValue = convertFromCFI(cfi, calculateCutoffDate(cfi.getCode(), entity));
+            if (cfvValue != null) {
+                customFieldValueCache.putIfAbsent(cacheKey, new TreeMap<String, List<CachedCFPeriodValue>>());
+                if (!customFieldValueCache.get(cacheKey).containsKey(cfi.getCode())) {
+                    customFieldValueCache.get(cacheKey).put(cfi.getCode(), new ArrayList<CachedCFPeriodValue>());
+                }
+                customFieldValueCache.get(cacheKey).get(cfi.getCode()).remove(cfvValue);
+                customFieldValueCache.get(cacheKey).get(cfi.getCode()).add(cfvValue);
+
+                log.trace("Updated custom field {} from CustomFieldInstance cache for entity uuid {}", cfi.getCode(), cacheKey);
+
+                // If no longer cacheable - remove it
+            } else {
+                cfvValue = convertFromCFI(cfi, null);
+                if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfi.getCode())) {
+                    customFieldValueCache.get(cacheKey).get(cfi.getCode()).remove(cfvValue);
+
+                    log.trace("Removed custom field {} value from CustomFieldInstance cache for entity uuid {}. Value removed {}", cfi.getCode(), cacheKey, cfvValue);
+                }
+            }
+
         }
     }
 
     /**
-     * Remove custom field instance from cache for a given entity
+     * Remove all custom field instances from cache for a given entity
      * 
      * @param entity Entity with custom fields
      */
     public void removeCustomFieldsFromCache(ICustomFieldEntity entity) {
 
-        String cacheKey = getCacheKey((IEntity) entity);
+        String cacheKey = getCacheKey(entity);
         customFieldValueCache.remove(cacheKey);
 
-        log.trace("Removed custom fields from CustomFieldInstance cache for entity {}", cacheKey);
+        log.trace("Removed all custom fields from CustomFieldInstance cache for entity uuid {}", cacheKey);
+    }
+
+    /**
+     * Remove a particular custom field instance from cache for a given entity
+     * 
+     * @param entity Entity with custom fields
+     * @param cfi Custom field instance
+     */
+    public void removeCustomFieldFromCache(ICustomFieldEntity entity, CustomFieldInstance cfi) {
+        String cacheKey = getCacheKey(entity);
+        if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfi.getCode())) {
+            CachedCFPeriodValue cfvValue = convertFromCFI(cfi, null);
+            customFieldValueCache.get(cacheKey).get(cfi.getCode()).remove(cfvValue);
+            log.trace("Removed custom field {} from CustomFieldInstance cache for entity uuid {}", cfvValue, cacheKey);
+        }
+    }
+
+    /**
+     * Remove a particular custom field instance from cache for a given entity
+     * 
+     * @param entity Entity with custom fields
+     */
+    public void removeCustomFieldFromCache(ICustomFieldEntity entity, String code) {
+
+        String cacheKey = getCacheKey(entity);
+        if (customFieldValueCache.containsKey(cacheKey)) {
+            customFieldValueCache.get(cacheKey).remove(code);
+            log.trace("Removed custom field {} from CustomFieldInstance cache for entity uuid {}", code, cacheKey);
+        }
     }
 
     /**
@@ -255,21 +288,20 @@ public class CustomFieldsCacheContainerProvider {
      * @return A map of CachedCFPeriodValue values with CF code as a key
      */
     public Map<String, Object> getValues(ICustomFieldEntity entity) {
-        return getValues(entity.getClass(), ((IEntity) entity).getId());
+        return getValues(entity.getUuid());
     }
 
     /**
      * Get a map of custom field values (not versioned) mapped by a CF code that apply to an entity
      * 
-     * @param entityClass Entity class to match
-     * @param id Entity id
+     * @param entityIdentifier Unique entity identifier
      * @return A map of CachedCFPeriodValue values with CF code as a key
      */
-    public Map<String, Object> getValues(Class<? extends ICustomFieldEntity> entityClass, Serializable id) {
+    public Map<String, Object> getValues(String entityIdentifier) {
 
         Map<String, Object> values = new HashMap<String, Object>();
 
-        String cacheKey = getCacheKey(entityClass, id);
+        String cacheKey = entityIdentifier;
 
         if (!customFieldValueCache.containsKey(cacheKey)) {
             return values;
@@ -293,28 +325,27 @@ public class CustomFieldsCacheContainerProvider {
      * Get a single custom field value (not versioned) for a given custom field code that applies to an entity
      * 
      * @param entity Entity to match
-     * @param cfCode Custom field code
+     * @param code Custom field code
      * @return A single custom field value
      */
-    public Object getValue(ICustomFieldEntity entity, String cfCode) {
-        return getValue(entity.getClass(), ((IEntity) entity).getId(), cfCode);
+    public Object getValue(ICustomFieldEntity entity, String code) {
+        return getValue(entity.getUuid(), code);
     }
 
     /**
      * Get a single custom field value (not versioned) for a given custom field code that applies to an entity
      * 
-     * @param entityClass Entity class to match
-     * @param id Entity id
-     * @param cfCode Custom field code
+     * @param entityIdentifier Unique entity identifier
+     * @param code Custom field code
      * @return A single custom field value
      */
-    public Object getValue(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode) {
+    public Object getValue(String entityIdentifier, String code) {
 
-        String cacheKey = getCacheKey(entityClass, id);
+        String cacheKey = entityIdentifier;
 
-        if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
+        if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(code)) {
             // Only value that is not versioned
-            for (CachedCFPeriodValue cfValue : customFieldValueCache.get(cacheKey).get(cfCode)) {
+            for (CachedCFPeriodValue cfValue : customFieldValueCache.get(cacheKey).get(code)) {
                 if (!cfValue.isVersioned()) {
                     return cfValue.getValue();
                 }
@@ -332,12 +363,12 @@ public class CustomFieldsCacheContainerProvider {
      * TODO can be an issue with lower/upper case mismatch
      * 
      * @param entity Entity to match
-     * @param cfCode Custom field code
+     * @param code Custom field code
      * @param keyToMatch Key to match
      * @return Map value that closely matches map key
      */
-    public Object getClosestMatchValue(ICustomFieldEntity entity, String cfCode, String keyToMatch) {
-        return getClosestMatchValue(entity.getClass(), ((IEntity) entity).getId(), cfCode, keyToMatch);
+    public Object getClosestMatchValue(ICustomFieldEntity entity, String code, String keyToMatch) {
+        return getClosestMatchValue(entity.getUuid(), code, keyToMatch);
     }
 
     /**
@@ -347,13 +378,13 @@ public class CustomFieldsCacheContainerProvider {
      * TODO can be an issue with lower/upper case mismatch
      * 
      * @param entity Entity to match
-     * @param cfCode Custom field code
+     * @param code Custom field code
      * @param date Date
      * @param keyToMatch Key to match
      * @return Map value that closely matches map key
      */
-    public Object getClosestMatchValue(ICustomFieldEntity entity, String cfCode, Date date, String keyToMatch) {
-        return getClosestMatchValue(entity.getClass(), ((IEntity) entity).getId(), cfCode, date, keyToMatch);
+    public Object getClosestMatchValue(ICustomFieldEntity entity, String code, Date date, String keyToMatch) {
+        return getClosestMatchValue(entity.getUuid(), code, date, keyToMatch);
     }
 
     /**
@@ -362,22 +393,21 @@ public class CustomFieldsCacheContainerProvider {
      * 
      * TODO can be an issue with lower/upper case mismatch
      * 
-     * @param entityClass Entity class to match
-     * @param id Entity id
-     * @param cfCode Custom field code
+     * @param entityIdentifier Unique entity identifier
+     * @param code Custom field code
      * @param keyToMatch Key to match
      * @return Map value that closely matches map key
      */
-    public Object getClosestMatchValue(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode, String keyToMatch) {
+    public Object getClosestMatchValue(String entityIdentifier, String code, String keyToMatch) {
 
-        String cacheKey = getCacheKey(entityClass, id);
+        String cacheKey = entityIdentifier;
         CachedCFPeriodValue value = null;
 
-        if (!customFieldValueCache.containsKey(cacheKey) || !customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
+        if (!customFieldValueCache.containsKey(cacheKey) || !customFieldValueCache.get(cacheKey).containsKey(code)) {
             return null;
         }
         // Only value that is not versioned
-        for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(cfCode)) {
+        for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(code)) {
             if (!period.isVersioned()) {
                 value = period;
             }
@@ -396,24 +426,23 @@ public class CustomFieldsCacheContainerProvider {
      * 
      * TODO can be an issue with lower/upper case mismatch
      * 
-     * @param entityClass Entity class to match
-     * @param id Entity id
-     * @param cfCode Custom field code
+     * @param entityIdentifier Unique entity identifier
+     * @param code Custom field code
      * @param date Date
      * @param keyToMatch Key to match
      * @return Map value that closely matches map key
      */
-    public Object getClosestMatchValue(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode, Date date, String keyToMatch) {
+    public Object getClosestMatchValue(String entityIdentifier, String code, Date date, String keyToMatch) {
 
-        String cacheKey = getCacheKey(entityClass, id);
+        String cacheKey = entityIdentifier;
 
-        if (!customFieldValueCache.containsKey(cacheKey) || !customFieldValueCache.get(cacheKey).containsKey(cfCode)) {
+        if (!customFieldValueCache.containsKey(cacheKey) || !customFieldValueCache.get(cacheKey).containsKey(code)) {
             return null;
         }
 
         // Add only values that are versioned, with highest priority
         CachedCFPeriodValue periodFound = null;
-        for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(cfCode)) {
+        for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(code)) {
             if (period.isVersioned() && period.isCorrespondsToPeriod(date)) {
                 if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
                     periodFound = period;
@@ -440,22 +469,21 @@ public class CustomFieldsCacheContainerProvider {
      * @return A map of CachedCFPeriodValue values with CF code as a key
      */
     public Map<String, Object> getValues(ICustomFieldEntity entity, Date date) {
-        return getValues(entity.getClass(), ((IEntity) entity).getId(), date);
+        return getValues(entity.getUuid(), date);
     }
 
     /**
      * Get a map of custom field values mapped by a CF code that apply to an entity for a given date
      * 
-     * @param entityClass Entity class to match
-     * @param id Entity id
+     * @param entityIdentifier Unique entity identifier
      * @param date Date to match
      * @return A map of CachedCFPeriodValue values with CF code as a key
      */
-    public Map<String, Object> getValues(Class<? extends ICustomFieldEntity> entityClass, Serializable id, Date date) {
+    public Map<String, Object> getValues(String entityIdentifier, Date date) {
 
         Map<String, Object> values = new HashMap<String, Object>();
 
-        String cacheKey = getCacheKey(entityClass, id);
+        String cacheKey = entityIdentifier;
 
         if (!customFieldValueCache.containsKey(cacheKey)) {
             return values;
@@ -482,33 +510,32 @@ public class CustomFieldsCacheContainerProvider {
      * Get a single custom field value (versioned) for a given custom field code that applies to an entity in a given date
      * 
      * @param entity Entity to match
-     * @param cfCode Custom field code
+     * @param code Custom field code
      * @param date Date to match
      * @return A single custom field value
      */
-    public Object getValue(ICustomFieldEntity entity, String cfCode, Date date) {
-        return getValue(entity.getClass(), ((IEntity) entity).getId(), cfCode, date);
+    public Object getValue(ICustomFieldEntity entity, String code, Date date) {
+        return getValue(entity.getUuid(), code, date);
     }
 
     /**
      * Get a single custom field value (versioned) for a given custom field code that applies to an entity in a given date
      * 
-     * @param entityClass Entity class to match
-     * @param id Entity id
-     * @param cfCode Custom field code
+     * @param entityIdentifier Unique entity identifier
+     * @param code Custom field code
      * @param date Date to match
      * @return A single custom field value
      */
-    public Object getValue(Class<? extends ICustomFieldEntity> entityClass, Serializable id, String cfCode, Date date) {
+    public Object getValue(String entityIdentifier, String code, Date date) {
 
-        String cacheKey = getCacheKey(entityClass, id);
+        String cacheKey = entityIdentifier;
 
-        if (!(customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfCode))) {
+        if (!(customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(code))) {
             return null;
         }
         // Add only values that are versioned, with highest priority
         CachedCFPeriodValue periodFound = null;
-        for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(cfCode)) {
+        for (CachedCFPeriodValue period : customFieldValueCache.get(cacheKey).get(code)) {
             if (period.isVersioned() && period.isCorrespondsToPeriod(date)) {
                 if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
                     periodFound = period;
@@ -549,50 +576,31 @@ public class CustomFieldsCacheContainerProvider {
         }
     }
 
-    private List<CachedCFPeriodValue> convertFromCFI(CustomFieldInstance cfi, Date cutoffDate) {
-        List<CachedCFPeriodValue> values = new ArrayList<CachedCFPeriodValue>();
+    private CachedCFPeriodValue convertFromCFI(CustomFieldInstance cfi, Date cutoffDate) {
 
-        if (!cfi.isVersionable()) {
+        if (cutoffDate == null || cfi.getPeriodEndDate() == null || (cfi.getPeriodEndDate() != null && cutoffDate.before(cfi.getPeriodEndDate()))) {
             cfi.deserializeValue();
-            CachedCFPeriodValue value = new CachedCFPeriodValue(cfi.getCfValue().getValue());
-            values.add(value);
-
-        } else {
-
-            for (CustomFieldPeriod period : cfi.getValuePeriods()) {
-                if (cutoffDate == null || period.getPeriodEndDate() == null || (period.getPeriodEndDate() != null && cutoffDate.before(period.getPeriodEndDate()))) {
-                    period.deserializeValue();
-                    CachedCFPeriodValue value = new CachedCFPeriodValue(period.getCfValue().getValue(), period.getPriority(), period.getPeriodStartDate(),
-                        period.getPeriodEndDate());
-                    values.add(value);
-                }
-            }
-
+            CachedCFPeriodValue value = new CachedCFPeriodValue(cfi.getCfValue().getValue(), cfi.getPriority(), cfi.getPeriodStartDate(), cfi.getPeriodEndDate());
+            return value;
         }
 
-        return values;
+        return null;
 
     }
 
     /**
      * Calculate until what date the versionable custom field value should be stored in cache
      * 
-     * @param cfCode Custom field template cache
+     * @param code Custom field template cache
      * @param entity Entity (only to find provider)
      * @return A date or null if not applicable
      */
-    private Date calculateCutoffDate(String cfCode, ICustomFieldEntity entity) {
+    private Date calculateCutoffDate(String code, ICustomFieldEntity entity) {
 
-        Long providerId = null;
-        if (entity instanceof Provider) {
-            providerId = ((Provider) entity).getId();
-
-        } else {
-            providerId = ((IProvider) entity).getProvider().getId();
-        }
+        Long providerId = getProvider(entity).getId();
 
         Date cutoffDate = null;
-        Integer cutoffPeriod = cfValueCacheTime.get(providerId + "_" + cfCode);
+        Integer cutoffPeriod = cfValueCacheTime.get(providerId + "_" + code);
         if (cutoffPeriod != null) {
             Calendar calendar = new GregorianCalendar();
             calendar.add(Calendar.DATE, (-1) * cutoffPeriod.intValue());
@@ -601,19 +609,24 @@ public class CustomFieldsCacheContainerProvider {
         return cutoffDate;
     }
 
-    private String getCacheKey(IEntity entity) {
-        return getCacheKey(entity.getClass(), entity.getId());
+    /**
+     * Calculate custom field value cache key for a given entity
+     * 
+     * @param entity Entity
+     * @return String cache key
+     */
+    private String getCacheKey(ICustomFieldEntity entity) {
+        return entity.getUuid();
     }
 
-    @SuppressWarnings("rawtypes")
-    private String getCacheKey(Class entityClass, Serializable id) {
-        String className = entityClass.getSimpleName();
-        int pos = className.indexOf("_$$_");
-        if (pos > 0) {
-            className = className.substring(0, pos);
-        }
-
-        return className + "_" + id;
+    /**
+     * Calculate custom field value cache key for a given custom field instance
+     * 
+     * @param cfi Custom Field Instance
+     * @return String cache key
+     */
+    private String getCacheKey(CustomFieldInstance cfi) {
+        return cfi.getAppliesToEntity();
     }
 
     /**
@@ -625,10 +638,11 @@ public class CustomFieldsCacheContainerProvider {
 
         String cacheKeyByAppliesTo = getCFTCacheKeyByAppliesTo(cft);
         if (!cftsByAppliesTo.containsKey(cacheKeyByAppliesTo)) {
-            cftsByAppliesTo.put(cacheKeyByAppliesTo, new ArrayList<CustomFieldTemplate>());
+            cftsByAppliesTo.put(cacheKeyByAppliesTo, new TreeMap<String, CustomFieldTemplate>());
         } else {
-            cftsByAppliesTo.get(cacheKeyByAppliesTo).remove(cft);
+            cftsByAppliesTo.get(cacheKeyByAppliesTo).remove(cft.getCode());
         }
+        // Load calendar for lazy loading
         if (cft.getCalendar() != null) {
             cft.setCalendar(PersistenceUtils.initializeAndUnproxy(cft.getCalendar()));
             if (cft.getCalendar() instanceof CalendarDaily) {
@@ -639,7 +653,7 @@ public class CustomFieldsCacheContainerProvider {
                 ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
             }
         }
-        cftsByAppliesTo.get(cacheKeyByAppliesTo).add(cft);
+        cftsByAppliesTo.get(cacheKeyByAppliesTo).put(cft.getCode(), cft);
 
         if (cft.isVersionable()) {
             if (cft.getCacheValueTimeperiod() != null) {
@@ -658,7 +672,7 @@ public class CustomFieldsCacheContainerProvider {
      */
     public void removeCustomFieldTemplate(CustomFieldTemplate cft) {
 
-        cftsByAppliesTo.get(getCFTCacheKeyByAppliesTo(cft)).remove(cft);
+        cftsByAppliesTo.get(getCFTCacheKeyByAppliesTo(cft)).remove(cft.getCode());
 
         if (cft.isVersionable()) {
             cfValueCacheTime.remove(getCFTCacheKeyByCode(cft));
@@ -673,14 +687,14 @@ public class CustomFieldsCacheContainerProvider {
     public void addUpdateCustomEntityTemplate(CustomEntityTemplate cet) {
 
         if (!cetsByProvider.containsKey(cet.getProvider().getId().toString())) {
-            cetsByProvider.put(cet.getProvider().getId().toString(), new ArrayList<CustomEntityTemplate>());
+            cetsByProvider.put(cet.getProvider().getId().toString(), new TreeMap<String, CustomEntityTemplate>());
         } else {
-            cetsByProvider.get(cet.getProvider().getId().toString()).remove(cet);
+            cetsByProvider.get(cet.getProvider().getId().toString()).remove(cet.getCode());
         }
-        cetsByProvider.get(cet.getProvider().getId().toString()).add(cet);
+        cetsByProvider.get(cet.getProvider().getId().toString()).put(cet.getCode(), cet);
 
         // Sort values by cet.name
-        Collections.sort(cetsByProvider.get(cet.getProvider().getId().toString()));
+        // Collections.sort(cetsByProvider.get(cet.getProvider().getId().toString()));
 
     }
 
@@ -691,7 +705,7 @@ public class CustomFieldsCacheContainerProvider {
      */
     public void removeCustomEntityTemplate(CustomEntityTemplate cet) {
 
-        cetsByProvider.get(cet.getProvider().getId().toString()).remove(cet);
+        cetsByProvider.get(cet.getProvider().getId().toString()).remove(cet.getCode());
     }
 
     private String getCFTCacheKeyByCode(CustomFieldTemplate cft) {
@@ -707,15 +721,15 @@ public class CustomFieldsCacheContainerProvider {
      * 
      * @param appliesTo entity (appliesTo value)
      * @param provider Provider
-     * @return A list of custom field templates
+     * @return A map of custom field templates with template code as a key
      */
-    public List<CustomFieldTemplate> getCustomFieldTemplatesByAppliesTo(String appliesTo, Provider provider) {
+    public Map<String, CustomFieldTemplate> getCustomFieldTemplates(String appliesTo, Provider provider) {
         String key = provider.getId() + "_" + appliesTo;
         if (cftsByAppliesTo.containsKey(key)) {
             return cftsByAppliesTo.get(key);
 
         } else {
-            return new ArrayList<CustomFieldTemplate>();
+            return new HashMap<String, CustomFieldTemplate>();
         }
     }
 
@@ -725,13 +739,65 @@ public class CustomFieldsCacheContainerProvider {
      * @param provider Provider
      * @return A list of custom entity templates
      */
-    public List<CustomEntityTemplate> getCustomEntityTemlates(Provider provider) {
+    public Collection<CustomEntityTemplate> getCustomEntityTemplates(Provider provider) {
 
         if (cetsByProvider.containsKey(provider.getId().toString())) {
-            return cetsByProvider.get(provider.getId().toString());
+            return cetsByProvider.get(provider.getId().toString()).values();
 
         } else {
             return new ArrayList<CustomEntityTemplate>();
+        }
+    }
+
+    /**
+     * Get custom field template of a given code, applicable to a given entity
+     * 
+     * @param code Custom field template code
+     * @param entity Entity
+     * @return Custom field template
+     */
+    public CustomFieldTemplate getCustomFieldTemplate(String code, ICustomFieldEntity entity) {
+        try {
+            return getCustomFieldTemplate(code, CustomFieldTemplateService.calculateAppliesToValue(entity), getProvider(entity));
+
+        } catch (CustomFieldException e) {
+            log.error("Can not determine applicable CFT type for entity of {} class. Value from propeties file will NOT be saved as customfield", entity.getClass().getSimpleName());
+        }
+        return null;
+    }
+
+    /**
+     * Get custom field template of a given code, applicable to a given entity
+     * 
+     * @param code Custom field template code
+     * @param appliesTo Entity appliesTo value
+     * @param provider Provider
+     * @return Custom field template
+     */
+    public CustomFieldTemplate getCustomFieldTemplate(String code, String appliesTo, Provider provider) {
+
+        String key = provider.getId() + "_" + appliesTo;
+        if (cftsByAppliesTo.containsKey(key)) {
+            return cftsByAppliesTo.get(key).get(code);
+
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get provider of and entity. Handles cases when entity itself is a provider
+     * 
+     * @param entity Entity
+     * @return Provider
+     */
+    private Provider getProvider(ICustomFieldEntity entity) {
+
+        if (entity instanceof Provider) {
+            return (Provider) entity;
+
+        } else {
+            return ((IProvider) entity).getProvider();
         }
     }
 }

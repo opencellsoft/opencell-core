@@ -1,6 +1,8 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,6 +20,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
@@ -39,6 +42,9 @@ public class CustomEntityApi extends BaseApi {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
     public void createEntityTemplate(CustomEntityTemplateDto dto, User currentUser) throws MeveoApiException {
 
@@ -86,12 +92,14 @@ public class CustomEntityApi extends BaseApi {
         cet = CustomEntityTemplateDto.fromDTO(dto, cet);
         cet = customEntityTemplateService.update(cet, currentUser);
 
-        List<CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
+        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
 
         // Create, update or remove fields as necessary
+        List<CustomFieldTemplate> cftsToRemove = new ArrayList<CustomFieldTemplate>();
         if (dto.getFields() != null && !dto.getFields().isEmpty()) {
+
             boolean found = false;
-            for (CustomFieldTemplate cft : cetFields) {
+            for (CustomFieldTemplate cft : cetFields.values()) {
                 for (CustomFieldTemplateDto cftDto : dto.getFields()) {
                     if (cftDto.getCode().equals(cft.getCode())) {
                         found = true;
@@ -101,17 +109,20 @@ public class CustomEntityApi extends BaseApi {
 
                 // Old field is no longer needed. Remove by id, as CFT might come detached from cache
                 if (!found) {
-                    customFieldTemplateService.remove(cft.getId());
+                    cftsToRemove.add(cft);
                 }
             }
             // Update or create custom field templates
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {
                 customFieldTemplateApi.createOrUpdate(cftDto, currentUser, cet);
+            }
 
+            for (CustomFieldTemplate cft : cftsToRemove) {
+                customFieldTemplateService.remove(cft.getId());
             }
 
         } else {
-            for (CustomFieldTemplate cft : cetFields) {
+            for (CustomFieldTemplate cft : cetFields.values()) {
                 customFieldTemplateService.remove(cft.getId());
             }
         }
@@ -148,9 +159,9 @@ public class CustomEntityApi extends BaseApi {
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
-        List<CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), provider);
+        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), provider);
 
-        return CustomEntityTemplateDto.toDTO(cet, cetFields);
+        return CustomEntityTemplateDto.toDTO(cet, cetFields.values());
     }
 
     public void createOrUpdateEntityTemplate(CustomEntityTemplateDto postData, User currentUser) throws MeveoApiException {
@@ -185,15 +196,15 @@ public class CustomEntityApi extends BaseApi {
 
         CustomEntityInstance cei = CustomEntityInstanceDto.fromDTO(dto, null);
 
+        customEntityInstanceService.create(cei, currentUser, currentUser.getProvider());
+
         // populate customFields
         try {
-            populateCustomFields(dto.getCustomFields(), cei, currentUser);
+            populateCustomFields(dto.getCustomFields(), cei, true, currentUser);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
-
-        customEntityInstanceService.create(cei, currentUser, currentUser.getProvider());
 
     }
 
@@ -221,15 +232,16 @@ public class CustomEntityApi extends BaseApi {
 
         cei = CustomEntityInstanceDto.fromDTO(dto, cei);
 
+        cei = customEntityInstanceService.update(cei, currentUser);
+
         // populate customFields
         try {
-            populateCustomFields(dto.getCustomFields(), cei, currentUser);
+            populateCustomFields(dto.getCustomFields(), cei, false, currentUser);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new MeveoApiException("Failed to associate custom field instance to an entity");
         }
 
-        cei = customEntityInstanceService.update(cei, currentUser);
     }
 
     public void removeEntityInstance(String cetCode, String code, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
@@ -267,7 +279,7 @@ public class CustomEntityApi extends BaseApi {
         if (cei == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
-        return CustomEntityInstanceDto.toDTO(cei);
+        return CustomEntityInstanceDto.toDTO(cei, customFieldInstanceService.getCustomFieldInstances(cei));
     }
 
     public void createOrUpdateEntityInstance(CustomEntityInstanceDto dto, User currentUser) throws MeveoApiException {

@@ -56,7 +56,7 @@ public class UserAccountApiService extends AccountApiService {
 			}
 
 			UserAccount userAccount = new UserAccount();
-			populate(postData, userAccount, currentUser, checkCustomFields);
+			populate(postData, userAccount, currentUser);
 
 			userAccount.setBillingAccount(billingAccount);
 			userAccount.setProvider(currentUser.getProvider());
@@ -69,6 +69,16 @@ public class UserAccountApiService extends AccountApiService {
 				throw new EntityAlreadyExistsException(UserAccount.class,
 						postData.getCode());
 			}
+			
+	          
+            // Validate and populate customFields
+            try {
+                populateCustomFields(postData.getCustomFields(), userAccount, true, currentUser, checkCustomFields);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+            }
+            
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -117,6 +127,15 @@ public class UserAccountApiService extends AccountApiService {
 			updateAccount(userAccount, postData, currentUser, checkCustomFields);
 
 			userAccountService.updateAudit(userAccount, currentUser);
+				          
+            // Validate and populate customFields
+           try {
+               populateCustomFields(postData.getCustomFields(), userAccount, false, currentUser, checkCustomFields);
+           } catch (IllegalArgumentException | IllegalAccessException e) {
+               log.error("Failed to associate custom field instance to an entity", e);
+               throw new MeveoApiException("Failed to associate custom field instance to an entity");
+           }
+           
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -142,12 +161,11 @@ public class UserAccountApiService extends AccountApiService {
 						userAccountCode);
 			}
 
-			return new UserAccountDto(userAccount);
+			return accountHierarchyApiService.userAccountToDto(userAccount);
 		} else {
 			missingParameters.add("userAccountCode");
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -186,7 +204,7 @@ public class UserAccountApiService extends AccountApiService {
 					.listByBillingAccount(billingAccount);
 			if (userAccounts != null) {
 				for (UserAccount ua : userAccounts) {
-					result.getUserAccount().add(new UserAccountDto(ua));
+					result.getUserAccount().add(accountHierarchyApiService.userAccountToDto(ua));
 				}
 			}
 

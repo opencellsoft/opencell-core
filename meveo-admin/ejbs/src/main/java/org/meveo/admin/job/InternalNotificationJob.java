@@ -30,6 +30,7 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 
 @Startup
@@ -38,11 +39,14 @@ public class InternalNotificationJob extends Job {
 
     @Inject
     private InternalNotificationJobBean internalNotificationJobBean;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
-        String filterCode = (String) jobInstance.getCFValue("InternalNotificationJob_filterCode");
-        String notificationCode = (String) jobInstance.getCFValue("InternalNotificationJob_notificationCode");
+        String filterCode = (String) customFieldInstanceService.getCFValue(jobInstance, "InternalNotificationJob_filterCode", currentUser);
+        String notificationCode = (String) customFieldInstanceService.getCFValue(jobInstance, "InternalNotificationJob_notificationCode", currentUser);
         internalNotificationJobBean.execute(filterCode,notificationCode,result, currentUser);
     }
 

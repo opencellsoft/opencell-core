@@ -119,15 +119,17 @@ public class UsageChargeTemplateApi extends BaseApi {
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
 			
+
+            usageChargeTemplateService.create(chargeTemplate, currentUser, provider);
+            
 			// populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), chargeTemplate, currentUser);
+                populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
-			usageChargeTemplateService.create(chargeTemplate, currentUser, provider);
 
 			// create cat messages
 			if (postData.getLanguageDescriptions() != null) {
@@ -255,16 +257,17 @@ public class UsageChargeTemplateApi extends BaseApi {
 
 				chargeTemplate.setEdrTemplates(edrTemplates);
 			}
-			
+
+			chargeTemplate = usageChargeTemplateService.update(chargeTemplate, currentUser);
+            
 			// populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), chargeTemplate, currentUser);
+                populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity");
             }
 
-			usageChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -290,7 +293,7 @@ public class UsageChargeTemplateApi extends BaseApi {
 				throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
 			}
 
-			result = new UsageChargeTemplateDto(chargeTemplate);
+			result = new UsageChargeTemplateDto(chargeTemplate, customFieldInstanceService.getCustomFieldInstances(chargeTemplate));
 
 			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
 			for (CatMessages msg : catMessagesService.getCatMessagesList(UsageChargeTemplate.class.getSimpleName() + "_" + chargeTemplate.getId())) {

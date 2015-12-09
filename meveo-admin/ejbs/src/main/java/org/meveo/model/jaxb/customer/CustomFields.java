@@ -2,36 +2,15 @@ package org.meveo.model.jaxb.customer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.model.crm.CustomFieldFields;
 import org.meveo.model.crm.CustomFieldInstance;
 
-/**
- * <p>
- * Java class for anonymous complex type.
- * 
- * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{}customerField" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "customField" })
 @XmlRootElement(name = "customFields")
@@ -42,13 +21,15 @@ public class CustomFields {
 
     }
 
-    public static CustomFields toDTO(CustomFieldFields cff) {
-        if (cff == null || cff.getCustomFields() == null || cff.getCustomFields().isEmpty()) {
+    public static CustomFields toDTO(Map<String, List<CustomFieldInstance>> customFields) {
+        if (customFields == null || customFields.isEmpty()) {
             return null;
         }
         CustomFields dto = new CustomFields();
-        for (CustomFieldInstance cfi : cff.getCustomFields().values()) {
-            dto.getCustomField().addAll(CustomField.toDTO(cfi));
+        for (List<CustomFieldInstance> cfis : customFields.values()) {
+            for (CustomFieldInstance cfi : cfis) {
+                dto.getCustomField().add(CustomField.toDTO(cfi));
+            }
         }
         return dto;
     }

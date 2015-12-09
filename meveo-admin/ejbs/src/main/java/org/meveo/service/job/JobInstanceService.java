@@ -323,10 +323,6 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 		if (entity == null) {
 			throw new JobDoesNotExistsException(jobInstanceCode);
 		}		
-		// lazy loading
-		if (entity.getCfFields() != null) {
-		    entity.getCfFields().getUuid();
-		}
 	
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		result.setJobInstance(entity);

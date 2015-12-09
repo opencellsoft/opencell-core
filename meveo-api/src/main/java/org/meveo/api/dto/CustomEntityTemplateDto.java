@@ -1,6 +1,7 @@
 package org.meveo.api.dto;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -79,7 +80,7 @@ public class CustomEntityTemplateDto extends BaseDto {
      * @param cetFields Fields (CustomFieldTemplate) that are part of CustomEntityTemplate
      * @return A CustomEntityTemplateDto object with fields set
      */
-    public static CustomEntityTemplateDto toDTO(CustomEntityTemplate cet, List<CustomFieldTemplate> cetFields) {
+    public static CustomEntityTemplateDto toDTO(CustomEntityTemplate cet, Collection<CustomFieldTemplate> cetFields) {
         CustomEntityTemplateDto dto = new CustomEntityTemplateDto();
         dto.setCode(cet.getCode());
         dto.setName(cet.getName());

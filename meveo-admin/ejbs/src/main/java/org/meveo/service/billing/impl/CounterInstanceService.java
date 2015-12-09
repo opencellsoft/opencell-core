@@ -295,7 +295,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 			userMap.put("service",serviceInstance); 
 		} 
 		if(expression.indexOf("sub.") >= 0){ 
-			userMap.put("sub",subscription); ;
+			userMap.put("sub",subscription); 
 		}
 
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);

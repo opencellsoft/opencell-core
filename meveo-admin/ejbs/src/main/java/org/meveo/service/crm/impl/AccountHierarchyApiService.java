@@ -17,6 +17,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.account.AccountHierarchyTypeEnum;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountDto;
@@ -24,9 +25,11 @@ import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.AddressDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
+import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.dto.account.ContactInformationDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.CustomersDto;
@@ -184,6 +187,9 @@ public class AccountHierarchyApiService extends BaseApi {
 
 	@Inject
 	private TerminationReasonService terminationReasonService;
+    
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 			
 	@Inject
 	@MeveoParamBean
@@ -851,13 +857,14 @@ public class AccountHierarchyApiService extends BaseApi {
 		if (customers != null) {
 			for (Customer cust : customers) {
 				if (postData.getCustomFields() == null || postData.getCustomFields().getCustomField() == null) {
-					result.getCustomer().add(new CustomerDto(cust));
+					result.getCustomer().add(customerToDto(cust));
 				} else {
 					for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 
 						if (!cfDto.isEmpty()) {
-							if (cfDto.getValueConverted().equals(cust.getCFValue(cfDto.getCode()))) {
-								result.getCustomer().add(new CustomerDto(cust));
+						    Object cfValue = customFieldInstanceService.getCFValue(cust, cfDto.getCode(), currentUser);
+							if (cfDto.getValueConverted().equals(cfValue)) {
+								result.getCustomer().add(customerToDto(cust));
 							}
 						}
 					}
@@ -916,21 +923,22 @@ public class AccountHierarchyApiService extends BaseApi {
 						}
 					}
 
-					// populate customFields
-                    try {
-                        populateCustomFields(sellerDto.getCustomFields(), seller, currentUser);
-
-                    } catch (IllegalArgumentException | IllegalAccessException e) {
-                        log.error("Failed to associate custom field instance to an entity", e);
-                        throw new MeveoApiException("Failed to associate custom field instance to an entity");
-                    }
-
-					if (seller.isTransient()) {
+					boolean isNewSeller = seller.isTransient();
+					if (isNewSeller) {
 						sellerService.create(seller, currentUser, provider);
 					} else {
 						sellerService.update(seller, currentUser);
 					}
 
+                    // populate customFields
+                    try {
+                        populateCustomFields(sellerDto.getCustomFields(), seller, isNewSeller, currentUser);
+
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        log.error("Failed to associate custom field instance to an entity", e);
+                        throw new MeveoApiException("Failed to associate custom field instance to an entity");
+                    }					
+					
 					// customers
 					if (sellerDto.getCustomers() != null) {
 						for (CustomerDto customerDto : sellerDto.getCustomers().getCustomer()) {
@@ -1021,14 +1029,24 @@ public class AccountHierarchyApiService extends BaseApi {
 								}
 							}
 
-                            populateNameAddressAndCustomFields(customer, customerDto, currentUser);
+                            populateNameAddress(customer, customerDto, currentUser);
 
-							if (customer.isTransient()) {
+                            boolean isNewCustomer = customer.isTransient();
+							if (isNewCustomer) {
 								customerService.create(customer, currentUser, provider);
 							} else {
 								customerService.update(customer, currentUser);
 							}
 
+					        // Validate and populate customFields
+					        try {
+					            populateCustomFields(customerDto.getCustomFields(), customer, isNewCustomer, currentUser);
+
+					        } catch (IllegalArgumentException | IllegalAccessException e) {
+					            log.error("Failed to associate custom field instance to an entity {}", customerDto.getCode(), e);
+					            throw new MeveoApiException("Failed to associate custom field instance to an entity " + customerDto.getCode());
+					        }
+							
 							// customerAccounts
 							if (customerDto.getCustomerAccounts() != null) {
 								for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts()
@@ -1200,14 +1218,24 @@ public class AccountHierarchyApiService extends BaseApi {
 										}
 									}
 
-                                    populateNameAddressAndCustomFields(customerAccount, customerAccountDto, currentUser);
+                                    populateNameAddress(customerAccount, customerAccountDto, currentUser);
 
-									if (customerAccount.isTransient()) {
+                                    boolean isNewCA = customerAccount.isTransient(); 
+									if (isNewCA) {
 										customerAccountService.create(customerAccount, currentUser, provider);
 									} else {
 										customerAccountService.update(customerAccount, currentUser);
 									}
 
+		                            // Validate and populate customFields
+		                            try {
+		                                populateCustomFields(customerAccountDto.getCustomFields(), customerAccount, isNewCA, currentUser);
+
+		                            } catch (IllegalArgumentException | IllegalAccessException e) {
+		                                log.error("Failed to associate custom field instance to an entity {}", customerAccountDto.getCode(), e);
+		                                throw new MeveoApiException("Failed to associate custom field instance to an entity " + customerAccountDto.getCode());
+		                            }
+		                            
 									// billing accounts
 									if (customerAccountDto.getBillingAccounts() != null) {
 										for (BillingAccountDto billingAccountDto : customerAccountDto
@@ -1364,14 +1392,24 @@ public class AccountHierarchyApiService extends BaseApi {
 												billingAccount.setEmail(billingAccountDto.getEmail());
 											}
 
-                                            populateNameAddressAndCustomFields(billingAccount, billingAccountDto, currentUser);
+                                            populateNameAddress(billingAccount, billingAccountDto, currentUser);
 
-											if (billingAccount.isTransient()) {
+                                            boolean isNewBA = billingAccount.isTransient(); 
+											if (isNewBA) {
 												billingAccountService.create(billingAccount, currentUser, provider);
 											} else {
 												billingAccountService.update(billingAccount, currentUser);
 											}
 
+		                                    // Validate and populate customFields
+		                                    try {
+		                                        populateCustomFields(billingAccountDto.getCustomFields(), billingAccount, isNewBA, currentUser);
+
+		                                    } catch (IllegalArgumentException | IllegalAccessException e) {
+		                                        log.error("Failed to associate custom field instance to an entity {}", billingAccountDto.getCode(), e);
+		                                        throw new MeveoApiException("Failed to associate custom field instance to an entity " + billingAccountDto.getCode());
+		                                    }
+		                                    
 											// user accounts
 											if (billingAccountDto.getUserAccounts() != null) {
 												for (UserAccountDto userAccountDto : billingAccountDto
@@ -1445,9 +1483,10 @@ public class AccountHierarchyApiService extends BaseApi {
 																.getTerminationDate());
 													}
 
-                                                    populateNameAddressAndCustomFields(userAccount, userAccountDto, currentUser);
+                                                    populateNameAddress(userAccount, userAccountDto, currentUser);
 
-													if (userAccount.isTransient()) {
+                                                    boolean isNewUA = userAccount.isTransient();
+													if (isNewUA) {
 														try {
 															userAccountService.createUserAccount(billingAccount,
 																	userAccount, currentUser);
@@ -1457,6 +1496,15 @@ public class AccountHierarchyApiService extends BaseApi {
 													} else {
 														userAccountService.update(userAccount, currentUser);
 													}
+													
+													// Validate and populate customFields
+		                                            try {
+		                                                populateCustomFields(userAccountDto.getCustomFields(), userAccount, isNewUA, currentUser);
+
+		                                            } catch (IllegalArgumentException | IllegalAccessException e) {
+		                                                log.error("Failed to associate custom field instance to an entity {}", userAccountDto.getCode(), e);
+		                                                throw new MeveoApiException("Failed to associate custom field instance to an entity " + userAccountDto.getCode());
+		                                            }
 
 													// subscriptions
 													if (userAccountDto.getSubscriptions() != null) {
@@ -1569,23 +1617,25 @@ public class AccountHierarchyApiService extends BaseApi {
 																		.getTerminationDate());
 															}
 
-															// populate
-															// customFields
-                                                            try {
-                                                                populateCustomFields(subscriptionDto.getCustomFields(), subscription, currentUser);
-                                                            } catch (IllegalArgumentException | IllegalAccessException e) {
-                                                                log.error("Failed to associate custom field instance to a subscription {}", subscriptionDto.getCode(), e);
-                                                                throw new MeveoApiException("Failed to associate custom field instance to a subscription "
-                                                                        + subscriptionDto.getCode());
-                                                            }
 
-															if (subscription.isTransient()) {
+															boolean isNewSubscription = subscription.isTransient();
+															if (isNewSubscription) {
 																subscriptionService.create(subscription, currentUser,
 																		provider);
 															} else {
 																subscriptionService.update(subscription, currentUser);
 															}
 
+	                                                         // populate
+                                                            // customFields
+                                                            try {
+                                                                populateCustomFields(subscriptionDto.getCustomFields(), subscription, isNewSubscription, currentUser);
+                                                            } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                                log.error("Failed to associate custom field instance to a subscription {}", subscriptionDto.getCode(), e);
+                                                                throw new MeveoApiException("Failed to associate custom field instance to a subscription "
+                                                                        + subscriptionDto.getCode());
+                                                            }
+                                                            
 															// accesses
 															if (subscriptionDto.getAccesses() != null) {
 																for (AccessDto accessDto : subscriptionDto
@@ -1614,22 +1664,24 @@ public class AccountHierarchyApiService extends BaseApi {
 																		access.setEndDate(accessDto.getEndDate());
 																	}
 
-																	// populate
-																	// customFields
-                                                                    try {
-                                                                        populateCustomFields(accessDto.getCustomFields(), access, currentUser);
-                                                                    } catch (IllegalArgumentException | IllegalAccessException e) {
-                                                                        log.error("Failed to associate custom field instance to an access {}", subscriptionDto.getCode(), e);
-                                                                        throw new MeveoApiException("Failed to associate custom field instance to an access "
-                                                                                + subscriptionDto.getCode());
-                                                                    }
-
-																	if (access.isTransient()) {
+																	boolean isNewAccess = access.isTransient();
+																	if (isNewAccess) {
 																		accessService.create(access, currentUser,
 																				provider);
 																	} else {
 																		accessService.update(access, currentUser);
 																	}
+																	
+
+                                                                    // populate
+                                                                    // customFields
+                                                                    try {
+                                                                        populateCustomFields(accessDto.getCustomFields(), access, isNewAccess, currentUser);
+                                                                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                                        log.error("Failed to associate custom field instance to an access {}", subscriptionDto.getCode(), e);
+                                                                        throw new MeveoApiException("Failed to associate custom field instance to an access "
+                                                                                + subscriptionDto.getCode());
+                                                                    }
 																}
 															}
 
@@ -1807,7 +1859,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 	}
 
-    private void populateNameAddressAndCustomFields(AccountEntity accountEntity, AccountDto accountDto, User currentUser) throws MeveoApiException {
+    private void populateNameAddress(AccountEntity accountEntity, AccountDto accountDto, User currentUser) throws MeveoApiException {
 
 		if (!StringUtils.isBlank(accountDto.getDescription())) {
 			accountEntity.setDescription(accountDto.getDescription());
@@ -1858,14 +1910,6 @@ public class AccountHierarchyApiService extends BaseApi {
 			}
 		}
 
-		// Validate and populate customFields
-        try {
-            populateCustomFields(accountDto.getCustomFields(), accountEntity, currentUser);
-
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            log.error("Failed to associate custom field instance to an entity {}", accountDto.getCode(), e);
-            throw new MeveoApiException("Failed to associate custom field instance to an entity " + accountDto.getCode());
-        }
 	}
 
 	public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData,
@@ -1903,7 +1947,7 @@ public class AccountHierarchyApiService extends BaseApi {
 			List<Customer> customers = customerService.findByNameAndAddress(name, address, currentUser.getProvider());
 			if (customers != null) {
 				for (Customer customer : customers) {
-					result.getCustomers().getCustomer().add(new CustomerDto(customer));
+					result.getCustomers().getCustomer().add(customerToDto(customer));
 				}
 			}
 		}
@@ -1957,12 +2001,12 @@ public class AccountHierarchyApiService extends BaseApi {
 					if (billingAccountDto.getCode().equals(billingAccount.getCode())) {
 						if (billingAccountDto.getUserAccounts() != null
 								&& billingAccountDto.getUserAccounts().getUserAccount().size() > 0) {
-							UserAccountDto userAccountDto = new UserAccountDto(userAccount);
+							UserAccountDto userAccountDto =  userAccountToDto(userAccount);
 							if (!billingAccountDto.getUserAccounts().getUserAccount().contains(userAccountDto)) {
 								billingAccountDto.getUserAccounts().getUserAccount().add(userAccountDto);
 							}
 						} else {
-							billingAccountDto.getUserAccounts().getUserAccount().add(new UserAccountDto(userAccount));
+							billingAccountDto.getUserAccounts().getUserAccount().add(userAccountToDto(userAccount));
 						}
 					}
 				}
@@ -1982,13 +2026,12 @@ public class AccountHierarchyApiService extends BaseApi {
 				if (customerAccountDto.getCode().equals(customerAccount.getCode())) {
 					if (customerAccountDto.getBillingAccounts() != null
 							&& customerAccountDto.getBillingAccounts().getBillingAccount().size() > 0) {
-						BillingAccountDto billingAccountDto = new BillingAccountDto(billingAccount);
+						BillingAccountDto billingAccountDto = billingAccountToDto(billingAccount);
 						if (!customerAccountDto.getBillingAccounts().getBillingAccount().contains(billingAccountDto)) {
 							customerAccountDto.getBillingAccounts().getBillingAccount().add(billingAccountDto);
 						}
 					} else {
-						customerAccountDto.getBillingAccounts().getBillingAccount()
-								.add(new BillingAccountDto(billingAccount));
+                        customerAccountDto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(billingAccount));
 					}
 				}
 			}
@@ -1997,10 +2040,10 @@ public class AccountHierarchyApiService extends BaseApi {
 
 	private void addCustomerAccount(GetAccountHierarchyResponseDto result, CustomerAccount customerAccount) {
 		Customer customer = customerAccount.getCustomer();
-		CustomerAccountDto customerAccountDto = new CustomerAccountDto(customerAccount);
+		CustomerAccountDto customerAccountDto = customerAccountToDto(customerAccount);
 
 		if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
-			CustomerDto customerDto = new CustomerDto(customer);
+			CustomerDto customerDto = customerToDto(customer);
 			customerDto.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
 			result.getCustomers().getCustomer().add(customerDto);
 		} else {
@@ -2016,13 +2059,13 @@ public class AccountHierarchyApiService extends BaseApi {
 
 	private void addCustomer(GetAccountHierarchyResponseDto result, Customer customer) {
 		if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
-			result.getCustomers().getCustomer().add(new CustomerDto(customer));
+			result.getCustomers().getCustomer().add(customerToDto(customer));
 		} else {
 			boolean found = false;
 			for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
 				if (customerDto.getCode().equals(customer.getCode())) {
 					if (!customerDto.isLoaded()) {
-						customerDto.initFromEntity(customer);
+						customerDto.initFromEntity(customer, customFieldInstanceService.getCustomFieldInstances(customer));
 					}
 
 					found = true;
@@ -2031,7 +2074,7 @@ public class AccountHierarchyApiService extends BaseApi {
 			}
 
 			if (!found) {
-				result.getCustomers().getCustomer().add(new CustomerDto(customer));
+				result.getCustomers().getCustomer().add(customerToDto(customer));
 			}
 		}
 	}
@@ -2492,4 +2535,176 @@ public class AccountHierarchyApiService extends BaseApi {
 			createCRMAccountHierarchy(postData, currentUser);
 		}
 	}
+
+    public void accountEntityToDto(AccountDto dto, AccountEntity account) {
+        dto.setCode(account.getCode());
+        dto.setDescription(account.getDescription());
+        dto.setExternalRef1(account.getExternalRef1());
+        dto.setExternalRef2(account.getExternalRef2());
+        dto.setName(new NameDto(account.getName()));
+        dto.setAddress(new AddressDto(account.getAddress()));
+
+        dto.setCustomFields(CustomFieldsDto.toDTO(customFieldInstanceService.getCustomFieldInstances(account)));
+
+        dto.setLoaded(true);
+    }
+
+    public CustomerDto customerToDto(Customer customer) {
+        CustomerDto dto = new CustomerDto();
+        accountEntityToDto(dto, customer);
+
+        if (customer.getCustomerCategory() != null) {
+            dto.setCustomerCategory(customer.getCustomerCategory().getCode());
+        }
+
+        if (customer.getCustomerBrand() != null) {
+            dto.setCustomerBrand(customer.getCustomerBrand().getCode());
+        }
+
+        if (customer.getSeller() != null) {
+            dto.setSeller(customer.getSeller().getCode());
+        }
+
+        if (customer.getContactInformation() != null) {
+            dto.setContactInformation(new ContactInformationDto(customer.getContactInformation()));
+        }
+
+        if (!dto.isLoaded() && customer.getCustomerAccounts() != null) {
+            dto.setCustomerAccounts(new CustomerAccountsDto());
+
+            for (CustomerAccount ca : customer.getCustomerAccounts()) {
+                dto.getCustomerAccounts().getCustomerAccount().add(customerAccountToDto(ca));
+            }
+        }
+
+        dto.setLoaded(true);
+        return dto;
+    }
+
+    public CustomerAccountDto customerAccountToDto(CustomerAccount ca) {
+        CustomerAccountDto dto = new CustomerAccountDto();
+        accountEntityToDto(dto, ca);
+
+        if (ca.getCustomer() != null) {
+            dto.setCustomer(ca.getCustomer().getCode());
+        }
+
+        if (ca.getTradingCurrency() != null) {
+            dto.setCurrency(ca.getTradingCurrency().getCurrencyCode());
+        }
+
+        if (ca.getTradingLanguage() != null) {
+            dto.setLanguage(ca.getTradingLanguage().getLanguageCode());
+        }
+
+        try {
+            dto.setStatus(ca.getStatus().name());
+        } catch (NullPointerException ex) {
+        }
+        try {
+            dto.setPaymentMethod(ca.getPaymentMethod().name());
+        } catch (NullPointerException ex) {
+        }
+        try {
+            dto.setCreditCategory(ca.getCreditCategory().getCode());
+        } catch (NullPointerException ex) {
+        }
+        try {
+            dto.setDunningLevel(ca.getDunningLevel().name());
+        } catch (NullPointerException ex) {
+        }
+
+        dto.setDateStatus(ca.getDateStatus());
+        dto.setDateDunningLevel(ca.getDateDunningLevel());
+        if (ca.getContactInformation() != null) {
+            dto.setContactInformation(new ContactInformationDto(ca.getContactInformation()));
+        }
+
+        dto.setMandateIdentification(ca.getMandateIdentification());
+        dto.setMandateDate(ca.getMandateDate());
+
+        if (!dto.isLoaded() && ca.getBillingAccounts() != null) {
+            dto.setBillingAccounts(new BillingAccountsDto());
+
+            for (BillingAccount ba : ca.getBillingAccounts()) {
+                dto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(ba));
+            }
+        }
+
+        dto.setLoaded(true);
+        return dto;
+    }
+
+    
+    public BillingAccountDto billingAccountToDto(BillingAccount ba) {
+
+        BillingAccountDto dto = new BillingAccountDto();
+        accountEntityToDto(dto, ba);
+
+        if (ba.getCustomerAccount() != null) {
+            dto.setCustomerAccount(ba.getCustomerAccount().getCode());
+        }
+        if (ba.getBillingCycle() != null) {
+            dto.setBillingCycle(ba.getBillingCycle().getCode());
+        }
+        if (ba.getTradingCountry() != null) {
+            dto.setCountry(ba.getTradingCountry().getCountryCode());
+        }
+        if (ba.getTradingLanguage() != null) {
+            dto.setLanguage(ba.getTradingLanguage().getLanguageCode());
+        }
+        if (ba.getPaymentMethod() != null) {
+            dto.setPaymentMethod(ba.getPaymentMethod().name());
+        }
+        dto.setNextInvoiceDate(ba.getNextInvoiceDate());
+        dto.setSubscriptionDate(ba.getSubscriptionDate());
+        dto.setTerminationDate(ba.getTerminationDate());
+        if (ba.getPaymentTerm() != null) {
+            dto.setPaymentTerms(ba.getPaymentTerm().name());
+        }
+        dto.setElectronicBilling(ba.getElectronicBilling());
+        if (ba.getStatus() != null) {
+            dto.setStatus(ba.getStatus().name());
+        }
+        if (ba.getTerminationReason() != null) {
+            dto.setTerminationReason(ba.getTerminationReason().getCode());
+        }
+        dto.setEmail(ba.getEmail());
+
+        if (ba.getBankCoordinates() != null) {
+            dto.setBankCoordinates(new BankCoordinatesDto(ba.getBankCoordinates()));
+        }
+
+        if (!dto.isLoaded() && ba.getUsersAccounts() != null) {
+            for (UserAccount userAccount : ba.getUsersAccounts()) {
+                dto.getUserAccounts().getUserAccount().add(userAccountToDto(userAccount));
+            }
+        }
+
+        dto.setLoaded(true);
+
+        return dto;
+
+    }
+
+    public UserAccountDto userAccountToDto(UserAccount ua) {
+
+        UserAccountDto dto = new UserAccountDto();
+        accountEntityToDto(dto, ua);
+
+        if (ua.getBillingAccount() != null) {
+            dto.setBillingAccount(ua.getBillingAccount().getCode());
+        }
+
+        dto.setSubscriptionDate(ua.getSubscriptionDate());
+        dto.setTerminationDate(ua.getTerminationDate());
+        try {
+            dto.setStatus(ua.getStatus().name());
+        } catch (NullPointerException ex) {
+        }
+
+        dto.setLoaded(true);
+
+        return dto;
+    }
 }
