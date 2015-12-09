@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -40,6 +41,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Title;
@@ -271,6 +273,11 @@ public class UserService extends PersistenceService<User> {
 		
 		for (WalletTemplate template : provider.getPrepaidWalletTemplates()) {
 			template.getCode();
+		}
+		if(provider.getCustomFields() != null){
+			for(Map.Entry<String, CustomFieldInstance>  cf : provider.getCustomFields().entrySet()){
+				provider.getCustomFields().get(cf.getKey());
+			}
 		}
 
 		// End lazy loading issue
