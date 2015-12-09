@@ -30,7 +30,8 @@
             <versionable>false</versionable>
             <storageType>MAP</storageType>
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-        <appliesTo>SUB</appliesTo>
+        <allowEdit>true</allowEdit>
+            <appliesTo>SUB</appliesTo>
             <code>sub mandatory cf</code>
         </org.meveo.model.crm.CustomFieldTemplate>
         <org.meveo.model.crm.CustomFieldTemplate xsId="7">
@@ -50,7 +51,8 @@
             <listValues xsId="13"/>
             <versionable>false</versionable>
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-        <appliesTo>JOB_XMLInvoiceGenerationJob</appliesTo>
+        <allowEdit>true</allowEdit>
+            <appliesTo>JOB_XMLInvoiceGenerationJob</appliesTo>
             <code>nbRuns</code>
             <storageType>SINGLE</storageType>
         </org.meveo.model.crm.CustomFieldTemplate>
@@ -71,7 +73,8 @@
             <listValues xsId="18"/>
             <versionable>false</versionable>
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-        <appliesTo>JOB_XMLInvoiceGenerationJob</appliesTo>
+        <allowEdit>true</allowEdit>
+            <appliesTo>JOB_XMLInvoiceGenerationJob</appliesTo>
             <code>waitingMillis</code>
             <storageType>SINGLE</storageType>
         </org.meveo.model.crm.CustomFieldTemplate>
@@ -92,7 +95,8 @@
             <versionable>false</versionable>
             <storageType>SINGLE</storageType>
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-        <appliesTo>JOB_PurgeJob</appliesTo>
+        <allowEdit>true</allowEdit>
+            <appliesTo>JOB_PurgeJob</appliesTo>
             <code>PurgeJob_counterPeriod_nbDays</code>
         </org.meveo.model.crm.CustomFieldTemplate>
     </data>
