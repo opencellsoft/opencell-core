@@ -524,9 +524,19 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 	public boolean isMandatoryFieldsFilled(RecordedInvoice invoice){
 		Provider provider=invoice.getProvider();
 		BankCoordinates providerBC = provider.getBankCoordinates();
-		CustomerAccount ca = invoice.getCustomerAccount();
-		if(invoice.getAmount()==null ||provider.getDescription()==null || providerBC.getIban()==null| providerBC.getBic()==null || providerBC.getIcs()==null
-				|| invoice.getReference()==null|| ca.getMandateIdentification()==null|| ca.getMandateDate()==null || ca.getDescription()==null ){
+		CustomerAccount ca = invoice.getCustomerAccount();		
+		if(invoice == null || 
+		   invoice.getAmount()==null ||
+		   provider.getDescription()==null || 
+		   providerBC == null ||  
+		   providerBC.getIban()==null| 
+		   providerBC.getBic()==null || 
+		   providerBC.getIcs()==null || 
+		   invoice.getReference()==null|| 
+		   ca == null || 
+		   ca.getMandateIdentification()==null|| 
+		   ca.getMandateDate()==null || 
+		   ca.getDescription()==null ){
 			return false;	
 		}else{
 			return true;
