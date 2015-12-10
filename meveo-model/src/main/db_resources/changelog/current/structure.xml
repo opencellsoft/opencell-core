@@ -2008,4 +2008,19 @@
 		<modifyDataType columnName="FILTER_PARAM_4" newDataType="varchar(255)"   tableName="CAT_USAGE_CHARGE_TEMPLATE"/>
 	</changeSet>
 	
+	 <changeSet id="#1320-20151210" author="Mbarek">
+	    <modifyDataType columnName="PARAMETER_1" newDataType="VARCHAR(255)"
+				tableName="BILLING_WALLET_OPERATION" />
+		<modifyDataType columnName="PARAMETER_2" newDataType="VARCHAR(255)"
+				tableName="BILLING_WALLET_OPERATION" />
+		<modifyDataType columnName="PARAMETER_3" newDataType="VARCHAR(255)"
+				tableName="BILLING_WALLET_OPERATION" />	
+		 <modifyDataType columnName="PARAMETER_1" newDataType="VARCHAR(255)"
+				tableName="BILLING_RATED_TRANSACTION" />
+		<modifyDataType columnName="PARAMETER_2" newDataType="VARCHAR(255)"
+				tableName="BILLING_RATED_TRANSACTION" />
+		<modifyDataType columnName="PARAMETER_3" newDataType="VARCHAR(255)"
+				tableName="BILLING_RATED_TRANSACTION" />																																			
+		</changeSet>
+	
 </databaseChangeLog>
