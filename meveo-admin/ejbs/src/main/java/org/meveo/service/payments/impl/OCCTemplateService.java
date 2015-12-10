@@ -22,12 +22,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.AccountLevelEnum;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.ProviderService;
 
 /**
@@ -41,6 +39,9 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 	
 	@Inject
 	private ProviderService providerService;
+	
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
 	public OCCTemplate findByCode(String code, String providerCode) {
 		OCCTemplate occTemplate = null;
@@ -79,16 +80,20 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 		return getOccTemplateByCFKeyOrProperty(DDREQUEST_OCC_CODE, occCodeDefaultValue, provider);
 	}
 
-	private OCCTemplate getOccTemplateByCFKeyOrProperty(String occCodeKey,String occCodeDefaultValue,Provider provider) {				
-		CustomFieldInstance cfInstance = 
-		(CustomFieldInstance) providerService.getCustomFieldOrProperty(occCodeKey,occCodeDefaultValue , provider, true,AccountLevelEnum.PROVIDER,getCurrentUser());
-		if (cfInstance == null) {
-			log.error("Custom Field Instance with code=" + occCodeKey+ " does not exist");
-			return null;
-		}
-		return findByCode(cfInstance.getStringValue(),provider);
-	}
-	
+    private OCCTemplate getOccTemplateByCFKeyOrProperty(String occCodeKey, String occCodeDefaultValue, Provider provider) {
+
+        try {
+            String occTemplateCode = null;
+            occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCodeKey, occCodeDefaultValue, provider, providerService, true,
+                getCurrentUser());
+            return findByCode(occTemplateCode, provider);
+
+        } catch (Exception e) {
+            log.error("error while getting occ template ", e);
+            return null;
+        }
+    }
+
 	public OCCTemplate findByCode(String code, Provider provider) {
 		OCCTemplate occTemplate = null;
 		log.debug("start of find {} by code (code={}) ..", "OCCTemplate", code);
