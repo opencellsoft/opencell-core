@@ -2,7 +2,7 @@
 <con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
-  <con:entry key="TestSuite" value="#1095"/>
+  <con:entry key="TestSuite" value="#1095_title_Add_translation_function_on_description"/>
   <con:entry key="Password" value=""/>
   <con:entry key="TestRunner Path" value=""/>
   <con:entry key="Tool Args" value=""/>
@@ -21,7 +21,7 @@
   <con:entry key="Export All" value="false"/>
   <con:entry key="Project Password" value=""/>
   <con:entry key="Report Format(s)" value=""/>
-  <con:entry key="TestCase" value="activateService"/>
+  <con:entry key="TestCase" value="Add Title Description in English"/>
   <con:entry key="Print Report" value="false"/>
   <con:entry key="Username" value=""/>
   <con:entry key="Root Folder" value=""/>
@@ -32126,7 +32126,17 @@ for( testCase in testSuite.getTestCaseList() ) {
          </subscription>
       </ws:create>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="240803c9-2c00-4346-b4d8-650c0d30d297"/><con:assertion type="Simple Contains" name="Contains" id="79577b9e-ebe9-4ccd-8b29-6cc3b479f0ee"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="activateService" searchProperties="true" id="ecec628f-caf8-4db4-915a-1ead208a7645"><con:settings/><con:testStep type="request" name="Activate service" id="2a165471-982e-418a-a669-bec37b705bef"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Activate service" id="1286bdbb-331f-4e14-88f7-15faee42196f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="240803c9-2c00-4346-b4d8-650c0d30d297"/><con:assertion type="Simple Contains" name="Contains" id="79577b9e-ebe9-4ccd-8b29-6cc3b479f0ee"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties><con:property><con:name>index</con:name><con:value>794</con:value></con:property></con:properties></con:testCase><con:testCase id="1e159850-e1b8-44e3-8613-a9a9edd0be5f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Add Title Description in English" searchProperties="true"><con:settings/><con:testStep type="manualTestStep" name="create title english translation in descriptions" id="ee2b4c8e-c60b-4290-b77e-8251672957e4"><con:description>1) Go to http://i.meveo.info/meveo/loginInternal.jsf or the test environment you are currently running the test, login as meveo.admin.
+2) Go to Configurations->International Settings->Descriptions
+3) Click New Button
+4) In Object type dropdown, select Titles and Civilities
+5) In Language dropdown, select Eng
+6) Click Search Button in Code.
+7) In pop-up window, Input M in Code text field.
+8) Click Search button.
+9) Click the Item with M as code in the result below.
+10) Input the text Mr in Description translation text field.
+11) Click Save button.</con:description><con:settings/><con:config xsi:type="con:ManualTestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:expectedResult>Under Configurations->International Settings->Descriptions, there should be an entry for Title with Language as Eng and value as Mr.</con:expectedResult></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="activateService" searchProperties="true" id="ecec628f-caf8-4db4-915a-1ead208a7645"><con:settings/><con:testStep type="request" name="Activate service" id="2a165471-982e-418a-a669-bec37b705bef"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Activate service" id="1286bdbb-331f-4e14-88f7-15faee42196f"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:activateServices>
