@@ -243,7 +243,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFI", "true"));
 
         // If field is not versionable - get the value without the date
-        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+		CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+		if (cft == null) {
+			log.trace("No CFT found {}/{}", entity, code);
+			return null;
+		}
+		
         if (!cft.isVersionable()) {
             return getCFValue(entity, code, currentUser);
         }
@@ -353,6 +358,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         // If field is not versionable - set the value without the date
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        if (cft == null) {
+            throw new BusinessException("Custom field template with code " + code + " not found found for entity " + entity);
+        }
+        
         if (!cft.isVersionable()) {
             setCFValue(entity, code, value, currentUser);
 
@@ -390,6 +399,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         // If field is not versionable - set the value without the date
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        if (cft == null) {
+            throw new BusinessException("Custom field template with code " + code + " not found found for entity " + entity);
+        }
+        
         if (!cft.isVersionable()) {
             setCFValue(entity, code, value, currentUser);
 
