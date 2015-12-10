@@ -7,9 +7,10 @@
     </ui:define>
     
        <ui:define name="metadata">
-        <f:metadata>  
-			<f:event type="preRenderView"
-				listener="#{providerBean.preRenderView}" />
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{providerBean.objectId}" /> 
+            <f:viewParam name="tab" value="#{providerBean.activeTab}" />
+            <f:event type="preRenderView" listener="#{providerBean.preRenderView}" />
         </f:metadata>
     </ui:define>
 
@@ -17,7 +18,8 @@
 
         <hf:formPanel id="providerFormPanel" formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormPanel:providerFormId:tabView"
             label="#{messages['provider.title']}" backingBean="#{providerBean}" showBackButton="false" showDeleteButton="false">
-            <p:tabView id="tabView">
+            <p:tabView id="tabView" activeIndex="#{providerBean.activeTab}">
+            
                 <p:tab title="#{messages['customer.tab.information']}">
 							<hf:formField label="#{messages['businessEntity.code']}"
 								field="code" maxlength="35" required="true"/>

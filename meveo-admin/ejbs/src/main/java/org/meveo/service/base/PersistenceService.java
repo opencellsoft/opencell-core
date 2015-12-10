@@ -575,7 +575,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return findById((Long) entity.getId());
         }
     }
-    
+
 	/**
 	 * Creates query to filter entities according data provided in pagination
 	 * configuration.
@@ -849,7 +849,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		return (E) getEntityManager().merge(e);
 	}
 
-	private boolean isConversationScoped() {
+	protected boolean isConversationScoped() {
 		if (conversation != null) {
 			try {
 				conversation.isTransient();

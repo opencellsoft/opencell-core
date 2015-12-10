@@ -54,8 +54,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 
         try {
-            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), creator, paramBean.getProperty("role.modifyAllCET", "ModifyAllCET"));
-            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), creator, paramBean.getProperty("role.readAllCET", "ReadAllCET"));
+            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), creator, paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
+            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), creator, paramBean.getProperty("role.readAllCE", "ReadAllCE"));
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -68,8 +68,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 
         try {
-            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), updater, paramBean.getProperty("role.modifyAllCET", "ModifyAllCET"));
-            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), updater, paramBean.getProperty("role.readAllCET", "ReadAllCET"));
+            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), updater, paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
+            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), updater, paramBean.getProperty("role.readAllCE", "ReadAllCE"));
 
         } catch (Exception e) {
             throw new RuntimeException(e);

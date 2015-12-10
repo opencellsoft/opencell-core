@@ -172,8 +172,9 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
     	if(!getCurrentUser().hasPermission("superAdmin", "superAdminManagement")) {
-        	super.saveOrUpdate(entity);
+    	    super.saveOrUpdate(killConversation);
         	messages.info(new BundleKey("messages", "update.successful"));
         	return null;
         }

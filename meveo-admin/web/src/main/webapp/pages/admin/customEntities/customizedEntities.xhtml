@@ -38,30 +38,32 @@
 
         <h:form prependId="false">
             <p:panel width="100">
-                <p:dataTable id="searchResults" value="#{customEntityTemplateListBean.customizedEntities}" var="entity" sortOrder="ascending" sortBy="#{'null'}"
-                    sortField="entityName" paginator="true" rows="30" resizableColumns="true"
+                <p:dataTable id="searchResults" value="#{customEntityTemplateListBean.customizedEntities}" var="entity" sortOrder="ascending" sortBy="#{entity.entityName}"
+                    paginator="true" rows="30" resizableColumns="true"
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="30,50"
                     lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex">
-                    <hftl:column label="#{messages['customizedEntities.entityName']}" field="entityName" />
-                    <hftl:column label="#{messages['customizedEntities.description']}" field="description" />
-                    <hftl:column label="#{messages['customizedEntities.customEntity']}" field="customEntity" isMessage="true" sort="false"/>
-                    <c:if test="#{identity.hasPermission('administration','administrationManagement')}">
-                        <p:column headerText="#{messages['commons.actions']}" width="10%">
-                            <p:tooltip for="editlink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" rendered="#{entity.customEntity}" />
-                            <p:button id="editlink" outcome="customizedEntity" icon="ui-icon-document" rendered="#{entity.customEntity}">
+                    <p:column headerText="#{messages['customizedEntities.entityName']}" sortBy="#{entity.entityName}">
+                        <c:if test="#{!identity.hasPermission('administration','administrationManagement')}">
+                            <h:outputText value="#{entity.entityName}" />
+                        </c:if>
+                        <c:if test="#{identity.hasPermission('administration','administrationManagement')}">
+                            <h:link outcome="customizedEntity" rendered="#{entity.customEntity}">
+                                <h:outputText value="#{entity.entityName}" />
                                 <f:param name="entityClass" value="#{entity.entityClass.name}" />
                                 <f:param name="cetId" value="#{entity.customEntityId}" />
                                 <f:param name="backView" value="customizedEntities" />
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                            </p:button>
-                            <p:tooltip for="editlink2" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" rendered="#{!entity.customEntity}" />
-                            <p:button id="editlink2" outcome="customizedEntity" icon="ui-icon-document" rendered="#{!entity.customEntity}">
+                            </h:link>
+                            <h:link outcome="customizedEntity" rendered="#{!entity.customEntity}">
+                                <h:outputText value="#{entity.entityName}" />
                                 <f:param name="entityClass" value="#{entity.entityClass.name}" />
                                 <f:param name="backView" value="customizedEntities" />
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                            </p:button>
-                        </p:column>
-                    </c:if>
+                            </h:link>
+                        </c:if>
+                    </p:column>
+                    <hftl:column label="#{messages['customizedEntities.description']}" field="description" />
+                    <hftl:column label="#{messages['customizedEntities.customEntity']}" field="customEntity" isMessage="true" sort="false" />
                 </p:dataTable>
             </p:panel>
         </h:form>

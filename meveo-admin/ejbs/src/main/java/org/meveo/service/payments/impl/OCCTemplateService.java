@@ -26,7 +26,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.ProviderService;
 
 /**
  * OCCTemplate service implementation.
@@ -36,10 +35,7 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 
 	private static final String DUNNING_OCC_CODE = "bayad.dunning.occCode";
 	private static final String DDREQUEST_OCC_CODE = "bayad.ddrequest.occCode";
-	
-	@Inject
-	private ProviderService providerService;
-	
+		
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
@@ -84,8 +80,7 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 
         try {
             String occTemplateCode = null;
-            occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCodeKey, occCodeDefaultValue, provider, providerService, true,
-                getCurrentUser());
+            occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCodeKey, occCodeDefaultValue, provider, true, getCurrentUser());
             return findByCode(occTemplateCode, provider);
 
         } catch (Exception e) {

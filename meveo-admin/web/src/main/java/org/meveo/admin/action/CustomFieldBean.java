@@ -129,6 +129,22 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     }
 
     /**
+     * Load available custom fields (templates) and their values
+     * 
+     * @return Custom field information
+     */
+    public GroupedCustomField getGroupedCustomFieldWithInit() {
+        if (groupedCustomField == null) {
+            if (entity == null) {
+                initEntity();
+            } else {
+                initCustomFields();
+            }
+        }
+        return groupedCustomField;
+    }
+
+    /**
      * Save custom fields
      * 
      * @throws BusinessException
@@ -139,7 +155,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             List<CustomFieldInstance> cfis = getInstancesAsList(cft);
 
             for (CustomFieldInstance cfi : cfis) {
-
                 // Not saving empty values unless template has a default value or is versionable
                 if (cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable()) {
                     if (!cfi.isTransient()) {

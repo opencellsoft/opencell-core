@@ -46,7 +46,7 @@
 
     <c:set var="index" value="0" />
 
-    <c:forEach items="#{backingBean.groupedCustomField.children}" var="cfTab">
+    <c:forEach items="#{backingBean.groupedCustomFieldWithInit.children}" var="cfTab">
 
         <p:tab title="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}">
 

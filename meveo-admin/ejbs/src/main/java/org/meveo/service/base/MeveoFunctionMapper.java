@@ -2,6 +2,7 @@ package org.meveo.service.base;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,9 +38,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
         try {
             addFunction("mv", "getCFValue", MeveoFunctionMapper.class.getMethod("getCFValue", ICustomFieldEntity.class, String.class));
+            addFunction("mv", "getCFValueForDate", MeveoFunctionMapper.class.getMethod("getCFValueForDate", ICustomFieldEntity.class, String.class, Date.class));
+            addFunction("mv", "getInheritedCFValue", MeveoFunctionMapper.class.getMethod("getInheritedCFValue", ICustomFieldEntity.class, String.class));
+            addFunction("mv", "getInheritedCFValueForDate", MeveoFunctionMapper.class.getMethod("getInheritedCFValueForDate", ICustomFieldEntity.class, String.class, Date.class));
 
         } catch (NoSuchMethodException | SecurityException e) {
-            log.error("Failed to instantiate EL custom function mv:getCFValue", e);
+            log.error("Failed to instantiate EL custom function mv:xx", e);
         }
     }
 
@@ -89,6 +93,78 @@ public class MeveoFunctionMapper extends FunctionMapper {
         Object cfValue = customFieldInstanceService.getCFValue(entity, code, null);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} for {}/{}", cfValue, entity, code);
+
+        return cfValue;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Object getCFValueForDate(ICustomFieldEntity entity, String code, Date date) {
+
+        if (customFieldInstanceService == null) {
+
+            try {
+                InitialContext initialContext = new InitialContext();
+                BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+
+                Bean<CustomFieldInstanceService> bean = (Bean<CustomFieldInstanceService>) beanManager.resolve(beanManager.getBeans(CustomFieldInstanceService.class));
+                customFieldInstanceService = (CustomFieldInstanceService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+            } catch (NamingException e) {
+                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+                log.error("Unable to access CustomFieldInstanceService", e);
+                throw new RuntimeException(e);
+            }
+        }
+        Object cfValue = customFieldInstanceService.getCFValue(entity, code, date, null);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained CF value {} for {}/{} for {}", cfValue, entity, code, date);
+
+        return cfValue;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Object getInheritedCFValue(ICustomFieldEntity entity, String code) {
+
+        if (customFieldInstanceService == null) {
+
+            try {
+                InitialContext initialContext = new InitialContext();
+                BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+
+                Bean<CustomFieldInstanceService> bean = (Bean<CustomFieldInstanceService>) beanManager.resolve(beanManager.getBeans(CustomFieldInstanceService.class));
+                customFieldInstanceService = (CustomFieldInstanceService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+            } catch (NamingException e) {
+                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+                log.error("Unable to access CustomFieldInstanceService", e);
+                throw new RuntimeException(e);
+            }
+        }
+        Object cfValue = customFieldInstanceService.getInheritedCFValue(entity, code, null);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} for {}/{}", cfValue, entity, code);
+
+        return cfValue;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Object getInheritedCFValueForDate(ICustomFieldEntity entity, String code, Date date) {
+
+        if (customFieldInstanceService == null) {
+
+            try {
+                InitialContext initialContext = new InitialContext();
+                BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+
+                Bean<CustomFieldInstanceService> bean = (Bean<CustomFieldInstanceService>) beanManager.resolve(beanManager.getBeans(CustomFieldInstanceService.class));
+                customFieldInstanceService = (CustomFieldInstanceService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+            } catch (NamingException e) {
+                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+                log.error("Unable to access CustomFieldInstanceService", e);
+                throw new RuntimeException(e);
+            }
+        }
+        Object cfValue = customFieldInstanceService.getInheritedCFValue(entity, code, date, null);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained inherited CF value {} for {}/{} for {}", cfValue, entity, code, date);
 
         return cfValue;
     }

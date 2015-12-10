@@ -23,7 +23,6 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.slf4j.Logger;
@@ -48,11 +47,7 @@ public class UnitAccountOperationsGenerationJobBean {
 	
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-    
-	@Inject
-	private ProviderService providerService;
-
-	
+    	
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, User currentUser, Long id) {
@@ -83,9 +78,8 @@ public class UnitAccountOperationsGenerationJobBean {
 
 			String occTemplateCode = null;
 			try {
-				occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(
-						"accountOperationsGenerationJob.occCode", "FA_FACT", customerAccount.getProvider(),
-						providerService, true, currentUser);
+                occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue("accountOperationsGenerationJob.occCode", "FA_FACT",
+                    customerAccount.getProvider(), true, currentUser);
 				log.debug("occTemplateCode:" + occTemplateCode);
 				invoiceTemplate = oCCTemplateService.findByCode(occTemplateCode, customerAccount.getProvider());
 			} catch (Exception e) {

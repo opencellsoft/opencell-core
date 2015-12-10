@@ -19,11 +19,14 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.event.CFEndPeriodEvent;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
@@ -32,8 +35,7 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.CustomFieldValue;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.meveo.util.PersistenceUtils;
 
 @Stateless
 public class CustomFieldInstanceService extends PersistenceService<CustomFieldInstance> {
@@ -133,9 +135,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         return entities;
     }
 
-    @SuppressWarnings({ "rawtypes" })
-    public Object getOrCreateCFValueFromParamValue(String code, String defaultParamBeanValue, ICustomFieldEntity entity, PersistenceService pService, boolean saveInCFIfNotExist,
-            User currentUser) throws BusinessException {
+    public Object getOrCreateCFValueFromParamValue(String code, String defaultParamBeanValue, ICustomFieldEntity entity, boolean saveInCFIfNotExist, User currentUser)
+            throws BusinessException {
 
         Object value = getCFValue(entity, code, currentUser);
         if (value != null) {
@@ -248,7 +249,6 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 			log.trace("No CFT found {}/{}", entity, code);
 			return null;
 		}
-		
         if (!cft.isVersionable()) {
             return getCFValue(entity, code, currentUser);
         }
@@ -591,7 +591,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
     public Object getInheritedOnlyCFValue(ICustomFieldEntity entity, String code, User currentUser) {
         if (entity.getParentCFEntity() != null) {
-            return getInheritedCFValue(entity.getParentCFEntity(), code, currentUser);
+            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
+            return getInheritedCFValue(parentCFEntity, code, currentUser);
         }
         return null;
     }
@@ -599,34 +600,29 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getInheritedOnlyCFValue(ICustomFieldEntity entity, String code, Date date, User currentUser) {
 
         if (entity.getParentCFEntity() != null) {
-            return getInheritedCFValue(entity.getParentCFEntity(), code, date, currentUser);
+            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
+            return getInheritedCFValue(parentCFEntity, code, date, currentUser);
         }
         return null;
     }
 
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code, User currentUser) {
-
-        try {
-            Object value = getCFValue(entity, code, currentUser);
-            if (value == null && entity.getParentCFEntity() != null) {
-                return getInheritedCFValue(entity.getParentCFEntity(), code, currentUser);
-            }
-
-        } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("Failed to access inherited CF values", e);
+        Object value = getCFValue(entity, code, currentUser);
+        if (value == null && entity.getParentCFEntity() != null) {
+            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
+            return getInheritedCFValue(parentCFEntity, code, currentUser);
         }
-
-        return null;
+        return value;
     }
 
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code, Date date, User currentUser) {
 
         Object value = getCFValue(entity, code, date, currentUser);
         if (value == null && entity.getParentCFEntity() != null) {
-            return getInheritedCFValue(entity.getParentCFEntity(), code, date, currentUser);
+            ICustomFieldEntity parentCFEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) entity.getParentCFEntity());
+            return getInheritedCFValue(parentCFEntity, code, date, currentUser);
         }
-        return null;
+        return value;
     }
 
     /**
@@ -695,6 +691,28 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             log.debug("Creating timer for triggerEndPeriodEvent for Custom field value {} with expiration={}", cfi, cfi.getPeriodEndDate());
 
             timerService.createSingleActionTimer(cfi.getPeriodEndDate(), timerConfig);
+        }
+    }
+
+    private IEntity refreshOrRetrieveAny(IEntity entity) {
+
+        if (getEntityManager().contains(entity)) {
+            getEntityManager().refresh(entity);
+            return entity;
+
+        } else {
+            entity = getEntityManager().find(PersistenceUtils.getClassForHibernateObject(entity), entity.getId());
+            if (entity != null && isConversationScoped() && getCurrentProvider() != null) {
+                if (entity instanceof BaseEntity) {
+                    boolean notSameProvider = !((BaseEntity) entity).doesProviderMatch(getCurrentProvider());
+                    if (notSameProvider) {
+                        log.debug("CheckProvider in refreshOrRetrieveAny getCurrentProvider() id={}, entityProvider id={}", new Object[] { getCurrentProvider().getId(),
+                                ((BaseEntity) entity).getProvider().getId() });
+                        throw new ProviderNotAllowedException();
+                    }
+                }
+            }
+            return entity;
         }
     }
 }
