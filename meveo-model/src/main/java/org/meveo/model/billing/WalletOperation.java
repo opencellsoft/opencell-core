@@ -165,13 +165,13 @@ public class WalletOperation extends BusinessEntity {
 	// @JoinColumn(name = "EDR_ID")
 	// private EDR usageEdr;
 
-	@Column(name = "PARAMETER_1", length = 50)
+	@Column(name = "PARAMETER_1")
 	private String parameter1;
 
-	@Column(name = "PARAMETER_2", length = 50)
+	@Column(name = "PARAMETER_2")
 	private String parameter2;
 
-	@Column(name = "PARAMETER_3", length = 50)
+	@Column(name = "PARAMETER_3")
 	private String parameter3;
 
 	@Temporal(TemporalType.TIMESTAMP)
