@@ -23,9 +23,6 @@ public class ArConfig {
 
 	private static final String BAYAD_PROPERTIES_FILENAME = "meveo-admin.properties";
 
-
-	//private static final String INVOICES_OCC_CODE = "bayad.invoices.occCode";
-	private static final String DDREQUEST_OCC_CODE = "bayad.ddrequest.occCode";
 	//private static final String DDREQUEST_HEADER_DDMODE = "bayad.ddrequest.header.DDmode";
 	private static final String DDREQUEST_HEADER_REFRENCE = "bayad.ddrequest.header.reference";
 
@@ -60,11 +57,6 @@ public class ArConfig {
 	public static String getDDRequestFileNameExtension() {
 		//FIXME:set correct default value
 		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_FILE_NAME_EXTENSION,".txt");
-	}
-
-	public static String getDirectDebitOccCode() {
-		//FIXME:set correct default value
-		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_OCC_CODE,"");
 	}
 	public static int getDateValueAfter() {
 		//FIXME:set correct default value

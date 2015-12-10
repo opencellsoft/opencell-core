@@ -223,15 +223,13 @@ public class UpgradeDunningLevel {
 	private OtherCreditAndCharge addOCC(CustomerAccount customerAccount,
 			BigDecimal chargeAmount,User currentUser) throws Exception {
 		Provider provider=currentUser.getProvider();
-		OCCTemplate dunningOccTemplate = oCCTemplateService
-				.getDunningOCCTemplate(customerAccount.getProvider().getCode());
+		OCCTemplate dunningOccTemplate = oCCTemplateService.getDunningOCCTemplate(customerAccount.getProvider());
 		OtherCreditAndCharge occ = new OtherCreditAndCharge();
 		occ.setAccountCode(dunningOccTemplate.getAccountCode());
 		occ.setOccCode(dunningOccTemplate.getCode());
 		occ.setOccDescription(dunningOccTemplate.getDescription());
 		occ.setTransactionCategory(dunningOccTemplate.getOccCategory());
-		occ.setAccountCodeClientSide(dunningOccTemplate
-				.getAccountCodeClientSide());
+		occ.setAccountCodeClientSide(dunningOccTemplate.getAccountCodeClientSide());
 		occ.setAmount(chargeAmount);
 		occ.setUnMatchingAmount(chargeAmount);
 		occ.setMatchingAmount(BigDecimal.ZERO);

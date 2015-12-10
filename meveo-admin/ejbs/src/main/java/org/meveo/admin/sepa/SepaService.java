@@ -113,11 +113,9 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		if ((invoices == null) || (invoices.isEmpty())) {
 			throw new BusinessEntityException("no invoices!");
 		}
-		OCCTemplate directDebitTemplate = oCCTemplateService
-				.getDirectDebitOCCTemplate(provider.getCode());
+		OCCTemplate directDebitTemplate = oCCTemplateService.getDirectDebitOCCTemplate(provider);
 		if (directDebitTemplate == null) {
-			throw new BusinessException("OCC doesn't exist. code="
-					+ ArConfig.getDirectDebitOccCode());
+			throw new BusinessException("OCC doesn't exist. code=bayad.ddrequest.occCode");
 		}
 		logger.info("number invoices : " + invoices.size());
 
