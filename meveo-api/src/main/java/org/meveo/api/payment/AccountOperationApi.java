@@ -32,8 +32,6 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.RejectedType;
 import org.meveo.service.payments.impl.AccountOperationService;
@@ -76,36 +74,6 @@ public class AccountOperationApi extends BaseApi {
 				OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
 				otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
 				accountOperation = (AccountOperation) otherCreditAndCharge;
-			} else if ("I".equals(postData.getType()) && postData.getRecordedInvoice() != null) {
-				// recordedInvoice
-				RecordedInvoice recordedInvoice = new RecordedInvoice();
-				recordedInvoice.setProductionDate(postData.getRecordedInvoice().getProductionDate());
-				recordedInvoice.setInvoiceDate(postData.getRecordedInvoice().getInvoiceDate());
-				recordedInvoice.setAmountWithoutTax(postData.getRecordedInvoice().getAmountWithoutTax());
-				recordedInvoice.setTaxAmount(postData.getRecordedInvoice().getTaxAmount());
-				recordedInvoice.setNetToPay(postData.getRecordedInvoice().getNetToPay());
-
-				try {
-					recordedInvoice.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getRecordedInvoice().getPaymentMethod()));
-				} catch (IllegalStateException e) {
-					log.warn("error occurred while setting payment methode",e);
-				} catch (NullPointerException e) {
-					log.warn("error generated while setting payment methode",e);
-				}
-
-				recordedInvoice.setPaymentInfo(postData.getRecordedInvoice().getPaymentInfo());
-				recordedInvoice.setPaymentInfo1(postData.getRecordedInvoice().getPaymentInfo1());
-				recordedInvoice.setPaymentInfo2(postData.getRecordedInvoice().getPaymentInfo2());
-				recordedInvoice.setPaymentInfo3(postData.getRecordedInvoice().getPaymentInfo3());
-				recordedInvoice.setPaymentInfo4(postData.getRecordedInvoice().getPaymentInfo4()); 
-				recordedInvoice.setPaymentInfo5(postData.getRecordedInvoice().getPaymentInfo5());
-				recordedInvoice.setPaymentInfo6(postData.getRecordedInvoice().getPaymentInfo6());
-
-				// recordedInvoice.setDdRequestItem(postData.getRecordedInvoice().getDdRequestItem());
-				// recordedInvoice.setDdRequestLOT(postData.getRecordedInvoice().getDdRequestItem());
-				recordedInvoice.setBillingAccountName(postData.getRecordedInvoice().getBillingAccountName());
-
-				accountOperation = (AccountOperation) recordedInvoice;
 			} else if ("R".equals(postData.getType()) && postData.getRejectedPayment() != null) {
 				// rejectedPayment
 				RejectedPayment rejectedPayment = new RejectedPayment();
@@ -128,7 +96,7 @@ public class AccountOperationApi extends BaseApi {
 			}
 
 			if (accountOperation == null) {
-				throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, I=recordedInvoice, R=rejectedPayment.");
+				throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment.");
 			}
 
 			accountOperation.setDueDate(postData.getDueDate());
