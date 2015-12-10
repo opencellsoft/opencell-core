@@ -565,12 +565,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (!invoiceXmlFile.exists()) {
 			throw new InvoiceXmlNotFoundException("The xml invoice file doesn't exist.");
 		}
-		
-		BillingCycle billingCycle = null;
-		if (invoice.getBillingRun() != null) {
-			invoice.getBillingRun().getBillingCycle();
-		}
 		BillingAccount billingAccount = invoice.getBillingAccount();
+		BillingCycle billingCycle = null;
+		if (billingAccount!= null && billingAccount.getBillingCycle()!= null) {
+			billingCycle=billingAccount.getBillingCycle();
+		}
 		String billingTemplate = (billingCycle != null && billingCycle.getBillingTemplateName() != null) ? billingCycle
 				.getBillingTemplateName() : "default";
 		String resDir = meveoDir + "jasper";

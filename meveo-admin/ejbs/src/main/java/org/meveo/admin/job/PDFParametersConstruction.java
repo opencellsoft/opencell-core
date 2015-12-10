@@ -86,12 +86,11 @@ public class PDFParametersConstruction {
 			Invoice invoice = invoiceService.findById(invoiceId, provider);
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
-			
+			BillingAccount billingAccount = invoice.getBillingAccount();
 			BillingCycle billingCycle = null;
-			if (invoice.getBillingRun() != null) {
-				invoice.getBillingRun().getBillingCycle();
-			}
-			BillingAccount billingAccount = invoice.getBillingAccount();			
+			if (billingAccount!= null && billingAccount.getBillingCycle()!= null) {
+				billingCycle=billingAccount.getBillingCycle();
+			}			
 			String billingTemplateName = billingCycle != null
 					&& billingCycle.getBillingTemplateName() != null ? billingCycle
 					.getBillingTemplateName() : "default";
