@@ -113,11 +113,9 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		if ((invoices == null) || (invoices.isEmpty())) {
 			throw new BusinessEntityException("no invoices!");
 		}
-		OCCTemplate directDebitTemplate = oCCTemplateService
-				.getDirectDebitOCCTemplate(provider.getCode());
+		OCCTemplate directDebitTemplate = oCCTemplateService.getDirectDebitOCCTemplate(provider);
 		if (directDebitTemplate == null) {
-			throw new BusinessException("OCC doesn't exist. code="
-					+ ArConfig.getDirectDebitOccCode());
+			throw new BusinessException("OCC doesn't exist. code=bayad.ddrequest.occCode");
 		}
 		logger.info("number invoices : " + invoices.size());
 
@@ -524,9 +522,19 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 	public boolean isMandatoryFieldsFilled(RecordedInvoice invoice){
 		Provider provider=invoice.getProvider();
 		BankCoordinates providerBC = provider.getBankCoordinates();
-		CustomerAccount ca = invoice.getCustomerAccount();
-		if(invoice.getAmount()==null ||provider.getDescription()==null || providerBC.getIban()==null| providerBC.getBic()==null || providerBC.getIcs()==null
-				|| invoice.getReference()==null|| ca.getMandateIdentification()==null|| ca.getMandateDate()==null || ca.getDescription()==null ){
+		CustomerAccount ca = invoice.getCustomerAccount();		
+		if(invoice == null || 
+		   invoice.getAmount()==null ||
+		   provider.getDescription()==null || 
+		   providerBC == null ||  
+		   providerBC.getIban()==null| 
+		   providerBC.getBic()==null || 
+		   providerBC.getIcs()==null || 
+		   invoice.getReference()==null|| 
+		   ca == null || 
+		   ca.getMandateIdentification()==null|| 
+		   ca.getMandateDate()==null || 
+		   ca.getDescription()==null ){
 			return false;	
 		}else{
 			return true;
