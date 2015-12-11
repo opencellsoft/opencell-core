@@ -872,12 +872,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public synchronized Integer getSequenceSize(Seller seller, User currentUser) {
-		int result = 0;
+		int result = 9;
 		if (seller != null) {
-			if (seller.getInvoiceSequenceSize() != null) {
+			if (seller.getInvoiceSequenceSize() != null && seller.getInvoiceSequenceSize()!=0) {
 				result = seller.getInvoiceSequenceSize();
 			} else {
-				if (seller.getProvider().getInvoiceSequenceSize() != null) {
+				if (seller.getProvider().getInvoiceSequenceSize() != null && seller.getInvoiceSequenceSize()!=0) {
 					result = seller.getProvider().getInvoiceSequenceSize();
 				}
 			}
