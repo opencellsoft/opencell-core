@@ -312,7 +312,7 @@
                         <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true"
                             rendered="#{customFieldTemplateBean.entity.fieldType == 'LONG' or customFieldTemplateBean.entity.fieldType == 'DOUBLE'}" />
                         <hftl:formField label="#{messages[customFieldTemplateBean.entity.fieldType == 'STRING'?'customFieldTemplate.maxValueTxt':'customFieldTemplate.maxValue']}"
-                            field="maxValue" required="#{customFieldTemplateBean.entity.fieldType == 'STRING'}"
+                            field="maxValue" required="#{customFieldTemplateBean.entity.fieldType == 'STRING'}" negativeValue="#{customFieldTemplateBean.entity.fieldType != 'STRING'}"
                             rendered="#{customFieldTemplateBean.entity.fieldType == 'LONG' or customFieldTemplateBean.entity.fieldType == 'DOUBLE' or customFieldTemplateBean.entity.fieldType == 'STRING'}" />
                         <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == 'STRING'}" />
                     </p:fieldset>
