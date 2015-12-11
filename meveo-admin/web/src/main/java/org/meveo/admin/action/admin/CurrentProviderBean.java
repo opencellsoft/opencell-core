@@ -18,6 +18,7 @@ package org.meveo.admin.action.admin;
 
 import java.io.Serializable;
 
+import javax.ejb.EJB;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -26,6 +27,8 @@ import org.jboss.seam.security.Identity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.util.PersistenceUtils;
 
 /**
  * Class used to set current system provider and user
@@ -37,6 +40,10 @@ public class CurrentProviderBean implements Serializable {
 
     @Inject
     private Identity identity;
+    
+    @Inject
+    @EJB
+    private UserService userService; 
 
     /**
      * Sets current provider
@@ -67,5 +74,18 @@ public class CurrentProviderBean implements Serializable {
             return ((MeveoUser) identity.getUser()).getUser();
         }
         return null;
+    }
+
+    /**
+     * Refresh logged in user with a new information
+     */
+    public void refreshCurrentUser() {
+        if (identity != null && identity.isLoggedIn()) {
+
+            User reloadedUser = userService.findById(((MeveoUser) identity.getUser()).getUser().getId());
+            PersistenceUtils.initializeAndUnproxy(reloadedUser.getRoles());
+
+            ((MeveoUser) identity.getUser()).refreshUser(reloadedUser);
+        }
     }
 }

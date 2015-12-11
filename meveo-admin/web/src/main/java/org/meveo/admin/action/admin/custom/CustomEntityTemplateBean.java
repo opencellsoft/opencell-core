@@ -10,6 +10,7 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.CurrentProviderBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -25,6 +26,9 @@ import org.primefaces.model.TreeNode;
 public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     private static final long serialVersionUID = 1187554162639618526L;
+
+    @Inject
+    private CurrentProviderBean currentProviderBean;
 
     /**
      * Request parameter
@@ -88,6 +92,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     /**
      * Construct customizedEntity instance which is a representation of customizable class (e.g. Customer)
+     * 
      * @return
      * @throws ClassNotFoundException
      */
@@ -163,7 +168,12 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        boolean isNew = entity.isTransient();
         super.saveOrUpdate(killConversation);
+        if (isNew) {
+            currentProviderBean.refreshCurrentUser();
+        }
+
         return getEditViewName();
     }
 

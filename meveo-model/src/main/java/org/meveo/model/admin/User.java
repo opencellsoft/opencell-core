@@ -193,22 +193,32 @@ public class User extends AuditableEntity {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof User)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        User other = (User) obj;
+
+        if (getId() != null && other.getId() != null && getId() == other.getId()) {
+            // return true;
+        }
+
+        if (userName == null) {
+            if (other.getUserName() != null) {
+                return false;
+            }
+        } else if (!userName.equals(other.getUserName())) {
+            return false;
+        }
+        return true;
+    }
 
 	public String toString() {
 		return userName;
