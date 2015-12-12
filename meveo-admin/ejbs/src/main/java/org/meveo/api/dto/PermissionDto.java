@@ -15,9 +15,11 @@ public class PermissionDto extends BaseDto {
 	
 	@XmlAttribute(required = true)
 	private String permission;
+	
 	@XmlAttribute(required = true)
 	private String name;
-	
+
+    @XmlAttribute(required = true)
 	private String resource;
 	
 	public PermissionDto() {
