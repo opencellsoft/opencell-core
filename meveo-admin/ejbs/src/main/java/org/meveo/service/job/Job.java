@@ -62,17 +62,24 @@ public abstract class Job {
      * @return the result of execute(parameter,false) method
      */
     public void execute(JobInstance jobInstance, User currentUser) {
+    	log.debug("execute jobInstance,currentUser");
         JobExecutionResultImpl result = new JobExecutionResultImpl();
     
         if (!jobInstanceService.isJobRunning(jobInstance.getId()) && (jobInstance.isActive() || currentUser != null)) {
             log.debug("Job {} of type {} execution start, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser);
 
             try {            	            	
-            	JobInstanceService.runningJobs.add(jobInstance.getId());
+            	JobInstanceService.runningJobs.add(jobInstance.getId());            	
                 if (currentUser == null) {
-                    currentUser = userService.attach(jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable()
-                        .getCreator());
-                }
+                	log.debug("currentUser is null");                	
+                	long userId = (jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable().getCreator()).getId();
+                	log.debug("userId:"+userId);
+                    currentUser = userService.findByIdLoadProvider(userId);
+                }else{
+                	log.debug("currentUser not null");
+                }            
+                log.debug("currentUser.getUserName = "+currentUser.getUserName());
+                log.debug("currentUser.getProvider().getCode() = "+currentUser.getProvider().getCode());
                 execute(result, jobInstance, currentUser);
                 result.close();
 
@@ -104,6 +111,7 @@ public abstract class Job {
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobInstance jobInstance, JobExecutionResultImpl result, User currentUser) {    
+		log.debug("execute jobInstance,result,currentUser...");
         if (!jobInstanceService.isJobRunning(jobInstance.getId()) && (jobInstance.isActive() || currentUser != null)) {
             log.debug("Job {} of type {} execution start, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser);
 
@@ -113,6 +121,7 @@ public abstract class Job {
                     currentUser = userService.attach(jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable()
                         .getCreator());
                 }
+                jobInstance = jobInstanceService.attach(jobInstance);
                 execute(result, jobInstance, currentUser);
                 result.close();
 
