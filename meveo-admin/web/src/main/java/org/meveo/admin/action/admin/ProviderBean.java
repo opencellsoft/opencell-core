@@ -128,6 +128,14 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     protected Provider saveOrUpdate(Provider entity) throws BusinessException {
 
         boolean isNew = entity.isTransient();
+        
+        if (isNew){            
+           entity.getInvoiceConfiguration().setCode(entity.getCode()); 
+           entity.getInvoiceConfiguration().setDescription(entity.getDescription());   
+           entity.getInvoiceConfiguration().setProvider(entity);
+           entity.getInvoiceConfiguration().updateAudit(getCurrentUser());
+        }
+        
         entity = super.saveOrUpdate(entity);
 
         // Create a default role and a user
@@ -150,20 +158,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
             user.getRoles().add(role);
             userService.create(user);
             log.info("created default user id={} for provider {}", user.getId(), entity.getCode());
-             
-            InvoiceConfiguration invoiceConfiguration =new InvoiceConfiguration();
-			invoiceConfiguration.setCode(entity.getCode()); 
-			invoiceConfiguration.setDescription(entity.getDescription());   
-	   		invoiceConfiguration.setProvider(entity);
-	   		invoiceConfiguration.setDisplayOffers(entity.getInvoiceConfiguration().getDisplayOffers());
-	   		invoiceConfiguration.setDisplayServices(entity.getInvoiceConfiguration().getDisplayServices());
-	   		invoiceConfiguration.setDisplaySubscriptions(entity.getInvoiceConfiguration().getDisplaySubscriptions());
-	   		invoiceConfiguration.setDisplayEdrs(entity.getInvoiceConfiguration().getDisplayEdrs());
-	   		invoiceConfiguration.setDisplayProvider(entity.getInvoiceConfiguration().getDisplayProvider());
-	   		invoiceConfiguration.setDisplayDetail(entity.getInvoiceConfiguration().getDisplayDetail());
-	   		invoiceConfigurationService.create(invoiceConfiguration);
-			entity.setInvoiceConfiguration(invoiceConfiguration); 
-	   	    log.info("created invoiceConfiguration id={} for provider {}", invoiceConfiguration.getId(), entity.getCode());
+
             messages.info(new BundleKey("messages", "provider.createdWithDefaultUser"), entity.getCode() + ".ADMIN", entity.getCode() + ".password");
          }
 
