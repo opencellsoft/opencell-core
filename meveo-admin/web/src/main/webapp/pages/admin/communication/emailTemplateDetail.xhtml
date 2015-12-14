@@ -23,23 +23,23 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel edit="#{emailTemplateBean.edit}"
+		<hftl:formPanel edit="#{emailTemplateBean.edit}"
 			label="#{messages['emailTemplate.Panel']}"
 			backingBean="#{emailTemplateBean}" columns="1">
 
-			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"
+			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code"
 				required="true" />
 
-			<hf:formField label="#{messages['emailTemplate.subject']}"
+			<hftl:formField label="#{messages['emailTemplate.subject']}"
 				field="subject" size="80" required="true" />
 
-			<hf:formField label="#{messages['emailTemplate.htmlContent']}"
+			<hftl:formField label="#{messages['emailTemplate.htmlContent']}"
 				field="htmlContent" isHtml="true" componentWidth="100" newLine="true"/>
 
-			<hf:formField label="#{messages['emailTemplate.textContent']}"
+			<hftl:formField label="#{messages['emailTemplate.textContent']}"
 				field="textContent" textArea="true" cols="180" rows="10" componentWidth="100" newLine="true"/>
 
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

@@ -142,6 +142,10 @@
         <source>formListField.xhtml</source>
     </tag>
     <tag>
+        <tag-name>formLanguageFields</tag-name>
+        <source>formLanguageFields.xhtml</source>
+    </tag>
+    <tag>
         <tag-name>getFieldInformation</tag-name>
         <handler-class>org.meveo.util.view.GetFieldInformationHandler</handler-class>
     </tag>

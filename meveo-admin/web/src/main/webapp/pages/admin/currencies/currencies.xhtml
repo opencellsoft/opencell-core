@@ -20,13 +20,13 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['currency.search']}" columns="3"
+		<hftl:searchPanel label="#{messages['currency.search']}" columns="3"
 			backingBean="#{currencyListBean}">
-			<hf:searchField label="#{messages['currency.code']}"
+			<hftl:searchField label="#{messages['currency.code']}"
 				field="currencyCode" />
-			<hf:searchField label="#{messages['currency.name']}"
+			<hftl:searchField label="#{messages['currency.name']}"
 				field="descriptionEn" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['currency.title']}"
 			backingBean="#{currencyListBean}">

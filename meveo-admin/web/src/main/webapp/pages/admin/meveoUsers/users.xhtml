@@ -18,10 +18,10 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel id="searchPanel" backingBean="#{userListBean}"
+		<hftl:searchPanel id="searchPanel" backingBean="#{userListBean}"
 			label="#{messages['user.search']}">
-			<hf:searchField label="#{messages['user.userName']}" field="userName" />
-		</hf:searchPanel>
+			<hftl:searchField label="#{messages['user.userName']}" field="userName" />
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['user.title']}"
 			backingBean="#{userListBean}" sortBy="userName">

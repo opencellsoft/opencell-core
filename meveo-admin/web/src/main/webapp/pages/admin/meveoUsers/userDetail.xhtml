@@ -22,11 +22,11 @@
 			</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel id="formPanel" label="#{messages['user.userPanel']}"
+		<hftl:formPanel label="#{messages['user.userPanel']}"
 			backingBean="#{userBean}" columns="1">
-			<hf:formField label="#{messages['user.userName']}" field="userName"
+			<hftl:formField label="#{messages['user.userName']}" field="userName"
 				required="true" validateUnique="true" useConverter="false" />
-			<hf:formField label="#{messages['contactInformation.email']}"
+			<hftl:formField label="#{messages['contactInformation.email']}"
 				field="email" required="true" useConverter="false"
 				validatorId="emailValidator" />
 			<p:commandLink value="#{messages['menutop.changePassword']}" 
@@ -46,13 +46,13 @@
                 </h:panelGroup>
             </p:outputPanel>
 
-            <hf:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false" rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate=":formPanel:formId:userRoles"/> 
+            <hftl:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false" rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate="userRoles"/> 
 
-            <hf:formField id="userRoles" label="#{messages['user.roles']}" field="roles"
+            <hftl:formField id="userRoles" label="#{messages['user.roles']}" field="roles"
 				listType="pickUpList" valueLabelField="name" required="true"
 				dualListModel="#{userBean.dualListModel}" newLine="true"/>
 
-		</hf:formPanel>
+		</hftl:formPanel>
 		
 	</ui:define>
 

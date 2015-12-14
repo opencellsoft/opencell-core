@@ -19,13 +19,13 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel columns="3" label="#{messages['timers.page.title']}"
+		<hftl:searchPanel columns="3" label="#{messages['timers.page.title']}"
 			backingBean="#{timerEntityListBean}">
 
-			<hf:searchField label="#{messages['tax.code']}" field="code" />
-			<hf:searchField label="#{messages['tax.description']}"
+			<hftl:searchField label="#{messages['tax.code']}" field="code" />
+			<hftl:searchField label="#{messages['tax.description']}"
 				id="description" field="description" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['timers.page.title']}"
 			backingBean="#{timerEntityListBean}" sortBy="code">
