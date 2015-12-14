@@ -334,7 +334,7 @@ public class ProviderApi extends BaseApi {
 			}
 
 			provider = providerService.update(provider, currentUser);
-			
+			providerService.refresh(provider);
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
