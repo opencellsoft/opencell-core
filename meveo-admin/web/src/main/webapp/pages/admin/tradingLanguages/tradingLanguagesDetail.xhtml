@@ -1,11 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -37,20 +35,20 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel id="formPanel" formId="languagesFormId"
+		<hftl:formPanel id="formPanel" formId="languagesFormId"
 			label="#{messages['tradingLanguage.tradingLanguagePanel']}"
 			backingBean="#{tradingLanguageBean}" showEnableDisableButton="true">
 
-			<hf:formField id="languageSelectedId"
+			<hftl:formField id="languageSelectedId"
 				label="#{messages['tradingLanguage.languageCode']}" field="language"
 				valueLabelField="languageCode" popup="true" popupId="languagePopup"
 				required="true" showPopupOnlyOnNew="true" />
-			<hf:formField label="#{messages['tradingLanguage.prDescription']}"
+			<hftl:formField label="#{messages['tradingLanguage.prDescription']}"
 				field="prDescription" maxlength="80" id="prDescription" />
-			<hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+			<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
 				field="disabled" isMessage="true" />
 
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

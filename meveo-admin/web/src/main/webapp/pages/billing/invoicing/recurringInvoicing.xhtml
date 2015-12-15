@@ -1,10 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<f:metadata>
@@ -29,33 +27,35 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description"
 			selection="#{billingRunBean.billingCycle}"
-			updateField=":formPanel:formId">
+			updateField=":formId">
 
 		</hftl:entityPopup>
 
-		<hf:formPanel id="formPanel" edit="true"
+		<hftl:formPanel edit="true"
 			label="#{messages['billingRun.panel']}"
 			backingBean="#{billingRunBean}" showFormButtons="false">
-			<hf:formField id="billingCycleId"
+			<hftl:formField id="billingCycleId"
 				label="#{messages['billingRun.billingCycle']}" field="billingCycle"
 				valueLabelField="code" required="true" popup="true"
 				popupId="billingCyclePopup" />
-			<hf:formField label="#{messages['billingRun.type']}"
+			<hftl:formField label="#{messages['billingRun.type']}"
 				field="processType" required="true" noSelectionLabel="false"
 				disabled="false" />
-			<hf:formField label="#{messages['billingRun.startDate']}"
+			<hftl:formField label="#{messages['billingRun.startDate']}"
 				field="startDate" />
-			<hf:formField label="#{messages['billingRun.endDate']}"
+			<hftl:formField label="#{messages['billingRun.endDate']}"
 				field="endDate" />
-			<hf:formField id="invoiceDateId" label="#{messages['billingRun.invoiceDate']}"
+			<hftl:formField id="invoiceDateId" label="#{messages['billingRun.invoiceDate']}"
 				field="invoiceDate" />
-			<hf:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
+			<hftl:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
 				field="lastTransactionDate" />
-            <f:facet name="buttons">
+
+            <ui:param name="buttons" value="true"/>
+            <ui:define name="buttons">
     			<p:commandButton action="#{billingRunBean.launchRecurringInvoicing}"
-    				value="#{messages['button.launchInvoicing']}" update=":formPanel:formId " />
-            </f:facet>
-		</hf:formPanel>
+    				value="#{messages['button.launchInvoicing']}" update=":formId " />
+            </ui:define>
+		</hftl:formPanel>
 
 	</ui:define>
 

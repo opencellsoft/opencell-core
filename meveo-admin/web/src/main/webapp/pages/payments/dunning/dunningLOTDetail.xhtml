@@ -1,10 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -12,14 +11,14 @@
 	</ui:define>
 	<ui:define name="body">	
 	<p:panel>				
-				<hf:formPanel  showFormButtons ="#{false}" label="#{messages['dunningLOT.panel']}" backingBean="#{dunningLOTBean}">
+				<hftl:formPanel  showFormButtons ="#{false}" label="#{messages['dunningLOT.panel']}" backingBean="#{dunningLOTBean}">
 							 
-						<hf:formField label="#{messages['dunningLOT.fileName']}" field="fileName"  />
-						<hf:formField label="#{messages['dunningLOT.actionType']}" field="actionType"  />
+						<hftl:formField label="#{messages['dunningLOT.fileName']}" field="fileName"  />
+						<hftl:formField label="#{messages['dunningLOT.actionType']}" field="actionType"  />
                     <f:facet name="buttons">											
 					   <h:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>
                     </f:facet>											
-				</hf:formPanel>
+				</hftl:formPanel>
 				<custom:listPanel label="#{messages['dunningLOT.actionsDunning']}">
 					<custom:dataList backingBean="#{dunningLOTBean}"
 						dataModel="#{dunningLOT.getActions()}"

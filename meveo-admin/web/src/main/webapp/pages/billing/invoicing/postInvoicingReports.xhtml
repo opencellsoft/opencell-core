@@ -1,10 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml"
 	xmlns:e="http://jboss.com/products/seam/excel"
 	xmlns:p="http://primefaces.org/ui">
@@ -15,53 +13,53 @@
 
 	<ui:define name="body">
          <p:messages id="messages" />
-		<hf:formPanel formId="form3" edit="false"
+		<hftl:formPanel formId="form3" edit="false"
 			label="#{messages['postInvoicingReport.title']}"
 			backingBean="#{billingRunBean}" showFormButtons="false">
-					<hf:formField
+					<hftl:formField
 						label="#{messages['postInvoicingReport.globalAmountHT']}"
 						field="postInvoicingReports" childField="globalAmount"
 						popup="false" />
-					<hf:formField
+					<hftl:formField
 						label="#{messages['postInvoicingReport.invoicesNumber']}"
 						field="postInvoicingReports" childField="invoicesNumber"
 						popup="false" />
-					<hf:formField
+					<hftl:formField
 						label="#{messages['postInvoicingReport.positiveInvoicesNumber']}"
 						field="postInvoicingReports" childField="positiveInvoicesNumber"
 						popup="false" />
-					<hf:formField
+					<hftl:formField
 						label="#{messages['postInvoicingReport.positiveInvoicesAmountHT']}"
 						field="postInvoicingReports" childField="positiveInvoicesAmountHT"
 						popup="false" />
-					<hf:formField
+					<hftl:formField
 						label="#{messages['postInvoicingReport.positiveInvoicesAmount']}"
 						field="postInvoicingReports" childField="positiveInvoicesAmount"
 						popup="false" />
 
-					<hf:formField id="emptyInvoicesNumber"
+					<hftl:formField id="emptyInvoicesNumber"
 						label="#{messages['postInvoicingReport.emptyInvoicesNumber']}"
 						field="postInvoicingReports" childField="emptyInvoicesNumber"
 						popup="false" />
 
 
-					<hf:formField
+					<hftl:formField
 						label="#{messages['postInvoicingReport.positiveInvoicesTaxAmount']}"
 						field="postInvoicingReports"
 						childField="positiveInvoicesTaxAmount" popup="false" />
-					<hf:formField
+					<hftl:formField
 						label="#{messages['postInvoicingReport.negativeInvoicesAmountHT']}"
 						field="postInvoicingReports" childField="negativeInvoicesAmountHT"
 						popup="false" />
-					<hf:formField
+					<hftl:formField
 						label="#{messages['postInvoicingReport.negativeInvoicesTaxAmount']}"
 						field="postInvoicingReports"
 						childField="negativeInvoicesTaxAmount" popup="false" />
-					<hf:formField id="positiveInvoicesAmount"
+					<hftl:formField id="positiveInvoicesAmount"
 						label="#{messages['postInvoicingReport.negativeInvoicesAmount']}"
 						field="postInvoicingReports" childField="negativeInvoicesAmount"
 						popup="false" />
-					<hf:formField id="electronicInvoicesNumber"
+					<hftl:formField id="electronicInvoicesNumber"
 						label="#{messages['postInvoicingReport.electronicInvoicesNumber']}"
 						field="postInvoicingReports" childField="electronicInvoicesNumber"
 						popup="false" />
@@ -70,19 +68,19 @@
 
 			<b>#{messages['postInvoicingReport.invoicesNumberPerPaymentMode']}</b>
 
-				<hf:formField label="#{messages['paymentMethod.check']}"
+				<hftl:formField label="#{messages['paymentMethod.check']}"
 					field="postInvoicingReports" childField="checkInvoicesNumber"
 					popup="false" />
 
-				<hf:formField label="#{messages['paymentMethod.directDebit']}"
+				<hftl:formField label="#{messages['paymentMethod.directDebit']}"
 					field="postInvoicingReports" childField="directDebitInvoicesNumber"
 					popup="false" />
 
-				<hf:formField label="#{messages['paymentMethod.tip']}"
+				<hftl:formField label="#{messages['paymentMethod.tip']}"
 					field="postInvoicingReports" childField="tipInvoicesNumber"
 					popup="false" />
 
-				<hf:formField
+				<hftl:formField
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="postInvoicingReports"
 					childField="wiretransferInvoicesNumber" popup="false" />
@@ -90,18 +88,18 @@
 
 			<b>#{messages['postInvoicingReport.amoutHtPerPaymentMode']}</b>
 
-				<hf:formField label="#{messages['paymentMethod.check']}"
+				<hftl:formField label="#{messages['paymentMethod.check']}"
 					field="postInvoicingReports" childField="checkAmuontHT"
 					popup="false" />
 
-				<hf:formField label="#{messages['paymentMethod.directDebit']}"
+				<hftl:formField label="#{messages['paymentMethod.directDebit']}"
 					field="postInvoicingReports" childField="directDebitAmuontHT"
 					popup="false" />
 
-				<hf:formField label="#{messages['paymentMethod.tip']}"
+				<hftl:formField label="#{messages['paymentMethod.tip']}"
 					field="postInvoicingReports" childField="tipAmuontHT" popup="false" />
 
-				<hf:formField
+				<hftl:formField
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="postInvoicingReports" childField="wiretransferAmuontHT"
 					popup="false" />
@@ -110,23 +108,23 @@
 			<b>#{messages['postInvoicingReport.amoutTtcPerPaymentMode']}</b>
 
 
-				<hf:formField label="#{messages['paymentMethod.check']}"
+				<hftl:formField label="#{messages['paymentMethod.check']}"
 					field="postInvoicingReports" childField="checkAmuont" popup="false" />
 
-				<hf:formField label="#{messages['paymentMethod.directDebit']}"
+				<hftl:formField label="#{messages['paymentMethod.directDebit']}"
 					field="postInvoicingReports" childField="directDebitAmuont"
 					popup="false" />
 
-				<hf:formField label="#{messages['paymentMethod.tip']}"
+				<hftl:formField label="#{messages['paymentMethod.tip']}"
 					field="postInvoicingReports" childField="tipAmuont" popup="false" />
 
-				<hf:formField
+				<hftl:formField
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="postInvoicingReports" childField="wiretransferAmuont"
 					popup="false" />
 
 
-		</hf:formPanel>
+		</hftl:formPanel>
 
 
 		<h:outputText value="#{messages['postInvoicingReport.billableBA']}"

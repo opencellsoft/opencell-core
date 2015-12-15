@@ -1,10 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -21,34 +19,34 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['invoice.search']}"
+		<hftl:searchPanel label="#{messages['invoice.search']}"
 			backingBean="#{invoiceListBean}" columns="3">
-			<hf:searchField 
+			<hftl:searchField 
 				label="#{messages['invoice.billingAccount']}" field="billingAccount"
 				valueLabelField="code" popup="true" popupId="searchBillingAccountPopup"
 				clearButton="true" />
-			<hf:searchField label="#{messages['invoice.invoiceNumber']}"
+			<hftl:searchField label="#{messages['invoice.invoiceNumber']}"
 				field="invoiceNumber" />
-			<hf:searchField label="#{messages['invoice.productDate']}"
+			<hftl:searchField label="#{messages['invoice.productDate']}"
 				field="productDate"  newLine="true"/>
-			<hf:searchField label="#{messages['invoice.invoiceDate']}"
+			<hftl:searchField label="#{messages['invoice.invoiceDate']}"
 				field="invoiceDate" />
-			<hf:searchField label="#{messages['invoice.dueDate']}"
+			<hftl:searchField label="#{messages['invoice.dueDate']}"
 				field="dueDate" />
-			<hf:searchField label="#{messages['invoice.amount']}" field="amount" newLine="true"/>
-			<hf:searchField label="#{messages['invoice.discount']}"
+			<hftl:searchField label="#{messages['invoice.amount']}" field="amount" newLine="true"/>
+			<hftl:searchField label="#{messages['invoice.discount']}"
 				field="discount" />
-			<hf:searchField label="#{messages['invoice.amountWithoutTax']}"
+			<hftl:searchField label="#{messages['invoice.amountWithoutTax']}"
 				field="amountWithoutTax" />
-			<hf:searchField label="#{messages['invoice.amountTax']}"
+			<hftl:searchField label="#{messages['invoice.amountTax']}"
 				field="amountTax" />
-			<hf:searchField label="#{messages['invoice.amountWithTax']}"
+			<hftl:searchField label="#{messages['invoice.amountWithTax']}"
 				field="amountWithTax" />
-			<hf:searchField label="#{messages['invoice.paymentMethod']}"
+			<hftl:searchField label="#{messages['invoice.paymentMethod']}"
 				field="paymentMethod"/>
-			<hf:searchField label="#{messages['invoice.iban']}" field="iban" />
-			<hf:searchField label="#{messages['invoice.alias']}" field="alias" />
-		</hf:searchPanel>
+			<hftl:searchField label="#{messages['invoice.iban']}" field="iban" />
+			<hftl:searchField label="#{messages['invoice.alias']}" field="alias" />
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['invoices.title']}"
 			backingBean="#{invoiceListBean}">

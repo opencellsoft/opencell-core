@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -21,11 +18,11 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel id="searchPanel" label="#{messages['tradingCurrency.search']}"
+		<hftl:searchPanel id="searchPanel" label="#{messages['tradingCurrency.search']}"
 			backingBean="#{tradingCurrencyListBean}">
-			<hf:searchField label="#{messages['tradingCurrency.trCurrencyCode']}"
+			<hftl:searchField label="#{messages['tradingCurrency.trCurrencyCode']}"
 				field="currency.currencyCode"  />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['tradingCurrency.title']}"
 			backingBean="#{tradingCurrencyListBean}">

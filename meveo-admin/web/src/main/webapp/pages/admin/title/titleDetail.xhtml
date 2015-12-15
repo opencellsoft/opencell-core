@@ -1,10 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -21,13 +20,13 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel label="#{messages['title.panel']}"
+		<hftl:formPanel label="#{messages['title.panel']}"
 			backingBean="#{titleBean}">
-			<hf:formField label="#{messages['title.code']}" field="code"
+			<hftl:formField label="#{messages['title.code']}" field="code"
 				required="true" validateUnique="true" />
-			<hf:formField label="#{messages['title.isCompany']}"
+			<hftl:formField label="#{messages['title.isCompany']}"
 				field="isCompany" />
-			<hf:languageFields />
-		</hf:formPanel>
+			<hftl:formLanguageFields entity="#{titleBean.entity}" backingBean="#{titleBean}"/>
+		</hftl:formPanel>
 	</ui:define>
 </ui:composition>

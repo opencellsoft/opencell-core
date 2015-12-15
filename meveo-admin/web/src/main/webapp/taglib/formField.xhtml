@@ -331,7 +331,7 @@
                 <c:set var="showButtonAddNew" value="true" />
             </c:if>
             <c:if test="#{dualListModel == null}">
-                <c:set var="elements" value="#{backingBean.dualListModel}" />
+                <c:set var="dualListModel" value="#{backingBean.dualListModel}" />
             </c:if>
 
             <hftl:formListField id="${empty(id)?fieldIdPrefix.concat('_list'):id}" backingBean="${backingBean}" fieldItem="#{fieldItem}" label="${label}" disabled="${disabled}"

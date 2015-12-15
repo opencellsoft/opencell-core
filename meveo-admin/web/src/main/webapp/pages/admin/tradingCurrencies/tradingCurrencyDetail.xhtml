@@ -38,25 +38,25 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel id="formPanel" formId="currenciesFormId"
+		<hftl:formPanel id="formPanel" formId="currenciesFormId"
 			edit="#{tradingCurrencyBean.edit}"
 			label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
 			backingBean="#{tradingCurrencyBean}" showEnableDisableButton="true">
 
-			<hf:formField id="currencySelectedId"
+			<hftl:formField id="currencySelectedId"
 				label="#{messages['tradingCurrency.currencyCode']}" field="currency"
 				valueLabelField="currencyCode" popup="true" popupId="currencyPopup"
 				required="true" showPopupOnlyOnNew="true" />
 
-			<hf:formField label="#{messages['tradingCurrency.prDescription']}"
+			<hftl:formField label="#{messages['tradingCurrency.prDescription']}"
 				field="prDescription" maxlength="80" id="prDescription" />
-			<hf:formField label="#{messages['tradingCurrency.prCurrencyToThis']}"
+			<hftl:formField label="#{messages['tradingCurrency.prCurrencyToThis']}"
 				field="prCurrencyToThis">
-			</hf:formField>
-			<hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+			</hftl:formField>
+			<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
 				field="disabled" isMessage="true" />
 
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 
