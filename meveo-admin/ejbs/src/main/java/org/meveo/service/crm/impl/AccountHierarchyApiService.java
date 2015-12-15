@@ -835,19 +835,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		// custom fields
 		if (postData.getCustomFields() != null) {
 			for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-				qb.addCriterion("KEY(c.customFields)", "=", cfDto.getCode(), true);
-				// problem with multiple result
-				// List<CustomFieldInstance> cfis =
-				// customFieldInstanceService.findByCodeAndAccountAndValue(
-				// cfDto.getCode(), Customer.ACCOUNT_TYPE,
-				// cfDto.getStringValue(), cfDto.getDateValue(),
-				// cfDto.getLongValue(), cfDto.getDoubleValue(),
-				// currentUser.getProvider());
-				// if (cfis != null) {
-				// for (CustomFieldInstance cfi : cfis) {
-				// qb.addCriterion("VALUE(c.customFields)", "=", cfi, true);
-				// }
-				// }
+//				qb.addCriterion("KEY(c.customFields)", "=", cfDto.getCode(), true); // TODO FIX me - custom fields are no longer tied to entity
 			}
 		}
 
