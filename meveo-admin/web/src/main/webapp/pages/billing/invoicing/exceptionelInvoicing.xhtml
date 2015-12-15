@@ -1,12 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
 	xmlns:e="http://jboss.com/products/seam/excel"
 	xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -22,19 +19,19 @@
 			</f:metadata>
 		</ui:define>
 
-		<hf:searchPanel label="#{messages['billingAccount.search']}"
+		<hftl:searchPanel label="#{messages['billingAccount.search']}"
 			backingBean="#{billingAccountBean}">
-			<hf:searchField label="#{messages['businessEntity.code']}"
+			<hftl:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['billingAccount.subscriptionDate']}"
 				field="subscriptionDate" />
-			<hf:searchField label="#{messages['billingAccount.nextInvoiceDate']}"
+			<hftl:searchField label="#{messages['billingAccount.nextInvoiceDate']}"
 				field="nextInvoiceDate" />
-            <hf:searchField
+            <hftl:searchField
                 label="#{messages['billingAccount.electronicBilling']}"
                 field="electronicBilling" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['billingRun.exceptionelInvoicing']}"
 			backingBean="#{billingAccountBean}">
@@ -82,11 +79,11 @@
 			</ui:define>
 		</hftl:dataList>
 		
-		<!-- <hf:formPanel id="formPanel" edit="true"
+		<!-- <hftl:formPanel id="formPanel" edit="true"
 			label=""
 			backingBean="#{billingAccountBean}" showFormButtons="false">
 			
-		</hf:formPanel>-->
+		</hftl:formPanel>-->
 	</ui:define>
 
 </ui:composition>

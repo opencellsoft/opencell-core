@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -36,23 +33,23 @@
 			</a:commandLink>
 		</hftl:entityPopup>
 
-		<hf:searchPanel label="#{messages['invoiceTasks.search']}"
+		<hftl:searchPanel label="#{messages['invoiceTasks.search']}"
 			backingBean="#{invoiceTaskBean}">
-			<hf:searchField label="#{messages['invoiceTask.executionTime']}"
+			<hftl:searchField label="#{messages['invoiceTask.executionTime']}"
 				field="executionTime" />
-			<hf:searchField label="#{messages['invoiceTask.taskStatus']}"
+			<hftl:searchField label="#{messages['invoiceTask.taskStatus']}"
 				field="taskStatus" />
-			<hf:searchField label="#{messages['invoiceTask.processName']}"
+			<hftl:searchField label="#{messages['invoiceTask.processName']}"
 				field="processName" />
-			<hf:searchField label="#{messages['invoiceTask.accountFilter']}"
+			<hftl:searchField label="#{messages['invoiceTask.accountFilter']}"
 				field="accountFilter" />
-			<hf:searchField label="#{messages['invoiceTask.walletFilter']}"
+			<hftl:searchField label="#{messages['invoiceTask.walletFilter']}"
 				field="walletFilter" />
-			<hf:searchField 
+			<hftl:searchField 
 				label="#{messages['invoiceTask.billingCycle']}" field="billingCycle"
 				valueLabelField="billingFrequency" popup="true"
 				popupId="searchBillingCyclePopup" clearButton="true" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['invoiceTasks.title']}"
 			backingBean="#{invoiceTaskBean}">

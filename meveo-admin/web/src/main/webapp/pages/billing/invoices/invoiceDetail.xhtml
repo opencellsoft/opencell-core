@@ -1,10 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -13,7 +11,7 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel label="#{messages['invoice.panel']}"
+		<hftl:formPanel label="#{messages['invoice.panel']}"
 			backingBean="#{invoiceBean}" showFormButtons="false" id="headerForm"
 			edit="false">
 			<h:panelGrid columns="2">
@@ -43,22 +41,22 @@
 								</h:link>
 							</h:panelGroup>
 						</h:panelGroup>
-						<!-- 						<hf:formField label="#{messages['invoice.billingAccount']}" -->
+						<!-- 						<hftl:formField label="#{messages['invoice.billingAccount']}" -->
 						<!-- 							field="billingAccount" valueLabelField="code" popup="false" -->
 						<!-- 							popupId="searchBillingAccountPopup" clearButton="true" /> -->
 
-						<hf:formField label="#{messages['invoice.invoiceNumber']}"
+						<hftl:formField label="#{messages['invoice.invoiceNumber']}"
 							field="invoiceNumber" validateUnique="true" />
-						<hf:formField label="#{messages['invoice.invoiceDate']}"
+						<hftl:formField label="#{messages['invoice.invoiceDate']}"
 							field="invoiceDate" />
 
-						<hf:formField label="#{messages['invoice.dueDate']}"
+						<hftl:formField label="#{messages['invoice.dueDate']}"
 							field="dueDate" />
-						<hf:formField label="#{messages['invoice.iban']}" field="iban" />
-						<hf:formField label="#{messages['invoice.alias']}" field="alias" />
-						<hf:formField label="#{messages['invoice.comment']}"
+						<hftl:formField label="#{messages['invoice.iban']}" field="iban" />
+						<hftl:formField label="#{messages['invoice.alias']}" field="alias" />
+						<hftl:formField label="#{messages['invoice.comment']}"
 							field="comment" textArea="true" />
-						<hf:formField label="#{messages['invoice.paymentMethod']}"
+						<hftl:formField label="#{messages['invoice.paymentMethod']}"
 							field="paymentMethod" isMessage="true" />
 					</h:panelGroup>
 				</p:fieldset>
@@ -129,7 +127,7 @@
 				</p:dataTable>
 
 			</p:fieldset>
-		</hf:formPanel>
+		</hftl:formPanel>
 		<h:form id="form">
 			<p:fieldset legend="#{messages['invoice.details']}">
 				<p:dataTable id="catTable" var="cat"
@@ -200,15 +198,15 @@
 			</p:fieldset>
 		</h:form>
 
-		<hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false"
+		<hftl:formPanel backingBean="#{invoiceBean}" showFormButtons="false"
 			id="totalForm" edit="false">
 
 			<p:fieldset legend="#{messages['invoice.totals']}">
-				<hf:formField label="#{messages['invoice.amountWithoutTax']}"
+				<hftl:formField label="#{messages['invoice.amountWithoutTax']}"
 					field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
-				<hf:formField label="#{messages['invoice.amountTax']}"
+				<hftl:formField label="#{messages['invoice.amountTax']}"
 					field="amountTax" converter="bigDecimal4DigitsConverter" />
-				<hf:formField label="#{messages['invoice.amountWithTax']}"
+				<hftl:formField label="#{messages['invoice.amountWithTax']}"
 					field="amountWithTax" converter="bigDecimal4DigitsConverter" />
 				<hftl:decorateFormField fieldId="netTopayId"
 					label="#{messages['invoice.netToPay']}">
@@ -236,7 +234,7 @@
 					action="#{invoiceBean.generateXMLInvoice}"
 					update="headerForm:formId,buttonGenerate" />
 			</p:outputPanel>
-		</hf:formPanel>
+		</hftl:formPanel>
 
 		<p:panel>
 			<h:panelGroup layout="block" styleClass="form-panel">
@@ -263,7 +261,7 @@
 					</hftl:dataList>
 				</p:fieldset>
 
-				<hf:formPanel backingBean="#{invoiceBean}" showFormButtons="false"
+				<hftl:formPanel backingBean="#{invoiceBean}" showFormButtons="false"
 					id="invoiceAdjustmentForm" edit="false">
 					<p:outputPanel styleClass="action-buttons" column="2"
 						id="invoiceAdjustmentActionPanel"
@@ -290,7 +288,7 @@
 							<f:param name="edit" value="true" />
 						</p:button>
 					</p:outputPanel>
-				</hf:formPanel>
+				</hftl:formPanel>
 			</h:panelGroup>
 		</p:panel>
 

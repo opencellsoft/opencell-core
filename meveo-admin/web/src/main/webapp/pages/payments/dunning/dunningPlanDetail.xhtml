@@ -27,19 +27,19 @@
 		<p:panel header="#{messages['dunningPlan.panel']}">
 			<p:tabView id="tabView" dynamic="true" cache="true">
 				<p:tab title="#{messages['dunningPlan.panel']}">
-					<hf:formPanel backingBean="#{dunningPlanBean}">
-						<hf:formField label="#{messages['businessEntity.code']}"
+					<hftl:formPanel backingBean="#{dunningPlanBean}">
+						<hftl:formField label="#{messages['businessEntity.code']}"
 							field="code" required="true" validateUnique="true" />
-						<hf:formField label="#{messages['businessEntity.description']}"
+						<hftl:formField label="#{messages['businessEntity.description']}"
 							field="description" useConverter="false" size="50" maxlength="50" />
-						<hf:formField label="#{messages['dunningPlan.creditCategory']}"
+						<hftl:formField label="#{messages['dunningPlan.creditCategory']}"
 							field="creditCategory" valueLabelField="code"
 							listBean="#{creditCategoryBean}" required="true" />
-						<hf:formField label="#{messages['dunningPlan.paymentMethod']}"
+						<hftl:formField label="#{messages['dunningPlan.paymentMethod']}"
 							field="paymentMethod" required="true" />
-						<hf:formField label="#{messages['commons.status']}" field="status"
+						<hftl:formField label="#{messages['commons.status']}" field="status"
 							required="true" />
-					</hf:formPanel>
+					</hftl:formPanel>
 				</p:tab>
 
 				<c:if test="#{!dunningPlanBean.entity.isTransient()}">
@@ -100,7 +100,7 @@
 										value="#{messages['commons.edit']}" showEffect="slide"
 										hideEffect="slide" />
 									<p:commandButton id="editDunningPlanTransitionLink"
-										update=":tabView:formPanelDunningPlanTransition:formDunningPlanTransition"
+										update=":tabView:formDunningPlanTransition"
 										action="#{dunningPlanBean.editDunningPlanTransition(entity)}"
 										icon="ui-icon-document" />
 									<p:tooltip for="editDunningPlanTransitionDeleteLink"
@@ -109,7 +109,7 @@
 									<p:commandButton id="editDunningPlanTransitionDeleteLink"
 										action="#{dunningPlanBean.deleteDunningPlanTransition(entity)}"
 										icon="ui-icon-trash"
-										update=":tabView:dunningPlanTransition_panel,:tabView:formPanelDunningPlanTransition:formDunningPlanTransition" />
+										update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition" />
 								</p:column>
 
 							</hftl:dataList>
@@ -118,7 +118,7 @@
 						<p:panel id="dunningPlanTransitiondiv"
 							rendered="#{dunningPlanBean.edit}">
 
-							<hf:formPanel id="formPanelDunningPlanTransition"
+							<hftl:formPanel
 								formId="formDunningPlanTransition"
 								edit="#{dunningPlanBean.edit}"
 								label="#{messages['dunningPlan.transitions']}"
@@ -126,40 +126,41 @@
 								entity="#{dunningPlanBean.dunningPlanTransition}"
 								showFormButtons="false" ajaxSubmit="true">
 
-								<hf:formField
+								<hftl:formField
 									label="#{messages['dunningPlanTransition.dunningLevelFrom']}"
 									style="width: 100px" panelStyle="width: 100px"
 									field="dunningLevelFrom" required="true" isMessage="true"
 									edit="#{dunningPlanBean.edit}" />
-								<hf:formField
+								<hftl:formField
 									label="#{messages['dunningPlanTransition.dunningLevelTo']}"
 									style="width: 100px" panelStyle="width: 100px"
 									field="dunningLevelTo" required="true" isMessage="true"
 									edit="#{dunningPlanBean.edit}" />
-								<hf:formField
+								<hftl:formField
 									label="#{messages['dunningPlanTransition.delayBeforeProcess']}"
 									field="delayBeforeProcess" required="true"
 									edit="#{dunningPlanBean.edit}" />
-								<hf:formField
+								<hftl:formField
 									label="#{messages['dunningPlanTransition.thresholdAmount']}"
 									field="thresholdAmount" required="true"
 									edit="#{dunningPlanBean.edit}" />
-								<hf:formField
+								<hftl:formField
 									label="#{messages['dunningPlanTransition.waitDuration']}"
 									field="waitDuration" required="true"
 									edit="#{dunningPlanBean.edit}" />
-								<hf:formField label="#{messages['dunningPlan.conditionEl']}"
+								<hftl:formField label="#{messages['dunningPlan.conditionEl']}"
 									field="conditionEl" textArea="true" maxlength="2000"
 									edit="#{dunningPlanBean.edit}" />
-								<f:facet name="buttons">
+								<ui:param name="buttons" value="true" />
+			                    <ui:define name="buttons">
 									<p:commandButton rendered="#{dunningPlanTransition.id==null}"
 										action="#{dunningPlanBean.saveDunningPlanTransition}"
 										value="#{messages['dunningPlanTransition.saveNewDunningPlanTransition']}"
-										update=":tabView:dunningPlanTransition_panel,:tabView:formPanelDunningPlanTransition:formDunningPlanTransition,:tabView:dunningPlanTransitiondiv" />
+										update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition,:tabView:dunningPlanTransitiondiv" />
 									<p:commandButton rendered="#{dunningPlanTransition.id!=null}"
 										action="#{dunningPlanBean.saveDunningPlanTransition}"
 										value="#{messages['dunningPlanTransition.modifyDunningPlanTransition']}"
-										update=":tabView:dunningPlanTransition_panel,:tabView:formPanelDunningPlanTransition:formDunningPlanTransition,:tabView:dunningPlanTransitiondiv" />
+										update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition,:tabView:dunningPlanTransitiondiv" />
 
 									<p:commandButton value="#{messages['action.cancel']}"
 										action="#{dunningPlanBean.newDunningPlanTransitionInstance}"
@@ -170,9 +171,9 @@
 										<f:param name="cid"
 											value="#{javax.enterprise.context.conversation.id}" />
 									</p:button>
-								</f:facet>
+								</ui:define>
 
-							</hf:formPanel>
+							</hftl:formPanel>
 						</p:panel>
 					</p:tab>
 
@@ -230,7 +231,7 @@
 											value="#{messages['commons.edit']}" showEffect="slide"
 											hideEffect="slide" />
 										<p:commandButton id="editActionPlanItemsLink"
-											update=":tabView:formPanelActionPlanItems:formActionPlanItems"
+											update=":tabView:formActionPlanItems"
 											action="#{dunningPlanBean.editActionPlanItem(entity)}"
 											icon="ui-icon-document" />
 										<p:tooltip for="editActionPlanItemDeleteLink"
@@ -239,7 +240,7 @@
 										<p:commandButton id="editActionPlanItemDeleteLink"
 											action="#{dunningPlanBean.deleteActionPlanItem(entity)}"
 											icon="ui-icon-trash"
-											update=":tabView:actionPlanItems_panel,:tabView:formPanelActionPlanItems:formActionPlanItems" />
+											update=":tabView:actionPlanItems_panel,:tabView:formActionPlanItems" />
 									</p:column>
 
 								</hftl:dataList>
@@ -248,56 +249,57 @@
 
 						<p:panel id="actionPlanItemsdiv"
 							rendered="#{dunningPlanBean.edit}">
-							<hf:formPanel id="formPanelActionPlanItems"
+							<hftl:formPanel
 								formId="formActionPlanItems" edit="#{dunningPlanBean.edit}"
 								label="#{messages['dunningPlan.actions']}"
 								backingBean="#{actionPlanItemBean}"
 								entity="#{dunningPlanBean.actionPlanItem}"
 								showFormButtons="false" ajaxSubmit="true">
 
-								<hf:formField label="#{messages['actionPlanItem.dunningLevel']}"
+								<hftl:formField label="#{messages['actionPlanItem.dunningLevel']}"
 									field="dunningLevel" style="width: 100px"
 									panelStyle="width: 100px" required="true" isMessage="true"
 									edit="#{dunningPlanBean.edit}" />
-								<hf:formField label="#{messages['actionPlanItem.actionType']}"
+								<hftl:formField label="#{messages['actionPlanItem.actionType']}"
 									field="actionType" style="width: 100px"
 									panelStyle="width: 100px" required="true" event="onchange"
 									render="amountOrTemplate" edit="#{dunningPlanBean.edit}" />
-								<hf:formField label="#{messages['actionPlanItem.order']}"
+								<hftl:formField label="#{messages['actionPlanItem.order']}"
 									field="itemOrder" required="true"
 									edit="#{dunningPlanBean.edit}" />
-								<hf:formField
+								<hftl:formField
 									label="#{messages['actionPlanItem.thresholdAmount']}"
 									field="thresholdAmount" required="true"
 									edit="#{dunningPlanBean.edit}" />
 								<p:outputPanel id="amountOrTemplate">
 									<h:panelGroup style="display:block;"
 										rendered="#{actionPlanItem.actionType.toString() != 'CHARGE'}">
-										<hf:formField
+										<hftl:formField
 											label="#{messages['actionPlanItem.letterTemplate']}"
 											field="letterTemplate" size="50" required="false"
 											edit="#{dunningPlanBean.edit}" />
 									</h:panelGroup>
 									<h:panelGroup style="display:block;"
 										rendered="#{actionPlanItem.actionType.toString() == 'CHARGE'}">
-										<hf:formField
+										<hftl:formField
 											label="#{messages['actionPlanItem.chargeAmount']}"
 											field="chargeAmount" required="true"
 											edit="#{dunningPlanBean.edit}" />
 									</h:panelGroup>
 								</p:outputPanel>
-								<hf:formField label="#{messages['dunningPlan.conditionEl']}"
+								<hftl:formField label="#{messages['dunningPlan.conditionEl']}"
 									field="conditionEl" textArea="true" maxlength="2000"
 									edit="#{dunningPlanBean.edit}" />
-								<f:facet name="buttons">
+								<ui:param name="buttons" value="true" />
+			                    <ui:define name="buttons">
 									<p:commandButton rendered="#{actionPlanItem.id==null}"
 										action="#{dunningPlanBean.saveActionPlanItem}"
 										value="#{messages['actionPlanItem.saveNewActionPlanItem']}"
-										update=":tabView:actionPlanItems_panel,:tabView:formPanelActionPlanItems:formActionPlanItems,:tabView:actionPlanItemsdiv" />
+										update=":tabView:actionPlanItems_panel,:tabView:formActionPlanItems,:tabView:actionPlanItemsdiv" />
 									<p:commandButton rendered="#{actionPlanItem.id!=null}"
 										action="#{dunningPlanBean.saveActionPlanItem}"
 										value="#{messages['actionPlanItem.modifyActionPlanItem']}"
-										update=":tabView:actionPlanItems_panel,:tabView:formPanelActionPlanItems:formActionPlanItems,:tabView:actionPlanItemsdiv" />
+										update=":tabView:actionPlanItems_panel,:tabView:formActionPlanItems,:tabView:actionPlanItemsdiv" />
 
 									<p:commandButton value="#{messages['action.cancel']}"
 										action="#{dunningPlanBean.newActionPlanItemInstance}"
@@ -308,9 +310,9 @@
 										<f:param name="cid"
 											value="#{javax.enterprise.context.conversation.id}" />
 									</p:button>
-								</f:facet>
+								</ui:define>
 
-							</hf:formPanel>
+							</hftl:formPanel>
 
 						</p:panel>
 					</p:tab>

@@ -3,9 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -15,9 +13,9 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel label="#{messages['invoiceTasks.panel']}" backingBean="#{invoiceTaskBean}" >
-			<hf:formField label="#{messages['invoiceTask.executionTime']}" field="executionTime" required="true" />
-			<hf:formField label="#{messages['invoiceTask.processName']}" field="processName" required="true"  />
+		<hftl:formPanel label="#{messages['invoiceTasks.panel']}" backingBean="#{invoiceTaskBean}" >
+			<hftl:formField label="#{messages['invoiceTask.executionTime']}" field="executionTime" required="true" />
+			<hftl:formField label="#{messages['invoiceTask.processName']}" field="processName" required="true"  />
 				
 			<!-- Show form field with all possible values for account filter. -->
 			<s:decorate template="/layout/edit.xhtml">
@@ -33,9 +31,9 @@
 		        <h:outputText rendered="#{!edit}" value="#{invoiceTask.accountFilter}" />
 	       	</s:decorate>
 	       	
-			<hf:formField label="#{messages['invoiceTask.walletFilter']}" field="walletFilter" />
-			<hf:formField label="#{messages['invoiceTask.taskStatus']}" field="taskStatus" required="true" />
-		</hf:formPanel>
+			<hftl:formField label="#{messages['invoiceTask.walletFilter']}" field="walletFilter" />
+			<hftl:formField label="#{messages['invoiceTask.taskStatus']}" field="taskStatus" required="true" />
+		</hftl:formPanel>
 
 	</ui:define>
 

@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    
-    
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
     
 	<f:metadata>
@@ -18,13 +15,11 @@
    	</ui:define>
     
     <ui:define name="body">
-	
-    	  
-     
-			<hf:searchPanel id="searchPanel" label="#{messages['actionPlanItem.search']}" backingBean="#{actionPlanItemListBean}">
-                <hf:searchField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
-    			<hf:searchField label="#{messages['actionPlanItem.actionType']}" field="actionType" />				
-		      </hf:searchPanel>
+	 
+			<hftl:searchPanel id="searchPanel" label="#{messages['actionPlanItem.search']}" backingBean="#{actionPlanItemListBean}">
+                <hftl:searchField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
+    			<hftl:searchField label="#{messages['actionPlanItem.actionType']}" field="actionType" />				
+		      </hftl:searchPanel>
  
 			<hftl:dataList label="#{messages['actionPlanItem.title']}" backingBean="#{actionPlanItemListBean}" dataModel="#{actionPlanItems}">
 	    		<hftl:column label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />

@@ -150,12 +150,13 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	}
 
 	public void setBillingCycle(BillingCycle billingCycle) {
+		if (billingCycle != null) {
 		entity.setBillingCycle(billingCycle);
 		if (entity.getProcessDate() == null) {
 			entity.setProcessDate(new Date());
 		}
 		log.debug("setBillingCycle {}, invoicedate={}, lastTransactionDate={}", billingCycle.getCode(), entity.getInvoiceDate(), entity.getLastTransactionDate());
-		if (billingCycle != null) {
+		
 			if (billingCycle.getInvoiceDateProductionDelay() != null) {
 				entity.setInvoiceDate(DateUtils.addDaysToDate(entity.getProcessDate(), billingCycle.getInvoiceDateProductionDelay()));
 			} else {
@@ -166,8 +167,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			} else {
 				entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(), 1));
 			}
+			log.debug("after setBillingCycle invoicedate={}, lastTransactionDate={}", entity.getInvoiceDate(), entity.getLastTransactionDate());
 		}
-		log.debug("after setBillingCycle invoicedate={}, lastTransactionDate={}", entity.getInvoiceDate(), entity.getLastTransactionDate());
 	}
 
 	public String launchRecurringInvoicing() {

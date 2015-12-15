@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 
@@ -22,12 +19,12 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['ponctualChargeInstance.search']}"
+		<hftl:searchPanel label="#{messages['ponctualChargeInstance.search']}"
 			backingBean="#{ponctualChargeInstanceListBean}">
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['ponctualChargeInstance.chargeDate']}"
 				field="chargeDate" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['ponctualChargeInstance.title']}"
 			backingBean="#{ponctualChargeInstanceListBean}">
