@@ -17,6 +17,7 @@
 package org.meveo.service.job;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +120,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	public void startTimers(Job job) {
 		// job.cleanAllTimers();
 		@SuppressWarnings("unchecked")
-		List<JobInstance> jobInstances = getEntityManager().createQuery("from JobInstance ji where ji.jobTemplate=:jobName")
+		List<JobInstance> jobInstances = getEntityManager().createQuery("from JobInstance ji JOIN FETCH ji.customFields  JOIN FETCH ji.followingJob where ji.jobTemplate=:jobName")
 		.setParameter("jobName", job.getClass().getSimpleName()).getResultList();
 
 		if (jobInstances != null) {
@@ -387,7 +388,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	}
 
 	public JobInstance findByCode(String code,Provider provider) {
-		QueryBuilder qb = new QueryBuilder(JobInstance.class, "t");
+		QueryBuilder qb = new QueryBuilder(JobInstance.class, "t",Arrays.asList("customFields"),null);
 		qb.addCriterion("t.code","=", code, true); 
 		qb.addCriterionEntity("provider", provider);
 		try {
