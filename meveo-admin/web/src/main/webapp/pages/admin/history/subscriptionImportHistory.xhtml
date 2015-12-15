@@ -20,13 +20,13 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel columns="1"
+		<hftl:searchPanel columns="1"
 			label="#{messages['subscriptionImportHisto.search']}"
 			backingBean="#{subscriptionImportHistoBean}" renderNewButton="false">
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['subscriptionImportHisto.executionDate']}"
 				field="executionDate" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList backingBean="#{subscriptionImportHistoBean}">		
 			<hftl:column

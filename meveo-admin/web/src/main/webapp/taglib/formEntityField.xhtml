@@ -14,9 +14,9 @@
         <c:if test="#{popup}">
             <c:if test="#{edit}">
                 <p:inputText id="#{id}" value="#{fieldItem[valueLabelField]}" required="#{required}" size="#{size}" disabled="true" />
-                <p:commandButton immediate="true" rendered="#{(!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)}" id="selectLink" onclick="PF('dlg_#{popupId}').show()"
+                <p:commandButton immediate="true" rendered="#{(!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)}" id="#{id}_selectLink" onclick="PF('dlg_#{popupId}').show()"
                     icon="ui-icon-search" type="button" />
-                <p:tooltip for="selectLink" value="#{messages['commons.search']}" />
+                <p:tooltip for="#{id}_selectLink" value="#{messages['commons.search']}" />
 
             </c:if>
 

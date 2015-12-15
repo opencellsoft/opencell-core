@@ -13,13 +13,13 @@
 	</ui:define>
 	<ui:define name="body">	
 	<p:panel>				
-				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryBean}">
-						<hf:formField label="#{messages['jobHistory.executionDate']}" field="executionDate"  />	  
-						<hf:formField label="#{messages['dunningHistory.loadedCustomerAccounts']}" field="linesRead"  />
-						<hf:formField label="#{messages['dunningHistory.updatedCustomerAccounts']}" field="linesInserted"  />
-						<hf:formField label="#{messages['dunningHistory.errorCustomerAccounts']}" field="linesRejected"  />																		                  																									
+				<hftl:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryBean}">
+						<hftl:formField label="#{messages['jobHistory.executionDate']}" field="executionDate"  />	  
+						<hftl:formField label="#{messages['dunningHistory.loadedCustomerAccounts']}" field="linesRead"  />
+						<hftl:formField label="#{messages['dunningHistory.updatedCustomerAccounts']}" field="linesInserted"  />
+						<hftl:formField label="#{messages['dunningHistory.errorCustomerAccounts']}" field="linesRejected"  />																		                  																									
 					<h:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
-				</hf:formPanel>
+				</hftl:formPanel>
 				<custom:listPanel label="#{messages['dunningHistory.dunningLot']}">
 					<custom:dataList backingBean="#{dunningHistoryBean}"
 						dataModel="#{dunningHistory.getDunningLots()}"

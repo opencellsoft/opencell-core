@@ -13,13 +13,13 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel label="#{messages['currency.currencyPanel']}"
+		<hftl:formPanel label="#{messages['currency.currencyPanel']}"
 			backingBean="#{currencyBean}">
-			<hf:formField label="#{messages['currency.code']}"
+			<hftl:formField label="#{messages['currency.code']}"
 				field="currencyCode" required="false" />
-			<hf:formField label="#{messages['currency.name']}"
+			<hftl:formField label="#{messages['currency.name']}"
 				field="descriptionEn" required="false" />
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

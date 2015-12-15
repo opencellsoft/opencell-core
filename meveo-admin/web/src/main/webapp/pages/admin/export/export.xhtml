@@ -16,12 +16,12 @@
                 <h:panelGroup id="searchPanel" layout="block" styleClass="search-panel">
                     <p:messages id="messages" autoUpdate="false" />
 
-                    <hf:formDecorateField fieldId="search_templateName" label="#{messages['export.templateName']}">
+                    <hftl:decorateFormField fieldId="search_templateName" label="#{messages['export.templateName']}">
                         <p:inputText id="search_templateName" value="#{entityExportImportBean.filters['templateName']}" size="40" />
-                    </hf:formDecorateField>
-                    <hf:formDecorateField fieldId="search_complex" label="#{messages['export.complex']}">
+                    </hftl:decorateFormField>
+                    <hftl:decorateFormField fieldId="search_complex" label="#{messages['export.complex']}">
                         <p:selectBooleanCheckbox id="search_complex" value="#{entityExportImportBean.filters['complex']}" />
-                    </hf:formDecorateField>
+                    </hftl:decorateFormField>
                     <h:panelGroup layout="block" styleClass="search-panel-actions">
                         <p:commandButton value="#{messages['commons.search']}" action="#{entityExportImportBean.searchExportTemplates}" update=":form:datatable" />
                         <p:commandButton value="#{messages['commons.clean']}" action="#{entityExportImportBean.cleanExportTemplates}"

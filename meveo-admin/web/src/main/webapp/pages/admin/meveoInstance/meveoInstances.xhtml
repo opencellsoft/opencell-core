@@ -19,19 +19,19 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel columns="3" label="#{messages['meveoInstance.search']}"
+		<hftl:searchPanel columns="3" label="#{messages['meveoInstance.search']}"
 			backingBean="#{meveoInstanceListBean}">
 
-			<hf:searchField label="#{messages['meveoInstance.code']}" field="code" />
-			<hf:searchField label="#{messages['meveoInstance.description']}"
+			<hftl:searchField label="#{messages['meveoInstance.code']}" field="code" />
+			<hftl:searchField label="#{messages['meveoInstance.description']}"
 				id="description" field="description" />
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['meveoInstance.productVersion']}"
 				field="productVersion" />
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['meveoInstance.owner']}"
 				field="owner" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['meveoInstance.title']}"
 			backingBean="#{meveoInstanceListBean}" sortBy="code">

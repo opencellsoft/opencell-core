@@ -13,10 +13,10 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['creditCategory.search']}" backingBean="#{creditCategoryListBean}">
-			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
-			<hf:searchField label="#{messages['businessEntity.description']}" id="description" field="description" />
-		</hf:searchPanel>
+		<hftl:searchPanel label="#{messages['creditCategory.search']}" backingBean="#{creditCategoryListBean}">
+			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:searchField label="#{messages['businessEntity.description']}" id="description" field="description" />
+		</hftl:searchPanel>
 
 		<hftl:dataList backingBean="#{creditCategoryListBean}" label="#{messages['customerBrand.title']}" sortBy="code">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
