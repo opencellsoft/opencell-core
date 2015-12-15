@@ -86,10 +86,11 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 			if (!entity.isDone()) {
 				executeJob(job.getClass().getSimpleName(), jobInstance, currentUser, jobCategory);
 			} else if (jobInstance.getFollowingJob() != null) {
-				try {
-					executeJob(jobInstance.getFollowingJob().getJobTemplate(), jobInstance.getFollowingJob(), currentUser, jobInstance.getFollowingJob().getJobCategoryEnum());
+				try {					  
+					JobInstance jobFlow  = jobInstanceService.attach(jobInstance.getFollowingJob());
+					executeJob(jobFlow.getJobTemplate(), jobFlow, currentUser, jobFlow.getJobCategoryEnum());
 				} catch (Exception e) {
-					log.warn("PersistResult cannot excute the following jobs.");
+					log.warn("PersistResult cannot excute the following jobs.",e);
 				}
 			}
 		} catch (Exception e) {// FIXME:BusinessException e) {
