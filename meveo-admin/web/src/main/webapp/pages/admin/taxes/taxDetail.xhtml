@@ -1,9 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -24,13 +22,13 @@
 			backingBean="#{taxBean}" columns="1">
 			<hftl:formField label="#{messages['tax.code']}" field="code"
 				required="true" />
-			<hftl:formLanguageFields />
-			<hf:formField label="#{messages['tax.percent']}" field="percent"
+			<hftl:formLanguageFields entity="#{taxBean.entity}"  backingBean="#{taxBean}" multiLang="false"/>
+			<hftl:formField label="#{messages['tax.percent']}" field="percent"
 				required="true" />
-			<hf:formField
+			<hftl:formField
 				label="#{messages['invoiceSubCategory.accountingCode']}"
 				field="accountingCode" />
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

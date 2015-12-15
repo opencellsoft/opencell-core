@@ -3,7 +3,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -20,13 +20,13 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel label="#{messages['occTemplate.title']}" backingBean="#{occTemplateBean}" >
-			<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
-			<hf:formField label="#{messages['businessEntity.description']}" field="description" required="true"/>
-			<hf:formField label="#{messages['occTemplate.accountCode']}" field="accountCode" required="true" />
-			<hf:formField label="#{messages['occTemplate.accountCodeClientSide']}" field="accountCodeClientSide" />
-			<hf:formField label="#{messages['occTemplate.occCategory']}" field="occCategory" required="true"/>
-		</hf:formPanel>
+		<hftl:formPanel label="#{messages['occTemplate.title']}" backingBean="#{occTemplateBean}" >
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
+			<hftl:formField label="#{messages['businessEntity.description']}" field="description" required="true"/>
+			<hftl:formField label="#{messages['occTemplate.accountCode']}" field="accountCode" required="true" />
+			<hftl:formField label="#{messages['occTemplate.accountCodeClientSide']}" field="accountCodeClientSide" />
+			<hftl:formField label="#{messages['occTemplate.occCategory']}" field="occCategory" required="true"/>
+		</hftl:formPanel>
 	</ui:define>
 
 </ui:composition>

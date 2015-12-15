@@ -1,13 +1,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:o="http://omnifaces.org/ui"
+    xmlns:o="http://omnifaces.org/ui"
 	xmlns:e="http://jboss.com/products/seam/excel"
 	xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -25,13 +22,13 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel backingBean="#{billingRunListBean}"
+		<hftl:searchPanel backingBean="#{billingRunListBean}"
 			label="#{messages['billingRun.search']}" renderNewButton="false">
-			<hf:searchField label="#{messages['billingRun.status']}"
+			<hftl:searchField label="#{messages['billingRun.status']}"
 				field="status" />
-			<hf:searchField label="#{messages['billingRun.processDate']}"
+			<hftl:searchField label="#{messages['billingRun.processDate']}"
 				field="processDate" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['billingRuns.title']}"
 			backingBean="#{billingRunListBean}"  sortOrder="descending">

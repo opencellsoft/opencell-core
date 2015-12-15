@@ -1,11 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -13,14 +11,14 @@
 	</ui:define>
 	<ui:define name="body">	
 	<p:panel>				
-				<hf:formPanel  showFormButtons ="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}">
-						<hf:formField label="#{messages['matchingCode.matchingDate']}" field="matchingDate" disabled="true" />	  
-						<hf:formField label="#{messages['matchingCode.matchingType']}" field="matchingType" disabled="true"/>
-						<hf:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit" disabled="true" />
-						<hf:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit" disabled="true" />																		                  																						
+				<hftl:formPanel  showFormButtons ="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}">
+						<hftl:formField label="#{messages['matchingCode.matchingDate']}" field="matchingDate" disabled="true" />	  
+						<hftl:formField label="#{messages['matchingCode.matchingType']}" field="matchingType" disabled="true"/>
+						<hftl:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit" disabled="true" />
+						<hftl:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit" disabled="true" />																		                  																						
 					<p:commandButton value="#{messages['action.back']}"	 onclick="window.history.back();"/>						
 					<p:commandButton value="#{messages['matchingCode.button.unmatching']}"	 action="#{matchingCodeBean.unmatching()}"/>
-				</hf:formPanel>
+				</hftl:formPanel>
 				<p:panel label="#{messages['customerAccount.operations']}">
 					<hftl:dataList backingBean="#{matchingCodeBean}"
 						dataModel="#{matchingCodeBean.entity.matchingAmounts}"

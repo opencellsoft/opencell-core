@@ -1,10 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
@@ -23,31 +21,31 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel edit="#{billingCycleBean.edit}"
+		<hftl:formPanel edit="#{billingCycleBean.edit}"
 			label="#{messages['billingCycle.panel']}"
 			backingBean="#{billingCycleBean}">
-			<hf:formField label="#{messages['billingCycle.code']}" field="code"
+			<hftl:formField label="#{messages['billingCycle.code']}" field="code"
 				validateUnique="true" required="true" />
-			<hf:formField label="#{messages['billingCycle.description']}"
+			<hftl:formField label="#{messages['billingCycle.description']}"
 				id="description" field="description" useConverter="false" size="50"
 				maxlength="50" required="true" />
-			<hf:formField label="#{messages['billingCycle.billingTemplateName']}"
+			<hftl:formField label="#{messages['billingCycle.billingTemplateName']}"
 				field="billingTemplateName" size="20" maxlength="20"
 				required="false" />
-			<hf:formField label="#{messages['billingCycle.transactionDateDelay']}"
+			<hftl:formField label="#{messages['billingCycle.transactionDateDelay']}"
 				field="transactionDateDelay" required="true" negativeValue="true" />
-			<hf:formField label="#{messages['billingCycle.invoiceProductionDateDelay']}"
+			<hftl:formField label="#{messages['billingCycle.invoiceProductionDateDelay']}"
 				field="invoiceDateProductionDelay" required="true" negativeValue="true"/>
-			<hf:formField label="#{messages['billingCycle.dueDateDelay']}"
+			<hftl:formField label="#{messages['billingCycle.dueDateDelay']}"
 				field="dueDateDelay" required="true" />
-			<hf:formField label="#{messages['billingCycle.invoiceDateDelay']}"
+			<hftl:formField label="#{messages['billingCycle.invoiceDateDelay']}"
 				field="invoiceDateDelay" required="true" />
-			<hf:formField label="#{messages['billingCycle.calendar']}"
+			<hftl:formField label="#{messages['billingCycle.calendar']}"
 				field="calendar" valueLabelField="code" required="true"
 				listBean="#{calendarBean}" />
-			<hf:formField label="#{messages['billingCycle.invoicingThreshold']}"
+			<hftl:formField label="#{messages['billingCycle.invoicingThreshold']}"
 				field="invoicingThreshold"	required="false" />				
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

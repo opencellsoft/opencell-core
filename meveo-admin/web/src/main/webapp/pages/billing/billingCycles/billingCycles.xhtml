@@ -1,10 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -19,12 +17,12 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['billingCycle.search']}"
+		<hftl:searchPanel label="#{messages['billingCycle.search']}"
 			backingBean="#{billingCycleListBean}">
-			<hf:searchField label="#{messages['billingCycle.code']}" field="code" />
-			<hf:searchField label="#{messages['billingCycle.description']}"
+			<hftl:searchField label="#{messages['billingCycle.code']}" field="code" />
+			<hftl:searchField label="#{messages['billingCycle.description']}"
 				field="description" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['billingCycles.title']}"
 			backingBean="#{billingCycleListBean}">

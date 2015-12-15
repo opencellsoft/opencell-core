@@ -19,16 +19,16 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel columns="3"
+		<hftl:searchPanel columns="3"
 			label="#{messages['terminationReason.search']}"
 			backingBean="#{terminationReasonListBean}">
 
-			<hf:searchField label="#{messages['BusinessEntity.code']}"
+			<hftl:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['BusinessEntity.description']}"
+			<hftl:searchField label="#{messages['BusinessEntity.description']}"
 				field="description" />
 
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['terminationReason.title']}"
 			backingBean="#{terminationReasonListBean}">

@@ -1,6 +1,5 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-    xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -14,10 +13,10 @@
 
     <ui:define name="body">
 
-        <hf:searchPanel id="searchPanel" label="#{messages['role.search']}" backingBean="#{userRoleListBean}">
-            <hf:searchField label="#{messages['role.name']}" field="name" />
-            <hf:searchField label="#{messages['role.description']}" field="description" />
-        </hf:searchPanel>
+        <hftl:searchPanel id="searchPanel" label="#{messages['role.search']}" backingBean="#{userRoleListBean}">
+            <hftl:searchField label="#{messages['role.name']}" field="name" />
+            <hftl:searchField label="#{messages['role.description']}" field="description" />
+        </hftl:searchPanel>
 
         <hftl:dataList label="#{messages['role.title']}" backingBean="#{userRoleListBean}" sortBy="name">
             <hftl:column label="#{messages['role.name']}" field="name" entityView="roleDetail" valueIdField="id"/>

@@ -1,9 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -47,7 +45,7 @@
 			<hftl:formField label="#{messages['meveoInstance.code']}" field="code" required="true" />
             <hftl:formField label="#{messages['meveoInstance.url']}" field="url" required="true" size="60" componentWidth="75"/>
             
-			<hftl:formLanguageFields entity="#{meveoInstanceBean.entity}"  backingBean="#{meveoInstanceBean}" multiLang="true"/>
+			<hftl:formLanguageFields entity="#{meveoInstanceBean.entity}"  backingBean="#{meveoInstanceBean}" multiLang="false"/>
 			<hftl:formField id="userSelectedId"
 							label="#{messages['meveoInstance.user']}"
 							field="user" valueLabelField="userName" 

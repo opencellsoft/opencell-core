@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    
-    
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
     
 	<f:metadata>
@@ -18,11 +15,11 @@
    	</ui:define>
     
     <ui:define name="body">
-		    <hf:searchPanel id="searchPanel"
+		    <hftl:searchPanel id="searchPanel"
 			label="#{messages['dunningPlanTransition.search']}" backingBean="#{dunningPlanTransitionListBean}">
-				<hf:searchField  label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" />
-    			<hf:searchField  label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" />
-		    </hf:searchPanel>
+				<hftl:searchField  label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" />
+    			<hftl:searchField  label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" />
+		    </hftl:searchPanel>
 		 
 	    	<hftl:dataList label="#{messages['dunningPlanTransition.title']}" backingBean="#{dunningPlanTransitionListBean}"   dataModel="#{dunningPlanTransitions}">
 	    		<hftl:column label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" />
