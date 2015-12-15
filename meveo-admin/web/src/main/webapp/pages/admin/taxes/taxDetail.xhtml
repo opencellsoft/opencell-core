@@ -20,11 +20,11 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel label="#{messages['tax.panel']}"
+		<hftl:formPanel label="#{messages['tax.panel']}"
 			backingBean="#{taxBean}" columns="1">
-			<hf:formField label="#{messages['tax.code']}" field="code"
+			<hftl:formField label="#{messages['tax.code']}" field="code"
 				required="true" />
-			<hf:languageFields />
+			<hftl:formLanguageFields />
 			<hf:formField label="#{messages['tax.percent']}" field="percent"
 				required="true" />
 			<hf:formField

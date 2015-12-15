@@ -76,9 +76,15 @@ public abstract class Job {
             try {            	            	
             	JobInstanceService.runningJobs.add(jobInstance.getId());
                 if (currentUser == null) {
-                    currentUser = userService.attach(jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable()
-                        .getCreator());
-                }
+                	log.debug("currentUser is null");                	
+                	long userId = (jobInstance.getAuditable().getUpdater() != null ? jobInstance.getAuditable().getUpdater() : jobInstance.getAuditable().getCreator()).getId();
+                	log.debug("userId:"+userId);
+                    currentUser = userService.findByIdLoadProvider(userId);
+                }else{
+                	log.debug("currentUser not null");
+                }            
+                log.debug("currentUser.getUserName = "+currentUser.getUserName());
+                log.debug("currentUser.getProvider().getCode() = "+currentUser.getProvider().getCode());
                 execute(result, jobInstance, currentUser);
                 result.close();
 

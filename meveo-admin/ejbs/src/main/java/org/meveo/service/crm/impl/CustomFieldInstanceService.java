@@ -244,11 +244,11 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFI", "true"));
 
         // If field is not versionable - get the value without the date
-		CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
-		if (cft == null) {
-			log.trace("No CFT found {}/{}", entity, code);
-			return null;
-		}
+        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        if (cft == null) {
+            log.trace("No CFT found {}/{}", entity, code);
+            return null;
+        }
         if (!cft.isVersionable()) {
             return getCFValue(entity, code, currentUser);
         }
@@ -361,7 +361,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         if (cft == null) {
             throw new BusinessException("Custom field template with code " + code + " not found found for entity " + entity);
         }
-        
+
         if (!cft.isVersionable()) {
             setCFValue(entity, code, value, currentUser);
 
@@ -402,7 +402,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         if (cft == null) {
             throw new BusinessException("Custom field template with code " + code + " not found found for entity " + entity);
         }
-        
+
         if (!cft.isVersionable()) {
             setCFValue(entity, code, value, currentUser);
 
@@ -473,6 +473,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @return A map of Custom field instances with CF code as a key
      */
     public Map<String, List<CustomFieldInstance>> getCustomFieldInstances(ICustomFieldEntity entity) {
+        if (((IEntity)entity).isTransient()) {
+            return new HashMap<String, List<CustomFieldInstance>>();
+        }
+        
         TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntity", CustomFieldInstance.class);
         query.setParameter("appliesToEntity", entity.getUuid());
         query.setParameter("provider", getProvider(entity));
@@ -582,6 +586,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     private Provider getProvider(ICustomFieldEntity entity) {
 
         if (entity instanceof Provider) {
+            if (((Provider) entity).isTransient()) {
+                return null;
+            }
             return (Provider) entity;
 
         } else {

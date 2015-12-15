@@ -17,12 +17,12 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['offerTemplate.search']}" backingBean="#{offerTemplateListBean}">
-			<hf:searchField label="#{messages['offerTemplate.code']}" field="code" />
-			<hf:searchField label="#{messages['offerTemplate.description']}" id="description" field="description" />
-			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+		<hftl:searchPanel label="#{messages['offerTemplate.search']}" backingBean="#{offerTemplateListBean}">
+			<hftl:searchField label="#{messages['offerTemplate.code']}" field="code" />
+			<hftl:searchField label="#{messages['offerTemplate.description']}" id="description" field="description" />
+			<hftl:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
 
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['offerTemplate.title']}" noClose="false" backingBean="#{offerTemplateListBean}">
 			<hftl:column label="#{messages['offerTemplate.code']}" field="code" />

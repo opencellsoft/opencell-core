@@ -17,13 +17,13 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['filter.search']}"
+		<hftl:searchPanel label="#{messages['filter.search']}"
 			backingBean="#{filterListBean}">
-			<hf:searchField label="#{messages['BusinessEntity.code']}"
+			<hftl:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['BusinessEntity.description']}"
+			<hftl:searchField label="#{messages['BusinessEntity.description']}"
 				id="description" field="description" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['filter.title']}"
 			noClose="false" backingBean="#{filterListBean}">

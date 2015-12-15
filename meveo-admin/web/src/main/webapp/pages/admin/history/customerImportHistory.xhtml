@@ -19,13 +19,13 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel columns="1"
+		<hftl:searchPanel columns="1"
 			label="#{messages['customerImportHisto.search']}"
 			backingBean="#{customerImportHistoBean}" renderNewButton="false">
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['customerImportHisto.executionDate']}"
 				field="executionDate" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList backingBean="#{customerImportHistoBean}">
 			<hftl:column label="#{messages['customerImportHisto.executionDate']}"

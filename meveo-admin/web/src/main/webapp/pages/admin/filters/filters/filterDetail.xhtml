@@ -26,23 +26,23 @@
 			<p:tabView id="tabView">
 				<p:tab title="#{messages['filter.info']}">
 
-					<hf:formPanel backingBean="#{filterBean}" columns="1"
+					<hftl:formPanel backingBean="#{filterBean}" columns="1"
 						showEnableDisableButton="true">
 
-						<hf:formField label="#{messages['BusinessEntity.code']}"
+						<hftl:formField label="#{messages['BusinessEntity.code']}"
 							field="code" required="true" validateUnique="true"
 							disabled="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
-						<hf:formField label="#{messages['BusinessEntity.description']}"
+						<hftl:formField label="#{messages['BusinessEntity.description']}"
 							field="description" required="true" useConverter="false"
 							size="50" maxlength="50"
 							disabled="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
 
-						<hf:formField showOnlyOnNew="true" field="shared"
-							label="#{messages['filter.shared']}"></hf:formField>
+						<hftl:formField showOnlyOnNew="true" field="shared"
+							label="#{messages['filter.shared']}"/>
 
-						<hf:formField
+						<hftl:formField
 							rendered="#{filterBean.entity != null and filterBean.entity.auditable.creator.id == filterBean.getCurrentUser().id}"
-							field="shared" label="#{messages['filter.shared']}"></hf:formField>
+							field="shared" label="#{messages['filter.shared']}"/>
 
 						<hftl:decorateFormField fieldId="inputXml"
 							label="#{messages['filter.inputXml']}" newLine="true">
@@ -50,7 +50,7 @@
 								value="#{filterBean.entity.inputXml}" lineNumbers="true"
 								readonly="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
 						</hftl:decorateFormField>
-					</hf:formPanel>
+					</hftl:formPanel>
 
 				</p:tab>
 			</p:tabView>

@@ -40,7 +40,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     public Map<String, CustomFieldTemplate> findByAppliesTo(ICustomFieldEntity entity, Provider provider) {
         try {
-            return findByAppliesTo(calculateAppliesToValue(entity), provider);
+            if (entity instanceof Provider) {
+                return findByAppliesTo(calculateAppliesToValue(entity), (Provider) entity);
+            } else {
+                return findByAppliesTo(calculateAppliesToValue(entity), provider);
+            }
 
         } catch (CustomFieldException e) {
             // Its ok, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
@@ -57,6 +61,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     @SuppressWarnings("unchecked")
     public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo, Provider provider) {
+        
+        // Handles cases when creating a new provider
+        if (provider.isTransient()) {
+            return new HashMap<String, CustomFieldTemplate>();
+        }
+
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFT", "true"));
         if (useCache) {
             return customFieldsCache.getCustomFieldTemplates(appliesTo, provider);

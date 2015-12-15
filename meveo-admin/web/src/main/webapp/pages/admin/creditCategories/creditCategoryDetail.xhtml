@@ -21,10 +21,10 @@
 			</h:form>
 		</p:panel>
 	
-		<hf:formPanel label="#{messages['creditCategory.title']}" backingBean="#{creditCategoryBean}" >
-			<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
-			<hf:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" maxlength="50" required="true"/>
-		</hf:formPanel>
+		<hftl:formPanel label="#{messages['creditCategory.title']}" backingBean="#{creditCategoryBean}" >
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
+			<hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" maxlength="50" required="true"/>
+		</hftl:formPanel>
 	</ui:define>
 
 </ui:composition>
