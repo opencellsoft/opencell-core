@@ -121,7 +121,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	public void startTimers(Job job) {
 		// job.cleanAllTimers();
 		@SuppressWarnings("unchecked")
-		List<JobInstance> jobInstances = getEntityManager().createQuery("from JobInstance ji JOIN FETCH ji.customFields  JOIN FETCH ji.followingJob where ji.jobTemplate=:jobName")
+		List<JobInstance> jobInstances = getEntityManager().createQuery("from JobInstance ji left JOIN FETCH ji.customFields  left JOIN FETCH ji.followingJob where ji.jobTemplate=:jobName")
 		.setParameter("jobName", job.getClass().getSimpleName()).getResultList();
 
 		if (jobInstances != null) {
@@ -377,9 +377,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	}
 
 	public JobInstance findByCode(String code,Provider provider) {
-		QueryBuilder qb = new QueryBuilder(JobInstance.class, "t",Arrays.asList("customFields"),null);
+		QueryBuilder qb = new QueryBuilder(JobInstance.class, "t",Arrays.asList("customFields"),provider);
 		qb.addCriterion("t.code","=", code, true); 
-		qb.addCriterionEntity("provider", provider);
 		try {
 			return (JobInstance) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
