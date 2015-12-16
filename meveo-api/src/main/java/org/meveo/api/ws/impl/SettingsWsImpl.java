@@ -6,6 +6,7 @@ import javax.jws.WebService;
 
 import org.meveo.api.BillingCycleApi;
 import org.meveo.api.CalendarApi;
+import org.meveo.api.CatMessagesApi;
 import org.meveo.api.CountryApi;
 import org.meveo.api.CurrencyApi;
 import org.meveo.api.CustomEntityApi;
@@ -26,6 +27,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CalendarDto;
+import org.meveo.api.dto.CatMessagesDto;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.CustomEntityInstanceDto;
@@ -50,6 +52,7 @@ import org.meveo.api.dto.response.GetCustomEntityTemplateResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
+import org.meveo.api.dto.response.GetDescriptionsResponse;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
@@ -131,6 +134,9 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	
 	@Inject
 	private RoleApi roleApi;
+	
+	@Inject
+	private CatMessagesApi catMessagesApi;
 
 	@Override
 	public ActionStatus createCountry(CountryDto countryDto) {
@@ -1890,6 +1896,109 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
 			roleApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createDescriptions(CatMessagesDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			catMessagesApi.create(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateDescriptions(CatMessagesDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			catMessagesApi.update(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public GetDescriptionsResponse findDescriptions(String descriptionsCode,
+			String languageCode) {
+		GetDescriptionsResponse result = new GetDescriptionsResponse();
+		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+		try {
+			result.setCatMessagesDto(catMessagesApi.find(descriptionsCode, languageCode, getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus removeDescriptions(String descriptionsCode,
+			String languageCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			catMessagesApi.remove(descriptionsCode, languageCode, getCurrentUser().getProvider());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createOrUpdateDescriptions(CatMessagesDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			catMessagesApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

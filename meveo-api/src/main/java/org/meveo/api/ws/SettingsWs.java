@@ -7,6 +7,7 @@ import javax.jws.WebService;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CalendarDto;
+import org.meveo.api.dto.CatMessagesDto;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.CustomEntityInstanceDto;
@@ -31,6 +32,7 @@ import org.meveo.api.dto.response.GetCustomEntityTemplateResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
+import org.meveo.api.dto.response.GetDescriptionsResponse;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
@@ -380,4 +382,21 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);
+	
+	// descriptions
+	
+	@WebMethod
+	public ActionStatus createDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+	
+	@WebMethod
+	public ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+	
+	@WebMethod
+	public GetDescriptionsResponse findDescriptions(@WebParam(name = "descriptionsCode") String descriptionsCode, @WebParam(name = "languageCode") String languageCode);
+	
+	@WebMethod
+	public ActionStatus removeDescriptions(@WebParam(name = "descriptionsCode") String descriptionsCode, @WebParam(name = "languageCode") String languageCode);
+	
+	@WebMethod
+	public ActionStatus createOrUpdateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 }
