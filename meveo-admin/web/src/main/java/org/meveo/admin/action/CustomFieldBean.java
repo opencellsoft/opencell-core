@@ -123,9 +123,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             }
 
             populateCustomFieldNewValueDefaults(customFieldTemplates.values());
+            groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
         }
 
-        groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
     }
 
     /**
@@ -150,7 +150,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      * @throws BusinessException
      */
     private void updateCustomFieldsInEntity() throws BusinessException {
-
+       if(groupedCustomField!=null && groupedCustomField.getFields().size()>0){
         for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
             List<CustomFieldInstance> cfis = getInstancesAsList(cft);
 
@@ -175,6 +175,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                 }
             }
         }
+       }
     }
 
     private void deserializeForGUI(CustomFieldTemplate cft, CustomFieldValue cfv) {
@@ -485,9 +486,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      * @param event
      */
     public void validateCustomFields(ComponentSystemEvent event) {
-
         boolean valid = true;
         FacesContext fc = FacesContext.getCurrentInstance();
+        if(groupedCustomField!=null && groupedCustomField.getFields().size()>0){
         for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
             if (cft.isActive() && cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
 
@@ -504,6 +505,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                     }
                 }
             }
+        }
         }
 
         if (!valid) {
