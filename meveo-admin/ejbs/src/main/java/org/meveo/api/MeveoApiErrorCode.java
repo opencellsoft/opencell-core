@@ -16,6 +16,7 @@ public class MeveoApiErrorCode {
 	 * Missing Parameter.
 	 */
 	public static String MISSING_PARAMETER = "MISSING_PARAMETER";
+	public static String CONSTRAINT_VIOLATION_EXCEPTION = "CONSTRAINT_VIOLATION_EXCEPTION";
 
 	/**
 	 * Invalid Parameter.
