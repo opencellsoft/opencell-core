@@ -6,12 +6,16 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.CatalogApi;
+import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.CatalogRs;
@@ -30,9 +34,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Context
 	private UriInfo uriInfo;
-	
+
 	@Inject
 	private CatalogApi catalogApi;
+
+	@Inject
+	private BusinessOfferApi businessOfferApi;
 
 	@Override
 	public List<Category> findCategories() {
@@ -49,21 +56,24 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 		}
 		return Response.ok().entity(Category.createProto(uriInfo)).build();
 	}
+
 	public List<ProductOffering> findProductOfferings() {
 		log.debug("find productOfferings ... ");
-		List<ProductOffering> productOfferings=catalogApi.findProductOfferings(uriInfo, Category.createProto(uriInfo));
+		List<ProductOffering> productOfferings = catalogApi
+				.findProductOfferings(uriInfo, Category.createProto(uriInfo));
 		return productOfferings;
 	}
 
 	@Override
 	public Response findProductOfferingById(String id) {
-		log.debug("find productOffering by id {}",id);
+		log.debug("find productOffering by id {}", id);
 		ProductOffering productOffering = null;
 		try {
-			productOffering=catalogApi.findProductOffering(id, getCurrentUser(),uriInfo,Category.createProto(uriInfo));
+			productOffering = catalogApi.findProductOffering(id, getCurrentUser(), uriInfo,
+					Category.createProto(uriInfo));
 		} catch (Exception e) {
 		}
-		if(productOffering==null){
+		if (productOffering == null) {
 			return Response.status(Status.NOT_FOUND).entity("not found").build();
 		}
 		return Response.ok().entity(productOffering).build();
@@ -77,14 +87,36 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response findProductSpecificationById(String id) {
-		log.debug("find productSpecification by id {}",id);
+		log.debug("find productSpecification by id {}", id);
 		ProductSpecification productSpecification = null;
-		try{
-			productSpecification=catalogApi.findProductSpecification(id, getCurrentUser(), uriInfo);
-		}catch(Exception e){}
+		try {
+			productSpecification = catalogApi.findProductSpecification(id, getCurrentUser(), uriInfo);
+		} catch (Exception e) {
+		}
 		if (productSpecification == null) {
 			return Response.status(Status.NOT_FOUND).entity("no found!").build();
 		}
 		return Response.ok().entity(productSpecification).build();
+	}
+
+	@Override
+	public Response createOfferFromBOM(BomOfferDto postData) {
+		Response.ResponseBuilder responseBuilder = null;
+
+		try {
+			businessOfferApi.createOfferFromBOM(postData, getCurrentUser());
+			responseBuilder = Response.ok();
+		} catch (ConstraintViolationException e) {
+			log.error(e.getMessage());
+			responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+		} catch (MeveoApiException e) {
+			log.error(e.getMessage());
+			responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+
+		return responseBuilder.build();
 	}
 }

@@ -17,16 +17,13 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -40,7 +37,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ObservableEntity
@@ -81,6 +78,14 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@ManyToOne
 	@JoinColumn(name = "INVOICING_CALENDAR_ID")
 	private Calendar invoicingCalendar;
+	
+	@ManyToOne
+	@JoinColumn(name = "TERMINATION_SCRIPT_INSTANCE_ID")
+	private ScriptInstance terminationScript;
+
+	@ManyToOne
+	@JoinColumn(name = "ACTIVATION_SCRIPT_INSTANCE_ID")
+	private ScriptInstance activationScript;
 	
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
@@ -184,5 +189,21 @@ public class ServiceTemplate extends BusinessCFEntity {
     @Override
     public ICustomFieldEntity getParentCFEntity() {
         return null;
+	}
+
+	public ScriptInstance getActivationScript() {
+		return activationScript;
+	}
+
+	public void setActivationScript(ScriptInstance activationScript) {
+		this.activationScript = activationScript;
+	}
+
+	public ScriptInstance getTerminationScript() {
+		return terminationScript;
+	}
+
+	public void setTerminationScript(ScriptInstance terminationScript) {
+		this.terminationScript = terminationScript;
 	}
 }

@@ -18,11 +18,13 @@ package org.meveo.model.catalog;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -32,6 +34,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ObservableEntity
@@ -45,6 +48,17 @@ public class OfferTemplate extends BusinessCFEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "CAT_OFFER_SERV_TEMPLATES", joinColumns = @JoinColumn(name = "OFFER_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"))
     private List<ServiceTemplate> serviceTemplates;
+    
+	@Column(name = "BOM_CODE", length = 60)
+	private String bomCode;
+	
+	@ManyToOne
+	@JoinColumn(name = "TERMINATION_SCRIPT_INSTANCE_ID")
+	private ScriptInstance terminationScript;
+
+	@ManyToOne
+	@JoinColumn(name = "SUBSCRIPTION_SCRIPT_INSTANCE_ID")
+	private ScriptInstance subscriptionScript;
 
     public List<ServiceTemplate> getServiceTemplates() {
         return serviceTemplates;
@@ -58,4 +72,28 @@ public class OfferTemplate extends BusinessCFEntity {
     public ICustomFieldEntity getParentCFEntity() {
         return null;
     }
+
+	public String getBomCode() {
+		return bomCode;
+	}
+
+	public void setBomCode(String bomCode) {
+		this.bomCode = bomCode;
+	}
+
+	public ScriptInstance getSubscriptionScript() {
+		return subscriptionScript;
+	}
+
+	public void setSubscriptionScript(ScriptInstance subscriptionScript) {
+		this.subscriptionScript = subscriptionScript;
+	}
+
+	public ScriptInstance getTerminationScript() {
+		return terminationScript;
+	}
+
+	public void setTerminationScript(ScriptInstance terminationScript) {
+		this.terminationScript = terminationScript;
+	}
 }

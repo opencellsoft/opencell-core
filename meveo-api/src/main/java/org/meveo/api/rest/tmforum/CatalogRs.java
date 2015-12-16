@@ -4,12 +4,14 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.rest.security.RSSecured;
 import org.tmf.dsmapi.catalog.resource.category.Category;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
@@ -32,7 +34,7 @@ public interface CatalogRs {
 	@GET
 	@Path("/productOffering")
 	List<ProductOffering> findProductOfferings();
-	
+
 	@GET
 	@Path("/productOffering/{id}")
 	Response findProductOfferingById(@PathParam("id") String id);
@@ -44,4 +46,9 @@ public interface CatalogRs {
 	@GET
 	@Path("/productSpecification/{id}")
 	Response findProductSpecificationById(@PathParam("id") String id);
+
+	@POST
+	@Path("/createOfferFromBOM")
+	Response createOfferFromBOM(BomOfferDto postData);
+
 }

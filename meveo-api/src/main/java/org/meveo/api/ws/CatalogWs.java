@@ -5,6 +5,8 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.catalog.BomEntityDto;
+import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
@@ -14,6 +16,7 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.response.catalog.GetBomEntityResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
@@ -189,4 +192,26 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createOrUpdateTriggeredEdr(@WebParam(name = "triggeredEdrTemplate") TriggeredEdrTemplateDto postData);
+
+	// bom
+
+	@WebMethod
+	ActionStatus createBomEntity(@WebParam(name = "bomEntity") BomEntityDto postData);
+
+	@WebMethod
+	ActionStatus updateBomEntity(@WebParam(name = "bomEntity") BomEntityDto postData);
+
+	@WebMethod
+	GetBomEntityResponseDto findBomEntity(@WebParam(name = "bomEntityCode") String bomEntityCode);
+
+	@WebMethod
+	ActionStatus removeBomEntity(@WebParam(name = "bomEntityCode") String bomEntityCode);
+
+	@WebMethod
+	ActionStatus createOrUpdateBomEntity(@WebParam(name = "bomEntity") BomEntityDto postData);
+
+	// bom offer
+
+	@WebMethod
+	ActionStatus createOfferFromBOM(@WebParam(name = "bomOffer") BomOfferDto postData);
 }

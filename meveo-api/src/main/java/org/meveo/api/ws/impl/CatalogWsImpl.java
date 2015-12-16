@@ -11,6 +11,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.catalog.BomEntityApi;
+import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.ChargeTemplateApi;
 import org.meveo.api.catalog.CounterTemplateApi;
 import org.meveo.api.catalog.OfferTemplateApi;
@@ -22,6 +24,8 @@ import org.meveo.api.catalog.TriggeredEdrApi;
 import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.catalog.BomEntityDto;
+import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
@@ -31,6 +35,7 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.response.catalog.GetBomEntityResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
@@ -52,6 +57,12 @@ import org.meveo.model.shared.DateUtils;
 @WebService(serviceName = "CatalogWs", endpointInterface = "org.meveo.api.ws.CatalogWs")
 @Interceptors({ LoggingInterceptor.class })
 public class CatalogWsImpl extends BaseWs implements CatalogWs {
+
+	@Inject
+	private BusinessOfferApi businessOfferApi;
+
+	@Inject
+	private BomEntityApi bomEntityApi;
 
 	@Inject
 	private TriggeredEdrApi triggeredEdrApi;
@@ -285,7 +296,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetOneShotChargeTemplateResponseDto result = new GetOneShotChargeTemplateResponseDto();
 
 		try {
-			result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser().getProvider()));
+			result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -301,13 +313,15 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(String languageCode, String countryCode, String currencyCode, String sellerCode, String date) {
+	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(String languageCode, String countryCode,
+			String currencyCode, String sellerCode, String date) {
 		Date subscriptionDate = DateUtils.parseDateWithPattern(date, "yyyy-MM-dd");
 
 		try {
-			return oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode, subscriptionDate, getCurrentUser());
+			return oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode,
+					subscriptionDate, getCurrentUser());
 		} catch (Exception e) {
-			log.error("error occurred while getting list oneShotCharge with price ",e);
+			log.error("error occurred while getting list oneShotCharge with price ", e);
 			return null;
 		}
 	}
@@ -457,7 +471,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetRecurringChargeTemplateResponseDto result = new GetRecurringChargeTemplateResponseDto();
 
 		try {
-			result.setRecurringChargeTemplate(recurringChargeTemplateApi.find(recurringChargeTemplateCode, getCurrentUser().getProvider()));
+			result.setRecurringChargeTemplate(recurringChargeTemplateApi.find(recurringChargeTemplateCode,
+					getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -600,25 +615,25 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			usageChargeTemplateApi.create(postData, getCurrentUser());
 		} catch (EJBTransactionRolledbackException e) {
 			Throwable t = e.getCause();
-		    while ((t != null) && !(t instanceof ConstraintViolationException)) {
-		        t = t.getCause();
-		    }
-		    if (t instanceof ConstraintViolationException) {
-		    	ConstraintViolationException cve = (ConstraintViolationException) (t);
-		    	Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
-		    	String errMsg = "";
-		    	for (ConstraintViolation<?> cv : violations) {		    		
-		    		errMsg  += cv.getPropertyPath() + " " + cv.getMessage() + ",";
-		    	}
-		    	errMsg = errMsg.substring(0, errMsg.length()-1);
-		    	result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
+			while ((t != null) && !(t instanceof ConstraintViolationException)) {
+				t = t.getCause();
+			}
+			if (t instanceof ConstraintViolationException) {
+				ConstraintViolationException cve = (ConstraintViolationException) (t);
+				Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
+				String errMsg = "";
+				for (ConstraintViolation<?> cv : violations) {
+					errMsg += cv.getPropertyPath() + " " + cv.getMessage() + ",";
+				}
+				errMsg = errMsg.substring(0, errMsg.length() - 1);
+				result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
 				result.setStatus(ActionStatusEnum.FAIL);
-				result.setMessage(errMsg);   
-		    } else {
-		    	result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+				result.setMessage(errMsg);
+			} else {
+				result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 				result.setStatus(ActionStatusEnum.FAIL);
 				result.setMessage(e.getMessage());
-		    }
+			}
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -641,25 +656,25 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			usageChargeTemplateApi.update(postData, getCurrentUser());
 		} catch (EJBTransactionRolledbackException e) {
 			Throwable t = e.getCause();
-		    while ((t != null) && !(t instanceof ConstraintViolationException)) {
-		        t = t.getCause();
-		    }
-		    if (t instanceof ConstraintViolationException) {
-		    	ConstraintViolationException cve = (ConstraintViolationException) (t);
-		    	Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
-		    	String errMsg = "";
-		    	for (ConstraintViolation<?> cv : violations) {		    		
-		    		errMsg  += cv.getPropertyPath() + " " + cv.getMessage() + ",";
-		    	}
-		    	errMsg = errMsg.substring(0, errMsg.length()-1);
-		    	result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
+			while ((t != null) && !(t instanceof ConstraintViolationException)) {
+				t = t.getCause();
+			}
+			if (t instanceof ConstraintViolationException) {
+				ConstraintViolationException cve = (ConstraintViolationException) (t);
+				Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
+				String errMsg = "";
+				for (ConstraintViolation<?> cv : violations) {
+					errMsg += cv.getPropertyPath() + " " + cv.getMessage() + ",";
+				}
+				errMsg = errMsg.substring(0, errMsg.length() - 1);
+				result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
 				result.setStatus(ActionStatusEnum.FAIL);
-				result.setMessage(errMsg);   
-		    } else {
-		    	result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+				result.setMessage(errMsg);
+			} else {
+				result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 				result.setStatus(ActionStatusEnum.FAIL);
 				result.setMessage(e.getMessage());
-		    }
+			}
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -679,7 +694,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		GetUsageChargeTemplateResponseDto result = new GetUsageChargeTemplateResponseDto();
 
 		try {
-			result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode, getCurrentUser().getProvider()));
+			result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -799,7 +815,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		PricePlanMatrixesResponseDto result = new PricePlanMatrixesResponseDto();
 
 		try {
-			result.getPricePlanMatrixes().setPricePlanMatrix(pricePlanApi.list(eventCode, getCurrentUser().getProvider()));
+			result.getPricePlanMatrixes().setPricePlanMatrix(
+					pricePlanApi.list(eventCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -816,7 +833,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
 	@Override
 	public ActionStatus createOrUpdateOfferTemplate(OfferTemplateDto postData) {
-		
+
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -834,7 +851,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdateUsageChargeTemplate(UsageChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -843,25 +860,25 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			usageChargeTemplateApi.createOrUpdate(postData, getCurrentUser());
 		} catch (EJBTransactionRolledbackException e) {
 			Throwable t = e.getCause();
-		    while ((t != null) && !(t instanceof ConstraintViolationException)) {
-		        t = t.getCause();
-		    }
-		    if (t instanceof ConstraintViolationException) {
-		    	ConstraintViolationException cve = (ConstraintViolationException) (t);
-		    	Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
-		    	String errMsg = "";
-		    	for (ConstraintViolation<?> cv : violations) {		    		
-		    		errMsg  += cv.getPropertyPath() + " " + cv.getMessage() + ",";
-		    	}
-		    	errMsg = errMsg.substring(0, errMsg.length()-1);
-		    	result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
+			while ((t != null) && !(t instanceof ConstraintViolationException)) {
+				t = t.getCause();
+			}
+			if (t instanceof ConstraintViolationException) {
+				ConstraintViolationException cve = (ConstraintViolationException) (t);
+				Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
+				String errMsg = "";
+				for (ConstraintViolation<?> cv : violations) {
+					errMsg += cv.getPropertyPath() + " " + cv.getMessage() + ",";
+				}
+				errMsg = errMsg.substring(0, errMsg.length() - 1);
+				result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
 				result.setStatus(ActionStatusEnum.FAIL);
-				result.setMessage(errMsg);   
-		    } else {
-		    	result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+				result.setMessage(errMsg);
+			} else {
+				result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 				result.setStatus(ActionStatusEnum.FAIL);
 				result.setMessage(e.getMessage());
-		    }
+			}
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -875,11 +892,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdateTriggeredEdr(TriggeredEdrTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			triggeredEdrApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
@@ -895,11 +912,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdateServiceTemplate(ServiceTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			serviceTemplateApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
@@ -915,7 +932,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdateRecurringChargeTemplate(RecurringChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -935,11 +952,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdatePricePlan(PricePlanDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			pricePlanApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
@@ -955,7 +972,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdateOneShotChargeTemplate(OneShotChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -975,13 +992,133 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus createOrUpdateCounterTemplate(CounterTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
+
 		try {
 			counterTemplateApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createBomEntity(BomEntityDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			bomEntityApi.create(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateBomEntity(BomEntityDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			bomEntityApi.update(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public GetBomEntityResponseDto findBomEntity(String bomEntityCode) {
+		GetBomEntityResponseDto result = new GetBomEntityResponseDto();
+
+		try {
+			result.setBomEntity(bomEntityApi.find(bomEntityCode, getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus removeBomEntity(String bomEntityCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			bomEntityApi.remove(bomEntityCode, getCurrentUser().getProvider());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createOrUpdateBomEntity(BomEntityDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			bomEntityApi.createOrUpdate(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public ActionStatus createOfferFromBOM(BomOfferDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			businessOfferApi.createOfferFromBOM(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
