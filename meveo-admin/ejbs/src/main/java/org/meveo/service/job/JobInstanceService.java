@@ -388,9 +388,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 	}
 
 	public JobInstance findByCode(String code,Provider provider) {
-		QueryBuilder qb = new QueryBuilder(JobInstance.class, "t",Arrays.asList("customFields"),null);
-		qb.addCriterion("t.code","=", code, true); 
-		qb.addCriterionEntity("provider", provider);
+		QueryBuilder qb = new QueryBuilder(JobInstance.class, "t",Arrays.asList("customFields"),provider);
+		qb.addCriterion("t.code","=", code, true); 		
 		try {
 			return (JobInstance) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
