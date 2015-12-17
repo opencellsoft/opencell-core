@@ -14,8 +14,8 @@
 	</ui:define>
 	<ui:define name="body">
 		<hf:formPanel showFormButtons="#{false}" edit="#{false}"
-			label="#{messages['accountOperation_I.form']}"
-			backingBean="#{recordedInvoiceBean}">
+			label="#{messages['accountOperation_I.form']}" 
+			backingBean="#{recordedInvoiceBean}" id="formPanelOccInvoice">
 				<hf:formField
 					label="#{messages['accountOperation.transactionDate']}"
 					field="transactionDate" disabled="true" />
@@ -36,19 +36,37 @@
 				<hf:formField label="#{messages['accountOperation.amountHT']}"
 					field="amountWithoutTax" disabled="true" />
 				<hf:formField label="#{messages['accountOperation.amountTax']}"
-					field="taxAmount" disabled="true"/>
-             <f:facet name="buttons">
-				<p:commandButton action="#{recordedInvoiceBean.addLitigation()}"
+					field="taxAmount" disabled="true"/> 
+               <f:facet name="buttons">
+			   <p:tooltip for="litigation" value="#{messages['action.update']}"
+					showEffect="slide" hideEffect="slide" />
+			   <p:commandButton action="#{recordedInvoiceBean.addLitigation()}" id="litigation"
 					value="#{messages['accountOperation_I.buttonAddLitigation']}"
-					rendered="#{recordedInvoice.matchingStatus.toString() == 'O'}" />
-				<p:commandButton action="#{recordedInvoiceBean.cancelLitigation()}"
+					rendered="#{recordedInvoice.matchingStatus.toString() == 'O'}" update=":formPanelOccInvoice:formId">
+                        <p:confirm header="#{messages['message.confirmation']}"
+						message="#{messages['message.confirm.litigation']}"
+						icon="ui-icon-alert"/>
+					</p:commandButton>	
+			   <p:tooltip for="cancelLitigation" value="#{messages['action.update']}"
+					showEffect="slide" hideEffect="slide" />					
+				<p:commandButton action="#{recordedInvoiceBean.cancelLitigation()}" id="cancelLitigation"
 					value="#{messages['accountOperation_I.buttonCancelLitigation']}"
-					rendered="#{recordedInvoice.matchingStatus.toString() == 'I'}" />
+					rendered="#{recordedInvoice.matchingStatus.toString() == 'I'}" update=":formPanelOccInvoice:formId">
+					<p:confirm header="#{messages['message.confirmation']}"
+						message="#{messages['message.confirm.cancelLitigation']}"
+						icon="ui-icon-alert"/>
+				</p:commandButton>
                 <p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
                     <f:param name="customerAccountId" value="#{recordedInvoice.getCustomerAccount().getId()}" />
                     <f:param name="edit" value="false" />
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                 </p:button> 
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+			<p:commandButton value="#{messages['commons.yes']}" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="#{messages['commons.no']}" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		   </p:confirmDialog>
 			</f:facet>
 		</hf:formPanel>
 	</ui:define>
