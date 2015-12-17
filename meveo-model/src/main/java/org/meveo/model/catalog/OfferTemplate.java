@@ -16,6 +16,7 @@
  */
 package org.meveo.model.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -43,15 +44,15 @@ import org.meveo.model.scripts.ScriptInstance;
 @Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")
 public class OfferTemplate extends BusinessCFEntity {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "CAT_OFFER_SERV_TEMPLATES", joinColumns = @JoinColumn(name = "OFFER_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"))
-    private List<ServiceTemplate> serviceTemplates;
-    
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CAT_OFFER_SERV_TEMPLATES", joinColumns = @JoinColumn(name = "OFFER_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"))
+	private List<ServiceTemplate> serviceTemplates;
+
 	@Column(name = "BOM_CODE", length = 60)
 	private String bomCode;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "TERMINATION_SCRIPT_INSTANCE_ID")
 	private ScriptInstance terminationScript;
@@ -60,18 +61,18 @@ public class OfferTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "SUBSCRIPTION_SCRIPT_INSTANCE_ID")
 	private ScriptInstance subscriptionScript;
 
-    public List<ServiceTemplate> getServiceTemplates() {
-        return serviceTemplates;
-    }
+	public List<ServiceTemplate> getServiceTemplates() {
+		return serviceTemplates;
+	}
 
-    public void setServiceTemplates(List<ServiceTemplate> serviceTemplates) {
-        this.serviceTemplates = serviceTemplates;
-    }
+	public void setServiceTemplates(List<ServiceTemplate> serviceTemplates) {
+		this.serviceTemplates = serviceTemplates;
+	}
 
-    @Override
-    public ICustomFieldEntity getParentCFEntity() {
-        return null;
-    }
+	@Override
+	public ICustomFieldEntity getParentCFEntity() {
+		return null;
+	}
 
 	public String getBomCode() {
 		return bomCode;
@@ -95,5 +96,13 @@ public class OfferTemplate extends BusinessCFEntity {
 
 	public void setTerminationScript(ScriptInstance terminationScript) {
 		this.terminationScript = terminationScript;
+	}
+
+	public void addServiceTemplate(ServiceTemplate serviceTemplate) {
+		if (getServiceTemplates() == null) {
+			serviceTemplates = new ArrayList<ServiceTemplate>();
+		}
+
+		serviceTemplates.add(serviceTemplate);
 	}
 }

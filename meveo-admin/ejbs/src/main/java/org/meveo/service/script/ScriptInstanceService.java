@@ -346,7 +346,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	 */
 	private  void execute(Class<ScriptInterface> scriptClass, Map<String, Object> context,Provider provider,User userExecutor) throws InstantiationException, IllegalAccessException, BusinessException {
 			ScriptInterface script = scriptClass.newInstance();
-			script.execute(context, getCurrentProvider(),userExecutor);		
+			script.execute(context, provider,userExecutor);		
 	}
 
 	/**
