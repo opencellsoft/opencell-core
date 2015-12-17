@@ -53,6 +53,7 @@ public class BomEntityApi extends BaseApi {
 			bomEntity.setCode(postData.getBomCode());
 			bomEntity.setOfferTemplate(offerTemplate);
 			bomEntity.setCreationScript(scriptInstance);
+			bomEntity.setDescription(postData.getDescription());
 
 			bomEntityService.create(bomEntity, currentUser, currentUser.getProvider());
 		} else {
@@ -83,6 +84,7 @@ public class BomEntityApi extends BaseApi {
 			ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCreationScriptCode(),
 					currentUser.getProvider());
 
+			bomEntity.setDescription(postData.getDescription());
 			bomEntity.setOfferTemplate(offerTemplate);
 			bomEntity.setCreationScript(scriptInstance);
 

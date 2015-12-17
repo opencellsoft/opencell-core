@@ -213,6 +213,9 @@ public class SwaggerBootStrap extends HttpServlet {
 				.description("Manages billing run")
 				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Invoicing")));
 
+		swagger.tag(new Tag().name("bomEntity").description("Operations about bomEntity")
+				.externalDocs(new ExternalDocs("Find out more", "https://www.assembla.com/spaces/meveo/wiki/Catalog")));
+
 		context.setAttribute("swagger", swagger);
 	}
 }
