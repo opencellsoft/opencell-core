@@ -68,7 +68,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;${TaxValue}&quot;)</td>
+	<td>css=li:contains(&quot;${TaxValue1}&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -124,12 +124,12 @@
 <tr>
 	<td>waitForText</td>
 	<td>//tbody[@id='tabView:datatable_invoiceSubCategoryCountries_results_data']/tr/td[3]</td>
-	<td>Tax${TaxValue}</td>
+	<td>Tax${TaxValue1}</td>
 </tr>
 <tr>
 	<td>assertText</td>
 	<td>//tbody[@id='tabView:datatable_invoiceSubCategoryCountries_results_data']/tr/td[3]</td>
-	<td>Tax${TaxValue}</td>
+	<td>Tax${TaxValue1}</td>
 </tr>
 <tr>
 	<td>assertText</td>
@@ -161,7 +161,6 @@
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
 </tr>
-
 </tbody></table>
 </body>
 </html>
