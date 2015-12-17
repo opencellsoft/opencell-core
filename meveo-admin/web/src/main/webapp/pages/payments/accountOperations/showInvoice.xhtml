@@ -18,25 +18,25 @@
 			backingBean="#{recordedInvoiceBean}">
 				<hf:formField
 					label="#{messages['accountOperation.transactionDate']}"
-					field="transactionDate" />
+					field="transactionDate" disabled="true" />
 				<hf:formField label="#{messages['accountOperation.matchingStatus']}"
-					field="matchingStatus" isMessage="true" />
+					field="matchingStatus" isMessage="true" disabled="true" />
 				<hf:formField label="#{messages['accountOperation.invoiceNumber']}"
-					field="reference" />
+					field="reference" disabled="true" />
 				<hf:formField label="#{messages['accountOperation.invoiceDate']}"
-					field="invoiceDate" />
+					field="invoiceDate" disabled="true" />
 				<hf:formField label="#{messages['accountOperation.dueDate']}"
-					field="dueDate" />
+					field="dueDate" disabled="true" />
 
 				<hf:formField label="#{messages['accountOperation.occDescription']}"
-					field="occDescription" size="50" maxlength="50" />
+					field="occDescription" size="50" maxlength="50" disabled="true" />
 
 				<hf:formField label="#{messages['accountOperation.amountTTC']}"
-					field="amount" />
+					field="amount" disabled="true"/>
 				<hf:formField label="#{messages['accountOperation.amountHT']}"
-					field="amountWithoutTax" />
+					field="amountWithoutTax" disabled="true" />
 				<hf:formField label="#{messages['accountOperation.amountTax']}"
-					field="taxAmount" />
+					field="taxAmount" disabled="true"/>
              <f:facet name="buttons">
 				<p:commandButton action="#{recordedInvoiceBean.addLitigation()}"
 					value="#{messages['accountOperation_I.buttonAddLitigation']}"
