@@ -29,7 +29,7 @@ public class BomEntityDto extends BaseDto {
 	@XmlElement(required = true)
 	private String offerTemplateCode;
 
-	private String scriptInstanceCode;
+	private String creationScriptCode;
 
 	public String getOfferTemplateCode() {
 		return offerTemplateCode;
@@ -37,14 +37,6 @@ public class BomEntityDto extends BaseDto {
 
 	public void setOfferTemplateCode(String offerTemplateCode) {
 		this.offerTemplateCode = offerTemplateCode;
-	}
-
-	public String getScriptInstanceCode() {
-		return scriptInstanceCode;
-	}
-
-	public void setScriptInstanceCode(String scriptInstanceCode) {
-		this.scriptInstanceCode = scriptInstanceCode;
 	}
 
 	public String getBomCode() {
@@ -58,7 +50,7 @@ public class BomEntityDto extends BaseDto {
 	@Override
 	public String toString() {
 		return "BomEntityDto [bomCode=" + bomCode + ", description=" + description + ", offerTemplateCode="
-				+ offerTemplateCode + ", scriptInstanceCode=" + scriptInstanceCode + "]";
+				+ offerTemplateCode + ", creationScriptCode=" + creationScriptCode + "]";
 	}
 
 	public String getDescription() {
@@ -67,6 +59,14 @@ public class BomEntityDto extends BaseDto {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getCreationScriptCode() {
+		return creationScriptCode;
+	}
+
+	public void setCreationScriptCode(String creationScriptCode) {
+		this.creationScriptCode = creationScriptCode;
 	}
 
 }

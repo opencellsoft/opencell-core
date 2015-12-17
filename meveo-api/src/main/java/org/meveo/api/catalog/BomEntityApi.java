@@ -46,13 +46,13 @@ public class BomEntityApi extends BaseApi {
 				throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateCode());
 			}
 
-			ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(),
+			ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCreationScriptCode(),
 					currentUser.getProvider());
 
 			BOMEntity bomEntity = new BOMEntity();
 			bomEntity.setCode(postData.getBomCode());
 			bomEntity.setOfferTemplate(offerTemplate);
-			bomEntity.setScriptInstance(scriptInstance);
+			bomEntity.setCreationScript(scriptInstance);
 
 			bomEntityService.create(bomEntity, currentUser, currentUser.getProvider());
 		} else {
@@ -80,11 +80,11 @@ public class BomEntityApi extends BaseApi {
 				throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateCode());
 			}
 
-			ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(),
+			ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCreationScriptCode(),
 					currentUser.getProvider());
 
 			bomEntity.setOfferTemplate(offerTemplate);
-			bomEntity.setScriptInstance(scriptInstance);
+			bomEntity.setCreationScript(scriptInstance);
 
 			bomEntityService.update(bomEntity, currentUser);
 		} else {
@@ -109,8 +109,8 @@ public class BomEntityApi extends BaseApi {
 				if (bomEntity.getOfferTemplate() != null) {
 					bomEntityDto.setOfferTemplateCode(bomEntity.getOfferTemplate().getCode());
 				}
-				if (bomEntity.getScriptInstance() != null) {
-					bomEntityDto.setScriptInstanceCode(bomEntity.getScriptInstance().getCode());
+				if (bomEntity.getCreationScript() != null) {
+					bomEntityDto.setCreationScriptCode(bomEntity.getCreationScript().getCode());
 				}
 
 				return bomEntityDto;
