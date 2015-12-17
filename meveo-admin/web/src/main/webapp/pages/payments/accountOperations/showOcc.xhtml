@@ -12,16 +12,16 @@
 	</ui:define>
     <ui:define name="body">
         <hf:formPanel showFormButtons="#{false}" edit="#{false}" label="#{messages['accountOperation.form']}" backingBean="#{accountOperationBean}">
-            <hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
-            <hf:formField label="#{messages['accountOperation.type']}" field="type" />
-            <hf:formField label="#{messages['accountOperation.occCode']}" field="occCode" />
-            <hf:formField label="#{messages['accountOperation.reference']}" field="reference" />
-            <hf:formField label="#{messages['accountOperation.creationDate']}" field="transactionDate" />
-            <hf:formField label="#{messages['accountOperation.valueDate']}" field="transactionDate" />
+            <hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" disabled="true" />
+            <hf:formField label="#{messages['accountOperation.type']}" field="type" disabled="true" />
+            <hf:formField label="#{messages['accountOperation.occCode']}" field="occCode" disabled="true" />
+            <hf:formField label="#{messages['accountOperation.reference']}" field="reference" disabled="true" />
+            <hf:formField label="#{messages['accountOperation.creationDate']}" field="transactionDate" disabled="true"/>
+            <hf:formField label="#{messages['accountOperation.valueDate']}" field="transactionDate" disabled="true" />
 
-            <hf:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" size="50" maxlength="50" />
+            <hf:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" size="50" maxlength="50" disabled="true" />
 
-            <hf:formField label="#{messages['accountOperation.amount']}" field="amount" />
+            <hf:formField label="#{messages['accountOperation.amount']}" field="amount" disabled="true" />
 
             <f:facet name="buttons">
                 <p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
