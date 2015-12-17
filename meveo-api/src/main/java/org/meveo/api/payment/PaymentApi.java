@@ -89,7 +89,7 @@ public class PaymentApi extends BaseApi {
 		
 		PaymentMethodEnum paymentMethod = null;
 		try {
-			PaymentMethodEnum.valueOf(paymentDto.getPaymentMethod());
+			paymentMethod=PaymentMethodEnum.valueOf(paymentDto.getPaymentMethod());
 		} catch (Exception e) {
 			throw new InvalidEnumValue(PaymentMethodEnum.class.getName(), paymentDto.getPaymentMethod());
 		}
