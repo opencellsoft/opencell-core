@@ -29,7 +29,7 @@ public class BOMEntity extends BusinessEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
-	private ScriptInstance scriptInstance;
+	private ScriptInstance creationScript;
 
 	public OfferTemplate getOfferTemplate() {
 		return offerTemplate;
@@ -39,12 +39,12 @@ public class BOMEntity extends BusinessEntity {
 		this.offerTemplate = offerTemplate;
 	}
 
-	public ScriptInstance getScriptInstance() {
-		return scriptInstance;
+	public ScriptInstance getCreationScript() {
+		return creationScript;
 	}
 
-	public void setScriptInstance(ScriptInstance scriptInstance) {
-		this.scriptInstance = scriptInstance;
+	public void setCreationScript(ScriptInstance creationScript) {
+		this.creationScript = creationScript;
 	}
 
 }
