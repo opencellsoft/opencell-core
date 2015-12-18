@@ -141,7 +141,6 @@ public class CustomFieldService<P extends IEntity> extends PersistenceService<P>
 					cfInstance.setSeller((Seller) entity);
 				}
 				entity.getCustomFields().put(code, cfInstance);
-				update((P) entity, user);
 				log.debug("create CFI and db persist");
 			}
 			result = cfInstance;
