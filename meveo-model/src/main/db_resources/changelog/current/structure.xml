@@ -984,5 +984,10 @@
             initiallyDeferred="false" tableName="cat_bom_entity" />						
 
 	</changeSet>
+	
+	  <changeSet id="#1362-20151218" author="Mbarek">
+	    <modifyDataType columnName="MANDATE_IDENTIFICATION" newDataType="VARCHAR(256)"
+				tableName="AR_CUSTOMER_ACCOUNT" /> 																																			
+		</changeSet>
     
 </databaseChangeLog>
