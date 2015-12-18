@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-=======
 <con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
@@ -42495,7 +42492,6 @@ for( testCase in testSuite.getTestCaseList() ) {
       </ws:createBillingAccount>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4e1e7802-23b3-4b72-990d-161a870c732d"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create User Account" id="33f47368-0473-4ee6-879e-c1dab8afb623"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createUserAccount</con:operation><con:request name="Create User Account" id="226fafba-b1a0-4f10-ba78-41d2af0965b5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
->>>>>>> branch 'master' of https://git@git.assembla.com/meveo.git
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUserAccount>
@@ -42503,7 +42499,6 @@ for( testCase in testSuite.getTestCaseList() ) {
          	 <billingAccount>${#TestSuite#ticket}_BA_1</billingAccount>
            <externalRef1>EXTREF1</externalRef1>
            <externalRef2>EXTREF2</externalRef2>
-           <!-- <primaryContact>DEMO_ADMIN</primaryContact> -->
            <name>
                <title>M</title>
                <firstName>First Name</firstName>
@@ -42511,7 +42506,7 @@ for( testCase in testSuite.getTestCaseList() ) {
            </name>
            <address>
                <address1>adress 1</address1>
-               <address2/>
+               <address2></address2>
                <address3>adress 3</address3>
                <zipCode>21000</zipCode>
                <city>Dijon</city>
@@ -42520,9 +42515,6 @@ for( testCase in testSuite.getTestCaseList() ) {
          </userAccount>
       </ws:createUserAccount>
    </soapenv:Body>
-<<<<<<< HEAD
-</soapenv:Envelope>
-=======
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8aa33399-1ee5-4ca0-beda-0ffa67146405"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="f48ef23a-cb79-4579-96d7-ecf2ec4a4ec7" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Find/Check User Account Status" searchProperties="true"><con:settings/><con:testStep type="request" name="Find and check User Account Status 1" id="db0da119-e066-4c1d-bbc4-88e0349ccb7e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>findUserAccount</con:operation><con:request name="Find and check User Account Status 1" id="e9509456-8e26-4f12-81c1-fefeda28b0e5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -43704,4 +43696,3 @@ public class ${#TestSuite#ticket}BOMCreationScript extends Script {
       </ws:findDescriptions>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e16cff91-bc17-4095-a7e2-3facf3524fe7"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1199</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
->>>>>>> branch 'master' of https://git@git.assembla.com/meveo.git
