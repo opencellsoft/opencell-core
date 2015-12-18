@@ -19,6 +19,7 @@ import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
+import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
@@ -240,6 +241,14 @@ public interface AccountWs extends IBaseWs {
 	@WebMethod
 	ActionStatus unMatchingOperations(
 			@WebParam(name = "unMatchingOperationRequest") UnMatchingOperationRequestDto postData);
+	
+	@WebMethod
+	ActionStatus addLitigation(
+			@WebParam(name = "addLitigationRequest") LitigationRequestDto postData);
+	
+	@WebMethod
+	ActionStatus cancelLitigation(
+			@WebParam(name = "cancelLitigationRequest") LitigationRequestDto postData);
 
 	// dunning
 

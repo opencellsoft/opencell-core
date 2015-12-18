@@ -9,6 +9,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
@@ -103,6 +104,42 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 			log.error("error generated while unMatching account operation ", e);
 		}
 
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus addLitigation(LitigationRequestDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			accountOperationApi.addLitigation(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error occurred while adding Litigation account operation ", e);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error generated while adding Litigation account operation ", e);
+		}
+		log.debug("RESPONSE={}", result);
+		return result;
+	}
+	
+	@Override
+	public ActionStatus cancelLitigation(LitigationRequestDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			accountOperationApi.cancelLitigation(postData, getCurrentUser());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error occurred while cancelling litigation account operation ", e);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			log.error("error generated while cancelling Litigation account operation ", e);
+		}
 		log.debug("RESPONSE={}", result);
 		return result;
 	}

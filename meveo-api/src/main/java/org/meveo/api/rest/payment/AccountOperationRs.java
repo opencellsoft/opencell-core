@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
@@ -40,6 +41,14 @@ public interface AccountOperationRs extends IBaseRs {
 	@POST
 	@Path("/")
 	ActionStatus unMatchingOperations(UnMatchingOperationRequestDto postData);
+	
+	@POST
+	@Path("/")
+	ActionStatus addLitigation(LitigationRequestDto postData);
+	
+	@POST
+	@Path("/")
+	ActionStatus cancelLitigation(LitigationRequestDto postData);
 
 
 }

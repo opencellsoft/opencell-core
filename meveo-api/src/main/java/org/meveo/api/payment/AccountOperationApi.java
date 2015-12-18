@@ -12,6 +12,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingAmountsDto;
@@ -32,12 +33,14 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.RejectedType;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
+import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 /**
  * @author Edward P. Legaspi
@@ -56,6 +59,10 @@ public class AccountOperationApi extends BaseApi {
 
 	@Inject
 	private MatchingAmountService matchingAmountService;
+	
+	@Inject
+	private RecordedInvoiceService recordedInvoiceService;
+	
 
 	public void create(AccountOperationDto postData, User currentUser) throws MeveoApiException {
 		
@@ -298,6 +305,72 @@ public class AccountOperationApi extends BaseApi {
 			}
 			for(Long matchingCodeId : matchingCodesToUnmatch){
 				matchingCodeService.unmatching(matchingCodeId,currentUser);
+			}	
+		}
+		
+		public void addLitigation(LitigationRequestDto postData, User currentUser) throws BusinessException,Exception {
+			if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
+				missingParameters.add("customerAccountCode");				
+			}
+			if (StringUtils.isBlank(postData.getAccountOperationId())) {
+				missingParameters.add("accountOperationId");				
+			}
+			if(!missingParameters.isEmpty()){
+				throw new MissingParameterException(getMissingParametersExceptionMessage());
+			}
+			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode(),currentUser.getProvider());
+			if (customerAccount == null) {
+				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
+			}
+			AccountOperation accountOperation = null;
+			try{
+				accountOperation = accountOperationService.findById(postData.getAccountOperationId(),currentUser.getProvider());
+			}catch(Exception e){}
+			if (accountOperation == null) {
+				throw new EntityDoesNotExistsException(AccountOperation.class, postData.getAccountOperationId());
+			}
+			if(!customerAccount.getAccountOperations().contains(accountOperation)){
+				throw new BusinessException("The operationId " + postData.getAccountOperationId()
+						+ " is not for the customerAccount "+customerAccount.getCode());
+			}
+			if(accountOperation instanceof RecordedInvoice){
+				recordedInvoiceService.addLitigation(accountOperation.getId(), currentUser);
+			}else{
+				throw new BusinessException("The operationId " + postData.getAccountOperationId()
+						+ " should be invoice");
+			}	
+		}
+		
+		public void cancelLitigation(LitigationRequestDto postData, User currentUser) throws BusinessException,Exception {
+			if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
+				missingParameters.add("customerAccountCode");				
+			}
+			if (StringUtils.isBlank(postData.getAccountOperationId())) {
+				missingParameters.add("accountOperationId");				
+			}
+			if(!missingParameters.isEmpty()){
+				throw new MissingParameterException(getMissingParametersExceptionMessage());
+			}
+			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode(),currentUser.getProvider());
+			if (customerAccount == null) {
+				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
+			}
+			AccountOperation accountOperation = null;
+			try{
+				accountOperation = accountOperationService.findById(postData.getAccountOperationId(),currentUser.getProvider());
+			}catch(Exception e){}
+			if (accountOperation == null) {
+				throw new EntityDoesNotExistsException(AccountOperation.class, postData.getAccountOperationId());
+			}
+			if(!customerAccount.getAccountOperations().contains(accountOperation)){
+				throw new BusinessException("The operationId " + postData.getAccountOperationId()
+						+ " is not for the customerAccount "+customerAccount.getCode());
+			}
+			if(accountOperation instanceof RecordedInvoice){
+				recordedInvoiceService.cancelLitigation(accountOperation.getId(), currentUser);
+			}else{
+				throw new BusinessException("The operationId " + postData.getAccountOperationId()
+						+ " should be invoice");
 			}	
 		}
 

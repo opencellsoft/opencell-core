@@ -43,7 +43,6 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
@@ -70,9 +69,6 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	@Inject
 	private MatchingCodeService matchingCodeService;
 	
-	@Inject
-	private MatchingAmountService matchingAmountService;
-
 	private List<PartialMatchingOccToSelect> partialMatchingOps = new ArrayList<PartialMatchingOccToSelect>();
 
 	private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
