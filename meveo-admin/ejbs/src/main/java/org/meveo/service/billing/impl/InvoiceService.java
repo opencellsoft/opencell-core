@@ -336,7 +336,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	public synchronized long getNextValue(Provider provider, User currentUser) {
 		long result = 0;
-
 		Date now = new Date();
 		if (provider != null) {
 		    
@@ -355,8 +354,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 } catch (BusinessException e) {
                     log.error("Failed to set custom field " + INVOICE_SEQUENCE + " value on provider", e);
                 }
-			} else {
-				long currentInvoiceNbre = provider.getCurrentInvoiceNb() != null ? provider.getCurrentInvoiceNb() : 0;
+			} else {   
+				long currentInvoiceNbre = provider.getCurrentInvoiceNb()!= null ? provider.getCurrentInvoiceNb() : 0;
 				result = 1 + currentInvoiceNbre;
 				provider.setCurrentInvoiceNb(result);
 			}
@@ -705,6 +704,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_PATERN);
 		return dateFormat.format(invoiceDate);
 	}
+	
 	public  Map<String,List<String>> getJasperFilesNotFound(){
 		Map<String,List<String>> jasperFiles = new HashMap<String, List<String>>(); 
 		return jasperFiles;
@@ -876,9 +876,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (seller != null) {
 			if (seller.getInvoiceSequenceSize() != null && seller.getInvoiceSequenceSize()!=0) {
 				result = seller.getInvoiceSequenceSize();
-			} else {
-				if (seller.getProvider().getInvoiceSequenceSize() != null && seller.getInvoiceSequenceSize()!=0) {
-					result = seller.getProvider().getInvoiceSequenceSize();
+			} else { 
+				Provider provider=seller.getProvider();
+				if (provider.getInvoiceSequenceSize() != null && provider.getInvoiceSequenceSize()!=0) {
+					result = provider.getInvoiceSequenceSize();
 				}
 			}
 		}
