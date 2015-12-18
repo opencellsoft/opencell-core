@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -17,7 +14,7 @@
 
 		<hftl:entityPopup id="searchMeasurableQuantity"
 			header="#{messages['measurableQuantity.popup.header']}"
-			updateField=":chartFormPanel:formChat:measurableQuantityId"
+			updateField=":formChat:measurableQuantityId"
 			selection="#{lineChartBean.entity.measurableQuantity}"
 			backingBean="#{measurableQuantityBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -28,7 +25,7 @@
 
 		<hftl:entityPopup id="searchRole"
 			header="#{messages['role.userRolePanel']}"
-			updateField=":chartFormPanel:formChat:roleId"
+			updateField=":formChat:roleId"
 			selection="#{lineChartBean.entity.role}"
 			backingBean="#{userRoleBean}"
 			searchField1Label="#{messages['commons.name']}" searchField1="name"
@@ -36,58 +33,58 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" />
 
-		<hf:formPanel id="chartFormPanel" formId="formChat"
+		<hftl:formPanel formId="formChat"
 			label="#{messages['chart.panel']}" backingBean="#{lineChartBean}"
 			columns="2">
 
-			<hf:formField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" />
 
-			<hf:formField id="measurableQuantityId"
+			<hftl:formField id="measurableQuantityId"
 				label="#{messages['chart.measurableQuantity']}"
 				field="measurableQuantity" valueLabelField="code" required="true"
 				popup="true" popupId="searchMeasurableQuantity" />
 
-			<hf:formField id="roleId" label="#{messages['chart.role']}"
+			<hftl:formField id="roleId" label="#{messages['chart.role']}"
 				field="role" valueLabelField="name" required="false" popup="true"
 				popupId="searchRole" rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
-			<hf:formField label="#{messages['chart.style']}" field="style" />
-			<hf:formField label="#{messages['chart.styleClass']}"
+			<hftl:formField label="#{messages['chart.style']}" field="style" />
+			<hftl:formField label="#{messages['chart.styleClass']}"
 				field="styleClass" />
-			<hf:formField label="#{messages['chart.extender']}" field="extender" />
-			<hf:formField label="#{messages['lineChart.filled']}" field="filled" />
-			<hf:formField label="#{messages['lineChart.legendposition']}"
+			<hftl:formField label="#{messages['chart.extender']}" field="extender" />
+			<hftl:formField label="#{messages['lineChart.filled']}" field="filled" />
+			<hftl:formField label="#{messages['lineChart.legendposition']}"
 				field="legendPosition" />
 			<hftl:decorateFormField fieldId="color" label="#{messages['pieChart.seriesColors']}" >
 				<p:colorPicker id="color" value="#{lineChartBean.entity.seriesColors}" />
 			</hftl:decorateFormField>
-			<hf:formField label="#{messages['lineChart.shadow']}" field="shadow" />
-			<hf:formField label="#{messages['lineChart.minX']}" field="minX" />
-			<hf:formField label="#{messages['lineChart.minY']}" field="minY" />
-			<hf:formField label="#{messages['lineChart.maxX']}" field="maxX" />
-			<hf:formField label="#{messages['lineChart.maxY']}" field="maxY" />
-			<hf:formField label="#{messages['lineChart.breakOnNull']}"
+			<hftl:formField label="#{messages['lineChart.shadow']}" field="shadow" />
+			<hftl:formField label="#{messages['lineChart.minX']}" field="minX" />
+			<hftl:formField label="#{messages['lineChart.minY']}" field="minY" />
+			<hftl:formField label="#{messages['lineChart.maxX']}" field="maxX" />
+			<hftl:formField label="#{messages['lineChart.maxY']}" field="maxY" />
+			<hftl:formField label="#{messages['lineChart.breakOnNull']}"
 				field="breakOnNull" />
-			<hf:formField label="#{messages['lineChart.xaxislabel']}"
+			<hftl:formField label="#{messages['lineChart.xaxislabel']}"
 				field="xaxisLabel" />
-			<hf:formField label="#{messages['lineChart.yaxislabel']}"
+			<hftl:formField label="#{messages['lineChart.yaxislabel']}"
 				field="yaxisLabel" />
-			<hf:formField label="#{messages['lineChart.xaxisangle']}"
+			<hftl:formField label="#{messages['lineChart.xaxisangle']}"
 				field="xaxisAngle" />
-			<hf:formField label="#{messages['lineChart.yaxisangle']}"
+			<hftl:formField label="#{messages['lineChart.yaxisangle']}"
 				field="yaxisAngle" />
-			<hf:formField label="#{messages['lineChart.legendcols']}"
+			<hftl:formField label="#{messages['lineChart.legendcols']}"
 				field="legendCols" />
-			<hf:formField label="#{messages['lineChart.legendrows']}"
+			<hftl:formField label="#{messages['lineChart.legendrows']}"
 				field="legendRows" />
-			<hf:formField label="#{messages['lineChart.stacked']}"
+			<hftl:formField label="#{messages['lineChart.stacked']}"
 				field="stacked" />
-			<hf:formField label="#{messages['lineChart.zoom']}" field="zoom" />
-			<hf:formField label="#{messages['lineChart.animate']}"
+			<hftl:formField label="#{messages['lineChart.zoom']}" field="zoom" />
+			<hftl:formField label="#{messages['lineChart.animate']}"
 				field="animate" />
-			<hf:formField label="#{messages['lineChart.showDataTip']}"
+			<hftl:formField label="#{messages['lineChart.showDataTip']}"
 				field="showDataTip" />
-			<hf:formField label="#{messages['lineChart.datatipFormat']}"
+			<hftl:formField label="#{messages['lineChart.datatipFormat']}"
 				field="datatipFormat" />
 
 			<p:commandButton id="showPreview"
@@ -95,7 +92,7 @@
 				value="#{messages['page.chart.preview']}" update="@all"></p:commandButton>
 
 			<p:outputPanel id="chartPreview"
-				rendered="#{lineChartBean.chartEntityModel.model != null}">
+				rendered="#{lineChartBean.chartEntityModel.model != null}" style="margin:50px">
 				<p:chart type="line" model="#{lineChartBean.chartEntityModel.model}"
 					fill="#{lineChartBean.chartEntityModel.lineChart.filled}"
 					legendPosition="#{lineChartBean.chartEntityModel.lineChart.legendPosition}"
@@ -121,7 +118,7 @@
 					styleClass="#{line.lineChart.style}" />
 			</p:outputPanel>
 
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

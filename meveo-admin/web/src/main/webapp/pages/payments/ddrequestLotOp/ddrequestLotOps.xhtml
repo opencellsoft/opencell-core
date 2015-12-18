@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<f:metadata>
@@ -19,14 +16,14 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel id="searchPanel"
+		<hftl:searchPanel id="searchPanel"
 			label="#{messages['menu.ddrequestLotOp']}"
 			backingBean="#{ddRequestLotOpListBean}">
-			<hf:searchField label="#{messages['ddrequestLotOp.ddrequestOp']}"
+			<hftl:searchField label="#{messages['ddrequestLotOp.ddrequestOp']}"
 				field="ddrequestOp" />
-			<hf:searchField label="#{messages['ddrequestLotOp.status']}"
+			<hftl:searchField label="#{messages['ddrequestLotOp.status']}"
 				field="status" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['menu.ddrequestLotOp']}"
 			backingBean="#{ddRequestLotOpListBean}">

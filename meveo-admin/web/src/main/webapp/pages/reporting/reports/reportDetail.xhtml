@@ -1,9 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -12,28 +11,29 @@
     
     <ui:define name="body">
     	
-		<hf:formPanel label="#{messages['report.reportPanel']}" backingBean="#{reportBean}">
-			<hf:formField label="#{messages['report.name']}" field="name" useConverter="false"/>
-				<hf:formField label="#{messages['report.startDate']}" field="startDate" isDate="true"/>
-				<hf:formField label="#{messages['report.endDate']}" field="endDate" isDate="true"/>
-			<hf:formField label="#{messages['report.nextExecution']}" field="schedule" isDate="true"/>
-			<hf:formField label="#{messages['report.frequency']}" field="frequency" />
-				<hf:formField label="#{messages['report.executionHour']}" field="executionHour" />
-				<hf:formField label="#{messages['report.executionMinutes']}" field="executionMinutes" />
-				<hf:formField label="#{messages['report.executionIntervalMinutes']}" field="executionIntervalMinutes" />
-				<hf:formField label="#{messages['report.executionIntervalSeconds']}" field="executionIntervalSeconds" />
-				<hf:formField label="#{messages['report.executionDayOfWeek']}" field="executionDayOfWeek" />
-			<hf:formField  label="#{messages['report.emails']}" field="emails" isList="true" childField="address" listService="#{emailService}" listType="pickUpList" />	
-			<hf:formField label="#{messages['report.outputFormat']}" field="outputFormat" required="true"/>
+		<hftl:formPanel label="#{messages['report.reportPanel']}" backingBean="#{reportBean}">
+			<hftl:formField label="#{messages['report.name']}" field="name" useConverter="false"/>
+			<hftl:formField label="#{messages['report.startDate']}" field="startDate" isDate="true"/>
+			<hftl:formField label="#{messages['report.endDate']}" field="endDate" isDate="true"/>
+			<hftl:formField label="#{messages['report.nextExecution']}" field="schedule" isDate="true"/>
+			<hftl:formField label="#{messages['report.frequency']}" field="frequency" />
+			<hftl:formField label="#{messages['report.executionHour']}" field="executionHour" />
+			<hftl:formField label="#{messages['report.executionMinutes']}" field="executionMinutes" />
+			<hftl:formField label="#{messages['report.executionIntervalMinutes']}" field="executionIntervalMinutes" />
+			<hftl:formField label="#{messages['report.executionIntervalSeconds']}" field="executionIntervalSeconds" />
+			<hftl:formField label="#{messages['report.executionDayOfWeek']}" field="executionDayOfWeek" />
+			<hftl:formField  label="#{messages['report.emails']}" field="emails" isList="true" childField="address" listService="#{emailService}" listType="pickUpList" />	
+			<hftl:formField label="#{messages['report.outputFormat']}" field="outputFormat" required="true"/>
 		
-          <f:facet name="buttons">
+          <ui:param name="buttons" value="true"/>
+          <ui:define name="buttons">
 			<h:commandButton rendered="#{edit}" value="#{messages['commons.addNew']}" action="addNew"/>
 		
 			<h:commandButton rendered="#{edit}" id="executeReportNow" value="#{messages['report.generateReport']}" action="#{reportBean.executeReport}">
 				<f:attribute  name="backView" value="#{backView}" />
 			</h:commandButton>
-		  </f:facet>
-		</hf:formPanel>
+		  </ui:define>
+		</hftl:formPanel>
       
        
        

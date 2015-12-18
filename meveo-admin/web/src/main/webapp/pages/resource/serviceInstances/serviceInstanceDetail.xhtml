@@ -1,10 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
 	<ui:define name="metadata">
@@ -42,7 +40,7 @@
 			column2Label="#{messages['serviceTemplate.description']}"
 			column2="description"
 			selection="#{serviceInstanceBean.entity.serviceTemplate}"
-            updateField=":formPanel:formId:serviceSelectedId">
+            updateField=":formId:serviceSelectedId">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="subscriptionPopup"
@@ -56,44 +54,44 @@
 			column2Label="#{messages['subscription.description']}"
 			column2="description"
 			selection="#{serviceInstanceBean.entity.subscription}"
-            updateField=":formPanel:formId:subscriptionSelectedId">
+            updateField=":formId:subscriptionSelectedId">
 		</hftl:entityPopup>
 
-		<hf:formPanel label="#{messages['serviceInstance.panel']}" id="formPanel" killConversationOnBack="false" killConversationOnSave="false"
+		<hftl:formPanel label="#{messages['serviceInstance.panel']}" id="formPanel" killConversationOnBack="false" killConversationOnSave="false"
 			backingBean="#{serviceInstanceBean}" columns="2" objectIdParamName="serviceInstanceId"  showDeleteButton="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" >
 
-			<hf:formField id="serviceSelectedId"
+			<hftl:formField id="serviceSelectedId"
 				label="#{messages['serviceInstance.code']}" field="serviceTemplate"
 				valueLabelField="code" required="true" popup="true"
 				popupId="serviceTemplatePopup" allowEdit="false"/>
 
-			<hf:formField id="subscriptionSelectedId"
+			<hftl:formField id="subscriptionSelectedId"
 				label="#{messages['serviceInstance.subscription']}"
 				field="subscription" valueLabelField="code" required="true" popup="true"
 				popupId="subscriptionPopup" allowEdit="false"/>
 
-			<hf:formField label="#{messages['serviceInstance.description']}"
+			<hftl:formField label="#{messages['serviceInstance.description']}"
 				field="description" size="40" maxlength="50"
 				allowEdit="false" />
-			<hf:formField label="#{messages['serviceInstance.status']}"
+			<hftl:formField label="#{messages['serviceInstance.status']}"
 				field="status" allowEdit="false"/>
-			<hf:formField label="#{messages['serviceInstance.statusDate']}"
+			<hftl:formField label="#{messages['serviceInstance.statusDate']}"
 				field="statusDate" allowEdit="false"/>
-			<hf:formField label="#{messages['serviceInstance.subscriptionDate']}"
+			<hftl:formField label="#{messages['serviceInstance.subscriptionDate']}"
 				field="subscriptionDate"
 				allowEdit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
-			<hf:formField label="#{messages['serviceInstance.endAgrementDate']}"
+			<hftl:formField label="#{messages['serviceInstance.endAgrementDate']}"
 				field="endAgrementDate" />
-			<hf:formField
+			<hftl:formField
 				label="#{messages[serviceInstanceBean.entity.status=='SUSPENDED'?'serviceInstance.suspensionDate':'serviceInstance.terminationDate']}"
 				field="terminationDate" allowEdit="false"/>
-			<hf:formField label="#{messages['serviceInstance.quantity']}"
+			<hftl:formField label="#{messages['serviceInstance.quantity']}"
 				field="quantity" allowEdit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
-			<hf:formField
+			<hftl:formField
 				label="#{messages['serviceInstance.terminationReason']}" allowEdit="false"
 				field="subscriptionTerminationReason" valueLabelField="description"
 				rendered="#{not empty serviceInstanceBean.entity.subscriptionTerminationReason}" />
-		</hf:formPanel>
+		</hftl:formPanel>
 
 		<h:form id="operationsForm" rendered="#{not empty serviceInstanceBean.entity.id}">
 			<p:commandButton action="#{serviceInstanceBean.activateService}"

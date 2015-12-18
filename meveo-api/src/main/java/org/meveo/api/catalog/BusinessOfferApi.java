@@ -32,7 +32,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.service.catalog.impl.BOMEntityService;
+import org.meveo.service.catalog.impl.BusinessOfferService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
@@ -76,7 +76,7 @@ public class BusinessOfferApi extends BaseApi {
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
 	@Inject
-	private BOMEntityService bomEntityService;
+	private BusinessOfferService bomEntityService;
 
 	@Inject
 	private ServiceTemplateService serviceTemplateService;

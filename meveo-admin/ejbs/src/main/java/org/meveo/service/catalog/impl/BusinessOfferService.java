@@ -9,6 +9,6 @@ import org.meveo.service.base.BusinessService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class BOMEntityService extends BusinessService<BOMEntity> {
+public class BusinessOfferService extends BusinessService<BOMEntity> {
 
 }

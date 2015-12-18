@@ -20,7 +20,7 @@
 
         <!--  Autocomplete -->
         <c:if test="#{listValues == null and isAutocomplete}">
-            <p:autoComplete id="#{id}" value="#{backingBean.filters[field]}" size="#{size}" disabled="#{disabled}" dropdown="true" completeMethod="#{autocompleteMethod}" />
+            <p:autoComplete id="#{id}" value="#{backingBean.filters[field]}" size="#{size}" disabled="#{disabled}" dropdown="true" completeMethod="#{autocompleteBean[autocompleteMethod]}" />
         </c:if>
 
         <!--  Picklist -->

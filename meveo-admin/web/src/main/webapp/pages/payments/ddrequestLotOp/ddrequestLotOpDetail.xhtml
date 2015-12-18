@@ -1,10 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org" 
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -20,14 +19,14 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel  formId="FormId"  label="#{messages['menu.ddrequestLotOp']}" backingBean="#{ddRequestLotOpBean}">
+		<hftl:formPanel formId="FormId"  label="#{messages['menu.ddrequestLotOp']}" backingBean="#{ddRequestLotOpBean}">
 		 
-			<hf:formField label="#{messages['ddrequestLotOp.fromDueDate']}"  field="fromDueDate" required="true" isMessage="true"/>
-			<hf:formField label="#{messages['ddrequestLotOp.toDueDate']}"  field="toDueDate" required="true" isMessage="true"/> 
-			<hf:formField label="#{messages['ddrequestLotOp.status']}" field="status"  isMessage="true" rendered="#{not empty ddRequestLotOpBean.entity.id}" edit="false"/>
-			<hf:formField label="#{messages['ddrequestLotOp.errorCause']}" field="errorCause" rendered="#{not empty ddRequestLotOpBean.entity.id}" edit="false"/>
+			<hftl:formField label="#{messages['ddrequestLotOp.fromDueDate']}"  field="fromDueDate" required="true" isMessage="true"/>
+			<hftl:formField label="#{messages['ddrequestLotOp.toDueDate']}"  field="toDueDate" required="true" isMessage="true"/> 
+			<hftl:formField label="#{messages['ddrequestLotOp.status']}" field="status"  isMessage="true" rendered="#{not empty ddRequestLotOpBean.entity.id}" edit="false"/>
+			<hftl:formField label="#{messages['ddrequestLotOp.errorCause']}" field="errorCause" rendered="#{not empty ddRequestLotOpBean.entity.id}" edit="false"/>
 			 
-		</hf:formPanel>
+		</hftl:formPanel>
 	</ui:define>  
 
 </ui:composition>

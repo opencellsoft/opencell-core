@@ -1,10 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -22,20 +21,20 @@
 			</h:form>
 		</p:panel>
 	
-		<hf:formPanel showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddRequestLOTBean}" edit="false">
+		<hftl:formPanel showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddRequestLOTBean}" edit="false">
 		    <p:panel>
-			<hf:formField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
-			<hf:formField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
-			<hf:formField label="#{messages['ddrequestLot.invoicesNumber']}" field="invoicesNumber" />
-			<hf:formField label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount" />
-			<hf:formField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true"/>
-			<hf:formField label="#{messages['ddrequestLot.rejectedCause']}" field="rejectedCause" />
+			<hftl:formField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
+			<hftl:formField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
+			<hftl:formField label="#{messages['ddrequestLot.invoicesNumber']}" field="invoicesNumber" />
+			<hftl:formField label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount" />
+			<hftl:formField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true"/>
+			<hftl:formField label="#{messages['ddrequestLot.rejectedCause']}" field="rejectedCause" />
 		   </p:panel>	
 		<h:panelGrid columns="3">
 			<p:commandButton rendered="#{!edit}" action="#{ddRequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
      		<p:commandButton value="#{messages['action.back']}" action="#{ddRequestLOTBean.back}" immediate="true" />
    		</h:panelGrid>	
-		</hf:formPanel>					 
+		</hftl:formPanel>					 
 			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddRequestLOTBean.entity.getInvoices()}" edit="#{false}" checkMany="#{false}">
 						<hftl:column showSortLinks="false"
 							label="#{messages['accountOperation.operationDate']}"

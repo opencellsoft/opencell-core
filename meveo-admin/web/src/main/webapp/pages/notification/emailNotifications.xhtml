@@ -2,7 +2,7 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
 
 
@@ -20,13 +20,13 @@
    		
 			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-			<hf:searchPanel label="#{messages['menu.emailNotifications']}" columns="3" backingBean="#{emailNotificationListBean}">
-				<hf:searchField label="#{messages['entity.code']}" field="code" />
-				<hf:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteMethod="#{notificationBean.autocompleteClassNames}" isAutocomplete="true"/>
-				<hf:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
-				<hf:searchField label="#{messages['entity.emailNotification.subject']}" field="subject" />
-				<hf:searchField label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" />
-			</hf:searchPanel>
+			<hftl:searchPanel label="#{messages['menu.emailNotifications']}" columns="3" backingBean="#{emailNotificationListBean}">
+				<hftl:searchField label="#{messages['entity.code']}" field="code" />
+				<hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{notificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>
+				<hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
+				<hftl:searchField label="#{messages['entity.emailNotification.subject']}" field="subject" />
+				<hftl:searchField label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" />
+			</hftl:searchPanel>
 
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 

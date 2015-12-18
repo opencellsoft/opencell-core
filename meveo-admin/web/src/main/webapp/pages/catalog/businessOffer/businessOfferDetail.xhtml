@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{businessOfferBean.objectId}" />
+			<f:viewParam name="tab" value="#{businessOfferBean.activeTab}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+					<p:menuitem outcome="businessOffers"
+						value="#{messages['menu.businessOffer']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<hftl:formPanel ajaxSubmit="true"
+			submitPartialProcess=":formId:tabView"
+			label="#{messages['businessOffer.title']}"
+			backingBean="#{businessOfferBean}" showEnableDisableButton="true">
+
+			<p:tabView id="tabView" activeIndex="#{businessOfferBean.activeTab}">
+				<p:tab title="#{messages['commons.information']}">
+					<hftl:formField label="#{messages['BusinessEntity.code']}"
+						field="code" required="true" validateUnique="true" />
+					<hftl:formField label="#{messages['BusinessEntity.description']}"
+						field="description" required="true" useConverter="false"
+						id="description" maxlength="50" />
+					<hftl:formField id="offerSelectId"
+						label="#{messages['pricePlanMatrix.offerCode']}"
+						field="offerTemplate" valueLabelField="code"
+						listElements="#{offerTemplateBean.listActive}" />
+				</p:tab>
+			</p:tabView>
+			
+		</hftl:formPanel>
+	</ui:define>
+</ui:composition>

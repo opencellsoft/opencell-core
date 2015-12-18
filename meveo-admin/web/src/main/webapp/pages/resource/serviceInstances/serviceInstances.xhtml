@@ -1,5 +1,5 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -13,10 +13,10 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['serviceInstance.search']}" backingBean="#{serviceInstanceListBean}">
-			<hf:searchField label="#{messages['serviceInstance.description']}" field="description" />
-			<hf:searchField label="#{messages['serviceInstance.code']}" field="code" />
-		</hf:searchPanel>
+		<hftl:searchPanel label="#{messages['serviceInstance.search']}" backingBean="#{serviceInstanceListBean}">
+			<hftl:searchField label="#{messages['serviceInstance.description']}" field="description" />
+			<hftl:searchField label="#{messages['serviceInstance.code']}" field="code" />
+		</hftl:searchPanel>
 
 		<hftl:dataList backingBean="#{serviceInstanceListBean}" label="#{messages['serviceInstance.title']}">
 			<hftl:column label="#{messages['serviceInstance.description']}" field="description" />

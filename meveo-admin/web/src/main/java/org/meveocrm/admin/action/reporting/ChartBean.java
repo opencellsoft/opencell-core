@@ -66,7 +66,7 @@ public class ChartBean extends BaseBean<Chart> {
 		if (chart instanceof LineChart) {
 			return "/pages/reporting/dwh/lineChartDetail.xhtml";
 		}
-		return "/pages/reporting/dwh/chartDetail.xhtml";
+		return "/pages/reporting/dwh/barChartDetail.xhtml";
 	}
 
 	@Override

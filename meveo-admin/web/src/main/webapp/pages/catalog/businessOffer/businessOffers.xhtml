@@ -5,32 +5,36 @@
 	template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{providerListBean.preRenderView}" />
+		<f:event type="preRenderView"
+			listener="#{businessOfferListBean.preRenderView}" />
 	</f:metadata>
-	
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
 
-		<hftl:searchPanel id="searchPanel" backingBean="#{providerListBean}"
-			label="#{messages['provider.search']}">
-            <hftl:searchField 
-                label="#{messages['BusinessEntity.code']}" field="code" />
+		<hftl:searchPanel label="#{messages['businessOffer.search']}"
+			backingBean="#{businessOfferListBean}" columns="1">
+			<hftl:searchField label="#{messages['BusinessEntity.code']}"
+				field="code" />
 			<hftl:searchField label="#{messages['BusinessEntity.description']}"
-				field="description" />
+				field="description" size="100" />
 		</hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['provider.title']}"
-			backingBean="#{providerListBean}">
+		<hftl:dataList label="#{messages['businessOffer.title']}"
+			backingBean="#{businessOfferListBean}" sortBy="code">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />
-			<hftl:column label="#{messages['provider.enterprise']}" field="entreprise"/>
+			<hftl:column label="#{messages['offerTemplate.title']}"
+				field="offerTemplate.code" />
+
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
+				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
+
 	</ui:define>
 
 </ui:composition>

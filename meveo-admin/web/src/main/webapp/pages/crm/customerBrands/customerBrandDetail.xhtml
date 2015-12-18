@@ -3,7 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -21,10 +21,10 @@
 			</h:form>
 		</p:panel>
 	
-		<hf:formPanel label="#{messages['customerBrand.panel']}" backingBean="#{customerBrandBean}" >
-			<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
-			<hf:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" maxlength="50" required="true"/>
-		</hf:formPanel>
+		<hftl:formPanel label="#{messages['customerBrand.panel']}" backingBean="#{customerBrandBean}" >
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
+			<hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" maxlength="50" required="true"/>
+		</hftl:formPanel>
 	</ui:define>
 
 </ui:composition>

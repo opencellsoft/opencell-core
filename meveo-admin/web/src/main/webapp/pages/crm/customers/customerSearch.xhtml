@@ -2,10 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:sc="http://java.sun.com/jsf/composite/components/seamfaces"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -21,19 +18,19 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['customerSearch.search']}"
+		<hftl:searchPanel label="#{messages['customerSearch.search']}"
 			backingBean="#{customerSearchBean}" renderNewButton="false"
 			columns="2">
-			<hf:searchField label="#{messages['businessEntity.code']}"
+			<hftl:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['businessEntity.description']}"
+			<hftl:searchField label="#{messages['businessEntity.description']}"
 				field="description" />
-			<hf:searchField label="#{messages['accountEntity.externalRef1']}"
+			<hftl:searchField label="#{messages['accountEntity.externalRef1']}"
 				field="externalRef1" />
-			<hf:searchField label="#{messages['accountEntity.externalRef2']}"
+			<hftl:searchField label="#{messages['accountEntity.externalRef2']}"
 				field="externalRef2" />
 
-			<hf:formDecorateField fieldId="accountType" label="#{messages['customerSearch.type']}">
+			<hftl:decorateFormField fieldId="accountType" label="#{messages['customerSearch.type']}">
                 <p:selectOneMenu id="accountType" value="#{customerSearchBean.filters['type_class']}">
                     <f:selectItem itemLabel="" />
                     <f:selectItem itemLabel="#{messages['customer.type']}" itemValue="org.meveo.model.crm.Customer" />
@@ -41,8 +38,8 @@
                     <f:selectItem itemLabel="#{messages['billingAccount.type']}" itemValue="org.meveo.model.billing.BillingAccount" />
                     <f:selectItem itemLabel="#{messages['userAccount.type']}" itemValue="org.meveo.model.billing.UserAccount" />
                 </p:selectOneMenu>
-            </hf:formDecorateField>
-		</hf:searchPanel>
+            </hftl:decorateFormField>
+		</hftl:searchPanel>
 
 		<hftl:dataList backingBean="#{customerSearchBean}"
 			label="#{messages['customerSearch.title']}" exportToXml="false">

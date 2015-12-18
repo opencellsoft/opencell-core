@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
@@ -27,7 +26,7 @@
 <!-- 			column2="description" -->
 <!-- 			selection="#{pricePlanMatrixListBean.filters['offerTemplate']}" -->
 <!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive}" -->
-<!-- 			updateField=":searchPanel:searchForm:offer"> -->
+<!-- 			updateField=":searchForm:offer"> -->
 <!-- 		</hftl:entityPopup> -->
 		<hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['seller.search']}" backingBean="#{sellerBean}"
@@ -38,7 +37,7 @@
 			column2="description"
 			selection="#{pricePlanMatrixListBean.filters['seller']}" lazy="false"
 			dataModel="#{sellerBean.listAll}"
-			updateField=":searchPanel:searchForm:seller">
+			updateField=":searchForm:seller">
 		</hftl:entityPopup>
 <!-- 		<hftl:entityPopup id="searchTradingCountryPopup" -->
 <!-- 			header="#{messages['country.search']}" -->
@@ -51,7 +50,7 @@
 <!-- 			column2="prDescription" -->
 <!-- 			selection="#{pricePlanMatrixListBean.filters['tradingCountry']}" -->
 <!-- 			lazy="false" dataModel="#{tradingCountryBean.listAll}" -->
-<!-- 			updateField=":searchPanel:searchForm:tradingCountry"> -->
+<!-- 			updateField=":searchForm:tradingCountry"> -->
 <!-- 		</hftl:entityPopup> -->
 <!-- 		<hftl:entityPopup id="searchTradingCurrencyPopup" -->
 <!-- 			header="#{messages['currency.search']}" -->
@@ -64,52 +63,52 @@
 <!-- 			column2="prDescription" -->
 <!-- 			selection="#{pricePlanMatrixListBean.filters['tradingCurrency']}" -->
 <!-- 			lazy="false" dataModel="#{tradingCurrencyBean.listAll}" -->
-<!-- 			updateField=":searchPanel:searchForm:tradingCurrency"> -->
+<!-- 			updateField=":searchForm:tradingCurrency"> -->
 <!-- 		</hftl:entityPopup> -->
 
-		<hf:searchPanel id="searchPanel" columns="3"
+		<hftl:searchPanel columns="3"
 			label="#{messages['pricePlanMatrix.search']}"
 			backingBean="#{pricePlanMatrixListBean}"
 			renderAdvancedLink="#{!pricePlanMatrixListBrean.advanced}"
 			renderHideAdvancedLink="#{pricePlanMatrixListBean.advanced}">
-			<hf:searchField label="#{messages['BusinessEntity.code']}"
+			<hftl:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
+			<hftl:searchField label="#{messages['pricePlanMatrix.eventCode']}"
 				field="eventCode" />
-			<hf:searchField id="offer"
+			<hftl:searchField id="offer"
 				label="#{messages['pricePlanMatrix.offerCode']}"
 				field="offerTemplate" valueLabelField="code" listElements="#{offerTemplateBean.listActive}"/>
 <!--                 popup="true" popupId="offerPopup" clearButton="true" /> -->
-			<hf:searchField id="seller" label="#{messages['seller.title']}"
+			<hftl:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" valueLabelField="description" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
 			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
-				<hf:searchField id="tradingCountry"
+				<hftl:searchField id="tradingCountry"
 					label="#{messages['tradingCountry.tradingCountry']}"
 					field="tradingCountry" valueLabelField="countryCode" listBean="#{tradingCountryBean}" />
 <!--                     popup="true" popupId="searchTradingCountryPopup" clearButton="true" /> -->
-				<hf:searchField id="tradingCurrency"
+				<hftl:searchField id="tradingCurrency"
 					label="#{messages['currency.codeCurrency']}"
 					field="tradingCurrency" valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}" />
 <!--                     popup="true" popupId="searchTradingCurrencyPopup" clearButton="true" /> -->
-				<hf:searchMinMaxField
+				<hftl:searchMinMaxField
 					label="#{messages['pricePlanMatrix.quantity']}"
 					minField="minQuantity" maxField="maxQuantity" />
-				<hf:searchLikeCriteriasField
+				<hftl:searchLikeCriteriasField
 					label="#{messages['pricePlanMatrix.criteriaValue']}"
 					fields="criteria1Value,criteria2Value,criteria3Value" />
-				<hf:searchMinMaxField
+				<hftl:searchMinMaxField
 					label="#{messages['pricePlanMatrix.subscriptionDate']}"
 					minField="startSubscriptionDate" maxField="endSubscriptionDate" />
-				<hf:searchMinMaxField
+				<hftl:searchMinMaxField
 					label="#{messages['pricePlanMatrix.ratingDate']}"
 					minField="startRatingDate" maxField="endRatingDate" />
-				<hf:searchMinMaxField
+				<hftl:searchMinMaxField
 					label="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}"
 					minField="minSubscriptionAgeInMonth"
 					maxField="maxSubscriptionAgeInMonth" />
 			</h:panelGroup>
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}" rowsPerPage="5,10"
 			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
@@ -117,7 +116,7 @@
 			backingBean="#{pricePlanMatrixListBean}">
 
 			<p:ajax event="cellEdit" partialSubmit="true" process="@this" listener="#{pricePlanMatrixListBean.onCellEdit}"
-				update=":searchPanel:searchForm:search_messages datatable_results" />
+				update=":searchForm:search_messages datatable_results" />
 
 			<f:facet name="header">
 				<p:commandButton id="toggler" type="button" style="float:right" disabled="#{backingBean.lazyDataModel.size==0?'true':'false'}"

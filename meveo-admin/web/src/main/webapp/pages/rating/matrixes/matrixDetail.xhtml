@@ -1,9 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -28,16 +27,16 @@
 			</a:commandLink>
 		</custom:entityPopup>
 			
-		<hf:formPanel label="#{messages['matrixDefinition.matrixPanel']}" backingBean="#{matrixBean}" showEnableDisableButton="true">
-			<hf:formField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true" showOnlyOnConsult="true"/>
-			<hf:formField label="#{messages['matrixDefinition.activated']}" field="activated" />
-			<hf:formField label="#{messages['matrixDefinition.name']}" field="name" required="true" size="60"/>
-			<hf:formField label="#{messages['matrixDefinition.dimension']}" field="dimension" required="true" />
-			<hf:formField label="#{messages['matrixDefinition.usageType']}" field="usageType" valueLabelField="code" popup="false" service="#{usageTypeService}" />
-			<hf:formField label="#{messages['matrixDefinition.startDate']}" field="startDate" />
-			<hf:formField label="#{messages['matrixDefinition.endDate']}" field="endDate" />
-    		<hf:formField label="#{messages['matrixDefinition.entry']}" field="matrixEntries" showFields="matrixEntry.coordinates,coordinates;matrixEntry.value,value" deleteButton="false" />
-			<hf:formField label="#{messages['matrixDefinition.entryType']}" field="entryType" required="true" />
+		<hftl:formPanel label="#{messages['matrixDefinition.matrixPanel']}" backingBean="#{matrixBean}" showEnableDisableButton="true">
+			<hftl:formField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+			<hftl:formField label="#{messages['matrixDefinition.activated']}" field="activated" />
+			<hftl:formField label="#{messages['matrixDefinition.name']}" field="name" required="true" size="60"/>
+			<hftl:formField label="#{messages['matrixDefinition.dimension']}" field="dimension" required="true" />
+			<hftl:formField label="#{messages['matrixDefinition.usageType']}" field="usageType" valueLabelField="code" popup="false" service="#{usageTypeService}" />
+			<hftl:formField label="#{messages['matrixDefinition.startDate']}" field="startDate" />
+			<hftl:formField label="#{messages['matrixDefinition.endDate']}" field="endDate" />
+    		<hftl:formField label="#{messages['matrixDefinition.entry']}" field="matrixEntries" showFields="matrixEntry.coordinates,coordinates;matrixEntry.value,value" deleteButton="false" />
+			<hftl:formField label="#{messages['matrixDefinition.entryType']}" field="entryType" required="true" />
 		
 			<!-- 
 			<rich:dataTable id="matrixEntries" value="#{matrix.entries.keySet}" var="key"
@@ -52,7 +51,7 @@
 				</rich:column>
 			</rich:dataTable>
 			 -->
-		</hf:formPanel>
+		</hftl:formPanel>
 		
     </ui:define>
     

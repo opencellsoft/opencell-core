@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -24,7 +24,7 @@ import org.primefaces.model.chart.PieChartModel;
  * 
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class PieChartBean extends ChartEntityBean<PieChart> {
 
 	private static final long serialVersionUID = 3731010636973175230L;
@@ -67,8 +67,8 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 		for (PieChart pieChart : pieChartList) {
 
 			MeasurableQuantity mq = pieChart.getMeasurableQuantity();
-			List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-					fromDate.getTime(), toDate.getTime(), null, mq);
+			List<MeasuredValue> mvs = mvService
+					.getByDateAndPeriod(null, fromDate.getTime(), toDate.getTime(), null, mq);
 
 			PieChartModel chartModel = new PieChartModel();
 
@@ -79,21 +79,21 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 
 			if (mvs.size() > 0) {
 				for (MeasuredValue measuredValue : mvs) {
-					chartModel.set(sdf.format(measuredValue.getDate()),
-							measuredValue.getValue());
+					chartModel.set(sdf.format(measuredValue.getDate()), measuredValue.getValue());
 				}
 			} else {
+				chartModel.set("NO RECORDS", 0);
 				log.info("No measured values found for : " + mq.getCode());
 			}
 
+			chartModel.setTitle(mq.getCode());
+
 			PieChartEntityModel chartEntityModel = new PieChartEntityModel();
-			boolean isAdmin = pieChart.getAuditable().getCreator()
-					.hasRole("administrateur");
-			boolean equalUser = pieChart.getAuditable().getCreator().getId() == getCurrentUser()
-					.getId();
-			boolean sameRoleWithChart = pieChart.getRole() != null ? getCurrentUser()
-					.hasRole(pieChart.getRole().getDescription()) : false;
-					pieChart.setVisible(isAdmin || equalUser || sameRoleWithChart);
+			boolean isAdmin = pieChart.getAuditable().getCreator().hasRole("administrateur");
+			boolean equalUser = pieChart.getAuditable().getCreator().getId() == getCurrentUser().getId();
+			boolean sameRoleWithChart = pieChart.getRole() != null ? getCurrentUser().hasRole(
+					pieChart.getRole().getDescription()) : false;
+			pieChart.setVisible(isAdmin || equalUser || sameRoleWithChart);
 			chartEntityModel.setPieChart(pieChart);
 			chartEntityModel.setModel(chartModel);
 
@@ -117,8 +117,8 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 				toDate.add(Calendar.MONTH, 1);
 
 				MeasurableQuantity mq = getEntity().getMeasurableQuantity();
-				List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-						fromDate.getTime(), toDate.getTime(), null, mq);
+				List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null, fromDate.getTime(), toDate.getTime(),
+						null, mq);
 
 				PieChartModel chartModel = new PieChartModel();
 
@@ -129,13 +129,14 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 
 				if (mvs.size() > 0) {
 					for (MeasuredValue measuredValue : mvs) {
-						chartModel.set(sdf.format(measuredValue.getDate()),
-								measuredValue.getValue());
+						chartModel.set(sdf.format(measuredValue.getDate()), measuredValue.getValue());
 					}
 				} else {
+					chartModel.set("NO RECORDS", 0);
 					log.info("No measured values found for : " + mq.getCode());
 				}
 
+				chartModel.setTitle(mq.getCode());
 				chartEntityModel.setModel(chartModel);
 				chartEntityModel.setPieChart(getEntity());
 			}
@@ -153,8 +154,7 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(curr.getMaxDate());
 		cal.add(Calendar.DATE, 1);
-		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null,
-				curr.getMinDate(), cal.getTime(), null, mq);
+		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null, curr.getMinDate(), cal.getTime(), null, mq);
 
 		PieChartModel chartModel = new PieChartModel();
 
@@ -165,12 +165,14 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 
 		if (mvs.size() > 0) {
 			for (MeasuredValue measuredValue : mvs) {
-				chartModel.set(sdf.format(measuredValue.getDate()),
-						measuredValue.getValue());
+				chartModel.set(sdf.format(measuredValue.getDate()), measuredValue.getValue());
 			}
 		} else {
+			chartModel.set("NO RECORDS", 0);
 			log.info("No measured values found for : " + mq.getCode());
 		}
+
+		chartModel.setTitle(mq.getDescription());
 
 		curr.setPieChart(curr.getPieChart());
 		curr.setModel(chartModel);
@@ -184,10 +186,8 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 		return pieChartEntityModels;
 	}
 
-	public void setPieChartEntityModels(
-			List<PieChartEntityModel> pieChartEntityModels) {
+	public void setPieChartEntityModels(List<PieChartEntityModel> pieChartEntityModels) {
 		this.pieChartEntityModels = pieChartEntityModels;
 	}
 
 }
-

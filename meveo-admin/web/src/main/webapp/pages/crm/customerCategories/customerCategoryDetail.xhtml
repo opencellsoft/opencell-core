@@ -3,7 +3,6 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -20,17 +19,17 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel label="#{messages['customerCategory.panel']}"
+		<hftl:formPanel label="#{messages['customerCategory.panel']}"
 			backingBean="#{customerCategoryBean}">
-			<hf:formField label="#{messages['businessEntity.code']}" field="code"
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code"
 				validateUnique="true" required="true" />
-			<hf:formField label="#{messages['businessEntity.description']}"
+			<hftl:formField label="#{messages['businessEntity.description']}"
 				field="description" useConverter="false" id="description"
 				maxlength="50" required="true" />
-			<hf:formField
+			<hftl:formField
 				label="#{messages['customerCategory.exoneratedFromTaxes']}"
 				field="exoneratedFromTaxes" />
-		</hf:formPanel>
+		</hftl:formPanel>
 	</ui:define>
 
 </ui:composition>

@@ -1720,6 +1720,19 @@
 			<to-view-id>/pages/admin/filters/projectors/projectorDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>businessOffers</from-outcome>
+			<to-view-id>/pages/catalog/businessOffer/businessOffers.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>businessOfferDetail</from-outcome>
+			<to-view-id>/pages/catalog/businessOffer/businessOfferDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
 	</navigation-rule>
 
 

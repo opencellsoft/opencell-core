@@ -1,9 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" 
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	template="/layout/template.xhtml">
@@ -23,11 +22,11 @@
 			</h:form>
 			 <a href='https://www.assembla.com/spaces/meveo-enterprise/wiki/Scripts' target='_blank'>Help ?</a>
 		</p:panel>
-		<hf:formPanel id="formPanel" label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" showFormButtons="false" >						
+		<hftl:formPanel label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" showFormButtons="false" >						
            <pe:codeMirror id="codeMirror"  theme="eclipse" mode="text/x-java" value="#{scriptInstanceBean.entity.script}"  lineNumbers="true"  required="true"/>
-			<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true" size="80"  doNotShowOnNew="true" disabled="true" />			
-			<hf:formField label="#{messages['businessEntity.description']}" field="description" />
-			<hf:formField label="#{messages['scriptInstance.scriptTypeEnum']}" field="scriptTypeEnum" />
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" size="80"  doNotShowOnNew="true" disabled="true" />			
+			<hftl:formField label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:formField label="#{messages['scriptInstance.scriptTypeEnum']}" field="scriptTypeEnum" />
 			<p:panel rendered="#{scriptInstanceBean.entity.error}">
 				<hftl:dataList label="#{messages['scriptInstance.title']}"
 				backingBean="#{scriptInstanceErrorListBean}" sortBy="lineNumber" checkMany="false" 
@@ -38,8 +37,8 @@
 				</hftl:dataList>				
 			</p:panel>
             <hf:formButtons backingBean="#{scriptInstanceBean}" edit="#{scriptInstanceBean.edit}" ajaxSubmit="true"
-             submitPartialProcess=":formPanel:scriptInstanceForm" execute="#{scriptInstanceBean.entity.id!=null and !scriptInstanceBean.entity.error}"  executeLabel="#{messages['action.execute']}" />                               
-		</hf:formPanel>
+             submitPartialProcess=":scriptInstanceForm" execute="#{scriptInstanceBean.entity.id!=null and !scriptInstanceBean.entity.error}"  executeLabel="#{messages['action.execute']}" />                               
+		</hftl:formPanel>
 		<p:dataTable var="log" value="#{scriptInstanceBean.getLogs()}" rendered="#{!empty(scriptInstanceBean.getLogs())}">
 			<p:column headerText="Logs">
     			<h:outputText value="#{log}" />

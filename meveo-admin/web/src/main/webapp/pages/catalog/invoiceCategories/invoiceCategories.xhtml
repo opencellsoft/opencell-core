@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -18,14 +17,14 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['invoiceCategory.search']}"
+		<hftl:searchPanel label="#{messages['invoiceCategory.search']}"
 			backingBean="#{invoiceCategoryListBean}">
-			<hf:searchField label="#{messages['invoiceCategory.code']}"
+			<hftl:searchField label="#{messages['invoiceCategory.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['invoiceCategory.description']}"
+			<hftl:searchField label="#{messages['invoiceCategory.description']}"
 				field="description" id="description" />
-			<!-- 	<hf:searchField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
-		</hf:searchPanel>
+			<!-- 	<hftl:searchField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['invoiceCategory.title']}"
 			backingBean="#{invoiceCategoryListBean}" sortBy="code">

@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -18,22 +17,22 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel edit="#{invoiceCategoryBean.edit}"
+		<hftl:formPanel edit="#{invoiceCategoryBean.edit}"
 			label="#{messages['invoiceCategory.panel']}"
 			backingBean="#{invoiceCategoryBean}">
 
-			<hf:formField label="#{messages['invoiceCategory.code']}"
+			<hftl:formField label="#{messages['invoiceCategory.code']}"
 				field="code" required="true" validateUnique="true" />
 
-			<!-- <hf:formField label="#{messages['invoiceCategory.subcategories']}"
+			<!-- <hftl:formField label="#{messages['invoiceCategory.subcategories']}"
 				field="invoiceSubCategories" edit="true"
 				showFields="invoiceSubCategory.code,code;invoiceSubCategory.accountingCode,accountingCode"
 
 				deleteButton="false" />	 -->
-			<hf:languageFields />
-			<!-- <hf:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
+			<hftl:formLanguageFields entity="#{invoiceCategoryBean.entity}" backingBean="#{invoiceCategoryBean}" multiLang="false"/>
+			<!-- <hftl:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
 
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

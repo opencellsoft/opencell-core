@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+=======
+<con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+>>>>>>> branch 'master' of https://git@git.assembla.com/meveo.git
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="#1095_title_Add_translation_function_on_description"/>
@@ -34779,7 +34783,6 @@ for( testCase in testSuite.getTestCaseList() ) {
          	 <billingAccount>${#TestSuite#ticket}_BA_1</billingAccount>
            <externalRef1>EXTREF1</externalRef1>
            <externalRef2>EXTREF2</externalRef2>
-           <!-- <primaryContact>DEMO_ADMIN</primaryContact> -->
            <name>
                <title>M</title>
                <firstName>First Name</firstName>
@@ -35399,4 +35402,750 @@ for( testCase in testSuite.getTestCaseList() ) {
    <soapenv:Body>\r
       <ws:index/>\r
    </soapenv:Body>\r
+<<<<<<< HEAD
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e16cff91-bc17-4095-a7e2-3facf3524fe7"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1199</con:value></con:property></con:properties></con:testSuite><con:testSuite id="f3c241a8-dec3-4980-8429-95a6e4ed4046" name="#1102-Create_Custom_Entity_Functionality"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:properties><con:property><con:name>ticket</con:name><con:value>1102</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://192.168.10.14:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+=======
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e16cff91-bc17-4095-a7e2-3facf3524fe7"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1199</con:value></con:property></con:properties></con:testSuite><con:testSuite id="66024d3a-d5ab-41a5-9082-abc00b0e5e06" name="#1347_bom_offer"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="b197706c-c38c-4669-aada-a26f51e46222" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="pre" searchProperties="true" disabled="true"><con:settings/><con:testStep type="request" name="delete script instance" id="84393262-abd3-4028-830d-49cbf8e50ea0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>remove</con:operation><con:request name="delete script instance" id="601e6bc5-2b55-4dd9-b5b5-0cb7889dc37b"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <!--Optional:-->\r
+         <removeScriptInstanceRequest>?</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bd0904f1-c823-4780-b1ee-6649ecfd68b8"/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="ba6a4e87-8007-4f1c-937b-4ea32ac54cdf" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create custom fields" searchProperties="true"><con:settings/><con:testStep type="request" name="create recurring cft price" id="a195391d-1b83-4d10-b8b2-e1f4863a09ce"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="create recurring cft price" id="f84b907f-fec9-4c9d-8134-aced4e4eb9b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+   <soapenv:Header/> 
+   <soapenv:Body> 
+      <ws:createCustomFieldTemplate> 
+         <customField code="${#TestSuite#ticket}REC_PRICE" description="REC_PRICE"> 
+            <fieldType>DOUBLE</fieldType>
+            <appliesTo>SERVICE</appliesTo>
+            <storageType>SINGLE</storageType>
+         </customField>
+      </ws:createCustomFieldTemplate>
+   </soapenv:Body> 
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f329450a-0c6d-48ba-b306-13ed8d43116c"/><con:assertion type="Simple Contains" id="1262e074-0dd8-4c7f-9a9e-a94687847abf" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create usage cft included" id="801d9fbf-4a6f-4a55-b44a-2323f250f37f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="create usage cft included" id="f84b907f-fec9-4c9d-8134-aced4e4eb9b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+   <soapenv:Header/> 
+   <soapenv:Body> 
+      <ws:createCustomFieldTemplate> 
+         <customField code="${#TestSuite#ticket}INCLUDED_QTY" description="INCLUDED_QTY"> 
+            <fieldType>DOUBLE</fieldType>
+            <appliesTo>SERVICE</appliesTo>
+            <storageType>SINGLE</storageType>
+         </customField>
+      </ws:createCustomFieldTemplate>
+   </soapenv:Body> 
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f329450a-0c6d-48ba-b306-13ed8d43116c"/><con:assertion type="Simple Contains" id="6b4de314-c24e-4efa-8360-2ceaf28bb81f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create usage cft over" id="6febb2dd-e3cb-441c-84ca-b3480939b32f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCustomFieldTemplate</con:operation><con:request name="create usage cft over" id="f84b907f-fec9-4c9d-8134-aced4e4eb9b4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
+   <soapenv:Header/> 
+   <soapenv:Body> 
+      <ws:createCustomFieldTemplate> 
+         <customField code="${#TestSuite#ticket}OVER_PRICE" description="OVER_PRICE"> 
+            <fieldType>DOUBLE</fieldType>
+            <appliesTo>SERVICE</appliesTo>
+            <storageType>SINGLE</storageType>
+         </customField>
+      </ws:createCustomFieldTemplate>
+   </soapenv:Body> 
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="f329450a-0c6d-48ba-b306-13ed8d43116c"/><con:assertion type="Simple Contains" id="368b9338-6d7b-40c1-a09d-7bc8673aa087" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="0aabac86-9d10-4d9f-8d04-871af02d1985" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create BOM catalog" searchProperties="true"><con:settings/><con:testStep type="request" name="create bom creation script" id="8115fc15-5f34-4bb4-b17d-f94e48f7ab00"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create bom creation script" id="49cbd249-8900-41f0-811e-9bc456887293"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:create>\r
+         <!--Optional:-->\r
+         <createScriptInstanceRequest code="org.meveo.service.script.${#TestSuite#ticket}BOMCreationScript" description="${#TestSuite#ticket}SCRIPT_INSTANCE">\r
+            <!--Optional:-->\r
+            <type>JAVA</type>\r
+            <script>
+            <![CDATA[
+package org.meveo.service.script;
+
+import java.util.Map;
+import java.math.BigDecimal;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ${#TestSuite#ticket}BOMCreationScript extends Script {
+  
+  	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}BOMCreationScript.class);
+  
+  	PricePlanMatrixService pricePlanMatrixService = (PricePlanMatrixService) getServiceInterface("PricePlanMatrixService");
+
+	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+		log.debug("start bom creation script...");
+      
+      	String ppPrefix = (String) context.get("prefix");
+      
+      	PricePlanMatrix ppInPlan = new PricePlanMatrix();
+      	ppInPlan.setCode(ppPrefix + "_INCLUDED_IN_PLAN");
+      	ppInPlan.setEventCode(ppPrefix + "_IN_PLAN_USAGE");
+      	ppInPlan.setAmountWithoutTax(new BigDecimal(0));
+      	ppInPlan.setAmountWithTax(new BigDecimal(0));
+      
+      	pricePlanMatrixService.create(ppInPlan, user, provider);
+      
+       	PricePlanMatrix ppOverPlan = new PricePlanMatrix();
+      	ppOverPlan.setCode(ppPrefix + "_OVER_PLAN");
+      	ppOverPlan.setEventCode(ppPrefix + "_OVER_PLAN_USAGE");
+      	ppOverPlan.setAmountWithoutTaxEL("#{serviceTemplate.getCFValue('${#TestSuite#ticket}OVER_PRICE')}");
+      	ppOverPlan.setAmountWithTaxEL("#{serviceTemplate.getCFValue('${#TestSuite#ticket}OVER_PRICE')}");
+      
+      	pricePlanMatrixService.create(ppOverPlan, user, provider);
+      
+      	PricePlanMatrix ppRecurring = new PricePlanMatrix();
+      	ppRecurring.setCode(ppPrefix + "_RECURING");
+      	ppRecurring.setEventCode(ppPrefix + "_RECURING");
+      	ppRecurring.setAmountWithoutTaxEL("#{serviceTemplate.getCFValue('${#TestSuite#ticket}REC_PRICE')");
+      	ppRecurring.setAmountWithTaxEL("#{serviceTemplate.getCFValue('${#TestSuite#ticket}REC_PRICE')");
+      
+      	pricePlanMatrixService.create(ppRecurring, user, provider);
+      
+      	log.debug("end bom creation script...");
+	}
+
+}
+]]]]>><![CDATA[
+            </script>\r
+         </createScriptInstanceRequest>\r
+      </ws:create>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b9598fff-642d-49c2-aaa4-864b21e1b9c5"/><con:assertion type="Simple Contains" id="cbd0e2cd-c88c-4a2c-8508-27aefcf01089" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create counter template PLAN_COUNTER" id="4325e4dc-800c-4ec5-8a21-617d268b3b2f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerAccount</con:operation><con:request name="create counter template PLAN_COUNTER" id="c024bcc6-b433-4497-82c6-e231d9645796"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCounterTemplate>
+         <!--Optional:-->
+         <counterTemplate code="${#TestSuite#ticket}PLAN_COUNTER" description="${#TestSuite#ticket}PLAN_COUNTER" calendar="MONTHLY">
+            <!--Optional:-->
+            <unity>Quantity</unity>
+            <type>USAGE</type>
+            <disabled>false</disabled>
+            <ceilingExpressionEl>#{serviceTemplate.getCFValue('INCLUDED_QTY')}</ceilingExpressionEl>            
+         </counterTemplate>
+      </ws:createCounterTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="514f3cfa-1e63-4736-b7a0-8892aa45a267"/><con:assertion type="Simple Contains" id="74509279-9072-4fbb-aa2b-3cc877caf67e" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create usage template IN_PLAN_USAGE" id="b0e8fe7b-6abf-4d73-9b5b-813572750f73"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="create usage template IN_PLAN_USAGE" id="2c4a6eaf-d9a9-49c8-9ae7-b22b2a97c193"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createUsageChargeTemplate>\r
+         <!--Optional:-->\r
+         <usageChargeTemplate code="${#TestSuite#ticket}IN_PLAN_USAGE" description="${#TestSuite#ticket}IN_PLAN_USAGE">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <!--Optional:-->\r
+            <inputUnitDescription>Minutes</inputUnitDescription>\r
+            <!--Optional:-->\r
+            <ratingUnitDescription>Minutes</ratingUnitDescription>\r
+         </usageChargeTemplate>\r
+      </ws:createUsageChargeTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="15b76281-6007-4e70-bfd0-f37d878e351d"/><con:assertion type="Simple Contains" id="49cdb7b1-eb78-4fbf-b7dd-d50a000db40c" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create usage template OVER_PLAN_USAGE" id="57a1f266-fdcb-4e47-a8b0-483c3c3eb010"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createUsageChargeTemplate</con:operation><con:request name="create usage template OVER_PLAN_USAGE" id="2c4a6eaf-d9a9-49c8-9ae7-b22b2a97c193"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createUsageChargeTemplate>\r
+         <!--Optional:-->\r
+         <usageChargeTemplate code="${#TestSuite#ticket}OVER_PLAN_USAGE" description="${#TestSuite#ticket}IN_PLAN_USAGE">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <!--Optional:-->\r
+            <inputUnitDescription>Minutes</inputUnitDescription>\r
+            <!--Optional:-->\r
+            <ratingUnitDescription>Minutes</ratingUnitDescription>\r
+         </usageChargeTemplate>\r
+      </ws:createUsageChargeTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="15b76281-6007-4e70-bfd0-f37d878e351d"/><con:assertion type="Simple Contains" id="b5d09ed2-d606-433b-b093-c5bbec2de632" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create recurring charge template RECURING" id="0d4451ec-a1a7-495e-87bb-fb6435099090"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="create recurring charge template RECURING" id="52f24647-9e02-412e-81bb-9c38e33dd66d"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createRecurringChargeTemplate>\r
+         <!--Optional:-->\r
+         <recurringChargeTemplate code="${#TestSuite#ticket}RECURRING" description="${#TestSuite#ticket}RECURRING">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <calendar>MONTHLY</calendar>
+         </recurringChargeTemplate>\r
+      </ws:createRecurringChargeTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="6d102b4f-0632-4065-870d-0e1bd9925808"/><con:assertion type="Simple Contains" id="155b7e37-5119-4338-84d5-0339b23436b9" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create service template RECURRING" id="bf20d8cc-c396-4d51-8f0b-cdde573ae9c4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createServiceTemplate</con:operation><con:request name="create service template RECURRING" id="42c575cf-9927-48f3-9913-504020fd858a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createServiceTemplate>\r
+         <!--Optional:-->\r
+         <serviceTemplate code="${#TestSuite#ticket}RECURRING" description="${#TestSuite#ticket}RECURRING">\r
+            <!--Optional:-->\r
+            <invoicingCalendar>MONTHLY</invoicingCalendar>\r
+            <!--Optional:-->\r
+            <serviceChargeTemplateRecurrings>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceChargeTemplateRecurring>\r
+                  <!--Optional:-->\r
+                  <code>${#TestSuite#ticket}RECURRING</code>\r
+               </serviceChargeTemplateRecurring>\r
+            </serviceChargeTemplateRecurrings>\r
+         </serviceTemplate>\r
+      </ws:createServiceTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="4fbf5eb4-c30d-4c4e-8b61-87db890954f5"/><con:assertion type="Simple Contains" id="f83f654a-d225-402c-b888-fc26a765b1d1" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create service template USAGE" id="5b0d44ba-f65f-4bf4-a245-370a99acc648"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createServiceTemplate</con:operation><con:request name="create service template USAGE" id="c5f43feb-98c8-4ecc-8c2b-08b64b297971"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createServiceTemplate>\r
+         <!--Optional:-->\r
+         <serviceTemplate code="${#TestSuite#ticket}USAGE" description="${#TestSuite#ticket}USAGE">\r
+            <!--Optional:-->\r
+            <invoicingCalendar>MONTHLY</invoicingCalendar>\r
+            <serviceChargeTemplateUsages>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceChargeTemplateUsage>\r
+                  <!--Optional:-->\r
+                  <code>${#TestSuite#ticket}IN_PLAN_USAGE</code>\r
+                  <!--Optional:-->\r
+                  <counterTemplate>${#TestSuite#ticket}PLAN_COUNTER</counterTemplate>\r
+               </serviceChargeTemplateUsage>
+            	
+            	<serviceChargeTemplateUsage>
+                  <!--Optional:-->
+                  <code>${#TestSuite#ticket}OVER_PLAN_USAGE</code>
+                  </serviceChargeTemplateUsage>
+            	</serviceChargeTemplateUsages>
+            </serviceTemplate>
+      </ws:createServiceTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="8307f4ef-a6f2-4729-b9b7-7cae5ce36996"/><con:assertion type="Simple Contains" id="6fa236ff-fa9c-4fc5-aa97-cce79cf1b32b" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create offer template" id="caa2bb85-7e95-408e-86d3-293dc6a870b1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="create offer template" id="52e0fff5-e07f-4002-b647-d2d37a088d98"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOfferTemplate>\r
+         <!--Optional:-->\r
+         <offerTemplate code="${#TestSuite#ticket}PLAN_ONE_LEVEL" description="${#TestSuite#ticket}PLAN_ONE_LEVEL">\r
+            <serviceTemplates>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceTemplate code="${#TestSuite#ticket}RECURRING" />
+               <serviceTemplate code="${#TestSuite#ticket}USAGE" />
+            </serviceTemplates>
+         </offerTemplate>\r
+      </ws:createOfferTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="bf213221-a441-475c-8977-f81dfc163ae5"/><con:assertion type="Simple Contains" id="86433ce5-6fcd-4f5a-9c53-23123e1f5040" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create bom entity" id="47196379-43b6-4aee-9a41-a76e67b2b6d6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createBomEntity</con:operation><con:request name="create bom entity" id="cdcdf2aa-daea-456c-904b-a2373fde1d00"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntity bomCode="${#TestSuite#ticket}PLAN_ONE_LEVEL">\r
+            <!--Optional:-->\r
+            <offerTemplateCode>${#TestSuite#ticket}PLAN_ONE_LEVEL</offerTemplateCode>\r
+            <!--Optional:-->\r
+            <creationScriptCode>org.meveo.service.script.${#TestSuite#ticket}BOMCreationScript</creationScriptCode>\r
+         </bomEntity>\r
+      </ws:createBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="174e656d-0dac-4b0f-873b-c98d904ca61b"/><con:assertion type="Simple Contains" id="070d977c-d55a-4d69-bfca-d742f2283a8a" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="4e19e87d-3838-48f6-aba4-6fa022282906" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create BOM offer" searchProperties="true"><con:settings/><con:testStep type="request" name="create offer bom" id="1b02d745-e592-4534-a662-257a8ab0b008"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferFromBOM</con:operation><con:request name="create offer bom" id="f855783d-4205-4c10-bf79-338171954ce8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOfferFromBOM>\r
+         <!--Optional:-->\r
+         <bomOffer bomCode="${#TestSuite#ticket}PLAN_ONE_LEVEL">\r
+            <!--Optional:-->\r
+            <bomVersion>1</bomVersion>\r
+            <offerCode>${#TestSuite#ticket}OFFER1</offerCode>\r
+            <!--Optional:-->\r
+            <serviceCodePrefix>${#TestSuite#ticket}OFFER1_</serviceCodePrefix>\r
+            <!--Zero or more repetitions:-->\r
+            <servicesToActivate>${#TestSuite#ticket}RECURRING</servicesToActivate>\r
+            <servicesToActivate>${#TestSuite#ticket}USAGE</servicesToActivate>
+            <serviceCFVs>\r
+               <!--Zero or more repetitions:-->\r
+               <entry>\r
+                  <!--Optional:-->\r
+                  <key>${#TestSuite#ticket}RECURRING</key>\r
+                  <!--Optional:-->\r
+                  <value>\r
+                     <!--Zero or more repetitions:-->\r
+                     <customField code="${#TestSuite#ticket}REC_PRICE">\r
+                        <doubleValue>10</doubleValue>\r
+                     </customField>\r
+                  </value>\r
+               </entry>\r
+               <!--Zero or more repetitions:-->
+               <entry>
+                  <!--Optional:-->
+                  <key>${#TestSuite#ticket}USAGE</key>
+                  <!--Optional:-->
+                  <value>
+                     <!--Zero or more repetitions:-->
+                     <customField code="${#TestSuite#ticket}INCLUDED_QTY">
+                        <doubleValue>120</doubleValue>
+                     </customField>
+                     <customField code="${#TestSuite#ticket}OVER_PRICE">
+                        <doubleValue>0.1</doubleValue>
+                     </customField>
+                  </value>
+               </entry>
+
+            </serviceCFVs>\r
+         </bomOffer>\r
+      </ws:createOfferFromBOM>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9de2234f-e71d-4da4-9fc6-2ab99608b73e"/><con:assertion type="Simple Contains" id="bd599461-6a85-41a4-a732-9b29187fa9ab" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="c0864ee4-b26b-40c6-bc92-ecc18d022ddc" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer Creation" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Customer" id="45fe8961-f3aa-446d-a8d8-56686b7c8e6e"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomer</con:operation><con:request name="Create Customer" id="c6a02f0d-3773-423a-98de-c3de10b9ddb2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <!--Optional:-->
+         <customer code="${#TestSuite#ticket}CUST" description="${#TestSuite#ticket}CUST">
+            <name>
+               <title>M</title>
+               <firstName>firstName</firstName>
+               <lastName>lastName</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+            <contactInformation>
+               <email>test@manaty.net</email>
+               <phone>+33100000000</phone>
+               <mobile>+33666666666</mobile>
+            </contactInformation>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="cff30046-ec80-4d73-9f96-1b334ac03630"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Customer Account" id="9ddff9db-2edf-4c95-910e-bb1aef271e73"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createCustomerAccount</con:operation><con:request name="Create Customer Account" id="f5f29813-9f42-452f-a35b-649abfdf24f1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomerAccount>
+         <customerAccount code="${#TestSuite#ticket}CA" description="${#TestCase#ticket}CA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>firstName</firstName>
+               <lastName>lastName</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customer>${#TestSuite#ticket}CUST</customer>
+            <currency>EUR</currency>
+            <paymentMethod>CHECK</paymentMethod>
+            <creditCategory>Pro</creditCategory>
+            <language>FRA</language>
+         </customerAccount>
+      </ws:createCustomerAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="cd1f200a-456a-49d1-bd32-87238a75176f"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Billing Account" id="27e43e57-2aa2-453c-acec-f40a9dc67c99"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createBillingAccount</con:operation><con:request name="Create Billing Account" id="6a98b651-3d54-4bbf-841f-2805ced827de"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingAccount>
+         <billingAccount code="${#TestSuite#ticket}BA" description="${#TestSuite#ticket}BA">
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>firstName</firstName>
+               <lastName>lastName</lastName>
+            </name>
+            <address>
+               <address1>adresse 1</address1>
+               <address2></address2>
+               <address3>adresse 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            <customerAccount>${#TestSuite#ticket}CA</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>FR</country>
+            <language>FRA</language>
+            <paymentMethod>CHECK</paymentMethod>
+            <nextInvoiceDate>2015-04-01</nextInvoiceDate>
+            <subscriptionDate>2015-01-01</subscriptionDate>
+            <paymentTerms>CASH</paymentTerms>
+            <electronicBilling>true</electronicBilling>
+            <email>test@manaty.net</email>
+         </billingAccount>
+      </ws:createBillingAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="da9adc93-0923-4c87-89ad-d9ecd0447119"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create User Account" id="ab03fb7d-4022-4497-b65c-0f0ae80532fe"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>AccountWsSoapBinding</con:interface><con:operation>createUserAccount</con:operation><con:request name="Create User Account" id="da490af6-e66a-4340-8225-21b0b7b5dda1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createUserAccount>
+         <userAccount code="${#TestSuite#ticket}UA" description="${#TestSuite#ticket}UA">
+         	<billingAccount>${#TestSuite#ticket}BA</billingAccount>
+            <externalRef1>EXTREF1</externalRef1>
+            <externalRef2>EXTREF2</externalRef2>
+            <name>
+               <title>M</title>
+               <firstName>firstName</firstName>
+               <lastName>lastName</lastName>
+            </name>
+            <address>
+               <address1>adress 1</address1>
+               <address2></address2>
+               <address3>adress 3</address3>
+               <zipCode>21000</zipCode>
+               <city>Dijon</city>
+               <country>FR</country>
+            </address>
+            
+         </userAccount>
+      </ws:createUserAccount>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="aa12de36-f228-4a2e-86d3-69977790b29c"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="6925fe36-fe5f-4cfc-a088-a7d758e4f955" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Subscription Creation/Activation" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Subscription 1" id="5373f789-e94a-46fb-8cee-f77377985b85"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SubscriptionWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="Create Subscription 1" id="6552dcce-e271-4574-8dbb-7f4216e5945c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <subscription code="${#TestSuite#ticket}SUB_1" description="${#TestSuite#ticket}SUB_1">
+            <userAccount>${#TestSuite#ticket}UA</userAccount>
+            <offerTemplate>${#TestSuite#ticket}OFFER1</offerTemplate>
+            <subscriptionDate>2015-12-15</subscriptionDate>
+         </subscription>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="c3574034-e1ec-4c2a-9212-4de724bbec87"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Activate Service 1" id="68841b3d-f1f3-4de9-b957-67883480fbc0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SubscriptionWsSoapBinding</con:interface><con:operation>activateServices</con:operation><con:request name="Activate Service 1" id="bcf0438c-8fd4-4512-ba35-0fc95af76eac"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:activateServices>
+         <activateServices>
+         	  <subscription>${#TestSuite#ticket}SUB_1</subscription>
+            <servicesToActivate>
+            	<service code ='${#TestSuite#ticket}OFFER1_${#TestSuite#ticket}RECURRING'>
+                  <quantity>1</quantity>
+                  <subscriptionDate>2015-12-15</subscriptionDate>
+            	</service>
+            	<service code ='${#TestSuite#ticket}OFFER1_${#TestSuite#ticket}USAGE'>
+                  <quantity>1</quantity>
+                  <subscriptionDate>2015-12-15</subscriptionDate>
+            	</service>            	
+            </servicesToActivate>
+         </activateServices>
+      </ws:activateServices>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="13a808aa-0a07-44b5-84b6-0bd6b8c9b0b1"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>BOM7_</con:value></con:property></con:properties></con:testSuite><con:testSuite id="fee7ab1e-70a1-48ec-be85-d9caf9f4186c" name="#1340_bom_entity"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="a0c15676-ac53-4e9c-be56-e7ab43601622" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="tests" searchProperties="true"><con:settings/><con:testStep type="request" name="create offer template" id="8ef6b0ab-fb9f-421e-b464-ed837dfe4fce"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="create offer template" id="68a26945-dafc-4328-9e22-77fa33cce21c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOfferTemplate>\r
+         <!--Optional:-->\r
+         <offerTemplate code="${#TestSuite#ticket}_OFFER" description="${#TestSuite#ticket}_OFFER">\r            
+         </offerTemplate>\r
+      </ws:createOfferTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="563f20b5-fdc4-4134-9f37-6b09d2f06b44"/><con:assertion type="Simple Contains" id="d7abdcac-42c0-4c8e-a7e5-695c33c0e646" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create" id="0a5f5324-7957-426e-9265-f945bb3528f8"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createBomEntity</con:operation><con:request name="create" id="eb9e9bf6-ec4b-48f4-afbd-0eac5d9b6261"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntity bomCode="${#TestSuite#ticket}_BOM" description="${#TestSuite#ticket}_BOM">\r
+            <offerTemplateCode>${#TestSuite#ticket}_OFFER</offerTemplateCode>\r
+         </bomEntity>\r
+      </ws:createBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="eec01dc4-09a7-4353-a8b9-db7206662c9a"/><con:assertion type="Simple Contains" id="f2012c81-c114-425d-ac79-22ea3960b875" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create - already exists" id="3d4fd394-c6fe-4b4c-be72-3756fcaaa766"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createBomEntity</con:operation><con:request name="create - already exists" id="eb9e9bf6-ec4b-48f4-afbd-0eac5d9b6261"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntity bomCode="${#TestSuite#ticket}_BOM" description="${#TestSuite#ticket}_BOM">\r
+            <offerTemplateCode>${#TestSuite#ticket}_OFFER</offerTemplateCode>\r
+         </bomEntity>\r
+      </ws:createBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="eec01dc4-09a7-4353-a8b9-db7206662c9a"/><con:assertion type="Simple Contains" id="f2012c81-c114-425d-ac79-22ea3960b875" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="fc0116fb-9f30-460a-a66d-3600cd080e49"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findBomEntity</con:operation><con:request name="find" id="ecd097d4-2021-4d9e-9605-fe278b0b8cf9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntityCode>${#TestSuite#ticket}_BOM</bomEntityCode>\r
+      </ws:findBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5a4071ae-b3b9-4dd7-bfaa-5ea0a2bc05dd"/><con:assertion type="Simple Contains" id="b92cf2db-989c-4732-bd96-75b3c6b9d9c6" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="b37d71d7-1e46-4b43-b625-d190b40400f1" name="BOM"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="a7a56c10-101a-484a-9cdc-381351415f3a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createBomEntity</con:operation><con:request name="update" id="eb9e9bf6-ec4b-48f4-afbd-0eac5d9b6261"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntity bomCode="${#TestSuite#ticket}_BOM" description="${#TestSuite#ticket}_BOM1">\r
+            <offerTemplateCode>${#TestSuite#ticket}_OFFER</offerTemplateCode>\r
+         </bomEntity>\r
+      </ws:updateBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="eec01dc4-09a7-4353-a8b9-db7206662c9a"/><con:assertion type="Simple Contains" id="6475e172-8737-4da9-9867-bdc59ef6550b" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find - updated" id="6ce8a06f-1d1a-4557-bd49-e7832e2e6c4f"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findBomEntity</con:operation><con:request name="find - updated" id="ecd097d4-2021-4d9e-9605-fe278b0b8cf9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntityCode>${#TestSuite#ticket}_BOM</bomEntityCode>\r
+      </ws:findBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5a4071ae-b3b9-4dd7-bfaa-5ea0a2bc05dd"/><con:assertion type="Simple Contains" id="4a8e567e-4ee5-4f24-a31d-f126ae356585" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="f45e180c-8d06-40f9-b13a-cdd53fbcd0d1" name="_BOM1"><con:configuration><token>_BOM</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove" id="35a42dd4-c6b1-40fc-a1fc-fda51e301710"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>removeBomEntity</con:operation><con:request name="remove" id="a7a69466-7f76-438f-8537-0235a24b32ef"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntityCode>${#TestSuite#ticket}_BOM</bomEntityCode>\r
+      </ws:removeBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="781cfe31-2918-49fc-85b3-5a1e615698e1"/><con:assertion type="Simple Contains" id="7447e6ae-cf4f-47b3-93fc-babe06909eee" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find - does not exists" id="e19d0add-c3f5-40dc-b6d9-001f0dc00b38"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findBomEntity</con:operation><con:request name="find - does not exists" id="ecd097d4-2021-4d9e-9605-fe278b0b8cf9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntityCode>${#TestSuite#ticket}_BOM</bomEntityCode>\r
+      </ws:findBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5a4071ae-b3b9-4dd7-bfaa-5ea0a2bc05dd"/><con:assertion type="Simple Contains" id="5cc37fc9-ef1e-4fad-a53f-96065e577070" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create or update - create" id="e9076aed-fa5b-43d3-92e4-30dc540158d6"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOrUpdateBomEntity</con:operation><con:request name="create or update - create" id="0828b1ec-56b7-4804-8455-a248eaf86892"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntity bomCode="${#TestSuite#ticket}_BOM" description="${#TestSuite#ticket}_BOM">\r
+            <offerTemplateCode>${#TestSuite#ticket}_OFFER</offerTemplateCode>
+         </bomEntity>\r
+      </ws:createOrUpdateBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="7b3802ee-5b7f-418f-a304-2f63db640f9a"/><con:assertion type="Simple Contains" id="4e54c49b-3c10-4150-94d2-646f56f507a6" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find - create or update" id="b9adc612-aeff-485a-bf72-9b0fda469f25"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findBomEntity</con:operation><con:request name="find - create or update" id="ecd097d4-2021-4d9e-9605-fe278b0b8cf9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntityCode>${#TestSuite#ticket}_BOM</bomEntityCode>\r
+      </ws:findBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5a4071ae-b3b9-4dd7-bfaa-5ea0a2bc05dd"/><con:assertion type="Simple Contains" id="b92cf2db-989c-4732-bd96-75b3c6b9d9c6" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="b37d71d7-1e46-4b43-b625-d190b40400f1" name="BOM"><con:configuration><token>_BOM</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create or update - update" id="627a195c-ab65-4e78-b79b-0e937918ca16"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOrUpdateBomEntity</con:operation><con:request name="create or update - update" id="0828b1ec-56b7-4804-8455-a248eaf86892"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntity bomCode="${#TestSuite#ticket}_BOM" description="${#TestSuite#ticket}_BOM1">\r
+            <offerTemplateCode>${#TestSuite#ticket}_OFFER</offerTemplateCode>
+         </bomEntity>\r
+      </ws:createOrUpdateBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="7b3802ee-5b7f-418f-a304-2f63db640f9a"/><con:assertion type="Simple Contains" id="9d100b3d-9eff-4f52-ab9c-58252e3c6f00" name="SUCCESS"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find - create or update - updated" id="ca58bf20-5381-48bf-9158-5ca0a848c615"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findBomEntity</con:operation><con:request name="find - create or update - updated" id="ecd097d4-2021-4d9e-9605-fe278b0b8cf9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntityCode>${#TestSuite#ticket}_BOM</bomEntityCode>\r
+      </ws:findBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5a4071ae-b3b9-4dd7-bfaa-5ea0a2bc05dd"/><con:assertion type="Simple Contains" id="4a8e567e-4ee5-4f24-a31d-f126ae356585" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="f45e180c-8d06-40f9-b13a-cdd53fbcd0d1" name="_BOM1"><con:configuration><token>_BOM</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove 1" id="57231e17-5d1c-4e57-b583-f697492374dc"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>removeBomEntity</con:operation><con:request name="remove 1" id="a7a69466-7f76-438f-8537-0235a24b32ef"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntityCode>${#TestSuite#ticket}_BOM</bomEntityCode>\r
+      </ws:removeBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="781cfe31-2918-49fc-85b3-5a1e615698e1"/><con:assertion type="Simple Contains" id="7447e6ae-cf4f-47b3-93fc-babe06909eee" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find - does not exists 1" id="2843e7e3-0d3e-47d9-9812-c48281c3b208"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findBomEntity</con:operation><con:request name="find - does not exists 1" id="ecd097d4-2021-4d9e-9605-fe278b0b8cf9"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findBomEntity>\r
+         <!--Optional:-->\r
+         <bomEntityCode>${#TestSuite#ticket}_BOM</bomEntityCode>\r
+      </ws:findBomEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5a4071ae-b3b9-4dd7-bfaa-5ea0a2bc05dd"/><con:assertion type="Simple Contains" id="5cc37fc9-ef1e-4fad-a53f-96065e577070" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1340</con:value></con:property></con:properties></con:testSuite><con:testSuite name="#1319_description_api"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createDescription - Price plans" searchProperties="true"><con:settings/><con:testStep type="request" name="create_ChargeTemplate"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="create_ChargeTemplate" id="64fd8c8e-721a-4465-8a83-d4b96755cda8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createRecurringChargeTemplate>
+         <!--Optional:-->
+         <recurringChargeTemplate code="${#TestSuite#ticket}_REC1" description="${#TestSuite#ticket}_REC1">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <amountEditable>false</amountEditable>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <languageCode>FRA</languageCode>
+               <description>Forfait test ${#ticket}</description>
+            </languageDescriptions>
+            <calendar>MONTHLY</calendar>
+            <subscriptionProrata>true</subscriptionProrata>
+            <terminationProrata>true</terminationProrata>
+            <applyInAdvance>true</applyInAdvance>
+            <inputUnitDescription>1</inputUnitDescription>
+            <!--Optional:-->
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <!--Optional:-->
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+         </recurringChargeTemplate>
+      </ws:createRecurringChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ce40feca-4644-4d87-928c-216ae3c87919"/><con:assertion type="Simple Contains" id="9c6b907b-6293-409b-ba7b-35db9ad492ec" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_PricePlan"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createPricePlan</con:operation><con:request name="create_PricePlan" id="9b5f5e73-e287-43ba-8fa1-06e00f4ab336"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createPricePlan>
+         <!--Optional:-->
+         <pricePlan code="${#TestSuite#ticket}_PP1" description="${#TestSuite#ticket}_PP1_DESC">
+            <eventCode>${#TestSuite#ticket}_REC1</eventCode>
+         </pricePlan>
+      </ws:createPricePlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="a7b71af8-11f5-4dd6-acfa-46e63cefcabb"/><con:assertion type="Simple Contains" id="47429485-0c45-4fd6-8f51-c643a53c33e6" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createOrUpdateLanguage"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateLanguage</con:operation><con:request name="createOrUpdateLanguage" id="4e80e4bc-58b3-4f36-901c-4f63ab0316ed"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateLanguage>
+         <!--Optional:-->
+         <language code="ENG">
+            <!--Optional:-->
+            <description>English</description>
+         </language>
+      </ws:createOrUpdateLanguage>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="64ea55ef-4e55-4dc9-aa4b-178f9eae4a88"/><con:assertion type="Simple Contains" id="a552ace4-d445-4ab0-9130-145753b654ab" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_Descriptions" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createDescriptions</con:operation><con:request name="create_Descriptions" id="36b148b2-4fbe-444e-a06f-3306bb8521f8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createDescriptions>
+         <!--Optional:-->
+         <descriptions objectType="Price plans" languageCode="ENG" entityCode="${#TestSuite#ticket}_PP1" descriptionTranslation="${#TestSuite#ticket}_PP1_TRANS">
+         </descriptions>
+      </ws:createDescriptions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="11637718-b467-4cb5-a61f-00e828ae870d"/><con:assertion type="Simple Contains" id="3a98a1bc-a705-4486-af44-d5265076c6fb" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_Descriptions" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findDescriptions</con:operation><con:request name="find_Descriptions" id="9948138b-8988-4ab5-a8b9-2b0ec7acc865"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDescriptions>
+         <!--Optional:-->
+         <descriptionsCode>PricePlanMatrix_1</descriptionsCode>
+         <!--Optional:-->
+         <languageCode>ENG</languageCode>
+      </ws:findDescriptions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0a238642-e0ba-4a4c-b1b6-05dfd9d1286a"/><con:assertion type="Simple Contains" id="e15ec343-323e-4afe-a92d-b6d80af0f07f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3d2f8c8e-cb2d-440c-ab7b-d497a8d31fc6" name="response_translation"><con:configuration><token>1319_PP1_TRANS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="updateDescription - Taxes" searchProperties="true"><con:settings/><con:testStep type="request" name="create_Tax"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createTax</con:operation><con:request name="create_Tax" id="64fd8c8e-721a-4465-8a83-d4b96755cda8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createTax>
+         <!--Optional:-->
+         <tax code="${#TestSuite#ticket}_TAX1" description="${#TestSuite#ticket}_TAX1_DESC">
+            <percent>10</percent>
+            
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <!--Optional:-->
+               <languageCode>FRA</languageCode>
+               <!--Optional:-->
+               <description>TUX</description>
+            </languageDescriptions>
+         </tax>
+      </ws:createTax>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ce40feca-4644-4d87-928c-216ae3c87919"/><con:assertion type="Simple Contains" id="9c6b907b-6293-409b-ba7b-35db9ad492ec" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createOrUpdateLanguage"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateLanguage</con:operation><con:request name="createOrUpdateLanguage" id="4e80e4bc-58b3-4f36-901c-4f63ab0316ed"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateLanguage>
+         <!--Optional:-->
+         <language code="ENG">
+            <!--Optional:-->
+            <description>English</description>
+         </language>
+      </ws:createOrUpdateLanguage>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="64ea55ef-4e55-4dc9-aa4b-178f9eae4a88"/><con:assertion type="Simple Contains" id="a552ace4-d445-4ab0-9130-145753b654ab" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_Descriptions" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createDescriptions</con:operation><con:request name="create_Descriptions" id="36b148b2-4fbe-444e-a06f-3306bb8521f8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createDescriptions>
+         <!--Optional:-->
+         <descriptions objectType="Taxes" languageCode="ENG" entityCode="${#TestSuite#ticket}_TAX1" descriptionTranslation="TAX">
+         </descriptions>
+      </ws:createDescriptions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="11637718-b467-4cb5-a61f-00e828ae870d"/><con:assertion type="Simple Contains" id="38a76f6c-a4cb-4eaf-8b71-7413c4671e5f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_Descriptions" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findDescriptions</con:operation><con:request name="find_Descriptions" id="9948138b-8988-4ab5-a8b9-2b0ec7acc865"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDescriptions>
+         <!--Optional:-->
+         <descriptionsCode>Tax_4</descriptionsCode>
+         <!--Optional:-->
+         <languageCode>ENG</languageCode>
+      </ws:findDescriptions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0a238642-e0ba-4a4c-b1b6-05dfd9d1286a"/><con:assertion type="Simple Contains" id="e15ec343-323e-4afe-a92d-b6d80af0f07f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3d2f8c8e-cb2d-440c-ab7b-d497a8d31fc6" name="response_translation"><con:configuration><token>TAX</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="deleteDescription - Charges" searchProperties="true"><con:settings/><con:testStep type="request" name="createOrUpdate_ChargeTemplate"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createRecurringChargeTemplate</con:operation><con:request name="createOrUpdate_ChargeTemplate" id="64fd8c8e-721a-4465-8a83-d4b96755cda8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateRecurringChargeTemplate>
+         <!--Optional:-->
+         <recurringChargeTemplate code="${#TestSuite#ticket}_REC1" description="${#TestSuite#ticket}_REC1">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <amountEditable>false</amountEditable>
+            <!--Zero or more repetitions:-->
+            <languageDescriptions>
+               <languageCode>FRA</languageCode>
+               <description>Forfait test ${#ticket}</description>
+            </languageDescriptions>
+            <calendar>MONTHLY</calendar>
+            <subscriptionProrata>true</subscriptionProrata>
+            <terminationProrata>true</terminationProrata>
+            <applyInAdvance>true</applyInAdvance>
+            <inputUnitDescription>1</inputUnitDescription>
+            <!--Optional:-->
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <!--Optional:-->
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+         </recurringChargeTemplate>
+      </ws:createOrUpdateRecurringChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="ce40feca-4644-4d87-928c-216ae3c87919"/><con:assertion type="Simple Contains" id="9c6b907b-6293-409b-ba7b-35db9ad492ec" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="createOrUpdateLanguage"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createOrUpdateLanguage</con:operation><con:request name="createOrUpdateLanguage" id="4e80e4bc-58b3-4f36-901c-4f63ab0316ed"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateLanguage>
+         <!--Optional:-->
+         <language code="ENG">
+            <!--Optional:-->
+            <description>English</description>
+         </language>
+      </ws:createOrUpdateLanguage>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="64ea55ef-4e55-4dc9-aa4b-178f9eae4a88"/><con:assertion type="Simple Contains" id="a552ace4-d445-4ab0-9130-145753b654ab" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create_Descriptions" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createDescriptions</con:operation><con:request name="create_Descriptions" id="36b148b2-4fbe-444e-a06f-3306bb8521f8"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createDescriptions>
+         <!--Optional:-->
+         <descriptions objectType="Charges" languageCode="ENG" entityCode="${#TestSuite#ticket}_REC1" descriptionTranslation="Flat rate">
+         </descriptions>
+      </ws:createDescriptions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="11637718-b467-4cb5-a61f-00e828ae870d"/><con:assertion type="Simple Contains" id="3a98a1bc-a705-4486-af44-d5265076c6fb" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_Descriptions" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findDescriptions</con:operation><con:request name="find_Descriptions" id="9948138b-8988-4ab5-a8b9-2b0ec7acc865"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDescriptions>
+         <!--Optional:-->
+         <descriptionsCode>RecurringChargeTemplate_1</descriptionsCode>
+         <!--Optional:-->
+         <languageCode>ENG</languageCode>
+      </ws:findDescriptions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="0a238642-e0ba-4a4c-b1b6-05dfd9d1286a"/><con:assertion type="Simple Contains" id="e15ec343-323e-4afe-a92d-b6d80af0f07f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="3d2f8c8e-cb2d-440c-ab7b-d497a8d31fc6" name="response_translation"><con:configuration><token>Flat rate</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove_Description" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>removeDescriptions</con:operation><con:request name="remove_Description" id="d5c85b0b-8b44-46fe-b74d-488aff798690"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeDescriptions>
+         <!--Optional:-->
+         <descriptionsCode>RecurringChargeTemplate_1</descriptionsCode>
+         <!--Optional:-->
+         <languageCode>ENG</languageCode>
+      </ws:removeDescriptions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1f2ae6f8-c3c3-466e-a266-2cf5c42152b2"/><con:assertion type="Simple Contains" id="3fadf4f8-497a-48e1-8596-5826ff749253" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_deleted_Descriptions" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findDescriptions</con:operation><con:request name="find_deleted_Descriptions" id="9948138b-8988-4ab5-a8b9-2b0ec7acc865"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDescriptions>
+         <!--Optional:-->
+         <descriptionsCode>RecurringChargeTemplate_1</descriptionsCode>
+         <!--Optional:-->
+         <languageCode>ENG</languageCode>
+      </ws:findDescriptions>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e16cff91-bc17-4095-a7e2-3facf3524fe7"/><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1199</con:value></con:property></con:properties></con:testSuite><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+>>>>>>> branch 'master' of https://git@git.assembla.com/meveo.git

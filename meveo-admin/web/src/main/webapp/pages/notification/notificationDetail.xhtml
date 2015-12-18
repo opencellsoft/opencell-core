@@ -1,10 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -29,36 +26,36 @@
 			column1="code" selection="#{notificationBean.entity.scriptInstance}"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
-			updateField=":notificationFormPanel:notificationForm:scriptInstanceSelectId">
+			updateField=":notificationForm:scriptInstanceSelectId">
 		</hftl:entityPopup>
 		
-		<hf:formPanel id="notificationFormPanel" formId="notificationForm"
+		<hftl:formPanel formId="notificationForm"
 			label="#{messages['menu.notification']}"
 			backingBean="#{notificationBean}" columns="2" showEnableDisableButton="true">
-			<hf:formField label="#{messages['entity.code']}" field="code"
+			<hftl:formField label="#{messages['entity.code']}" field="code"
 				required="true" maxLength="60" />
-			<hf:formField
+			<hftl:formField
 				label="#{messages['entity.notification.classNameFilter']}"
-				field="classNameFilter" required="true" size="60" maxlength="255"
-				autocompleteMethod="#{notificationBean.autocompleteClassNames}" isAutocomplete="true" />
-			<hf:formField
+				field="classNameFilter" required="true" size="60" maxlength="255" 
+                autocompleteBean="#{notificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>
+			<hftl:formField
 				label="#{messages['entity.notification.eventTypeFilter']}"
 				field="eventTypeFilter" required="true" />
-			<hf:formField label="#{messages['entity.notification.elFilter']}"
+			<hftl:formField label="#{messages['entity.notification.elFilter']}"
 				field="elFilter" textArea="true" maxlength="2000" componentWidth="50" newLine="true"/>
 			
-			<hf:formField id="scriptInstanceSelectId"
+			<hftl:formField id="scriptInstanceSelectId"
 										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
 										valueLabelField="description" required="true" popup="true"
 										popupId="scriptInstancePopup" />
 										
-			<hf:formField label="#{messages['entity.notification.params']}" field="params"  />  
+			<hftl:formField label="#{messages['entity.notification.params']}" field="params"  />  
 				
-            <hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
                 field="disabled" isMessage="true" />
                 
               
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

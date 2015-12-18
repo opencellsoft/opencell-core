@@ -75,16 +75,16 @@
 
                     <p:panel>
                         <h:panelGroup id="#{prefix}periodFields" layout="block" styleClass="form-panel">
-                            <hf:formDecorateField fieldId="period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
+                            <hftl:decorateFormField fieldId="period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
                                 <h:outputText id="period_start_date" value="#{backingBean.customFieldSelectedPeriod.periodStartDate}">
                                     <f:convertDateTime type="date" pattern="#{datePattern}" />
                                 </h:outputText>
-                            </hf:formDecorateField>
-                            <hf:formDecorateField fieldId="period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}">
+                            </hftl:decorateFormField>
+                            <hftl:decorateFormField fieldId="period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}">
                                 <h:outputText id="period_end_date" value="#{backingBean.customFieldSelectedPeriod.periodEndDate}">
                                     <f:convertDateTime type="date" pattern="#{datePattern}" />
                                 </h:outputText>
-                            </hf:formDecorateField>
+                            </hftl:decorateFormField>
                             <p:remoteCommand name="updateMasterTable" update="#{backingBean.customFieldSelectedPeriodId}" process="@this" partialSubmit="true"
                                 partialSubmitFilter=":not([name*='addNewFields'])" />
                             <hftl:customFieldListTable edit="#{edit}" cft="#{backingBean.customFieldSelectedTemplate}" backingBean="#{backingBean}"

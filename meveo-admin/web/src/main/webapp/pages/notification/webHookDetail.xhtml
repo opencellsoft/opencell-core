@@ -1,12 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -17,7 +13,7 @@
 
 		<hftl:entityPopup id="searchCounterTemplatePopup"
 			header="#{messages['counterTemplate.title']}"
-			updateField=":webHookForm:webHookFormId:counterTemplateSelectedId"
+			updateField=":webHookFormId:counterTemplateSelectedId"
 			selection="#{webHookBean.entity.counterTemplate}"
 			backingBean="#{counterTemplateBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
@@ -34,7 +30,7 @@
 			column1="code" selection="#{webHookBean.entity.scriptInstance}"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
-			updateField=":webHookForm:webHookFormId:scriptInstanceSelectId">
+			updateField=":webHookFormId:scriptInstanceSelectId">
 		</hftl:entityPopup>		
 		<p:panel>
 			<h:form id="crumbmenuForm">
@@ -45,55 +41,55 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel id="webHookForm" formId="webHookFormId" label="#{messages['menu.webHook']}"
+		<hftl:formPanel formId="webHookFormId" label="#{messages['menu.webHook']}"
 			backingBean="#{webHookBean}" columns="4" showEnableDisableButton="true">
 
-			<hf:formField label="#{messages['entity.code']}" field="code"
+			<hftl:formField label="#{messages['entity.code']}" field="code"
 				required="true" maxLength="60" />
-			<hf:formField
+			<hftl:formField
 				label="#{messages['entity.notification.classNameFilter']}"
 				field="classNameFilter" required="true" size="60" maxlength="255" 
-                autocompleteMethod="#{notificationBean.autocompleteClassNames}" isAutocomplete="true"/>
-			<hf:formField
+                autocompleteBean="#{notificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>
+			<hftl:formField
 				label="#{messages['entity.notification.eventTypeFilter']}"
 				field="eventTypeFilter" required="true" />
-			<hf:formField label="#{messages['entity.notification.elFilter']}"
+			<hftl:formField label="#{messages['entity.notification.elFilter']}"
 				field="elFilter" textArea="true" maxlength="2000" componentWidth="50" newLine="true"/>
-			<hf:formField id="scriptInstanceSelectId"
+			<hftl:formField id="scriptInstanceSelectId"
 										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
 										valueLabelField="description" required="false" popup="true"
 										popupId="scriptInstancePopup" />
-           <hf:formField label="#{messages['entity.notification.params']}" field="params"  />  
+           <hftl:formField label="#{messages['entity.notification.params']}" field="params"  />  
            
-           	<hf:formField label="#{messages['entity.webHook.bodyEL']}"
+           	<hftl:formField label="#{messages['entity.webHook.bodyEL']}"
 			        field="bodyEL" textArea="true" maxlength="2000"/>
            
            
-			<hf:formField label="#{messages['entity.webHook.host']}" field="host"
+			<hftl:formField label="#{messages['entity.webHook.host']}" field="host"
 				required="true" size="100" maxlength="255" />
-			<hf:formField label="#{messages['entity.webHook.port']}" field="port" maxValue="65535"/>
-			<hf:formField label="#{messages['entity.webHook.page']}" field="page"
+			<hftl:formField label="#{messages['entity.webHook.port']}" field="port" maxValue="65535"/>
+			<hftl:formField label="#{messages['entity.webHook.page']}" field="page"
 				size="100" maxlength="255" required="true" />
-			<hf:formField label="#{messages['entity.webHook.httpMethod']}"
+			<hftl:formField label="#{messages['entity.webHook.httpMethod']}"
 				field="httpMethod" required="true" />
-			<hf:formField label="#{messages['entity.webHook.username']}"
+			<hftl:formField label="#{messages['entity.webHook.username']}"
 				field="username" size="40" maxlength="255" newLine="true"/>
-			<hf:formField label="#{messages['entity.webHook.password']}"
+			<hftl:formField label="#{messages['entity.webHook.password']}"
 				field="password" size="40" maxlength="255" />
 
-			<hf:formField label="#{messages['entity.webHook.headers']}"
+			<hftl:formField label="#{messages['entity.webHook.headers']}"
 				field="headers" componentWidth="100" />
-			<hf:formField label="#{messages['entity.webHook.params']}"
+			<hftl:formField label="#{messages['entity.webHook.params']}"
 				field="webhookParams" componentWidth="100"/>
 
-			<hf:formField id="counterTemplateSelectedId"
+			<hftl:formField id="counterTemplateSelectedId"
 				label="#{messages['counterTemplate.title']}" field="counterTemplate"
 				valueLabelField="code" popup="true" popupId="searchCounterTemplatePopup"
 				clearButton="true" required="false" />
                 
-            <hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
                 field="disabled" isMessage="true" />
-		</hf:formPanel>
+		</hftl:formPanel>
 
 		<p:panel rendered="#{not empty webHookBean.entity.id}">
 			<hftl:dataList backingBean="#{notificationHistoryBean}"

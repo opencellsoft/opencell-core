@@ -1,9 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
@@ -15,7 +13,7 @@
 
 		<hftl:entityPopup id="searchCalendarPopup1"
 			header="#{messages['calendar.search']}" backingBean="#{calendarBean}"
-			updateField=":calendarPanel:formId:joinCalendar1"
+			updateField=":formId:joinCalendar1"
 			selection="#{calendarBean.entity.joinCalendar1}"
 			searchField1Label="#{messages['calendar.name']}" searchField1="code"
 			searchField2Label="#{messages['BusinessEntity.description']}"
@@ -27,7 +25,7 @@
 
 		<hftl:entityPopup id="searchCalendarPopup2"
 			header="#{messages['calendar.search']}" backingBean="#{calendarBean}"
-			updateField=":calendarPanel:formId:joinCalendar2"
+			updateField=":formId:joinCalendar2"
 			selection="#{calendarBean.entity.joinCalendar2}"
 			searchField1Label="#{messages['calendar.name']}" searchField1="code"
 			searchField2Label="#{messages['BusinessEntity.description']}"
@@ -45,10 +43,10 @@
 				</p:breadCrumb>
 			</h:form>
 		</p:panel>
-		<hf:formPanel id="calendarPanel" label="#{messages['calendar.panel']}"
+		<hftl:formPanel label="#{messages['calendar.panel']}"
 			backingBean="#{calendarBean}">
 
-			<hf:formDecorateField fieldId="calendarType"
+			<hftl:decorateFormField fieldId="calendarType"
 				label="#{messages['calendar.type']}"
 				rendered="#{calendarBean.entity.id==null}">
 				<p:selectOneMenu id="calendarType"
@@ -68,15 +66,15 @@
 						listener="#{calendarBean.changeCalendarType}" partialSubmit="true"
 						process="@this" update="@form" />
 				</p:selectOneMenu>
-			</hf:formDecorateField>
-			<hf:formField label="#{messages['calendar.name']}" field="code"
+			</hftl:decorateFormField>
+			<hftl:formField label="#{messages['calendar.name']}" field="code"
 				required="true" validateUnique="true" useConverter="false"
 				newLine="true" />
-			<hf:formField label="#{messages['calendar.description']}"
+			<hftl:formField label="#{messages['calendar.description']}"
 				field="description" useConverter="false" id="description" />
 
 
-			<hf:formField label="#{messages['calendar.days']}" field="days"
+			<hftl:formField label="#{messages['calendar.days']}" field="days"
 				listType="pickUpList" valueLabelField="day" valueLabelField2="month"
 				dualListModel="#{calendarBean.dayInYearModel}"
 				rendered="#{calendarBean.entity.calendarType=='YEARLY'}"
@@ -92,8 +90,8 @@
 							mask="99:99" rendered="#{calendarBean.edit}" />
 						<p:commandButton icon="ui-icon-plus"
 							action="#{calendarBean.addTime()}" partialSubmit="true"
-							process=":calendarPanel:formId:date, @this"
-							update=":calendarPanel:formId:date, :calendarPanel:formId:calendarHours"
+							process=":formId:date, @this"
+							update=":formId:date, :formId:calendarHours"
 							rendered="#{calendarBean.edit}" />
 					</h:panelGrid>
 					<p:dataTable id="calendarHours" resizableColumns="true"
@@ -109,7 +107,7 @@
 								style="float:right;margin-right:10px"
 								action="#{calendarBean.removeTime(hourMin)}"
 								partialSubmit="true" process="@this"
-								update=":calendarPanel:formId:calendarHours"
+								update=":formId:calendarHours"
 								rendered="#{calendarBean.edit}">
 							</p:commandLink>
 						</p:column>
@@ -120,29 +118,29 @@
 			<h:panelGroup
 				rendered="#{calendarBean.entity.calendarType=='PERIOD'}">
 
-				<hf:formField label="#{messages['calendar.periodLength']}"
+				<hftl:formField label="#{messages['calendar.periodLength']}"
 					field="periodLength" required="true" newLine="true" />
-				<hf:formField label="#{messages['calendar.periodUnit']}"
+				<hftl:formField label="#{messages['calendar.periodUnit']}"
 					field="periodUnit" required="true"
 					listValues="#{calendarBean.periodTypes}"
 					rendered="#{ calendarBean.edit}" />
-				<hf:formField label="#{messages['calendar.periodUnit']}"
+				<hftl:formField label="#{messages['calendar.periodUnit']}"
 					field="periodUnit" isMessage="true"
 					messagePrefix="calendar.periodUnit"
 					rendered="#{ not calendarBean.edit}" />
-				<hf:formField label="#{messages['calendar.nbPeriods']}"
+				<hftl:formField label="#{messages['calendar.nbPeriods']}"
 					field="nbPeriods" required="true" />
 			</h:panelGroup>
 
 			<h:panelGroup rendered="#{calendarBean.entity.calendarType=='JOIN'}">
-				<hf:formField id="joinType" label="#{messages['calendar.joinType']}"
+				<hftl:formField id="joinType" label="#{messages['calendar.joinType']}"
 					field="joinType" newLine="true" required="true" />
-				<hf:formField id="joinCalendar1"
+				<hftl:formField id="joinCalendar1"
 					label="#{messages['calendar.joinCalendar1']}" field="joinCalendar1"
 					valueLabelField="code" required="true" popup="true"
 					popupId="searchCalendarPopup1" />
 
-				<hf:formField id="joinCalendar2"
+				<hftl:formField id="joinCalendar2"
 					label="#{messages['calendar.joinCalendar2']}" field="joinCalendar2"
 					valueLabelField="code" required="true" popup="true"
 					popupId="searchCalendarPopup2" />
@@ -152,7 +150,7 @@
 			<h:panelGroup
 				rendered="#{calendarBean.entity.calendarType=='INTERVAL'}">
 
-				<hf:formDecorateField fieldId="intervalType"
+				<hftl:decorateFormField fieldId="intervalType"
 					label="#{messages['calendar.intervalType']}" newLine="true">
 					<p:selectOneMenu id="intervalType"
 						value="#{calendarBean.entity.intervalType}" required="true"
@@ -171,7 +169,7 @@
 						value="#{messages[calendarBean.entity.intervalType.label]}"
 						styleClass="field-value"
 						rendered="#{calendarBean.entity.id!=null}" />
-				</hf:formDecorateField>
+				</hftl:decorateFormField>
 
 
 				<h:panelGrid columns="2"
@@ -185,8 +183,8 @@
 								rendered="#{calendarBean.edit}" />
 							<p:commandButton icon="ui-icon-plus"
 								action="#{calendarBean.addInterval()}" partialSubmit="true"
-								process=":calendarPanel:formId:hourIntervalToAdd, @this"
-								update=":calendarPanel:formId:hourIntervalToAdd, :calendarPanel:formId:intervalHours"
+								process=":formId:hourIntervalToAdd, @this"
+								update=":formId:hourIntervalToAdd, :formId:intervalHours"
 								rendered="#{calendarBean.edit}" />
 						</h:panelGrid>
 						<p:dataTable id="intervalHours" resizableColumns="true"
@@ -202,7 +200,7 @@
 									style="float:right;margin-right:10px"
 									action="#{calendarBean.removeInterval(interval)}"
 									partialSubmit="true" process="@this"
-									update=":calendarPanel:formId:intervalHours"
+									update=":formId:intervalHours"
 									rendered="#{calendarBean.edit}">
 								</p:commandLink>
 							</p:column>
@@ -221,8 +219,8 @@
 								rendered="#{calendarBean.edit}" />
 							<p:commandButton icon="ui-icon-plus"
 								action="#{calendarBean.addInterval()}" partialSubmit="true"
-								process=":calendarPanel:formId:dayIntervalToAdd, @this"
-								update=":calendarPanel:formId:dayIntervalToAdd, :calendarPanel:formId:intervalDays"
+								process=":formId:dayIntervalToAdd, @this"
+								update=":formId:dayIntervalToAdd, :formId:intervalDays"
 								rendered="#{calendarBean.edit}" />
 						</h:panelGrid>
 						<p:dataTable id="intervalDays" resizableColumns="true"
@@ -238,7 +236,7 @@
 									style="float:right;margin-right:10px"
 									action="#{calendarBean.removeInterval(interval)}"
 									partialSubmit="true" process="@this"
-									update=":calendarPanel:formId:intervalDays"
+									update=":formId:intervalDays"
 									rendered="#{calendarBean.edit}">
 								</p:commandLink>
 							</p:column>
@@ -292,8 +290,8 @@
 							</p:selectOneMenu>
 							<p:commandButton icon="ui-icon-plus"
 								action="#{calendarBean.addInterval()}" partialSubmit="true"
-								process=":calendarPanel:formId:weekdayIntervalFrom, :calendarPanel:formId:weekdayIntervalTo, @this"
-								update=":calendarPanel:formId:weekdayIntervalFrom, :calendarPanel:formId:weekdayIntervalTo, :calendarPanel:formId:intervalWeekdays"
+								process=":formId:weekdayIntervalFrom, :formId:weekdayIntervalTo, @this"
+								update=":formId:weekdayIntervalFrom, :formId:weekdayIntervalTo, :formId:intervalWeekdays"
 								rendered="#{calendarBean.edit}" />
 						</h:panelGrid>
 						<p:dataTable id="intervalWeekdays" resizableColumns="true"
@@ -310,7 +308,7 @@
 									style="float:right;margin-right:10px"
 									action="#{calendarBean.removeInterval(interval)}"
 									partialSubmit="true" process="@this"
-									update=":calendarPanel:formId:intervalWeekdays"
+									update=":formId:intervalWeekdays"
 									rendered="#{calendarBean.edit}">
 								</p:commandLink>
 							</p:column>
@@ -320,7 +318,7 @@
 
 			</h:panelGroup>
 
-		</hf:formPanel>
+		</hftl:formPanel>
 	</ui:define>
 
 </ui:composition>

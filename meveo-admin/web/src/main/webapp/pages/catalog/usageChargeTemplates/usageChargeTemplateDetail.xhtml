@@ -3,7 +3,6 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
@@ -22,7 +21,7 @@
 <!-- 		<hftl:entityPopup id="searchInvoiceSubCategoryPopup" -->
 <!-- 			header="#{messages['invoiceSubCategory.panel']}" -->
 <!-- 			backingBean="#{invoiceSubCategoryBean}" -->
-<!-- 			updateField=":panelUsage:usageChargeId:tabView:invoiceSubCategorySelectedId" -->
+<!-- 			updateField=":usageChargeId:tabView:invoiceSubCategorySelectedId" -->
 <!-- 			selection="#{usageChargeTemplateBean.entity.invoiceSubCategory}" -->
 <!-- 			searchField1Label="#{messages['invoiceSubCategory.code']}" -->
 <!-- 			searchField1="code" -->
@@ -42,7 +41,7 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel id="panelUsage" formId="usageChargeId" ajaxSubmit="true" submitPartialProcess=":panelUsage:usageChargeId:tabView"
+		<hftl:formPanel formId="usageChargeId" ajaxSubmit="true" submitPartialProcess=":usageChargeId:tabView"
 			label="#{messages['usageChargeTemplate.title']}"
 			backingBean="#{usageChargeTemplateBean}" showEnableDisableButton="true" updateConfirmationMessage="#{usageChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
 
@@ -50,75 +49,75 @@
 
 				<p:tab title="#{messages['customer.tab.information']}">
 
-						<hf:formField label="#{messages['chargeTemplate.code']}"
+						<hftl:formField label="#{messages['chargeTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
-						<hf:languageFields />
+						<hftl:formLanguageFields entity="#{usageChargeTemplateBean.entity}" backingBean="#{usageChargeTemplateBean}"  multiLang="true"/>
 
-						<hf:formField label="#{messages['chargeTemplate.amountEditable']}"
+						<hftl:formField label="#{messages['chargeTemplate.amountEditable']}"
 							field="amountEditable" />						
-						<hf:formField label="#{messages['usageChargeTemplate.priority']}"
+						<hftl:formField label="#{messages['usageChargeTemplate.priority']}"
 							field="priority" />
-						<hf:formField
+						<hftl:formField
 							label="#{messages['chargeTemplate.inputUnitDescription']}"
 							field="inputUnitDescription" />
-						<hf:formField
+						<hftl:formField
 							label="#{messages['chargeTemplate.ratingUnitDescription']}"
 							field="ratingUnitDescription" />
-						<hf:formField
+						<hftl:formField
 							label="#{messages['chargeTemplate.unitMultiplicator']}"
 							field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
-						<hf:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
+						<hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
 							field="unitNbDecimal" />
-						<hf:formField
+						<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam1']}"
 							field="filterParam1" />
-						<hf:formField
+						<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam2']}"
 							field="filterParam2" />
-						<hf:formField
+						<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam3']}"
 							field="filterParam3" />
-						<hf:formField
+						<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam4']}"
 							field="filterParam4" />
-						<hf:formField label="#{messages['usageChargeTemplate.filterExpression']}"
+						<hftl:formField label="#{messages['usageChargeTemplate.filterExpression']}"
 						   field="filterExpression" textArea="true" maxlength="2000"/>
 
-						<hf:formField id="invoiceSubCategorySelectedId"
+						<hftl:formField id="invoiceSubCategorySelectedId"
 							label="#{messages['charge.subCategory']}"
 							field="invoiceSubCategory" valueLabelField="code" required="true" listBean="#{invoiceSubCategoryBean}"/>
 <!-- 							popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->
                                                         
-                        <hf:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
                             field="disabled" isMessage="true" />
                             
-                        <hf:formField label="#{messages['menu.triggeredEdrTemplates']}"
+                        <hftl:formField label="#{messages['menu.triggeredEdrTemplates']}"
                             field="edrTemplates" listType="pickUpList" valueLabelField="code"
                             dualListModel="#{usageChargeTemplateBean.edrTemplatesModel}" newLine="true"/>
                             
 				</p:tab>
 
-				<hftl:customFields backingBean="#{usageChargeTemplateBean}" messagesId=":panelUsage:usageChargeId:messages"/>
+				<hftl:customFields backingBean="#{usageChargeTemplateBean}" messagesId=":usageChargeId:messages"/>
 				
 				<p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{pricePlanMatrixBean.objectId!=null}" >  
                     <p:panel>
-						<hf:formDecorateField fieldId="usageChargeCode" label="#{messages['pricePlanMatrix.eventCode']} :">
+						<hftl:decorateFormField fieldId="usageChargeCode" label="#{messages['pricePlanMatrix.eventCode']} :">
 							<h:outputText id="usageChargeCode"
 								value="#{usageChargeTemplateBean.entity.code}"
 								disabled="true" style="font-weight:bold;" />
-						</hf:formDecorateField> 
+						</hftl:decorateFormField> 
 						
-						<hf:formDecorateField fieldId="usageChargeDescription" label="#{messages['businessEntity.description']} :">
+						<hftl:decorateFormField fieldId="usageChargeDescription" label="#{messages['businessEntity.description']} :">
 							<h:outputText id="usageChargeDescription"
 								value="#{usageChargeTemplateBean.entity.description}" 
 								disabled="true" style="font-weight:bold;" />
-						</hf:formDecorateField>
+						</hftl:decorateFormField>
                     </p:panel>
 					<ui:include src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />					
 				   </p:tab>
 			</p:tabView>
 
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

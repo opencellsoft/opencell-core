@@ -117,7 +117,7 @@ public class CustomerAccount extends AccountEntity {
 	@Column(name = "PASSWORD", length = 10)
 	private String password = "";
 
-	@Column(name = "MANDATE_IDENTIFICATION", length = 35)
+	@Column(name = "MANDATE_IDENTIFICATION", length = 256)
 	private String mandateIdentification = "";
 
 	@Column(name = "MANDATE_DATE")
