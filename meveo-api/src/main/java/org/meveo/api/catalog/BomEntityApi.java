@@ -15,7 +15,7 @@ import org.meveo.model.bom.BOMEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.service.catalog.impl.BOMEntityService;
+import org.meveo.service.catalog.impl.BusinessOfferService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
 
@@ -29,7 +29,7 @@ public class BomEntityApi extends BaseApi {
 	private OfferTemplateService offerTemplateService;
 
 	@Inject
-	private BOMEntityService bomEntityService;
+	private BusinessOfferService bomEntityService;
 
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
