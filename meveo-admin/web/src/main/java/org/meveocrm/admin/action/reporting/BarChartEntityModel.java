@@ -1,12 +1,12 @@
 package org.meveocrm.admin.action.reporting;
 
 import org.meveocrm.model.dwh.BarChart;
-import org.primefaces.model.chart.CartesianChartModel;
+import org.primefaces.model.chart.BarChartModel;
 
 public class BarChartEntityModel extends ChartEntityModel {
 
 	private BarChart barChart;
-	private CartesianChartModel model;
+	private BarChartModel model;
 
 	public BarChart getBarChart() {
 		return barChart;
@@ -16,11 +16,11 @@ public class BarChartEntityModel extends ChartEntityModel {
 		this.barChart = barChart;
 	}
 
-	public CartesianChartModel getModel() {
+	public BarChartModel getModel() {
 		return model;
 	}
 
-	public void setModel(CartesianChartModel model) {
+	public void setModel(BarChartModel model) {
 		this.model = model;
 	}
 

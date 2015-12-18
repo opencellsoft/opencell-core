@@ -84,7 +84,7 @@
 
 		<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-		<hftl:dataList backingBean="#{chartListBean}">
+		<hftl:dataList backingBean="#{chartListBean}" editView="#{chartListBean.getEditView(entity)}" >
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['user.userPanel']}" field="auditable.creator" />
 			<hftl:column label="#{messages['role.userRolePanel']}" field="role.description" />

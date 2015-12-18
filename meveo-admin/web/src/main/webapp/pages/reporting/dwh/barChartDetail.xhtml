@@ -82,7 +82,7 @@
 				value="#{messages['page.chart.preview']}" update="@all"></p:commandButton>
 
 			<p:outputPanel id="chartPreview"
-				rendered="#{barChartBean.chartEntityModel.model != null}">
+				rendered="#{barChartBean.chartEntityModel.model != null}"  style="margin:50px">
 				<p:chart type="bar" model="#{barChartBean.chartEntityModel.model}"
 					fill="#{barChartBean.chartEntityModel.barChart.filled}"
 					legendPosition="#{barChartBean.chartEntityModel.barChart.legendPosition}"
