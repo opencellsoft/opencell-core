@@ -33,27 +33,7 @@
         <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_enum_view" value="#{messages[cc.attrs.fieldItem.label]}" styleClass="field-value" rendered="#{not cc.attrs.edit}" />
         <cc:insertChildren />
     </hftl:decorateFormField>
-
-
-    <!--     <h:panelGroup layout="block" styleClass="formFieldGroup #{cc.parent.attrs.styleClass}" style="width:#{cc.parent.attrs.componentWidth}%; #{cc.parent.attrs.style}"> -->
-    <!--         <p:outputLabel for="#{cc.parent.attrs.fieldIdPrefix}_enum#{cc.attrs.edit?'':'_view'}" value="#{cc.parent.attrs.label}" /> -->
-    <!--         <h:panelGroup layout="block" styleClass="#{cc.parent.attrs.fieldStyle}  #{cc.parent.attrs.inputStyleClass}" -->
-    <!--             style="width:#{cc.parent.attrs.inputWidth}%; #{cc.parent.attrs.inputStyle}"> -->
-    <!--             <p:selectOneMenu id="#{cc.parent.attrs.fieldIdPrefix}_enum" value="#{cc.attrs.fieldItem}" disabled="#{cc.parent.attrs.disabled}" required="#{cc.parent.attrs.required}" -->
-    <!--                 rendered="#{cc.attrs.edit}"> -->
-    <!--                 <f:selectItem itemLabel="" /> -->
-    <!--                 <f:selectItems value="#{cc.parent.attrs.listValues !=null? cc.parent.attrs.listValues: cc.parent.getEnumConstants(cc.parent.attrs.field)}" var="enumElement" -->
-    <!--                     itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" /> -->
-    <!--                 <f:converter converterId="enumConverter" /> -->
-    <!--                 <c:if test="#{not empty cc.parent.attrs.listenerUpdate}"> -->
-    <!--                     <p:ajax update="#{cc.parent.attrs.listenerUpdate}" event="change" /> -->
-    <!--                 </c:if> -->
-    <!--             </p:selectOneMenu> -->
-    <!--             <h:outputText id="#{cc.parent.attrs.fieldIdPrefix}_enum_view" value="#{messages[cc.attrs.fieldItem.label]}" styleClass="field-value" rendered="#{not cc.attrs.edit}" /> -->
-    <!--             <cc:insertChildren /> -->
-    <!--         </h:panelGroup> -->
-    <!--     </h:panelGroup> -->
-
+    
 </cc:implementation>
 
 </html>

@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<f:metadata>
@@ -18,16 +15,16 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel id="searchPanel"
+		<hftl:searchPanel id="searchPanel"
 			label="#{messages['ddrequestLot.panel']}"
 			backingBean="#{ddRequestLOTListBean}" renderNewButton="false">
-			<hf:searchField label="#{messages['ddrequestLot.fileName']}"
+			<hftl:searchField label="#{messages['ddrequestLot.fileName']}"
 				field="fileName" />
-			<hf:searchField label="#{messages['ddrequestLot.sendDate']}"
+			<hftl:searchField label="#{messages['ddrequestLot.sendDate']}"
 				field="sendDate" />
-			<hf:searchField label="#{messages['ddrequestLot.paymentCreated']}"
+			<hftl:searchField label="#{messages['ddrequestLot.paymentCreated']}"
 				field="paymentCreated" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList backingBean="#{ddRequestLOTListBean}">
 			<hftl:column label="#{messages['ddrequestLot.fileName']}"

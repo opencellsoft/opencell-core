@@ -4,7 +4,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:e="http://jboss.com/products/seam/excel"
 	xmlns:p="http://primefaces.org/ui"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -14,14 +14,14 @@
 	<ui:define name="body">
 
 
-		<hf:searchPanel label="#{messages['billingAccount.search']}" renderNewButton="false" backingBean="#{billingAccountBean}">
-	    	<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
-			<hf:searchField label="#{messages['billingAccount.status']}" field="status" />
-			<hf:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
-			<hf:searchField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
-			<hf:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
-			<hf:searchField label="#{messages['billingAccount.electronicBilling']}" field="electronicBilling" />
-		</hf:searchPanel>
+		<hftl:searchPanel label="#{messages['billingAccount.search']}" renderNewButton="false" backingBean="#{billingAccountBean}">
+	    	<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:searchField label="#{messages['billingAccount.status']}" field="status" />
+			<hftl:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
+			<hftl:searchField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
+			<hftl:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+			<hftl:searchField label="#{messages['billingAccount.electronicBilling']}" field="electronicBilling" />
+		</hftl:searchPanel>
 
 		<hftl:dataList backingBean="#{billingAccountBean}" label="#{messages['billingAccount.title']}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />

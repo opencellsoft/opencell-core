@@ -17,34 +17,34 @@
 			</h:form>
 		</p:panel>
 
-        <hf:formPanel id="formPanel" edit="false" label="#{messages['walletOperation.panel']}" backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
+        <hftl:formPanel edit="false" label="#{messages['walletOperation.panel']}" backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
 
-            <hf:formField label="#{messages['BusinessEntity.code']}" field="code" />
-            <hf:formField label="#{messages['BusinessEntity.description']}" field="description" />
-            <hf:formField label="#{messages['seller.title']}" field="seller" valueLabelField="description" />
-            <hf:formField label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance" valueLabelField="code" />
-            <hf:formField label="#{messages['counterTemplate.title']}" field="counter" valueLabelField="code" />
-            <hf:formField label="#{messages['pricePlan.title']}" id="priceplanSelectId" field="priceplan" valueLabelField="code" />
-            <hf:formField label="#{messages['walletOperation.offer']}" field="offerCode" />
-            <hf:formField label="#{messages['operation.wallet']}" field="wallet" valueLabelField="code" />
-            <hf:formField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
-            <hf:formField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter" />
-            <hf:formField label="#{messages['walletOperation.quantity']}" field="quantity" converter="bigDecimal4DigitsConverter" />
-            <hf:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
-            <hf:formField label="#{messages['accountOperation.type']}" field="type" isMessage="true" />
-            <hf:formField label="#{messages['walletOperation.ratingUnitDescription']}" field="ratingUnitDescription" maxlength="20"/>
-            <hf:formField label="#{messages['walletOperation.taxPercent']}" field="taxPercent" converter="bigDecimal4DigitsConverter" />
-            <hf:formField label="#{messages['walletOperation.unitAmountWithTax']}" field="unitAmountWithTax" converter="bigDecimal4DigitsConverter" />
-            <hf:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" />
-            <hf:formField label="#{messages['walletOperation.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter" />
-            <hf:formField label="#{messages['walletOperation.param1']}" field="parameter1" />
-            <hf:formField label="#{messages['walletOperation.param2']}" field="parameter2" />
-            <hf:formField label="#{messages['walletOperation.param3']}" field="parameter3" />
-            <hf:formField label="#{messages['walletOperation.startDate']}" field="startDate" />
-            <hf:formField label="#{messages['walletOperation.endDate']}" field="endDate" />
-            <hf:formField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
-            <hf:formField label="#{messages['walletOperation.invoicingDate']}" field="invoicingDate" />
-            <hf:formField label="#{messages['walletOperation.status']}" field="status" />
+            <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
+            <hftl:formField label="#{messages['seller.title']}" field="seller" valueLabelField="description" />
+            <hftl:formField label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance" valueLabelField="code" />
+            <hftl:formField label="#{messages['counterTemplate.title']}" field="counter" valueLabelField="code" />
+            <hftl:formField label="#{messages['pricePlan.title']}" id="priceplanSelectId" field="priceplan" valueLabelField="code" />
+            <hftl:formField label="#{messages['walletOperation.offer']}" field="offerCode" />
+            <hftl:formField label="#{messages['operation.wallet']}" field="wallet" valueLabelField="code" />
+            <hftl:formField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
+            <hftl:formField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter" />
+            <hftl:formField label="#{messages['walletOperation.quantity']}" field="quantity" converter="bigDecimal4DigitsConverter" />
+            <hftl:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
+            <hftl:formField label="#{messages['accountOperation.type']}" field="type" isMessage="true" />
+            <hftl:formField label="#{messages['walletOperation.ratingUnitDescription']}" field="ratingUnitDescription" maxlength="20"/>
+            <hftl:formField label="#{messages['walletOperation.taxPercent']}" field="taxPercent" converter="bigDecimal4DigitsConverter" />
+            <hftl:formField label="#{messages['walletOperation.unitAmountWithTax']}" field="unitAmountWithTax" converter="bigDecimal4DigitsConverter" />
+            <hftl:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" />
+            <hftl:formField label="#{messages['walletOperation.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter" />
+            <hftl:formField label="#{messages['walletOperation.param1']}" field="parameter1" />
+            <hftl:formField label="#{messages['walletOperation.param2']}" field="parameter2" />
+            <hftl:formField label="#{messages['walletOperation.param3']}" field="parameter3" />
+            <hftl:formField label="#{messages['walletOperation.startDate']}" field="startDate" />
+            <hftl:formField label="#{messages['walletOperation.endDate']}" field="endDate" />
+            <hftl:formField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
+            <hftl:formField label="#{messages['walletOperation.invoicingDate']}" field="invoicingDate" />
+            <hftl:formField label="#{messages['walletOperation.status']}" field="status" />
             <hftl:decorateFormField fieldId="rerated" label="#{messages['walletOperationStatus.rerated']}">
                 <h:link id="rerated" outcome="walletOperationDetail">
                     <f:param name="objectId" value="#{walletOperationBean.entity.reratedWalletOperation.id}" />
@@ -56,10 +56,11 @@
                     <h:outputText value=" #{walletOperationBean.entity.reratedWalletOperation.code}" />
                 </h:link>
             </hftl:decorateFormField>
-            <f:facet name="buttons">
+            <ui:param name="buttons" value="true">
+            <ui:define name="buttons">
                 <p:button id="back" value="#{messages['action.back']}" outcome="#{walletOperationBean.back()}" includeViewParams="true" />
-            </f:facet>
-        </hf:formPanel>
+            </ui:define>
+        </hftl:formPanel>
     </ui:define>
 
 </ui:composition>

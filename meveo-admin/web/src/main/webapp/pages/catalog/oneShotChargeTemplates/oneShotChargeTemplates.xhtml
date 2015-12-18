@@ -21,18 +21,18 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['oneShotChargeTemplate.search']}"
+		<searchPanel label="#{messages['oneShotChargeTemplate.search']}"
 			backingBean="#{oneShotChargeTemplateListBean}">
-			<hf:searchField label="#{messages['chargeTemplate.code']}"
+			<searchField label="#{messages['chargeTemplate.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['chargeTemplate.description']}"
+			<searchField label="#{messages['chargeTemplate.description']}"
 				id="description" field="description" />
-			<!-- <hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" /> -->
-			<hf:searchField label="#{messages['chargeTemplate.type']}"
+			<!-- <searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" /> -->
+			<searchField label="#{messages['chargeTemplate.type']}"
 				field="oneShotChargeTemplateType" childField="label" />
-			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+			<searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
 
-		</hf:searchPanel>
+		</searchPanel>
 
 		<hftl:dataList label="#{messages['oneShotChargeTemplate.title']}"
 		    noClose="false" sortBy="code"

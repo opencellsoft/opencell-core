@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -33,13 +30,13 @@
 			</a:commandLink>
 		</custom:entityPopup>
 
-		<hf:formPanel label="#{messages['wallet.walletPanel']}" backingBean="#{walletBean}" pdf="true">
-			<hf:formField id="userAccount" label="#{messages['wallet.userAccount']}" field="userAccount" valueLabelField="name" required="true" popup="true" popupId="userAccountPopup" />
-			<hf:formField label="#{messages['wallet.name']}" field="name" />
-			<hf:formField label="#{messages['wallet.walletType']}" field="walletType" childField="label" isMessage="true" />
-			<hf:formField label="#{messages['walletTemplate.lowBalanceLevel']}" field="lowBalanceLevel" />
-			<hf:formField label="#{messages['wallet.ratedTransactions']}" field="ratedTransactions" edit="false" showFields="ratedTransaction.usageCode,usageCode;ratedTransaction.usageAmount,usageAmount;ratedTransaction.amount1,amount1" />
-		</hf:formPanel>
+		<hftl:formPanel label="#{messages['wallet.walletPanel']}" backingBean="#{walletBean}" pdf="true">
+			<hftl:formField id="userAccount" label="#{messages['wallet.userAccount']}" field="userAccount" valueLabelField="name" required="true" popup="true" popupId="userAccountPopup" />
+			<hftl:formField label="#{messages['wallet.name']}" field="name" />
+			<hftl:formField label="#{messages['wallet.walletType']}" field="walletType" childField="label" isMessage="true" />
+			<hftl:formField label="#{messages['walletTemplate.lowBalanceLevel']}" field="lowBalanceLevel" />
+			<hftl:formField label="#{messages['wallet.ratedTransactions']}" field="ratedTransactions" edit="false" showFields="ratedTransaction.usageCode,usageCode;ratedTransaction.usageAmount,usageAmount;ratedTransaction.amount1,amount1" />
+		</hftl:formPanel>
 
 	</ui:define>
 

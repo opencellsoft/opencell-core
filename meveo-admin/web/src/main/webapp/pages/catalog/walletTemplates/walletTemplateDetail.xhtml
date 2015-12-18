@@ -2,9 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -22,26 +20,26 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel id="formPanel" formId="walletTemplatId"
+		<hftl:formPanel id="formPanel" formId="walletTemplatId"
 			label="#{messages['menu.wallets']}"
 			backingBean="#{walletTemplateBean}">
 
-			<hf:formField label="#{messages['businessEntity.code']}" field="code"
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code"
 				required="true" validateUnique="true" />
-			<hf:formField label="#{messages['businessEntity.description']}"
+			<hftl:formField label="#{messages['businessEntity.description']}"
 				field="description" id="description" required="true"
 				validateUnique="true" />
-			<hf:formField
+			<hftl:formField
 				label="#{messages['walletTemplate.lowBalanceLevel']}"
 				field="lowBalanceLevel"/>
-			<!--  <hf:formField
+			<!--  <hftl:formField
 				label="#{messages['walletTemplate.consumptionAlertSet']}"
 				field="consumptionAlertSet" required="true"  />-->
-			<!-- 			<hf:formField label="#{messages['wallet.walletType']}" -->
+			<!-- 			<hftl:formField label="#{messages['wallet.walletType']}" -->
 			<!-- 				field="walletType" childField="label" isMessage="true" required="true"  /> -->
-			<!-- <hf:formField label="#{messages['walletTemplate.fastRatingLevel']}"
+			<!-- <hftl:formField label="#{messages['walletTemplate.fastRatingLevel']}"
 				field="fastRatingLevel" required="true" />  -->
-		    </hf:formPanel>
+		    </hftl:formPanel>
 
 	</ui:define>
 </ui:composition>

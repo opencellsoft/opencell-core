@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -18,17 +17,17 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['usageChargeTemplate.title']}"
+		<hftl:searchPanel label="#{messages['usageChargeTemplate.title']}"
 			backingBean="#{usageChargeTemplateListBean}">
-			<hf:searchField label="#{messages['chargeTemplate.code']}"
+			<hftl:searchField label="#{messages['chargeTemplate.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['chargeTemplate.description']}"
+			<hftl:searchField label="#{messages['chargeTemplate.description']}"
 				id="description" field="description" />
-			<hf:searchField label="#{messages['chargeTemplate.priority']}"
+			<hftl:searchField label="#{messages['chargeTemplate.priority']}"
 				field="priority" />
-			<hf:searchField label="#{messages['enableEntity.disabled']}"
+			<hftl:searchField label="#{messages['enableEntity.disabled']}"
 				field="disabled" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['usageChargeTemplate.title']}" sortBy="code"
 			backingBean="#{usageChargeTemplateListBean}">

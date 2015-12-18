@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -30,22 +29,22 @@
 <!-- 			column1Label="#{messages['invoiceCategory.code']}" column1="code"> -->
 <!-- 		</hftl:entityPopup> -->
 
-		<hf:searchPanel id="searchPanel"
+		<hftl:searchPanel id="searchPanel"
 			label="#{messages['invoiceSubCategory.search']}"
 			backingBean="#{invoiceSubCategoryListBean}">
-			<hf:searchField id="invoiceCategoryField"
+			<hftl:searchField id="invoiceCategoryField"
 				label="#{messages['invoiceSubCategory.invoiceCategory']}"
 				field="invoiceCategory" valueLabelField="code" listBean="#{invoiceCategoryBean}"/>
 <!--                 popup="true" popupId="searchInvoiceCategoryPopup" clearButton="true" /> -->
-			<hf:searchField label="#{messages['invoiceSubCategory.code']}"
+			<hftl:searchField label="#{messages['invoiceSubCategory.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['invoiceSubCategory.description']}"
+			<hftl:searchField label="#{messages['invoiceSubCategory.description']}"
 				field="description" id="description" />
-			<!-- <hf:searchField
+			<!-- <hftl:searchField
 				label="#{messages['invoiceSubCategory.accountingCode']}"
 				field="accountingCode" size="50" /> -->
-			<!-- 	<hf:searchField label="#{messages['invoiceSubCategory.discount']}" field="discount" /> -->
-		</hf:searchPanel>
+			<!-- 	<hftl:searchField label="#{messages['invoiceSubCategory.discount']}" field="discount" /> -->
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['invoiceSubCategory.title']}"
 			backingBean="#{invoiceSubCategoryListBean}" sortBy="code">

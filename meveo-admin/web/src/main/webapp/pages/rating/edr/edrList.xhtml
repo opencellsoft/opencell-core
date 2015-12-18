@@ -1,11 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:o="http://omnifaces.org/ui"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
 	<ui:define name="metadata">
@@ -36,16 +34,16 @@
 
 		<p:messages id="messages" />
 
-		<hf:searchPanel label="#{messages['commons.search']}" id="searchPanel"
+		<hftl:searchPanel label="#{messages['commons.search']}" id="searchPanel"
 			backingBean="#{edrBean}" renderNewButton="false">
-			<hf:searchField id="edr" label="#{messages['edr.subscription']}"
+			<hftl:searchField id="edr" label="#{messages['edr.subscription']}"
 				field="subscription" valueLabelField="code" popup="true"
 				popupId="searchEdrPopup" />
-		  <hf:searchField label="#{messages['commons.status']}"
+		  <hftl:searchField label="#{messages['commons.status']}"
 				field="status"/>
-          <hf:searchField label="#{messages['edr.eventDate']}"
+          <hftl:searchField label="#{messages['edr.eventDate']}"
 				field="eventDate"/>				
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList checkMany="true" noClose="false"
 			backingBean="#{edrBean}">

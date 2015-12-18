@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -24,7 +24,7 @@ import org.primefaces.model.chart.PieChartModel;
  * 
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class PieChartBean extends ChartEntityBean<PieChart> {
 
 	private static final long serialVersionUID = 3731010636973175230L;

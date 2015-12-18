@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -43,16 +40,16 @@
 
 		</hftl:entityPopup>
 
-		<hf:searchPanel backingBean="#{walletListBean}"
+		<hftl:searchPanel backingBean="#{walletListBean}"
 			label="#{messages['wallet.search']}"
 			newButtonView="/pages/billing/wallets/walletDetail.xhtml">
-			<hf:searchField label="#{messages['wallet.userAccount']}"
+			<hftl:searchField label="#{messages['wallet.userAccount']}"
 				field="userAccount" valueLabelField="code" popup="true"
 				popupId="searchUserAccountPopup" clearButton="true" />
-			<hf:searchField label="#{messages['wallet.name']}" field="name" />
-			<hf:searchField label="#{messages['wallet.walletType']}"
+			<hftl:searchField label="#{messages['wallet.name']}" field="name" />
+			<hftl:searchField label="#{messages['wallet.walletType']}"
 				field="walletType" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['wallet.title']}"
 			backingBean="#{walletListBean}" pdf="true">

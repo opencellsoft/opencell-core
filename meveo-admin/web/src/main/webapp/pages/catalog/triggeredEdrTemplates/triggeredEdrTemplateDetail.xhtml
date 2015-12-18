@@ -2,9 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -22,29 +20,29 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel id="formPanel" formId="triggeredTemplateId"
+		<hftl:formPanel id="formPanel" formId="triggeredTemplateId"
 			label="#{messages['menu.triggeredEdrTemplates']}"
 			backingBean="#{triggeredEDRTemplateBean}">
-				<hf:formField label="#{messages['businessEntity.code']}" field="code"
+				<hftl:formField label="#{messages['businessEntity.code']}" field="code"
 					required="true" validateUnique="true" />
-				<hf:formField label="#{messages['businessEntity.description']}"
+				<hftl:formField label="#{messages['businessEntity.description']}"
 					field="description" id="description" />
-				<hf:formField label="#{messages['triggeredEdrTemplate.conditionEl']}"
+				<hftl:formField label="#{messages['triggeredEdrTemplate.conditionEl']}"
 					field="conditionEl" textArea="true" cols="80" row="6" maxlength="2000" componentWidth="50" newLine="true"/>
-				<hf:formField label="#{messages['triggeredEdrTemplate.quantityEl']}"
+				<hftl:formField label="#{messages['triggeredEdrTemplate.quantityEl']}"
 					field="quantityEl"  textArea="true" cols="80" row="6" maxlength="2000" componentWidth="50" required="true"/>
-				<hf:formField label="#{messages['triggeredEdrTemplate.param1El']}"
+				<hftl:formField label="#{messages['triggeredEdrTemplate.param1El']}"
 					field="param1El"  textArea="true" cols="80" row="6" maxlength="2000" componentWidth="50"/>
-				<hf:formField label="#{messages['triggeredEdrTemplate.param2El']}"
+				<hftl:formField label="#{messages['triggeredEdrTemplate.param2El']}"
 					field="param2El"  textArea="true" cols="80" row="6" maxlength="2000" componentWidth="50"/>
-				<hf:formField label="#{messages['triggeredEdrTemplate.param3El']}"
+				<hftl:formField label="#{messages['triggeredEdrTemplate.param3El']}"
 					field="param3El"  textArea="true" cols="80" row="6" maxlength="2000" componentWidth="50"/>
-				<hf:formField label="#{messages['triggeredEdrTemplate.param4El']}"
+				<hftl:formField label="#{messages['triggeredEdrTemplate.param4El']}"
 					field="param4El"  textArea="true" cols="80" row="6" maxlength="2000" componentWidth="50"/>
-				<hf:formField
+				<hftl:formField
 					label="#{messages['triggeredEdrTemplate.subscriptionEl']}"
 					field="subscriptionEl"  textArea="true" cols="80" row="6" maxlength="2000" componentWidth="50"/>
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 </ui:composition>

@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    
-    
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
     
     <ui:define name="metadata">
@@ -21,14 +18,14 @@
     
     <ui:define name="body">
     	
-    		<hf:searchPanel label="#{messages['accountOperation.search']}"  backingBean="#{otherCreditAndChargeListBean}" newButtonView="/pages/payments/accountOperations/accountOperationDetail.xhtml">    			    			    				
-    			<hf:searchField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />					
-    			<hf:searchField label="#{messages['accountOperation.reference']}" field="reference" />
-    			<hf:searchField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
-    			<hf:searchField label="#{messages['accountOperation.dueDate']}" field="dueDate" />
-    			<hf:searchField label="#{messages['accountOperation.occCode']}" field="occCode" />      			    			
-    			<hf:searchField label="#{messages['accountOperation.operationDate']}" field="operationDate" />
-    		</hf:searchPanel>
+    		<hftl:searchPanel label="#{messages['accountOperation.search']}"  backingBean="#{otherCreditAndChargeListBean}" newButtonView="/pages/payments/accountOperations/accountOperationDetail.xhtml">    			    			    				
+    			<hftl:searchField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />					
+    			<hftl:searchField label="#{messages['accountOperation.reference']}" field="reference" />
+    			<hftl:searchField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
+    			<hftl:searchField label="#{messages['accountOperation.dueDate']}" field="dueDate" />
+    			<hftl:searchField label="#{messages['accountOperation.occCode']}" field="occCode" />      			    			
+    			<hftl:searchField label="#{messages['accountOperation.operationDate']}" field="operationDate" />
+    		</hftl:searchPanel>
     		
     		<hftl:dataList label="#{messages['accountOperation.title']}"   backingBean="#{otherCreditAndChargeListBean}">    			    			
     			<hftl:column label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />	   

@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
 
 
@@ -16,10 +16,10 @@
 
         <!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-        <hf:searchPanel label="#{messages['menu.inboundRequests']}" columns="2" backingBean="#{inboundRequestListBean}" renderNewButton="false">
-            <hf:searchField label="#{messages['commons.date']}" field="auditable" childField="created" />
-            <hf:searchField label="#{messages['inboundRequest.remoteAddress']}" field="remoteAddr" />
-        </hf:searchPanel>
+        <hftl:searchPanel label="#{messages['menu.inboundRequests']}" columns="2" backingBean="#{inboundRequestListBean}" renderNewButton="false">
+            <hftl:searchField label="#{messages['commons.date']}" field="auditable" childField="created" />
+            <hftl:searchField label="#{messages['inboundRequest.remoteAddress']}" field="remoteAddr" />
+        </hftl:searchPanel>
 
         <!-- ===================================== SEARCH RESULTS ======================================= -->
 

@@ -1,11 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
     xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -42,25 +40,23 @@
 
         <hftl:decorateFormPanel formId="transferAccountForm" label="#{messages['customerAccount.transferAccountTitle']}">
             <ui:define name="fields">        
-                    <hf:formDecorateField fieldId="accountTransferFrom" label="#{messages['customerAccount.accountTransferFrom']}">
+                    <hftl:decorateFormField fieldId="accountTransferFrom" label="#{messages['customerAccount.accountTransferFrom']}">
                         <p:inputText id="accountTransferFrom" value="#{customerAccountBean.entity.code}" disabled="true" size="30"></p:inputText>
-                    </hf:formDecorateField>
+                    </hftl:decorateFormField>
 
-                    <hf:formDecorateField id="accountTransferCode" fieldId="accountTransferCode" label="#{messages['customerAccount.accountTransferTo']}">
+                    <hftl:decorateFormField id="accountTransferCode" fieldId="accountTransferCode" label="#{messages['customerAccount.accountTransferTo']}">
 
                         <p:inputText id="accountTransferCode" value="#{customerAccountBean.getCustomerAccountTransfer().getCode()}" required="true" disabled="true" size="30"></p:inputText>
-                        <p:commandLink id="selectLink" onclick="PF('dlg_customerAccountPopup').show()" type="button">
-                            <h:graphicImage value="/img/search.gif" style="border:0" />
-                        </p:commandLink>
+                        <p:commandButton id="selectLink" onclick="PF('dlg_customerAccountPopup').show()" type="button" icon="ui-icon-search" />
                         <p:tooltip for="selectLink" value="#{messages['commons.search']}"></p:tooltip>
                         <ui:insert />
-                    </hf:formDecorateField>
+                    </hftl:decorateFormField>
 
-                    <hf:formDecorateField fieldId="amountToTransfer" label="#{messages['customerAccount.amountToTransfer']}">
+                    <hftl:decorateFormField fieldId="amountToTransfer" label="#{messages['customerAccount.amountToTransfer']}">
                         <p:inputText id="amountToTransfer" value="#{customerAccountBean.amountToTransfer}" required="true" size="5">
                             <f:converter converterId="bigDecimalConverter" />
                         </p:inputText>
-                    </hf:formDecorateField>
+                    </hftl:decorateFormField>
              </ui:define>
              <ui:define name="buttons">
                     <p:commandButton value="#{messages['customerAccount.buttonTransfert']}" action="#{customerAccountBean.transferAccount()}" />

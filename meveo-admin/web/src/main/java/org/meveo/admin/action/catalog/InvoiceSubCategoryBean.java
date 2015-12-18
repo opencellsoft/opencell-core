@@ -151,14 +151,11 @@ public class InvoiceSubCategoryBean extends
 		return null;
 	}
 
-	public void deleteInvoiceSubcategoryCountry(
-			InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
-		invoiceSubcategoryCountry = (InvoiceSubcategoryCountry) invoiceSubCategoryCountryService
-				.attach(invoiceSubcategoryCountry);
-		invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
-		entity.getInvoiceSubcategoryCountries().remove(
-				invoiceSubcategoryCountry);
-	}
+    public void deleteInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+        entity.getInvoiceSubcategoryCountries().remove(invoiceSubcategoryCountry);
+        invoiceSubcategoryCountry = (InvoiceSubcategoryCountry) invoiceSubCategoryCountryService.attach(invoiceSubcategoryCountry);
+        invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
+    }
 
 	public void editInvoiceSubcategoryCountry(
 			InvoiceSubcategoryCountry invoiceSubcategoryCountry) {

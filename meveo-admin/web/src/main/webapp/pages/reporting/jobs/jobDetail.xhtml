@@ -1,9 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -12,17 +11,17 @@
     
     <ui:define name="body">
     	
-		<hf:formPanel label="#{messages['job.jobPanel']}" backingBean="#{jobBean}" >
- 			<hf:formField label="#{messages['job.name']}" field="name" edit="false" useConverter="false"/>
-   		    <hf:formField label="#{messages['job.nextExecutionDate']}" field="nextExecutionDate" isDate="true"/>
-   		     <hf:formField label="#{messages['job.lastExecutionDate']}" field="lastExecutionDate" isDate="true"/>
-   		    <hf:formField label="#{messages['job.active']}" field="active" isMessage="true"/>
-   			<hf:formField label="#{messages['job.jobFrequencyId']}" field="frequency" childField="label" isMessage="true" edit="false"/>
-			<hf:formField label="#{messages['job.executions']}" field="jobHistory" showFields="jobHistory.executionDate,executionDate"  showButtonAddNew="false"/>
+		<hftl:formPanel label="#{messages['job.jobPanel']}" backingBean="#{jobBean}" >
+ 			<hftl:formField label="#{messages['job.name']}" field="name" edit="false" useConverter="false"/>
+   		    <hftl:formField label="#{messages['job.nextExecutionDate']}" field="nextExecutionDate" isDate="true"/>
+   		    <hftl:formField label="#{messages['job.lastExecutionDate']}" field="lastExecutionDate" isDate="true"/>
+   		    <hftl:formField label="#{messages['job.active']}" field="active" isMessage="true"/>
+   			<hftl:formField label="#{messages['job.jobFrequencyId']}" field="frequency" childField="label" isMessage="true" edit="false"/>
+			<hftl:formField label="#{messages['job.executions']}" field="jobHistory" showFields="jobHistory.executionDate,executionDate"  showButtonAddNew="false"/>
 			<h:commandButton rendered="#{edit}" id="executeJobNow" value="#{messages['job.executeJobNow']}" action="#{jobBean.executeJob}">
 				<f:attribute name="backView" value="#{backView}" />
 			</h:commandButton>
-		</hf:formPanel>
+		</hftl:formPanel>
        
     </ui:define>
     

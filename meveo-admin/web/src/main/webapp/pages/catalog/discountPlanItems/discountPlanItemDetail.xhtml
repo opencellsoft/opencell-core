@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -50,7 +49,7 @@
 			</hftl:entityPopup>
 		</c:if>
 
-		<hf:formPanel edit="#{edit}" id="discountPlanItemFormPanel"
+		<hftl:formPanel edit="#{edit}" id="discountPlanItemFormPanel"
 			formId="formDiscountPlanItem"
 			label="#{messages['discountPlanItem.title']}"
 			backingBean="#{discountPlanItemBean}">
@@ -59,38 +58,38 @@
 				#{messages['message.discountPlanItem.info.requiredFields']}
 			</div>
 
-			<hf:formField label="#{messages['BusinessEntity.code']}" field="code"
+			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code"
 				required="true" />
 
-			<hf:formField id="discountPlan"
+			<hftl:formField id="discountPlan"
 				label="#{messages['discountPlan.title']}" field="discountPlan"
 				valueLabelField="code" required="true" popup="true"
 				popupId="popupDiscountPlans" />
 
-			<hf:formField id="offerTemplate"
+			<hftl:formField id="offerTemplate"
 				label="#{messages['discountPlanItem.offerTemplate']}"
 				field="offerTemplate" valueLabelField="code" required="false"
 				popup="true" popupId="popupOfferTemplates" />
 
-			<hf:formField id="invoiceCategory"
+			<hftl:formField id="invoiceCategory"
 				label="#{messages['discountPlanItem.invoiceCategory']}"
 				field="invoiceCategory" valueLabelField="code" required="false"
 				listBean="#{invoiceCategoryBean}" />
 
-			<hf:formField id="invoiceSubCategory"
+			<hftl:formField id="invoiceSubCategory"
 				label="#{messages['discountPlanItem.invoiceSubCategory']}"
 				field="invoiceSubCategory" valueLabelField="code" required="false"
 				listBean="#{invoiceSubCategoryBean}" />
 
-			<hf:formField id="chargeTemplate"
+			<hftl:formField id="chargeTemplate"
 				label="#{messages['discountPlanItem.chargeTemplate']}"
 				field="chargeTemplate" valueLabelField="code" required="false"
 				popup="true" popupId="popupChargeTemplates" />
 
-			<hf:formField label="#{messages['discountPlanItem.percent']}"
+			<hftl:formField label="#{messages['discountPlanItem.percent']}"
 				field="percent" required="true" minValue="-100" maxValue="100" />
 
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

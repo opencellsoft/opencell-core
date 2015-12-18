@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<f:metadata>
@@ -27,7 +26,7 @@
 			column2="description"
 			selection="#{discountPlanMatrixBean.filters['offerTemplate']}"
 			lazy="false" dataModel="#{offerTemplateBean.listActive}"
-			updateField=":searchPanel:searchForm:offer">
+			updateField=":searchForm:offer">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['customer.popup.header']}"
@@ -37,31 +36,31 @@
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
 			selection="#{discountPlanMatrixBean.filters['seller']}"
-			updateField=":searchPanel:searchForm:seller">
+			updateField=":searchForm:seller">
 		</hftl:entityPopup>
-		<hf:searchPanel id="searchPanel"
+		<hftl:searchPanel
 			label="#{messages['discountPlanMatrix.search']}"
 			backingBean="#{discountPlanMatrixBean}">
-			<hf:searchField label="#{messages['discountPlanMatrix.eventCode']}"
+			<hftl:searchField label="#{messages['discountPlanMatrix.eventCode']}"
 				field="eventCode" />
-			<hf:searchField id="offer"
+			<hftl:searchField id="offer"
 				label="#{messages['pricePlanMatrix.offerCode']}"
 				field="offerTemplate" childField="description" popup="true"
 				popupId="searchOfferPopup" clearButton="true" />
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['discountPlanMatrix.startSubscriptionDate']}"
 				field="startSubscriptionDate" />
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['discountPlanMatrix.endSubscriptionDate']}"
 				field="endSubscriptionDate" />
-			<hf:searchField label="#{messages['discountPlanMatrix.nbPeriod']}"
+			<hftl:searchField label="#{messages['discountPlanMatrix.nbPeriod']}"
 				field="nbPeriod" />
-			<hf:searchField label="#{messages['discountPlanMatrix.percent']}"
+			<hftl:searchField label="#{messages['discountPlanMatrix.percent']}"
 				field="percent" />
-			<hf:searchField id="seller" label="#{messages['seller.title']}"
+			<hftl:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" childField="description" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['discountPlanMatrix.title']}"
 			backingBean="#{discountPlanMatrixBean}">

@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
 	<ui:define name="metadata">
@@ -22,7 +19,7 @@
 	 
 <!-- 	<hftl:entityPopup id="searchSellerPopup" -->
 <!-- 			header="#{messages['seller.search']}" -->
-<!-- 			updateField=":searchPanel:searchForm:seller" -->
+<!-- 			updateField=":searchForm:seller" -->
 <!-- 			selection="#{walletOperationBean.filters['seller']}" -->
 <!-- 			backingBean="#{sellerBean}" -->
 <!-- 			searchField1Label="#{messages['BusinessEntity.code']}" -->
@@ -34,7 +31,7 @@
 		
 		<hftl:entityPopup id="searchChargeInstancePopup"
 			header="#{messages['walletOperation.chargeInstance']}"
-			updateField=":searchPanel:searchForm:chargeInstance"
+			updateField=":searchForm:chargeInstance"
 			selection="#{walletOperationBean.filters['chargeInstance']}"
 			backingBean="#{chargeTemplateBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -45,7 +42,7 @@
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchCounterInstancePopup"
 			header="#{messages['counterTemplate.title']}"
-			updateField=":searchPanel:searchForm:counter"
+			updateField=":searchForm:counter"
 			selection="#{walletOperationBean.filters['counter']}"
 			backingBean="#{counterTemplateBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -56,7 +53,7 @@
 		</hftl:entityPopup>
 			<hftl:entityPopup id="searchWalletInstancePopup"
 			header="#{messages['walletTemplate.title']}"
-			updateField=":searchPanel:searchForm:wallet"
+			updateField=":searchForm:wallet"
 			selection="#{walletOperationBean.filters['wallet']}"
 			backingBean="#{walletTemplateBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -72,7 +69,7 @@
 			searchField1="code" 
 			column1Label="#{messages['BusinessEntity.code']}" column1="code" 
 			selection="#{walletOperationBean.filters['priceplan']}" 
-			updateField=":searchPanel:searchForm:priceplan">
+			updateField=":searchForm:priceplan">
 		</hftl:entityPopup> 
 		
 		<hftl:entityPopup id="billingAccountPopup"
@@ -87,13 +84,13 @@
 			column2Label="#{messages['invoiceSubCategory.description']}"
 			column2="description" 
 			selection="#{walletOperationBean.filters['billingAccount']}"
-            updateField=":searchPanel:searchForm">
+            updateField=":searchForm">
 		</hftl:entityPopup>
 		
 <!-- 		<hftl:entityPopup id="searchInvoiceSubCategoryPopup" -->
 <!-- 			header="#{messages['invoiceSubCategory.panel']}" -->
 <!-- 			backingBean="#{invoiceSubCategoryBean}" -->
-<!-- 			updateField=":searchPanel:searchForm" -->
+<!-- 			updateField=":searchForm" -->
 <!-- 			selection="#{walletOperationBean.filters['invoiceSubCategory']}" -->
 <!-- 			searchField1Label="#{messages['invoiceSubCategory.code']}" -->
 <!-- 			searchField1="code" -->
@@ -107,7 +104,7 @@
 		  <hftl:entityPopup id="searchBillingRunPopup"
 			header="#{messages['billingRun.search']}"
 			backingBean="#{billingRunBean}"
-			updateField=":searchPanel:searchForm"
+			updateField=":searchForm"
 			selection="#{walletOperationBean.filters['billingRun']}"
 			searchField1Label="#{messages['role.id']}"
 			searchField1="id" 
@@ -121,7 +118,7 @@
 <!-- 		  <hftl:entityPopup id="searchOfferPopup" -->
 <!-- 			header="#{messages['offerTemplate.search']}" -->
 <!-- 			backingBean="#{offerTemplateBean}" -->
-<!-- 			updateField=":searchPanel:searchForm" -->
+<!-- 			updateField=":searchForm" -->
 <!-- 			selection="#{walletOperationBean.filters['offerTemplate']}" -->
 <!-- 			searchField1Label="#{messages['BusinessEntity.code']}" -->
 <!-- 			searchField1="code" -->
@@ -132,7 +129,7 @@
 <!-- 			column2="description"> -->
 <!-- 		  </hftl:entityPopup> -->
 
-        <hf:searchPanel id="searchPanel" label="#{messages['walletOperation.search']}" backingBean="#{walletOperationBean}" renderNewButton="false">
+        <hftl:searchPanel label="#{messages['walletOperation.search']}" backingBean="#{walletOperationBean}" renderNewButton="false">
 
             <hftl:decorateFormField fieldId="currency" label="#{messages['currency.codeCurrency']}" style="width:105px">
             <p:selectOneMenu id="currency" value="#{walletOperationBean.filters['currency.currencyCode']}">
@@ -141,36 +138,36 @@
             </p:selectOneMenu>
             </hftl:decorateFormField>
 
-            <hf:searchField label="#{messages['billingRun.panel']}" id="billingRunId" field="billingRun" valueLabelField="id" popup="true" popupId="searchBillingRunPopup"
+            <hftl:searchField label="#{messages['billingRun.panel']}" id="billingRunId" field="billingRun" valueLabelField="id" popup="true" popupId="searchBillingRunPopup"
                 clearButton="true" renderNewButton="false" />
-            <hf:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount" valueLabelField="code" popup="true"
+            <hftl:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount" valueLabelField="code" popup="true"
                 popupId="billingAccountPopup" clearButton="true" />
-            <hf:searchField label="#{messages['invoiceSubCategory.title']}" id="invoiceSubCategoryId" field="invoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" />
+            <hftl:searchField label="#{messages['invoiceSubCategory.title']}" id="invoiceSubCategoryId" field="invoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" />
 <!--             popup="true" popupId="searchInvoiceSubCategoryPopup" clearButton="true" /> -->
-            <hf:searchField label="#{messages['walletOperation.offer']}" id="offerCodeId" field="offerTemplate" valueLabelField="code" listBean="#{offerTemplateBean}" />
+            <hftl:searchField label="#{messages['walletOperation.offer']}" id="offerCodeId" field="offerTemplate" valueLabelField="code" listBean="#{offerTemplateBean}" />
 <!--             popup="true" popupId="searchOfferPopup" clearButton="true" /> -->
-            <hf:searchField label="#{messages['walletOperation.chargeInstance']}" id="chargeInstance" field="chargeInstance" valueLabelField="code" popup="true"
+            <hftl:searchField label="#{messages['walletOperation.chargeInstance']}" id="chargeInstance" field="chargeInstance" valueLabelField="code" popup="true"
                 popupId="searchChargeInstancePopup" clearButton="true" />
-            <hf:searchField label="#{messages['counterTemplate.title']}" id="counter" field="counter" valueLabelField="code" popup="true" popupId="searchCounterInstancePopup"
+            <hftl:searchField label="#{messages['counterTemplate.title']}" id="counter" field="counter" valueLabelField="code" popup="true" popupId="searchCounterInstancePopup"
                 clearButton="true" />
-            <hf:searchField label="#{messages['pricePlan.title']}" id="priceplan" field="priceplan" valueLabelField="code" popup="true" popupId="searchPricePlanPopup"
+            <hftl:searchField label="#{messages['pricePlan.title']}" id="priceplan" field="priceplan" valueLabelField="code" popup="true" popupId="searchPricePlanPopup"
                 clearButton="true" />
-            <hf:searchField id="seller" label="#{messages['seller.title']}" field="seller" valueLabelField="description" listBean="#{sellerBean}"/>
+            <hftl:searchField id="seller" label="#{messages['seller.title']}" field="seller" valueLabelField="description" listBean="#{sellerBean}"/>
 <!--             popup="true" popupId="searchSellerPopup" clearButton="true" /> -->
-            <hf:searchField label="#{messages['walletOperation.param1']}" field="parameter1" />
-            <hf:searchField label="#{messages['operation.wallet']}" id="wallet" field="wallet" valueLabelField="code" popup="true" popupId="searchWalletInstancePopup" clearButton="true" />
-            <hf:searchField label="#{messages['walletOperation.param2']}" field="parameter2" />
-            <hf:searchField label="#{messages['walletOperation.status']}" field="status" />
-            <hf:searchField label="#{messages['walletOperation.param3']}" field="parameter3" />
-            <hf:searchField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" />
-            <hf:searchField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
-            <hf:searchField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
-            <hf:searchField label="#{messages['walletOperation.startDate']}" field="startDate" />
-            <hf:searchField label="#{messages['walletOperation.endDate']}" field="endDate" />
-            <hf:searchField label="#{messages['walletOperation.quantity']}" field="quantity" />
-            <hf:searchField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
+            <hftl:searchField label="#{messages['walletOperation.param1']}" field="parameter1" />
+            <hftl:searchField label="#{messages['operation.wallet']}" id="wallet" field="wallet" valueLabelField="code" popup="true" popupId="searchWalletInstancePopup" clearButton="true" />
+            <hftl:searchField label="#{messages['walletOperation.param2']}" field="parameter2" />
+            <hftl:searchField label="#{messages['walletOperation.status']}" field="status" />
+            <hftl:searchField label="#{messages['walletOperation.param3']}" field="parameter3" />
+            <hftl:searchField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" />
+            <hftl:searchField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
+            <hftl:searchField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
+            <hftl:searchField label="#{messages['walletOperation.startDate']}" field="startDate" />
+            <hftl:searchField label="#{messages['walletOperation.endDate']}" field="endDate" />
+            <hftl:searchField label="#{messages['walletOperation.quantity']}" field="quantity" />
+            <hftl:searchField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
 
-        </hf:searchPanel>
+        </hftl:searchPanel>
         <hftl:dataList label="#{messages['walletOperations.title']}"
 			backingBean="#{walletOperationBean}" sortBy="operationDate" sortOrder="DESCENDING" deleteManyButton="false">
 			

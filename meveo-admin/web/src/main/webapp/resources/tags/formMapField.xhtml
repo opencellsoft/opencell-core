@@ -42,34 +42,6 @@
         <cc:insertChildren />
     </hftl:decorateFormField>
 
-    <!--         <h:panelGroup layout="block" styleClass="formFieldGroup #{cc.parent.attrs.styleClass}" style="width:#{cc.parent.attrs.componentWidth}%; #{cc.parent.attrs.style}"> -->
-    <!--         <p:outputLabel for="mapValueList" value="#{cc.parent.attrs.label}" /> -->
-    <!--         <h:panelGroup layout="block" styleClass="#{cc.parent.attrs.fieldStyle}  #{cc.parent.attrs.inputStyleClass}" -->
-    <!--             style="width:#{cc.parent.attrs.inputWidth}%; #{cc.parent.attrs.inputStyle}"> -->
-
-    <!--             <p:dataTable id="mapValueList" value="#{cc.attrs.fieldItem}" var="mapValues" paginator="false" styleClass="custom-grid" reflow="true"> -->
-    <!--                 <p:column headerText="#{cc.parent.attrs.mapKeyLabel}"> -->
-    <!--                     <p:inputText value="#{mapValues['key']}" size="50" maxlength="100" rendered="#{cc.attrs.edit}" /> -->
-    <!--                     <h:outputText value="#{mapValues['key']}" styleClass="field-value" rendered="#{not cc.attrs.edit}" /> -->
-    <!--                 </p:column> -->
-    <!--                 <p:column headerText="#{cc.parent.attrs.mapValueLabel}"> -->
-    <!--                     <p:inputText value="#{mapValues['value']}" size="50" maxlength="100" rendered="#{cc.attrs.edit}" /> -->
-    <!--                     <h:outputText value="#{mapValues['value']}" styleClass="field-value" rendered="#{not cc.attrs.edit}" /> -->
-    <!--                 </p:column> -->
-    <!--                 <p:column rendered="#{cc.attrs.edit}" headerText="#{messages['commons.actions']}"> -->
-    <!--                     <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this mapValueList" update="mapValueList" -->
-    <!--                         actionListener="#{cc.parent.backingBeanFromParentOrCurrent.removeMapTypeFieldValue(cc.parent.attrs.field, mapValues)}" /> -->
-    <!--                 </p:column> -->
-    <!--                 <f:facet name="footer"> -->
-    <!--                     <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this mapValueList" update="mapValueList" -->
-    <!--                         actionListener="#{cc.parent.backingBeanFromParentOrCurrent.addMapTypeFieldValue(cc.parent.attrs.field)}" rendered="#{cc.attrs.edit}" /> -->
-    <!--                 </f:facet> -->
-    <!--             </p:dataTable> -->
-
-    <!--             <cc:insertChildren /> -->
-    <!--         </h:panelGroup> -->
-    <!--     </h:panelGroup> -->
-
 </cc:implementation>
 
 </html>

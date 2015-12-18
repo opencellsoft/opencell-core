@@ -1,9 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -12,12 +11,12 @@
     
     <ui:define name="body">
     	
-		<hf:formPanel label="#{messages['usageType.usageTypePanel']}" backingBean="#{usageTypeBean}">
-			<hf:formField label="#{messages['usageType.code']}" field="code" required="false" />
-			<hf:formField label="#{messages['usageType.name']}" field="name" required="false" />
-			<hf:formField label="#{messages['usageType.metricName']}" field="metricName" required="false" />
-			<hf:formField label="#{messages['usageType.metricCode']}" field="metricCode" required="false" />
-		</hf:formPanel>
+		<hftl:formPanel label="#{messages['usageType.usageTypePanel']}" backingBean="#{usageTypeBean}">
+			<hftl:formField label="#{messages['usageType.code']}" field="code" required="false" />
+			<hftl:formField label="#{messages['usageType.name']}" field="name" required="false" />
+			<hftl:formField label="#{messages['usageType.metricName']}" field="metricName" required="false" />
+			<hftl:formField label="#{messages['usageType.metricCode']}" field="metricCode" required="false" />
+		</hftl:formPanel>
        
     </ui:define>
     

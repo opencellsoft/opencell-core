@@ -1,7 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
-     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    xmlns:hftl="http://hftl.org" 
+    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="navigation">
         <ui:include src="/layout/navigation.xhtml" />
@@ -9,33 +9,33 @@
 
     <ui:define name="body">
 
-        <hf:formPanel id="inboundRequestForm" label="#{messages['menu.inboundRequest']}" backingBean="#{inboundRequestBean}" columns="2"
+        <hftl:formPanel id="inboundRequestForm" label="#{messages['menu.inboundRequest']}" backingBean="#{inboundRequestBean}" columns="2"
             showEditButton="false" edit="false">
 
-            <hf:formField label="#{messages['entity.code']}" field="code" />
-			<hf:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true"
+            <hftl:formField label="#{messages['entity.code']}" field="code" />
+			<hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true"
 				field="disabled" isMessage="true" />
-            <hf:formField label="#{messages['inboundRequest.remoteAddress']}" field="remoteAddr" />
-            <hf:formField label="#{messages['inboundRequest.remotePort']}" field="remotePort" />
-            <hf:formField label="#{messages['inboundRequest.protocol']}" field="protocol" />
-            <hf:formField label="#{messages['inboundRequest.scheme']}" field="scheme" />
-            <hf:formField label="#{messages['inboundRequest.contentType']}" field="contentType" />
-            <hf:formField label="#{messages['inboundRequest.contentLength']}" field="contentLength" />
-            <hf:formField label="#{messages['inboundRequest.method']}" field="method" />
-            <hf:formField label="#{messages['inboundRequest.authType']}" field="authType" />
-            <hf:formField label="#{messages['inboundRequest.pathInfo']}" field="pathInfo" />
-            <hf:formField label="#{messages['inboundRequest.requestUri']}" field="requestURI" />
-            <hf:formField label="#{messages['inboundRequest.cookies']}" field="coockies" />
-            <hf:formField label="#{messages['inboundRequest.headers']}" field="headers" />
-            <hf:formField label="#{messages['inboundRequest.parameters']}" field="parameters" />
+            <hftl:formField label="#{messages['inboundRequest.remoteAddress']}" field="remoteAddr" />
+            <hftl:formField label="#{messages['inboundRequest.remotePort']}" field="remotePort" />
+            <hftl:formField label="#{messages['inboundRequest.protocol']}" field="protocol" />
+            <hftl:formField label="#{messages['inboundRequest.scheme']}" field="scheme" />
+            <hftl:formField label="#{messages['inboundRequest.contentType']}" field="contentType" />
+            <hftl:formField label="#{messages['inboundRequest.contentLength']}" field="contentLength" />
+            <hftl:formField label="#{messages['inboundRequest.method']}" field="method" />
+            <hftl:formField label="#{messages['inboundRequest.authType']}" field="authType" />
+            <hftl:formField label="#{messages['inboundRequest.pathInfo']}" field="pathInfo" />
+            <hftl:formField label="#{messages['inboundRequest.requestUri']}" field="requestURI" />
+            <hftl:formField label="#{messages['inboundRequest.cookies']}" field="coockies" />
+            <hftl:formField label="#{messages['inboundRequest.headers']}" field="headers" />
+            <hftl:formField label="#{messages['inboundRequest.parameters']}" field="parameters" />
 
 
-            <hf:formField label="#{messages['inboundRequest.responseContentType']}" field="responseContentType" />
-            <hf:formField label="#{messages['inboundRequest.responseEncoding']}" field="responseEncoding" />
-            <hf:formField label="#{messages['inboundRequest.responseCookies']}" field="responseCoockies" />
-            <hf:formField label="#{messages['inboundRequest.responseHeaders']}" field="responseHeaders" />
+            <hftl:formField label="#{messages['inboundRequest.responseContentType']}" field="responseContentType" />
+            <hftl:formField label="#{messages['inboundRequest.responseEncoding']}" field="responseEncoding" />
+            <hftl:formField label="#{messages['inboundRequest.responseCookies']}" field="responseCoockies" />
+            <hftl:formField label="#{messages['inboundRequest.responseHeaders']}" field="responseHeaders" />
 
-        </hf:formPanel>
+        </hftl:formPanel>
     </ui:define>
 
 </ui:composition>

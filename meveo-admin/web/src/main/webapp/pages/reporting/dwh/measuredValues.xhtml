@@ -1,13 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
-
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -22,18 +18,17 @@
 
 	<ui:define name="body">
 
-
 		<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
-		<hf:searchPanel label="#{messages['menu.measuredValues']}" columns="3"
+		<hftl:searchPanel label="#{messages['menu.measuredValues']}" columns="3"
 			backingBean="#{measurementListBean}">
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['entity.measuredvalue.measurementPeriod']}"
 				field="measurementPeriod" />
-			<hf:searchField label="#{messages['entity.measuredvalue.date']}"
+			<hftl:searchField label="#{messages['entity.measuredvalue.date']}"
 				field="date" />
-			<hf:searchField label="#{messages['entity.measuredvalue.value']}"
+			<hftl:searchField label="#{messages['entity.measuredvalue.value']}"
 				field="value" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 		<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
 		<hftl:dataList backingBean="#{measurementListBean}" sortBy="measurableQuantity.code">

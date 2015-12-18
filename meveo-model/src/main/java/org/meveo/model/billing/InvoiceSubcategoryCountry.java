@@ -97,17 +97,23 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		InvoiceSubcategoryCountry other = (InvoiceSubcategoryCountry) obj;
-		if (getId() == null) {
-			if (other.getId() != null)
-				return false;
-		} else if (!getId().equals(other.getId()))
-			return false;
-		return true;
-	}
-
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        } else if (!(obj instanceof InvoiceSubcategoryCountry)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+        
+        InvoiceSubcategoryCountry other = (InvoiceSubcategoryCountry) obj;
+        if (getId() == null) {
+            if (other.getId() != null) {
+                return false;
+            }
+        } else if (!getId().equals(other.getId())){
+            return false;
+        }
+        return true;
+    }
 }

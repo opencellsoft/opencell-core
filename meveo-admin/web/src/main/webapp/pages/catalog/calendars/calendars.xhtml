@@ -2,7 +2,7 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
 
 	<f:metadata>
@@ -15,12 +15,12 @@
 	
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['calendar.search']}" backingBean="#{calendarListBean}" columns="1" >
-			<hf:searchField label="#{messages['calendar.name']}" field="code" />
-			<hf:searchField label="#{messages['calendar.type']}" field="calendarType" listValues="#{calendarListBean.calendarTypes}"/>
-			<hf:searchField label="#{messages['calendar.description']}" field="description" size="100" />
+		<hftl:searchPanel label="#{messages['calendar.search']}" backingBean="#{calendarListBean}" columns="1" >
+			<hftl:searchField label="#{messages['calendar.name']}" field="code" />
+			<hftl:searchField label="#{messages['calendar.type']}" field="calendarType" listValues="#{calendarListBean.calendarTypes}"/>
+			<hftl:searchField label="#{messages['calendar.description']}" field="description" size="100" />
 
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['calendar.title']}" backingBean="#{calendarListBean}" sortBy="code">
 			<hftl:column label="#{messages['calendar.name']}" field="code" />

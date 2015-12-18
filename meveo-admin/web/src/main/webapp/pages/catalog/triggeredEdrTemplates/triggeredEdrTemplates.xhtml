@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -18,13 +17,13 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['triggeredEdrTemplate.search']}"
+		<hftl:searchPanel label="#{messages['triggeredEdrTemplate.search']}"
 			backingBean="#{triggeredEDRTemplateListBean}">
-			<hf:searchField label="#{messages['businessEntity.code']}"
+			<hftl:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['businessEntity.description']}"
+			<hftl:searchField label="#{messages['businessEntity.description']}"
 				field="description" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['triggeredEdrTemplate.title']}" sortBy="code"
 		    backingBean="#{triggeredEDRTemplateListBean}">

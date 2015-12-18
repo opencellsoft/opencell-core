@@ -2,11 +2,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -24,63 +21,63 @@
 			</h:form>
 		</p:panel>
 
-		<hf:formPanel edit="#{providerContactBean.edit}"
+		<hftl:formPanel edit="#{providerContactBean.edit}"
 			label="#{messages['providerContact.title']}"
 			backingBean="#{providerContactBean}" columns="1">
 
 			<p:fieldset legend="#{messages['billingAccount.tab.account']}">
-				<hf:formField label="#{messages['businessEntity.code']}"
+				<hftl:formField label="#{messages['businessEntity.code']}"
 					field="code" useConverter="false" size="50" maxlength="50"
 					required="true" />
-				<hf:formField label="#{messages['name.firstName']}"
+				<hftl:formField label="#{messages['name.firstName']}"
 					field="firstName" />
-				<hf:formField label="#{messages['name.lastName']}" field="lastName" />
-				<hf:formField label="#{messages['businessEntity.description']}"
+				<hftl:formField label="#{messages['name.lastName']}" field="lastName" />
+				<hftl:formField label="#{messages['businessEntity.description']}"
 					field="description" useConverter="false" size="50" maxlength="50"
 					required="true" />
 			</p:fieldset>
 
 			<p:fieldset legend="#{messages['commons.contacts']}">
-				<hf:formField label="#{messages['contactInformation.email']}"
+				<hftl:formField label="#{messages['contactInformation.email']}"
 					field="email" size="50" maxlength="100" useConverter="false"
 					required="true" validateEmail="true" />
-				<hf:formField label="#{messages['contactInformation.genericMail']}"
+				<hftl:formField label="#{messages['contactInformation.genericMail']}"
 					field="genericMail" size="50" maxlength="100" useConverter="false"
 					required="true" validateEmail="true" />
-				<hf:formField label="#{messages['contactInformation.phone']}"
+				<hftl:formField label="#{messages['contactInformation.phone']}"
 					field="phone" size="50" maxlength="15" />
-				<hf:formField label="#{messages['contactInformation.mobile']}"
+				<hftl:formField label="#{messages['contactInformation.mobile']}"
 					field="mobile" size="50" maxlength="15" />
 			</p:fieldset>
 
 			<p:fieldset legend="#{messages['commons.address']}">
-					<hf:formField label="#{messages['address.address1']}"
+					<hftl:formField label="#{messages['address.address1']}"
 						field="address" id="address1" childField="address1" 
 						size="80" maxlength="80" />
 
-					<hf:formField label="#{messages['address.address2']}"
+					<hftl:formField label="#{messages['address.address2']}"
 						field="address" id="address2" childField="address2" 
 						size="80" maxlength="80" />
 
-					<hf:formField label="#{messages['address.address3']}"
+					<hftl:formField label="#{messages['address.address3']}"
 						field="address" id="address3" childField="address3" 
 						size="80" maxlength="80" />
 
-					<hf:formField label="#{messages['address.zipCode']}" size="10"
+					<hftl:formField label="#{messages['address.zipCode']}" size="10"
 						required="true" id="zipCode" field="address" childField="zipCode"
 						length="10" maxlength="10" />
 
-					<hf:formField label="#{messages['address.city']}"
+					<hftl:formField label="#{messages['address.city']}"
 						required="true" id="city" field="address" childField="city"
 						maxlength="50" />
 
-					<hf:formField label="#{messages['address.country']}"
+					<hftl:formField label="#{messages['address.country']}"
 						fkToEntity="true" field="address" childField="country"
 						valueLabelField="descriptionEn" valueField="countryCode"
 						listBean="#{countryBean}"/>
 			</p:fieldset>
 
-		</hf:formPanel>
+		</hftl:formPanel>
 
 	</ui:define>
 

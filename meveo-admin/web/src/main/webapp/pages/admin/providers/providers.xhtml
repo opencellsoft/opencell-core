@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<f:metadata>
@@ -15,13 +14,13 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel id="searchPanel" backingBean="#{providerListBean}"
+		<hftl:searchPanel id="searchPanel" backingBean="#{providerListBean}"
 			label="#{messages['provider.search']}">
-            <hf:searchField 
+            <hftl:searchField 
                 label="#{messages['BusinessEntity.code']}" field="code" />
-			<hf:searchField label="#{messages['BusinessEntity.description']}"
+			<hftl:searchField label="#{messages['BusinessEntity.description']}"
 				field="description" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['provider.title']}"
 			backingBean="#{providerListBean}">

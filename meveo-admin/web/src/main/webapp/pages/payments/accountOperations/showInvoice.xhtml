@@ -1,43 +1,42 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
-	
-	 xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">
-		<hf:formPanel showFormButtons="#{false}" edit="#{false}"
+		<hftl:formPanel showFormButtons="#{false}" edit="#{false}"
 			label="#{messages['accountOperation_I.form']}" 
 			backingBean="#{recordedInvoiceBean}" id="formPanelOccInvoice">
-				<hf:formField
+				<hftl:formField
 					label="#{messages['accountOperation.transactionDate']}"
 					field="transactionDate" disabled="true" />
-				<hf:formField label="#{messages['accountOperation.matchingStatus']}"
+				<hftl:formField label="#{messages['accountOperation.matchingStatus']}"
 					field="matchingStatus" isMessage="true" disabled="true" />
-				<hf:formField label="#{messages['accountOperation.invoiceNumber']}"
+				<hftl:formField label="#{messages['accountOperation.invoiceNumber']}"
 					field="reference" disabled="true" />
-				<hf:formField label="#{messages['accountOperation.invoiceDate']}"
+				<hftl:formField label="#{messages['accountOperation.invoiceDate']}"
 					field="invoiceDate" disabled="true" />
-				<hf:formField label="#{messages['accountOperation.dueDate']}"
+				<hftl:formField label="#{messages['accountOperation.dueDate']}"
 					field="dueDate" disabled="true" />
 
-				<hf:formField label="#{messages['accountOperation.occDescription']}"
+				<hftl:formField label="#{messages['accountOperation.occDescription']}"
 					field="occDescription" size="50" maxlength="50" disabled="true" />
 
-				<hf:formField label="#{messages['accountOperation.amountTTC']}"
+				<hftl:formField label="#{messages['accountOperation.amountTTC']}"
 					field="amount" disabled="true"/>
-				<hf:formField label="#{messages['accountOperation.amountHT']}"
+				<hftl:formField label="#{messages['accountOperation.amountHT']}"
 					field="amountWithoutTax" disabled="true" />
-				<hf:formField label="#{messages['accountOperation.amountTax']}"
+				<hftl:formField label="#{messages['accountOperation.amountTax']}"
 					field="taxAmount" disabled="true"/> 
-               <f:facet name="buttons">
+               
+               <ui:param name="buttons" value="true"/>
+               <ui:define name="buttons">
 			   <p:tooltip for="litigation" value="#{messages['action.update']}"
 					showEffect="slide" hideEffect="slide" />
 			   <p:commandButton action="#{recordedInvoiceBean.addLitigation()}" id="litigation"
@@ -67,7 +66,7 @@
 			<p:commandButton value="#{messages['commons.no']}" type="button"
 				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 		   </p:confirmDialog>
-			</f:facet>
-		</hf:formPanel>
+			</ui:define>
+		</hftl:formPanel>
 	</ui:define>
 </ui:composition>

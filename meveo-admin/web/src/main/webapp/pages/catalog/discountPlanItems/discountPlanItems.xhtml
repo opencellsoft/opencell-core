@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<f:metadata>
@@ -40,15 +39,15 @@
 			updateField=":#{p:component('offerTemplate_child')}">
 		</hftl:entityPopup>
 
-		<hf:searchPanel id="searchPanel" label="#{messages['action.search']}"
+		<hftl:searchPanel id="searchPanel" label="#{messages['action.search']}"
 			backingBean="#{discountPlanItemListBean}">
-			<hf:searchField label="#{messages['discountPlan.title']}"
+			<hftl:searchField label="#{messages['discountPlan.title']}"
 				field="discountPlan" childField="code" popup="true"
 				popupId="popupDiscountPlans" clearButton="true" />
-			<hf:searchField label="#{messages['discountPlanItem.offerTemplate']}"
+			<hftl:searchField label="#{messages['discountPlanItem.offerTemplate']}"
 				field="offerTemplate" childField="code" popup="true"
 				popupId="popupOfferTemplates" clearButton="true" />
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['discountPlan.title']}"
 			backingBean="#{discountPlanItemListBean}" sortBy="code">

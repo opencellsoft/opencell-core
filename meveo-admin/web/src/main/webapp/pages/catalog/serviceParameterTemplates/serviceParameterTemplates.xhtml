@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml">
 
 	<f:metadata>
@@ -12,10 +12,10 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['serviceParameterTemplate.search']}" backingBean="#{serviceParameterTemplateListBean}">
-			<hf:searchField label="#{messages['serviceParameterTemplate.code']}" field="code" />
-			<hf:searchField label="#{messages['serviceParameterTemplate.name']}" field="name" />
-		</hf:searchPanel>
+		<hftl:searchPanel label="#{messages['serviceParameterTemplate.search']}" backingBean="#{serviceParameterTemplateListBean}">
+			<hftl:searchField label="#{messages['serviceParameterTemplate.code']}" field="code" />
+			<hftl:searchField label="#{messages['serviceParameterTemplate.name']}" field="name" />
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['serviceParameterTemplate.title']}" backingBean="#{serviceParameterTemplateListBean}" sortBy="code">
 			<hftl:column label="#{messages['serviceParameterTemplate.code']}" field="code" />

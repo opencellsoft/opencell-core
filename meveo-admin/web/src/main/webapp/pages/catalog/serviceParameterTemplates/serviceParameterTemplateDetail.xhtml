@@ -1,11 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	
-	
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org" 
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -14,11 +11,11 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel label="#{messages['serviceParameterTemplate.serviceParameterPanel']}" backingBean="#{serviceParameterTemplateBean}" >
-				<hf:formField label="#{messages['serviceParameterTemplate.code']}" field="code" required="true" validateUnique="true" />
-    		    <hf:formField label="#{messages['serviceParameterTemplate.name']}" field="name" useConverter="false"/>
-    			<hf:formField label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" listType="pickUpList" listService="#{serviceTemplateService}" childField="name" />
-		</hf:formPanel>
+		<hftl:formPanel label="#{messages['serviceParameterTemplate.serviceParameterPanel']}" backingBean="#{serviceParameterTemplateBean}" >
+				<hftl:formField label="#{messages['serviceParameterTemplate.code']}" field="code" required="true" validateUnique="true" />
+    		    <hftl:formField label="#{messages['serviceParameterTemplate.name']}" field="name" useConverter="false"/>
+    			<hftl:formField label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" listType="pickUpList" listService="#{serviceTemplateService}" childField="name" />
+		</hftl:formPanel>
 
 	</ui:define>
 

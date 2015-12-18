@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -18,21 +17,21 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['recurringChargeTemplate.search']}"
+		<hftl:searchPanel label="#{messages['recurringChargeTemplate.search']}"
 			backingBean="#{recurringChargeTemplateListBean}">
-			<hf:searchField label="#{messages['chargeTemplate.code']}"
+			<hftl:searchField label="#{messages['chargeTemplate.code']}"
 				field="code" />
-			<hf:searchField label="#{messages['chargeTemplate.description']}"
+			<hftl:searchField label="#{messages['chargeTemplate.description']}"
 				id="description" field="description" />
-			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+			<hftl:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
 
-			<!--	<hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable"/>
-    			<hf:searchField label="#{messages['recurringChargeTemplate.recurrenceType']}" field="recurrenceType" childField="label"/>
-    		 	<hf:searchField label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
-    			<hf:searchField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
-    			<hf:searchField label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" />
-    			<hf:searchField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" /> -->
-		</hf:searchPanel>
+			<!--	<hftl:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable"/>
+    			<hftl:searchField label="#{messages['recurringChargeTemplate.recurrenceType']}" field="recurrenceType" childField="label"/>
+    		 	<hftl:searchField label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
+    			<hftl:searchField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
+    			<hftl:searchField label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" />
+    			<hftl:searchField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" /> -->
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['recurringChargeTemplate.title']}"
 		     backingBean="#{recurringChargeTemplateListBean}" sortBy="code">

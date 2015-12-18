@@ -1,9 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -12,11 +11,11 @@
     
     <ui:define name="body">
     
-		<hf:formPanel label="#{messages['matrixEntry.matrixEntryPanel']}" backingBean="#{matrixEntryBean}">
-				<hf:formField label="#{messages['matrixEntry.coordinates']}" field="coordinates" />
-				<hf:formField label="#{messages['matrixEntry.value']}" field="value" />
-				<hf:formField label="#{messages['matrixEntry.matrixDefinition']}" field="matrixDefinition" valueLabelField="name" required="true" popup="false" service="#{matrixService}"/>
-		</hf:formPanel>
+		<hftl:formPanel label="#{messages['matrixEntry.matrixEntryPanel']}" backingBean="#{matrixEntryBean}">
+				<hftl:formField label="#{messages['matrixEntry.coordinates']}" field="coordinates" />
+				<hftl:formField label="#{messages['matrixEntry.value']}" field="value" />
+				<hftl:formField label="#{messages['matrixEntry.matrixDefinition']}" field="matrixDefinition" valueLabelField="name" required="true" popup="false" service="#{matrixService}"/>
+		</hftl:formPanel>
 		
     </ui:define>
     

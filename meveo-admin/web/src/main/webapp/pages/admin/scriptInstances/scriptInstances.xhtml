@@ -19,12 +19,12 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel columns="3" label="#{messages['scriptInstance.search']}"
+		<hftl:searchPanel columns="3" label="#{messages['scriptInstance.search']}"
 			backingBean="#{scriptInstanceListBean}">
 
-			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
 		
-		</hf:searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['scriptInstance.title']}"
 			backingBean="#{scriptInstanceListBean}" sortBy="code">

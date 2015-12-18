@@ -2,7 +2,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 
@@ -44,23 +43,23 @@
 <!-- 			updateField=":searchPanel:searchForm:role"> -->
 <!-- 		</hftl:entityPopup>  -->
 		
-		<hf:searchPanel id="searchPanel" label="#{messages['menu.charts']}" columns="3"
+		<hftl:searchPanel id="searchPanel" label="#{messages['menu.charts']}" columns="3"
 			backingBean="#{chartListBean}" renderNewButton="false">
-			<hf:searchField label="#{messages['BusinessEntity.code']}"
+			<hftl:searchField label="#{messages['BusinessEntity.code']}"
 				field="code" />
 			
-			<hf:searchField id="user" label="#{messages['user.userPanel']}"
+			<hftl:searchField id="user" label="#{messages['user.userPanel']}"
 				field="user" valueLabelField="userName" popup="true"
 				popupId="searchUserPopup" clearButton="true" /> 
 				
-			<hf:searchField id="role" label="#{messages['role.name']}"
+			<hftl:searchField id="role" label="#{messages['role.name']}"
 				field="role" valueLabelField="description" listBean="#{userRoleBean}" /> 
 <!--                 popup="true" popupId="searchRolePopup" clearButton="true" />  -->
                 
-			<hf:searchField
+			<hftl:searchField
 				label="#{messages['entity.measuredvalue.measurableQuantity']}"
 				field="measurableQuantity.code" />
-            </hf:searchPanel>
+            </hftl:searchPanel>
              <p:panel styleClass="action-buttons">
     			<p:button id="buttonNewBar"
     				value="#{messages['entity.barChart.new']}" outcome="barChartDetail">

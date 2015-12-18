@@ -33,32 +33,5 @@
             <f:selectItems value="#{cc.parent.attrs.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
         </p:selectOneMenu>
     </hftl:decorateFormField>
-
-
-    <!--         <h:panelGroup layout="block" styleClass="formFieldGroup #{cc.parent.attrs.styleClass}" style="width:#{cc.parent.attrs.componentWidth}%; #{cc.parent.attrs.style}"> -->
-    <!--             <p:outputLabel for="#{cc.parent.attrs.fieldIdPrefix}_text#{cc.attrs.autocompleteMethod != null?'_ac':''}#{cc.parent.attrs.listValues != null?'_pick':''}" -->
-    <!--                 value="#{cc.parent.attrs.label}" /> -->
-
-    <!--             <h:panelGroup layout="block" styleClass="#{cc.parent.attrs.fieldStyle}  #{cc.parent.attrs.inputStyleClass}" -->
-    <!--                 style="width:#{cc.parent.attrs.inputWidth}%; #{cc.parent.attrs.inputStyle}"> -->
-
-    <!--                  Regular text input field -->
-    <!--                 <p:inputText id="#{cc.parent.attrs.fieldIdPrefix}_text" value="#{cc.parent.filters[cc.parent.attrs.field]}" size="#{cc.parent.attrs.size}" -->
-    <!--                     disabled="#{cc.parent.attrs.disabled}" rendered="#{cc.parent.attrs.listValues == null and cc.attrs.autocompleteMethod == null}" /> -->
-
-    <!--                  Autocomplete -->
-    <!--                 <p:autoComplete id="#{cc.parent.attrs.fieldIdPrefix}_text_ac" value="#{cc.parent.filters[cc.parent.attrs.field]}" size="#{cc.parent.attrs.size}" -->
-    <!--                     disabled="#{cc.parent.attrs.disabled}" rendered="#{cc.parent.attrs.listValues == null and cc.attrs.autocompleteMethod != null}" dropdown="true" -->
-    <!--                     completeMethod="#{cc.attrs.autocompleteMethod}" /> -->
-
-    <!--                  Picklist -->
-    <!--                 <p:selectOneMenu id="#{cc.parent.attrs.fieldIdPrefix}_text_pick" value="#{cc.parent.filters[cc.parent.attrs.field]}" disabled="#{cc.parent.attrs.disabled}" -->
-    <!--                     rendered="#{cc.parent.attrs.listValues != null}"> -->
-    <!--                     <f:selectItem itemValue="#{null}" itemLabel="" /> -->
-    <!--                     <f:selectItems value="#{cc.parent.attrs.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" /> -->
-    <!--                 </p:selectOneMenu> -->
-    <!--             </h:panelGroup> -->
-    <!--         </h:panelGroup> -->
-
 </cc:implementation>
 </html>
