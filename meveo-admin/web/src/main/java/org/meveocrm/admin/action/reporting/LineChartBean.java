@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
@@ -15,6 +16,8 @@ import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.services.dwh.LineChartService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.LineChartModel;
 
@@ -83,10 +86,15 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 				}
 			} else {
 				mvSeries.set("NO RECORDS", 0);
+				mvSeries.set("SAMPLE RECORD", 10);
+				mvSeries.set("SAMPLE RECORD 1", 20);
 				log.info("No measured values found for : " + mq.getCode());
 			}
 			chartModel.addSeries(mvSeries);
 			chartModel.setTitle(mq.getDescription());
+
+			chartModel = setCharModelConfig(chartModel, lineChart);
+
 			LineChartEntityModel chartEntityModel = new LineChartEntityModel();
 			boolean isAdmin = lineChart.getAuditable().getCreator().hasRole("administrateur");
 			boolean equalUser = lineChart.getAuditable().getCreator().getId() == getCurrentUser().getId();
@@ -132,11 +140,16 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 					}
 				} else {
 					mvSeries.set("NO RECORDS", 0);
+					mvSeries.set("SAMPLE RECORD", 10);
+					mvSeries.set("SAMPLE RECORD1", 20);
 					log.info("No measured values found for : " + mq.getCode());
 				}
 
 				chartModel.addSeries(mvSeries);
 				chartModel.setTitle(mq.getDescription());
+
+				chartModel = setCharModelConfig(chartModel, entity);
+
 				chartEntityModel.setModel(chartModel);
 				chartEntityModel.setLineChart(getEntity());
 			}
@@ -174,6 +187,9 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 		}
 		chartModel.addSeries(mvSeries);
 		chartModel.setTitle(mq.getDescription());
+
+		chartModel = setCharModelConfig(chartModel, curr.getLineChart());
+
 		curr.setLineChart(curr.getLineChart());
 		curr.setModel(chartModel);
 
@@ -188,6 +204,55 @@ public class LineChartBean extends ChartEntityBean<LineChart> {
 
 	public void setLineChartEntityModels(List<LineChartEntityModel> lineChartEntityModels) {
 		this.lineChartEntityModels = lineChartEntityModels;
+	}
+
+	public LineChartModel setCharModelConfig(LineChartModel chartModel, LineChart lineChart) {
+		if (lineChart.getExtender() != null) {
+			chartModel.setExtender(lineChart.getExtender());
+		}
+
+		if (lineChart.getLegendPosition() != null) {
+			chartModel.setLegendPosition(lineChart.getLegendPosition().name());
+		}
+		chartModel.setSeriesColors(lineChart.getSeriesColors());
+		chartModel.setShadow(lineChart.isShadow());
+
+		Axis xAxis = chartModel.getAxis(AxisType.X);
+		if (!StringUtils.isBlank(lineChart.getXaxisLabel())) {
+			xAxis.setLabel(lineChart.getXaxisLabel());
+		}
+
+		xAxis.setMin(lineChart.getMinX());
+		xAxis.setMax(lineChart.getMaxX());
+		xAxis.setMax(lineChart.getMaxX() != 0 ? lineChart.getMaxX() : null);
+		if (lineChart.getXaxisAngle() != null) {
+			xAxis.setTickAngle(lineChart.getXaxisAngle());
+		}
+
+		Axis yAxis = chartModel.getAxis(AxisType.Y);
+		if (!StringUtils.isBlank(lineChart.getYaxisLabel())) {
+			xAxis.setLabel(lineChart.getYaxisLabel());
+		}
+		yAxis.setMin(lineChart.getMinY());
+		yAxis.setMax(lineChart.getMaxY() != 0 ? lineChart.getMaxY() : null);
+		if (lineChart.getYaxisAngle() != null) {
+			yAxis.setTickAngle(lineChart.getYaxisAngle());
+		}
+
+		chartModel.setBreakOnNull(lineChart.isBreakOnNull());
+
+		chartModel.setLegendCols(lineChart.getLegendCols());
+		chartModel.setLegendRows(lineChart.getLegendRows());
+		chartModel.setStacked(lineChart.isStacked());
+		chartModel.setZoom(lineChart.isZoom());
+		chartModel.setAnimate(lineChart.isAnimate());
+		chartModel.setShowDatatip(lineChart.isShowDataTip());
+
+		if (lineChart.getDatatipFormat() != null) {
+			chartModel.setDatatipFormat(lineChart.getDatatipFormat());
+		}
+
+		return chartModel;
 	}
 
 }

@@ -1,8 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -33,11 +32,11 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" />
 
-		<hftl:formPanel formId="formChat"
-			label="#{messages['chart.panel']}" backingBean="#{lineChartBean}"
-			columns="2">
+		<hftl:formPanel formId="formChat" label="#{messages['chart.panel']}"
+			backingBean="#{lineChartBean}" columns="2">
 
-			<hftl:formField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:formField label="#{messages['businessEntity.code']}"
+				field="code" />
 
 			<hftl:formField id="measurableQuantityId"
 				label="#{messages['chart.measurableQuantity']}"
@@ -46,19 +45,25 @@
 
 			<hftl:formField id="roleId" label="#{messages['chart.role']}"
 				field="role" valueLabelField="name" required="false" popup="true"
-				popupId="searchRole" rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
+				popupId="searchRole"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
 			<hftl:formField label="#{messages['chart.style']}" field="style" />
 			<hftl:formField label="#{messages['chart.styleClass']}"
 				field="styleClass" />
-			<hftl:formField label="#{messages['chart.extender']}" field="extender" />
-			<hftl:formField label="#{messages['lineChart.filled']}" field="filled" />
+			<hftl:formField label="#{messages['chart.extender']}"
+				field="extender" />
+			<hftl:formField label="#{messages['lineChart.filled']}"
+				field="filled" />
 			<hftl:formField label="#{messages['lineChart.legendposition']}"
 				field="legendPosition" />
-			<hftl:decorateFormField fieldId="color" label="#{messages['pieChart.seriesColors']}" >
-				<p:colorPicker id="color" value="#{lineChartBean.entity.seriesColors}" />
+			<hftl:decorateFormField fieldId="color"
+				label="#{messages['pieChart.seriesColors']}">
+				<p:colorPicker id="color"
+					value="#{lineChartBean.entity.seriesColors}" />
 			</hftl:decorateFormField>
-			<hftl:formField label="#{messages['lineChart.shadow']}" field="shadow" />
+			<hftl:formField label="#{messages['lineChart.shadow']}"
+				field="shadow" />
 			<hftl:formField label="#{messages['lineChart.minX']}" field="minX" />
 			<hftl:formField label="#{messages['lineChart.minY']}" field="minY" />
 			<hftl:formField label="#{messages['lineChart.maxX']}" field="maxX" />
@@ -92,30 +97,10 @@
 				value="#{messages['page.chart.preview']}" update="@all"></p:commandButton>
 
 			<p:outputPanel id="chartPreview"
-				rendered="#{lineChartBean.chartEntityModel.model != null}" style="margin:50px">
+				rendered="#{lineChartBean.chartEntityModel.model != null}"
+				style="margin:50px">
 				<p:chart type="line" model="#{lineChartBean.chartEntityModel.model}"
-					fill="#{lineChartBean.chartEntityModel.lineChart.filled}"
-					legendPosition="#{lineChartBean.chartEntityModel.lineChart.legendPosition}"
-					stacked="#{lineChartBean.chartEntityModel.lineChart.stacked}"
-					minX="#{lineChartBean.chartEntityModel.lineChart.minX}"
-					minY="#{lineChartBean.chartEntityModel.lineChart.minY}"
-					maxX="#{lineChartBean.chartEntityModel.lineChart.maxX}"
-					maxY="#{lineChartBean.chartEntityModel.lineChart.maxY}"
-					breakOnNull="#{lineChartBean.chartEntityModel.lineChart.breakOnNull}"
-					xaxisLabel="#{lineChartBean.chartEntityModel.lineChart.xaxisLabel}"
-					yaxisLabel="#{lineChartBean.chartEntityModel.lineChart.yaxisLabel}"
-					xaxisAngle="#{lineChartBean.chartEntityModel.lineChart.xaxisAngle}"
-					yaxisAngle="#{lineChartBean.chartEntityModel.lineChart.yaxisAngle}"
-					legendCols="#{lineChartBean.chartEntityModel.lineChart.legendCols}"
-					legendRows="#{lineChartBean.chartEntityModel.lineChart.legendRows}"
-					zoom="#{lineChartBean.chartEntityModel.lineChart.zoom}"
-					animate="#{lineChartBean.chartEntityModel.lineChart.animate}"
-					showDatatip="#{lineChartBean.chartEntityModel.lineChart.showDataTip}"
-					datatipFormat="#{lineChartBean.chartEntityModel.lineChart.datatipFormat}"
-					seriesColors="#{lineChartBean.chartEntityModel.lineChart.seriesColors}"
-					shadow="#{lineChartBean.chartEntityModel.lineChart.shadow}"
-					style="#{line.lineChart.style}"
-					styleClass="#{line.lineChart.style}" />
+					style="#{entity.style}" styleClass="#{entity.style}" />
 			</p:outputPanel>
 
 		</hftl:formPanel>

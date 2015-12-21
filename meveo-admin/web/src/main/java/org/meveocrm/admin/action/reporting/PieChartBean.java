@@ -87,7 +87,7 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 			}
 
 			chartModel.setTitle(mq.getCode());
-
+			chartModel = setChartModelConfig(chartModel, pieChart);
 			PieChartEntityModel chartEntityModel = new PieChartEntityModel();
 			boolean isAdmin = pieChart.getAuditable().getCreator().hasRole("administrateur");
 			boolean equalUser = pieChart.getAuditable().getCreator().getId() == getCurrentUser().getId();
@@ -133,10 +133,13 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 					}
 				} else {
 					chartModel.set("NO RECORDS", 0);
+					chartModel.set("SAMPLE RECORD", 10);
+					chartModel.set("SAMPLE RECORD 1", 20);
 					log.info("No measured values found for : " + mq.getCode());
 				}
 
 				chartModel.setTitle(mq.getCode());
+				chartModel = setChartModelConfig(chartModel, entity);
 				chartEntityModel.setModel(chartModel);
 				chartEntityModel.setPieChart(getEntity());
 			}
@@ -174,6 +177,7 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 
 		chartModel.setTitle(mq.getDescription());
 
+		chartModel = setChartModelConfig(chartModel, curr.getPieChart());
 		curr.setPieChart(curr.getPieChart());
 		curr.setModel(chartModel);
 
@@ -188,6 +192,30 @@ public class PieChartBean extends ChartEntityBean<PieChart> {
 
 	public void setPieChartEntityModels(List<PieChartEntityModel> pieChartEntityModels) {
 		this.pieChartEntityModels = pieChartEntityModels;
+	}
+
+	public PieChartModel setChartModelConfig(PieChartModel chartModel, PieChart pieChart) {
+		if (pieChart.getExtender() != null) {
+			chartModel.setExtender(pieChart.getExtender());
+		}
+
+		chartModel.setFill(pieChart.isFilled());
+		if (pieChart.getLegendPosition() != null) {
+			chartModel.setLegendPosition(pieChart.getLegendPosition().name());
+		}
+		chartModel.setSeriesColors(pieChart.getSeriesColors());
+		if (pieChart.getDiameter() != null) {
+			chartModel.setDiameter(pieChart.getDiameter());
+		}
+
+		chartModel.setSliceMargin(pieChart.getSliceMargin());
+		chartModel.setShadow(pieChart.isShadow());
+		chartModel.setShowDataLabels(pieChart.isShowDataLabels());
+		chartModel.setLegendCols(pieChart.getLegendCols());
+		chartModel.setLegendRows(pieChart.getLegendRows());
+
+		return chartModel;
+
 	}
 
 }

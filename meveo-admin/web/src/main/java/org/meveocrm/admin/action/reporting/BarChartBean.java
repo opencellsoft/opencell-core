@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.model.dwh.BarChart;
 import org.meveocrm.model.dwh.MeasurableQuantity;
@@ -15,6 +16,8 @@ import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.services.dwh.BarChartService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.ChartSeries;
 
@@ -87,6 +90,9 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 			}
 			chartModel.addSeries(mvSeries);
 			chartModel.setTitle(mq.getDescription());
+
+			chartModel = setChartModelConfig(chartModel, barChart);
+
 			BarChartEntityModel chartEntityModel = new BarChartEntityModel();
 			boolean isAdmin = barChart.getAuditable().getCreator().hasRole("administrateur");
 			boolean equalUser = barChart.getAuditable().getCreator().getId() == getCurrentUser().getId();
@@ -107,8 +113,8 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 		if (chartEntityModel == null) {
 			chartEntityModel = new BarChartEntityModel();
 		}
-		if (getEntity() != null) {
-			if (getEntity().getMeasurableQuantity() != null) {
+		if (entity != null) {
+			if (entity.getMeasurableQuantity() != null) {
 				Calendar fromDate = Calendar.getInstance();
 				fromDate.set(Calendar.DAY_OF_MONTH, 1);
 				Calendar toDate = Calendar.getInstance();
@@ -132,10 +138,16 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 
 				} else {
 					mvSeries.set("NO RECORDS", 0);
+					mvSeries.set("SAMPLE RECORD", 10);
+					mvSeries.set("SAMPLE RECORD 1", 20);
+
 					log.info("No measured values found for : " + mq.getCode());
 				}
 				chartModel.addSeries(mvSeries);
 				chartModel.setTitle(mq.getDescription());
+
+				chartModel = setChartModelConfig(chartModel, entity);
+
 				chartEntityModel.setModel(chartModel);
 				chartEntityModel.setBarChart(getEntity());
 			}
@@ -178,6 +190,9 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 		}
 		chartModel.addSeries(mvSeries);
 		chartModel.setTitle(mq.getDescription());
+
+		chartModel = setChartModelConfig(chartModel, curr.getBarChart());
+
 		curr.setBarChart(curr.getBarChart());
 		curr.setModel(chartModel);
 	}
@@ -193,4 +208,41 @@ public class BarChartBean extends ChartEntityBean<BarChart> {
 		this.barChartEntityModels = barChartEntityModels;
 	}
 
+	public BarChartModel setChartModelConfig(BarChartModel chartModel, BarChart barChart) {
+		if (barChart.getExtender() != null) {
+			chartModel.setExtender(entity.getExtender());
+		}
+
+		chartModel.setStacked(barChart.isStacked());
+
+		Axis xAxis = chartModel.getAxis(AxisType.X);
+
+		if (!StringUtils.isBlank(barChart.getXaxisLabel())) {
+			xAxis.setLabel(barChart.getXaxisLabel());
+		}
+
+		if (barChart.getXaxisAngle() != null) {
+			xAxis.setTickAngle(barChart.getXaxisAngle());
+		}
+		Axis yAxis = chartModel.getAxis(AxisType.Y);
+		if (!StringUtils.isBlank(barChart.getYaxisLabel())) {
+			yAxis.setLabel(barChart.getYaxisLabel());
+		}
+		yAxis.setMin(barChart.getMin());
+		yAxis.setMax(barChart.getMax() != null && barChart.getMax() != 0 ? barChart.getMax() : null);
+		if (barChart.getYaxisAngle() != null) {
+			yAxis.setTickAngle(barChart.getYaxisAngle());
+		}
+
+		chartModel.setLegendCols(barChart.getLegendCols());
+		chartModel.setLegendRows(barChart.getLegendRows());
+		chartModel.setZoom(barChart.isZoom());
+		chartModel.setAnimate(barChart.isAnimate());
+		chartModel.setShowDatatip(barChart.isShowDataTip());
+		if (barChart.getDatatipFormat() != null) {
+			chartModel.setDatatipFormat(barChart.getDatatipFormat());
+		}
+
+		return chartModel;
+	}
 }
