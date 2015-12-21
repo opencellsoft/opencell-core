@@ -8,6 +8,7 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.GetTimerEntityResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -80,6 +81,23 @@ public class TimerEntityRsImpl extends BaseRs implements TimerEntityRs {
 		}
 
 		log.debug("RESPONSE={}", result);
+		return result;
+	}
+
+	@Override
+	public GetTimerEntityResponseDto find(String timerEntityCode) {
+		GetTimerEntityResponseDto result = new GetTimerEntityResponseDto();
+		try {
+			result.setTimerEntity(timerEntityApi.find(timerEntityCode, getCurrentUser()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
 		return result;
 	}
 

@@ -985,9 +985,13 @@
 
 	</changeSet>
 	
-	  <changeSet id="#1362-20151218" author="Mbarek">
+	<changeSet id="#1362-20151218" author="Mbarek">
 	    <modifyDataType columnName="MANDATE_IDENTIFICATION" newDataType="VARCHAR(256)"
 				tableName="AR_CUSTOMER_ACCOUNT" /> 																																			
 		</changeSet>
+	<changeSet id="#1103-20151221" author="TyshanShi">
+		<addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_module_provider" deferrable="false" disabled="false" initiallyDeferred="false"
+            tableName="meveo_module" />
+	</changeSet>
     
 </databaseChangeLog>

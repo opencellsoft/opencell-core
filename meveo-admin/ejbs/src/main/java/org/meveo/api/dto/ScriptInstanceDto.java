@@ -13,7 +13,7 @@ import org.meveo.model.scripts.ScriptInstance;
  **/
 @XmlRootElement(name = "ScriptInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ScriptInstanceDto {
+public class ScriptInstanceDto extends BaseDto{
 
 	@XmlAttribute(required = true)
 	private String code;

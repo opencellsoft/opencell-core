@@ -110,4 +110,17 @@ public class TimerEntityApi extends BaseApi {
 			update(timerEntityDto, currentUser);
 		}
 	}
+	public TimerEntityDto find(String timerEntityCode,User currentUser) throws MeveoApiException{
+		TimerEntityDto result=new TimerEntityDto();
+		if (!StringUtils.isBlank(timerEntityCode)) {
+			TimerEntity timerEntity=timerEntityService.findByCode(timerEntityCode, currentUser.getProvider());
+			if(timerEntity==null){
+				throw new EntityDoesNotExistsException(timerEntityCode.getClass(), timerEntityCode);
+			}
+			result=new TimerEntityDto(timerEntity);
+		}else{
+			missingParameters.add("code");
+		}
+		return result;
+	}
 }

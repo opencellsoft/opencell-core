@@ -16,9 +16,11 @@ import org.meveo.model.crm.CustomFieldTemplate;
  **/
 @XmlRootElement(name = "CustomFieldTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomFieldTemplateDto {
+public class CustomFieldTemplateDto extends BaseDto {
 
-    @XmlAttribute(required = true)
+	private static final long serialVersionUID = 1L;
+
+	@XmlAttribute(required = true)
     protected String code;
 
     @XmlAttribute(required = true)

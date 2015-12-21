@@ -152,7 +152,28 @@ public class CustomFieldTemplateApi extends BaseApi {
     }
 
     public void createOrUpdate(CustomFieldTemplateDto postData, User currentUser, CustomEntityTemplate cet) throws MeveoApiException {
-        CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
+    	if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+       
+        if (cet == null && StringUtils.isBlank(postData.getAccountLevel()) && StringUtils.isBlank(postData.getAppliesTo())) {
+            missingParameters.add("appliesTo");
+        }
+
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        if (cet != null) {
+            postData.setAppliesTo(cet.getCftPrefix());
+        }
+        String appliesTo = postData.getAppliesTo();
+        // Support for old API
+        if (postData.getAppliesTo() == null && postData.getAccountLevel() != null) {
+            appliesTo = postData.getAccountLevel();
+        }
+        
+        CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCodeAndAppliesTo(postData.getCode(),appliesTo, currentUser.getProvider());
         if (customFieldTemplate == null) {
             create(postData, currentUser, cet);
         } else {
