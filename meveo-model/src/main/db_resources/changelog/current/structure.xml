@@ -851,7 +851,7 @@
         
     </changeSet>            
     
-    
+<!--     
     <changeSet id="#1101_20151207" author="AndriusKarpavicius">
         <sql>
             update CAT_COUNTER_TEMPLATE set CEILING_EXPRESSION_EL= regexp_replace(CEILING_EXPRESSION_EL, '([a-z|A-Z|\.]*)\.getCFValue\\(', 'mv:getCFValue\(\\1,','g')  where CEILING_EXPRESSION_EL is not null;
@@ -902,7 +902,7 @@
    
         </sql>
     </changeSet>    
-    
+     -->
        <changeSet id="#1320-20151210" author="Mbarek">
 	    <modifyDataType columnName="PARAMETER_1" newDataType="VARCHAR(255)"
 				tableName="BILLING_WALLET_OPERATION" />
