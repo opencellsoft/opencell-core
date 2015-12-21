@@ -507,7 +507,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
 			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+				if(subCategoryInvoiceAgregate.getAmountWithoutTax()!=null){
 				total = total.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
+				}
 			}
 		}
 
@@ -518,7 +520,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
 			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+				if(subCategoryInvoiceAgregate.getAmountTax()!=null){
 				total = total.add(subCategoryInvoiceAgregate.getAmountTax());
+				}
 			}
 		}
 
@@ -529,7 +533,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
 			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+				if(subCategoryInvoiceAgregate.getAmountWithTax()!=null){
 				total = total.add(subCategoryInvoiceAgregate.getAmountWithTax());
+				}
 			}
 		}
 
@@ -540,7 +546,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
 			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+				if(subCategoryInvoiceAgregate.getOldAmountWithoutTax()!=null){
 				total = total.add(subCategoryInvoiceAgregate.getOldAmountWithoutTax());
+				}
 			}
 		}
 
@@ -551,7 +559,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
 			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+				if(subCategoryInvoiceAgregate.getOldAmountWithTax()!=null){
 				total = total.add(subCategoryInvoiceAgregate.getOldAmountWithTax());
+				}
 			}
 		}
 
@@ -566,7 +576,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiRatedTransactions != null) {
 			for (RatedTransaction ratedTransaction : uiRatedTransactions) {
+				if(ratedTransaction.getUnitAmountWithoutTax()!=null){
 				total = total.add(ratedTransaction.getUnitAmountWithoutTax());
+				}
 			}
 		}
 
@@ -577,7 +589,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiRatedTransactions != null) {
 			for (RatedTransaction ratedTransaction : uiRatedTransactions) {
+				if(ratedTransaction.getUnitAmountWithTax()!=null){
 				total = total.add(ratedTransaction.getUnitAmountWithTax());
+				}
 			}
 		}
 
@@ -588,7 +602,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiRatedTransactions != null) {
 			for (RatedTransaction ratedTransaction : uiRatedTransactions) {
+				if(ratedTransaction.getQuantity()!=null){
 				total = total.add(ratedTransaction.getQuantity());
+				}
 			}
 		}
 
@@ -599,7 +615,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiRatedTransactions != null) {
 			for (RatedTransaction ratedTransaction : uiRatedTransactions) {
+				if(ratedTransaction.getAmountWithoutTax()!=null){
 				total = total.add(ratedTransaction.getAmountWithoutTax());
+				}
 			}
 		}
 
@@ -610,7 +628,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		BigDecimal total = new BigDecimal(0);
 		if (entity != null && uiRatedTransactions != null) {
 			for (RatedTransaction ratedTransaction : uiRatedTransactions) {
+				if(ratedTransaction.getAmountWithTax()!=null){
 				total = total.add(ratedTransaction.getAmountWithTax());
+				}
 			}
 		}
 
