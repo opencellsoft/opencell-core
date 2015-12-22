@@ -24,6 +24,10 @@
 			<var>help</var>
 		</resource-bundle>
 		<message-bundle>messages</message-bundle>
+		
+		<action-listener>org.primefaces.application.DialogActionListener</action-listener>
+		<navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
+		<view-handler>org.primefaces.application.DialogViewHandler</view-handler>
 	</application>
 
 	<navigation-rule>
@@ -1730,6 +1734,12 @@
 		<navigation-case>
 			<from-outcome>businessOfferDetail</from-outcome>
 			<to-view-id>/pages/catalog/businessOffer/businessOfferDetail.xhtml
+			</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>businessOfferCreation</from-outcome>
+			<to-view-id>/pages/catalog/businessOffer/businessOfferCreation.xhtml
 			</to-view-id>
 			<redirect />
 		</navigation-case>

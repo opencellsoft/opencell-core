@@ -39,7 +39,7 @@ public class BomEntityApi extends BaseApi {
 			if (bomEntityService.findByCode(postData.getBomCode(), currentUser.getProvider()) != null) {
 				throw new EntityAlreadyExistsException(BOMEntity.class, postData.getBomCode());
 			}
-			
+
 			OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplateCode(),
 					currentUser.getProvider());
 			if (offerTemplate == null) {
@@ -53,7 +53,8 @@ public class BomEntityApi extends BaseApi {
 			bomEntity.setCode(postData.getBomCode());
 			bomEntity.setOfferTemplate(offerTemplate);
 			bomEntity.setCreationScript(scriptInstance);
-			bomEntity.setDescription(postData.getDescription());
+			bomEntity.setDescription(StringUtils.isBlank(postData.getDescription()) ? postData.getBomCode() : postData
+					.getDescription());
 
 			bomEntityService.create(bomEntity, currentUser, currentUser.getProvider());
 		} else {
@@ -84,7 +85,8 @@ public class BomEntityApi extends BaseApi {
 			ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCreationScriptCode(),
 					currentUser.getProvider());
 
-			bomEntity.setDescription(postData.getDescription());
+			bomEntity.setDescription(StringUtils.isBlank(postData.getDescription()) ? postData.getBomCode() : postData
+					.getDescription());
 			bomEntity.setOfferTemplate(offerTemplate);
 			bomEntity.setCreationScript(scriptInstance);
 

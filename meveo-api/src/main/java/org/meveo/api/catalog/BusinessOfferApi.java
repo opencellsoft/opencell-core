@@ -278,8 +278,7 @@ public class BusinessOfferApi extends BaseApi {
 										String key = it.next();
 										if (serviceTemplate.getCode().equalsIgnoreCase(key)) {
 											CustomFieldsDto customFieldsDto = postData.getServiceCFVs().get(key);
-											populateCustomFields(customFieldsDto, newServiceTemplate, false,
-													currentUser);
+											populateCustomFields(customFieldsDto, newServiceTemplate, true, currentUser);
 											break;
 										}
 									}
@@ -294,6 +293,15 @@ public class BusinessOfferApi extends BaseApi {
 				}
 
 				offerTemplateService.create(newOfferTemplate, currentUser, currentUser.getProvider());
+
+				// populate offer custom fields
+				if (postData.getOfferCustomFields() != null) {
+					try {
+						populateCustomFields(postData.getOfferCustomFields(), newOfferTemplate, true, currentUser);
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						throw new MeveoApiException(e.getMessage());
+					}
+				}
 
 				// execute bom scripts
 				if (bomEntity.getCreationScript() != null) {
