@@ -4,12 +4,12 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>AddFieldGroupOnCustomFieldsTestCase</title>
+<title>AddNewTabTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">AddFieldGroupOnCustomFieldsTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">AddNewTabTestCase</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
@@ -58,7 +58,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${AddFieldGroupButton}</td>
+	<td>${AddNewTabButton}</td>
 	<td></td>
 </tr>
 <tr>
@@ -89,7 +89,7 @@
 <tr>
 	<td>type</td>
 	<td>${Title}</td>
-	<td>${TitleGroupValue}</td>
+	<td>${TitleTabValue}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -98,19 +98,20 @@
 </tr>
 <tr>
 	<td>waitForText</td>
-	<td>//tr[@id='fieldsForm:fields_node_0_1']/td</td>
-	<td>${TitleGroupValue}</td>
+	<td>//tr[@id='fieldsForm:fields_node_1']/td</td>
+	<td>${TitleTabValue}</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>//tr[@id='fieldsForm:fields_node_0_1']/td</td>
-	<td>${TitleGroupValue}</td>
+	<td>//tr[@id='fieldsForm:fields_node_1']/td</td>
+	<td>${TitleTabValue}</td>
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>//tr[@id='fieldsForm:fields_node_0_1']/td</td>
-	<td>${TitleGroupValue}</td>
+	<td>//tr[@id='fieldsForm:fields_node_1']/td</td>
+	<td>${TitleTabValue}</td>
 </tr>
+
 </tbody></table>
 </body>
 </html>
