@@ -308,7 +308,7 @@ public class AccountOperationApi extends BaseApi {
 			}	
 		}
 		
-		public void addLitigation(LitigationRequestDto postData, User currentUser) throws BusinessException,Exception {
+		private void checkingLitigation(LitigationRequestDto postData, User currentUser) throws BusinessException,Exception{
 			if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
 				missingParameters.add("customerAccountCode");				
 			}
@@ -322,7 +322,7 @@ public class AccountOperationApi extends BaseApi {
 			if (customerAccount == null) {
 				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
 			}
-			AccountOperation accountOperation = null;
+			AccountOperation accountOperation=null;
 			try{
 				accountOperation = accountOperationService.findById(postData.getAccountOperationId(),currentUser.getProvider());
 			}catch(Exception e){}
@@ -333,45 +333,21 @@ public class AccountOperationApi extends BaseApi {
 				throw new BusinessException("The operationId " + postData.getAccountOperationId()
 						+ " is not for the customerAccount "+customerAccount.getCode());
 			}
-			if(accountOperation instanceof RecordedInvoice){
-				recordedInvoiceService.addLitigation(accountOperation.getId(), currentUser);
-			}else{
+			
+			if(!(accountOperation instanceof RecordedInvoice)){ 
 				throw new BusinessException("The operationId " + postData.getAccountOperationId()
 						+ " should be invoice");
-			}	
+			}
+		}
+		
+		public void addLitigation(LitigationRequestDto postData, User currentUser) throws BusinessException,Exception {
+			checkingLitigation(postData,currentUser);
+			recordedInvoiceService.addLitigation(postData.getAccountOperationId(), currentUser);
 		}
 		
 		public void cancelLitigation(LitigationRequestDto postData, User currentUser) throws BusinessException,Exception {
-			if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
-				missingParameters.add("customerAccountCode");				
-			}
-			if (StringUtils.isBlank(postData.getAccountOperationId())) {
-				missingParameters.add("accountOperationId");				
-			}
-			if(!missingParameters.isEmpty()){
-				throw new MissingParameterException(getMissingParametersExceptionMessage());
-			}
-			CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode(),currentUser.getProvider());
-			if (customerAccount == null) {
-				throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
-			}
-			AccountOperation accountOperation = null;
-			try{
-				accountOperation = accountOperationService.findById(postData.getAccountOperationId(),currentUser.getProvider());
-			}catch(Exception e){}
-			if (accountOperation == null) {
-				throw new EntityDoesNotExistsException(AccountOperation.class, postData.getAccountOperationId());
-			}
-			if(!customerAccount.getAccountOperations().contains(accountOperation)){
-				throw new BusinessException("The operationId " + postData.getAccountOperationId()
-						+ " is not for the customerAccount "+customerAccount.getCode());
-			}
-			if(accountOperation instanceof RecordedInvoice){
-				recordedInvoiceService.cancelLitigation(accountOperation.getId(), currentUser);
-			}else{
-				throw new BusinessException("The operationId " + postData.getAccountOperationId()
-						+ " should be invoice");
-			}	
+			checkingLitigation(postData,currentUser);
+			recordedInvoiceService.cancelLitigation(postData.getAccountOperationId(), currentUser);	
 		}
 
 }
