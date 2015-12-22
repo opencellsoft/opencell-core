@@ -158,6 +158,7 @@ public class UsageRatingService {
 
 		walletOperation.setChargeInstance(chargeInstance);
 		walletOperation.setRatingUnitDescription(chargeInstance.getRatingUnitDescription());
+		walletOperation.setInputUnitDescription(chargeInstance.getChargeTemplate().getInputUnitDescription());
 		walletOperation.setSeller(chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount()
 				.getCustomer().getSeller());
 		// we set here the wallet to the pricipal wallet but it will later be
