@@ -16,6 +16,9 @@
  */
 package org.meveo.admin.action.admin.module;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,7 +50,7 @@ import org.primefaces.model.TreeNode;
 /**
  * Meveo module bean
  * 
- * @author Tyshan Shi(tyshan@manaty.com)
+ * @author Tyshan Shi(tyshan@manaty.net)
  *
  */
 
@@ -127,43 +130,64 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	@Override
 	public MeveoModule initEntity() {
 		MeveoModule module = super.initEntity();
-		if (module != null && module.getModuleItems() != null) {
-			for (MeveoModuleItem item : module.getModuleItems()) {
+		if (module.getModuleItems() != null) {
+			List<MeveoModuleItem> items=module.getModuleItems();
+			Iterator<MeveoModuleItem> itr=items.iterator();
+			while (itr.hasNext()) {
+				MeveoModuleItem item=itr.next();
 				switch (item.getItemType()) {
 				case CET:
 					CustomEntityTemplate cet = customEntityTemplateService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(cet!=null){
 						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(cet.getCode(),cet.getDescription(), ModuleItemTypeEnum.CET),cetnode);
+					}else{
+						item.setMeveoModule(null);
+						itr.remove();
 					}
 					break;
 				case CFT:
 					CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(),item.getAppliesTo(),getCurrentProvider());
 					if(cft!=null){
 						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(cft.getCode(),cft.getDescription(),cft.getAppliesTo(),ModuleItemTypeEnum.CFT),cftnode);
+					}else{
+						item.setMeveoModule(null);
+						itr.remove();
 					}
 					break;
 				case FILTER:
 					Filter filter = filterService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(filter!=null){
 						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(filter.getCode(),filter.getDescription(),ModuleItemTypeEnum.FILTER),filternode);
+					}else{
+						item.setMeveoModule(null);
+						itr.remove();
 					}
 					break;
 				case SCRIPT:
 					ScriptInstance script = scriptInstanceService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(script!=null){
 						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(script.getCode(),script.getDescription(),ModuleItemTypeEnum.SCRIPT),scriptnode);
+					}else{
+						item.setMeveoModule(null);
+						itr.remove();
 					}
 					break;
 				case JOBINSTANCE:
 					JobInstance job=jobInstanceService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(job!=null){
 						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(job.getCode(),job.getDescription(),ModuleItemTypeEnum.JOBINSTANCE),jobnode);
+					}else{
+						item.setMeveoModule(null);
+						itr.remove();
 					}
 					break;
 				case NOTIFICATION:
 					Notification notification=notificationService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(notification!=null){
 						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(notification.getCode(),notification.getDescription(),ModuleItemTypeEnum.NOTIFICATION),notificationnode);
+					}else{
+						item.setMeveoModule(null);
+						itr.remove();
 					}
 					break;
 				default:
@@ -188,16 +212,9 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	public void setCustomEntity(CustomEntityTemplate customEntity) {
 		// this.customEntity = customEntity;
 		if (customEntity != null) {
-			boolean found=false;
-			for(MeveoModuleItem item:entity.getModuleItems()){
-				if(item.getItemType()==ModuleItemTypeEnum.CET&&item.getItemCode().equalsIgnoreCase(customEntity.getCode())){
-					found=true;
-					break;
-				}
-			}
-			if(!found){
-				entity.addModuleItem(
-						new MeveoModuleItem(customEntity.getCode(),ModuleItemTypeEnum.CET));
+			MeveoModuleItem item=new MeveoModuleItem(customEntity.getCode(),ModuleItemTypeEnum.CET);
+			if(!entity.getModuleItems().contains(item)){
+				entity.addModuleItem(item);
 				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(customEntity.getCode(),customEntity.getDescription(),ModuleItemTypeEnum.CET),cetnode);
 			}
 			
@@ -216,17 +233,9 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	}
 	public void setCustomField(CustomFieldTemplate customField) {
 		if (customField != null) {
-			boolean found=false;
-			for(MeveoModuleItem item:entity.getModuleItems()){
-				if(item.getItemType()==ModuleItemTypeEnum.CFT&&customField.getCode().equals(item.getItemCode())&&customField.getAppliesTo().equals(item.getAppliesTo())){
-					found=true;
-					break;
-				}
-			}
-			if(!found){
-				entity.addModuleItem(
-						new MeveoModuleItem(customField.getCode(),customField.getAppliesTo(),ModuleItemTypeEnum.CFT));
-				log.debug("add appliesTo {}",customField.getAppliesTo());
+			MeveoModuleItem item=new MeveoModuleItem(customField.getCode(),customField.getAppliesTo(),ModuleItemTypeEnum.CFT);
+			if(!entity.getModuleItems().contains(item)){
+				entity.addModuleItem(item);
 				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(customField.getCode(),customField.getDescription(),customField.getAppliesTo(),ModuleItemTypeEnum.CFT),cftnode);
 			}
 		}
@@ -236,16 +245,9 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	}
 	public void setFilter(Filter filter) {
 		if (filter != null) {
-			boolean found=false;
-			for(MeveoModuleItem item:entity.getModuleItems()){
-				if(item.getItemType()==ModuleItemTypeEnum.FILTER&&item.getItemCode().equalsIgnoreCase(filter.getCode())){
-					found=true;
-					break;
-				}
-			}
-			if(!found){
-				entity.addModuleItem(
-						new MeveoModuleItem(filter.getCode(),ModuleItemTypeEnum.FILTER));
+			MeveoModuleItem item=new MeveoModuleItem(filter.getCode(),ModuleItemTypeEnum.FILTER);
+			if(!entity.getModuleItems().contains(item)){
+				entity.addModuleItem(item);
 				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(filter.getCode(),filter.getDescription(),ModuleItemTypeEnum.FILTER),filternode);
 			}
 		}
@@ -255,16 +257,9 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	}
 	public void setScript(ScriptInstance script) {
 		if (script != null) {
-			boolean found=false;
-			for(MeveoModuleItem item:entity.getModuleItems()){
-				if(item.getItemType()==ModuleItemTypeEnum.SCRIPT&&item.getItemCode().equalsIgnoreCase(script.getCode())){
-					found=true;
-					break;
-				}
-			}
-			if(!found){
-				entity.addModuleItem(
-						new MeveoModuleItem(script.getCode(),ModuleItemTypeEnum.SCRIPT));
+			MeveoModuleItem item=new MeveoModuleItem(script.getCode(),ModuleItemTypeEnum.SCRIPT);
+			if(!entity.getModuleItems().contains(item)){
+				entity.addModuleItem(item);
 				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(script.getCode(),script.getDescription(),ModuleItemTypeEnum.SCRIPT),scriptnode);
 			}
 		}
@@ -274,16 +269,9 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	}
 	public void setJob(JobInstance job) {
 		if (job != null) {
-			boolean found=false;
-			for(MeveoModuleItem item:entity.getModuleItems()){
-				if(item.getItemType()==ModuleItemTypeEnum.JOBINSTANCE&&item.getItemCode().equalsIgnoreCase(job.getCode())){
-					found=true;
-					break;
-				}
-			}
-			if(!found){
-				entity.addModuleItem(
-						new MeveoModuleItem(job.getCode(),ModuleItemTypeEnum.JOBINSTANCE));
+			MeveoModuleItem item=new MeveoModuleItem(job.getCode(),ModuleItemTypeEnum.JOBINSTANCE);
+			if(!entity.getModuleItems().contains(item)){
+				entity.addModuleItem(item);
 				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(job.getCode(),job.getDescription(),ModuleItemTypeEnum.JOBINSTANCE),jobnode);
 			}
 		}
@@ -293,16 +281,9 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	}
 	public void setNotification(Notification notification) {
 		if (notification != null) {
-			boolean found=false;
-			for(MeveoModuleItem item:entity.getModuleItems()){
-				if(item.getItemType()==ModuleItemTypeEnum.NOTIFICATION&&item.getItemCode().equalsIgnoreCase(notification.getCode())){
-					found=true;
-					break;
-				}
-			}
-			if(!found){
-				entity.addModuleItem(
-						new MeveoModuleItem(notification.getCode(),ModuleItemTypeEnum.NOTIFICATION));
+			MeveoModuleItem item=new MeveoModuleItem(notification.getCode(),ModuleItemTypeEnum.NOTIFICATION);
+			if(!entity.getModuleItems().contains(item)){
+				entity.addModuleItem(item);
 				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(notification.getCode(),notification.getDescription(),ModuleItemTypeEnum.NOTIFICATION),notificationnode);
 			}
 		}
@@ -398,7 +379,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 		log.debug("export module {} to {}",entity.getCode(),meveoInstance.getCode());
 		if(meveoInstance!=null){
 			try{
-				meveoModuleService.exportModule(entity, meveoInstance);
+				meveoModuleService.exportModule2MeveoInstance(entity, meveoInstance);
 				messages.info(new BundleKey("messages", "meveoModule.exportSuccess"), entity.getCode(),meveoInstance.getCode());
 			} catch (Exception e) {
 				log.error("Error when export module {} to {}",entity.getCode(), meveoInstance,e);

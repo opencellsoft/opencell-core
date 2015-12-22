@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.WebHook;
 
 /**
@@ -21,7 +22,8 @@ public class WebhookNotificationDto extends NotificationDto {
 
 	@XmlElement(required = true)
 	private String host;
-	private int port;
+	@XmlElement(required=true)
+	private Integer port;
 
 	@XmlElement(required = true)
 	private String page;
@@ -42,7 +44,9 @@ public class WebhookNotificationDto extends NotificationDto {
 	}
 
 	public WebhookNotificationDto(WebHook e) {
+		super((Notification)e);
 		host = e.getHost();
+		port=e.getPort();
 		page = e.getPage();
 		httpMethod = e.getHttpMethod().name();
 		username = e.getUsername();
@@ -63,11 +67,10 @@ public class WebhookNotificationDto extends NotificationDto {
 		this.host = host;
 	}
 
-	public int getPort() {
+	public Integer getPort() {
 		return port;
 	}
-
-	public void setPort(int port) {
+	public void setPort(Integer port) {
 		this.port = port;
 	}
 

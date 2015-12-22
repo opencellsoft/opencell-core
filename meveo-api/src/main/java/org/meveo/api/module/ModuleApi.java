@@ -31,7 +31,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.notification.NotificationService;
+import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -54,7 +54,7 @@ public class ModuleApi extends BaseApi {
 	@Inject
 	private JobInstanceService jobInstanceService;
 	@Inject
-	private NotificationService notificationService;
+	private GenericNotificationService notificationService;
 
 	public void create(ModuleDto moduleDto, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(moduleDto.getCode()) || StringUtils.isBlank(moduleDto.getDescription())
@@ -174,6 +174,15 @@ public class ModuleApi extends BaseApi {
 			if (meveoModule == null) {
 				throw new EntityDoesNotExistsException(MeveoModule.class, moduleDto.getCode());
 			}
+			if(meveoModule.getModuleItems()!=null){
+				Iterator<MeveoModuleItem> itr=meveoModule.getModuleItems().iterator();
+				while(itr.hasNext()){
+					MeveoModuleItem i=itr.next();
+					i.setMeveoModule(null);
+					itr.remove();
+				}
+			}
+			meveoModule=meveoModuleService.update(meveoModule);
 			meveoModule.setDescription(moduleDto.getDescription());
 			meveoModule.setDisabled(moduleDto.getDisabled());
 			meveoModule.setLicense(moduleDto.getLicense());

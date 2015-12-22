@@ -101,8 +101,8 @@ public class MeveoModuleItem extends BaseEntity {
 		MeveoModuleItem other = (MeveoModuleItem) obj;
 
 		if (itemType == ModuleItemTypeEnum.CFT){
-			if(itemType.equals(other.getItemType())&& itemCode != null && itemCode.equalsIgnoreCase(other.getItemCode())
-				&& appliesTo.equalsIgnoreCase(other.getAppliesTo())) {
+			if(itemType.equals(other.getItemType())&& itemCode != null &&itemCode.equalsIgnoreCase(other.getItemCode())
+				&& appliesTo!=null&&appliesTo.equalsIgnoreCase(other.getAppliesTo())) {
 				return true;
 			}
 		}else if (itemType.equals(other.getItemType()) && itemCode != null

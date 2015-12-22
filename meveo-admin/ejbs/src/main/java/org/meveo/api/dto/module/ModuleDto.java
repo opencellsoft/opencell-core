@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BaseDto;
 import org.meveo.model.admin.ModuleLicenseEnum;
 
 /**
@@ -19,9 +20,9 @@ import org.meveo.model.admin.ModuleLicenseEnum;
  */
 @XmlRootElement(name = "Module")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ModuleDto implements Serializable{
+public class ModuleDto extends BaseDto{
 
-	private static final long serialVersionUID = 6955822636724508496L;
+	private static final long serialVersionUID = 1L;
 	
 	@XmlAttribute(required=true)
 	private String code;

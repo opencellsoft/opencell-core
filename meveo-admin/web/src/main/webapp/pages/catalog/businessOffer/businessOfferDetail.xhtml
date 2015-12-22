@@ -18,6 +18,20 @@
 
 	<ui:define name="body">
 
+		<hftl:entityPopup id="creationScriptPopup"
+			header="#{messages['businessOffer.search']}"
+			backingBean="#{scriptInstanceListBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['BusinessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['BusinessEntity.code']}" column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			selection="#{businessOfferBean.entity.creationScript}"
+			updateField=":formId:tabView:creationScriptId">
+		</hftl:entityPopup>
+
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -44,9 +58,26 @@
 						label="#{messages['pricePlanMatrix.offerCode']}"
 						field="offerTemplate" valueLabelField="code"
 						listElements="#{offerTemplateBean.listActive}" />
+					<hftl:formField id="creationScriptId"
+						label="#{messages['businessOffer.creationScript']}"
+						field="creationScript" valueLabelField="code" required="false"
+						popup="true" popupId="creationScriptPopup" newLine="true" />
 				</p:tab>
 			</p:tabView>
-			
+
 		</hftl:formPanel>
+
+		<h:panelGroup layout="block" styleClass="form-panel-actions"
+			rendered="#{!businessOfferBean.entity.isTransient()}">
+			<p:commandButton
+				actionListener="#{businessOfferBean.createOfferFromBOM()}"
+				icon="ui-icon-extlink"
+				value="#{messages['action.createOfferFromBOM']}">
+				<f:param name="objectId" value="#{businessOfferBean.entity.id}"></f:param>
+				<p:ajax event="dialogReturn"
+					listener="#{businessOfferBean.onCreateOfferFromBOM}" />
+			</p:commandButton>
+		</h:panelGroup>
+
 	</ui:define>
 </ui:composition>

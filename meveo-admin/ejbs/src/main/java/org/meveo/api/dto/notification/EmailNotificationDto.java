@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.notification.EmailNotification;
+import org.meveo.model.notification.Notification;
 
 /**
  * @author Edward P. Legaspi
@@ -31,6 +32,7 @@ public class EmailNotificationDto extends NotificationDto {
 	}
 
 	public EmailNotificationDto(EmailNotification e) {
+		super((Notification)e);
 		emailFrom = e.getEmailFrom();
 		emailToEl = e.getEmailToEl();
 		subject = e.getSubject();

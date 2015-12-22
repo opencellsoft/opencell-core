@@ -62,7 +62,7 @@ public class JobInstanceDto extends BaseDto {
         this.jobTemplate = jobInstance.getJobTemplate();
         this.parameter = jobInstance.getParametres();
         
-        this.setTimerCode(jobInstance.getTimerEntity() == null ? null:jobInstance.getTimerEntity().toString());
+        this.setTimerCode(jobInstance.getTimerEntity() == null ? null:jobInstance.getTimerEntity().getCode());
     }
 
     /**

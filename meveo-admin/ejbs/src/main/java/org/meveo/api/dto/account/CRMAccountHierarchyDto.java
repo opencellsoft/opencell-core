@@ -77,7 +77,6 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	// user account
 	private String uaStatus;
 	
-	//Used for SMS_Facile integration
 	private CustomFieldDto cfToAdd = new CustomFieldDto();
 	private CustomFieldDto cfMapToAdd = new CustomFieldDto();
 	

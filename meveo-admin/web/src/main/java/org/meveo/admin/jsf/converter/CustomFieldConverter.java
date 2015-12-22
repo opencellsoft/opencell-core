@@ -24,6 +24,9 @@ public class CustomFieldConverter implements Converter {
 	private List<String> customFields =Arrays.asList("ACCT_CUST", "ACCT_BA", "ACCT_CA", "ACCT_UA", "CHARGE", "SUB",
 			"SELLER", "SERVICE", "CA", "UA", "JOB", "CE", "OFFER", "BA", "ACC", "PROVIDER", "CUST");
 
+	private static final String JOB="JOB";
+	private static final String CE="CE";
+	
 	@Inject
 	private ResourceBundle resourceBundle;
 	@Inject
@@ -48,6 +51,12 @@ public class CustomFieldConverter implements Converter {
 		if(StringUtils.isEmpty(value)){
 			return "";
 		}
+		if(value.indexOf(JOB+"_")>=0){
+			value=JOB;
+		}else if(value.indexOf(CE+"_")>=0){
+			value=CE;
+		}
+		log.debug("cft 's value {}",value);
 		if(customFields.contains(value)){
 			return resourceBundle.getString(value);
 		}

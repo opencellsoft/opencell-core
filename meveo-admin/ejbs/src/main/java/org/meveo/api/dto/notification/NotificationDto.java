@@ -2,6 +2,7 @@ package org.meveo.api.dto.notification;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.model.notification.ScriptNotification;
+import org.meveo.model.notification.Notification;
 
 /**
  * @author Edward P. Legaspi
@@ -44,7 +45,7 @@ public class NotificationDto extends BaseDto {
 
 	}
 
-	public NotificationDto(ScriptNotification e) {
+	public NotificationDto(Notification e) {
 		code = e.getCode();
 		classNameFilter = e.getClassNameFilter();
 		eventTypeFilter = e.getEventTypeFilter().name();
@@ -53,7 +54,10 @@ public class NotificationDto extends BaseDto {
 		if (e.getCounterTemplate() != null) {
 			counterTemplate = e.getCounterTemplate().getCode();
 		}
-		scriptParams = e.getParams();
+		if(e.getParams()!=null){
+			scriptParams.putAll(e.getParams());
+		}
+//		scriptParams = e.getParams();
 	}
 
 	public String getCode() {

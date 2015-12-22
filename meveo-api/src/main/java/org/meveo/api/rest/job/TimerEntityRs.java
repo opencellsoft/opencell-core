@@ -1,13 +1,16 @@
 package org.meveo.api.rest.job;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.GetTimerEntityResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -33,4 +36,9 @@ public interface TimerEntityRs extends IBaseRs{
 	@Path("/createOrUpdate")
 	@POST
 	ActionStatus createOrUpdate(TimerEntityDto postData);
+	
+	@Path("/")
+	@GET
+	GetTimerEntityResponseDto find(@QueryParam("timerEntityCode") String timerEntityCode);
+	
 }

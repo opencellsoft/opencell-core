@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.jobs.TimerEntity;
 
 @XmlRootElement(name = "TimerEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -42,6 +43,18 @@ public class TimerEntityDto extends BaseDto {
     private String dayOfWeek = "*";
 
     public TimerEntityDto() {
+    }
+    
+    public TimerEntityDto(TimerEntity timerEntity){
+    	this.code=timerEntity.getCode();
+    	this.description=timerEntity.getDescription();
+    	this.year=timerEntity.getYear();
+    	this.month=timerEntity.getMonth();
+    	this.dayOfMonth=timerEntity.getDayOfMonth();
+    	this.dayOfWeek=timerEntity.getDayOfWeek();
+    	this.hour=timerEntity.getHour();
+    	this.minute=timerEntity.getMinute();
+    	this.second=timerEntity.getSecond();
     }
 
    
