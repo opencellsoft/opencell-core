@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -36,9 +37,9 @@ public class Filter extends BusinessEntity {
 	@JoinColumn(name = "PRIMARY_SELECTOR_ID")
 	private FilterSelector primarySelector;
 
-	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	@JoinColumn(name = "FILTER_ID")
-	private List<FilterSelector> secondarySelectors = new ArrayList<FilterSelector>();
+	private List<FilterSelector> secondarySelectors=new ArrayList<FilterSelector>();
 
 //	@OneToMany(mappedBy = "filter")
 //	public List<FilterParameter> filterParameters;
