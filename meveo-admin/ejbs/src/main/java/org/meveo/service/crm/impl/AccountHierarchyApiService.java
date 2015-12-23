@@ -49,6 +49,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.Auditable;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
@@ -68,6 +69,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -106,6 +108,9 @@ import org.meveo.util.MeveoParamBean;
 
 @Stateless
 public class AccountHierarchyApiService extends BaseApi {
+	
+	@Inject
+	private CustomFieldTemplateService customFieldTemplateService;
 
 	@Inject
 	private CustomerApiService customerApi;
@@ -2067,8 +2072,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 	}
 
-	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData,
-			User currentUser) throws MeveoApiException,
+	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException,
 			DuplicateDefaultAccountException {
 		NameDto name = new NameDto();
 		name.setFirstName(postData.getName().getFirstName());
@@ -2094,13 +2098,6 @@ public class AccountHierarchyApiService extends BaseApi {
 			contactInformation.setPhone(postData.getContactInformation().getPhone());
 		}
 
-		Map<String, Boolean> cfSet = new HashMap<>();
-		if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField().size() > 0) {
-			for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-				cfSet.put(cfDto.getCode(), Boolean.FALSE);
-			}
-		}
-
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		try {
 			accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
@@ -2123,7 +2120,20 @@ public class AccountHierarchyApiService extends BaseApi {
 			sellerDto.setCurrencyCode(postData.getCurrency());
 			sellerDto.setLanguageCode(postData.getLanguage());
 
-			sellerApi.create(sellerDto, currentUser);
+			CustomFieldsDto cfsDto = new CustomFieldsDto();
+			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class
+						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (cfts.containsKey(cfDto.getCode())) {
+						cfsDto.getCustomField().add(cfDto);
+					}
+				}
+
+				sellerDto.setCustomFields(cfsDto);
+			}
+
+			sellerApi.create(sellerDto, currentUser, true);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
@@ -2145,10 +2155,22 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerDto.setName(name);
 			customerDto.setAddress(address);
 			customerDto.setContactInformation(contactInformation);
-			customerDto.setCustomFields(postData.getCustomFields());
+
+			CustomFieldsDto cfsDto = new CustomFieldsDto();
+			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class
+						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (cfts.containsKey(cfDto.getCode())) {
+						cfsDto.getCustomField().add(cfDto);
+					}
+				}
+
+				customerDto.setCustomFields(cfsDto);
+			}
 
 			customerApi.create(customerDto, currentUser, true);
-						}
+		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
 			// create customer account
@@ -2176,10 +2198,23 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerAccountDto.setName(name);
 			customerAccountDto.setAddress(address);
 			customerAccountDto.setContactInformation(contactInformation);
-			customerAccountDto.setCustomFields(postData.getCustomFields());
+
+			CustomFieldsDto cfsDto = new CustomFieldsDto();
+			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(
+						CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(),
+						currentUser.getProvider());
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (cfts.containsKey(cfDto.getCode())) {
+						cfsDto.getCustomField().add(cfDto);
+					}
+				}
+
+				customerAccountDto.setCustomFields(cfsDto);
+			}
 
 			customerAccountApi.create(customerAccountDto, currentUser, true);
-						}
+		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
 			// create billing account
@@ -2223,10 +2258,22 @@ public class AccountHierarchyApiService extends BaseApi {
 			}
 			billingAccountDto.setName(name);
 			billingAccountDto.setAddress(address);
-			billingAccountDto.setCustomFields(postData.getCustomFields());
+
+			CustomFieldsDto cfsDto = new CustomFieldsDto();
+			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class
+						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (cfts.containsKey(cfDto.getCode())) {
+						cfsDto.getCustomField().add(cfDto);
+					}
+				}
+
+				billingAccountDto.setCustomFields(cfsDto);
+			}
 
 			billingAccountApi.create(billingAccountDto, currentUser, true);
-						}
+		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
 			// create user account
@@ -2246,24 +2293,25 @@ public class AccountHierarchyApiService extends BaseApi {
 			userAccountDto.setStatus(postData.getUaStatus());
 			userAccountDto.setName(name);
 			userAccountDto.setAddress(address);
-			userAccountDto.setCustomFields(postData.getCustomFields());
 
-			userAccountApi.create(userAccountDto, currentUser, true);
-						}
-
-		if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField().size() > 0) {
-			if (cfSet.size() > 0) {
-				for (Map.Entry<String, Boolean> entry : cfSet.entrySet()) {
-					if (entry.getValue().equals(false)) {
-						throw new MeveoApiException("CUSTOM_FIELD_NOT_FOUND");
+			CustomFieldsDto cfsDto = new CustomFieldsDto();
+			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class
+						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (cfts.containsKey(cfDto.getCode())) {
+						cfsDto.getCustomField().add(cfDto);
 					}
 				}
+
+				userAccountDto.setCustomFields(cfsDto);
 			}
+
+			userAccountApi.create(userAccountDto, currentUser, true);
 		}
 	}
 
-	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData,
-			User currentUser) throws MeveoApiException,
+	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData, User currentUser) throws MeveoApiException,
 			DuplicateDefaultAccountException {
 		NameDto name = new NameDto();
 		name.setFirstName(postData.getName().getFirstName());
@@ -2311,7 +2359,20 @@ public class AccountHierarchyApiService extends BaseApi {
 			sellerDto.setCurrencyCode(postData.getCurrency());
 			sellerDto.setLanguageCode(postData.getLanguage());
 
-			sellerApi.update(sellerDto, currentUser);
+			CustomFieldsDto cfsDto = new CustomFieldsDto();
+			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class
+						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (cfts.containsKey(cfDto.getCode())) {
+						cfsDto.getCustomField().add(cfDto);
+					}
+				}
+
+				sellerDto.setCustomFields(cfsDto);
+			}
+
+			sellerApi.update(sellerDto, currentUser, true);
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
@@ -2333,10 +2394,22 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerDto.setName(name);
 			customerDto.setAddress(address);
 			customerDto.setContactInformation(contactInformation);
-			customerDto.setCustomFields(postData.getCustomFields());
+
+			CustomFieldsDto cfsDto = new CustomFieldsDto();
+			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class
+						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (cfts.containsKey(cfDto.getCode())) {
+						cfsDto.getCustomField().add(cfDto);
+					}
+				}
+
+				customerDto.setCustomFields(cfsDto);
+			}
 
 			customerApi.update(customerDto, currentUser, true);
-						}
+		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
 			// update customer account
@@ -2364,10 +2437,23 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerAccountDto.setName(name);
 			customerAccountDto.setAddress(address);
 			customerAccountDto.setContactInformation(contactInformation);
-			customerAccountDto.setCustomFields(postData.getCustomFields());
+
+			CustomFieldsDto cfsDto = new CustomFieldsDto();
+			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(
+						CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix(),
+						currentUser.getProvider());
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (cfts.containsKey(cfDto.getCode())) {
+						cfsDto.getCustomField().add(cfDto);
+					}
+				}
+
+				customerAccountDto.setCustomFields(cfsDto);
+			}
 
 			customerAccountApi.update(customerAccountDto, currentUser, true);
-						}
+		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
 			// update billing account
@@ -2411,10 +2497,22 @@ public class AccountHierarchyApiService extends BaseApi {
 			}
 			billingAccountDto.setName(name);
 			billingAccountDto.setAddress(address);
-			billingAccountDto.setCustomFields(postData.getCustomFields());
+
+			CustomFieldsDto cfsDto = new CustomFieldsDto();
+			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class
+						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (cfts.containsKey(cfDto.getCode())) {
+						cfsDto.getCustomField().add(cfDto);
+					}
+				}
+
+				billingAccountDto.setCustomFields(cfsDto);
+			}
 
 			billingAccountApi.update(billingAccountDto, currentUser, true);
-						}
+		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
 			// update user account
@@ -2434,11 +2532,23 @@ public class AccountHierarchyApiService extends BaseApi {
 			userAccountDto.setStatus(postData.getUaStatus());
 			userAccountDto.setName(name);
 			userAccountDto.setAddress(address);
-			userAccountDto.setCustomFields(postData.getCustomFields());
+
+			CustomFieldsDto cfsDto = new CustomFieldsDto();
+			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+				Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class
+						.getAnnotation(CustomFieldEntity.class).cftCodePrefix(), currentUser.getProvider());
+				for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+					if (cfts.containsKey(cfDto.getCode())) {
+						cfsDto.getCustomField().add(cfDto);
+					}
+				}
+
+				userAccountDto.setCustomFields(cfsDto);
+			}
 
 			userAccountApi.update(userAccountDto, currentUser, true);
-        }
-    }
+		}
+	}
 
 	/**
 	 * Create or update Account Hierarchy based on code.

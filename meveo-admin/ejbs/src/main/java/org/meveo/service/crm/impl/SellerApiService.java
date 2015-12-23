@@ -45,8 +45,12 @@ public class SellerApiService extends BaseApi {
 
 	@Inject
 	private TradingLanguageService tradingLanguageService;
-
+	
 	public void create(SellerDto postData, User currentUser) throws MeveoApiException {
+		create(postData, currentUser, true);
+	}
+
+	public void create(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 			Provider provider = currentUser.getProvider();
 
@@ -108,7 +112,7 @@ public class SellerApiService extends BaseApi {
             
             // populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), seller, true, currentUser);
+                populateCustomFields(postData.getCustomFields(), seller, true, currentUser, checkCustomField);
 
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
@@ -126,8 +130,12 @@ public class SellerApiService extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-
+	
 	public void update(SellerDto postData, User currentUser) throws MeveoApiException {
+		update(postData, currentUser, true);
+	}
+
+	public void update(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 			Provider provider = currentUser.getProvider();
 
@@ -195,7 +203,7 @@ public class SellerApiService extends BaseApi {
             
             // populate customFields
             try {
-                populateCustomFields(postData.getCustomFields(), seller, false, currentUser);
+                populateCustomFields(postData.getCustomFields(), seller, false, currentUser, checkCustomField);
 
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Failed to associate custom field instance to an entity", e);
