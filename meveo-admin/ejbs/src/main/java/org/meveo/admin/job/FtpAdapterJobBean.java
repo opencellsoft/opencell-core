@@ -1,13 +1,11 @@
 package org.meveo.admin.job;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -16,12 +14,25 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.vfs.AllFileSelector;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystem;
+import org.apache.commons.vfs.FileSystemException;
+import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.FileSystemOptions;
+import org.apache.commons.vfs.FileType;
+import org.apache.commons.vfs.UserAuthenticator;
+import org.apache.commons.vfs.VFS;
+import org.apache.commons.vfs.auth.StaticUserAuthenticator;
+import org.apache.commons.vfs.impl.DefaultFileSystemConfigBuilder;
+import org.apache.commons.vfs.provider.local.LocalFile;
+import org.apache.commons.vfs.provider.sftp.SftpFileSystemConfigBuilder;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.FtpImportedFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -37,119 +48,107 @@ public class FtpAdapterJobBean {
 	@Inject
 	private FtpImportedFileService ftpImportedFileService;
 
+	private File localDirFile;
+	private Pattern filePattern;
+	private FileSystemManager fsManager = null;
+	private FileSystemOptions opts = null;
+	private FileObject sftpFile;
+	private FileObject src = null;
+
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser, String distDirectory, String remoteServer, int remotePort, boolean removeDistantFile, String ftpInputDirectory, String extention, String ftpUsername, String ftpPassword,String ftpProtocol) {
+	public void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser, String distDirectory, String remoteServer, int remotePort, boolean removeDistantFile, String ftpInputDirectory, String extention, String ftpUsername, String ftpPassword, String ftpProtocol) {
 		log.debug("start ftpClient...");
-		FTPClient ftpClient = new FTPClient();
-		OutputStream outputStream = null;
-		int reply,cpOk=0,cpKo=0,cpAll=0,cpWarn=0;
-		try {			
-			ftpClient.connect(remoteServer, remotePort);
-			ftpClient.login(ftpUsername, ftpPassword);
-			reply = ftpClient.getReplyCode();
-			log.debug("reply from server :" + reply);
-			if (!FTPReply.isPositiveCompletion(reply)) {
-				log.debug("isPositiveCompletion:false");
-				ftpClient.disconnect();
-				log.debug("end !");
-				return;
+
+		int cpOk = 0, cpKo = 0, cpAll = 0, cpWarn = 0;
+		FileObject[] children;
+
+		try {
+			initialize(distDirectory, ftpUsername, ftpPassword, extention, "SFTP".equalsIgnoreCase(ftpProtocol));
+			String ftpAddress = ftpProtocol.toLowerCase() + "://" + ftpUsername + ":" + ftpPassword + "@" + remoteServer + ":" + remotePort + ftpInputDirectory;
+			log.debug("ftpAddress:" + ftpAddress);
+			try {
+				sftpFile = fsManager.resolveFile(ftpAddress, opts);
+				log.debug("SFTP connection successfully established to " + ftpAddress);
+			} catch (FileSystemException ex) {
+				result.setReport(StringUtils.truncate(ex.getMessage(), 255, true));
+				throw new RuntimeException("SFTP error parsing path " + ftpInputDirectory, ex);
 			}
-			File tmp = new File(distDirectory);
-			if(!tmp.exists()){
-				tmp.mkdirs();
+
+			try {
+				children = sftpFile.getChildren();
+			} catch (FileSystemException ex) {
+				result.setReport(StringUtils.truncate(ex.getMessage(), 255, true));
+				throw new RuntimeException("Error collecting directory listing of " + ftpInputDirectory, ex);
 			}
-			ftpClient.changeWorkingDirectory(ftpInputDirectory);
-			String[] listNames = ftpClient.listNames();
-			cpAll = listNames.length;
-			log.debug("nb remote files : " + cpAll);
-			for (String fileName : listNames) {
-				log.debug("fileName : " + fileName);
+
+			for (FileObject fileObject : children) {
 				try {
-					if(extention == null){
-						log.debug("extension is null");
+					String fileName = fileObject.getName().getBaseName();
+					String relativePath = File.separatorChar + fileName;
+					if (fileObject.getType() != FileType.FILE) {
+						log.debug("Ignoring non-file " + fileObject.getName());
 						continue;
 					}
-					if (!fileName.endsWith(extention) && !"*".equals(extention)) {
-						log.debug("extension ignored");
+					log.debug("Examining remote file " + fileName);
+					log.debug("patern:" + filePattern.matcher(fileName));
+					if (!filePattern.matcher(fileName).matches()) {
+						log.debug("Filename does not match, skipping file :" + fileName);
 						continue;
 					}
-					FTPFile ftpFile = ftpClient.mlistFile(fileName);
-					if(ftpFile == null){
-						log.debug("mlistFile return null");
-						continue;
-					}
-					if (FTPFile.FILE_TYPE != ftpFile.getType()) {
-						log.debug("file type ignored");
-						continue;
-					}
-					long size = ftpFile.getSize();
-					log.debug("size : " + size);
-					Date lastModification =  null;
-	
-					if(ftpFile.getTimestamp() == null){
-						lastModification =  new Date(0);
-						log.debug("can't retrieve lastModification from server, 'the epoch' is used ");
-					}else{
-						lastModification = ftpFile.getTimestamp().getTime();
-						log.debug("lastModification : " + lastModification);
-					}					
-					String code = getCode(remoteServer, remotePort, fileName, ftpInputDirectory, size, lastModification);
+					long size = fileObject.getContent().getSize();
+					long lastModification = fileObject.getContent().getLastModifiedTime();
+					String code = getCode(remoteServer, remotePort, fileName, ftpInputDirectory, size,new Date( lastModification));
 					log.debug("code with sha:"+code);
 					FtpImportedFile ftpImportedFile = ftpImportedFileService.findByCode(code, currentUser.getProvider());
 					if (ftpImportedFile != null) {
 						log.debug("file already imported");
 						continue;
 					}
-					File localFile = new File(distDirectory + File.separator + fileName);
-					outputStream = new FileOutputStream(localFile);
-					boolean isRetrieved = ftpClient.retrieveFile(fileName, outputStream);
-					if (isRetrieved) {
-						log.debug("local file successfully created");
-						ftpImportedFile = new FtpImportedFile();
-						ftpImportedFile.setCode(code);
-						ftpImportedFile.setDescription(fileName);
-						ftpImportedFile.setLastModification(lastModification);
-						ftpImportedFile.setSize(size);
-						ftpImportedFile.setImportDate(new Date());
-						ftpImportedFile.setUri(getUri(remoteServer, remotePort, fileName, ftpInputDirectory));
-						ftpImportedFile.setProvider(currentUser.getProvider());
-						ftpImportedFileService.create(ftpImportedFile, currentUser);
-						log.debug("ftpImportedFile persisted");
-						if (removeDistantFile) {
-							log.debug("deleting remote file ...");
-							ftpClient.deleteFile(fileName);
-							log.debug("deleting remote file done");
-						}
-						cpOk++;
-					}else{
-						log.warn("cant retrieve file");
-						cpWarn++;
+					String localUrl = "file://" + distDirectory + relativePath;
+					String standardPath = distDirectory + relativePath;
+					log.debug("Standard local path is " + standardPath);
+					LocalFile localFile = (LocalFile) fsManager.resolveFile(localUrl);
+					log.debug("Resolved local file name: " + localFile.getName());
+
+					if (!localFile.getParent().exists()) {
+						localFile.getParent().createFolder();
 					}
-				} catch (Exception e) {
+
+
+					log.debug("Retrieving file");
+					localFile.copyFrom(fileObject, new AllFileSelector());
+					log.debug("get file ok");
+					if (removeDistantFile) {
+						log.debug("deleting remote file...");
+						fileObject.delete();
+						log.debug("remote file deleted");
+					}
+
+					cpOk++;
+					createImportedFileHistory(fileName, new Date(lastModification), size, remoteServer, remotePort, ftpInputDirectory, currentUser.getProvider(), currentUser);
+
+				} catch (Exception ex) {
+					log.error("Error getting file type for " + fileObject.getName(), ex);
 					cpKo++;
-					log.error("Exception on file iteration", e);
+					result.setReport(StringUtils.truncate(ex.getMessage(), 255, true));
 				}
 			}
-			ftpClient.logout();
+			// Set src for cleanup in release()
+			if (children != null && children.length > 0) {
+				src = children[0];
+			}
+
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("", e);
 		} finally {
-			try {
-				if (outputStream != null) {
-					outputStream.close();
-				}
-				if (ftpClient != null && ftpClient.isConnected()) {
-					ftpClient.disconnect();
-				}
-			} catch (IOException ioe) {
-			}
+			result.setDone(true);
+			result.setNbItemsToProcess(cpAll);
+			result.setNbItemsProcessedWithError(cpKo);
+			result.setNbItemsProcessedWithWarning(cpWarn);
+			result.setNbItemsCorrectlyProcessed(cpOk);
+			release();
 		}
-		result.setDone(true);
-		result.setNbItemsToProcess(cpAll);
-		result.setNbItemsProcessedWithError(cpKo);
-		result.setNbItemsProcessedWithWarning(cpWarn);
-		result.setNbItemsCorrectlyProcessed(cpOk);		
 	}
 
 	/**
@@ -161,8 +160,8 @@ public class FtpAdapterJobBean {
 	 * @param size
 	 * @param lastModification
 	 * @return
-	 * @throws NoSuchAlgorithmException 
-	 * @throws UnsupportedEncodingException 
+	 * @throws NoSuchAlgorithmException
+	 * @throws UnsupportedEncodingException
 	 */
 	private String getCode(String host, int port, String fileName, String ftpInputDirectory, long size, Date lastModification) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		String code = getUri(host, port, fileName, ftpInputDirectory) + ":" + size + ":" + lastModification.getTime();
@@ -181,6 +180,92 @@ public class FtpAdapterJobBean {
 	 * @return
 	 */
 	private String getUri(String host, int port, String fileName, String ftpInputDirectory) {
-		return host + ":" + port + "/" + ftpInputDirectory + "/" + fileName;
+		return host + ":" + port  + ftpInputDirectory + "/" + fileName;
+	}
+
+	/**
+	 * Creates the download directory localDir if it does not exist and makes a
+	 * connection to the remote SFTP server.
+	 * 
+	 * @throws FileSystemException
+	 * 
+	 */
+	private void initialize(String localDir, String userName, String password, String filePatternString, boolean isSftp) throws FileSystemException {
+		localDirFile = new File(localDir);
+		if (!localDirFile.exists()) {
+			localDirFile.mkdirs();
+		}
+		try {
+			fsManager = VFS.getManager();
+		} catch (FileSystemException ex) {
+			throw new RuntimeException("failed to get fsManager from VFS", ex);
+		}
+
+		UserAuthenticator auth = new StaticUserAuthenticator(null, userName, password);
+		opts = getSftpOptions(isSftp);
+		try {
+			DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
+		} catch (FileSystemException ex) {
+			throw new RuntimeException("setUserAuthenticator failed", ex);
+		}
+		if ("false".equals(ParamBean.getInstance().getProperty("ftpAdapter.useExtentionAsRegex", "false"))) {
+			filePattern = Pattern.compile(".*" + filePatternString);
+		} else {
+			filePattern = Pattern.compile(filePatternString);
+		}
+
+	}
+
+	/**
+	 * Release system resources, close connection to the filesystem.
+	 */
+	private void release() {
+		FileSystem fs = null;
+		if (src != null) {
+			fs = src.getFileSystem();
+			fsManager.closeFileSystem(fs);
+		}
+	}
+
+	/**
+	 * 
+	 * @param isSftp
+	 * @return
+	 * @throws FileSystemException
+	 */
+	private FileSystemOptions getSftpOptions(boolean isSftp) throws FileSystemException {
+		FileSystemOptions opts = new FileSystemOptions();
+		if (isSftp) {
+			SftpFileSystemConfigBuilder.getInstance().setStrictHostKeyChecking(opts, "no");
+			SftpFileSystemConfigBuilder.getInstance().setUserDirIsRoot(opts, false);
+			SftpFileSystemConfigBuilder.getInstance().setTimeout(opts, 10000);
+		}
+		return opts;
+	}
+
+	/**
+	 * 
+	 * @param code
+	 * @param fileName
+	 * @param lastModification
+	 * @param size
+	 * @param remoteServer
+	 * @param remotePort
+	 * @param ftpInputDirectory
+	 * @param provider
+	 * @param currentUser
+	 * @throws UnsupportedEncodingException
+	 * @throws NoSuchAlgorithmException
+	 */
+	private void createImportedFileHistory(String fileName, Date lastModification, Long size, String remoteServer, int remotePort, String ftpInputDirectory, Provider provider, User currentUser) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		FtpImportedFile ftpImportedFile = new FtpImportedFile();
+		ftpImportedFile.setCode(getCode(remoteServer, remotePort, fileName, ftpInputDirectory, size, lastModification));
+		ftpImportedFile.setDescription(fileName);
+		ftpImportedFile.setLastModification(lastModification);
+		ftpImportedFile.setSize(size);
+		ftpImportedFile.setImportDate(new Date());
+		ftpImportedFile.setUri(getUri(remoteServer, remotePort, fileName, ftpInputDirectory));
+		ftpImportedFile.setProvider(provider);
+		ftpImportedFileService.create(ftpImportedFile, currentUser);
 	}
 }
