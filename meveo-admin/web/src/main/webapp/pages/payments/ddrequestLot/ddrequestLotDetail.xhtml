@@ -32,7 +32,7 @@
 			<hf:formField label="#{messages['ddrequestLot.rejectedCause']}" field="rejectedCause" />
 		   </p:panel>	
 		<h:panelGrid columns="3">
-			<p:commandButton rendered="#{!edit}" action="#{ddRequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
+			<p:commandButton disabled="#{!ddRequestLOTBean.canGenerateFile()}" action="#{ddRequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
      		<p:commandButton value="#{messages['action.back']}" action="#{ddRequestLOTBean.back}" immediate="true" />
    		</h:panelGrid>	
 		</hf:formPanel>					 
