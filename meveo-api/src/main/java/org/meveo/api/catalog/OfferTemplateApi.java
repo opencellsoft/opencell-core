@@ -21,6 +21,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -36,6 +37,9 @@ public class OfferTemplateApi extends BaseApi {
     
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
 	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
@@ -50,6 +54,15 @@ public class OfferTemplateApi extends BaseApi {
 			offerTemplate.setCode(postData.getCode());
 			offerTemplate.setDescription(postData.getDescription());
 			offerTemplate.setDisabled(postData.isDisabled());
+
+			if (!StringUtils.isBlank(postData.getSubscriptionScriptCode())) {
+				offerTemplate.setSubscriptionScript(scriptInstanceService.findByCode(
+						postData.getSubscriptionScriptCode(), currentUser.getProvider()));
+			}
+			if (!StringUtils.isBlank(postData.getTerminationScriptCode())) {
+				offerTemplate.setTerminationScript(scriptInstanceService.findByCode(
+						postData.getTerminationScriptCode(), currentUser.getProvider()));
+			}
 
 			// check service templates
 			if (postData.getServiceTemplates() != null
@@ -101,6 +114,15 @@ public class OfferTemplateApi extends BaseApi {
 
 			offerTemplate.setDescription(postData.getDescription());
 			offerTemplate.setDisabled(postData.isDisabled());
+			
+			if (!StringUtils.isBlank(postData.getSubscriptionScriptCode())) {
+				offerTemplate.setSubscriptionScript(scriptInstanceService.findByCode(
+						postData.getSubscriptionScriptCode(), currentUser.getProvider()));
+			}
+			if (!StringUtils.isBlank(postData.getTerminationScriptCode())) {
+				offerTemplate.setTerminationScript(scriptInstanceService.findByCode(
+						postData.getTerminationScriptCode(), currentUser.getProvider()));
+			}
 
 			// check service templates
 			if (postData.getServiceTemplates() != null

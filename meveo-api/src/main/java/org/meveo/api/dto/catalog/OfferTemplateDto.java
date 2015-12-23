@@ -33,6 +33,9 @@ public class OfferTemplateDto implements Serializable {
 	private ServiceTemplatesDto serviceTemplates = new ServiceTemplatesDto();
 	
 	private CustomFieldsDto customFields = new CustomFieldsDto();
+	
+	private String subscriptionScriptCode;
+	private String terminationScriptCode;
 
 	public OfferTemplateDto() {
 
@@ -42,6 +45,12 @@ public class OfferTemplateDto implements Serializable {
 		code = e.getCode();
 		description = e.getDescription();
 		disabled = e.isDisabled();
+		if (e.getSubscriptionScript() != null) {
+			subscriptionScriptCode = e.getSubscriptionScript().getCode();
+		}
+		if (e.getTerminationScript() != null) {
+			terminationScriptCode = e.getTerminationScript().getCode();
+		}
 
 		if (e.getServiceTemplates() != null && e.getServiceTemplates().size() > 0) {
 			for (ServiceTemplate st : e.getServiceTemplates()) {
@@ -96,6 +105,22 @@ public class OfferTemplateDto implements Serializable {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	public String getSubscriptionScriptCode() {
+		return subscriptionScriptCode;
+	}
+
+	public void setSubscriptionScriptCode(String subscriptionScriptCode) {
+		this.subscriptionScriptCode = subscriptionScriptCode;
+	}
+
+	public String getTerminationScriptCode() {
+		return terminationScriptCode;
+	}
+
+	public void setTerminationScriptCode(String terminationScriptCode) {
+		this.terminationScriptCode = terminationScriptCode;
 	}
 
 }

@@ -658,7 +658,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			// create(chargeApplication, creator, chargeInstance.getProvider());
 		}
 
-		if (recurringChargeTemplate.getApplyInAdvance()) {
+		if (recurringChargeTemplate.getApplyInAdvance() != null && recurringChargeTemplate.getApplyInAdvance()) {
 			Date nextChargeDate = chargeInstance.getNextChargeDate();
 			log.debug("reimbursment-applyInAdvance applicationDate={}, nextapplicationDate={},nextChargeDate={}", applicationDate, nextapplicationDate, nextChargeDate);
 

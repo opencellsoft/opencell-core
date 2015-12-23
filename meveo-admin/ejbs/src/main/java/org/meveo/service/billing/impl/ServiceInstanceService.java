@@ -18,7 +18,9 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -49,9 +51,13 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.script.ScriptInstanceService;
 
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
+	
+	@Inject
+	private ScriptInstanceService scriptInstanceService;
 
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
@@ -294,19 +300,28 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		serviceInstance.setStatusDate(new Date());
 		update(serviceInstance, creator);
+
+		// execute subscription script
+		if (serviceInstance.getServiceTemplate().getActivationScript() != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put("serviceInstance", serviceInstance);
+
+			scriptInstanceService.execute(creator.getProvider(), serviceInstance.getServiceTemplate()
+					.getActivationScript().getCode(), scriptContext, creator);
+		}
 	}
 
 	public void terminateService(ServiceInstance serviceInstance, Date terminationDate,
 			SubscriptionTerminationReason terminationReason, User user) throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
 		terminateService(serviceInstance, terminationDate, terminationReason.isApplyAgreement(),
-				terminationReason.isApplyReimbursment(), terminationReason.isApplyTerminationCharges(), user);
+				terminationReason.isApplyReimbursment(), terminationReason.isApplyTerminationCharges(), user, terminationReason);
 		serviceInstance.setSubscriptionTerminationReason(terminationReason);
 		update(serviceInstance, user);
 	}
 
 	public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement,
-			boolean applyReimbursment, boolean applyTerminationCharges, User user)
+			boolean applyReimbursment, boolean applyTerminationCharges, User user, SubscriptionTerminationReason terminationReason)
 			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
 		if (serviceInstance.getId() != null) {
@@ -315,6 +330,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 		if (terminationDate == null) {
 			terminationDate = new Date();
+		}
+
+		// execute subscription script
+		if (serviceInstance.getServiceTemplate().getTerminationScript() != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put("serviceInstance", serviceInstance);
+			scriptContext.put("terminationDate", terminationDate);
+			scriptContext.put("terminationReason", terminationReason);
+
+			scriptInstanceService.execute(user.getProvider(), serviceInstance.getServiceTemplate()
+					.getTerminationScript().getCode(), scriptContext, user);
 		}
 
 		String serviceCode = serviceInstance.getCode();
@@ -391,7 +417,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
 		serviceInstance.setStatusDate(new Date());
 		update(serviceInstance, user);
-
 	}
 
 	public void updateTerminationMode(ServiceInstance serviceInstance, Date terminationDate, User user)
@@ -419,7 +444,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		terminateService(serviceInstance, terminationDate, newReason.isApplyAgreement(),
-				newReason.isApplyReimbursment(), newReason.isApplyTerminationCharges(), user);
+				newReason.isApplyReimbursment(), newReason.isApplyTerminationCharges(), user, newReason);
 
 	}
 

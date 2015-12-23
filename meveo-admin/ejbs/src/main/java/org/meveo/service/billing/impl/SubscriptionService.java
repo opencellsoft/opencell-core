@@ -17,7 +17,9 @@
 package org.meveo.service.billing.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -42,41 +44,39 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.script.ScriptInstanceService;
 
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
+	
+	@Inject
+	private ScriptInstanceService scriptInstanceService;
 
 	@EJB
 	private ServiceInstanceService serviceInstanceService;
 
 	@Inject
 	private AccessService accessService;
+	
+	@Override
+	public void create(Subscription subscription, User creator, Provider provider) {
+		super.create(subscription, creator, provider);
+
+		// execute subscription script
+		if (subscription.getOffer().getSubscriptionScript() != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put("subscription", subscription);
+
+			scriptInstanceService.execute(provider, subscription.getOffer().getSubscriptionScript().getCode(),
+					scriptContext, creator);
+		}
+	}
 
 	public void updateSubscription(Subscription subscription, User updater) {
 		update(subscription, updater);
 	}
 
-	public void terminateSubscription(Subscription subscription,
-			Date terminationDate, boolean applyAgreement,
-			boolean applyReimbursment, boolean applyTerminationCharges,
-			User user) throws IncorrectSusbcriptionException,
-			IncorrectServiceInstanceException, BusinessException {
-		terminateSubscription(subscription, terminationDate, null,
-				applyAgreement, applyReimbursment, applyTerminationCharges,
-				user);
-	}
-
-	public void terminateSubscription(Subscription subscription,
-			Date terminationDate,
-			SubscriptionTerminationReason terminationReason, User user)
-			throws IncorrectSusbcriptionException,
-			IncorrectServiceInstanceException, BusinessException {
-		terminateSubscription(getEntityManager(), subscription,
-				terminationDate, terminationReason, user);
-	}
-
-	public void terminateSubscription(EntityManager em,
-			Subscription subscription, Date terminationDate,
+	public void terminateSubscription(Subscription subscription, Date terminationDate,
 			SubscriptionTerminationReason terminationReason, User user)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
@@ -180,6 +180,17 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
+		
+		// execute termination script
+		if (subscription.getOffer().getTerminationScript() != null) {
+			Map<String, Object> scriptContext = new HashMap<>();
+			scriptContext.put("subscription", subscription);
+			scriptContext.put("terminationDate", terminationDate);
+			scriptContext.put("terminationReason", terminationReason);
+
+			scriptInstanceService.execute(user.getProvider(), subscription.getOffer().getTerminationScript().getCode(),
+					scriptContext, user);
+		}
 
 		List<ServiceInstance> serviceInstances = subscription
 				.getServiceInstances();
@@ -192,7 +203,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 				} else {
 					serviceInstanceService.terminateService(serviceInstance,
 							terminationDate, applyAgreement, applyReimbursment,
-							applyTerminationCharges, user);
+							applyTerminationCharges, user, null);
 				}
 			}
 		}

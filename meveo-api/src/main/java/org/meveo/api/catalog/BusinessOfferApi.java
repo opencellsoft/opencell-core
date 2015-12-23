@@ -108,6 +108,13 @@ public class BusinessOfferApi extends BaseApi {
 			newOfferTemplate.setCode(postData.getOfferCode());
 			newOfferTemplate.setBomCode(postData.getBomCode());
 
+			if (bomOffer.getSubscriptionScript() != null) {
+				newOfferTemplate.setSubscriptionScript(bomOffer.getSubscriptionScript());
+			}
+			if (bomOffer.getTerminationScript() != null) {
+				newOfferTemplate.setTerminationScript(bomOffer.getTerminationScript());
+			}
+
 			// get the services from bom offer
 			if (bomOffer.getServiceTemplates() != null) {
 				for (ServiceTemplate serviceTemplate : bomOffer.getServiceTemplates()) {
@@ -129,6 +136,13 @@ public class BusinessOfferApi extends BaseApi {
 								newServiceTemplate
 										.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
 								newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
+
+								if (serviceTemplate.getActivationScript() != null) {
+									newServiceTemplate.setActivationScript(serviceTemplate.getActivationScript());
+								}
+								if (serviceTemplate.getTerminationScript() != null) {
+									newServiceTemplate.setTerminationScript(serviceTemplate.getTerminationScript());
+								}
 
 								// get charges
 								if (serviceTemplate.getServiceRecurringCharges() != null
