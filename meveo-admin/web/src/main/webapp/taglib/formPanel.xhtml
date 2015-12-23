@@ -95,9 +95,11 @@
                         showBackButton="#{showBackButton}" showEditButton="#{showEditButton}" showEnableDisableButton="#{showEnableDisableButton}"
                         showDeleteButton="#{showDeleteButton}" updateConfirmationMessage="#{updateConfirmationMessage}" formId="#{formId}"/>
                 </c:if>
-                <h:panelGroup layout="block" styleClass="form-panel-actions">
-                    <ui:insert name="buttons" />
-                </h:panelGroup>
+                <c:if test="#{buttons}">
+                    <h:panelGroup layout="block" styleClass="form-panel-actions">
+                        <ui:insert name="buttons" />
+                    </h:panelGroup>
+                </c:if>
             </h:panelGroup>
         </p:panel>
     </h:form>
