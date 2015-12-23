@@ -85,7 +85,7 @@
             <!-- ===================================== JOB EXECUTION RESULTS ===================================== -->
 
             <p:outputPanel id="jobExecutions" rendered="#{!jobInstanceBean.entity.transient}">
-				<p:dataTable id="jobExecutionsDatatable" var="entity"
+				<p:dataTable id="jobExecutionsDatatable" var="entity" sortBy="#{entity.startDate}" sortOrder="descending"
 					paginator="true" value="#{jobInstanceBean.entity.executionResults}"
 					rows="10" rowKey="#{entity.id}" widget="jobExecutionsTable"
 					resizableColumns="true">
@@ -94,7 +94,7 @@
                             <h:outputText value="#{messages['jobExecution.startDate']}" />
                         </f:facet>
                         <h:outputText value="#{entity.startDate}">
-                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                         </h:outputText>
                     </p:column>
 
@@ -103,7 +103,7 @@
                             <h:outputText value="#{messages['jobExecution.endDate']}" />
                         </f:facet>
                         <h:outputText value="#{entity.endDate}">
-                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                         </h:outputText>
                     </p:column>
 
