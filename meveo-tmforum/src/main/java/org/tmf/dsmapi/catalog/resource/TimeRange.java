@@ -2,12 +2,15 @@ package org.tmf.dsmapi.catalog.resource;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
 /**
  *
@@ -21,10 +24,12 @@ public class TimeRange implements Serializable {
 
     @Column(name = "START_DATE_TIME", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonSerialize(using=CustomDateSerializer.class)
     private Date startDateTime;
 
     @Column(name = "END_DATE_TIME", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonSerialize(using=CustomDateSerializer.class)
     private Date endDateTime;
 
     public Date getStartDateTime() {

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,11 +16,14 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.Utilities;
 import org.tmf.dsmapi.commons.annotation.VersionProperty;
+import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
 /**
  *
@@ -54,6 +58,7 @@ public abstract class AbstractEntity implements Serializable {
 
     @Column(name = "LAST_UPDATE", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonSerialize(using=CustomDateSerializer.class)
     private Date lastUpdate;
 
     @Column(name = "LIFECYCLE_STATUS", nullable = true)
