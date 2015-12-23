@@ -62,7 +62,7 @@ public class FtpAdapterJob extends Job {
 			remotePort = ((Long) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_remotePort", currentUser)).intValue();
 			removeDistantFile = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_removeDistantFile", currentUser);
 			ftpInputDirectory = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpInputDirectory", currentUser);
-			ftpExtension = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_fileExtension", currentUser);
+			ftpExtension = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpFileExtension", currentUser);
 			ftpUsername = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpUsername", currentUser);
 			ftpPassword = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpPassword", currentUser);
 			ftpProtocol = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_ftpProtocol", currentUser);
@@ -75,7 +75,7 @@ public class FtpAdapterJob extends Job {
 
 	@Override
 	public JobCategoryEnum getJobCategory() {
-		return JobCategoryEnum.UTILS;
+		return JobCategoryEnum.MEDIATION;
 	}
 
 	@Override
@@ -156,7 +156,7 @@ public class FtpAdapterJob extends Job {
 		result.put("FtpAdapterJob_ftpPassword", ftpPassword);
 
 		CustomFieldTemplate ftpExtension = new CustomFieldTemplate();
-		ftpExtension.setCode("FtpAdapterJob_fileExtension");
+		ftpExtension.setCode("FtpAdapterJob_ftpFileExtension");
 		ftpExtension.setAppliesTo("JOB_FtpAdapterJob");
 		ftpExtension.setActive(true);
 		ftpExtension.setDescription(resourceMessages.getString("FtpAdapter.fileExtension"));
