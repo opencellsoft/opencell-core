@@ -28,6 +28,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
@@ -232,5 +233,12 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 	@Override
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
+	}
+	public boolean canGenerateFile(){		
+		if(entity != null &&  !StringUtils.isBlank(entity.getFileName())){
+			return true;
+		}
+		return false;
+		
 	}
 }
