@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -20,10 +22,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.MessagesUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
@@ -53,6 +57,8 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     private Map<String, Object> customFieldNewValue = new HashMap<String, Object>();
 
     private Map<String, Object> customFieldValues = new HashMap<String, Object>();
+
+    private Map<String, Set<String>> matrixColumns = new HashMap<String, Set<String>>();
 
     /**
      * Custom field templates grouped into tabs and field groups
@@ -91,7 +97,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     protected void initCustomFields() {
 
-        Map<String, CustomFieldTemplate> customFieldTemplates = getApplicateCustomFieldTemplates();
+        Map<String, CustomFieldTemplate> customFieldTemplates = getApplicableCustomFieldTemplates();
 
         customFieldValues.clear();
 
@@ -120,12 +126,35 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                 } else {
                     customFieldValues.put(cft.getCode(), cfisByTemplate.get(0));
                 }
+
+                // Retrieve columns for Matrix data entry
+                if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+                    populateMatrixColumns(cft.getCode(), cfisByTemplate);
+                }
             }
 
             populateCustomFieldNewValueDefaults(customFieldTemplates.values());
             groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
         }
 
+    }
+
+    /**
+     * Retrieve matrix columns from custom field instances
+     * 
+     * @param code Custom field template code
+     * @param cfis Custom field instances
+     */
+    private void populateMatrixColumns(String code, List<CustomFieldInstance> cfis) {
+
+        Set<String> cftColumns = new HashSet<String>();
+        matrixColumns.put(code, cftColumns);
+
+        for (CustomFieldInstance cfi : cfis) {
+            for (Map<String, Object> columnInfo : cfi.getCfValue().getMatrixValuesForGUI().values()) {
+                cftColumns.addAll(columnInfo.keySet());
+            }
+        }
     }
 
     /**
@@ -150,32 +179,32 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      * @throws BusinessException
      */
     private void updateCustomFieldsInEntity() throws BusinessException {
-       if(groupedCustomField!=null && groupedCustomField.getFields().size()>0){
-        for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
-            List<CustomFieldInstance> cfis = getInstancesAsList(cft);
+        if (groupedCustomField != null && groupedCustomField.getFields().size() > 0) {
+            for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
+                List<CustomFieldInstance> cfis = getInstancesAsList(cft);
 
-            for (CustomFieldInstance cfi : cfis) {
-                // Not saving empty values unless template has a default value or is versionable
-                if (cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable()) {
-                    if (!cfi.isTransient()) {
-                        customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
-                        log.trace("Remove empty cfi value {}", cfi);
-                    } else {
-                        log.error("Will ommit from saving cfi {}", cfi);
-                    }
+                for (CustomFieldInstance cfi : cfis) {
+                    // Not saving empty values unless template has a default value or is versionable
+                    if (cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable()) {
+                        if (!cfi.isTransient()) {
+                            customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
+                            log.trace("Remove empty cfi value {}", cfi);
+                        } else {
+                            log.error("Will ommit from saving cfi {}", cfi);
+                        }
 
-                    // Existing value update
-                } else {
-                    serializeForGUI(cft, cfi.getCfValue());
-                    if (cfi.isTransient()) {
-                        customFieldInstanceService.create(cfi, (ICustomFieldEntity) entity, getCurrentUser(), getCurrentProvider());
+                        // Existing value update
                     } else {
-                        customFieldInstanceService.update(cfi, getCurrentUser());
+                        serializeForGUI(cft, cfi.getCfValue());
+                        if (cfi.isTransient()) {
+                            customFieldInstanceService.create(cfi, (ICustomFieldEntity) entity, getCurrentUser(), getCurrentProvider());
+                        } else {
+                            customFieldInstanceService.update(cfi, getCurrentUser());
+                        }
                     }
                 }
             }
         }
-       }
     }
 
     private void deserializeForGUI(CustomFieldTemplate cft, CustomFieldValue cfv) {
@@ -221,6 +250,22 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                 }
             }
             cfv.setMapValuesForGUI(listOfMapValues);
+
+            // Populate matrixValuesForGUI field
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+
+            Map<String, Map<String, Object>> mapValues = new HashMap<String, Map<String, Object>>();
+
+            if (cfv.getMapValue() != null) {
+                for (Entry<String, Object> mapInfo : cfv.getMapValue().entrySet()) {
+                    String[] fromTo = mapInfo.getKey().split("\\" + CustomFieldInstanceService.MATRIX_VALUE_SEPARATOR);
+                    if (!mapValues.containsKey(fromTo[0])) {
+                        mapValues.put(fromTo[0], new HashMap<String, Object>());
+                    }
+                    mapValues.get(fromTo[0]).put(fromTo[1], mapInfo.getValue());
+                }
+            }
+            cfv.setMatrixValuesForGUI(mapValues);
         }
     }
 
@@ -272,7 +317,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                 }
             }
 
-            // Populate mapValuesForGUI field
+            // Populate customFieldValue.listValue from mapValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
 
             List<Object> listValue = new ArrayList<Object>();
@@ -285,7 +330,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             }
             cfv.setListValue(listValue);
 
-            // Populate mapValuesForGUI field
+            // Populate customFieldValue.mapValue from mapValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
 
             Map<String, Object> mapValue = new HashMap<String, Object>();
@@ -297,6 +342,22 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                     mapValue.put((String) listItem.get(CustomFieldValue.MAP_KEY), listItem.get(CustomFieldValue.MAP_VALUE));
                 }
             }
+            cfv.setMapValue(mapValue);
+
+            // Populate customFieldValue.mapValue from matrixValuesForGUI field
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+
+            Map<String, Object> mapValue = new HashMap<String, Object>();
+
+            for (Entry<String, Map<String, Object>> mapInfo : cfv.getMatrixValuesForGUI().entrySet()) {
+
+                for (Entry<String, Object> valueInfo : mapInfo.getValue().entrySet()) {
+                    if (!StringUtils.isBlank(valueInfo.getValue())) {
+                        mapValue.put(mapInfo.getKey() + CustomFieldInstanceService.MATRIX_VALUE_SEPARATOR + valueInfo.getKey(), valueInfo.getValue());
+                    }
+                }
+            }
+
             cfv.setMapValue(mapValue);
         }
     }
@@ -340,7 +401,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         Date periodStartDate = (Date) customFieldNewValue.get(cft.getCode() + "_periodStartDate");
         Date periodEndDate = (Date) customFieldNewValue.get(cft.getCode() + "_periodEndDate");
-        String key = (String) customFieldNewValue.get(cft.getCode() + "_key");
         Object value = customFieldNewValue.get(cft.getCode() + "_value");
 
         // Check that two dates are one after another
@@ -353,6 +413,13 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         CustomFieldInstance period = null;
         // First check if any period matches the dates
         if (!customFieldPeriodMatched) {
+            if (periodStartDate == null && periodEndDate == null) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.periodDatesBothNull"));
+                customFieldPeriodMatched = true;
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+            }
+
             boolean strictMatch = false;
             if (cft.getCalendar() != null) {
                 period = getValuePeriod(cft, (ICustomFieldEntity) entity, periodStartDate, false);
@@ -400,17 +467,21 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                 period.getCfValue().setEntityReferenceValueForGUI((BusinessEntity) value);
             }
-        } else {
-            Map<String, Object> newValue = new HashMap<String, Object>();
-            if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
-                newValue.put("key", key);
-            }
-            newValue.put("value", value);
-            period.getCfValue().getMapValuesForGUI().add(newValue);
         }
+
+        // } else {
+        // Map<String, Object> newValue = new HashMap<String, Object>();
+        // if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+        // newValue.put("key", key);
+        // }
+        // newValue.put("value", value);
+        // period.getCfValue().getMapValuesForGUI().add(newValue);
+        // }
 
         populateCustomFieldNewValueDefaults(null);
         customFieldPeriodMatched = false;
+        customFieldSelectedTemplate = cft;
+        customFieldSelectedPeriod = period;
     }
 
     /**
@@ -420,7 +491,30 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     public void addValueToMap(CustomFieldValue cfv, CustomFieldTemplate cft) {
 
-        String newKey = (String) customFieldNewValue.get(cft.getCode() + "_key");
+        String newKey = null;
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+            if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
+                newKey = (String) customFieldNewValue.get(cft.getCode() + "_key");
+
+            } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
+                // Validate that at least one value is provided and in correct order
+                Double from = (Double) customFieldNewValue.get(cft.getCode() + "_key_one_from");
+                Double to = (Double) customFieldNewValue.get(cft.getCode() + "_key_one_to");
+
+                if (from == null && to == null) {
+                    messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
+                    FacesContext.getCurrentInstance().validationFailed();
+                    return;
+
+                } else if (from != null && to != null && from.compareTo(to) >= 0) {
+                    messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                    FacesContext.getCurrentInstance().validationFailed();
+                    return;
+                }
+                newKey = (from == null ? "" : from) + CustomFieldInstanceService.RON_VALUE_SEPARATOR + (to == null ? "" : to);
+            }
+        }
+
         Object newValue = customFieldNewValue.get(cft.getCode() + "_value");
 
         Map<String, Object> value = new HashMap<String, Object>();
@@ -430,7 +524,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         value.put(CustomFieldValue.MAP_VALUE, newValue);
 
         // Validate that key or value is not duplicate
-
         for (Map<String, Object> mapItem : cfv.getMapValuesForGUI()) {
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && mapItem.get(CustomFieldValue.MAP_KEY).equals(newKey)) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyExists"));
@@ -474,7 +567,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      * 
      * @return A map of custom field templates with template code as a key
      */
-    protected Map<String, CustomFieldTemplate> getApplicateCustomFieldTemplates() {
+    protected Map<String, CustomFieldTemplate> getApplicableCustomFieldTemplates() {
         Map<String, CustomFieldTemplate> result = customFieldTemplateService.findByAppliesTo((ICustomFieldEntity) entity, getCurrentProvider());
         log.debug("Found {} custom field templates for entity {}", result.size(), entity.getClass());
         return result;
@@ -488,24 +581,24 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     public void validateCustomFields(ComponentSystemEvent event) {
         boolean valid = true;
         FacesContext fc = FacesContext.getCurrentInstance();
-        if(groupedCustomField!=null && groupedCustomField.getFields().size()>0){
-        for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
-            if (cft.isActive() && cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
+        if (groupedCustomField != null && groupedCustomField.getFields().size() > 0) {
+            for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
+                if (cft.isActive() && cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
 
-                for (CustomFieldInstance cfi : getInstancesAsList(cft)) {
+                    for (CustomFieldInstance cfi : getInstancesAsList(cft)) {
 
-                    // Fail validation on non empty values
-                    if (cfi.isValueEmptyForGui()) {
+                        // Fail validation on non empty values
+                        if (cfi.isValueEmptyForGui()) {
 
-                        FacesMessage msg = new FacesMessage(MessagesUtils.getMessage("javax.faces.component.UIInput.REQUIRED", FacesContext.getCurrentInstance().getViewRoot()
-                            .getLocale(), cft.getDescription()));
-                        msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-                        fc.addMessage(null, msg);
-                        valid = false;
+                            FacesMessage msg = new FacesMessage(MessagesUtils.getMessage("javax.faces.component.UIInput.REQUIRED", FacesContext.getCurrentInstance().getViewRoot()
+                                .getLocale(), cft.getDescription()));
+                            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                            fc.addMessage(null, msg);
+                            valid = false;
+                        }
                     }
                 }
             }
-        }
         }
 
         if (!valid) {
@@ -665,7 +758,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         customFieldNewValue.clear();
 
         if (cfts == null) {
-            cfts = getApplicateCustomFieldTemplates().values();
+            cfts = getApplicableCustomFieldTemplates().values();
         }
 
         for (CustomFieldTemplate cft : cfts) {
@@ -682,5 +775,101 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     public void clearCustomFieldNewValueDefaults(CustomFieldTemplate cft) {
         customFieldNewValue.remove(cft.getCode() + "_value");
+    }
+
+    /**
+     * Get columns for matrix data entry
+     * 
+     * @param matrixValues Matrix values
+     * @return A set of column names
+     */
+    public Set<String> getMatrixColumns(String cftCode) {
+        return matrixColumns.get(cftCode);
+    }
+
+    /**
+     * Add column to a matrix. Also sets null value for new column in every row of matrix
+     * 
+     * @param cft Custom field template
+     * @param matrixValues Matrix values
+     */
+    public void addMatrixColumn(CustomFieldTemplate cft, Map<String, Map<String, Object>> matrixValues) {
+
+        String columnValue = null;
+
+        if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
+
+            // Validate that at least one value is provided and in correct order
+            Double from = (Double) customFieldNewValue.get(cft.getCode() + "_key_from");
+            Double to = (Double) customFieldNewValue.get(cft.getCode() + "_key_to");
+
+            if (from == null && to == null) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+
+            } else if (from != null && to != null && from.compareTo(to) >= 0) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+            }
+            columnValue = (from == null ? "" : from) + CustomFieldInstanceService.RON_VALUE_SEPARATOR + (to == null ? "" : to);
+        } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
+            columnValue = (String) customFieldNewValue.get(cft.getCode() + "_key");
+        }
+
+        if (matrixColumns.get(cft.getCode()).add(columnValue)) {
+            customFieldNewValue.clear();
+
+        } else {
+            messages.error(new BundleKey("messages", "customFieldTemplate.columnExists"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return;
+        }
+    }
+
+    /**
+     * Add row to a matrix. Also sets null value for every column of matrix in a new row
+     * 
+     * @param cft Custom field template
+     * @param matrixValues Matrix values
+     */
+    public void addMatrixRow(CustomFieldTemplate cft, Map<String, Map<String, Object>> matrixValues) {
+
+        String rowValue = null;
+
+        if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
+
+            // Validate that at least one value is provided and in correct order
+            Double from = (Double) customFieldNewValue.get(cft.getCode() + "_key_from");
+            Double to = (Double) customFieldNewValue.get(cft.getCode() + "_key_to");
+
+            if (from == null && to == null) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+
+            } else if (from != null && to != null && from.compareTo(to) >= 0) {
+                messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+            }
+            rowValue = (from == null ? "" : from) + CustomFieldInstanceService.RON_VALUE_SEPARATOR + (to == null ? "" : to);
+
+        } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
+            rowValue = (String) customFieldNewValue.get(cft.getCode() + "_key");
+        }
+
+        if (matrixValues.containsKey(rowValue)) {
+            messages.error(new BundleKey("messages", "customFieldTemplate.rowExists"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return;
+
+        } else {
+            Map<String, Object> rowValues = new HashMap<String, Object>();
+            matrixValues.put(rowValue, rowValues);
+            customFieldNewValue.clear();
+        }
+
     }
 }

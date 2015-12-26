@@ -8,14 +8,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 
 import com.google.gson.Gson;
@@ -48,7 +51,7 @@ public class CustomFieldValue implements Serializable {
     public static String MAP_KEY = "key";
     public static String MAP_VALUE = "value";
 
-    @Column(name = "STRING_VALUE" ,columnDefinition="TEXT")
+    @Column(name = "STRING_VALUE", columnDefinition = "TEXT")
     private String stringValue;
 
     @Column(name = "DATE_VALUE")
@@ -74,6 +77,9 @@ public class CustomFieldValue implements Serializable {
 
     @Transient
     private List<Map<String, Object>> mapValuesForGUI = new ArrayList<Map<String, Object>>();
+
+    @Transient
+    private Map<String, Map<String, Object>> matrixValuesForGUI = new HashMap<String, Map<String, Object>>();
 
     @Transient
     private BusinessEntity entityReferenceValueForGUI;
@@ -116,6 +122,14 @@ public class CustomFieldValue implements Serializable {
 
     public List<Map<String, Object>> getMapValuesForGUI() {
         return mapValuesForGUI;
+    }
+
+    public Map<String, Map<String, Object>> getMatrixValuesForGUI() {
+        return matrixValuesForGUI;
+    }
+
+    public void setMatrixValuesForGUI(Map<String, Map<String, Object>> matrixValuesForGUI) {
+        this.matrixValuesForGUI = matrixValuesForGUI;
     }
 
     public EntityReferenceWrapper getEntityReferenceValue() {
@@ -369,6 +383,42 @@ public class CustomFieldValue implements Serializable {
 
             return builder.toString();
 
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+            StringBuilder builder = new StringBuilder();
+
+            SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+            int i = 0;
+            for (Entry<String, Map<String, Object>> mapInfo : matrixValuesForGUI.entrySet()) {
+
+                for (Entry<String, Object> valueInfo : mapInfo.getValue().entrySet()) {
+
+                    Object value = valueInfo.getValue();
+                    if (value == null) {
+                        continue;
+                    }
+
+                    if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+                        value = sdf.format(value);
+
+                    } else if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY && value != null) {
+                        value = ((BusinessEntity) value).getCode();
+                    }
+
+                    builder.append(builder.length() == 0 ? "" : ", ");
+                    builder.append(String.format("%s|%s: [%s]", mapInfo.getKey(), valueInfo.getKey(), value));
+                    i++;
+                    if (i >= 10) {
+                        break;
+                    }
+                }
+            }
+
+            if (matrixValuesForGUI.size() > 10) {
+                builder.append(", ...");
+            }
+
+            return builder.toString();
+
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
             switch (cft.getFieldType()) {
             case DATE:
@@ -407,8 +457,23 @@ public class CustomFieldValue implements Serializable {
      * @return True is value is empty
      */
     protected boolean isValueEmptyForGui() {
-        return ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && entityReferenceValueForGUI == null && (mapValuesForGUI == null || mapValuesForGUI
-            .isEmpty()));
+        boolean isEmpty = ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && entityReferenceValueForGUI == null
+                && (mapValuesForGUI == null || mapValuesForGUI.isEmpty()) && (matrixValuesForGUI == null || matrixValuesForGUI.isEmpty()));
+
+        if (isEmpty) {
+            return true;
+
+        } else if (matrixValuesForGUI != null && !matrixValuesForGUI.isEmpty()) {
+            for (Map<String, Object> mapValue : matrixValuesForGUI.values()) {
+                for (Object value : mapValue.values()) {
+                    boolean empty = StringUtils.isBlank(value);
+                    if (!empty) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -578,9 +643,10 @@ public class CustomFieldValue implements Serializable {
         final int maxLen = 10;
         return String
             .format(
-                "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, serializedValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, entityReferenceValueForGUI=%s]",
+                "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, serializedValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, entityReferenceValueForGUI=%s]",
                 stringValue, dateValue, longValue, doubleValue, serializedValue, entityReferenceValue, listValue != null ? toString(listValue, maxLen) : null,
-                mapValue != null ? toString(mapValue.entrySet(), maxLen) : null, mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null, entityReferenceValueForGUI);
+                mapValue != null ? toString(mapValue.entrySet(), maxLen) : null, mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null,
+                matrixValuesForGUI != null ? toString(matrixValuesForGUI.entrySet(), maxLen) : null, entityReferenceValueForGUI);
     }
 
     private String toString(Collection<?> collection, int maxLen) {

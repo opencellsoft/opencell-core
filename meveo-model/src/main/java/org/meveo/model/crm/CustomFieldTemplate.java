@@ -1,7 +1,6 @@
 package org.meveo.model.crm;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CollectionTable;
@@ -17,7 +16,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.BusinessEntity;
@@ -72,6 +70,10 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Column(name = "STORAGE_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
     private CustomFieldStorageTypeEnum storageType = CustomFieldStorageTypeEnum.SINGLE;
+
+    @Column(name = "MAPKEY_TYPE", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CustomFieldMapKeyEnum mapKeyType;
 
     @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
     private boolean triggerEndPeriodEvent;
@@ -186,6 +188,14 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setStorageType(CustomFieldStorageTypeEnum storageType) {
         this.storageType = storageType;
+    }
+
+    public CustomFieldMapKeyEnum getMapKeyType() {
+        return mapKeyType;
+    }
+
+    public void setMapKeyType(CustomFieldMapKeyEnum mapKeyType) {
+        this.mapKeyType = mapKeyType;
     }
 
     public boolean isTriggerEndPeriodEvent() {

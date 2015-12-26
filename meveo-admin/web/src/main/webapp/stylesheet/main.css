@@ -600,4 +600,7 @@ vertical-align:top !important;
 .invoice-adjustment-table span.ui-column-title {
 	display: block !important;
 }
+
+.minWidthCalendar input {
+	width: 90px;
 }

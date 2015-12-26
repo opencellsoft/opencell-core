@@ -10,8 +10,6 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.eclipse.jetty.util.log.Log;
-import org.junit.Test;
 import org.meveo.export.EntityExportImportService.ReusingReferenceByIdMarshallingStrategy;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;

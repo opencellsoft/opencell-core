@@ -12,6 +12,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.crm.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
@@ -231,6 +232,19 @@ public class CustomFieldTemplateApi extends BaseApi {
 
         if (cft.getFieldType() == CustomFieldTypeEnum.LIST) {
             cft.setListValues(dto.getListValues());
+        }
+
+        if (dto.getMapKeyType() != null) {
+            try {
+                cft.setMapKeyType(CustomFieldMapKeyEnum.valueOf(dto.getMapKeyType()));
+            } catch (IllegalArgumentException e) {
+                throw new InvalidEnumValue(CustomFieldMapKeyEnum.class.getName(), dto.getMapKeyType());
+            }
+        } else {
+            cft.setMapKeyType(null);
+        }
+        if (cft.getStorageType()==CustomFieldStorageTypeEnum.MAP && cft.getMapKeyType()==null){
+            cft.setMapKeyType(CustomFieldMapKeyEnum.STRING);
         }
 
         if (!StringUtils.isBlank(dto.getCalendar())) {

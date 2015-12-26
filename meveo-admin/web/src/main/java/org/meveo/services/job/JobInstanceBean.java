@@ -99,7 +99,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * @return A map of custom field templates with template code as a key
      */
     @Override
-    protected Map<String, CustomFieldTemplate> getApplicateCustomFieldTemplates() {
+    protected Map<String, CustomFieldTemplate> getApplicableCustomFieldTemplates() {
 
         if (entity.getJobTemplate() == null) {
             return null;

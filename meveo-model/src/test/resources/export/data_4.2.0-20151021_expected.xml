@@ -33,6 +33,7 @@
         <allowEdit>true</allowEdit>
             <appliesTo>SUB</appliesTo>
             <code>sub mandatory cf</code>
+            <mapKeyType>STRING</mapKeyType>
         </org.meveo.model.crm.CustomFieldTemplate>
         <org.meveo.model.crm.CustomFieldTemplate xsId="7">
             <id>24</id>

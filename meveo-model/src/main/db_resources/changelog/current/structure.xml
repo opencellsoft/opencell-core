@@ -993,5 +993,11 @@
 		<addUniqueConstraint columnNames="code, provider_id" constraintName="uk_meveo_module_provider" deferrable="false" disabled="false" initiallyDeferred="false"
             tableName="meveo_module" />
 	</changeSet>
-    
+
+    <changeSet id="#1360=20151219" author="AndriusKarpavicius">
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="MAPKEY_TYPE" type="varchar(20)"/>
+        </addColumn>
+        <sql>update CRM_CUSTOM_FIELD_TMPL set MAPKEY_TYPE='STRING' where storage_type='MAP'</sql>
+    </changeSet>      
 </databaseChangeLog>

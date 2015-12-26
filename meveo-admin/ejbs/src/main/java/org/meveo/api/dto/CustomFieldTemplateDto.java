@@ -84,6 +84,9 @@ public class CustomFieldTemplateDto extends BaseDto {
     @XmlElement
     protected String guiPosition;
 
+    @XmlElement()
+    protected String mapKeyType;
+
     public CustomFieldTemplateDto() {
 
     }
@@ -112,7 +115,9 @@ public class CustomFieldTemplateDto extends BaseDto {
         cacheValueTimeperiod = cf.getCacheValueTimeperiod();
         guiPosition = cf.getGuiPosition();
         listValues = cf.getListValues();
-
+        if (cf.getMapKeyType() != null) {
+            mapKeyType = cf.getMapKeyType().name();
+        }
     }
 
     public String getCode() {
@@ -206,8 +211,8 @@ public class CustomFieldTemplateDto extends BaseDto {
     @Override
     public String toString() {
         return "CustomFieldTemplateDto [code=" + code + ", description=" + description + ", fieldType=" + fieldType + ", accountLevel=" + accountLevel + ", appliesTo=" + appliesTo
-                + ", defaultValue=" + defaultValue + ", storageType=" + storageType + ", valueRequired=" + valueRequired + ", versionable=" + versionable
-                + ", triggerEndPeriodEvent=" + triggerEndPeriodEvent + ", calendar=" + calendar + ", entityClazz=" + entityClazz + "]";
+                + ", defaultValue=" + defaultValue + ", storageType=" + storageType + ", mapKeyType=" + mapKeyType + ", valueRequired=" + valueRequired + ", versionable="
+                + versionable + ", triggerEndPeriodEvent=" + triggerEndPeriodEvent + ", calendar=" + calendar + ", entityClazz=" + entityClazz + "]";
     }
 
     public String getEntityClazz() {
@@ -294,5 +299,13 @@ public class CustomFieldTemplateDto extends BaseDto {
 
     public void setGuiPosition(String guiPosition) {
         this.guiPosition = guiPosition;
+    }
+
+    public String getMapKeyType() {
+        return mapKeyType;
+    }
+
+    public void setMapKeyType(String mapKeyType) {
+        this.mapKeyType = mapKeyType;
     }
 }

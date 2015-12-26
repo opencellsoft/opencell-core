@@ -33,7 +33,9 @@
 <cc:implementation>
 
     <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.CustomFieldMapKeyEnum" />
     <o:importFunctions type="org.meveo.model.crm.CustomFieldValue" var="cfv" />
+    <c:set var="dateTimePattern" value="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
     <!--     <c:if test="${empty(datePattern)}"> -->
     <!--         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" /> -->
     <!--     </c:if> -->
@@ -41,14 +43,14 @@
     <c:if test="#{!cc.attrs.cft.versionable}">
         <c:if test="#{cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.SINGLE }">
             <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired?' *':''}" componentWidth="25" displayOneLine="false">
-                <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.backingBean.customFieldValues[cc.attrs.cft.code].cfValue}" backingBean="#{cc.attrs.backingBean}"
-                    disabled="#{cc.attrs.disabled}" />
+                <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.backingBean.customFieldValues[cc.attrs.cft.code].cfValue}"
+                    backingBean="#{cc.attrs.backingBean}" disabled="#{cc.attrs.disabled}" />
             </hftl:decorateFormField>
         </c:if>
 
-        <c:if test="#{(cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MAP or cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.LIST) }">
-            <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" backingBean="#{cc.attrs.backingBean}" field="#{cc.attrs.backingBean.customFieldValues[cc.attrs.cft.code].cfValue}"
-                messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}" />
+        <c:if test="#{(cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MAP or cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.LIST or cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MATRIX) }">
+            <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" backingBean="#{cc.attrs.backingBean}"
+                field="#{cc.attrs.backingBean.customFieldValues[cc.attrs.cft.code].cfValue}" messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}" />
         </c:if>
 
         <c:set var="inheritedValue" value="#{cc.attrs.backingBean.getInheritedCFValue(cc.attrs.cft.code)}" />
@@ -73,12 +75,12 @@
                 </p:column>
                 <p:column headerText="#{messages['customFieldTemplate.periodStartDate']}" width="13%" sortBy="#{period.periodStartDate}">
                     <h:outputText value="#{period.periodStartDate}">
-                        <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}" />
+                        <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
                     </h:outputText>
                 </p:column>
                 <p:column headerText="#{messages['customFieldTemplate.periodEndDate']}" width="13%" sortBy="#{period.periodEndDate}">
                     <h:outputText value="#{period.periodEndDate}">
-                        <f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}" />
+                        <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
                     </h:outputText>
                 </p:column>
                 <p:column headerText="#{messages['customFieldTemplate.periodValue']}">
@@ -95,8 +97,9 @@
                 </p:column>
                 <p:column headerText="#{messages['commons.actions']}" width="15%">
                     <!-- update="periodFields"  -->
-                    <p:commandButton icon="ui-icon-search" immediate="true" update=":#{p:component(cc.attrs.prefix.concat('periodFields'))}" actionListener="#{cc.attrs.backingBean.clearCustomFieldNewValueDefaults(cc.attrs.cft)}"
-                        onsuccess="PF('#{cc.attrs.prefix}periodValuesDialogWidget').show()" rendered="#{cc.attrs.cft.storageType != CustomFieldStorageTypeEnum.SINGLE}">
+                    <p:commandButton icon="ui-icon-search" immediate="true" update=":#{p:component(cc.attrs.prefix.concat('periodFields'))}"
+                        actionListener="#{cc.attrs.backingBean.clearCustomFieldNewValueDefaults(cc.attrs.cft)}" onsuccess="PF('#{cc.attrs.prefix}periodValuesDialogWidget').show()"
+                        rendered="#{cc.attrs.cft.storageType != CustomFieldStorageTypeEnum.SINGLE}">
                         <f:setPropertyActionListener target="#{cc.attrs.backingBean.customFieldSelectedTemplate}" value="#{cc.attrs.cft}" />
                         <f:setPropertyActionListener target="#{cc.attrs.backingBean.customFieldSelectedPeriod}" value="#{period}" />
                         <f:setPropertyActionListener target="#{cc.attrs.backingBean.customFieldSelectedPeriodId}" value=":#{component.parent.parent.clientId}" />
@@ -110,34 +113,45 @@
 
                     <hf:namingContainer id="addNewFields" rendered="#{cc.attrs.edit and !cc.attrs.disabled}">
 
-                        <p:calendar id="period_date" showButtonPanel="true" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}"
-                            value="#{cc.attrs.backingBean.customFieldNewValue[cc.attrs.cft.code.concat('_periodStartDate')]}" required="true"
+                        <p:calendar id="period_date" showButtonPanel="true" pattern="#{dateTimePattern}"
+                            value="#{cc.attrs.backingBean.customFieldNewValue[cc.attrs.cft.code.concat('_periodStartDate')]}" required="true" styleClass="minWidthCalendar"
                             label="#{messages['customFieldTemplate.periodDate']}" placeholder="#{messages['customFieldTemplate.periodDate']}"
                             rendered="#{cc.attrs.cft.calendar!=null}">
                         </p:calendar>
-                        <p:calendar id="period_start_date" showButtonPanel="true" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}"
-                            value="#{cc.attrs.backingBean.customFieldNewValue[cc.attrs.cft.code.concat('_periodStartDate')]}"
+                        <p:calendar id="period_start_date" showButtonPanel="true" pattern="#{dateTimePattern}"
+                            value="#{cc.attrs.backingBean.customFieldNewValue[cc.attrs.cft.code.concat('_periodStartDate')]}" styleClass="minWidthCalendar"
                             label="#{messages['customFieldTemplate.periodStartDate']}" placeholder="#{messages['customFieldTemplate.periodStartDate']}"
                             rendered="#{cc.attrs.cft.calendar==null}">
                         </p:calendar>
 
-                        <p:calendar id="period_end_date" showButtonPanel="true" pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy')}"
+                        <p:calendar id="period_end_date" showButtonPanel="true" pattern="#{dateTimePattern}" styleClass="minWidthCalendar"
                             value="#{cc.attrs.backingBean.customFieldNewValue[cc.attrs.cft.code.concat('_periodEndDate')]}" label="#{messages['customFieldTemplate.periodEndDate']}"
                             placeholder="#{messages['customFieldTemplate.periodEndDate']}" rendered="#{cc.attrs.cft.calendar==null}">
                         </p:calendar>
 
-                        <p:inputText id="newKey" value="#{cc.attrs.backingBean.customFieldNewValue[cc.attrs.cft.code.concat('_key')]}" required="true"
-                            placeholder="#{messages['commons.key']}" label="#{messages['commons.key']}" size="15" maxlength="50"
-                            rendered="#{cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MAP}" />
-
-                        <hftl:customFieldValueMuteField edit="true" cft="#{cc.attrs.cft}" field="#{cc.attrs.backingBean.customFieldNewValue[cc.attrs.cft.code.concat('_value')]}"
-                            required="true" label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" backingBean="#{cc.attrs.backingBean}" />
+                        <c:if test="#{cc.attrs.cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
+                            <hftl:customFieldValueMuteField edit="true" cft="#{cc.attrs.cft}"
+                                field="#{cc.attrs.backingBean.customFieldNewValue[cc.attrs.cft.code.concat('_value')]}" required="true" label="#{messages['commons.value']}"
+                                placeholder="#{messages['commons.value']}" backingBean="#{cc.attrs.backingBean}" />
+                        </c:if>
                     </hf:namingContainer>
 
-                    <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="periodTable_omitFromSubmit"
-                        action="#{cc.attrs.backingBean.addNewCustomFieldPeriod(cc.attrs.cft)}" rendered="#{cc.attrs.edit and !cc.attrs.disabled}">
+                    <p:commandButton value="#{messages['customFieldTemplate.addNewPeriod']}" partialSubmit="true" process="@this addNewFields" update="periodTable_omitFromSubmit"
+                        action="#{cc.attrs.backingBean.addNewCustomFieldPeriod(cc.attrs.cft)}"
+                        rendered="#{cc.attrs.edit and !cc.attrs.disabled and cc.attrs.cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
                         <p:resetInput target="addNewFields" />
                     </p:commandButton>
+
+                    <p:commandButton value="#{messages['customFieldTemplate.addNewPeriod']}" partialSubmit="true" process="@this addNewFields"
+                        update="periodTable_omitFromSubmit :#{p:component(cc.attrs.prefix.concat('periodFields'))}"
+                        oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{cc.attrs.prefix}periodValuesDialogWidget').show()"
+                        action="#{cc.attrs.backingBean.addNewCustomFieldPeriod(cc.attrs.cft)}"
+                        rendered="#{cc.attrs.edit and !cc.attrs.disabled and cc.attrs.cft.storageType != CustomFieldStorageTypeEnum.SINGLE}">
+                        <p:resetInput target="addNewFields" />
+                        <p:resetInput target=":#{p:component(cc.attrs.prefix.concat('periodFields'))}" />
+                        <f:setPropertyActionListener target="#{cc.attrs.backingBean.customFieldSelectedPeriodId}" value=":#{cc.clientId}:periodTable_omitFromSubmit" />
+                    </p:commandButton>
+
 
                 </f:facet>
             </p:dataTable>

@@ -30,6 +30,7 @@
     <c:if test="${empty(datePattern)}">
         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     </c:if>
+    <c:set var="dateTimePattern" value="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
     <c:if test="${empty(messagesId)}">
         <c:set var="messagesId" value=":formPanel:formId:messages" />
     </c:if>
@@ -71,18 +72,18 @@
 
             <c:if test="#{index==0}">
                 <p:dialog id="#{prefix}dlg_periodValues" widgetVar="#{prefix}periodValuesDialogWidget" header="#{messages['customFieldTemplate.periodValues']}" closeOnEscape="true"
-                    modal="true" appendTo="@(body)" rendered="#{edit}" width="700">
+                    modal="true" appendTo="@(body)" rendered="#{edit}" width="900">
 
                     <p:panel>
                         <h:panelGroup id="#{prefix}periodFields" layout="block" styleClass="form-panel">
                             <hftl:decorateFormField fieldId="period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
                                 <h:outputText id="period_start_date" value="#{backingBean.customFieldSelectedPeriod.periodStartDate}">
-                                    <f:convertDateTime type="date" pattern="#{datePattern}" />
+                                    <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
                                 </h:outputText>
                             </hftl:decorateFormField>
                             <hftl:decorateFormField fieldId="period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}">
                                 <h:outputText id="period_end_date" value="#{backingBean.customFieldSelectedPeriod.periodEndDate}">
-                                    <f:convertDateTime type="date" pattern="#{datePattern}" />
+                                    <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
                                 </h:outputText>
                             </hftl:decorateFormField>
                             <p:remoteCommand name="updateMasterTable" update="#{backingBean.customFieldSelectedPeriodId}" process="@this" partialSubmit="true"

@@ -1,5 +1,7 @@
 package org.meveo.service.crm.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
@@ -30,15 +33,22 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.CustomFieldValue;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.util.PersistenceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class CustomFieldInstanceService extends PersistenceService<CustomFieldInstance> {
+
+    public static String MATRIX_VALUE_SEPARATOR = "|";
+    public static String RON_VALUE_SEPARATOR = "<";
 
     @Inject
     private CustomFieldTemplateService cfTemplateService;
@@ -473,10 +483,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @return A map of Custom field instances with CF code as a key
      */
     public Map<String, List<CustomFieldInstance>> getCustomFieldInstances(ICustomFieldEntity entity) {
-        if (((IEntity)entity).isTransient()) {
+        if (((IEntity) entity).isTransient()) {
             return new HashMap<String, List<CustomFieldInstance>>();
         }
-        
+
         TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntity", CustomFieldInstance.class);
         query.setParameter("appliesToEntity", entity.getUuid());
         query.setParameter("provider", getProvider(entity));
@@ -721,5 +731,335 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
             return entity;
         }
+    }
+
+    /**
+     * Match for a given entity's custom field (non-versionable values) as close as possible map's key to the key provided and return a map value. Match is performed by matching a
+     * full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public Object getCFValueByClosestMatch(ICustomFieldEntity entity, String code, String keyToMatch) {
+
+        Object value = getCFValue(entity, code, null);
+        Object valueMatched = CustomFieldInstanceService.matchClosestValue(value, keyToMatch);
+
+        log.trace("Found closest match value {} for keyToMatch={}", valueMatched, keyToMatch);
+        return valueMatched;
+
+    }
+
+    /**
+     * Match for a given date (versionable values) for a given entity's custom field as close as possible map's key to the key provided and return a map value. Match is performed
+     * by matching a full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param date Date
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public Object getCFValueByClosestMatch(ICustomFieldEntity entity, String code, Date date, String keyToMatch) {
+        Object value = getCFValue(entity, code, date, null);
+
+        Object valueMatched = CustomFieldInstanceService.matchClosestValue(value, keyToMatch);
+        log.trace("Found closest match value {} for period {} and keyToMatch={}", valueMatched, date, keyToMatch);
+        return valueMatched;
+
+    }
+
+    /**
+     * Match for a given entity's custom field (non-versionable values) map's key as the matrix value and return a map value.
+     * 
+     * Map key is assumed to be the following format:
+     * <ul>
+     * <li>MATRIX_STRING: <matrix first key>|<matrix second key></li>
+     * <li>MATRIX_RON: <range of numbers for the first key>|<range of numbers for the second key></li>
+     * </ul>
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param keyOne First key to match
+     * @param keyTwo Second key to match
+     * @return Map value that matches the matrix format map key
+     */
+    @SuppressWarnings("unchecked")
+    public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo) {
+
+        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        if (cft == null || cft.getMapKeyType() == null) {
+            log.trace("No CFT found or map key type is unknown  {}/{}", entity, code);
+            return null;
+        }
+
+        if (cft.getStorageType() != CustomFieldStorageTypeEnum.MATRIX) {
+            log.trace("getCFValueByMatrix does not apply to storage type {}", cft.getStorageType());
+            return null;
+        }
+
+        Map<String, Object> value = (Map<String, Object>) getCFValue(entity, code, null);
+        Object valueMatched = CustomFieldInstanceService.matchMatrixValue(cft, value, keyOne, keyTwo);
+
+        log.trace("Found matrix value match {} for keyToMatch={}|{}", valueMatched, keyOne, keyTwo);
+        return valueMatched;
+
+    }
+
+    /**
+     * Match for a given entity's custom field (versionable values) map's key as the matrix value and return a map value.
+     * 
+     * Map key is assumed to be the following format:
+     * <ul>
+     * <li>MATRIX_STRING: <matrix first key>|<matrix second key></li>
+     * <li>MATRIX_RON: <range of numbers for the first key>|<range of numbers for the second key></li>
+     * </ul>
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param date Date to match
+     * @param keyOne First key to match
+     * @param keyTwo Second key to match
+     * @return Map value that matches the matrix format map key
+     */
+    public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo) {
+
+        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        if (cft == null || cft.getMapKeyType() == null) {
+            log.trace("No CFT found or map key type is unknown  {}/{}", entity, code);
+            return null;
+        }
+
+        if (cft.getStorageType() != CustomFieldStorageTypeEnum.MATRIX) {
+            log.trace("getCFValueByMatrix does not apply to storage type {}", cft.getStorageType());
+            return null;
+        }
+
+        Object value = getCFValue(entity, code, date, null);
+        Object valueMatched = CustomFieldInstanceService.matchMatrixValue(cft, value, keyOne, keyTwo);
+
+        log.trace("Found matrix value match {} for period {} and keyToMatch={}|{}", valueMatched, date, keyOne, keyTwo);
+        return valueMatched;
+
+    }
+
+    /**
+     * Match for a given entity's custom field (non-versionable values) map's key as a range of numbers value and return a map value.
+     * 
+     * Number ranges is assumed to be the following format: <number from>&gt;<number to>
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param numberToMatch Number (long, integer, double, bigdecimal) value to match
+     * @return Map value that matches the range of numbers in a map key
+     */
+    @SuppressWarnings("unchecked")
+    public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Object numberToMatch) {
+
+        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        if (cft == null || cft.getMapKeyType() == null) {
+            log.trace("No CFT found or map key type is unknown  {}/{}", entity, code);
+            return null;
+        }
+
+        if (!(cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && cft.getMapKeyType() == CustomFieldMapKeyEnum.RON)) {
+            log.trace("getCFValueByRangeOfNumbers does not apply to storage type {} and mapKeyType {}", cft.getStorageType(), cft.getMapKeyType());
+            return null;
+        }
+
+        Map<String, Object> value = (Map<String, Object>) getCFValue(entity, code, null);
+        Object valueMatched = CustomFieldInstanceService.matchRangeOfNumbersValue(value, numberToMatch);
+
+        log.trace("Found matrix value match {} for numberToMatch={}", valueMatched, numberToMatch);
+        return valueMatched;
+
+    }
+
+    /**
+     * Match for a given entity's custom field (versionable values) map's key as a range of numbers value and return a map value.
+     * 
+     * Number ranges is assumed to be the following format: <number from>&gt;<number to>
+     * 
+     * @param entity Entity to match
+     * @param code Custom field code
+     * @param date Date to match
+     * @param numberToMatch Number (long, integer, double, bigdecimal) value to match
+     * @return Map value that matches the range of numbers in a map key
+     */
+    public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Date date, Object numberToMatch) {
+
+        CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
+        if (cft == null || cft.getMapKeyType() == null) {
+            log.trace("No CFT found or map key type is unknown  {}/{}", entity, code);
+            return null;
+        }
+
+        if (!(cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && cft.getMapKeyType() == CustomFieldMapKeyEnum.RON)) {
+            log.trace("getCFValueByRangeOfNumbers does not apply to storage type {} and mapKeyType {}", cft.getStorageType(), cft.getMapKeyType());
+            return null;
+        }
+
+        Object value = getCFValue(entity, code, date, null);
+        Object valueMatched = CustomFieldInstanceService.matchRangeOfNumbersValue(value, numberToMatch);
+
+        log.trace("Found matrix value match {} for period {} and numberToMatch={}", valueMatched, date, numberToMatch);
+        return valueMatched;
+
+    }
+
+    /**
+     * Match as close as possible map's key to the key provided and return a map value. Match is performed by matching a full string and then reducing one by one symbol untill a
+     * match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param value Value to inspect
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    @SuppressWarnings("unchecked")
+    public static Object matchClosestValue(Object value, String keyToMatch) {
+        if (value == null || !(value instanceof Map) || StringUtils.isEmpty(keyToMatch)) {
+            return null;
+        }
+
+        Object valueFound = null;
+        Map<String, Object> mapValue = (Map<String, Object>) value;
+        for (int i = keyToMatch.length(); i > 0; i--) {
+            valueFound = mapValue.get(keyToMatch.substring(0, i));
+            if (valueFound != null) {
+                return valueFound;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Match for a given value map's key as the matrix value and return a map value.
+     * 
+     * Map key is assumed to be the following format:
+     * <ul>
+     * <li>MATRIX_STRING: <matrix first key>|<matrix second key></li>
+     * <li>MATRIX_RON: <range of numbers for the first key>|<range of numbers for the second key></li>
+     * </ul>
+     * 
+     * @param cft Custom field template
+     * @param value Value to inspect
+     * @param keyOne First key to match
+     * @param keyTwo Second key to match
+     * @return A value matched
+     */
+    @SuppressWarnings("unchecked")
+    public static Object matchMatrixValue(CustomFieldTemplate cft, Object value, Object keyOne, Object keyTwo) {
+        if (value == null || !(value instanceof Map) || keyOne == null || keyTwo == null || StringUtils.isEmpty(keyOne.toString()) || StringUtils.isEmpty(keyTwo.toString())) {
+            return null;
+        }
+
+        Object valueMatched = null;
+        if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
+            String mapKey = keyOne + MATRIX_VALUE_SEPARATOR + keyTwo;
+            valueMatched = ((Map<String, Object>) value).get(mapKey);
+
+        } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
+
+            for (Entry<String, Object> valueInfo : ((Map<String, Object>) value).entrySet()) {
+                String[] ranges = valueInfo.getKey().split("\\" + MATRIX_VALUE_SEPARATOR);
+                if (isNumberRangeMatch(ranges[0], keyOne) && isNumberRangeMatch(ranges[1], keyTwo)) {
+                    valueMatched = valueInfo.getValue();
+                    break;
+                }
+            }
+        }
+
+        return valueMatched;
+    }
+
+    /**
+     * Match map's key as a range of numbers value and return a matched value.
+     * 
+     * Number ranges is assumed to be the following format: <number from>&lt;<number to>
+     * 
+     * @param value Value to inspect
+     * @param numberToMatch Number to match
+     * @return Map value that closely matches map key
+     */
+    @SuppressWarnings("unchecked")
+    public static Object matchRangeOfNumbersValue(Object value, Object numberToMatch) {
+        if (value == null || !(value instanceof Map) || numberToMatch == null
+                || !(numberToMatch instanceof Long || numberToMatch instanceof Integer || numberToMatch instanceof Double || numberToMatch instanceof BigDecimal)) {
+            return null;
+        }
+
+        for (Entry<String, Object> valueInfo : ((Map<String, Object>) value).entrySet()) {
+            if (isNumberRangeMatch(valueInfo.getKey(), numberToMatch)) {
+                return valueInfo.getValue();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Determine if a number value is inside the number range expressed as <number from>&lt;<number to>
+     * 
+     * @param numberRange Number range value
+     * @param numberToMatchObj A double number o
+     * @return True if number have matched
+     */
+    private static boolean isNumberRangeMatch(String numberRange, Object numberToMatchObj) {
+        String[] rangeInfo = numberRange.split(RON_VALUE_SEPARATOR);
+        Double fromNumber = null;
+        try {
+            fromNumber = Double.parseDouble(rangeInfo[0]);
+        } catch (NumberFormatException e) { // Ignore the error as value might be empty
+        }
+        Double toNumber = null;
+        if (rangeInfo.length == 2) {
+            try {
+                toNumber = Double.parseDouble(rangeInfo[1]);
+            } catch (NumberFormatException e) { // Ignore the error as value might be empty
+            }
+        }
+
+        // Convert matching number to Double for further comparison
+        Double numberToMatchDbl = null;
+        if (numberToMatchObj instanceof Double) {
+            numberToMatchDbl = (Double) numberToMatchObj;
+
+        } else if (numberToMatchObj instanceof Integer) {
+            numberToMatchDbl = ((Integer) numberToMatchObj).doubleValue();
+
+        } else if (numberToMatchObj instanceof Long) {
+            numberToMatchDbl = ((Long) numberToMatchObj).doubleValue();
+
+        } else if (numberToMatchObj instanceof BigInteger) {
+            numberToMatchDbl = ((BigInteger) numberToMatchObj).doubleValue();
+        } else {
+            Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
+            log.error("Failed to match CF value for a range of numbers. Value passed is not a number {}", numberToMatchDbl);
+            return false;
+        }
+
+        if (fromNumber != null && toNumber != null) {
+            if (fromNumber.compareTo(numberToMatchDbl) <= 0 && toNumber.compareTo(numberToMatchDbl) > 0) {
+                return true;
+            }
+        } else if (fromNumber != null) {
+            if (fromNumber.compareTo(numberToMatchDbl) <= 0) {
+                return true;
+            }
+        } else if (toNumber != null) {
+            if (toNumber.compareTo(numberToMatchDbl) > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }

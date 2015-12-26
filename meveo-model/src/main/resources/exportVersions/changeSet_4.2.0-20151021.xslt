@@ -101,6 +101,9 @@
             <xsl:if test="not(storageType)">
                 <storageType>SINGLE</storageType>
             </xsl:if>
+            <xsl:if test="storageType = 'MAP'">
+                <mapKeyType>STRING</mapKeyType>
+            </xsl:if>            
         </xsl:copy>
     </xsl:template>
 
