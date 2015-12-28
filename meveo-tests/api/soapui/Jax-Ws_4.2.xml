@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="657a8dc3-c56c-4ee7-b734-7ae096f3eb47" activeEnvironment="Default" name="Jax-Ws_4.2.xml" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
   <con:entry key="Global Properties" value=""/>
   <con:entry key="TestSuite" value="#1095_title_Add_translation_function_on_description"/>
@@ -32976,12 +32976,10 @@ for( testCase in testSuite.getTestCaseList() ) {
          <role name="${#TestSuite#ticket}_ROLE1">
             <!--Optional:-->
             <description>${#TestSuite#ticket}_ROLE1_DESC</description>
-            <!--Zero or more repetitions:-->            
-            <permission permission="administrationVisualization" name="Administration visualization">
-	            <!--Optional:-->
-	            <resource>administration</resource>
-            </permission>
-
+            <!--Zero or more repetitions:-->
+            <permissions>
+               <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>
+            </permissions>
          </role>
       </ws:createRole>
    </soapenv:Body>
@@ -32993,22 +32991,21 @@ for( testCase in testSuite.getTestCaseList() ) {
          <roleName>${#TestSuite#ticket}_ROLE1</roleName>
       </ws:findRole>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="38623e7c-1034-42f9-8b00-6c5b31cdbae6"/><con:assertion type="Simple Contains" id="7e72179f-c7ff-4d5b-a3fe-4ee96e986a57" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="6e05459b-1baf-49f5-905b-a3d8f533df17" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Update_Role" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="b3b63a73-8e63-46f3-81a4-2234aba84636"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createRole</con:operation><con:request name="create" id="be5b3b9f-2a7e-4064-99a5-6234e217aae0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createRole>
-         <!--Optional:-->
-         <role name="${#TestSuite#ticket}_ROLE2">
-            <!--Optional:-->
-            <description>${#TestSuite#ticket}_ROLE2_DESC</description>
-            <!--Zero or more repetitions:-->
-            <permission permission="administrationVisualization" name="Administration visualization">
-               <!--Optional:-->
-               <resource>administration</resource>
-            </permission>
-         </role>
-      </ws:createRole>
-   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="38623e7c-1034-42f9-8b00-6c5b31cdbae6"/><con:assertion type="Simple Contains" id="7e72179f-c7ff-4d5b-a3fe-4ee96e986a57" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="6e05459b-1baf-49f5-905b-a3d8f533df17" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Update_Role" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="b3b63a73-8e63-46f3-81a4-2234aba84636"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createRole</con:operation><con:request name="create" id="be5b3b9f-2a7e-4064-99a5-6234e217aae0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createRole>\r
+         <!--Optional:-->\r
+         <role name="${#TestSuite#ticket}_ROLE2">\r
+            <!--Optional:-->\r
+            <description>${#TestSuite#ticket}_ROLE2_DESC</description>\r
+            <!--Zero or more repetitions:-->\r
+            <permissions>\r
+               <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
+            </permissions>\r
+         </role>\r
+      </ws:createRole>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9c7925e1-84e6-4881-b195-ebe4ed8cc07e"/><con:assertion type="Simple Contains" id="c2d52fd3-ac02-4217-9ba4-ed3202f68816" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="0dcfa869-ce2b-41d5-9047-40eca47388d1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findRole</con:operation><con:request name="find" id="90ba7629-dcde-4aff-a516-0036526c4416"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -33017,22 +33014,21 @@ for( testCase in testSuite.getTestCaseList() ) {
          <roleName>${#TestSuite#ticket}_ROLE2</roleName>
       </ws:findRole>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="38623e7c-1034-42f9-8b00-6c5b31cdbae6"/><con:assertion type="Simple Contains" id="7e72179f-c7ff-4d5b-a3fe-4ee96e986a57" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="8e2b08ef-34ab-4b85-a271-70b56be5a6d9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateRole</con:operation><con:request name="update" id="f771fe46-5655-4b4b-ab1a-e9a16057cd5e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateRole>
-         <!--Optional:-->
-         <role name="${#TestSuite#ticket}_ROLE2">
-            <!--Optional:-->
-            <description>${#TestSuite#ticket}_ROLE2_DESC</description>
-            <!--Zero or more repetitions:-->
-            <permission permission="catalogVisualization" name="Catalog visualization">
-               <!--Optional:-->
-               <resource>catalog</resource>
-            </permission>
-         </role>
-      </ws:updateRole>
-   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="38623e7c-1034-42f9-8b00-6c5b31cdbae6"/><con:assertion type="Simple Contains" id="7e72179f-c7ff-4d5b-a3fe-4ee96e986a57" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="8e2b08ef-34ab-4b85-a271-70b56be5a6d9"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>updateRole</con:operation><con:request name="update" id="f771fe46-5655-4b4b-ab1a-e9a16057cd5e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateRole>\r
+         <!--Optional:-->\r
+         <role name="${#TestSuite#ticket}_ROLE2">\r
+            <!--Optional:-->\r
+            <description>${#TestSuite#ticket}_ROLE2_DESC</description>\r
+            <!--Zero or more repetitions:-->\r
+            <permissions>\r
+               <permission permission="catalogVisualization" name="Catalog visualization" resource="catalog"/>\r
+            </permissions>\r
+         </role>\r
+      </ws:updateRole>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="df965125-6102-4a02-9884-df91aa36568c"/><con:assertion type="Simple Contains" id="6c67ba1c-13b6-4a83-a70f-102b08aec3a1" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_updated_role" id="045c376d-ae75-438a-9021-19ab2a8ffb91"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findRole</con:operation><con:request name="find_updated_role" id="90ba7629-dcde-4aff-a516-0036526c4416"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -33041,22 +33037,21 @@ for( testCase in testSuite.getTestCaseList() ) {
          <roleName>${#TestSuite#ticket}_ROLE2</roleName>
       </ws:findRole>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="38623e7c-1034-42f9-8b00-6c5b31cdbae6"/><con:assertion type="Simple Contains" id="7e72179f-c7ff-4d5b-a3fe-4ee96e986a57" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="b682da1b-1482-44f5-9ce6-9d2462015e55" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Remove_Role" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="ff9f0fc8-b9da-4ae1-b5c0-cf9c5777d901"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createRole</con:operation><con:request name="create" id="be5b3b9f-2a7e-4064-99a5-6234e217aae0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createRole>
-         <!--Optional:-->
-         <role name="${#TestSuite#ticket}_ROLE3">
-            <!--Optional:-->
-            <description>${#TestSuite#ticket}_ROLE3_DESC</description>
-            <!--Zero or more repetitions:-->
-            <permission permission="administrationVisualization" name="Administration visualization">
-               <!--Optional:-->
-               <resource>administration</resource>
-            </permission>
-         </role>
-      </ws:createRole>
-   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="38623e7c-1034-42f9-8b00-6c5b31cdbae6"/><con:assertion type="Simple Contains" id="7e72179f-c7ff-4d5b-a3fe-4ee96e986a57" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:domain/><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="b682da1b-1482-44f5-9ce6-9d2462015e55" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Remove_Role" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="ff9f0fc8-b9da-4ae1-b5c0-cf9c5777d901"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createRole</con:operation><con:request name="create" id="be5b3b9f-2a7e-4064-99a5-6234e217aae0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createRole>\r
+         <!--Optional:-->\r
+         <role name="${#TestSuite#ticket}_ROLE3">\r
+            <!--Optional:-->\r
+            <description>${#TestSuite#ticket}_ROLE3_DESC</description>\r
+            <!--Zero or more repetitions:-->\r
+            <permissions>\r
+               <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
+            </permissions>\r
+         </role>\r
+      </ws:createRole>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9c7925e1-84e6-4881-b195-ebe4ed8cc07e"/><con:assertion type="Simple Contains" id="c2d52fd3-ac02-4217-9ba4-ed3202f68816" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="19f6ed85-782f-4e59-b106-28d2768c9e17"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findRole</con:operation><con:request name="find" id="90ba7629-dcde-4aff-a516-0036526c4416"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -33081,22 +33076,21 @@ for( testCase in testSuite.getTestCaseList() ) {
          <roleName>${#TestSuite#ticket}_ROLE3</roleName>
       </ws:findRole>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="38623e7c-1034-42f9-8b00-6c5b31cdbae6"/><con:assertion type="Simple Contains" id="7e72179f-c7ff-4d5b-a3fe-4ee96e986a57" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="fcfcd577-2807-4392-9be3-735e62d951fb" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createOrUpdate_Role" searchProperties="true"><con:settings/><con:testStep type="request" name="createOrUpdate" id="5535430b-9cd5-4993-a741-c09a739f9f1c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createRole</con:operation><con:request name="createOrUpdate" id="be5b3b9f-2a7e-4064-99a5-6234e217aae0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateRole>
-         <!--Optional:-->
-         <role name="${#TestSuite#ticket}_ROLE4">
-            <!--Optional:-->
-            <description>${#TestSuite#ticket}_ROLE4_DESC</description>
-            <!--Zero or more repetitions:-->
-            <permission permission="administrationVisualization" name="Administration visualization">
-               <!--Optional:-->
-               <resource>administration</resource>
-            </permission>
-         </role>
-      </ws:createOrUpdateRole>
-   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="38623e7c-1034-42f9-8b00-6c5b31cdbae6"/><con:assertion type="Simple Contains" id="7e72179f-c7ff-4d5b-a3fe-4ee96e986a57" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="fcfcd577-2807-4392-9be3-735e62d951fb" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createOrUpdate_Role" searchProperties="true"><con:settings/><con:testStep type="request" name="createOrUpdate" id="5535430b-9cd5-4993-a741-c09a739f9f1c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createRole</con:operation><con:request name="createOrUpdate" id="be5b3b9f-2a7e-4064-99a5-6234e217aae0"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateRole>\r
+         <!--Optional:-->\r
+         <role name="${#TestSuite#ticket}_ROLE4">\r
+            <!--Optional:-->\r
+            <description>${#TestSuite#ticket}_ROLE4_DESC</description>\r
+            <!--Zero or more repetitions:-->\r
+            <permissions>\r
+               <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
+            </permissions>\r
+         </role>\r
+      </ws:createOrUpdateRole>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="9c7925e1-84e6-4881-b195-ebe4ed8cc07e"/><con:assertion type="Simple Contains" id="c2d52fd3-ac02-4217-9ba4-ed3202f68816" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="2d0097ea-5241-4cbf-bb70-213f91eb0f5c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findRole</con:operation><con:request name="find" id="90ba7629-dcde-4aff-a516-0036526c4416"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndPoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
