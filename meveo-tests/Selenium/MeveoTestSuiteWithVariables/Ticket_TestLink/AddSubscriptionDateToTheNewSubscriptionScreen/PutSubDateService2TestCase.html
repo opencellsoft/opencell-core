@@ -13,17 +13,17 @@
 </thead><tbody>
 <tr>
 	<td>assertText</td>
-	<td>//a[contains(text(),'${Code1}')]</td>
-	<td>${Code1}</td>
+	<td>//a[contains(text(),'${Code2}')]</td>
+	<td>${Code2}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//a[contains(text(),'${Code1}')]</td>
+	<td>//a[contains(text(),'${Code2}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//a[contains(text(),'${Code1}')]</td>
+	<td>//a[contains(text(),'${Code2}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -128,22 +128,22 @@
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=formPanel:formId:serviceSelectedId:entityFieldSingle:serviceTemplate_entity_view</td>
+	<td>id=formId:serviceSelectedId</td>
 	<td>${CodeService}</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>id=formPanel:formId:serviceSelectedId:entityFieldSingle:serviceTemplate_entity_view</td>
+	<td>id=formId:serviceSelectedId</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=formPanel:formId:subscriptionSelectedId:entityFieldSingle:subscription_entity_view</td>
-	<td>${Code1}</td>
+	<td>id=formId:subscriptionSelectedId</td>
+	<td>${Code2}</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>id=formPanel:formId:subscriptionSelectedId:entityFieldSingle:subscription_entity_view</td>
+	<td>id=formId:subscriptionSelectedId</td>
 	<td></td>
 </tr>
 <tr>
@@ -159,7 +159,7 @@
 <tr>
 	<td>type</td>
 	<td>${SubscriptionDate}</td>
-	<td>${SubscriptionDatePast}</td>
+	<td>${SubscriptionDateFuture}</td>
 </tr>
 <tr>
 	<td>endIf</td>

@@ -43,12 +43,12 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SelectUserAccount}</td>
+	<td>${ChooseUserAccount}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectUserAccount}</td>
+	<td>${ChooseUserAccount}</td>
 	<td></td>
 </tr>
 <tr>
@@ -63,17 +63,17 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td>id=userAccountPopuppopupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td>id=userAccountPopuppopupForm:searchField1</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td>id=userAccountPopuppopupForm:searchField1</td>
 	<td>${UserAccount}</td>
 </tr>
 <tr>
@@ -122,8 +122,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${SelectUserAccount}</td>
+	<td>assertElementPresent</td>
+	<td>${ChooseUserAccount}</td>
 	<td></td>
 </tr>
 <tr>
@@ -138,17 +138,17 @@
 </tr>
 <tr>
 	<td>waitForValue</td>
-	<td>id=subscriptionTab:subscriptionFormPanel:formId:informationTab:userSelectId:entityFieldSingle:userAccount_entity</td>
+	<td>id=subscriptionTab:subscriptionFormId:informationTab:userSelectId</td>
 	<td>${UserAccount}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SelectOffer}</td>
+	<td>${ChooseOffer}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SelectOffer}</td>
+	<td>${ChooseOffer}</td>
 	<td></td>
 </tr>
 <tr>
@@ -158,22 +158,22 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SubCode}</td>
+	<td>${SbCode}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${SubCode}</td>
+	<td>${SbCode}</td>
 	<td>${Code2}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${descriptionText}</td>
+	<td>${SubDescription}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionText}</td>
+	<td>${SubDescription}</td>
 	<td>${Description2}</td>
 </tr>
 <tr>
