@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.meveo.api.dto.PermissionDto;
 import org.meveo.api.dto.RoleDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -41,6 +42,11 @@ public class RoleApi extends BaseApi {
             missingParameters.add("name");
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
+        
+        if (roleService.findByName(name, currentUser.getProvider()) != null) {
+        	throw new EntityAlreadyExistsException(Role.class, name, "role name");
+        }
+        
         Role role = new Role();
         role.setName(name);
         role.setDescription(postData.getDescription());
