@@ -19,21 +19,25 @@ package org.meveo.model.scripts;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.security.Role;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -63,6 +67,14 @@ public class ScriptInstance extends BusinessEntity  {
 	
 	@Column(name = "IS_ERROR")
 	private Boolean error = false;
+	
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "ADM_SCRIPT_EXEC_ROLE", joinColumns = @JoinColumn(name = "SCRIPT_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+    private List<Role> executionRoles = new ArrayList<Role>();
+    
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "ADM_SCRIPT_SOURC_ROLE", joinColumns = @JoinColumn(name = "SCRIPT_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+    private List<Role> sourcingRoles = new ArrayList<Role>();
 	
 	public ScriptInstance(){
 
@@ -127,6 +139,34 @@ public class ScriptInstance extends BusinessEntity  {
 	 */
 	public void setError(Boolean error) {
 		this.error = error;
+	}
+
+	/**
+	 * @return the executionRoles
+	 */
+	public List<Role> getExecutionRoles() {
+		return executionRoles;
+	}
+
+	/**
+	 * @param executionRoles the executionRoles to set
+	 */
+	public void setExecutionRoles(List<Role> executionRoles) {
+		this.executionRoles = executionRoles;
+	}
+
+	/**
+	 * @return the sourcingRoles
+	 */
+	public List<Role> getSourcingRoles() {
+		return sourcingRoles;
+	}
+
+	/**
+	 * @param sourcingRoles the sourcingRoles to set
+	 */
+	public void setSourcingRoles(List<Role> sourcingRoles) {
+		this.sourcingRoles = sourcingRoles;
 	}
 
 

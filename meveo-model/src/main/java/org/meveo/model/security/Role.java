@@ -20,8 +20,6 @@ import org.meveo.model.ExportIdentifier;
 @ExportIdentifier({ "name", "provider" })
 @Table(name = "ADM_ROLE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_ROLE_SEQ")
-// @org.hibernate.annotations.Cache(usage =
-// org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
@@ -105,7 +103,6 @@ public class Role extends BaseEntity {
 
     @Override
     public boolean equals(Object obj) {
-
         if (this == obj) {
             return true;
         } else if (obj == null) {

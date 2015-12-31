@@ -24,6 +24,10 @@
 		</p:panel>
 		<hftl:formPanel label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" showFormButtons="false" >						
            <pe:codeMirror id="codeMirror"  theme="eclipse" mode="text/x-java" value="#{scriptInstanceBean.entity.script}"  lineNumbers="true"  required="true"/>
+           <hftl:formField label="#{messages['scriptInstance.executionRoles']}" field="executionRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.execRolesDM}" valueLabelField="name"
+                styleClass="clearLeft" />
+           <hftl:formField label="#{messages['scriptInstance.sourcingRoles']}" field="sourcingRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.sourcRolesDM}" valueLabelField="name"
+                styleClass="clearLeft" />                
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" size="80"  doNotShowOnNew="true" disabled="true" />			
 			<hftl:formField label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:formField label="#{messages['scriptInstance.scriptTypeEnum']}" field="scriptTypeEnum" />

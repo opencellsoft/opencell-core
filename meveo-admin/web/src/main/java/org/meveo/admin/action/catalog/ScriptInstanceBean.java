@@ -16,6 +16,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,10 +26,13 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.security.Role;
+import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link ScriptInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -43,6 +47,53 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
      */
     @Inject
     private ScriptInstanceService scriptInstanceService;
+    
+    @Inject
+    private RoleService roleService;
+    
+
+	private DualListModel<Role> execRolesDM;
+	private DualListModel<Role> sourcRolesDM;
+	
+    public DualListModel<Role> getExecRolesDM() {
+
+        if (execRolesDM == null) {
+            List<Role> perksSource = roleService.getAllRoles(getCurrentProvider());
+            List<Role> perksTarget = new ArrayList<Role>();
+            if (getEntity().getExecutionRoles() != null) {
+                perksTarget.addAll(getEntity().getExecutionRoles());
+            }
+            perksSource.removeAll(perksTarget);
+            execRolesDM = new DualListModel<Role>(perksSource, perksTarget);
+        }
+        return execRolesDM;
+    }
+    
+
+    public DualListModel<Role> getSourcRolesDM() {
+
+        if (sourcRolesDM == null) {
+            List<Role> perksSource = roleService.getAllRoles(getCurrentProvider());
+            List<Role> perksTarget = new ArrayList<Role>();
+            if (getEntity().getSourcingRoles() != null) {
+                perksTarget.addAll(getEntity().getSourcingRoles());
+            }
+            perksSource.removeAll(perksTarget);
+            sourcRolesDM = new DualListModel<Role>(perksSource, perksTarget);
+        }
+        return sourcRolesDM;
+    }    
+    
+	public void setExecRolesDM(DualListModel<Role> perks) {
+		getEntity().setExecutionRoles(perks.getTarget());
+		this.execRolesDM = perks;
+	}
+	
+	public void setSourcRolesDM(DualListModel<Role> perks) {
+		getEntity().setSourcingRoles(perks.getTarget());
+		this.sourcRolesDM = perks;
+	}	
+    
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.

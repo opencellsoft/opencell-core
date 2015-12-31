@@ -43,32 +43,34 @@ public class FilteringJobBean {
 
 		Provider provider = currentUser.getProvider();
 		Filter filter = filterService.findByCode(filterCode, provider);
-		if (filter != null) {
-			Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(), scriptInstanceCode);
+		if (filter != null) {			
 			ScriptInterface scriptInterface = null;
 			try {
+				Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(), scriptInstanceCode);
 				scriptInterface = scriptInterfaceClass.newInstance();
-				scriptInterface.init(variables,provider);
+				scriptInterface.init(variables,provider,currentUser);
 				List<? extends IEntity> xmlEntities = filterService.filteredListAsObjects(filter, provider);
 				result.setNbItemsToProcess(xmlEntities.size());
 				for (Object obj : xmlEntities) {
 					Map<String,Object> context=new HashMap<String,Object>();
 					context.put(recordVariableName,obj);
 					try{
-						scriptInterface.execute(context,provider);
+						scriptInterface.execute(context,provider,currentUser);
 						result.registerSucces();
 					} catch(BusinessException ex){
 						result.registerError(ex.getMessage());
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Error on execute",e);
 				result.setReport("error:"+e.getMessage());
 			} finally{
 				try{
-					scriptInterface.finalize(variables,provider);
+					if(scriptInterface != null){
+						scriptInterface.finalize(variables,provider,currentUser);
+					}
 				}catch (Exception e) {
-					e.printStackTrace();
+					log.error("Error on finally execute",e);
 					result.setReport("finalize error:"+e.getMessage());
 				}
 			}

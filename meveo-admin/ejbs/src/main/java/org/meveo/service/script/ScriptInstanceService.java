@@ -36,6 +36,7 @@ import javax.tools.JavaFileObject;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -46,6 +47,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptTypeEnum;
+import org.meveo.model.security.Role;
 import org.meveo.service.base.PersistenceService;
 
 @Singleton
@@ -359,10 +361,10 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	public void test(Provider provider, String scriptCode, Map<String, Object> context,User userExecutor) {		
 		try{
 			clearLogs(provider.getCode(), scriptCode);
-		    ScriptInstance scriptInstance = findByCode(scriptCode, provider);		
+		    ScriptInstance scriptInstance = findByCode(scriptCode, provider);	
+		    isUserHasExecutionRole(scriptInstance, userExecutor);
 			String javaSrc = scriptInstance.getScript();
-			javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\"" + provider.getCode() + "\",\"" + scriptCode + "\");//");
-			log.debug("script for testing: {}", javaSrc);
+			javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\"" + provider.getCode() + "\",\"" + scriptCode + "\");//");			
 			Class<ScriptInterface> compiledScript = compileJavaSrouce(javaSrc, getPackageName(scriptInstance.getScript()) + "." + getClassName(scriptInstance.getScript()));
 			execute(compiledScript,context,provider,userExecutor);
 
@@ -378,15 +380,20 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	 * @param provider
 	 * @param scriptCode
 	 * @return Script Class
+	 * @throws InvalidPermissionException 
 	 */
-	public Class<ScriptInterface> getScriptInterface(Provider provider, String scriptCode) {
+	public Class<ScriptInterface> getScriptInterface(Provider provider, String scriptCode) throws InvalidPermissionException {
 		Class<ScriptInterface> result = null;
+		ScriptInstance scriptInstance = findByCode(scriptCode, provider);
+		if (scriptInstance == null) {
+			log.debug("ScriptInstance with {} does not exist",scriptCode);
+			return null;
+		}
+		isUserHasExecutionRole(scriptInstance, getCurrentUser());
 		if (allScriptInterfaces.containsKey(provider.getCode())) {
 			result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
 		}
-		if (result == null) {
-			ScriptInstance scriptInstance = findByCode(scriptCode, provider);
-			if (scriptInstance != null) {
+		if (result == null) {			
 				compileScript(scriptInstance);
 				if (allScriptInterfaces.containsKey(provider.getCode())) {	
 					if(allScriptInterfaces.get(provider.getCode()).containsKey(scriptCode)){
@@ -397,9 +404,6 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 				}else{
 					log.debug("No ScriptInstance compiled available for the provider {}",provider.getCode());
 				}
-			}else{
-				log.debug("ScriptInstance with {} does not exist",scriptCode);
-			}
 		}
 		log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
 		return result;
@@ -471,5 +475,24 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	 */
 	public String getClassName(String src) {
 		return StringUtils.patternMacher("public class (.*) extends", src);
+	}
+	
+	/**
+	 * Only users having a role in executionRoles can execute the script, not having the role should 
+	 * throw an InvalidPermission exception that extends businessException.
+     * A script with no executionRoles can be executed by any user.
+     *
+	 * @param scriptInstance
+	 * @param user
+	 * @throws InvalidPermissionException
+	 */
+	public void isUserHasExecutionRole(ScriptInstance scriptInstance,User user) throws InvalidPermissionException{
+		if(scriptInstance != null && user != null && scriptInstance.getExecutionRoles() != null && !scriptInstance.getExecutionRoles().isEmpty() ){	
+			List<Role> execRoles = scriptInstance.getExecutionRoles();
+			execRoles.retainAll(user.getRoles());
+			if( execRoles.isEmpty()){
+				throw new InvalidPermissionException();
+			}
+		}
 	}
 }

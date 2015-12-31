@@ -1006,5 +1006,52 @@
             <column name="APPLICABLE_ON_EL" type="varchar(150)"/>
         </addColumn>
     </changeSet>
+    
+	<changeSet author="anasseh" id="#1214_20151229">
+		<createTable tableName="adm_script_exec_role">
+			<column name="script_instance_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="role_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_exec_role_pkey"
+			tableName="adm_script_exec_role" />
+
+		<addForeignKeyConstraint baseColumnNames="script_instance_id"
+			baseTableName="adm_script_exec_role" constraintName="fk_script_instance"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+		
+		<addForeignKeyConstraint baseColumnNames="role_id"
+			baseTableName="adm_script_exec_role" constraintName="fk_role"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
+			
+		<createTable tableName="adm_script_sourc_role">
+			<column name="script_instance_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="role_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_sourc_role_pkey"
+			tableName="adm_script_sourc_role" />
+
+		<addForeignKeyConstraint baseColumnNames="script_instance_id"
+			baseTableName="adm_script_sourc_role" constraintName="fk_script_instance"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+		
+		<addForeignKeyConstraint baseColumnNames="role_id"
+			baseTableName="adm_script_sourc_role" constraintName="fk_role"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />		
+	</changeSet>
+    
           
 </databaseChangeLog>
