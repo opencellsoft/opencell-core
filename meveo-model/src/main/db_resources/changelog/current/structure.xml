@@ -999,5 +999,12 @@
             <column name="MAPKEY_TYPE" type="varchar(20)"/>
         </addColumn>
         <sql>update CRM_CUSTOM_FIELD_TMPL set MAPKEY_TYPE='STRING' where storage_type='MAP'</sql>
-    </changeSet>      
+    </changeSet>
+    
+    <changeSet id="#1113_20151228" author="AndriusKarpavicius">
+        <addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+            <column name="APPLICABLE_ON_EL" type="varchar(150)"/>
+        </addColumn>
+    </changeSet>
+          
 </databaseChangeLog>

@@ -42,6 +42,7 @@
 
     <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
     <o:importFunctions type="org.meveo.model.crm.CustomFieldValue" var="cfv" />
+    <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
 
     <f:event listener="#{backingBean.validateCustomFields}" type="postValidate" />
 
@@ -54,7 +55,7 @@
             <c:forEach items="${cfTab.children}" var="cfFieldOrFg">
                 <c:if test="#{cfFieldOrFg.type == 'field'}">
                     <c:set var="cft" value="#{cfFieldOrFg.data}" />
-                    <c:if test="#{((not cft.disabled) or (cft.disabled and not backingBean.isAnyInstanceValueEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew))}">
+                    <c:if test="#{((not cft.disabled) or (cft.disabled and not backingBean.isAnyInstanceValueEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',backingBean.entity)}">
                         <hf:customField backingBean="#{backingBean}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" prefix="#{prefix}" />
                     </c:if>
                 </c:if>
@@ -62,7 +63,8 @@
                     <p:panel header="#{cfFieldOrFg.data}">
                         <c:forEach items="${cfFieldOrFg.children}" var="cfField">
                             <c:set var="cft" value="#{cfField.data}" />
-                            <c:if test="#{((not cft.disabled) or (cft.disabled and not backingBean.isAnyInstanceValueEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew))}">
+                            <c:if
+                                test="#{((not cft.disabled) or (cft.disabled and not backingBean.isAnyInstanceValueEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',backingBean.entity)}">
                                 <hf:customField backingBean="#{backingBean}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" prefix="#{prefix}" />
                             </c:if>
                         </c:forEach>

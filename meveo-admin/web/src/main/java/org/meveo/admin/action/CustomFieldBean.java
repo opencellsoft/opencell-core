@@ -34,6 +34,7 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.CustomFieldValue;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
@@ -87,8 +88,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
+        boolean isNew = entity.isTransient();
         String outcome = super.saveOrUpdate(killConversation);
-        updateCustomFieldsInEntity();
+        updateCustomFieldsInEntity(isNew);
         return outcome;
     }
 
@@ -176,22 +178,30 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     /**
      * Save custom fields
      * 
+     * @param isNewEntity Is it a new entity
      * @throws BusinessException
      */
-    private void updateCustomFieldsInEntity() throws BusinessException {
+    private void updateCustomFieldsInEntity(boolean isNewEntity) throws BusinessException {
         if (groupedCustomField != null && groupedCustomField.getFields().size() > 0) {
             for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
                 List<CustomFieldInstance> cfis = getInstancesAsList(cft);
 
                 for (CustomFieldInstance cfi : cfis) {
-                    // Not saving empty values unless template has a default value or is versionable
-                    if (cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable()) {
+                    // Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
+                    // instantiates automatically)
+                    // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
+                    if ((cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
+                            || ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
                         if (!cfi.isTransient()) {
                             customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
                             log.trace("Remove empty cfi value {}", cfi);
                         } else {
                             log.error("Will ommit from saving cfi {}", cfi);
                         }
+
+                        // Do not update existing CF value if it is not updatable
+                    } else if (!isNewEntity && !cft.isAllowEdit()) {
+                        continue;
 
                         // Existing value update
                     } else {
@@ -580,10 +590,19 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     public void validateCustomFields(ComponentSystemEvent event) {
         boolean valid = true;
+        boolean isNewEntity = entity.isTransient();
+
         FacesContext fc = FacesContext.getCurrentInstance();
         if (groupedCustomField != null && groupedCustomField.getFields().size() > 0) {
             for (CustomFieldTemplate cft : groupedCustomField.getFields()) {
-                if (cft.isActive() && cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
+
+                // Ignore the validation on a field when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false or when CFT.applicableOnEL expression
+                // evaluates to false
+                if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                    continue;
+
+                } else if (cft.isActive() && cft.isValueRequired() && (cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || cft.isVersionable())) {
 
                     for (CustomFieldInstance cfi : getInstancesAsList(cft)) {
 

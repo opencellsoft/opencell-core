@@ -24,14 +24,82 @@ public class ValueExpressionWrapper {
 
     static ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
 
-    SimpleELResolver simpleELResolver;
-    ELContext context;
-    ValueExpression ve;
+    private SimpleELResolver simpleELResolver;
+    private ELContext context;
+    private ValueExpression ve;
 
     static protected Logger log = LoggerFactory.getLogger(ValueExpressionWrapper.class);
 
     static HashMap<String, ValueExpressionWrapper> valueExpressionWrapperMap = new HashMap<String, ValueExpressionWrapper>();
 
+    /**
+     * Evaluate expression to a boolean value
+     * 
+     * @param expression Expression to evaluate
+     * @param variableName Variable name to give to a variable in context
+     * @param variable Variable to make available in context
+     * @return A boolean value expression evaluates to. An empty expression evaluates to true;
+     * @throws BusinessException
+     */
+    public static boolean evaluateToBoolean(String expression, String variableName, Object variable) throws BusinessException {
+       
+        boolean result = evaluateToBooleanMultiVariable(expression, variableName, variable);
+        return result;
+    }
+    
+    /**
+     * Evaluate expression to a boolean value ignoring exceptions
+     * 
+     * @param expression Expression to evaluate
+     * @param variableName Variable name to give to a variable in context
+     * @param variable Variable to make available in context
+     * @return A boolean value expression evaluates to. An empty expression evaluates to true. Failure to evaluate, return false;
+     */
+    public static boolean evaluateToBooleanIgnoreErrors(String expression, String variableName, Object variable) {
+        try {
+            return evaluateToBooleanMultiVariable(expression, variableName, variable);
+        } catch (BusinessException e) {
+            log.error("Failed to evaluate expression {} on variable {}/{}", expression, variableName, variable, e);
+            return false;
+        }
+    }
+
+    /**
+     * Evaluate expression to a boolean value
+     * 
+     * @param expression Expression to evaluate
+     * @param contextVarNameAndValue An array of context variables and their names in the following order: variable 1 name, variable 1, variable 2 name, variable2, etc..
+     * @return A boolean value expression evaluates to. An empty expression evaluates to true;
+     * @throws BusinessException
+     */
+    public static boolean evaluateToBooleanMultiVariable(String expression, Object... contextVarNameAndValue) throws BusinessException {
+        if (StringUtils.isBlank(expression)) {
+            return true;
+        }
+
+        Map<Object, Object> contextMap = new HashMap<Object, Object>();
+        if (contextVarNameAndValue != null) {
+            for (int i = 0; i < contextVarNameAndValue.length; i = i + 2) {
+                contextMap.put(contextVarNameAndValue[i], contextVarNameAndValue[i + 1]);
+            }
+        }
+        Object value = evaluateExpression(expression, contextMap, Boolean.class);
+        if (value instanceof Boolean) {
+            return (boolean) value;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Evaluate expression
+     * 
+     * @param expression Expression to evaluate
+     * @param userMap Context of values
+     * @param resultClass An expected result class
+     * @return A value that expression evaluated to
+     * @throws BusinessException
+     */
     public static Object evaluateExpression(String expression, Map<Object, Object> userMap, @SuppressWarnings("rawtypes") Class resultClass) throws BusinessException {
         Object result = null;
         if (StringUtils.isBlank(expression)) {

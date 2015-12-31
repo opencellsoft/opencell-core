@@ -25,6 +25,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
@@ -189,14 +190,13 @@ public abstract class BaseApi {
 							+ " and provider " + currentUser.getProvider() + " not found.");
 				}
 
-				// Ignore the value when creating entity and CFT.hideOnNew=true
-				// or editing entity and CFT.allowEdit=false
-				if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())) {
-					log.debug(
-							"Custom field value not applicable for this state of entity lifecycle: code={} for entity {} transient{}. Value will be ignored.",
-							cfDto.getCode(), entity.getClass(), isNewEntity);
-					continue;
-				}
+                // Ignore the value when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false or when CFT.applicableOnEL expression evaluates to false
+                if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                    log.debug("Custom field value not applicable for this state of entity lifecycle: code={} for entity {} transient{}. Value will be ignored.", cfDto.getCode(),
+                        entity.getClass(), isNewEntity);
+                    continue;
+                }
 
 				// Validate that value is not empty when field is mandatory
 				boolean isEmpty = cfDto.isEmpty(cft.getFieldType(), cft.getStorageType());
@@ -335,10 +335,11 @@ public abstract class BaseApi {
 		// Validate that CustomField value is not empty when field is mandatory
 		Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances(entity);
 
-		for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-			if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew())) {
-				continue;
-			}
+        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
+            if (cft.isDisabled() || !cft.isValueRequired() || (isNewEntity && cft.isHideOnNew())
+                    || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                continue;
+            }
 			if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {
 				missingParameters.add(cft.getCode());
 			} else {

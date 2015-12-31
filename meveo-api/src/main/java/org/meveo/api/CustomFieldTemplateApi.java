@@ -229,6 +229,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         cft.setRegExp(dto.getRegExp());
         cft.setCacheValueTimeperiod(dto.getCacheValueTimeperiod());
         cft.setGuiPosition(dto.getGuiPosition());
+        cft.setApplicableOnEl(dto.getApplicableOnEl());
 
         if (cft.getFieldType() == CustomFieldTypeEnum.LIST) {
             cft.setListValues(dto.getListValues());

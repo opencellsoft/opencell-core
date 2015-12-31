@@ -296,7 +296,8 @@
                         required="true" componentWidth="10" />
 
                     <h:panelGroup id="mapKeyTypeField">
-                        <hftl:formField label="#{messages['customFieldTemplate.mapKeyType']}" field="mapKeyType" required="true" componentWidth="10" rendered="#{customFieldTemplateBean.entity.storageType == 'MAP' or customFieldTemplateBean.entity.storageType == 'MATRIX'}" />
+                        <hftl:formField label="#{messages['customFieldTemplate.mapKeyType']}" field="mapKeyType" required="true" componentWidth="10"
+                            rendered="#{customFieldTemplateBean.entity.storageType == 'MAP' or customFieldTemplateBean.entity.storageType == 'MATRIX'}" />
                     </h:panelGroup>
                     <h:panelGroup id="defaultValueField">
                         <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
@@ -309,17 +310,19 @@
                             rendered="#{customFieldTemplateBean.entity.fieldType == 'ENTITY'}" />
                     </h:panelGroup>
                     <p:fieldset id="validations" legend="#{messages['customFieldTemplate.validations']}" styleClass="clearLeft">
-                        <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="15" />
-                        <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="15" />
-                        <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="15" />
-
-                        <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true"
+                        <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10" />
+                        <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="10" />
+                        <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="10" />
+                        <hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl" componentWidth="30" size="50" maxLength="150" />
+                        <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true" componentWidth="15"
                             rendered="#{customFieldTemplateBean.entity.fieldType == 'LONG' or customFieldTemplateBean.entity.fieldType == 'DOUBLE'}" />
                         <hftl:formField label="#{messages[customFieldTemplateBean.entity.fieldType == 'STRING'?'customFieldTemplate.maxValueTxt':'customFieldTemplate.maxValue']}"
                             field="maxValue" required="#{customFieldTemplateBean.entity.fieldType == 'STRING'}"
                             negativeValue="#{customFieldTemplateBean.entity.fieldType != 'STRING'}"
-                            rendered="#{customFieldTemplateBean.entity.fieldType == 'LONG' or customFieldTemplateBean.entity.fieldType == 'DOUBLE' or customFieldTemplateBean.entity.fieldType == 'STRING'}" />
-                        <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == 'STRING'}" />
+                            rendered="#{customFieldTemplateBean.entity.fieldType == 'LONG' or customFieldTemplateBean.entity.fieldType == 'DOUBLE' or customFieldTemplateBean.entity.fieldType == 'STRING'}"
+                            componentWidth="15" />
+                        <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == 'STRING'}"
+                            componentWidth="15" />
                     </p:fieldset>
                     <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearLeft">
                         <hftl:formField label="#{messages['customFieldTemplate.cacheValue']}" field="cacheValue" isMessage="true" componentWidth="15" />

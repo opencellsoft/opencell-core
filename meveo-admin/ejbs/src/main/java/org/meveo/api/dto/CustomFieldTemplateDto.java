@@ -18,9 +18,9 @@ import org.meveo.model.crm.CustomFieldTemplate;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomFieldTemplateDto extends BaseDto {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@XmlAttribute(required = true)
+    @XmlAttribute(required = true)
     protected String code;
 
     @XmlAttribute(required = true)
@@ -87,6 +87,9 @@ public class CustomFieldTemplateDto extends BaseDto {
     @XmlElement()
     protected String mapKeyType;
 
+    @XmlElement()
+    protected String applicableOnEl;
+
     public CustomFieldTemplateDto() {
 
     }
@@ -115,6 +118,7 @@ public class CustomFieldTemplateDto extends BaseDto {
         cacheValueTimeperiod = cf.getCacheValueTimeperiod();
         guiPosition = cf.getGuiPosition();
         listValues = cf.getListValues();
+        applicableOnEl = cf.getApplicableOnEl();
         if (cf.getMapKeyType() != null) {
             mapKeyType = cf.getMapKeyType().name();
         }
@@ -307,5 +311,13 @@ public class CustomFieldTemplateDto extends BaseDto {
 
     public void setMapKeyType(String mapKeyType) {
         this.mapKeyType = mapKeyType;
+    }
+
+    public String getApplicableOnEl() {
+        return applicableOnEl;
+    }
+
+    public void setApplicableOnEl(String applicableOnEl) {
+        this.applicableOnEl = applicableOnEl;
     }
 }

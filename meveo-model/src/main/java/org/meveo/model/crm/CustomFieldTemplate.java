@@ -17,6 +17,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -95,6 +96,10 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Column(name = "REG_EXP", length = 80)
     private String regExp;
+
+    @Column(name = "APPLICABLE_ON_EL", length = 150)
+    @Size(max = 150)
+    private String applicableOnEl;
 
     @Column(name = "CACHE_VALUE")
     private boolean cacheValue;
@@ -293,6 +298,14 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setCacheValue(boolean cacheValue) {
         this.cacheValue = cacheValue;
+    }
+
+    public String getApplicableOnEl() {
+        return applicableOnEl;
+    }
+
+    public void setApplicableOnEl(String applicableOnEl) {
+        this.applicableOnEl = applicableOnEl;
     }
 
     @Override
