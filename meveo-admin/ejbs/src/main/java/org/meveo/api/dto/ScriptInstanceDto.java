@@ -1,5 +1,8 @@
 package org.meveo.api.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -7,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.security.Role;
 
 /**
  * @author Edward P. Legaspi
@@ -14,6 +18,11 @@ import org.meveo.model.scripts.ScriptInstance;
 @XmlRootElement(name = "ScriptInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ScriptInstanceDto extends BaseDto{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@XmlAttribute(required = true)
 	private String code;
@@ -26,6 +35,9 @@ public class ScriptInstanceDto extends BaseDto{
 
 	@XmlElement(required = true)
 	private String script;
+	
+	private List<RoleDto> executionRoles = new ArrayList<RoleDto>();
+	private List<RoleDto> sourcingRoles = new ArrayList<RoleDto>();
 
 	public ScriptInstanceDto() {
 	}
@@ -37,6 +49,16 @@ public class ScriptInstanceDto extends BaseDto{
 		if (e.getScriptTypeEnum() != null) {
 			type = e.getScriptTypeEnum().name();
 		}
+		if(e.getExecutionRoles() != null){
+			for(Role role : e.getExecutionRoles()){
+				executionRoles.add(new RoleDto(role));
+			}
+		}
+		if(e.getSourcingRoles() != null){
+			for(Role role : e.getSourcingRoles()){
+				sourcingRoles.add(new RoleDto(role));
+			}
+		}		
 	}
 
 	public String getCode() {
@@ -73,8 +95,37 @@ public class ScriptInstanceDto extends BaseDto{
 
 	@Override
 	public String toString() {
-		return "ScriptInstanceDto [code=" + code + ", description=" + description + ", type=" + type + ", script="
-				+ script + "]";
+		return "ScriptInstanceDto [code=" + code + ", description=" + description + ", type=" + type + ", script=" + script + ", executionRoles=" + executionRoles + ", sourcingRoles=" + sourcingRoles + "]";
 	}
+
+	/**
+	 * @return the executionRoles
+	 */
+	public List<RoleDto> getExecutionRoles() {
+		return executionRoles;
+	}
+
+	/**
+	 * @param executionRoles the executionRoles to set
+	 */
+	public void setExecutionRoles(List<RoleDto> executionRoles) {
+		this.executionRoles = executionRoles;
+	}
+
+	/**
+	 * @return the sourcingRoles
+	 */
+	public List<RoleDto> getSourcingRoles() {
+		return sourcingRoles;
+	}
+
+	/**
+	 * @param sourcingRoles the sourcingRoles to set
+	 */
+	public void setSourcingRoles(List<RoleDto> sourcingRoles) {
+		this.sourcingRoles = sourcingRoles;
+	}
+	
+	
 
 }

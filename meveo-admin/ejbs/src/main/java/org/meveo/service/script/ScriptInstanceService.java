@@ -85,7 +85,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 		}
 		return result;
 	}
-    
+	
 	/**
 	 * Find ScriptInstance by code and provider
 	 * 
@@ -95,6 +95,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 	 */
 	public ScriptInstance findByCode(String code, Provider provider) {
 		log.debug("find ScriptInstance by code {}", code);
+		
 		QueryBuilder qb = new QueryBuilder(ScriptInstance.class, "t", null, provider);
 		qb.addCriterion("t.code", "=", code, false);
 		try {
@@ -103,6 +104,7 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 			return null;
 		}
 	}
+	
 
 	/**
 	 * Save or update the script instance and set the code as the canonical name of script class
@@ -494,5 +496,16 @@ public class ScriptInstanceService extends PersistenceService<ScriptInstance> {
 				throw new InvalidPermissionException();
 			}
 		}
+	}
+	
+	public boolean isUserHasSourcingRole(ScriptInstance scriptInstance,User user){
+		if(scriptInstance != null && user != null && scriptInstance.getSourcingRoles() != null && !scriptInstance.getSourcingRoles().isEmpty() ){	
+			List<Role> sourcingRoles = scriptInstance.getSourcingRoles();
+			sourcingRoles.retainAll(user.getRoles());
+			if( sourcingRoles.isEmpty()){
+				return false;
+			}
+		}
+		return true;
 	}
 }

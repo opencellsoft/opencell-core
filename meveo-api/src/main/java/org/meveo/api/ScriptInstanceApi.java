@@ -6,6 +6,8 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.InvalidPermissionException;
+import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.ScriptInstanceErrorDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -19,6 +21,8 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptTypeEnum;
+import org.meveo.model.security.Role;
+import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -30,6 +34,9 @@ public class ScriptInstanceApi extends BaseApi {
 
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
+	
+	@Inject
+	private RoleService roleService;
 
 
 	public List<ScriptInstanceErrorDto> create(ScriptInstanceDto scriptInstanceDto, User currentUser) throws MissingParameterException, EntityAlreadyExistsException, InvalidEnumValue,MeveoApiException {
@@ -49,6 +56,21 @@ public class ScriptInstanceApi extends BaseApi {
 		ScriptInstance scriptInstance = new ScriptInstance();
 		scriptInstance.setDescription(scriptInstanceDto.getDescription());
 		scriptInstance.setScript(scriptInstanceDto.getScript());
+		
+		for(RoleDto roleDto : scriptInstanceDto.getExecutionRoles()){
+			Role role = roleService.findByName(roleDto.getName(), currentUser.getProvider());
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, roleDto.getName(), "name");
+            }
+            scriptInstance.getExecutionRoles().add(role);
+		}
+		for(RoleDto roleDto : scriptInstanceDto.getSourcingRoles()){
+			Role role = roleService.findByName(roleDto.getName(), currentUser.getProvider());
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, roleDto.getName(), "name");
+            }
+            scriptInstance.getSourcingRoles().add(role);
+		}		
 
 		if (!StringUtils.isBlank(scriptInstanceDto.getType())) {
 			try {
@@ -94,6 +116,23 @@ public class ScriptInstanceApi extends BaseApi {
 				throw new InvalidEnumValue(ScriptTypeEnum.class.getName(), scriptInstanceDto.getType());
 			}
 		}		
+		if(!scriptInstanceService.isUserHasSourcingRole(scriptInstance, currentUser)){
+			throw new MeveoApiException("Invalid Sourcing Permission");
+		}
+		for(RoleDto roleDto : scriptInstanceDto.getExecutionRoles()){
+			Role role = roleService.findByName(roleDto.getName(), currentUser.getProvider());
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, roleDto.getName(), "name");
+            }
+            scriptInstance.getExecutionRoles().add(role);
+		}
+		for(RoleDto roleDto : scriptInstanceDto.getSourcingRoles()){
+			Role role = roleService.findByName(roleDto.getName(), currentUser.getProvider());
+            if (role == null) {
+                throw new EntityDoesNotExistsException(Role.class, roleDto.getName(), "name");
+            }
+            scriptInstance.getSourcingRoles().add(role);
+		}		
 		scriptInstance.setDescription(scriptInstanceDto.getDescription());
 		scriptInstance.setScript(scriptInstanceDto.getScript());
 		try {
@@ -110,7 +149,8 @@ public class ScriptInstanceApi extends BaseApi {
 		return result;
 	}
 
-	public ScriptInstanceDto find(String scriptInstanceCode, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+	public ScriptInstanceDto find(String scriptInstanceCode, Provider provider,User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+		ScriptInstanceDto scriptInstanceDtoResult = null;
 		if (StringUtils.isBlank(scriptInstanceCode)) {
 			missingParameters.add("scriptInstanceCode");
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
@@ -119,7 +159,11 @@ public class ScriptInstanceApi extends BaseApi {
 		if (scriptInstance == null) {
 			throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceCode);
 		}
-		return new ScriptInstanceDto(scriptInstance);
+		scriptInstanceDtoResult = new ScriptInstanceDto(scriptInstance);
+		if(!scriptInstanceService.isUserHasSourcingRole(scriptInstance, currentUser)){
+			scriptInstanceDtoResult.setScript("InvalidPermission");
+		}
+		return scriptInstanceDtoResult;
 	}
 
 	public void remove(String scriptInstanceCode, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {

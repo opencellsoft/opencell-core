@@ -55,7 +55,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 	private DualListModel<Role> execRolesDM;
 	private DualListModel<Role> sourcRolesDM;
 	
-    public DualListModel<Role> getExecRolesDM() {
+	public DualListModel<Role> getExecRolesDM() {
 
         if (execRolesDM == null) {
             List<Role> perksSource = roleService.getAllRoles(getCurrentProvider());
@@ -112,7 +112,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     @Override
     public ScriptInstance initEntity() {
         log.debug("start conversation id: {}", conversation.getId());
-        ScriptInstance scriptInstance = super.initEntity();
+        ScriptInstance scriptInstance = super.initEntity();		
         return scriptInstance;
     }
 
@@ -147,7 +147,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = getListViewName();
-		try {
+		try {			
 			entity = scriptInstanceService.saveOrUpdate(entity, getCurrentUser(), getCurrentProvider());
 			if(entity.getError().booleanValue()){
 				result =  "/pages/admin/scriptInstances/scriptInstanceDetail.xhtml?objectId="+entity.getId()+"&edit=true&faces-redirect=true";
@@ -162,11 +162,18 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 		return result;
 	}
 
-    public void execute() {
+    public String execute() {
         scriptInstanceService.test(getCurrentProvider(), entity.getCode(), null,getCurrentUser());
+        return  "/pages/admin/scriptInstances/scriptInstanceDetail.xhtml?objectId="+entity.getId()+"&edit=true&faces-redirect=true";
     }
 
     public List<String> getLogs() {
         return scriptInstanceService.getLogs(getCurrentProvider().getCode(), entity.getCode());
     }
+
+	public boolean isUserHasSourcingRole(ScriptInstance scriptInstance){		
+		return scriptInstanceService.isUserHasSourcingRole(scriptInstance, getCurrentUser());
+	}
+    
+    
 }

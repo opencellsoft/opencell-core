@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	 xmlns:p="http://primefaces.org/ui" 
 	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
@@ -28,7 +29,13 @@
 
 		<hftl:dataList label="#{messages['scriptInstance.title']}"
 			backingBean="#{scriptInstanceListBean}" sortBy="code">
-			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<p:column headerText="#{messages['businessEntity.code']}">
+                    <h:link outcome="scriptInstanceDetail" value="#{entity.code}" disabled="#{!scriptInstanceListBean.isUserHasSourcingRole(entity)}">
+                        <f:param name="objectId" value="#{entity.id}" />
+                        <f:param name="edit" value="true" />
+                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                    </h:link>
+                </p:column>
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('administration','administrationManagement')}" />

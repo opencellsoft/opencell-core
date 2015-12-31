@@ -120,7 +120,7 @@ public class ScriptInstanceWsImpl extends BaseWs implements ScriptInstanceWs {
 	public GetScriptInstanceResponseDto find(String scriptInstanceCode) {
 		GetScriptInstanceResponseDto result = new GetScriptInstanceResponseDto();
 		try {
-			result.setScriptInstance(scriptInstanceApi.find(scriptInstanceCode, getCurrentUser().getProvider()));
+			result.setScriptInstance(scriptInstanceApi.find(scriptInstanceCode, getCurrentUser().getProvider(),getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
