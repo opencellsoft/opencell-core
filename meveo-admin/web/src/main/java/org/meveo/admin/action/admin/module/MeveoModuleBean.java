@@ -412,6 +412,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	}
 
 	public synchronized void cropLogo() {
+		log.debug("start to crop logo, croppedImage is {}!",(croppedImage!=null));
 		if(croppedImage==null){
 			return;
 		}
@@ -420,16 +421,15 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			StringBuilder sb=new StringBuilder();
 			sb.append(croppedImage.getLeft()).append(",").append(croppedImage.getTop()).append(",").append(croppedImage.getLeft()+croppedImage.getWidth()).append(",").append(croppedImage.getTop()+croppedImage.getHeight());
 			entity.setCoordsLogo(sb.toString());
-			String originFilename=croppedImage.getOriginalFilename();
-			String formatname=originFilename.substring(originFilename.lastIndexOf(".")+1);
-			String filename=String.format("%s_crop.%s",entity.getCode(),formatname);
+//			String originFilename=croppedImage.getOriginalFilename();
+//			String formatname=originFilename.substring(originFilename.lastIndexOf(".")+1);
+			String filename=String.format("%s_crop.%s",entity.getCode(),entity.getLogoFormat());
+			log.debug("crop picture to {}",filename);
 			String destFilename = ModuleUtil.getPicturePath(entity)+File.separator+filename;
-			
 			imageOutput = new FileImageOutputStream(new File(destFilename));
 	        imageOutput.write(croppedImage.getBytes(), 0, croppedImage.getBytes().length);
 	        imageOutput.flush();
-			entity.setLogoFormat(formatname);
-			log.debug("crop picture to {}",filename);
+//			entity.setLogoFormat(formatname);
 			messages.info(new BundleKey("messages",
 					"meveoModule.cropPictureSuccess"));
 		} catch (Exception e) {

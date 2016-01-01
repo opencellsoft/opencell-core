@@ -98,7 +98,7 @@
 			<hftl:decorateFormField label="#{messages['meveoModule.logo']}" rendered="#{!meveoModuleBean.entity.transient}">
 				<h:panelGrid columns="2" id="logo">
 					<c:set var="pictureDestUrl1" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/${meveoModuleBean.entity.code}_crop.${meveoModuleBean.entity.logoFormat}"/>
-					<p:graphicImage url="${pictureDestUrl1}" rendered="#{not empty meveoModuleBean.entity.logoFormat}" cache="false">
+					<p:graphicImage url="${pictureDestUrl1}" rendered="#{not empty meveoModuleBean.entity.coordsLogo}" cache="false">
 						<f:attribute name="height" value="30"></f:attribute>
 						<f:attribute name="width" value="30"></f:attribute>
 					</p:graphicImage>  
@@ -153,7 +153,7 @@
             <ui:param name="buttons" value="true" />
 			<ui:define name="buttons">
 				<p:commandButton id="exportModuleButton" update=":#{p:component('meveoModuleDialog')}"
-					value="#{messages['meveoModule.exportModule']}" rendered="#{not empty meveoModuleBean.objectId}"
+					value="#{messages['meveoModule.exportModule']}" rendered="#{not meveoModuleBean.entity.transient}"
 					oncomplete="PF('meveoModuleDialog').show()">
 					<f:setPropertyActionListener value="#{null}" target="#{meveoModuleBean.meveoInstance}"/>
 				</p:commandButton>
@@ -163,7 +163,7 @@
 			header="#{messages['meveoModule.exportModule']}"
 			widgetVar="meveoModuleDialog" width="700" modal="true">
 			<hftl:decorateFormPanel formId="module"
-				rendered="#{not empty meveoModuleBean.entity}">
+				rendered="#{not meveoModuleBean.entity.transient}">
 				<ui:define name="fields">
 					<hftl:decorateFormField
 						label="#{messages['meveoModule.meveoInstance']}">
@@ -202,7 +202,7 @@
 					<c:set var="pictureSourceUrl" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/${meveoModuleBean.entity.code}.${meveoModuleBean.entity.logoFormat}"/>
 					<c:set var="pictureDestUrl2" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/${meveoModuleBean.entity.code}_crop.${meveoModuleBean.entity.logoFormat}"/>
 					<p:scrollPanel mode="native" style="width:400px;height:300px">
-						<p:imageCropper id="pic" value="#{meveoModuleBean.croppedImage}" image="${pictureSourceUrl}" minSize="30,30" maxSize="100,100" initialCoords="${empty meveoModuleBean.entity.coordsLogo?'0,0,30,30':meveoModuleBean.entity.coordsLogo}" />
+						<p:imageCropper id="pic" value="#{meveoModuleBean.croppedImage}" image="${pictureSourceUrl}" minSize="30,30" maxSize="100,100" initialCoords="${empty meveoModuleBean.entity.coordsLogo?'0,0,30,30':meveoModuleBean.entity.coordsLogo}" rendered="#{not empty meveoModuleBean.entity.logoFormat}"/>
 					</p:scrollPanel>
         			<p:graphicImage url="${pictureDestUrl2}" cache="false" rendered="#{not empty meveoModuleBean.entity.coordsLogo}"/>
     			</h:panelGrid>
