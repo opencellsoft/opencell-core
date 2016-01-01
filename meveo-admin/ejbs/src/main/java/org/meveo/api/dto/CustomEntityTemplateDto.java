@@ -115,4 +115,11 @@ public class CustomEntityTemplateDto extends BaseDto {
 
         return cet;
     }
+
+	@Override
+	public String toString() {
+		return "CustomEntityTemplateDto [code=" + code + ", name=" + name
+				+ ", description=" + description + ", fields=" + fields + "]";
+	}
+    
 }

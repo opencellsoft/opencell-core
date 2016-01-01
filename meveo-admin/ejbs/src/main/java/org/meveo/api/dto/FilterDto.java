@@ -58,5 +58,10 @@ public class FilterDto extends BaseDto {
 		dto.setInputXml(filter.getInputXml());
 		return dto;
 	}
+	@Override
+	public String toString() {
+		return "FilterDto [code=" + code + ", description=" + description
+				+ ", shared=" + shared + ", inputXml=" + inputXml + "]";
+	}
 	
 }

@@ -56,5 +56,11 @@ public class JobTriggerDto extends NotificationDto {
 			jobInstance=jobTrigger.getJobInstance().getCode();
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "JobTriggerDto [jobParams=" + jobParams + ", jobInstance="
+				+ jobInstance + "]";
+	}
 	
 }

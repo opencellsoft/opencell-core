@@ -95,6 +95,16 @@
 				field="description" id="description" maxlength="100" />
 			<hftl:formField label="#{messages['meveoModule.license']}" required="true"
 				field="license" id="license" isMessage="true"/>
+			<hftl:decorateFormField label="#{messages['meveoModule.logo']}" rendered="#{!meveoModuleBean.entity.transient}">
+				<h:panelGrid columns="2" id="logo">
+					<c:set var="pictureDestUrl1" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/${meveoModuleBean.entity.code}_crop.${meveoModuleBean.entity.logoFormat}"/>
+					<p:graphicImage url="${pictureDestUrl1}" rendered="#{not empty meveoModuleBean.entity.logoFormat}" cache="false">
+						<f:attribute name="height" value="30"></f:attribute>
+						<f:attribute name="width" value="30"></f:attribute>
+					</p:graphicImage>  
+					<p:commandButton value="#{messages['commons.upload']}" partialSubmit="true" process="@this" oncomplete="PF('uploadPictureDialog').show()" rendered="#{!meveoModuleBean.entity.transient}"></p:commandButton>
+				</h:panelGrid>
+			</hftl:decorateFormField>
 			<hftl:formField label="#{messages['enableEntity.disabled']}"
 				doNotShowOnNew="true" allowEdit="false" field="disabled"
 				isMessage="true" />
@@ -178,6 +188,29 @@
 						type="button" />
 				</ui:define>
 			</hftl:decorateFormPanel>
+		</p:dialog>
+		<p:dialog id="uploadPictureDialog" styleClass="confirm-dialog"
+			header="#{messages['meveoModule.uploadPicture.header']}"
+			widgetVar="uploadPictureDialog" width="700" modal="true" >
+			<h:form id="uploadPictureForm" enctype="multipart/form-data">
+				 <p:messages autoUpdate="true" />
+				 <div class="clearLeft">
+                    <p:fileUpload fileUploadListener="#{meveoModuleBean.handleFileUpload}" update="uploadPictureForm" multiple="false" mode="advanced"
+                        dragDropSupport="true" process="@this" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" auto="true"/>
+                </div>
+                <h:panelGrid columns="2" id="picture" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100">
+					<c:set var="pictureSourceUrl" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/${meveoModuleBean.entity.code}.${meveoModuleBean.entity.logoFormat}"/>
+					<c:set var="pictureDestUrl2" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/${meveoModuleBean.entity.code}_crop.${meveoModuleBean.entity.logoFormat}"/>
+					<p:scrollPanel mode="native" style="width:400px;height:300px">
+						<p:imageCropper id="pic" value="#{meveoModuleBean.croppedImage}" image="${pictureSourceUrl}" minSize="30,30" maxSize="100,100" initialCoords="${empty meveoModuleBean.entity.coordsLogo?'0,0,30,30':meveoModuleBean.entity.coordsLogo}" />
+					</p:scrollPanel>
+        			<p:graphicImage url="${pictureDestUrl2}" cache="false" rendered="#{not empty meveoModuleBean.entity.coordsLogo}"/>
+    			</h:panelGrid>
+                 <div class="clearLeft">
+                 	<p:commandButton id="cropButton" value="#{messages['meveoModule.crop']}" action="#{meveoModuleBean.cropLogo}"  update="uploadPictureForm moduleFormId:logo" icon="ui-icon-scissors"/>
+                 	<p:commandButton id="closeButton" value="#{messages['commons.close']}" onclick="PF('uploadPictureDialog').hide()" type="button"/>
+                 </div>
+			</h:form>
 		</p:dialog>
 	</ui:define>
 

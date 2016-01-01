@@ -1050,7 +1050,13 @@
 		<addForeignKeyConstraint baseColumnNames="role_id"
 			baseTableName="adm_script_sourc_role" constraintName="fk_role"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />		
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_role" />
+	</changeSet>
+	<changeSet id="#1103-20151224" author="TyshanShi">
+		<addColumn tableName="meveo_module">
+			<column name="LOGO_FORMAT" type="varchar(20)"></column>
+			<column name="COORDS_LOGO" type="varchar(255)"></column>
+		</addColumn>
 	</changeSet>
     
           

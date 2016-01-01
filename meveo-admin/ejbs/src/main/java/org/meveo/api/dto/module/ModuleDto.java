@@ -1,16 +1,27 @@
 package org.meveo.api.dto.module;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomEntityTemplateDto;
+import org.meveo.api.dto.CustomFieldTemplateDto;
+import org.meveo.api.dto.FilterDto;
+import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.job.JobInstanceDto;
+import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.notification.EmailNotificationDto;
+import org.meveo.api.dto.notification.JobTriggerDto;
+import org.meveo.api.dto.notification.NotificationDto;
+import org.meveo.api.dto.notification.WebhookNotificationDto;
+import org.meveo.model.admin.MeveoModule;
 import org.meveo.model.admin.ModuleLicenseEnum;
 
 /**
@@ -20,7 +31,7 @@ import org.meveo.model.admin.ModuleLicenseEnum;
  */
 @XmlRootElement(name = "Module")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ModuleDto extends BaseDto{
+public class ModuleDto extends BaseDataModelDto {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -28,18 +39,44 @@ public class ModuleDto extends BaseDto{
 	private String code;
 	@XmlAttribute(required=true)
 	private ModuleLicenseEnum license;
-	@XmlAttribute(required=true)
+	@XmlAttribute
 	private String description;
-	private Boolean disabled;
-	@XmlElementWrapper(name="moduleItems")
-	@XmlElement(name="ModuleItem")
-	private List<ModuleItemDto> moduleItems;
+	private String coordsLogo;
+	private String logoFormat;
+	private byte[] sourceFile;
+	private byte[] destFile;
+	
+	private List<CustomEntityTemplateDto> cetDtos;
+	private List<CustomFieldTemplateDto> cftDtos;
+	private List<FilterDto> filterDtos;
+	private List<JobInstanceDto> jobDtos;
+	private LinkedList<JobInstanceDto> jobNextDtos;
+	private List<ScriptInstanceDto> scriptDtos;
+	private List<NotificationDto> notificationDtos;
+	private List<TimerEntityDto> timerEntityDtos;
+	private List<EmailNotificationDto> emailNotifDtos;
+	private List<JobTriggerDto> jobTriggerDtos;
+	private List<WebhookNotificationDto> webhookNotifDtos;
+	private List<CounterTemplateDto> counterDtos;
+	
 	public ModuleDto(){}
-	public ModuleDto(String code,String description,ModuleLicenseEnum license,Boolean disabled){
-		this.code=code;
-		this.description=description;
-		this.license=license;
-		this.disabled=disabled;
+	public ModuleDto(MeveoModule meveoModule){
+		this.code=meveoModule.getCode();
+		this.description=meveoModule.getDescription();
+		this.license=meveoModule.getLicense();
+		this.coordsLogo=meveoModule.getCoordsLogo();
+		this.logoFormat=meveoModule.getLogoFormat();
+		this.cetDtos=new ArrayList<CustomEntityTemplateDto>();
+		this.cftDtos=new ArrayList<CustomFieldTemplateDto>();
+		this.filterDtos=new ArrayList<FilterDto>();
+		this.jobNextDtos=new LinkedList<JobInstanceDto>();
+		this.jobDtos=new ArrayList<JobInstanceDto>();
+		this.timerEntityDtos=new ArrayList<TimerEntityDto>();
+		this.scriptDtos=new ArrayList<ScriptInstanceDto>();
+		this.notificationDtos=new ArrayList<NotificationDto>();
+		this.emailNotifDtos=new ArrayList<EmailNotificationDto>();
+		this.jobTriggerDtos=new ArrayList<JobTriggerDto>();
+		this.webhookNotifDtos=new ArrayList<WebhookNotificationDto>();
 	}
 	public String getCode() {
 		return code;
@@ -54,29 +91,132 @@ public class ModuleDto extends BaseDto{
 		this.description = description;
 	}
 	
-	public Boolean getDisabled() {
-		return disabled;
-	}
-	public void setDisabled(Boolean disabled) {
-		this.disabled = disabled;
-	}
-	public List<ModuleItemDto> getModuleItems() {
-		return moduleItems;
-	}
-	public void setModuleItems(List<ModuleItemDto> moduleItems) {
-		this.moduleItems = moduleItems;
-	}
-	
 	public ModuleLicenseEnum getLicense() {
 		return license;
 	}
 	public void setLicense(ModuleLicenseEnum license) {
 		this.license = license;
 	}
-	@Override
-	public String toString() {
-		return "ModuleDto [code=" + code + ", description=" + description + ", diabled=" + disabled + ", license="+license+", moduleItems="
-				+ moduleItems + "]";
+	public byte[] getSourceFile() {
+		return sourceFile;
+	}
+	public void setSourceFile(byte[] sourceFile) {
+		this.sourceFile = sourceFile;
+	}
+	public byte[] getDestFile() {
+		return destFile;
+	}
+	public void setDestFile(byte[] destFile) {
+		this.destFile = destFile;
+	}
+	public String getCoordsLogo() {
+		return coordsLogo;
+	}
+	public void setCoordsLogo(String coordsLogo) {
+		this.coordsLogo = coordsLogo;
+	}
+	public List<CustomEntityTemplateDto> getCetDtos() {
+		return cetDtos;
+	}
+	public void setCetDtos(List<CustomEntityTemplateDto> cetDtos) {
+		this.cetDtos = cetDtos;
+	}
+	public List<CustomFieldTemplateDto> getCftDtos() {
+		return cftDtos;
+	}
+	public void setCftDtos(List<CustomFieldTemplateDto> cftDtos) {
+		this.cftDtos = cftDtos;
+	}
+	public List<FilterDto> getFilterDtos() {
+		return filterDtos;
+	}
+	public void setFilterDtos(List<FilterDto> filterDtos) {
+		this.filterDtos = filterDtos;
+	}
+	public List<JobInstanceDto> getJobDtos() {
+		return jobDtos;
+	}
+	public void setJobDtos(List<JobInstanceDto> jobDtos) {
+		this.jobDtos = jobDtos;
+	}
+	public List<ScriptInstanceDto> getScriptDtos() {
+		return scriptDtos;
+	}
+	public void setScriptDtos(List<ScriptInstanceDto> scriptDtos) {
+		this.scriptDtos = scriptDtos;
+	}
+	public List<NotificationDto> getNotificationDtos() {
+		return notificationDtos;
+	}
+	public void setNotificationDtos(List<NotificationDto> notificationDtos) {
+		this.notificationDtos = notificationDtos;
+	}
+	public List<TimerEntityDto> getTimerEntityDtos() {
+		return timerEntityDtos;
+	}
+	public void setTimerEntityDtos(List<TimerEntityDto> timerEntityDtos) {
+		this.timerEntityDtos = timerEntityDtos;
+	}
+	public List<EmailNotificationDto> getEmailNotifDtos() {
+		return emailNotifDtos;
+	}
+	public void setEmailNotifDtos(List<EmailNotificationDto> emailNotifDtos) {
+		this.emailNotifDtos = emailNotifDtos;
+	}
+	public List<JobTriggerDto> getJobTriggerDtos() {
+		return jobTriggerDtos;
+	}
+	public void setJobTriggerDtos(List<JobTriggerDto> jobTriggerDtos) {
+		this.jobTriggerDtos = jobTriggerDtos;
+	}
+	public List<WebhookNotificationDto> getWebhookNotifDtos() {
+		return webhookNotifDtos;
+	}
+	public void setWebhookNotifDtos(List<WebhookNotificationDto> webhookNotifDtos) {
+		this.webhookNotifDtos = webhookNotifDtos;
+	}
+	public String getLogoFormat() {
+		return logoFormat;
+	}
+	public void setLogoFormat(String logoFormat) {
+		this.logoFormat = logoFormat;
+	}
+	public List<CounterTemplateDto> getCounterDtos() {
+		return counterDtos;
+	}
+	public void setCounterDtos(List<CounterTemplateDto> counterDtos) {
+		this.counterDtos = counterDtos;
 	}
 	
+	public LinkedList<JobInstanceDto> getJobNextDtos() {
+		return jobNextDtos;
+	}
+	public void setJobNextDtos(LinkedList<JobInstanceDto> jobNextDtos) {
+		this.jobNextDtos = jobNextDtos;
+	}
+	@Override
+	public String toString() {
+		return "ModuleDto [code=" + code + ", license=" + license
+				+ ", description=" + description + ", coordsLogo=" + coordsLogo
+				+ ", logoFormat=" + logoFormat +", cetDtos=" + cetDtos
+				+ ", cftDtos=" + cftDtos + ", filterDtos=" + filterDtos
+				+ ", jobDtos=" + jobDtos + ", scriptDtos=" + scriptDtos
+				+ ", notificationDtos=" + notificationDtos
+				+ ", timerEntityDtos=" + timerEntityDtos + ", emailNotifDtos="
+				+ emailNotifDtos + ", jobTriggerDtos=" + jobTriggerDtos
+				+ ", webhookNotifDtos=" + webhookNotifDtos + ", counterDtos="
+				+ counterDtos + "]";
+	}
+	@Override
+	public Serializable getId() {
+		return this.code.hashCode();
+	}
+	@Override
+	public void setId(Long id) {
+		
+	}
+	@Override
+	public boolean isTransient() {
+		return true;
+	}
 }

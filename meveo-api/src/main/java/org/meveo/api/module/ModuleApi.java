@@ -7,32 +7,48 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.util.ModuleUtil;
 import org.meveo.api.BaseApi;
+import org.meveo.api.CustomEntityApi;
+import org.meveo.api.CustomFieldTemplateApi;
+import org.meveo.api.FilterApi;
+import org.meveo.api.ScriptInstanceApi;
+import org.meveo.api.dto.CustomEntityTemplateDto;
+import org.meveo.api.dto.CustomFieldTemplateDto;
+import org.meveo.api.dto.FilterDto;
+import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.job.JobInstanceDto;
+import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.module.ModuleDto;
-import org.meveo.api.dto.module.ModuleItemDto;
+import org.meveo.api.dto.notification.EmailNotificationDto;
+import org.meveo.api.dto.notification.JobTriggerDto;
+import org.meveo.api.dto.notification.NotificationDto;
+import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.job.JobInstanceApi;
+import org.meveo.api.job.TimerEntityApi;
+import org.meveo.api.notification.EmailNotificationApi;
+import org.meveo.api.notification.JobTriggerApi;
+import org.meveo.api.notification.NotificationApi;
+import org.meveo.api.notification.WebhookNotificationApi;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.MeveoModule;
 import org.meveo.model.admin.MeveoModuleItem;
 import org.meveo.model.admin.ModuleItemTypeEnum;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.filter.Filter;
-import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.notification.EmailNotification;
+import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.Notification;
-import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.notification.ScriptNotification;
+import org.meveo.model.notification.WebHook;
 import org.meveo.service.admin.impl.MeveoModuleService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.service.filter.FilterService;
-import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.notification.GenericNotificationService;
-import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
@@ -44,17 +60,28 @@ public class ModuleApi extends BaseApi {
 	@Inject
 	private MeveoModuleService meveoModuleService;
 	@Inject
-	private CustomEntityTemplateService customEntityTemplateService;
+	private CustomEntityApi customEntityApi;
 	@Inject
-	private CustomFieldTemplateService customFieldTemplateService;
+	private CustomFieldTemplateApi customFieldTemplateApi;
 	@Inject
-	private FilterService filterService;
+	private FilterApi filterApi;
 	@Inject
-	private ScriptInstanceService scriptInstanceService;
+	private ScriptInstanceApi scriptInstanceApi;
 	@Inject
-	private JobInstanceService jobInstanceService;
+	private JobInstanceApi jobInstanceApi;
 	@Inject
-	private GenericNotificationService notificationService;
+	private TimerEntityApi timerEntityApi;
+	
+	@Inject
+	private GenericNotificationService genericNotificationService;
+	@Inject
+	private NotificationApi notificationApi;
+	@Inject
+	private EmailNotificationApi emailNotificationApi;
+	@Inject
+	private JobTriggerApi jobTriggerApi;
+	@Inject
+	private WebhookNotificationApi webhookNotificationApi;
 
 	public void create(ModuleDto moduleDto, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(moduleDto.getCode()) || StringUtils.isBlank(moduleDto.getDescription())
@@ -76,93 +103,16 @@ public class ModuleApi extends BaseApi {
 		}
 		MeveoModule meveoModule = new MeveoModule();
 		meveoModule.setCode(moduleDto.getCode());
-		meveoModule.setDescription(moduleDto.getDescription());
-		meveoModule.setActive(true);
-		meveoModule.setLicense(moduleDto.getLicense());
-		List<ModuleItemDto> itemDtos = moduleDto.getModuleItems();
-		if (itemDtos != null) {
-			MeveoModuleItem moduleItem = null;
-			for (ModuleItemDto itemDto : itemDtos) {
-				if (itemDto.getItemType() == null) {
-					missingParameters.add("module item type is null");
-					throw new MissingParameterException(getMissingParametersExceptionMessage());
-				}
-				moduleItem = getModuleItemFromDto(itemDto, provider);
-				meveoModule.addModuleItem(moduleItem);
-			}
-		}
+		meveoModule=parseModuleFromDto(meveoModule,moduleDto,currentUser);
+		
 		meveoModuleService.create(meveoModule, currentUser, provider);
-	}
-
-	private MeveoModuleItem getModuleItemFromDto(ModuleItemDto itemDto, Provider provider)
-			throws EntityDoesNotExistsException {
-		MeveoModuleItem result = null;
-		switch (itemDto.getItemType()) {
-		case CET:
-			CustomEntityTemplate cet = customEntityTemplateService.findByCode(itemDto.getItemCode(), provider);
-			if (cet != null) {
-				result = new MeveoModuleItem(cet.getCode(), ModuleItemTypeEnum.CET);
-			} else {
-				throw new EntityDoesNotExistsException(CustomEntityTemplate.class, itemDto.getItemCode());
-			}
-			break;
-		case CFT:
-			CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(itemDto.getItemCode(),
-					itemDto.getAppliesTo(), provider);
-			if (cft != null) {
-				result = new MeveoModuleItem(cft.getCode(), cft.getAppliesTo(), ModuleItemTypeEnum.CFT);
-			} else {
-				throw new EntityDoesNotExistsException(CustomFieldTemplate.class, itemDto.getItemCode());
-			}
-			break;
-		case FILTER:
-			Filter filter = filterService.findByCode(itemDto.getItemCode(), provider);
-			if (filter != null) {
-				result = new MeveoModuleItem(filter.getCode(), ModuleItemTypeEnum.FILTER);
-			} else {
-				throw new EntityDoesNotExistsException(Filter.class, itemDto.getItemCode());
-			}
-			break;
-		case SCRIPT:
-			ScriptInstance script = scriptInstanceService.findByCode(itemDto.getItemCode(), provider);
-			if (script != null) {
-				result = new MeveoModuleItem(itemDto.getItemCode(), ModuleItemTypeEnum.SCRIPT);
-			} else {
-				throw new EntityDoesNotExistsException(ScriptInstance.class, itemDto.getItemCode());
-			}
-			break;
-		case JOBINSTANCE:
-			JobInstance job = jobInstanceService.findByCode(itemDto.getItemCode(), provider);
-			if (job != null) {
-				result = new MeveoModuleItem(itemDto.getItemCode(), ModuleItemTypeEnum.JOBINSTANCE);
-			} else {
-				throw new EntityDoesNotExistsException(JobInstance.class, itemDto.getItemCode());
-			}
-			break;
-		case NOTIFICATION:
-			Notification notification = notificationService.findByCode(itemDto.getItemCode(), provider);
-			if (notification != null) {
-				result = new MeveoModuleItem(itemDto.getItemCode(), ModuleItemTypeEnum.NOTIFICATION);
-			} else {
-				throw new EntityDoesNotExistsException(Notification.class, itemDto.getItemCode());
-			}
-			break;
-		default:
-		}
-		return result;
 	}
 
 	public void update(ModuleDto moduleDto, User currentUser) throws MeveoApiException {
 		if (StringUtils.isBlank(moduleDto.getCode()) && StringUtils.isBlank(moduleDto.getDescription())
-				|| StringUtils.isBlank(moduleDto.getDisabled()) || StringUtils.isBlank(moduleDto.getLicense())) {
+				||  StringUtils.isBlank(moduleDto.getLicense())) {
 			if (StringUtils.isBlank(moduleDto.getCode())) {
 				missingParameters.add("module code is null");
-			}
-			if (StringUtils.isBlank(moduleDto.getDescription())) {
-				missingParameters.add("module description is null");
-			}
-			if (StringUtils.isBlank(moduleDto.getDisabled())) {
-				missingParameters.add("module disabled is null");
 			}
 			if (StringUtils.isBlank(moduleDto.getLicense())) {
 				missingParameters.add("module license is null");
@@ -182,33 +132,7 @@ public class ModuleApi extends BaseApi {
 					itr.remove();
 				}
 			}
-			meveoModule=meveoModuleService.update(meveoModule);
-			meveoModule.setDescription(moduleDto.getDescription());
-			meveoModule.setDisabled(moduleDto.getDisabled());
-			meveoModule.setLicense(moduleDto.getLicense());
-			List<MeveoModuleItem> temps = new ArrayList<MeveoModuleItem>();
-			if (!StringUtils.isBlank(moduleDto.getModuleItems()) && moduleDto.getModuleItems().size() > 0) {
-				MeveoModuleItem moduleItem = null;
-				for (ModuleItemDto itemDto : moduleDto.getModuleItems()) {
-					if (StringUtils.isBlank(itemDto.getItemType())) {
-						missingParameters.add("module item type is null");
-						throw new MissingParameterException(getMissingParametersExceptionMessage());
-					}
-					moduleItem = getModuleItemFromDto(itemDto, provider);
-					if (!meveoModule.getModuleItems().contains(moduleItem)) {
-						meveoModule.addModuleItem(moduleItem);
-					}
-					temps.add(moduleItem);
-				}
-			}
-			Iterator<MeveoModuleItem> it = meveoModule.getModuleItems().iterator();
-			while (it.hasNext()) {
-				MeveoModuleItem i = it.next();
-				if (!temps.contains(i)) {
-					i.setMeveoModule(null);
-					it.remove();
-				}
-			}
+			meveoModule=parseModuleFromDto(meveoModule,moduleDto,currentUser);
 			meveoModuleService.update(meveoModule, currentUser);
 		}
 	}
@@ -222,49 +146,27 @@ public class ModuleApi extends BaseApi {
 		meveoModuleService.remove(meveoModule);
 	}
 
-	public List<ModuleDto> list(User currentUser) throws EntityDoesNotExistsException {
+	public List<ModuleDto> list(User currentUser) throws MeveoApiException {
 		Provider provider = currentUser.getProvider();
 		List<MeveoModule> meveoModules = meveoModuleService.list(provider);
 		List<ModuleDto> result = new ArrayList<ModuleDto>();
 		ModuleDto moduleDto = null;
 		for (MeveoModule meveoModule : meveoModules) {
-			moduleDto = new ModuleDto(meveoModule.getCode(), meveoModule.getDescription(), meveoModule.getLicense(),
-					meveoModule.isDisabled());
-			List<MeveoModuleItem> moduleItems = meveoModule.getModuleItems();
-			if (moduleItems != null && moduleItems.size() > 0) {
-				List<ModuleItemDto> itemDtos = new ArrayList<ModuleItemDto>();
-				ModuleItemDto itemDto = null;
-				for (MeveoModuleItem moduleItem : moduleItems) {
-					itemDto = new ModuleItemDto(moduleItem.getItemCode(), moduleItem.getAppliesTo(),
-							moduleItem.getItemType());
-					itemDtos.add(itemDto);
-				}
-				moduleDto.setModuleItems(itemDtos);
-			}
+			moduleDto = new ModuleDto(meveoModule);
+			moduleDto=parseModule2Dto(meveoModule, moduleDto, currentUser);
 			result.add(moduleDto);
 		}
 		return result;
 	}
 
-	public ModuleDto get(String code, User currentUser) throws EntityDoesNotExistsException {
+	public ModuleDto get(String code, User currentUser) throws MeveoApiException {
 		Provider provider = currentUser.getProvider();
 		MeveoModule meveoModule = meveoModuleService.findByCode(code, provider);
 		if (meveoModule == null) {
 			throw new EntityDoesNotExistsException(MeveoModule.class, code);
 		}
-		ModuleDto moduleDto = new ModuleDto(meveoModule.getCode(), meveoModule.getDescription(),
-				meveoModule.getLicense(), meveoModule.isDisabled());
-		List<MeveoModuleItem> moduleItems = meveoModule.getModuleItems();
-		if (moduleItems != null && moduleItems.size() > 0) {
-			List<ModuleItemDto> itemDtos = new ArrayList<ModuleItemDto>();
-			ModuleItemDto itemDto = null;
-			for (MeveoModuleItem moduleItem : moduleItems) {
-				itemDto = new ModuleItemDto(moduleItem.getItemCode(), moduleItem.getAppliesTo(),
-						moduleItem.getItemType());
-				itemDtos.add(itemDto);
-			}
-			moduleDto.setModuleItems(itemDtos);
-		}
+		ModuleDto moduleDto = new ModuleDto(meveoModule);
+		moduleDto=parseModule2Dto(meveoModule,moduleDto,currentUser);
 		return moduleDto;
 	}
 
@@ -277,6 +179,195 @@ public class ModuleApi extends BaseApi {
 			// update
 			update(postData, currentUser);
 		}
-
+	}
+	private ModuleDto parseModule2Dto(MeveoModule meveoModule,
+			ModuleDto moduleDto,User currentUser) throws MeveoApiException {
+		if(!StringUtils.isBlank(meveoModule.getLogoFormat())){
+			byte[] sourceFile=readModulePicture(meveoModule, String.format("%s.%s",meveoModule.getCode(),meveoModule.getLogoFormat()));
+			moduleDto.setSourceFile(sourceFile);
+			byte[] destFile=readModulePicture(meveoModule, String.format("%s_crop.%s",meveoModule.getCode(),meveoModule.getLogoFormat()));
+			moduleDto.setDestFile(destFile);
+		}
+		List<MeveoModuleItem> items=meveoModule.getModuleItems();
+		if(items!=null&&items.size()>0){
+			Provider provider=currentUser.getProvider();
+			for(MeveoModuleItem item:items){
+				switch(item.getItemType()){
+				case CET:
+					CustomEntityTemplateDto cetDto=customEntityApi.findEntityTemplate(item.getItemCode(), provider);
+					moduleDto.getCetDtos().add(cetDto);
+					break;
+				case CFT:
+					CustomFieldTemplateDto cftDto=customFieldTemplateApi.find(item.getItemCode(), item.getAppliesTo(), provider);
+					moduleDto.getCftDtos().add(cftDto);
+					break;
+				case FILTER:
+					FilterDto filterDto=filterApi.findFilter(item.getItemCode(), provider);
+					moduleDto.getFilterDtos().add(filterDto);
+					break;
+				case SCRIPT:
+					ScriptInstanceDto scriptDto=scriptInstanceApi.find(item.getItemCode(), provider,currentUser); 
+					moduleDto.getScriptDtos().add(scriptDto);
+					break;
+				case JOBINSTANCE:
+					moduleDto=getJobInstanceDto(item.getItemCode(), currentUser, moduleDto);
+					break;
+				case NOTIFICATION:
+					Notification notification=genericNotificationService.findByCode(item.getItemCode(), provider);
+					if(notification!=null){
+						if(notification instanceof ScriptNotification){
+							NotificationDto notificationDto=notificationApi.find(item.getItemCode(), provider);
+							moduleDto.getNotificationDtos().add(notificationDto);
+							ScriptInstanceDto scriptInstanceDto=scriptInstanceApi.find(notificationDto.getScriptInstanceCode(), provider,currentUser);
+							moduleDto.getScriptDtos().add(scriptInstanceDto);
+						}else if(notification instanceof EmailNotification){
+							EmailNotificationDto emailNotifiDto=emailNotificationApi.find(item.getItemCode(), provider);
+							moduleDto.getEmailNotifDtos().add(emailNotifiDto);
+						}else if(notification instanceof JobTrigger){
+							JobTriggerDto jobTriggerDto=jobTriggerApi.find(item.getItemCode(), provider);
+							moduleDto.getJobTriggerDtos().add(jobTriggerDto);
+						}else if(notification instanceof WebHook){
+							WebhookNotificationDto webhookNotifDto=webhookNotificationApi.find(item.getItemCode(), provider);
+							moduleDto.getWebhookNotifDtos().add(webhookNotifDto);
+						}
+						CounterTemplate counter=notification.getCounterTemplate();
+						if(!StringUtils.isBlank(counter)){
+							CounterTemplateDto counterDto=new CounterTemplateDto(counter);
+							moduleDto.getCounterDtos().add(counterDto);
+						}
+					}
+					break;
+				default:
+				}
+			}
+		}
+		return moduleDto;
+	}
+	private ModuleDto getJobInstanceDto(String jobInstanceCode,User currentUser,ModuleDto moduleDto) throws MeveoApiException{
+		if(jobInstanceCode==null){
+			return moduleDto;
+		}
+		JobInstanceDto jobInstanceDto=jobInstanceApi.find(jobInstanceCode, currentUser.getProvider());
+		moduleDto.getJobDtos().add(jobInstanceDto);
+		if(StringUtils.isBlank(jobInstanceDto.getTimerCode())){
+			TimerEntityDto timerDto=timerEntityApi.find(jobInstanceDto.getTimerCode(), currentUser);
+			moduleDto.getTimerEntityDtos().add(timerDto);
+		}
+		String jobInstanceNextCode=jobInstanceDto.getFollowingJob();
+		return getJobInstanceDto(jobInstanceNextCode,currentUser,moduleDto);
+	}
+	private MeveoModule parseModuleFromDto(MeveoModule meveoModule,ModuleDto moduleDto,User currentUser) throws MeveoApiException{
+		meveoModule.setCode(moduleDto.getCode());
+		meveoModule.setDescription(moduleDto.getDescription());
+		meveoModule.setLicense(moduleDto.getLicense());
+		meveoModule.setCoordsLogo(moduleDto.getCoordsLogo());
+		meveoModule.setLogoFormat(moduleDto.getLogoFormat());
+		if(StringUtils.isBlank(meveoModule.getLogoFormat())&&!meveoModule.isTransient()){
+			removeModulePicture(meveoModule, String.format("%s.%s",moduleDto.getCode(),meveoModule.getLogoFormat()));
+			removeModulePicture(meveoModule, String.format("%s_crop.%s",moduleDto.getCode(),meveoModule.getLogoFormat()));
+		}
+		if(!StringUtils.isBlank(moduleDto.getLogoFormat())&&!StringUtils.isBlank(moduleDto.getSourceFile())){
+			writeModulePicture(currentUser,String.format("%s.%s", moduleDto.getCode(),moduleDto.getLogoFormat()),moduleDto.getSourceFile());
+		}
+		if(!StringUtils.isBlank(moduleDto.getLogoFormat())&&!StringUtils.isBlank(moduleDto.getDestFile())){
+			writeModulePicture(currentUser,String.format("%s_crop.%s", moduleDto.getCode(),moduleDto.getLogoFormat()),moduleDto.getDestFile());
+		}
+		MeveoModuleItem item=null;
+		if(moduleDto.getCetDtos()!=null){
+			for(CustomEntityTemplateDto dto:moduleDto.getCetDtos()){
+				customEntityApi.createOrUpdateEntityTemplate(dto, currentUser);
+				item=new MeveoModuleItem(dto.getCode(),ModuleItemTypeEnum.CET);
+				meveoModule.addModuleItem(item);
+			}
+		}
+		if(moduleDto.getCftDtos()!=null){
+			for(CustomFieldTemplateDto dto:moduleDto.getCftDtos()){
+				customFieldTemplateApi.createOrUpdate(dto, currentUser, null);
+				item=new MeveoModuleItem(dto.getCode(),dto.getAppliesTo(),ModuleItemTypeEnum.CFT);
+				meveoModule.addModuleItem(item);
+			}
+		}
+		if(moduleDto.getFilterDtos()!=null){
+			for(FilterDto dto:moduleDto.getFilterDtos()){
+				filterApi.createOrUpdate(dto, currentUser);
+				item=new MeveoModuleItem(dto.getCode(),ModuleItemTypeEnum.FILTER);
+				meveoModule.addModuleItem(item);
+			}
+		}
+		if(moduleDto.getTimerEntityDtos()!=null){
+			for(TimerEntityDto dto:moduleDto.getTimerEntityDtos()){
+				timerEntityApi.createOrUpdate(dto, currentUser);
+			}
+		}
+		if(moduleDto.getJobNextDtos()!=null){
+			for(JobInstanceDto dto:moduleDto.getJobNextDtos()){
+				jobInstanceApi.createOrUpdate(dto, currentUser);
+			}
+		}
+		if(moduleDto.getJobDtos()!=null){
+			for(JobInstanceDto dto:moduleDto.getJobDtos()){
+				jobInstanceApi.createOrUpdate(dto, currentUser);
+				item=new MeveoModuleItem(dto.getCode(),ModuleItemTypeEnum.JOBINSTANCE);
+				meveoModule.addModuleItem(item);
+			}
+		}
+		if(moduleDto.getScriptDtos()!=null){
+			for(ScriptInstanceDto dto:moduleDto.getScriptDtos()){
+				scriptInstanceApi.createOrUpdate(dto, currentUser);
+				item=new MeveoModuleItem(dto.getCode(),ModuleItemTypeEnum.SCRIPT);
+				meveoModule.addModuleItem(item);
+			}
+		}
+		if(moduleDto.getNotificationDtos()!=null){
+			for(NotificationDto dto:moduleDto.getNotificationDtos()){
+				notificationApi.createOrUpdate(dto, currentUser);
+				item=new MeveoModuleItem(dto.getCode(),ModuleItemTypeEnum.NOTIFICATION);
+				meveoModule.addModuleItem(item);
+			}
+		}
+		if(moduleDto.getEmailNotifDtos()!=null){
+			for(EmailNotificationDto dto:moduleDto.getEmailNotifDtos()){
+				emailNotificationApi.createOrUpdate(dto, currentUser);
+				item=new MeveoModuleItem(dto.getCode(),ModuleItemTypeEnum.NOTIFICATION);
+				meveoModule.addModuleItem(item);
+			}
+		}
+		if(moduleDto.getJobTriggerDtos()!=null){
+			for(JobTriggerDto dto:moduleDto.getJobTriggerDtos()){
+				jobTriggerApi.createOrUpdate(dto, currentUser);
+				item=new MeveoModuleItem(dto.getCode(),ModuleItemTypeEnum.NOTIFICATION);
+				meveoModule.addModuleItem(item);
+			}
+		}
+		if(moduleDto.getWebhookNotifDtos()!=null){
+			for(WebhookNotificationDto dto:moduleDto.getWebhookNotifDtos()){
+				webhookNotificationApi.createOrUpdate(dto, currentUser);
+				item=new MeveoModuleItem(dto.getCode(),ModuleItemTypeEnum.NOTIFICATION);
+				meveoModule.addModuleItem(item);
+			}
+		}
+		return meveoModule;
+	}
+	private void writeModulePicture(User currentUser,String filename,byte[] fileData){
+		try{
+			ModuleUtil.writeModulePicture(currentUser.getProvider().getCode(), filename, fileData);
+		}catch(Exception e){
+			log.error("error when export module picture {}, info {}",filename,e.getMessage(),e);
+		}
+	}
+	private void removeModulePicture(MeveoModule meveoModule,String filename){
+		try{
+			ModuleUtil.removeModulePicture(meveoModule, filename);
+		}catch(Exception e){
+			log.error("error when delete module picture {}, info {}",filename,e.getMessage(),e);
+		}
+	}
+	private byte[] readModulePicture(MeveoModule meveoModule,String filename){
+		try{
+			return ModuleUtil.readModulePicture(meveoModule, filename);
+		}catch(Exception e){
+			log.error("error when read module picture {}, info {}",filename,e.getMessage(),e);
+		}
+		return null;
 	}
 }

@@ -16,7 +16,6 @@
  */
 package org.meveo.service.admin.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -29,10 +28,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.meveo.admin.util.ModuleUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.BaseDto;
@@ -43,17 +44,16 @@ import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.module.ModuleDto;
-import org.meveo.api.dto.module.ModuleItemDto;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
-import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.admin.MeveoModule;
 import org.meveo.model.admin.MeveoModuleItem;
+import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -145,48 +145,58 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 				
 		} catch (Exception e) {
 			log.error("Fail to communicate {}. Reason {}", meveoInstance.getCode(),
-					(e == null ? e.getClass().getSimpleName() : e.getMessage()));
-			throw new MeveoApiException("Failed to communicate " + meveoInstance.getCode() + ". Error "
+					(e == null ? e.getClass().getSimpleName() : e.getMessage()),e);
+			throw new MeveoApiException("Fail to communicate " + meveoInstance.getCode() + ". Error "
 					+ (e == null ? e.getClass().getSimpleName() : e.getMessage()));
 		}
 	}
 
 	/**
-	 * export meveo module with items to remote meveo instance
-	 * @param entity
+	 * export meveo module with DTO items to remote meveo instance
+	 * @param module
 	 * @param meveoInstance
 	 * @throws MeveoApiException
 	 * @throws RemoteAuthenticationException
 	 */
-	public void exportModule2MeveoInstance(MeveoModule entity, MeveoInstance meveoInstance)
+	public void exportModule2MeveoInstance(MeveoModule module, MeveoInstance meveoInstance,User currentUser)
 			throws MeveoApiException, RemoteAuthenticationException {
-		log.debug("export module {} to {}", entity, meveoInstance);
-		if (meveoInstance != null) {
-			try {
-				exportModuleItems(meveoInstance, entity.getModuleItems());
-
-				ModuleDto moduleDto = new ModuleDto(entity.getCode(), entity.getDescription(), entity.getLicense(),
-						entity.isDisabled());
-				moduleDto.setModuleItems(new ArrayList<ModuleItemDto>());
-				ModuleItemDto itemDto = null;
-				for (MeveoModuleItem item : entity.getModuleItems()) {
-					itemDto = new ModuleItemDto(item.getItemCode(), item.getAppliesTo(), item.getItemType());
-					moduleDto.getModuleItems().add(itemDto);
-				}
-
-				exportDtoRSCall("api/rest/module/createOrUpdate",meveoInstance,moduleDto);
-			} catch (Exception e) {
-				log.error("Error when export module {} to {}. Error {}", entity.getCode(), meveoInstance.getCode(),
-						(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
-				throw new MeveoApiException(
-						"Fail to communicte " + meveoInstance.getCode() + ". Error " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+		log.debug("export module {} to {}", module, meveoInstance);
+		final String url="api/rest/module/createOrUpdate";
+		
+		try {
+			ModuleDto moduleDto = exportModuleDto(module,currentUser);
+			log.debug("export module dto {}",moduleDto);
+			Response response=exportDto2MeveoInstance(url,meveoInstance,moduleDto);
+			ActionStatus actionStatus = response.readEntity(ActionStatus.class);
+			log.debug("response {}", actionStatus);
+			if (actionStatus==null||ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+				throw new MeveoApiException("Code "+ actionStatus.getErrorCode() + ", info "+ actionStatus.getMessage());
 			}
+		} catch (Exception e) {
+			log.error("Error when export module {} to {}. Reason {}", module.getCode(), meveoInstance.getCode(),
+					(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
+			throw new MeveoApiException(
+					"Fail to communicate " + meveoInstance.getCode() + ". Error " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
 		}
 	}
 
-	private void exportModuleItems(MeveoInstance meveoInstance, List<MeveoModuleItem> moduleItems) throws Exception{
+	private ModuleDto exportModuleDto(MeveoModule module,User currentUser){
+		ModuleDto moduleDto=new ModuleDto(module);
+		if(StringUtils.isNotBlank(module.getLogoFormat())){
+			String source=null;
+			String dest=null;
+			try{
+				source=String.format("%s.%s", moduleDto.getCode(),module.getLogoFormat());
+				dest=String.format("%s_crop.%s", moduleDto.getCode(),module.getLogoFormat());
+				moduleDto.setSourceFile(ModuleUtil.readModulePicture(module,source));
+				moduleDto.setDestFile(ModuleUtil.readModulePicture(module, dest));
+			}catch(Exception e){
+				log.error("Failed to read module files {}, info {}",source+","+dest,e.getMessage(),e);
+			}
+		}
+		List<MeveoModuleItem> moduleItems=module.getModuleItems();
 		if (moduleItems == null || moduleItems.size() == 0) {
-			return;
+			return moduleDto;
 		}
 		for (MeveoModuleItem item : moduleItems) {
 			switch (item.getItemType()) {
@@ -195,10 +205,10 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 						this.getCurrentProvider());
 				if (customEntityTemplate != null) {
 					Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-							.findByAppliesTo(customEntityTemplate.getCftPrefix(), getCurrentProvider());
+							.findByAppliesTo(customEntityTemplate.getCftPrefix(), currentUser.getProvider());
 					CustomEntityTemplateDto dto = CustomEntityTemplateDto.toDTO(customEntityTemplate,
 							customFieldTemplates != null ? customFieldTemplates.values() : null);
-					exportDtoRSCall("api/rest/customEntityTemplate/createOrUpdate", meveoInstance, dto);
+					moduleDto.getCetDtos().add(dto);
 				} 
 				break;
 			case CFT:
@@ -206,46 +216,47 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 						this.getCurrentProvider());
 				if (customFieldTemplate != null) {
 					CustomFieldTemplateDto dto = new CustomFieldTemplateDto(customFieldTemplate);
-					exportDtoRSCall("api/rest/customFieldTemplate/createOrUpdate", meveoInstance, dto);
+					moduleDto.getCftDtos().add(dto);
 				} 
 				break;
 			case FILTER:
 				Filter filter = filterService.findByCode(item.getItemCode(), this.getCurrentProvider());
 				if (filter != null) {
 					FilterDto dto = FilterDto.parseDto(filter);
-					exportDtoRSCall("api/rest/filter/createOrUpdate", meveoInstance, dto);
+					moduleDto.getFilterDtos().add(dto);
 				} 
 				break;
 			case JOBINSTANCE:
 				JobInstance jobInstance = jobInstanceService.findByCode(item.getItemCode(), this.getCurrentProvider());
 				if (jobInstance != null) {
-					exportJobInstance(meveoInstance, jobInstance);
+					moduleDto=exportJobInstance(jobInstance,moduleDto,false);
 				} 
 				break;
 			case NOTIFICATION:
 				Notification notification = genericNotificationService.findByCode(item.getItemCode(),
 						getCurrentProvider());
+				if(notification==null){
+					break;
+				}
 				if(notification.getScriptInstance()!=null){
-					String scriptUrl="api/rest/scriptInstance/createOrUpdate";
 					ScriptInstance scriptInstance=notification.getScriptInstance();
 					ScriptInstanceDto dto=new ScriptInstanceDto(scriptInstance);
-					exportDtoRSCallScriptInstance(scriptUrl,meveoInstance,dto);
+					moduleDto.getScriptDtos().add(dto);
 				}
 				
 				if (notification instanceof EmailNotification) {
 					EmailNotificationDto dto = new EmailNotificationDto((EmailNotification) notification);
-					exportDtoRSCall("api/rest/notification/email/createOrUpdate", meveoInstance, dto);
+					moduleDto.getEmailNotifDtos().add(dto);
 				} else if (notification instanceof JobTrigger) {
-					exportJobInstance(meveoInstance, ((JobTrigger)notification).getJobInstance());
+					exportJobInstance(((JobTrigger)notification).getJobInstance(),moduleDto,true);
 					JobTriggerDto dto = new JobTriggerDto((JobTrigger) notification);
-					exportDtoRSCall("api/rest/notification/jobTrigger/createOrUpdate", meveoInstance,
-							dto);
+					moduleDto.getJobTriggerDtos().add(dto);
 				} else if (notification instanceof ScriptNotification) {
 					NotificationDto dto = new NotificationDto(notification);
-					exportDtoRSCall("api/rest/notification/createOrUpdate", meveoInstance, dto);
+					moduleDto.getNotificationDtos().add(dto);
 				} else if (notification instanceof WebHook) {
 					WebhookNotificationDto dto = new WebhookNotificationDto((WebHook) notification);
-					exportDtoRSCall("api/rest/notification/webhook/createOrUpdate", meveoInstance, dto);
+					moduleDto.getWebhookNotifDtos().add(dto);
 				}
 				break;
 			case SCRIPT:
@@ -253,12 +264,13 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 						getCurrentProvider());
 				if (scriptInstance != null) {
 					ScriptInstanceDto dto = new ScriptInstanceDto(scriptInstance);
-					exportDtoRSCallScriptInstance("api/rest/scriptInstance/createOrUpdate", meveoInstance, dto);
+					moduleDto.getScriptDtos().add(dto);
 				} 
 				break;
 			default:
 			}
 		}
+		return moduleDto;
 	}
 
 	/**
@@ -268,24 +280,32 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 	 * @return
 	 * @throws MeveoApiException
 	 */
-	private boolean exportJobInstance(MeveoInstance meveoInstance, JobInstance jobInstance) throws MeveoApiException{
-		JobInstance nextJobInstance = jobInstance.getFollowingJob();
-		if (nextJobInstance != null) {
-			exportJobInstance(meveoInstance, nextJobInstance);
+	private ModuleDto exportJobInstance(JobInstance jobInstance,ModuleDto moduleDto, boolean nextJob){
+		if(jobInstance==null){
+			return moduleDto;
 		}
+		
 		if(jobInstance.getTimerEntity()!=null){
 			TimerEntity timerEntity=jobInstance.getTimerEntity();
 			TimerEntityDto timerDto=new TimerEntityDto(timerEntity);
-			exportDtoRSCall("api/rest/timerEntity/createOrUpdate",meveoInstance,timerDto);
+			moduleDto.getTimerEntityDtos().add(timerDto);
 		}
 		Map<String, List<CustomFieldInstance>> cfis = customFieldInstanceService
 				.getCustomFieldInstances(jobInstance);
 		JobInstanceDto dto = new JobInstanceDto(jobInstance, cfis);
-		return exportDtoRSCall("api/rest/jobInstance/createOrUpdate", meveoInstance, dto);
+		if(nextJob){
+			moduleDto.getJobNextDtos().addFirst(dto);
+		}else{
+			moduleDto.getJobDtos().add(dto);
+		}
+		
+		JobInstance nextJobInstance = jobInstance.getFollowingJob();
+		
+		return exportJobInstance(nextJobInstance,moduleDto,true);
 	}
 	
 	/**
-	 * export dto to remote meveo instance
+	 * export module dto to remote meveo instance
 	 * @param url
 	 * @param meveoInstance
 	 * @param dto
@@ -314,48 +334,8 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 			}
 			return response;
 		} catch(Exception e){
-			log.error("Fail to communicate {}. Reason {}", meveoInstance.getCode(),(e == null ? e.getClass().getSimpleName() : e.getMessage()));
-			throw new MeveoApiException("Failed to communicate " + meveoInstance.getCode() + ". Error "
-				+ (e == null ? e.getClass().getSimpleName() : e.getMessage()));
+			log.error("Fail to communicate {}. Reason {}", meveoInstance.getCode(),(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()),e);
+			throw new MeveoApiException("Failed to communicate " + meveoInstance.getCode() + ". Error "+  e.getMessage());
 		}
-	}
-
-	/**
-	 * call a RS client with dto to meveo instance and test actionStatus is success
-	 * @param url
-	 * @param meveoInstance
-	 * @param dto
-	 * @return
-	 * @throws MeveoApiException
-	 */
-	private boolean exportDtoRSCall(String url, MeveoInstance meveoInstance,BaseDto dto) throws MeveoApiException{
-		Response response=exportDto2MeveoInstance(url, meveoInstance, dto);
-		ActionStatus actionStatus = response.readEntity(ActionStatus.class);
-		log.debug("response {}", actionStatus);
-		if (actionStatus==null||ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
-			throw new MeveoApiException("Code "
-					+ actionStatus.getErrorCode() + ", info "
-					+ actionStatus.getMessage());
-		}
-		return true;
-	}
-	/**
-	 * call a RS client with dto to meveo instance for script instance and test scriptInstanceResponse is success
-	 * @param url
-	 * @param meveoInstance
-	 * @param dto 
-	 * @return
-	 * @throws MeveoApiException
-	 */
-	private boolean exportDtoRSCallScriptInstance(String url, MeveoInstance meveoInstance,ScriptInstanceDto dto) throws MeveoApiException{
-		Response response=exportDto2MeveoInstance(url, meveoInstance, dto);
-		ScriptInstanceReponseDto responseDto = response.readEntity(ScriptInstanceReponseDto.class);
-		log.debug("response {}", responseDto);
-		if (responseDto==null||ActionStatusEnum.SUCCESS != responseDto.getActionStatus().getStatus()) {
-			throw new MeveoApiException("Code "
-					+ responseDto.getActionStatus().getErrorCode() + ", info "
-					+ responseDto.getActionStatus().getMessage());
-		}
-		return true;
 	}
 }

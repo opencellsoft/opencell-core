@@ -4,6 +4,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.FilterDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -48,4 +49,21 @@ public class FilterApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
+	public FilterDto findFilter(String code, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        Filter filter = filterService.findByCode(code, provider);
+
+        if (filter == null) {
+            throw new EntityDoesNotExistsException(Filter.class, code);
+        }
+
+        return FilterDto.parseDto(filter);
+    }
+
 }
