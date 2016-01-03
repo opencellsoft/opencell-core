@@ -20,12 +20,15 @@ import java.io.File;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -106,9 +109,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	TransformerFactory transfac = TransformerFactory.newInstance();
 
-	// private static Logger log =
-	// LoggerFactory.getLogger(XMLInvoiceCreator.class);
-
+//	 private static Logger log = LoggerFactory.getLogger(XMLInvoiceCreator.class);
+	
+	private static DateFormat DEFAULT_DATE_FORMAT = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
+	private static String DEFAULT_DATE_PATTERN = ((SimpleDateFormat)DEFAULT_DATE_FORMAT).toLocalizedPattern();
+	
 	public void createXMLInvoiceAdjustment(Long invoiceId, File billingRundir) throws BusinessException {
 		createXMLInvoice(invoiceId, billingRundir, true);
 	}
@@ -120,8 +125,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	public void createXMLInvoice(Long invoiceId, File billingRundir, boolean isInvoiceAdjustment)
 			throws BusinessException {
-		// log.debug("creating xml invoice...");
-
+//		 log.debug("creating xml invoice... using date pattern: " + DEFAULT_DATE_PATTERN);
+		 
 		try {
 			Invoice invoice = findById(invoiceId);
 			getEntityManager().refresh(invoice);
@@ -313,11 +318,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			addNameAndAdress(billingAccount, doc, billingAccountTag, billingAccountLanguage);
 
 			addPaymentInfo(billingAccount, doc, billingAccountTag);
-
+			
 			if (invoice.getInvoiceDate() != null) {
 				Element invoiceDate = doc.createElement("invoiceDate");
 				Text invoiceDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoice.getInvoiceDate(),
-						"dd/MM/yyyy"));
+						paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)));
 				invoiceDate.appendChild(invoiceDateTxt);
 				header.appendChild(invoiceDate);
 			}
@@ -325,7 +330,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			if (invoice.getDueDate() != null) {
 				Element dueDate = doc.createElement("dueDate");
 				Text dueDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoice.getDueDate(),
-						"dd/MM/yyyy"));
+						paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)));
 				dueDate.appendChild(dueDateTxt);
 				header.appendChild(dueDate);
 			}
@@ -473,7 +478,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				subscriptionsTag = doc.createElement("subscriptions");
 				invoiceTag.appendChild(subscriptionsTag);
 			}
-
+			
 			for (Subscription subscription : userAccount.getSubscriptions()) {
 				if (invoice.getProvider().getInvoiceConfiguration() != null
 						&& invoice.getProvider().getInvoiceConfiguration().getDisplaySubscriptions() != null
@@ -487,7 +492,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					Element subscriptionDateTag = doc.createElement("subscriptionDate");
 					Text subscriptionDateText = null;
 					if (subscription.getSubscriptionDate() != null) {
-						subscriptionDateText = doc.createTextNode(subscription.getSubscriptionDate().toString());
+						subscriptionDateText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), 
+								paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)));
 					} else {
 						subscriptionDateText = doc.createTextNode("");
 					}
@@ -497,7 +503,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					Element endAgreementTag = doc.createElement("endAgreementDate");
 					Text endAgreementText = null;
 					if (subscription.getEndAgrementDate() != null) {
-						endAgreementText = doc.createTextNode(subscription.getEndAgrementDate().toString());
+						endAgreementText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getEndAgrementDate(), 
+								paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)));
 					} else {
 						endAgreementText = doc.createTextNode("");
 					}
@@ -891,7 +898,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					}
 					subCategory.setAttribute("taxCode", taxesCode);
 					subCategory.setAttribute("taxPercent", taxesPercent);
-
+										
 					for (RatedTransaction ratedTransaction : transactions) {
 						getEntityManager().refresh(ratedTransaction);
 						BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax()
@@ -973,7 +980,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 						Element usageDate = doc.createElement("usageDate");
 						Text usageDateTxt = doc.createTextNode(ratedTransaction.getUsageDate() != null ? DateUtils
-								.formatDateWithPattern(ratedTransaction.getUsageDate(), "dd/MM/yyyy") + "" : "");
+								.formatDateWithPattern(ratedTransaction.getUsageDate(), 
+										paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 						usageDate.appendChild(usageDateTxt);
 						line.appendChild(usageDate);
 						EDR edr = ratedTransaction.getEdr();
@@ -997,7 +1005,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							edrInfo.setAttribute(
 									"eventDate",
 									edr.getEventDate() != null ? DateUtils.formatDateWithPattern(edr.getEventDate(),
-											"dd/MM/yyyy") + "" : "");
+											paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 							edrInfo.setAttribute("accessCode", edr.getAccessCode() != null ? edr.getAccessCode() : "");
 							edrInfo.setAttribute("parameter1", edr.getParameter1() != null ? edr.getParameter1() : "");
 							edrInfo.setAttribute("parameter2", edr.getParameter2() != null ? edr.getParameter2() : "");
@@ -1011,23 +1019,23 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							edrInfo.setAttribute(
 									"dateParam1",
 									edr.getDateParam1() != null ? DateUtils.formatDateWithPattern(edr.getDateParam1(),
-											"dd/MM/yyyy") + "" : "");
+											paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 							edrInfo.setAttribute(
 									"dateParam2",
 									edr.getDateParam2() != null ? DateUtils.formatDateWithPattern(edr.getDateParam2(),
-											"dd/MM/yyyy") + "" : "");
+											paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 							edrInfo.setAttribute(
 									"dateParam3",
 									edr.getDateParam3() != null ? DateUtils.formatDateWithPattern(edr.getDateParam3(),
-											"dd/MM/yyyy") + "" : "");
+											paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 							edrInfo.setAttribute(
 									"dateParam4",
 									edr.getDateParam4() != null ? DateUtils.formatDateWithPattern(edr.getDateParam4(),
-											"dd/MM/yyyy") + "" : "");
+											paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 							edrInfo.setAttribute(
 									"dateParam5",
 									edr.getDateParam5() != null ? DateUtils.formatDateWithPattern(edr.getDateParam5(),
-											"dd/MM/yyyy") + "" : "");
+											paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)) + "" : "");
 							edrInfo.setAttribute("decimalParam1", edr.getDecimalParam1() != null ? edr
 									.getDecimalParam1().toPlainString() : "");
 							edrInfo.setAttribute("decimalParam2", edr.getDecimalParam2() != null ? edr
