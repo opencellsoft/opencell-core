@@ -444,10 +444,11 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 					"OriginalGroupInformationAndStatus tag doesn't exist");
 		}
 		String dDRequestLOTref = orgnlGrpInfAndSts.getOrgnlMsgId();
+		if(dDRequestLOTref== null || dDRequestLOTref.indexOf("-") < 0){
+			throw new Exception("Unknown dDRequestLOTref:"+dDRequestLOTref);
+		}		
 		String[] dDRequestLOTrefSplited = dDRequestLOTref.split("-");
-
-		DDRequestLOT dDRequestLOT = dDRequestLOTService.findById(Long
-				.valueOf(dDRequestLOTrefSplited[1]), currentUser.getProvider());
+		DDRequestLOT dDRequestLOT = dDRequestLOTService.findById(Long.valueOf(dDRequestLOTrefSplited[1]), currentUser.getProvider());
 		if (dDRequestLOT == null) {
 			throw new Exception("DDRequestLOT doesn't exist. id="
 					+ dDRequestLOTrefSplited[1]);
