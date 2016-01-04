@@ -11,7 +11,7 @@ import org.meveo.api.dto.response.billing.FilteredListResponseDto;
  * @author Edward P. Legaspi
  **/
 @WebService
-public interface FilteredListWs {
+public interface FilteredListWs extends IBaseWs {
 
 	@WebMethod
 	FilteredListResponseDto list(@WebParam(name = "filter") String filter,

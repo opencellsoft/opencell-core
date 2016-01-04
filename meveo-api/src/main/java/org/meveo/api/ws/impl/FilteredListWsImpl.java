@@ -49,7 +49,7 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 	public FilteredListResponseDto listByXmlInput(FilteredListDto postData) {
 		FilteredListResponseDto result = new FilteredListResponseDto();
 		try {
-			String response = filteredListApi.listByXmlInput(postData, getCurrentUser().getProvider());
+			String response = filteredListApi.listByXmlInput(postData, getCurrentUser());
 			result.getActionStatus().setMessage(response);
 		} catch (MeveoApiException e) {
 			log.debug("RESPONSE={}", e.getMessage());

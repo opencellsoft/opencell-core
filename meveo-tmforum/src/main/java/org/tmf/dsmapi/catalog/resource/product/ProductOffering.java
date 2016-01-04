@@ -1,11 +1,14 @@
 package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CollectionTable;
@@ -16,10 +19,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
@@ -618,7 +626,9 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 
         return productOffering;
     }
-    public static ProductOffering parseFromOfferTemplate(OfferTemplate offer,UriInfo uriInfo,Category category){
+    
+	public static ProductOffering parseFromOfferTemplate(OfferTemplate offer, UriInfo uriInfo, Category category,
+			List<PricePlanMatrix> offerPrices) {
     	ProductOffering productOffering = new ProductOffering();
 		productOffering.setId(offer.getCode());
 		productOffering.setVersion(String.format("%d.0", offer.getVersion() == null ? 0 : offer.getVersion()));
@@ -657,19 +667,83 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 		productOffering.setResourceCandidate(null);
 		productOffering.setProductOfferingTerm(new ArrayList<ProductOfferingTerm>()); // empty
 		productOffering.setProductOfferingPrice(new ArrayList<ProductOfferingPrice>());// empty
+		
+		// compute the sum of all one-shot and recurring charges
+		// use for quote
+		if (offerPrices != null) {
+			List<ProductOfferingPrice> productOfferingPrices = new ArrayList<>();
+			for (ServiceTemplate st : offer.getServiceTemplates()) {
+				if (st.getServiceSubscriptionCharges() != null) {
+					BigDecimal totalPriceOneShotCharges = new BigDecimal(0);
+					for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : st
+							.getServiceSubscriptionCharges()) {
+						for (PricePlanMatrix pricePlanMatrix : offerPrices) {
+							if (serviceChargeTemplateSubscription.getChargeTemplate().getCode()
+									.equals(pricePlanMatrix.getEventCode())) {
+								totalPriceOneShotCharges = totalPriceOneShotCharges.add(pricePlanMatrix
+										.getAmountWithTax());
+							}
+						}
+					}
+					Price price = new Price();
+					price.setTaxIncludedAmount(totalPriceOneShotCharges);
+					
+					ProductOfferingPrice productOfferingPrice = new ProductOfferingPrice();
+					productOfferingPrice.setPriceName(st.getCode() + "_SUB");
+					productOfferingPrice.setPriceType(ProductOfferingPriceType.ONE_TIME);
+					productOfferingPrice.setPrice(price);
+					
+					productOfferingPrices.add(productOfferingPrice);
+				}
+
+				if (st.getServiceRecurringCharges() != null) {
+					BigDecimal totalPriceRecurringCharges = new BigDecimal(0);
+					for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : st
+							.getServiceRecurringCharges()) {
+						for (PricePlanMatrix pricePlanMatrix : offerPrices) {
+							if (serviceChargeTemplateRecurring.getChargeTemplate().getCode()
+									.equals(pricePlanMatrix.getEventCode())) {
+								totalPriceRecurringCharges = totalPriceRecurringCharges.add(pricePlanMatrix
+										.getAmountWithTax());
+							}
+						}
+					}
+					
+					Price price = new Price();
+					price.setTaxIncludedAmount(totalPriceRecurringCharges);
+					
+					ProductOfferingPrice productOfferingPrice = new ProductOfferingPrice();
+					productOfferingPrice.setPriceName(st.getCode() + "_REC");
+					productOfferingPrice.setPriceType(ProductOfferingPriceType.RECURRING);
+					productOfferingPrice.setPrice(price);
+					
+					productOfferingPrices.add(productOfferingPrice);
+				}
+			}
+			
+			productOffering.setProductOfferingPrice(productOfferingPrices);
+		}
+		
 		return productOffering;
     }
 
 	public static List<ProductOffering> parseFromOfferTemplates(List<OfferTemplate> offerTemplates, UriInfo uriInfo,
-			Category category) {
-		if(offerTemplates!=null){
-			List<ProductOffering> productOfferings=new ArrayList<ProductOffering>();
-			for(OfferTemplate offerTemplate:offerTemplates){
-				ProductOffering productOffering=parseFromOfferTemplate(offerTemplate, uriInfo, category);
+			Category category, Map<String, List<PricePlanMatrix>> offerPriceList) {
+		if (offerTemplates != null) {
+			List<ProductOffering> productOfferings = new ArrayList<ProductOffering>();
+			for (OfferTemplate offerTemplate : offerTemplates) {
+				ProductOffering productOffering = parseFromOfferTemplate(
+						offerTemplate,
+						uriInfo,
+						category,
+						offerPriceList.get(offerTemplate.getCode()) == null ? null : offerPriceList.get(offerTemplate
+								.getCode()));
 				productOfferings.add(productOffering);
 			}
+			
 			return productOfferings;
 		}
+		
 		return null;
 	}
 
