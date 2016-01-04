@@ -57,7 +57,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
 		FilteredListResponseDto result = new FilteredListResponseDto();
 
 		try {
-			String response = filteredListApi.listByXmlInput(postData, getCurrentUser().getProvider());
+			String response = filteredListApi.listByXmlInput(postData, getCurrentUser());
 			result.getActionStatus().setMessage(response);
 			responseBuilder = Response.ok();
 			responseBuilder.entity(result);

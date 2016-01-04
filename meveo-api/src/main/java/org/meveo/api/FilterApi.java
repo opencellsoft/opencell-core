@@ -3,6 +3,7 @@ package org.meveo.api;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -23,13 +24,21 @@ public class FilterApi extends BaseApi {
 	@Inject
 	private FilterService filterService;
 
-	private void create(FilterDto dto, User currentUser,Provider provider) {
-		Filter filter = new Filter();
+	private void create(FilterDto dto, User currentUser, Provider provider) throws MeveoApiException {
+		Filter filter = filterService.parse(dto.getInputXml());
+
+		try {
+			filterService.initFilterFromInputXml(filter);
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
+		
 		filter.setCode(dto.getCode());
 		filter.setDescription(dto.getDescription());
 		filter.setInputXml(dto.getInputXml());
 		filter.setShared(dto.getShared());
-		filterService.create(filter, currentUser,provider);
+
+		filterService.create(filter, currentUser, provider);
 	}
 
 	public void createOrUpdate(FilterDto dto, User currentUser) throws MeveoApiException {

@@ -3,10 +3,13 @@ package org.meveo.service.filter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -14,6 +17,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.AndCompositeFilterCondition;
@@ -45,6 +49,9 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  **/
 @Stateless
 public class FilterService extends BusinessService<Filter> {
+
+	@Inject
+	private FilterSelectorService filterSelectorService;
 
 	public Filter parse(String xmlInput) throws XStreamException {
 		xmlInput = xmlInput.trim();
@@ -261,6 +268,66 @@ public class FilterService extends BusinessService<Filter> {
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+
+	public void initFilterFromInputXml(Filter filter) throws BusinessException {
+		if (filter != null) {
+			Auditable auditable = new Auditable();
+			auditable.setCreated(new Date());
+			auditable.setCreator(getCurrentUser());
+
+			if (filter.getOrderCondition() != null) {
+				filter.getOrderCondition().setProvider(getCurrentProvider());
+				filter.setOrderCondition(filter.getOrderCondition());
+			}
+
+			if (filter.getPrimarySelector() != null) {
+				filter.getPrimarySelector().setProvider(getCurrentProvider());
+				filter.setPrimarySelector(filter.getPrimarySelector());
+			}
+
+			if (filter.getSecondarySelectors() != null) {
+				if (filter.getSecondarySelectors() == null) {
+					filter.setSecondarySelectors(new ArrayList<FilterSelector>());
+				}
+				for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
+					filterSelector.setProvider(getCurrentProvider());
+					filterSelectorService.create(filterSelector);
+					filter.getSecondarySelectors().add(filterSelector);
+				}
+			}
+
+			// process filterCondition
+			if (filter.getFilterCondition() != null) {
+				filter.setFilterCondition(setProviderToFilterCondition(filter.getFilterCondition()));
+			}
+		}
+	}
+
+	public FilterCondition setProviderToFilterCondition(FilterCondition filterCondition) {
+		filterCondition.setProvider(getCurrentProvider());
+
+		if (filterCondition.getFilterConditionType().equals(
+				AndCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
+			AndCompositeFilterCondition andCompositeFilterCondition = (AndCompositeFilterCondition) filterCondition;
+			if (andCompositeFilterCondition.getFilterConditions() != null) {
+				for (FilterCondition filterConditionLoop : andCompositeFilterCondition.getFilterConditions()) {
+					setProviderToFilterCondition(filterConditionLoop);
+				}
+			}
+		}
+
+		if (filterCondition.getFilterConditionType().equals(
+				OrCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
+			OrCompositeFilterCondition orCompositeFilterCondition = (OrCompositeFilterCondition) filterCondition;
+			if (orCompositeFilterCondition.getFilterConditions() != null) {
+				for (FilterCondition filterConditionLoop : orCompositeFilterCondition.getFilterConditions()) {
+					setProviderToFilterCondition(filterConditionLoop);
+				}
+			}
+		}
+
+		return filterCondition;
 	}
 
 }

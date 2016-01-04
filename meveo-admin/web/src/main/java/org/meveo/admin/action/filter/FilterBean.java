@@ -7,7 +7,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.DiscriminatorValue;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -16,6 +15,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.XmlUtil;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.filter.AndCompositeFilterCondition;
 import org.meveo.model.filter.Filter;
@@ -29,7 +29,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.filter.FilterSelectorService;
 import org.meveo.service.filter.FilterService;
 import org.omnifaces.cdi.ViewScoped;
-import org.meveo.commons.utils.StringUtils;
 /**
  * @author Edward P. Legaspi
  **/
@@ -59,51 +58,52 @@ public class FilterBean extends BaseBean<Filter> {
 
 	@Override
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if(entity.getInputXml()!=null && !StringUtils.isBlank(entity.getInputXml())){
-		if (!XmlUtil.validate(entity.getInputXml())) {
-			messages.error(new BundleKey("messages", "message.filter.invalidXml"));
-			return "";
-		}
-
-		Filter filter = filterService.parse(entity.getInputXml());
-		 if(filter!=null){
-		Auditable auditable = new Auditable();
-		auditable.setCreated(new Date());
-		auditable.setCreator(getCurrentUser());
-
-		if (filter.getOrderCondition() != null) {
-			filter.getOrderCondition().setProvider(getCurrentProvider());
-			entity.setOrderCondition(filter.getOrderCondition());
-		}
-
-		if (filter.getPrimarySelector() != null) {
-			filter.getPrimarySelector().setProvider(getCurrentProvider());
-			entity.setPrimarySelector(filter.getPrimarySelector());
-		}
-
-		if (filter.getSecondarySelectors() != null) {
-			if (entity.getSecondarySelectors() == null) {
-				entity.setSecondarySelectors(new ArrayList<FilterSelector>());
+		if (entity.getInputXml() != null && !StringUtils.isBlank(entity.getInputXml())) {
+			if (!XmlUtil.validate(entity.getInputXml())) {
+				messages.error(new BundleKey("messages", "message.filter.invalidXml"));
+				return "";
 			}
-			for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
-				filterSelector.setProvider(getCurrentProvider());
-				filterSelectorService.create(filterSelector);
-				entity.getSecondarySelectors().add(filterSelector);
+
+			Filter filter = filterService.parse(entity.getInputXml());
+			if (filter != null) {
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(getCurrentUser());
+
+				if (filter.getOrderCondition() != null) {
+					filter.getOrderCondition().setProvider(getCurrentProvider());
+					entity.setOrderCondition(filter.getOrderCondition());
+				}
+
+				if (filter.getPrimarySelector() != null) {
+					filter.getPrimarySelector().setProvider(getCurrentProvider());
+					entity.setPrimarySelector(filter.getPrimarySelector());
+				}
+
+				if (filter.getSecondarySelectors() != null) {
+					if (entity.getSecondarySelectors() == null) {
+						entity.setSecondarySelectors(new ArrayList<FilterSelector>());
+					}
+					for (FilterSelector filterSelector : filter.getSecondarySelectors()) {
+						filterSelector.setProvider(getCurrentProvider());
+						filterSelectorService.create(filterSelector);
+						entity.getSecondarySelectors().add(filterSelector);
+					}
+				}
+
+				// process filterCondition
+				if (filter.getFilterCondition() != null) {
+					entity.setFilterCondition(filterService.setProviderToFilterCondition(filter.getFilterCondition()));
+				}
+			}
+			
+			try {
+				validate(entity);
+			} catch (ConstraintViolationException e) {
+				messages.error(new BundleKey("messages", "message.filter.invalidXml"));
+				return "";
 			}
 		}
-
-		// process filterCondition
-		if (filter.getFilterCondition() != null) {
-			entity.setFilterCondition(setProviderToFilterCondition(filter.getFilterCondition()));
-		}
-		 }
-		try {
-			validate(entity);
-		} catch (ConstraintViolationException e) {
-			messages.error(new BundleKey("messages", "message.filter.invalidXml"));
-			return "";
-		}
-		 }
 
 		return super.saveOrUpdate(killConversation);
 	}
@@ -174,30 +174,5 @@ public class FilterBean extends BaseBean<Filter> {
 			}
 		}
 	}
-
-	private FilterCondition setProviderToFilterCondition(FilterCondition filterCondition) {
-		filterCondition.setProvider(getCurrentProvider());
-
-		if (filterCondition.getFilterConditionType().equals(
-				AndCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
-			AndCompositeFilterCondition andCompositeFilterCondition = (AndCompositeFilterCondition) filterCondition;
-			if (andCompositeFilterCondition.getFilterConditions() != null) {
-				for (FilterCondition filterConditionLoop : andCompositeFilterCondition.getFilterConditions()) {
-					setProviderToFilterCondition(filterConditionLoop);
-				}
-			}
-		}
-
-		if (filterCondition.getFilterConditionType().equals(
-				OrCompositeFilterCondition.class.getAnnotation(DiscriminatorValue.class).value())) {
-			OrCompositeFilterCondition orCompositeFilterCondition = (OrCompositeFilterCondition) filterCondition;
-			if (orCompositeFilterCondition.getFilterConditions() != null) {
-				for (FilterCondition filterConditionLoop : orCompositeFilterCondition.getFilterConditions()) {
-					setProviderToFilterCondition(filterConditionLoop);
-				}
-			}
-		}
-
-		return filterCondition;
-	}
+	
 }
