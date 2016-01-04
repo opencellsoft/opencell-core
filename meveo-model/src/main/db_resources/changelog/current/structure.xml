@@ -1058,6 +1058,14 @@
 			<column name="COORDS_LOGO" type="varchar(255)"></column>
 		</addColumn>
 	</changeSet>
-    
+	<changeSet id="#1103-20160104" author="TyshanShi">
+		<dropColumn tableName="meveo_module" columnName="LOGO_FORMAT"/>
+		<dropColumn tableName="meveo_module" columnName="COORDS_LOGO"/>
+		<addColumn tableName="meveo_module">
+			<column name="LOGO_PICTURE" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>
+
+
           
 </databaseChangeLog>

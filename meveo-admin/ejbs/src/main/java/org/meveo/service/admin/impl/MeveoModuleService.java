@@ -182,16 +182,11 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 
 	private ModuleDto exportModuleDto(MeveoModule module,User currentUser){
 		ModuleDto moduleDto=new ModuleDto(module);
-		if(StringUtils.isNotBlank(module.getLogoFormat())){
-			String source=null;
-			String dest=null;
+		if(StringUtils.isNotBlank(module.getLogoPicture())){
 			try{
-				source=String.format("%s.%s", moduleDto.getCode(),module.getLogoFormat());
-				dest=String.format("%s_crop.%s", moduleDto.getCode(),module.getLogoFormat());
-				moduleDto.setSourceFile(ModuleUtil.readModulePicture(module,source));
-				moduleDto.setDestFile(ModuleUtil.readModulePicture(module, dest));
+				moduleDto.setLogoPictureFile(ModuleUtil.readModulePicture(module.getProvider().getCode(),module.getLogoPicture()));
 			}catch(Exception e){
-				log.error("Failed to read module files {}, info {}",source+","+dest,e.getMessage(),e);
+				log.error("Failed to read module files {}, info {}",module.getLogoPicture(),e.getMessage(),e);
 			}
 		}
 		List<MeveoModuleItem> moduleItems=module.getModuleItems();

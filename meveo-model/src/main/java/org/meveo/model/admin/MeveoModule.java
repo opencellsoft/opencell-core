@@ -44,10 +44,8 @@ public class MeveoModule extends BusinessEntity implements Serializable {
 	@Column(name="MODULE_LICENSE",nullable=false)
 	private ModuleLicenseEnum license=ModuleLicenseEnum.GPL;
 	
-	@Column(name="LOGO_FORMAT")
-	private String logoFormat;
-	@Column(name="COORDS_LOGO")
-	private String coordsLogo;
+	@Column(name="LOGO_PICTURE")
+	private String logoPicture;
 
 	public List<MeveoModuleItem> getModuleItems() {
 		return moduleItems;
@@ -69,18 +67,11 @@ public class MeveoModule extends BusinessEntity implements Serializable {
 	public void setLicense(ModuleLicenseEnum license) {
 		this.license = license;
 	}
-	public String getLogoFormat() {
-		return logoFormat;
+	public String getLogoPicture() {
+		return logoPicture;
 	}
-	public void setLogoFormat(String logoFormat) {
-		this.logoFormat = logoFormat;
-	}
-	
-	public String getCoordsLogo() {
-		return coordsLogo;
-	}
-	public void setCoordsLogo(String coordsLogo) {
-		this.coordsLogo = coordsLogo;
+	public void setLogoPicture(String logoPicture) {
+		this.logoPicture = logoPicture;
 	}
 	
 }

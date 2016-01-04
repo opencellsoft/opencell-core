@@ -28,11 +28,7 @@ public interface PagesConfig {
         @ViewPattern("/pages/*")
         @LoggedIn()
         // @Admin(restrictAtPhase=RESTORE_VIEW)
-        PAGES,
-        
-        @ViewPattern("/picture/*")
-        @LoggedIn()
-        PICTURE
+        PAGES
     }
 
 }
