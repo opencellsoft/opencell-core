@@ -306,10 +306,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlType(name = "", propOrder = {
     "cstmrPmtStsRpt"
 })
-@XmlRootElement(name = "Document")
+@XmlRootElement(name = "Document",namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
 public class Pain002 {
 
-    @XmlElement(name = "CstmrPmtStsRpt", required = true)
+    @XmlElement(name = "CstmrPmtStsRpt", required = true, namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
     protected Pain002.CstmrPmtStsRpt cstmrPmtStsRpt;
 
     /**
@@ -616,11 +616,11 @@ public class Pain002 {
     })
     public static class CstmrPmtStsRpt {
 
-        @XmlElement(name = "GrpHdr", required = true)
+        @XmlElement(name = "GrpHdr", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
         protected Pain002.CstmrPmtStsRpt.GrpHdr grpHdr;
-        @XmlElement(name = "OrgnlGrpInfAndSts", required = true)
+        @XmlElement(name = "OrgnlGrpInfAndSts", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
         protected Pain002.CstmrPmtStsRpt.OrgnlGrpInfAndSts orgnlGrpInfAndSts;
-        @XmlElement(name = "OrgnlPmtInfAndSts", required = true)
+        @XmlElement(name = "OrgnlPmtInfAndSts", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
         protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts orgnlPmtInfAndSts;
 
         /**
@@ -755,12 +755,12 @@ public class Pain002 {
         })
         public static class GrpHdr {
 
-            @XmlElement(name = "MsgId", required = true)
+            @XmlElement(name = "MsgId", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected String msgId;
-            @XmlElement(name = "CreDtTm", required = true)
+            @XmlElement(name = "CreDtTm", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             @XmlSchemaType(name = "dateTime")
             protected XMLGregorianCalendar creDtTm;
-            @XmlElement(name = "InitgPty", required = true)
+            @XmlElement(name = "InitgPty", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected Pain002.CstmrPmtStsRpt.GrpHdr.InitgPty initgPty;
 
             /**
@@ -944,7 +944,7 @@ public class Pain002 {
                 })
                 public static class Id {
 
-                    @XmlElement(name = "OrgId", required = true)
+                    @XmlElement(name = "OrgId", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                     protected Pain002.CstmrPmtStsRpt.GrpHdr.InitgPty.Id.OrgId orgId;
 
                     /**
@@ -997,7 +997,7 @@ public class Pain002 {
                     })
                     public static class OrgId {
 
-                        @XmlElement(name = "BICOrBEI", required = true)
+                        @XmlElement(name = "BICOrBEI", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                         protected String bicOrBEI;
 
                         /**
@@ -1084,13 +1084,13 @@ public class Pain002 {
         })
         public static class OrgnlGrpInfAndSts {
 
-            @XmlElement(name = "OrgnlMsgId", required = true)
+            @XmlElement(name = "OrgnlMsgId", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected String orgnlMsgId;
-            @XmlElement(name = "OrgnlMsgNmId", required = true)
+            @XmlElement(name = "OrgnlMsgNmId", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected String orgnlMsgNmId;
-            @XmlElement(name = "GrpSts", required = true)
+            @XmlElement(name = "GrpSts", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected String grpSts;
-            @XmlElement(name = "StsRsnInf", required = true)
+            @XmlElement(name = "StsRsnInf", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected Pain002.CstmrPmtStsRpt.OrgnlGrpInfAndSts.StsRsnInf stsRsnInf;
 
             /**
@@ -1225,7 +1225,7 @@ public class Pain002 {
             })
             public static class StsRsnInf {
 
-                @XmlElement(name = "Rsn", required = true)
+                @XmlElement(name = "Rsn", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                 protected Pain002.CstmrPmtStsRpt.OrgnlGrpInfAndSts.StsRsnInf.Rsn rsn;
 
                 /**
@@ -1278,7 +1278,7 @@ public class Pain002 {
                 })
                 public static class Rsn {
 
-                    @XmlElement(name = "Cd", required = true)
+                    @XmlElement(name = "Cd", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                     protected String cd;
 
                     /**
@@ -1508,19 +1508,19 @@ public class Pain002 {
         })
         public static class OrgnlPmtInfAndSts {
 
-            @XmlElement(name = "OrgnlPmtInfId", required = true)
+            @XmlElement(name = "OrgnlPmtInfId", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected String orgnlPmtInfId;
-            @XmlElement(name = "OrgnlNbOfTxs")
+            @XmlElement(name = "OrgnlNbOfTxs",namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected byte orgnlNbOfTxs;
-            @XmlElement(name = "OrgnlCtrlSum")
+            @XmlElement(name = "OrgnlCtrlSum",namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected float orgnlCtrlSum;
-            @XmlElement(name = "PmtInfSts", required = true)
+            @XmlElement(name = "PmtInfSts", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected String pmtInfSts;
-            @XmlElement(name = "StsRsnInf", required = true)
+            @XmlElement(name = "StsRsnInf", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.StsRsnInf stsRsnInf;
-            @XmlElement(name = "NbOfTxsPerSts")
+            @XmlElement(name = "NbOfTxsPerSts",namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected List<Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.NbOfTxsPerSts> nbOfTxsPerSts;
-            @XmlElement(name = "TxInfAndSts")
+            @XmlElement(name = "TxInfAndSts",namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
             protected List<Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts> txInfAndSts;
 
             /**
@@ -1715,11 +1715,11 @@ public class Pain002 {
             })
             public static class NbOfTxsPerSts {
 
-                @XmlElement(name = "DtldNbOfTxs")
+                @XmlElement(name = "DtldNbOfTxs",namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                 protected byte dtldNbOfTxs;
-                @XmlElement(name = "DtldSts", required = true)
+                @XmlElement(name = "DtldSts", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                 protected String dtldSts;
-                @XmlElement(name = "DtldCtrlSum")
+                @XmlElement(name = "DtldCtrlSum",namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                 protected float dtldCtrlSum;
 
                 /**
@@ -1806,7 +1806,7 @@ public class Pain002 {
             })
             public static class StsRsnInf {
 
-                @XmlElement(name = "AddtlInf")
+                @XmlElement(name = "AddtlInf",namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                 protected List<String> addtlInf;
 
                 /**
@@ -1997,15 +1997,15 @@ public class Pain002 {
             })
             public static class TxInfAndSts {
 
-                @XmlElement(name = "OrgnlInstrId", required = true)
+                @XmlElement(name = "OrgnlInstrId", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                 protected String orgnlInstrId;
-                @XmlElement(name = "OrgnlEndToEndId", required = true)
+                @XmlElement(name = "OrgnlEndToEndId", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                 protected String orgnlEndToEndId;
-                @XmlElement(name = "TxSts", required = true)
+                @XmlElement(name = "TxSts", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                 protected String txSts;
-                @XmlElement(name = "StsRsnInf", required = true)
+                @XmlElement(name = "StsRsnInf", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                 protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.StsRsnInf stsRsnInf;
-                @XmlElement(name = "OrgnlTxRef", required = true)
+                @XmlElement(name = "OrgnlTxRef", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                 protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.OrgnlTxRef orgnlTxRef;
 
                 /**
@@ -2252,18 +2252,18 @@ public class Pain002 {
                 })
                 public static class OrgnlTxRef {
 
-                    @XmlElement(name = "Amt", required = true)
+                    @XmlElement(name = "Amt", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                     protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.OrgnlTxRef.Amt amt;
-                    @XmlElement(name = "ReqdExctnDt", required = true)
-                    @XmlSchemaType(name = "date")
+                    @XmlElement(name = "ReqdExctnDt", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
+                    @XmlSchemaType(name = "date",namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                     protected XMLGregorianCalendar reqdExctnDt;
-                    @XmlElement(name = "PmtTpInf", required = true)
+                    @XmlElement(name = "PmtTpInf", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                     protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.OrgnlTxRef.PmtTpInf pmtTpInf;
-                    @XmlElement(name = "CdtrAgt", required = true)
+                    @XmlElement(name = "CdtrAgt", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                     protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.OrgnlTxRef.CdtrAgt cdtrAgt;
-                    @XmlElement(name = "Cdtr", required = true)
+                    @XmlElement(name = "Cdtr", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                     protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.OrgnlTxRef.Cdtr cdtr;
-                    @XmlElement(name = "CdtrAcct", required = true)
+                    @XmlElement(name = "CdtrAcct", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                     protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.OrgnlTxRef.CdtrAcct cdtrAcct;
 
                     /**
@@ -2444,7 +2444,7 @@ public class Pain002 {
                     })
                     public static class Amt {
 
-                        @XmlElement(name = "InstdAmt", required = true)
+                        @XmlElement(name = "InstdAmt", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                         protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.OrgnlTxRef.Amt.InstdAmt instdAmt;
 
                         /**
@@ -2570,7 +2570,7 @@ public class Pain002 {
                     })
                     public static class Cdtr {
 
-                        @XmlElement(name = "Nm", required = true)
+                        @XmlElement(name = "Nm", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                         protected String nm;
 
                         /**
@@ -2635,7 +2635,7 @@ public class Pain002 {
                     })
                     public static class CdtrAcct {
 
-                        @XmlElement(name = "Id", required = true)
+                        @XmlElement(name = "Id", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                         protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.OrgnlTxRef.CdtrAcct.Id id;
 
                         /**
@@ -2688,7 +2688,7 @@ public class Pain002 {
                         })
                         public static class Id {
 
-                            @XmlElement(name = "IBAN", required = true)
+                            @XmlElement(name = "IBAN", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                             protected String iban;
 
                             /**
@@ -2755,7 +2755,7 @@ public class Pain002 {
                     })
                     public static class CdtrAgt {
 
-                        @XmlElement(name = "FinInstnId", required = true)
+                        @XmlElement(name = "FinInstnId", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                         protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.OrgnlTxRef.CdtrAgt.FinInstnId finInstnId;
 
                         /**
@@ -2808,7 +2808,7 @@ public class Pain002 {
                         })
                         public static class FinInstnId {
 
-                            @XmlElement(name = "BIC", required = true)
+                            @XmlElement(name = "BIC", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                             protected String bic;
 
                             /**
@@ -2875,7 +2875,7 @@ public class Pain002 {
                     })
                     public static class PmtTpInf {
 
-                        @XmlElement(name = "SvcLvl", required = true)
+                        @XmlElement(name = "SvcLvl", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                         protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.OrgnlTxRef.PmtTpInf.SvcLvl svcLvl;
 
                         /**
@@ -2928,7 +2928,7 @@ public class Pain002 {
                         })
                         public static class SvcLvl {
 
-                            @XmlElement(name = "Cd", required = true)
+                            @XmlElement(name = "Cd", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                             protected String cd;
 
                             /**
@@ -2997,7 +2997,7 @@ public class Pain002 {
                 })
                 public static class StsRsnInf {
 
-                    @XmlElement(name = "Rsn", required = true)
+                    @XmlElement(name = "Rsn", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                     protected Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts.StsRsnInf.Rsn rsn;
 
                     /**
@@ -3050,7 +3050,7 @@ public class Pain002 {
                     })
                     public static class Rsn {
 
-                        @XmlElement(name = "Cd", required = true)
+                        @XmlElement(name = "Cd", required = true,namespace="urn:iso:std:iso:20022:tech:xsd:pain.002.001.03")
                         protected String cd;
 
                         /**
