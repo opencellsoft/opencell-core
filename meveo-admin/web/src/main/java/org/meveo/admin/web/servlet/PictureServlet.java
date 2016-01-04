@@ -17,7 +17,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.meveo.admin.util.ModuleUtil;
 
-@WebServlet(name = "pictureServlet", urlPatterns = "/picture/*")
+/**
+ * Show a picture from a rest URI like /meveo/picture/provider/module/tmp/filename.suffix
+ * 
+ * 3 provider code
+ * 4 group like module or offer
+ * 5 tmp, read pictures from tmp folder
+ * 6 picture filename like entity's code with suffix png,gif,jpeg,jpg
+ * 
+ * @author Tyshan Shi(tyshan@manaty.net)
+ *
+ */
+@WebServlet(name = "pictureServlet", urlPatterns = "/picture/*",loadOnStartup=1000)
 public class PictureServlet extends HttpServlet {
 
 	/**
@@ -39,23 +50,36 @@ public class PictureServlet extends HttpServlet {
 	}
 
 	private void showPicture(HttpServletRequest req, HttpServletResponse resp) {
-		
 		String url=req.getRequestURI();
-		log.debug("pictureServlet request URL "+url);
 		String[] path=url.split("/");
-		if(path==null||path.length!=5){
+		if(path==null||(path.length!=6&path.length!=7)){
 			return;
 		}
-		String filename=ModuleUtil.getPicturePath(path[3])+File.separator+path[4];
-		File pictureFile=new File(filename);
-		if(!pictureFile.exists()){
-			log.debug(filename+ " module picture is not existed");
+		String rootPath=null;
+		String filename=null;
+		String provider=path[3];
+		String groupname=path[4];
+		if(path.length==7&&path[5].equals("tmp")){
+			rootPath=ModuleUtil.getTmpPicturePath(provider, groupname);
+			filename=path[6];
+		}else if(path.length==6){
+			rootPath=ModuleUtil.getPicturePath(provider,groupname);
+			filename=path[5];
+		}else{
+			log.error("error context path "+url);
+			return;
+		}
+		String destfile=rootPath+File.separator+filename;
+		log.debug("read a picture file from "+ destfile);
+		File file=new File(destfile);
+		if(!file.exists()){
+			log.debug("Picture file isn't existed "+destfile);
 			return;
 		}
 		InputStream in=null;
 		OutputStream out=null;
 		try{
-			in = new ByteArrayInputStream(ModuleUtil.readModulePicture(path[3], path[4]));
+			in = new ByteArrayInputStream(ModuleUtil.readPicture(destfile));
 	        out = resp.getOutputStream();
 	        byte[] buffer = new byte[1024];
 	        int len = 0;
@@ -64,7 +88,7 @@ public class PictureServlet extends HttpServlet {
 	        }
 	        out.flush();
 		}catch(Exception e){
-			log.error("error when read module file "+filename+" , info "+e.getMessage());
+			log.error("error when read picture file "+destfile+" , info "+(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()),e);
 		}finally{
 			IOUtils.closeQuietly(in);
 	        IOUtils.closeQuietly(out);

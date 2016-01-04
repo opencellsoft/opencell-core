@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
-import javax.imageio.stream.FileImageOutputStream;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -105,7 +105,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	protected MeveoInstance meveoInstance;
 	
 	private CroppedImage croppedImage;
-
+	private String sourcePicture;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -411,37 +411,25 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 		}
 	}
 
-	public synchronized void cropLogo() {
-		log.debug("start to crop logo, croppedImage is {}!",(croppedImage!=null));
-		if(croppedImage==null){
-			return;
-		}
-		FileImageOutputStream imageOutput=null;
+	public void cropLogo() {
 		try {
-			StringBuilder sb=new StringBuilder();
-			sb.append(croppedImage.getLeft()).append(",").append(croppedImage.getTop()).append(",").append(croppedImage.getLeft()+croppedImage.getWidth()).append(",").append(croppedImage.getTop()+croppedImage.getHeight());
-			entity.setCoordsLogo(sb.toString());
-//			String originFilename=croppedImage.getOriginalFilename();
-//			String formatname=originFilename.substring(originFilename.lastIndexOf(".")+1);
-			String filename=String.format("%s_crop.%s",entity.getCode(),entity.getLogoFormat());
-			log.debug("crop picture to {}",filename);
-			String destFilename = ModuleUtil.getPicturePath(entity)+File.separator+filename;
-			imageOutput = new FileImageOutputStream(new File(destFilename));
-	        imageOutput.write(croppedImage.getBytes(), 0, croppedImage.getBytes().length);
-	        imageOutput.flush();
-//			entity.setLogoFormat(formatname);
+			String originFilename=croppedImage.getOriginalFilename();
+			String formatname=originFilename.substring(originFilename.lastIndexOf(".")+1);
+			String filename=String.format("%s.%s",entity.getCode(),formatname);
+			log.debug("crop module picture to {}",filename);
+			String dest = ModuleUtil.getModulePicturePath(entity.getProvider().getCode())+File.separator+filename;
+			ModuleUtil.cropPicture(dest,croppedImage);
+	        entity.setLogoPicture(filename);
 			messages.info(new BundleKey("messages",
 					"meveoModule.cropPictureSuccess"));
 		} catch (Exception e) {
-			log.error("error when crop a module picture {}, info {}!",croppedImage.getOriginalFilename(),(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()),e);
-		}finally{
-			IOUtils.closeQuietly(imageOutput);
+			log.error("error when crop a module picture {}, info {}!",croppedImage.getOriginalFilename(),e.getMessage());
+			messages.error(new BundleKey("messages","meveoModule.cropPictureFailed"),(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
 		}
 	}
 
-	public synchronized void handleFileUpload(FileUploadEvent event) {
+	public void handleFileUpload(FileUploadEvent event) {
 		log.debug("upload file={}", event.getFile().getFileName());
-		
 		String originFilename=event.getFile().getFileName();
 		int formatPosition=originFilename.lastIndexOf(".");
 		String formatname=null;
@@ -452,16 +440,15 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			log.debug("error picture format name for origin file {}!",originFilename);
 			return;
 		}
-		
-		String filename=String.format("%s.%s",entity.getCode(),formatname);
-		String sourceFilename = ModuleUtil.getPicturePath(entity)+File.separator+filename;
-		log.debug("output module picture file {}",filename);
+		String filename=String.format("%s.%s",getSourceFilePrefix(),formatname);
+		this.sourcePicture=filename;
+		String dest = ModuleUtil.getTmpModulePath(entity.getProvider().getCode())+File.separator+filename;
+		log.debug("output original module picture file to {}",dest);
 		InputStream in = null;
 		try {
 			in = event.getFile().getInputstream();
 			BufferedImage src = ImageIO.read(in);
-			ImageIO.write(src, formatname, new File(sourceFilename));
-			entity.setLogoFormat(formatname);
+			ImageIO.write(src, formatname, new File(dest));
 			messages.info(new BundleKey("messages",
 					"meveoModule.uploadPictureSuccess"), originFilename);
 		} catch (Exception e) {
@@ -492,9 +479,9 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 		super.saveOrUpdate(killConversation);
 		return null;
 	}
-	private synchronized void removeModulePicture(String filename){
+	private void removeModulePicture(String filename){
 		try{
-			ModuleUtil.removeModulePicture(entity,filename);
+			ModuleUtil.removeModulePicture(entity.getProvider().getCode(),filename);
 		}catch(Exception e){
 			log.error("failed to remove module picture {}, info {}",filename,e.getMessage(),e);
 		}
@@ -505,11 +492,9 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	 */
 	@Override
 	public void delete() {
-		String source=String.format("%s.%s", entity.getCode(),entity.getLogoFormat());
-		String dest=String.format("%s_crop.%s", entity.getCode(),entity.getLogoFormat());
+		String source=entity.getLogoPicture();
 		super.delete();
 		removeModulePicture(source);
-		removeModulePicture(dest);
 	}
 
 	/**
@@ -519,17 +504,25 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	public void deleteMany() {
 		List<String> files=new ArrayList<String>();
 		String source=null;
-		String dest=null;
 		for (MeveoModule entity : getSelectedEntities()) {
-			source=String.format("%s.%s", entity.getCode(),entity.getLogoFormat());
-			dest=String.format("%s_crop.%s", entity.getCode(),entity.getLogoFormat());
+			source=entity.getLogoPicture();
             files.add(source);
-            files.add(dest);
         }
 		super.deleteMany();
 		for(String file:files){
 			removeModulePicture(file);
 		}
+	}
+
+	public String getSourcePicture() {
+		return sourcePicture;
+	}
+
+	public void setSourcePicture(String sourcePicture) {
+		this.sourcePicture = sourcePicture;
+	}
+	private static String getSourceFilePrefix(){
+		return UUID.randomUUID().toString();
 	}
 	
 }

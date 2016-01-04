@@ -23,37 +23,65 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
 
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.MeveoModule;
+import org.primefaces.model.CroppedImage;
 
 /**
- * a help class for meveo module pictures 
+ * a help class for meveo pictures like provider/media/module/pictures
  * @author Tyshan(tyshan@manaty.net)
  */
 
 public class ModuleUtil {
 
-	/**
-	 * 
-	 * @param entity
-	 * @param filename
-	 * @return
-	 */
-	public static String getPicturePath(MeveoModule meveoModule){
-		return getPicturePath(meveoModule.getProvider().getCode());
+	public static String getRootPicturePath(String provider){
+		String path = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo")+File.separator+provider
+			+File.separator+"media";
+		return getPath(path);
 	}
-	public static String getPicturePath(String provider){
-		String picturePath = ParamBean.getInstance().getProperty("providers.rootDir", "/opt/jboss/files/meveo")+File.separator+provider
-			+File.separator+"pictures";
-		File file=new File(picturePath);
+	public static String getPicturePath(String provider,String group){
+		String path=getRootPicturePath(provider)+File.separator+group+File.separator+"pictures";
+		return getPath(path);
+	}
+	public static String getModulePicturePath(String provider){
+		return getPicturePath(provider,"module");
+	}
+	
+	public static String getTmpRootPath(String provider){
+		String tmpFolder=System.getProperty("java.io.tmpdir");
+		String path= (tmpFolder==null||tmpFolder==""?"/tmp/meveo/tmp":tmpFolder+File.separator+"meveo"+File.separator+"tmp")+File.separator+provider+File.separator+"media";
+		return getPath(path);
+	}
+	public static String getTmpPicturePath(String provider,String group){
+		String path= getTmpRootPath(provider)+File.separator+group+File.separator+"pictures";
+		return getPath(path);
+	}
+	public static String getTmpModulePath(String provider){
+		return getTmpPicturePath(provider,"module");
+	}
+	private static String getPath(String path){
+		File file=new File(path);
 		if(!file.exists()){
 			file.mkdirs();
 		}
-		return picturePath;
+		return path;
 	}
-	public static byte[] readModulePicture(MeveoModule meveoModule,String filename) throws IOException{
-		return readModulePicture(meveoModule.getProvider().getCode(),filename);
+	public static byte[] readPicture(String filename) throws IOException{
+		File file=new File(filename);
+		if(!file.exists()){
+			return null;
+		}
+		BufferedImage img=ImageIO.read(file);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ImageIO.write(img,filename.substring(filename.indexOf(".")+1), out);
+		return out.toByteArray();
+	}
+	public static void writePicture(String filename,byte[] fileData) throws Exception{
+		ByteArrayInputStream in=new ByteArrayInputStream(fileData);
+		BufferedImage img=ImageIO.read(in);
+		in.close();
+		ImageIO.write(img, filename.substring(filename.indexOf(".")+1), new File(filename));
 	}
 	/**
 	 * read a module picture and save into byte[]
@@ -62,12 +90,10 @@ public class ModuleUtil {
 	 * @throws Exception
 	 */
 	public static byte[] readModulePicture(String provider,String filename) throws IOException{
-		String picturePath=getPicturePath(provider);
+		String picturePath=getModulePicturePath(provider);
 		String file=picturePath+File.separator+filename;
-		BufferedImage img=ImageIO.read(new File(file));
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ImageIO.write(img,filename.substring(filename.indexOf(".")+1), out);
-		return out.toByteArray();
+		return readPicture(file);
+		
 	}
 	/**
 	 * save a byte[] data of module picture into file
@@ -75,20 +101,26 @@ public class ModuleUtil {
 	 * @param fileData
 	 * @throws Exception
 	 */
-	public synchronized static void writeModulePicture(String provider,String filename,byte[] fileData) throws Exception{
-		String picturePath=getPicturePath(provider);
+	public static void writeModulePicture(String provider,String filename,byte[] fileData) throws Exception{
+		String picturePath=getModulePicturePath(provider);
 		String file=picturePath+File.separator+filename;
-		ByteArrayInputStream in=new ByteArrayInputStream(fileData);
-		BufferedImage img=ImageIO.read(in);
-		in.close();
-		ImageIO.write(img, filename.substring(filename.indexOf(".")+1), new File(file));
+		writePicture(file,fileData);
 	}
-	public synchronized static void removeModulePicture(MeveoModule meveoModule,String filename) throws Exception{
-		String picturePath=getPicturePath(meveoModule);
-		filename=picturePath+File.separator+filename;
+	public static void removePicture(String filename) throws Exception{
 		File file=new File(filename);
 		if(file.exists()){
 			file.delete();
 		}
+	}
+	public static void removeModulePicture(String provider,String filename) throws Exception{
+		String picturePath=getModulePicturePath(provider);
+		filename=picturePath+File.separator+filename;
+		removePicture(filename);
+	}
+	public static void cropPicture(String filename,CroppedImage croppedImage) throws Exception{
+		FileImageOutputStream imageOutput = new FileImageOutputStream(new File(filename));
+        imageOutput.write(croppedImage.getBytes(), 0, croppedImage.getBytes().length);
+        imageOutput.flush();
+        imageOutput.close();
 	}
 }
