@@ -250,12 +250,9 @@ public class ModuleApi extends BaseApi {
 		}
 		JobInstanceDto jobInstanceDto=jobInstanceApi.find(jobInstanceCode, currentUser.getProvider());
 		moduleDto.getJobDtos().add(jobInstanceDto);
-		if(StringUtils.isBlank(jobInstanceDto.getTimerCode())){
+		if(!StringUtils.isBlank(jobInstanceDto.getTimerCode())){
 			TimerEntityDto timerDto=timerEntityApi.find(jobInstanceDto.getTimerCode(), currentUser);
-			log.debug("find timer entity DTO {}",timerDto);
-			if(timerDto!=null&&!StringUtils.isBlank(timerDto.getCode())){
-				moduleDto.getTimerEntityDtos().add(timerDto);
-			}
+			moduleDto.getTimerEntityDtos().add(timerDto);
 		}
 		String jobInstanceNextCode=jobInstanceDto.getFollowingJob();
 		return getJobInstanceDto(jobInstanceNextCode,currentUser,moduleDto);
@@ -265,7 +262,7 @@ public class ModuleApi extends BaseApi {
 		meveoModule.setDescription(moduleDto.getDescription());
 		meveoModule.setLicense(moduleDto.getLicense());
 		meveoModule.setLogoPicture(moduleDto.getLogoPicture());
-		if(!StringUtils.isBlank(moduleDto.getLogoPicture())){
+		if(!StringUtils.isBlank(moduleDto.getLogoPicture())&&moduleDto.getLogoPictureFile()!=null){
 			writeModulePicture(currentUser,moduleDto.getLogoPicture(),moduleDto.getLogoPictureFile());
 		}
 		MeveoModuleItem item=null;

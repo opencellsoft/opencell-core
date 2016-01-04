@@ -145,7 +145,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 				
 		} catch (Exception e) {
 			log.error("Fail to communicate {}. Reason {}", meveoInstance.getCode(),
-					(e == null ? e.getClass().getSimpleName() : e.getMessage()),e);
+					(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()),e);
 			throw new MeveoApiException("Fail to communicate " + meveoInstance.getCode() + ". Error "
 					+ (e == null ? e.getClass().getSimpleName() : e.getMessage()));
 		}
@@ -282,8 +282,10 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 		
 		if(jobInstance.getTimerEntity()!=null){
 			TimerEntity timerEntity=jobInstance.getTimerEntity();
-			TimerEntityDto timerDto=new TimerEntityDto(timerEntity);
-			moduleDto.getTimerEntityDtos().add(timerDto);
+			if(timerEntity!=null){
+				TimerEntityDto timerDto=new TimerEntityDto(timerEntity);
+				moduleDto.getTimerEntityDtos().add(timerDto);
+			}
 		}
 		Map<String, List<CustomFieldInstance>> cfis = customFieldInstanceService
 				.getCustomFieldInstances(jobInstance);
