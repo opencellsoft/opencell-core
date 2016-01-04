@@ -22,7 +22,7 @@
    		
 			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-			<hftl:searchPanel label="#{messages['menu.jobTriggers']}" columns="3" backingBean="#{jobTriggerListBean}" id="notifications_panel" ajaxUpdateIds="notifications_panel">
+			<hftl:searchPanel label="#{messages['menu.jobTriggers']}" columns="3" backingBean="#{jobTriggerListBean}" ajaxUpdateIds="jobTriggers_panel">
 				<hftl:searchField label="#{messages['entity.code']}" field="code" />
 				<hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{jobTriggerBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>
 	            <hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />

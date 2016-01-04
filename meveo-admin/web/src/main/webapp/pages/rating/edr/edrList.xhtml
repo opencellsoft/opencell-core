@@ -22,7 +22,7 @@
 
 		<hftl:entityPopup id="searchEdrPopup"
 			header="#{messages['commons.search']}"
-			updateField=":searchPanel:searchForm:edr"
+			updateField=":searchForm:edr"
 			selection="#{edrBean.filters['subscription']}"
 			backingBean="#{subscriptionBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -34,7 +34,7 @@
 
 		<p:messages id="messages" />
 
-		<hftl:searchPanel label="#{messages['commons.search']}" id="searchPanel"
+		<hftl:searchPanel label="#{messages['commons.search']}"
 			backingBean="#{edrBean}" renderNewButton="false">
 			<hftl:searchField id="edr" label="#{messages['edr.subscription']}"
 				field="subscription" valueLabelField="code" popup="true"

@@ -20,7 +20,7 @@
 
 	<ui:define name="body">
 
-		<hftl:searchPanel id="searchPanel" backingBean="#{catMessagesListBean}" columns="3"
+		<hftl:searchPanel backingBean="#{catMessagesListBean}" columns="3"
 			label="#{messages['catMessages.search']}" renderNewButton="true">
 			<hftl:searchField label="#{messages['catMessages.objectType']}"
 				field="messageCode" listValues="#{catMessagesListBean.objectTypes}" />

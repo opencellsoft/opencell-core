@@ -13,10 +13,10 @@
         <!-- Entity select popup. -->
         <hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerBean}" searchField1Label="#{messages['customer.code']}"
             searchField1="code" column1Label="#{messages['customer.code']}" column1="code" selection="#{customerAccountListBean.filters['customer']}"
-            updateField=":searchPanel:searchForm:customer">
+            updateField=":searchForm:customer">
         </hftl:entityPopup>
 
-        <hftl:searchPanel id="searchPanel" label="#{messages['customerAccount.search']}" backingBean="#{customerAccountListBean}">
+        <hftl:searchPanel label="#{messages['customerAccount.search']}" backingBean="#{customerAccountListBean}">
             <hftl:searchField id="customer" label="#{messages['customerAccount.customer']}" field="customer" valueLabelField="code" popup="true" popupId="searchCustomerPopup" />
             <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
             <hftl:searchField label="#{messages['businessEntity.description']}" field="description" />

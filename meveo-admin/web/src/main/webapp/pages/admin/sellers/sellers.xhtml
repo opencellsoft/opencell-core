@@ -11,7 +11,7 @@
 
     <ui:define name="body">
 
-        <hftl:searchPanel id="searchPanel" backingBean="#{sellerListBean}" label="#{messages['seller.search']}">
+        <hftl:searchPanel backingBean="#{sellerListBean}" label="#{messages['seller.search']}">
             <hftl:searchField id="seller" label="#{messages['BusinessEntity.code']}" field="code" />
             <hftl:searchField label="#{messages['BusinessEntity.description']}" field="description" />
         </hftl:searchPanel>

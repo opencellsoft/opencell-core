@@ -13,7 +13,7 @@
 
     <ui:define name="body">
 
-        <hftl:searchPanel id="searchPanel" label="#{messages['customer.search']}" backingBean="#{customerListBean}">
+        <hftl:searchPanel label="#{messages['customer.search']}" backingBean="#{customerListBean}">
             <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
             <hftl:searchField label="#{messages['businessEntity.description']}" id="description" field="description" componentWidth="75" size="100" />
             <hftl:searchField id="customerCategoryField" label="#{messages['customer.customerCategory']}" field="customerCategory" valueLabelField="description"

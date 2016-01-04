@@ -39,13 +39,13 @@
 			updateField=":#{p:component('offerTemplate_child')}">
 		</hftl:entityPopup>
 
-		<hftl:searchPanel id="searchPanel" label="#{messages['action.search']}"
+		<hftl:searchPanel label="#{messages['action.search']}"
 			backingBean="#{discountPlanItemListBean}">
 			<hftl:searchField label="#{messages['discountPlan.title']}"
-				field="discountPlan" childField="code" popup="true"
+				field="discountPlan.code" popup="true"
 				popupId="popupDiscountPlans" clearButton="true" />
 			<hftl:searchField label="#{messages['discountPlanItem.offerTemplate']}"
-				field="offerTemplate" childField="code" popup="true"
+				field="offerTemplate.code" popup="true"
 				popupId="popupOfferTemplates" clearButton="true" />
 		</hftl:searchPanel>
 

@@ -19,7 +19,7 @@
 
 		<hftl:entityPopup id="searchSubscriptionPopup"
 			header="#{messages['access.subscription']}"
-			updateField=":searchPanel:searchForm:subscription"
+			updateField=":searchForm:subscription"
 			selection="#{accessListBean.filters['subscription']}"
 			backingBean="#{subscriptionBean}"
 			searchField1Label="#{messages['subscription.code']}"
@@ -28,7 +28,7 @@
 			column2="description">
 		</hftl:entityPopup>
 
-		<hftl:searchPanel id="searchPanel" columns="2"
+		<hftl:searchPanel columns="2"
 			label="#{messages['access.search']}" backingBean="#{accessListBean}">
 
 			<hftl:searchField label="#{messages['access.accessUserId']}"

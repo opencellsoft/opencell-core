@@ -11,6 +11,7 @@
     A custom component to display a search panel wrapping search fields and buttons implementing search and additional navigation functionality 
  
     Attributes
+        formId - form id value. Defaults to "searchForm"
         backingBean - backing bean associated with search.
         label - a panel header
         renderNewButton - should a "create new entity" button be displayed   
@@ -40,7 +41,7 @@
         <c:set var="newButtonView" value="#{backingBean.newViewName}" />
     </c:if>
 
-    <h:form id="${empty(id)?'searchForm':id}">
+    <h:form id="${empty(formId)?'searchForm':formId}">
         <p:panel header="#{label}">
             <h:panelGroup layout="block" styleClass="search-panel">
                 <p:messages id="search_messages" />
