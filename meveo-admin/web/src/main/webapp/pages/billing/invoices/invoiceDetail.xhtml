@@ -12,7 +12,7 @@
 	<ui:define name="body">
 
 		<hftl:formPanel label="#{messages['invoice.panel']}"
-			backingBean="#{invoiceBean}" showFormButtons="false" id="headerForm"
+			backingBean="#{invoiceBean}" showFormButtons="false" formId="headerForm"
 			edit="false">
 			<h:panelGrid columns="2">
 				<p:fieldset legend="#{messages['invoice.header']}">
@@ -76,7 +76,7 @@
 								<p:commandButton icon="ui-icon-close"
 									rendered="#{invoiceBean.entity.invoiceNumber==null}"
 									action="#{invoiceBean.deleteInvoicePdf}"
-									update="totalForm:formId:buttonGenerate,@form" />
+									update=":totalForm:buttonGenerate,@form" />
 							</p:outputPanel>
 							<p:outputPanel
 								rendered="#{invoiceBean.isXmlInvoiceAlreadyGenerated}">
@@ -91,7 +91,7 @@
 								<p:commandButton
 									rendered="#{invoiceBean.entity.invoiceNumber==null}"
 									icon="ui-icon-close" action="#{invoiceBean.deleteXmlInvoice}"
-									update="totalForm:formId:buttonGenerate,@form" />
+									update=":totalForm:buttonGenerate,@form" />
 							</p:outputPanel>
 						</p:panelGrid>
 					</p:fieldset>
@@ -199,7 +199,7 @@
 		</h:form>
 
 		<hftl:formPanel backingBean="#{invoiceBean}" showFormButtons="false"
-			id="totalForm" edit="false">
+			formId="totalForm" edit="false">
 
 			<p:fieldset legend="#{messages['invoice.totals']}">
 				<hftl:formField label="#{messages['invoice.amountWithoutTax']}"
@@ -227,12 +227,12 @@
 				<p:commandButton value="#{messages['invoice.generatePdf']}"
 					icon="ui-icon-refresh" disabled="#{invoiceBean.entity.pdf!=null}"
 					action="#{invoiceBean.generatePdf()}"
-					update="headerForm:formId,buttonGenerate" />
+					update=":headerForm,buttonGenerate" />
 				<p:commandButton value="#{messages['invoice.generateXml']}"
 					icon="ui-icon-refresh"
 					disabled="#{invoiceBean.isXmlInvoiceAlreadyGenerated}"
 					action="#{invoiceBean.generateXMLInvoice}"
-					update="headerForm:formId,buttonGenerate" />
+					update=":headerForm,buttonGenerate" />
 			</p:outputPanel>
 		</hftl:formPanel>
 
@@ -262,7 +262,7 @@
 				</p:fieldset>
 
 				<hftl:formPanel backingBean="#{invoiceBean}" showFormButtons="false"
-					id="invoiceAdjustmentForm" edit="false">
+					formId="invoiceAdjustmentForm" edit="false">
 					<p:outputPanel styleClass="action-buttons" column="2"
 						id="invoiceAdjustmentActionPanel"
 						rendered="#{not empty invoiceBean.entity.invoiceNumber}">
