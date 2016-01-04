@@ -26,7 +26,7 @@
 				field="paymentCreated" />
 		</hftl:searchPanel>
 
-		<hftl:dataList backingBean="#{ddRequestLOTListBean}">
+		<hftl:dataList backingBean="#{ddRequestLOTListBean}" deleteManyButton="false">
 			<hftl:column label="#{messages['ddrequestLot.fileName']}"
 				field="fileName" />
 			<hftl:column label="#{messages['ddrequestLot.sendDate']}"

@@ -35,7 +35,7 @@
      		<p:commandButton value="#{messages['action.back']}" action="#{ddRequestLOTBean.back}" immediate="true" />
    		</h:panelGrid>	
 		</hftl:formPanel>					 
-			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddRequestLOTBean.entity.getInvoices()}" edit="#{false}" checkMany="#{false}">
+			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddRequestLOTBean.entity.getInvoices()}" edit="#{false}" checkMany="#{false}" deleteManyButton="false">
 						<hftl:column showSortLinks="false"
 							label="#{messages['accountOperation.operationDate']}"
 							field="auditable.created" isDate="true"/>
