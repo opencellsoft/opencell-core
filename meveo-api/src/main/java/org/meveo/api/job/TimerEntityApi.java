@@ -119,7 +119,7 @@ public class TimerEntityApi extends BaseApi {
 			}
 			result=new TimerEntityDto(timerEntity);
 		}else{
-			missingParameters.add("code");
+			return null;
 		}
 		return result;
 	}

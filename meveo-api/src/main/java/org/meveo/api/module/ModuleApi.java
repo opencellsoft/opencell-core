@@ -143,7 +143,10 @@ public class ModuleApi extends BaseApi {
 		if (meveoModule == null) {
 			throw new EntityDoesNotExistsException(MeveoModule.class, code);
 		}
+		String logoPicture=meveoModule.getLogoPicture();
 		meveoModuleService.remove(meveoModule);
+		removeModulePicture(provider.getCode(),logoPicture);
+		
 	}
 
 	public List<ModuleDto> list(User currentUser) throws MeveoApiException {
@@ -182,11 +185,9 @@ public class ModuleApi extends BaseApi {
 	}
 	private ModuleDto parseModule2Dto(MeveoModule meveoModule,
 			ModuleDto moduleDto,User currentUser) throws MeveoApiException {
-		if(!StringUtils.isBlank(meveoModule.getLogoFormat())){
-			byte[] sourceFile=readModulePicture(meveoModule, String.format("%s.%s",meveoModule.getCode(),meveoModule.getLogoFormat()));
-			moduleDto.setSourceFile(sourceFile);
-			byte[] destFile=readModulePicture(meveoModule, String.format("%s_crop.%s",meveoModule.getCode(),meveoModule.getLogoFormat()));
-			moduleDto.setDestFile(destFile);
+		if(!StringUtils.isBlank(meveoModule.getLogoPicture())){
+			byte[] pictureFileData=readModulePicture(meveoModule, meveoModule.getLogoPicture());
+			moduleDto.setLogoPictureFile(pictureFileData);
 		}
 		List<MeveoModuleItem> items=meveoModule.getModuleItems();
 		if(items!=null&&items.size()>0){
@@ -251,7 +252,10 @@ public class ModuleApi extends BaseApi {
 		moduleDto.getJobDtos().add(jobInstanceDto);
 		if(StringUtils.isBlank(jobInstanceDto.getTimerCode())){
 			TimerEntityDto timerDto=timerEntityApi.find(jobInstanceDto.getTimerCode(), currentUser);
-			moduleDto.getTimerEntityDtos().add(timerDto);
+			log.debug("find timer entity DTO {}",timerDto);
+			if(timerDto!=null&&!StringUtils.isBlank(timerDto.getCode())){
+				moduleDto.getTimerEntityDtos().add(timerDto);
+			}
 		}
 		String jobInstanceNextCode=jobInstanceDto.getFollowingJob();
 		return getJobInstanceDto(jobInstanceNextCode,currentUser,moduleDto);
@@ -260,17 +264,9 @@ public class ModuleApi extends BaseApi {
 		meveoModule.setCode(moduleDto.getCode());
 		meveoModule.setDescription(moduleDto.getDescription());
 		meveoModule.setLicense(moduleDto.getLicense());
-		meveoModule.setCoordsLogo(moduleDto.getCoordsLogo());
-		meveoModule.setLogoFormat(moduleDto.getLogoFormat());
-		if(StringUtils.isBlank(meveoModule.getLogoFormat())&&!meveoModule.isTransient()){
-			removeModulePicture(meveoModule, String.format("%s.%s",moduleDto.getCode(),meveoModule.getLogoFormat()));
-			removeModulePicture(meveoModule, String.format("%s_crop.%s",moduleDto.getCode(),meveoModule.getLogoFormat()));
-		}
-		if(!StringUtils.isBlank(moduleDto.getLogoFormat())&&!StringUtils.isBlank(moduleDto.getSourceFile())){
-			writeModulePicture(currentUser,String.format("%s.%s", moduleDto.getCode(),moduleDto.getLogoFormat()),moduleDto.getSourceFile());
-		}
-		if(!StringUtils.isBlank(moduleDto.getLogoFormat())&&!StringUtils.isBlank(moduleDto.getDestFile())){
-			writeModulePicture(currentUser,String.format("%s_crop.%s", moduleDto.getCode(),moduleDto.getLogoFormat()),moduleDto.getDestFile());
+		meveoModule.setLogoPicture(moduleDto.getLogoPicture());
+		if(!StringUtils.isBlank(moduleDto.getLogoPicture())){
+			writeModulePicture(currentUser,moduleDto.getLogoPicture(),moduleDto.getLogoPictureFile());
 		}
 		MeveoModuleItem item=null;
 		if(moduleDto.getCetDtos()!=null){
@@ -355,18 +351,18 @@ public class ModuleApi extends BaseApi {
 			log.error("error when export module picture {}, info {}",filename,e.getMessage(),e);
 		}
 	}
-	private void removeModulePicture(MeveoModule meveoModule,String filename){
+	private void removeModulePicture(String provider,String filename){
 		try{
-			ModuleUtil.removeModulePicture(meveoModule, filename);
+			ModuleUtil.removeModulePicture(provider,filename);
 		}catch(Exception e){
-			log.error("error when delete module picture {}, info {}",filename,e.getMessage(),e);
+			log.error("error when delete module picture {} for provider {}, info {}",filename,provider,(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()),e);
 		}
 	}
 	private byte[] readModulePicture(MeveoModule meveoModule,String filename){
 		try{
-			return ModuleUtil.readModulePicture(meveoModule, filename);
+			return ModuleUtil.readModulePicture(meveoModule.getProvider().getCode(), filename);
 		}catch(Exception e){
-			log.error("error when read module picture {}, info {}",filename,e.getMessage(),e);
+			log.error("error when read module picture {}, info {}",filename,(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()),e);
 		}
 		return null;
 	}

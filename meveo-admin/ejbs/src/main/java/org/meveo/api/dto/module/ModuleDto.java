@@ -41,10 +41,8 @@ public class ModuleDto extends BaseDataModelDto {
 	private ModuleLicenseEnum license;
 	@XmlAttribute
 	private String description;
-	private String coordsLogo;
-	private String logoFormat;
-	private byte[] sourceFile;
-	private byte[] destFile;
+	private String logoPicture;
+	private byte[] logoPictureFile;
 	
 	private List<CustomEntityTemplateDto> cetDtos;
 	private List<CustomFieldTemplateDto> cftDtos;
@@ -64,8 +62,7 @@ public class ModuleDto extends BaseDataModelDto {
 		this.code=meveoModule.getCode();
 		this.description=meveoModule.getDescription();
 		this.license=meveoModule.getLicense();
-		this.coordsLogo=meveoModule.getCoordsLogo();
-		this.logoFormat=meveoModule.getLogoFormat();
+		this.logoPicture=meveoModule.getLogoPicture();
 		this.cetDtos=new ArrayList<CustomEntityTemplateDto>();
 		this.cftDtos=new ArrayList<CustomFieldTemplateDto>();
 		this.filterDtos=new ArrayList<FilterDto>();
@@ -97,24 +94,7 @@ public class ModuleDto extends BaseDataModelDto {
 	public void setLicense(ModuleLicenseEnum license) {
 		this.license = license;
 	}
-	public byte[] getSourceFile() {
-		return sourceFile;
-	}
-	public void setSourceFile(byte[] sourceFile) {
-		this.sourceFile = sourceFile;
-	}
-	public byte[] getDestFile() {
-		return destFile;
-	}
-	public void setDestFile(byte[] destFile) {
-		this.destFile = destFile;
-	}
-	public String getCoordsLogo() {
-		return coordsLogo;
-	}
-	public void setCoordsLogo(String coordsLogo) {
-		this.coordsLogo = coordsLogo;
-	}
+	
 	public List<CustomEntityTemplateDto> getCetDtos() {
 		return cetDtos;
 	}
@@ -175,12 +155,6 @@ public class ModuleDto extends BaseDataModelDto {
 	public void setWebhookNotifDtos(List<WebhookNotificationDto> webhookNotifDtos) {
 		this.webhookNotifDtos = webhookNotifDtos;
 	}
-	public String getLogoFormat() {
-		return logoFormat;
-	}
-	public void setLogoFormat(String logoFormat) {
-		this.logoFormat = logoFormat;
-	}
 	public List<CounterTemplateDto> getCounterDtos() {
 		return counterDtos;
 	}
@@ -194,11 +168,24 @@ public class ModuleDto extends BaseDataModelDto {
 	public void setJobNextDtos(LinkedList<JobInstanceDto> jobNextDtos) {
 		this.jobNextDtos = jobNextDtos;
 	}
+	
+	public String getLogoPicture() {
+		return logoPicture;
+	}
+	public void setLogoPicture(String logoPicture) {
+		this.logoPicture = logoPicture;
+	}
+	public byte[] getLogoPictureFile() {
+		return logoPictureFile;
+	}
+	public void setLogoPictureFile(byte[] logoPictureFile) {
+		this.logoPictureFile = logoPictureFile;
+	}
 	@Override
 	public String toString() {
 		return "ModuleDto [code=" + code + ", license=" + license
-				+ ", description=" + description + ", coordsLogo=" + coordsLogo
-				+ ", logoFormat=" + logoFormat +", cetDtos=" + cetDtos
+				+ ", description=" + description + ", logoPicture=" + logoPicture
+				+ ", cetDtos=" + cetDtos
 				+ ", cftDtos=" + cftDtos + ", filterDtos=" + filterDtos
 				+ ", jobDtos=" + jobDtos + ", scriptDtos=" + scriptDtos
 				+ ", notificationDtos=" + notificationDtos
