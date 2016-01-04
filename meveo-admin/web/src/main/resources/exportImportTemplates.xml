@@ -220,7 +220,7 @@
             </entry>
         </parameters>
         <groupedTemplates>
-            <template ref="Configuration" />
+            <template ref="Catalog" />
             <template ref="Customer hierarchy and subscriptions" />
         </groupedTemplates>
     </template>
