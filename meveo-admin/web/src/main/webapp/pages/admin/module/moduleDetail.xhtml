@@ -199,10 +199,10 @@
                         dragDropSupport="true" process="@this" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" auto="true"/>
                 </div>
                 <h:panelGrid columns="2" id="picture" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100">
-					<c:set var="pictureSourceUrl" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/module/tmp/${meveoModuleBean.sourcePicture}"/>
+					<c:set var="pictureSourceUrl" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/module/tmp/${meveoModuleBean.tmpPicture}"/>
 					<c:set var="pictureDestUrl2" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/module/${meveoModuleBean.entity.logoPicture}"/>
 					<p:scrollPanel mode="native" style="width:400px;height:300px">
-						<p:imageCropper id="pic" value="#{meveoModuleBean.croppedImage}" image="${pictureSourceUrl}" minSize="30,30" maxSize="100,100" initialCoords="0,0,30,30" rendered="#{not empty meveoModuleBean.sourcePicture}"/>
+						<p:imageCropper id="pic" value="#{meveoModuleBean.croppedImage}" image="${pictureSourceUrl}" minSize="30,30" maxSize="100,100" initialCoords="0,0,30,30" rendered="#{not empty meveoModuleBean.tmpPicture}"/>
 					</p:scrollPanel>
         			<p:graphicImage url="${pictureDestUrl2}" cache="false" rendered="#{not empty meveoModuleBean.entity.logoPicture}"/>
     			</h:panelGrid>

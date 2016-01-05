@@ -59,16 +59,22 @@ public class PictureServlet extends HttpServlet {
 		String filename=null;
 		String provider=path[3];
 		String groupname=path[4];
-		if(path.length==7&&path[5].equals("tmp")){
-			rootPath=ModuleUtil.getTmpPicturePath(provider, groupname);
-			filename=path[6];
-		}else if(path.length==6){
-			rootPath=ModuleUtil.getPicturePath(provider,groupname);
-			filename=path[5];
-		}else{
-			log.error("error context path "+url);
+		try{
+			if(path.length==7&&path[5].equals("tmp")){
+				rootPath=ModuleUtil.getTmpRootPath(provider);
+				filename=path[6];
+			}else if(path.length==6){
+				rootPath=ModuleUtil.getPicturePath(provider,groupname);
+				filename=path[5];
+			}else{
+				log.error("error context path "+url);
+				return;
+			}
+		}catch(Exception e){
+			log.error("error when read picture path. Reason "+(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
 			return;
 		}
+		
 		String destfile=rootPath+File.separator+filename;
 		log.debug("read a picture file from "+ destfile);
 		File file=new File(destfile);
