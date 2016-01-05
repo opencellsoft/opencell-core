@@ -105,7 +105,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	protected MeveoInstance meveoInstance;
 	
 	private CroppedImage croppedImage;
-	private String sourcePicture;
+	private String tmpPicture;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -440,12 +440,13 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			log.debug("error picture format name for origin file {}!",originFilename);
 			return;
 		}
-		String filename=String.format("%s.%s",getSourceFilePrefix(),formatname);
-		this.sourcePicture=filename;
-		String dest = ModuleUtil.getTmpModulePath(entity.getProvider().getCode())+File.separator+filename;
-		log.debug("output original module picture file to {}",dest);
+		String filename=String.format("%s.%s",getTmpFilePrefix(),formatname);
+		this.tmpPicture=filename;
 		InputStream in = null;
 		try {
+			String tmpFolder=ModuleUtil.getTmpRootPath(entity.getProvider().getCode());
+			String dest = tmpFolder+File.separator+filename;
+			log.debug("output original module picture file to {}",dest);
 			in = event.getFile().getInputstream();
 			BufferedImage src = ImageIO.read(in);
 			ImageIO.write(src, formatname, new File(dest));
@@ -454,7 +455,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 		} catch (Exception e) {
 			log.error("Failed to upload a picture {} for module {}, info {}", filename,entity.getCode(),e.getMessage(), e);
 			messages.error(new BundleKey("messages",
-					"meveoModule.uploadPictureFailed"), originFilename,e.getMessage());
+					"meveoModule.uploadPictureFailed"), (e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
@@ -513,16 +514,15 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			removeModulePicture(file);
 		}
 	}
-
-	public String getSourcePicture() {
-		return sourcePicture;
-	}
-
-	public void setSourcePicture(String sourcePicture) {
-		this.sourcePicture = sourcePicture;
-	}
-	private static String getSourceFilePrefix(){
+	private static String getTmpFilePrefix(){
 		return UUID.randomUUID().toString();
 	}
-	
+
+	public String getTmpPicture() {
+		return tmpPicture;
+	}
+
+	public void setTmpPicture(String tmpPicture) {
+		this.tmpPicture = tmpPicture;
+	}
 }

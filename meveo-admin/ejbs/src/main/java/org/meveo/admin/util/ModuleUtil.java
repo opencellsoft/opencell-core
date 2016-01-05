@@ -25,6 +25,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.primefaces.model.CroppedImage;
 
@@ -48,17 +49,12 @@ public class ModuleUtil {
 		return getPicturePath(provider,"module");
 	}
 	
-	public static String getTmpRootPath(String provider){
+	public static String getTmpRootPath(String provider) throws IOException{
 		String tmpFolder=System.getProperty("java.io.tmpdir");
-		String path= (tmpFolder==null||tmpFolder==""?"/tmp/meveo/tmp":tmpFolder+File.separator+"meveo"+File.separator+"tmp")+File.separator+provider+File.separator+"media";
-		return getPath(path);
-	}
-	public static String getTmpPicturePath(String provider,String group){
-		String path= getTmpRootPath(provider)+File.separator+group+File.separator+"pictures";
-		return getPath(path);
-	}
-	public static String getTmpModulePath(String provider){
-		return getTmpPicturePath(provider,"module");
+		if(StringUtils.isBlank(tmpFolder)){
+			tmpFolder="/tmp";
+		}
+		return getPath(tmpFolder+File.separator+provider);
 	}
 	private static String getPath(String path){
 		File file=new File(path);
