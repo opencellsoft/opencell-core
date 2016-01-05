@@ -13,8 +13,6 @@ import org.meveo.model.bom.BOMEntity;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -28,12 +26,6 @@ import org.primefaces.model.DualListModel;
 public class BusinessOfferBean extends BaseBean<BOMEntity> {
 
 	private static final long serialVersionUID = 8222060379099238520L;
-
-	@Inject
-	private ServiceTemplateService serviceTemplateService;
-
-	@Inject
-	private OfferTemplateService offerTemplateService;
 
 	@Inject
 	private BusinessOfferService bomEntityService;

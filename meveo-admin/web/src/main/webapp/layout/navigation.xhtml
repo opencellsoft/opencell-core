@@ -158,12 +158,15 @@
 		<p:submenu id="catalog" label="#{messages['menu.catalog']}"
 			rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
 
+			<p:menuitem id="offerTemplateCategories"
+				outcome="offerTemplateCategories"
+				value="#{messages['menu.offerTemplateCategories']}" />
+
 			<p:menuitem id="offerTemplates" outcome="offerTemplates"
 				value="#{messages['menu.offerTemplates']}" />
 
 			<p:menuitem id="serviceTemplates" outcome="serviceTemplates"
 				value="#{messages['menu.serviceTemplates']}" />
-
 
 			<p:submenu id="charges" label="#{messages['menu.charges']}">
 
