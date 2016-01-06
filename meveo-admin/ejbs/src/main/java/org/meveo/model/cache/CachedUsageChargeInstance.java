@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.UsageChargeTemplate;
@@ -113,9 +114,13 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
         return this.getTemplateCache().getPriority() - o.getTemplateCache().getPriority();
     }
 
-    public BigDecimal getInChargeUnit(BigDecimal edrUnitValue) {
-        if (unityMultiplicator == null)
+    public BigDecimal getInChargeUnit(BigDecimal edrUnitValue) throws BusinessException {
+        if (unityMultiplicator == null){
             unityMultiplicator = BigDecimal.ONE;
+        }        
+        if(edrUnitValue == null){
+        	throw new BusinessException("Cant get countedValue with null quantity");
+        }
         BigDecimal result = edrUnitValue.multiply(unityMultiplicator);
 
         if (unityNbDecimal > 0) {
