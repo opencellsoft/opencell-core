@@ -1089,6 +1089,8 @@
 			</column>
 			<column name="description" type="VARCHAR(100)" />
 			<column name="UUID" type="VARCHAR(50)" />
+			<column name="name" type="VARCHAR(100)" />
+			<column name="image" type="oid" />
 		</createTable>
 
 		<addPrimaryKey columnNames="id"
@@ -1108,7 +1110,7 @@
 		<addColumn tableName="cat_offer_template">
 			<column name="name" type="VARCHAR(100)" />
 			<column name="entity_version" type="INT4" />
-			<column name="logo" type="oid" />
+			<column name="image" type="oid" />
 			<column name="cat_offer_template_cat_id" type="BIGINT" />
 			<column name="status" type="VARCHAR(50)" />
 		</addColumn>

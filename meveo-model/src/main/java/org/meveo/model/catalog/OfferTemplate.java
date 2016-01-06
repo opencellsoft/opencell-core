@@ -62,7 +62,7 @@ public class OfferTemplate extends BusinessCFEntity {
 	@Column(name = "ENTITY_VERSION")
 	private Integer entityVersion;
 
-	@Column(name = "LOGO")
+	@Column(name = "image")
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	private Blob image;
