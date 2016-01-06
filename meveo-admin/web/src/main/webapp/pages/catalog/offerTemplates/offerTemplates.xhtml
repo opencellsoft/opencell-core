@@ -14,9 +14,13 @@
 
         <hftl:searchPanel label="#{messages['offerTemplate.search']}" backingBean="#{offerTemplateListBean}">
             <hftl:searchField label="#{messages['offerTemplate.code']}" field="code" />
-            <hftl:searchField label="#{messages['offerTemplate.description']}" id="description" field="description" />
+            <hftl:searchField label="#{messages['offerTemplate.description']}" field="description" />
+            <hftl:searchField label="#{messages['commons.status']}" field="status" />
+            <hftl:searchField label="#{messages['offerTemplate.template']}" field="bomCode" valueLabelField="name"
+                listElements="#{offerTemplateBean.listAll()}" valueField="code" />
+            <hftl:searchField label="#{messages['offerTemplate.category']}" field="offerTemplateCategory" valueLabelField="description"
+                listBean="#{offerTemplateCategoryListBean}" />
             <hftl:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
-
         </hftl:searchPanel>
 
         <hftl:dataList label="#{messages['offerTemplate.title']}" noClose="false" backingBean="#{offerTemplateListBean}">
