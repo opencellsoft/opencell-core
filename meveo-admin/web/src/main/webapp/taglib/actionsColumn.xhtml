@@ -71,10 +71,10 @@
 			<h:outputText value="#{messages['commons.actions']}" />
 		</f:facet>
 
-		<p:tooltip for="#{resultsId}viewlink"
+		<p:tooltip for="viewlink"
 			value="#{messages['commons.view']}" showEffect="slide"
 			hideEffect="slide" />
-		<p:button id="#{resultsId}viewlink" outcome="#{editView}"
+		<p:button id="viewlink" outcome="#{editView}"
 			icon="ui-icon-search" rendered="#{renderViewLink}">
 			<f:param name="#{objectIdParamName}" value="#{entity.id}" />
 			<f:param name="edit" value="false" />
@@ -88,10 +88,10 @@
 			</c:if>
 		</p:button>
 
-		<p:tooltip for="#{resultsId}editlink"
+		<p:tooltip for="editlink"
 			value="#{messages['commons.edit']}" showEffect="slide"
 			hideEffect="slide" />
-		<p:button id="#{resultsId}editlink" outcome="#{editView}"
+		<p:button id="editlink" outcome="#{editView}"
 			icon="ui-icon-document" rendered="#{renderEditLink}">
 			<f:param name="#{objectIdParamName}" value="#{entity.id}" />
 			<f:param name="edit" value="true" />
@@ -104,7 +104,7 @@
 					value="#{backView}" />
 			</c:if>
 		</p:button>
-		<p:tooltip for="#{resultsId}duplicatelink"
+		<p:tooltip for="duplicatelink"
 			value="#{messages['commons.duplicate']}" showEffect="slide"
 			hideEffect="slide" />
 		<p:confirmDialog id="confirmDuplicateDialog" styleClass="confirm-dialog"
@@ -120,7 +120,7 @@
 					onclick="PF('confirmDuplicateWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
-		<p:commandButton id="#{resultsId}duplicatelink"
+		<p:commandButton id="duplicatelink"
 			icon="ui-icon-plus" rendered="#{renderDuplicateLink}" oncomplete="PF('confirmDuplicateWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"/>
@@ -129,13 +129,13 @@
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
 		</p:commandButton>
-		<p:commandButton id="#{resultsId}enablelink" icon="ui-icon-circle-check"
+		<p:commandButton id="enablelink" icon="ui-icon-circle-check"
 			rendered="#{renderEnableLink and entity.disabled}"
 			oncomplete="PF('confirmEnableWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"/>
 		</p:commandButton>
-		<p:commandButton id="#{resultsId}disablelink" icon="ui-icon-circle-close"
+		<p:commandButton id="disablelink" icon="ui-icon-circle-close"
 			rendered="#{renderEnableLink and not entity.disabled}"
 			oncomplete="PF('confirmDisableWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
@@ -143,7 +143,7 @@
 		</p:commandButton>
 		
 
-		<p:tooltip for="#{resultsId}enablelink" rendered="#{renderEnableLink}"
+		<p:tooltip for="enablelink" rendered="#{renderEnableLink}"
 			value="#{messages['commons.enable']}" showEffect="slide"
 			hideEffect="slide"  />
 		<p:confirmDialog id="confirmEnableDialog" styleClass="confirm-dialog"
@@ -159,7 +159,7 @@
 					onclick="PF('confirmEnableWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
-		<p:tooltip for="#{resultsId}disablelink" rendered="#{renderEnableLink}"
+		<p:tooltip for="disablelink" rendered="#{renderEnableLink}"
 			value="#{messages['commons.disable']}" showEffect="slide"
 			hideEffect="slide"  />
 		<p:confirmDialog id="confirmDisableDialog" styleClass="confirm-dialog"
@@ -181,38 +181,38 @@
 				function handleDeleteComplete(xhr, status, args) {
 					var result = args.result;
 					if(typeof(result)!="undefined" && !result){
-						PF('#{resultsId}confirmCanotDeleteWidget').show();
+						PF('confirmCanotDeleteWidget').show();
 					}
 				}
 			//]]>
 		</script>	
 		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.deleteInlist}"
-			 name="#{resultsId}doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"
+			 name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"
 			 rendered="#{renderDeleteLink}"/>
-		<p:tooltip for="#{resultsId}deletelink" rendered="#{renderDeleteLink}"
+		<p:tooltip for="deletelink" rendered="#{renderDeleteLink}"
 			value="#{messages['commons.delete']}" showEffect="slide"
 			hideEffect="slide"  />
-		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
-			oncomplete="PF('#{resultsId}confirmDeleteWidget').show()" rendered="#{renderDeleteLink}">
+		<p:commandButton id="deletelink" icon="ui-icon-trash"
+			oncomplete="PF('confirmDeleteWidget').show()" rendered="#{renderDeleteLink}">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>
 		<p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDelete']}" header="" rendered="#{renderDeleteLink}"
-			severity="alert" widgetVar="#{resultsId}confirmDeleteWidget" appendTo="@(body)">
+			severity="alert" widgetVar="confirmDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-					oncomplete="#{resultsId}doDelete()" onclick="PF('#{resultsId}confirmDeleteWidget').hide()"/>
+					oncomplete="doDelete()" onclick="PF('confirmDeleteWidget').hide()"/>
 				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
-					onclick="PF('#{resultsId}confirmDeleteWidget').hide()" type="button" />
+					onclick="PF('confirmDeleteWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
-		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
+		<p:confirmDialog id="confirmCanotDeleteDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmCanotDelete']}" header="" rendered="#{renderDeleteLink}"
-			severity="alert" widgetVar="#{resultsId}confirmCanotDeleteWidget" appendTo="@(body)">
+			severity="alert" widgetVar="confirmCanotDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
-					oncomplete="PF('#{resultsId}confirmCanotDeleteWidget').hide()" update="@this" />
+					oncomplete="PF('confirmCanotDeleteWidget').hide()" update="@this" />
 			</p:panel>
 		</p:confirmDialog>
 		<ui:insert />
