@@ -218,10 +218,6 @@
 					outcome="#{entityView}">
 					<f:param name="#{objectIdParamName}" value="#{valueId}" />
 					<f:param name="edit" value="#{edit}" />
-<!-- 					<c:if test="${propagateConversation}"> -->
-<!-- 						<f:param name="cid" -->
-<!-- 							value="#{javax.enterprise.context.conversation.id}" /> -->
-<!-- 					</c:if> -->
 					<c:if test="${not empty backView}">
 						<f:param name="backView"
 							value="#{backView}" />
