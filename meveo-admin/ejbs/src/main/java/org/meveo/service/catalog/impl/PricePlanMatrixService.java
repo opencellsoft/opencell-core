@@ -544,6 +544,24 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 	}
     
 	@SuppressWarnings("unchecked")
+	public List<PricePlanMatrix> findByOfferTemplateAndEventCode(OfferTemplate offerTemplate, String chargeCode) {
+		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p");
+		if(offerTemplate == null) {
+			qb.addSql("offerTemplate is null");
+		} else {
+			qb.addCriterionEntity("offerTemplate", offerTemplate);
+		}
+		qb.addCriterion("eventCode", "=", chargeCode, true);
+
+		try {
+			return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			log.warn("failed to find pricePlanMatrix By offerTemplate", e);
+			return null;
+		}
+	}
+    
+	@SuppressWarnings("unchecked")
 	public List<PricePlanMatrix> listByEventCode(String eventCode, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null, provider);
 		qb.addCriterion("eventCode", "=", eventCode, true);
