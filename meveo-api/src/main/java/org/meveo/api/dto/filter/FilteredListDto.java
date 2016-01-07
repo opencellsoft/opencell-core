@@ -1,8 +1,14 @@
 package org.meveo.api.dto.filter;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * @author Edward P. Legaspi
  **/
+@XmlRootElement(name = "FilteredList")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class FilteredListDto {
 
 	private String xmlInput;

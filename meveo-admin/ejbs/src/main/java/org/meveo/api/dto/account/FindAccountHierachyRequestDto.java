@@ -6,12 +6,14 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author Edward P. Legaspi
  **/
 @XmlType(name = "FindAccountHierachyRequest")
+@XmlRootElement(name = "FindAccountHierachyRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FindAccountHierachyRequestDto implements Serializable {
 
