@@ -89,10 +89,10 @@ public class FlatFileProcessingJobBean {
 				currentFile = FileUtils.addExtension(file, ".processing");
 
 				result.setNbItemsToProcess(1);
-				Class<org.meveo.service.script.ScriptInterface> flowScriptClass = scriptInstanceService.getScriptInterface(provider, scriptInstanceFlowCode);
+				
+				script = scriptInstanceService.getScriptInstance(provider, scriptInstanceFlowCode);
 				Object recordObject = null;
 
-				script = flowScriptClass.newInstance();
 				script.init(context, provider, currentUser);
 
 				FileParsers parserUsed = getParserType(mappingConf);

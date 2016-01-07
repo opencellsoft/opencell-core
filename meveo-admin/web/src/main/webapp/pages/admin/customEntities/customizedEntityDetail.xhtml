@@ -1,5 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions"
+    template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -151,7 +152,7 @@
                             <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.deleteInlist}" action="#{customEntityTemplateBean.refreshFields}"
                                 name="fieldsDoDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
                             <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-                            <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="PF('fieldsConfirmDeleteWidget').show()">
+                            <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="PF('confirmDeleteFieldsWidget').show()">
                                 <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}"></f:setPropertyActionListener>
                             </p:commandButton>
 
@@ -166,7 +167,6 @@
 
                         </h:panelGroup>
                     </p:column>
-
                     <f:facet name="footer">
                         <p:commandButton id="addTab" value="#{messages['customizedEntities.addNewTab']}" oncomplete="PF('groupDialog').show()"
                             actionListener="#{customEntityTemplateBean.newTab()}" update=":groupForm">
@@ -178,12 +178,70 @@
                         <!--                         </p:commandButton> -->
                     </f:facet>
                 </p:treeTable>
+            </p:panel>
+
+            <p:panel width="100" header="#{messages['customizedEntities.actions']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
+                <p:dataTable id="entityActions" var="entity" value="#{customEntityTemplateBean.entityActions}" paginator="true" rows="10" sortBy="#{entity.code}"
+                    paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                    rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
+                    <p:column headerText="#{messages['BusinessEntity.code']}">
+                        <h:outputText value="#{entity.localCodeForRead}" />
+                    </p:column>
+                    <p:column headerText="#{messages['customizedEntities.actionLabel']}">
+                        <h:outputText value="#{entity.label}" />
+                    </p:column>
+                    <p:column headerText="#{messages['BusinessEntity.description']}">
+                        <h:outputText value="#{entity.description}" />
+                    </p:column>
+                    <p:column headerText="#{messages['customizedEntities.actionApplicableOnEl.short']}">
+                        <h:outputText value="#{entity.applicableOnEl}" />
+                    </p:column>
+                    <hftl:column label="#{messages['scriptInstance.error']}" field="error" isMessage="true" width="15%" />
+                    <p:column headerText="#{messages['enableEntity.active']}" width="10%">
+                        <h:outputText value="#{messages['commons.yes']}" rendered="#{entity.active != null and entity.active.toString() == 'true'}" />
+                        <h:outputText value="#{messages['commons.no']}" rendered="#{entity.active != null and entity.active.toString() == 'false'}" />
+                    </p:column>
+
+                    <p:column headerText="#{messages['commons.actions']}" width="10%">
+                        <p:tooltip for="editActionBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="editActionBtn" icon="ui-icon-document" oncomplete="PF('actionDialog').show()" action="#{entityActionScriptBean.initEntity(entity.id)}"
+                            update=":actionForm">
+                            <f:setPropertyActionListener target="#{entityActionScriptBean.backViewSave}" value="customizedEntity" />
+                        </p:commandButton>
+
+                        <p:commandButton id="enableActionlink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" oncomplete="PF('confirmEnableActionWidget').show()">
+                            <f:setPropertyActionListener target="#{entityActionScriptBean.entity}" value="#{entity}" />
+                        </p:commandButton>
+                        <p:commandButton id="disableActionlink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}" oncomplete="PF('confirmDisableActionWidget').show()">
+                            <f:setPropertyActionListener target="#{entityActionScriptBean.entity}" value="#{entity}" />
+                        </p:commandButton>
+
+                        <p:tooltip for="enableActionlink" value="#{messages['commons.enable']}" showEffect="slide" hideEffect="slide" />
+                        <p:tooltip for="disableActionlink" value="#{messages['commons.disable']}" showEffect="slide" hideEffect="slide" />
+
+                        <p:tooltip for="deleteActionlink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="deleteActionlink" icon="ui-icon-trash" oncomplete="PF('confirmDeleteActionsWidget').show()">
+                            <f:setPropertyActionListener target="#{entityActionScriptBean.entity}" value="#{entity}" />
+                        </p:commandButton>
+
+                    </p:column>
+
+                    <f:facet name="footer">
+                        <p:commandButton id="addAction" value="#{messages['customizedEntities.addAction']}" oncomplete="PF('actionDialog').show()"
+                            actionListener="#{entityActionScriptBean.newEntity()}" update=":actionForm">
+                            <f:setPropertyActionListener target="#{entityActionScriptBean.backViewSave}" value="customizedEntity" />
+                            <f:setPropertyActionListener target="#{entityActionScriptBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
+                        </p:commandButton>
+                    </f:facet>
+
+                </p:dataTable>
+
 
                 <p:button id="backButton" value="#{messages['action.back']}" outcome="#{customEntityTemplateBean.back()}" includeViewParams="true">
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                 </p:button>
 
-
+                <!--  Field related confirmation widgets -->
                 <p:confirmDialog id="confirmDeleteTabDialog" styleClass="confirm-dialog" message="#{messages['customizedEntities.confirmDeleteTab']}" header="" severity="alert"
                     widgetVar="tabConfirmDeleteWidget" appendTo="@(body)">
                     <p:panel styleClass="confirm-dialog-content">
@@ -221,10 +279,10 @@
                 </p:confirmDialog>
 
                 <p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDelete']}" header="" severity="alert"
-                    widgetVar="fieldsConfirmDeleteWidget" appendTo="@(body)">
+                    widgetVar="confirmDeleteFieldsWidget" appendTo="@(body)">
                     <p:panel styleClass="confirm-dialog-content">
-                        <p:commandButton id="deleteOk" value="#{messages['commons.yes']}" oncomplete="fieldsDoDelete()" onclick="PF('fieldsConfirmDeleteWidget').hide()" />
-                        <p:commandButton id="deleteKo" value="#{messages['commons.no']}" onclick="PF('fieldsConfirmDeleteWidget').hide()" type="button" />
+                        <p:commandButton id="deleteOk" value="#{messages['commons.yes']}" oncomplete="fieldsDoDelete()" onclick="PF('confirmDeleteFieldsWidget').hide()" />
+                        <p:commandButton id="deleteKo" value="#{messages['commons.no']}" onclick="PF('confirmDeleteFieldsWidget').hide()" type="button" />
                     </p:panel>
                 </p:confirmDialog>
                 <p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmCanotDelete']}" header="" severity="alert"
@@ -233,6 +291,39 @@
                         <p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}" oncomplete="PF('fieldsConfirmCanotDeleteWidget').hide()" update="@this" />
                     </p:panel>
                 </p:confirmDialog>
+
+
+
+                <!-- Action related widgets -->
+                <p:confirmDialog id="confirmEnableActionDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmEnable']}" header="#{messages['commons.enable']}"
+                    severity="alert" widgetVar="confirmEnableActionWidget" appendTo="@(body)">
+                    <p:panel styleClass="confirm-dialog-content">
+                        <p:commandButton value="#{messages['commons.yes']}" oncomplete="PF('confirmEnableActionWidget').hide()" process="@this"
+                            actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.enable()}" update="@form" />
+                        <p:commandButton value="#{messages['commons.no']}" onclick="PF('confirmEnableActionWidget').hide()" type="button" />
+                    </p:panel>
+                </p:confirmDialog>
+                <p:confirmDialog id="confirmDisableActionDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDisable']}" header="#{messages['commons.disable']}"
+                    severity="alert" widgetVar="confirmDisableActionWidget" appendTo="@(body)">
+                    <p:panel styleClass="confirm-dialog-content">
+                        <p:commandButton value="#{messages['commons.yes']}" oncomplete="PF('confirmEnableActionWidget').hide()" process="@this"
+                            actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.disable()}" update="@form" />
+                        <p:commandButton value="#{messages['commons.no']}" onclick="PF('confirmDisableActionWidget').hide()" type="button" />
+                    </p:panel>
+                </p:confirmDialog>
+
+                <p:remoteCommand id="remoteDeleteActionButton" actionListener="#{entityActionScriptBean.deleteInlist}" action="#{customEntityTemplateBean.refreshActions}"
+                    name="actionsDoDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
+
+                <p:confirmDialog id="confirmDeleteActionsDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmDelete']}" header="" severity="alert"
+                    widgetVar="confirmDeleteActionsWidget" appendTo="@(body)">
+                    <p:panel styleClass="confirm-dialog-content">
+                        <p:commandButton value="#{messages['commons.yes']}" oncomplete="actionsDoDelete()" onclick="PF('confirmDeleteActionsWidget').hide()" />
+                        <p:commandButton value="#{messages['commons.no']}" onclick="PF('confirmDeleteActionsWidget').hide()" type="button" />
+                    </p:panel>
+                </p:confirmDialog>
+
+
 
                 <script type="text/javascript">
 																	//<![CDATA[
@@ -363,6 +454,70 @@
                 </hftl:formPanel>
             </p:scrollPanel>
         </p:dialog>
+
+
+
+        <p:dialog id="actionDialog" header="#{messages['customizedEntities.actionHeader']}" modal="true" closeOnEscape="true" maximizable="true" widgetVar="actionDialog"
+            width="90%" height="550px">
+
+            <p:scrollPanel mode="native" style="max-height:550px">
+
+                <hftl:formPanel formId="actionForm" label="#{messages['customizedEntities.actionHeader']}" backingBean="#{entityActionScriptBean}" showFormButtons="false">
+
+                    <h:panelGroup rendered="#{entityActionScriptBean.entity.isError()}">
+                        <div class="ui-messages ui-widget">
+                            <div class="ui-messages-error ui-corner-all">
+                                <span class="ui-messages-error-icon"></span>
+                                <ul>
+                                    <li><h:outputText value="#{messages['scriptInstance.compilationFailed']}" styleClass="ui-messages-error-summary" /></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <hftl:formField label="#{messages['BusinessEntity.code']}" field="localCode" required="true" allowEdit="false" componentWidth="15" />
+                    <hftl:formField label="#{messages['customizedEntities.actionLabel']}" field="label" required="true" useConverter="false" maxlength="50" componentWidth="20" />
+                    <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" maxlength="50" componentWidth="35" />
+                    <hftl:formField label="#{messages['customizedEntities.actionApplicableOnEl']}" field="applicableOnEl" componentWidth="30" size="50" maxLength="150" />
+                    <hftl:formField label="#{messages['scriptInstance.sourceTypeEnum']}" field="sourceTypeEnum" />
+                    <hftl:decorateFormField fieldId="codeMirror" label="#{messages['customizedEntities.actionScriptSrc']}" newLine="true" componentWidth="100">
+                        <pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java" value="#{entityActionScriptBean.entity.script}" lineNumbers="true" required="true" />
+                    </hftl:decorateFormField>
+                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
+
+                    <h:panelGroup id="scriptErrors">
+                        <hftl:decorateFormField label="#{messages['scriptInstance.compilationErrors']}" componentWidth="100" newLine="true"
+                            rendered="#{entityActionScriptBean.entity.isError()}">
+                            <p:dataTable id="entityActions" var="entity" value="#{entityActionScriptBean.entity.scriptErrors}" paginator="true" rows="10"
+                                sortBy="#{entity.lineNumber}" sortField="lineNumber" paginatorAlwaysVisible="false"
+                                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
+                                <hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" width="10%" />
+                                <hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" width="15%" />
+                                <hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />
+                            </p:dataTable>
+                        </hftl:decorateFormField>
+                    </h:panelGroup>
+                    <ui:param name="buttons" value="true" />
+                    <ui:define name="buttons">
+                        <hf:formButtons backingBean="#{entityActionScriptBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:entityActions" edit="true"
+                            killConversationOnSave="false">
+                            <p:commandButton value="#{messages['scriptInstance.testCompilation']}" action="#{entityActionScriptBean.testCompilation}" update="@form" />
+                            <p:commandButton value="#{messages['commons.disable']}"
+                                rendered="#{not empty entityActionScriptBean.entity.id and entityActionScriptBean.entity.active}"
+                                actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.disable}" update="@form :fieldsForm:entityActions" />
+
+                            <p:commandButton value="#{messages['commons.enable']}"
+                                rendered="#{not empty entityActionScriptBean.entity.id and entityActionScriptBean.entity.disabled}"
+                                actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityActionScriptBean.enable}" update="@form :fieldsForm:entityActions" />
+
+                            <p:commandButton value="#{messages['commons.close']}" onclick="PF('actionDialog').hide()" type="button" />
+                        </hf:formButtons>
+                    </ui:define>
+                </hftl:formPanel>
+            </p:scrollPanel>
+        </p:dialog>
+
 
     </ui:define>
 

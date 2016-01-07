@@ -1,0 +1,372 @@
+/*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.meveo.service.script;
+
+import java.io.File;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.NoResultException;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaFileObject;
+
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VirtualFile;
+import org.meveo.admin.exception.InvalidPermissionException;
+import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.scripts.CustomScript;
+import org.meveo.model.scripts.ScriptInstanceError;
+import org.meveo.model.scripts.ScriptSourceTypeEnum;
+import org.meveo.service.base.BusinessService;
+
+public abstract class CustomScriptService<T extends CustomScript, SI> extends BusinessService<T> {
+
+    protected final Class<SI> scriptInterfaceClass;
+
+    private Map<String, Map<String, List<String>>> allLogs = new HashMap<String, Map<String, List<String>>>();
+
+    private Map<String, Map<String, Class<SI>>> allScriptInterfaces = new HashMap<String, Map<String, Class<SI>>>();
+
+    private CharSequenceCompiler<SI> compiler;
+
+    private String classpath = "";
+
+    /**
+     * Constructor.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public CustomScriptService() {
+        super();
+        Class clazz = getClass();
+        while (!(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
+            clazz = clazz.getSuperclass();
+        }
+        Object o = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[1];
+
+        if (o instanceof TypeVariable) {
+            this.scriptInterfaceClass = (Class<SI>) ((TypeVariable) o).getBounds()[0];
+        } else {
+            this.scriptInterfaceClass = (Class<SI>) o;
+        }
+    }
+
+    /**
+     * Find scripts by type
+     * 
+     * @param type
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> findByType(ScriptSourceTypeEnum type) {
+        List<T> result = new ArrayList<T>();
+        QueryBuilder qb = new QueryBuilder(getEntityClass(), "t");
+        qb.addCriterionEnum("t.sourceTypeEnum", type);
+        try {
+            result = (List<T>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+
+        }
+        return result;
+    }
+
+    @Override
+    public void create(T script, User creator, Provider provider) {
+
+        super.create(script, creator, provider);
+        compileScript(script, false);
+    }
+
+    @Override
+    public T update(T script, User updater) {
+
+        script = super.update(script, updater);
+        compileScript(script, false);
+
+        return script;
+    }
+
+    /**
+     * Build the classpath and compile all scripts
+     */
+    protected void compile(List<T> scripts) {
+        try {
+
+            VirtualFile virtualLibDir = VFS.getChild("/content/" + ParamBean.getInstance().getProperty("meveo.moduleName", "meveo") + ".war/WEB-INF/lib");
+            if (!virtualLibDir.exists()) {
+                log.info("cannot find /content in VFS ");
+                VirtualFile virtualDeploymentDirs = VFS.getChild("deployment");
+                if (!virtualDeploymentDirs.exists() || virtualDeploymentDirs.getChildren().size() == 0) {
+                    log.info("cannot find /deployment in VFS");
+                } else {
+                    // get the last deployment dir
+                    VirtualFile virtualDeploymentDir = null;
+                    for (VirtualFile virtualDeployment : virtualDeploymentDirs.getChildren()) {
+                        if (virtualDeploymentDir == null) {
+                            virtualDeploymentDir = virtualDeployment;
+                        } else {
+                            if (virtualDeployment.getLastModified() > virtualDeploymentDir.getLastModified()) {
+                                virtualDeploymentDir = virtualDeployment;
+                            }
+                        }
+                    }
+                    File physicalLibDirs = virtualDeploymentDir.getPhysicalFile();
+                    for (File physicalLibDir : physicalLibDirs.listFiles()) {
+                        if (physicalLibDir.isDirectory()) {
+                            for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
+                                classpath += f.getCanonicalPath() + File.pathSeparator;
+                            }
+                        }
+                    }
+                }
+            } else {
+                File physicalLibDir = virtualLibDir.getPhysicalFile();
+                for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
+                    classpath += f.getCanonicalPath() + File.pathSeparator;
+                }
+            }
+            if (classpath.length() == 0) {
+                String jbossHome = System.getProperty("jboss.home.dir");
+                File deploymentLibDirs = new File(jbossHome + "/standalone/tmp/vfs/deployment");
+                if (!deploymentLibDirs.exists()) {
+                    log.error("cannot find " + jbossHome + "/standalone/tmp/vfs/deployment .. are you deploying on jboss 7 ?");
+                    return;
+                } else {
+                    File deploymentDir = null;
+                    for (File deployment : deploymentLibDirs.listFiles()) {
+                        if (deploymentDir == null) {
+                            deploymentDir = deployment;
+                        } else {
+                            if (deployment.lastModified() > deploymentDir.lastModified()) {
+                                deploymentDir = deployment;
+                            }
+                        }
+                    }
+                    for (File physicalLibDir : deploymentDir.listFiles()) {
+                        if (physicalLibDir.isDirectory()) {
+                            for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
+                                classpath += f.getCanonicalPath() + File.pathSeparator;
+                            }
+                        }
+                    }
+                }
+            }
+            log.info("compileAll classpath={}", classpath);
+
+            for (T script : scripts) {
+                compileScript(script, false);
+            }
+        } catch (Exception e) {
+            log.error("", e);
+        }
+    }
+
+    /**
+     * Compile script and update status
+     * 
+     * @param script Script entity to compile
+     */
+    public void compileScript(T script, boolean testCompile) {
+        try {
+            final String packageName = getPackageName(script.getScript());
+            final String qName = (packageName != null ? packageName + '.' : "") + getClassName(script.getScript());
+            final String codeSource = script.getScript();
+
+            log.trace("Compiling code for {}: {}", qName, codeSource);
+            script.setError(false);
+            script.getScriptErrors().clear();
+
+            Class<SI> compiledScript = compileJavaSource(codeSource, qName);
+
+            if (!testCompile) {
+                if (!allScriptInterfaces.containsKey(script.getProvider().getCode())) {
+                    allScriptInterfaces.put(script.getProvider().getCode(), new HashMap<String, Class<SI>>());
+                    log.debug("create Map for {}", script.getProvider().getCode());
+                }
+                Map<String, Class<SI>> providerScriptInterfaces = allScriptInterfaces.get(script.getProvider().getCode());
+                providerScriptInterfaces.put(script.getCode(), compiledScript);
+                log.debug("Added script {} for provider {} to Map", script.getCode(), script.getProvider().getCode());
+            }
+        } catch (CharSequenceCompilerException e) {
+            log.error("Failed to compile script {} for provider {}. Compilation errors:", script.getCode(), script.getProvider().getCode());
+            List<Diagnostic<? extends JavaFileObject>> diagnosticList = e.getDiagnostics().getDiagnostics();
+            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticList) {
+                if ("ERROR".equals(diagnostic.getKind().name())) {
+                    ScriptInstanceError scriptInstanceError = new ScriptInstanceError();
+                    scriptInstanceError.setMessage(diagnostic.getMessage(Locale.getDefault()));
+                    scriptInstanceError.setLineNumber(diagnostic.getLineNumber());
+                    scriptInstanceError.setColumnNumber(diagnostic.getColumnNumber());
+                    scriptInstanceError.setSourceFile(diagnostic.getSource().toString());
+                    // scriptInstanceError.setScript(scriptInstance);
+                    script.getScriptErrors().add(scriptInstanceError);
+                    // scriptInstanceErrorService.create(scriptInstanceError, scriptInstance.getAuditable().getCreator(), scriptInstance.getProvider());
+                    log.warn("{} script {} location {}:{}: {}", diagnostic.getKind().name(), script.getCode(), diagnostic.getLineNumber(), diagnostic.getColumnNumber(),
+                        diagnostic.getMessage(Locale.getDefault()));
+                }
+            }
+            script.setError(true);
+
+        } catch (Exception e) {
+            log.error("", e);
+        }
+    }
+
+    /**
+     * Compile java Source script
+     * 
+     * @param javaSrc Java source to compile
+     * @param fullClassName Canonical class name
+     * @return Compiled class instance
+     * @throws CharSequenceCompilerException
+     */
+    protected Class<SI> compileJavaSource(String javaSrc, String fullClassName) throws CharSequenceCompilerException {
+        compiler = new CharSequenceCompiler<SI>(this.getClass().getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
+        final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
+        Class<SI> compiledScript = compiler.compile(fullClassName, javaSrc, errs, new Class<?>[] { scriptInterfaceClass });
+        return compiledScript;
+    }
+
+    /**
+     * Find the script class for a given script code
+     * 
+     * @param provider
+     * @param scriptCode
+     * @return Script Class
+     * @throws InvalidPermissionException
+     */
+    private Class<SI> getScriptInterface(Provider provider, String scriptCode) throws InvalidPermissionException {
+        Class<SI> result = null;
+
+        if (allScriptInterfaces.containsKey(provider.getCode())) {
+            result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+        }
+        if (result == null) {
+            T script = findByCode(scriptCode, provider);
+            if (script == null) {
+                log.debug("ScriptInstance with {} does not exist", scriptCode);
+                return null;
+            }
+            compileScript(script, false);
+            if (script.isError()) {
+                log.debug("ScriptInstance {} failed to compile", scriptCode);
+                return null;
+            }
+            result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+        }
+        log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
+        return result;
+    }
+
+    /**
+     * Get a compiled script class
+     * 
+     * @param provider Provider
+     * @param scriptCode Script code
+     * @return A compiled script class
+     * @throws InvalidPermissionException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    public SI getScriptInstance(Provider provider, String scriptCode) throws InvalidPermissionException, InstantiationException, IllegalAccessException {
+        Class<SI> scriptClass = getScriptInterface(provider, scriptCode);
+        SI script = scriptClass.newInstance();
+        return script;
+    }
+
+    /**
+     * Add a log line for a script
+     * 
+     * @param message
+     * @param providerCode
+     * @param scriptCode
+     */
+    public void addLog(String message, String providerCode, String scriptCode) {
+        if (!allLogs.containsKey(providerCode)) {
+            allLogs.put(providerCode, new HashMap<String, List<String>>());
+        }
+        if (!allLogs.get(providerCode).containsKey(scriptCode)) {
+            allLogs.get(providerCode).put(scriptCode, new ArrayList<String>());
+        }
+        allLogs.get(providerCode).get(scriptCode).add(message);
+    }
+
+    /**
+     * Get logs for script
+     * 
+     * @param providerCode
+     * @param scriptCode
+     * @return
+     */
+    public List<String> getLogs(String providerCode, String scriptCode) {
+        if (!allLogs.containsKey(providerCode)) {
+            return new ArrayList<String>();
+        }
+        if (!allLogs.get(providerCode).containsKey(scriptCode)) {
+            return new ArrayList<String>();
+        }
+        return allLogs.get(providerCode).get(scriptCode);
+    }
+
+    /**
+     * Clear all logs for a script
+     * 
+     * @param providerCode
+     * @param scriptCode
+     */
+    public void clearLogs(String providerCode, String scriptCode) {
+        if (allLogs.containsKey(providerCode)) {
+            if (allLogs.get(providerCode).containsKey(scriptCode)) {
+                allLogs.get(providerCode).get(scriptCode).clear();
+            }
+        }
+    }
+
+    /**
+     * Find the package name in a source java text
+     * 
+     * @param src Java source code
+     * @return Package name
+     */
+    public String getPackageName(String src) {
+        return StringUtils.patternMacher("package (.*?);", src);
+    }
+
+    /**
+     * Find the class name in a source java text
+     * 
+     * @param src Java source code
+     * @return Class name
+     */
+    public String getClassName(String src) {
+        String className = StringUtils.patternMacher("public class (.*) extends", src);
+        if (className == null) {
+            className = StringUtils.patternMacher("public class (.*) implements", src);
+        }
+        return className;
+    }
+}

@@ -41,12 +41,6 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         return customFieldTemplate;
     }
 
-    public CustomFieldTemplate initEntity(Long id) {
-        entity = null;
-        setObjectId(id);
-        return initEntity();
-    }
-
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 

@@ -17,13 +17,13 @@
 package org.meveo.model.scripts;
 
 
-public enum ScriptTypeEnum {	
-        JAVA(1, "scriptTypeEnum.JAVA");
-//	    GROOVY(2, "scriptTypeEnum.GROOVY"),
-//	    JAVA_SCRIPT(3, "scriptTypeEnum.JAVA_SCRIPT"),
-//	    BEAN_SHELL(4, "scriptTypeEnum.BEAN_SHELL"),
-//	    SQL(5, "scriptTypeEnum.SQL"),
-//	    PERL(6, "scriptTypeEnum.PERL");
+public enum ScriptSourceTypeEnum {	
+        JAVA(1, "scriptSourceTypeEnum.JAVA");
+//	    GROOVY(2, "scriptSourceTypeEnum.GROOVY"),
+//	    JAVA_SCRIPT(3, "scriptSourceTypeEnum.JAVA_SCRIPT"),
+//	    BEAN_SHELL(4, "scriptSourceTypeEnum.BEAN_SHELL"),
+//	    SQL(5, "scriptSourceTypeEnum.SQL"),
+//	    PERL(6, "scriptSourceTypeEnum.PERL");
 	    
 
 	    private Integer id;
@@ -31,7 +31,7 @@ public enum ScriptTypeEnum {
 	    
 
 
-		private ScriptTypeEnum(Integer id, String label) {
+		private ScriptSourceTypeEnum(Integer id, String label) {
 	        this.id = id;
 	        this.label = label;
 	    }
@@ -44,9 +44,9 @@ public enum ScriptTypeEnum {
 	        return id;
 	    }
 
-	    public static ScriptTypeEnum getValue(Integer id) {
+	    public static ScriptSourceTypeEnum getValue(Integer id) {
 	        if (id != null) {
-	            for (ScriptTypeEnum status : values()) {
+	            for (ScriptSourceTypeEnum status : values()) {
 	                if (id.equals(status.getId())) {
 	                    return status;
 	                }

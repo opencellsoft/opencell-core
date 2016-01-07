@@ -1125,4 +1125,15 @@
 		<sql>UPDATE cat_offer_template SET name=DESCRIPTION;</sql>
 	</changeSet>
 
+
+    <changeSet id="#1104_20160102" author="AndriusKarpavicius">
+        <addColumn tableName="MEVEO_SCRIPT_INSTANCE">
+            <column name="APPLIES_TO" type="varchar(100)"/>
+            <column name="APPLICABLE_ON_EL" type="varchar(150)"/>
+            <column name="LABEL" type="varchar(50)"/>
+            <column name="SCRIPT_TYPE" type="varchar(20)"/>
+        </addColumn>
+        <sql>update MEVEO_SCRIPT_INSTANCE set SCRIPT_TYPE='ScriptInstance'</sql>
+    </changeSet>    
+          
 </databaseChangeLog>

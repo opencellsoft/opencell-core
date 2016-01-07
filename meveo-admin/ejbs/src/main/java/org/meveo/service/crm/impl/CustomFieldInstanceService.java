@@ -197,7 +197,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
         if (cft == null) {
-            log.trace("No CFT found {}/{}", entity, code);
+            //log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
 

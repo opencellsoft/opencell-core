@@ -28,9 +28,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -67,8 +69,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
 			Map<String, Object> scriptContext = new HashMap<>();
 			scriptContext.put("subscription", subscription);
 
-			scriptInstanceService.execute(provider, subscription.getOffer().getSubscriptionScript().getCode(),
-					scriptContext, creator);
+			try {
+                scriptInstanceService.execute(provider, subscription.getOffer().getSubscriptionScript().getCode(),
+                		scriptContext, creator);
+            } catch (InvalidPermissionException | ElementNotFoundException e) {
+                log.error("Failed to execute a script {}", subscription.getOffer().getSubscriptionScript().getCode(), e);
+            }
 		}
 	}
 

@@ -12,8 +12,13 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.script.EntityActionScriptService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +35,9 @@ public class MeveoFunctionMapper extends FunctionMapper {
     private Map<String, Method> functionMap = new HashMap<String, Method>();
 
     private static CustomFieldInstanceService customFieldInstanceService;
+
+    private static EntityActionScriptService entityActionScriptService;
+
     Logger log = LoggerFactory.getLogger(this.getClass());
 
     public MeveoFunctionMapper() {
@@ -92,6 +100,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
                 Bean<CustomFieldInstanceService> bean = (Bean<CustomFieldInstanceService>) beanManager.resolve(beanManager.getBeans(CustomFieldInstanceService.class));
                 customFieldInstanceService = (CustomFieldInstanceService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+
             } catch (NamingException e) {
                 Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
                 log.error("Unable to access CustomFieldInstanceService", e);
@@ -99,6 +108,26 @@ public class MeveoFunctionMapper extends FunctionMapper {
             }
         }
         return customFieldInstanceService;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static EntityActionScriptService getEntityActionScriptService() {
+
+        if (entityActionScriptService == null) {
+            try {
+                InitialContext initialContext = new InitialContext();
+                BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+
+                Bean<EntityActionScriptService> bean = (Bean<EntityActionScriptService>) beanManager.resolve(beanManager.getBeans(EntityActionScriptService.class));
+                entityActionScriptService = (EntityActionScriptService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+
+            } catch (NamingException e) {
+                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+                log.error("Unable to access EntityActionScriptService", e);
+                throw new RuntimeException(e);
+            }
+        }
+        return entityActionScriptService;
     }
 
     /**
@@ -221,5 +250,29 @@ public class MeveoFunctionMapper extends FunctionMapper {
         log.trace("Obtained CF value {} by matrix for keys {}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, entity, code, date);
 
         return cfValue;
+    }
+
+    /**
+     * Execute action on an entity
+     * 
+     * @param entity Entity to execute action on
+     * @param scriptCode Script to execute, identified by a code
+     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
+     * @param currentUser Current user
+     * @param currentProvider Current provider
+     * @return A script execution result value
+     */
+    public static Object executeEntityAction(IEntity entity, String scriptCode, String encodedParameters, User currentUser, Provider currentProvider) {
+
+        Object result = null;
+
+        try {
+            result = getEntityActionScriptService().execute(entity, scriptCode, encodedParameters, currentUser, currentProvider);
+        } catch (InstantiationException | IllegalAccessException | BusinessException e) {
+            Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+            log.error("Failed to execute a script {} on entity {}", scriptCode, entity);
+        }
+
+        return result;
     }
 }

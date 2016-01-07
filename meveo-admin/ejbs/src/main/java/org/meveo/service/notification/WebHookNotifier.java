@@ -26,7 +26,6 @@ import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.MeveoJpaForJobs;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
@@ -161,27 +160,27 @@ public class WebHookNotifier {
 				} catch (BusinessException e2) {
 					log.error("Failed to create webhook ",e);
 				}
-			} else {
-				if(webHook.getScriptInstance() != null){
-				HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-				userMap.put("event", e);
-				userMap.put("response",result);
-			
-			        Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(webHook.getScriptInstance().getProvider(),webHook.getScriptInstance().getCode());
-			        try{
-			        	ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
-			        	Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
-			            
-			        	for (@SuppressWarnings("rawtypes") Map.Entry entry : paramsEvaluated.entrySet()) {
-			        	    paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression( (String)entry.getValue(), userMap, String.class));
-			        	}
-			        	paramsEvaluated.put("response",result);
-				    	scriptInterface.execute(paramsEvaluated,webHook.getScriptInstance().getProvider(),webHook.getScriptInstance().getAuditable().getCreator());
-			        } catch(Exception ee){
-			        	log.error("failed script execution",ee);
-			        }
-			    
-				}
+            } else {
+                if (webHook.getScriptInstance() != null) {
+                    HashMap<Object, Object> userMap = new HashMap<Object, Object>();
+                    userMap.put("event", e);
+                    userMap.put("response", result);
+
+                    try {
+                        Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
+
+                        for (@SuppressWarnings("rawtypes")
+                        Map.Entry entry : paramsEvaluated.entrySet()) {
+                            paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
+                        }
+                        paramsEvaluated.put("response", result);
+                        scriptInstanceService.execute(webHook.getScriptInstance().getProvider(), webHook.getScriptInstance().getCode(), paramsEvaluated, webHook
+                            .getScriptInstance().getAuditable().getCreator());
+
+                    } catch (Exception ee) {
+                        log.error("Failed to execute a script {}", webHook.getScriptInstance().getCode(), ee);
+                    }
+                }
 				notificationHistoryService.create(webHook, e, result, NotificationHistoryStatusEnum.SENT);
 				log.debug("webhook answer : " + result);
 			}

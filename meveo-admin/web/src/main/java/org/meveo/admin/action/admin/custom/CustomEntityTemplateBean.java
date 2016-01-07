@@ -15,9 +15,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.script.EntityActionScriptService;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -55,8 +57,15 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     private TreeNode selectedFieldGrouping;
 
+    private List<EntityActionScript> entityActions;
+
+    private EntityActionScript selectedEntityAction;
+
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
+
+    @Inject
+    private EntityActionScriptService entityActionScriptService;
 
     @Inject
     private JobInstanceService jobInstanceService;
@@ -154,8 +163,26 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         return groupedFields;
     }
 
+    public List<EntityActionScript> getEntityActions() {
+
+        if (entityActions != null || cetPrefix == null) {
+            return entityActions;
+        }
+
+        Map<String, EntityActionScript> scripts = entityActionScriptService.findByAppliesTo(cetPrefix, getCurrentProvider());
+
+        entityActions = new ArrayList<EntityActionScript>();
+        entityActions.addAll(scripts.values());
+
+        return entityActions;
+    }
+
     public void refreshFields() {
         groupedFields = null;
+    }
+    
+    public void refreshActions() {
+        entityActions = null;
     }
 
     public void setSelectedFieldGrouping(TreeNode selectedFieldGrouping) {
@@ -164,6 +191,14 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     public TreeNode getSelectedFieldGrouping() {
         return selectedFieldGrouping;
+    }
+
+    public void setSelectedEntityAction(EntityActionScript selectedEntityAction) {
+        this.selectedEntityAction = selectedEntityAction;
+    }
+
+    public EntityActionScript getSelectedEntityAction() {
+        return selectedEntityAction;
     }
 
     @Override

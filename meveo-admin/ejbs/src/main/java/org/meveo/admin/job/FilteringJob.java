@@ -43,17 +43,24 @@ public class FilteringJob extends Job {
         String filterCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_filter", currentUser)).getCode();
         String scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_script", currentUser)).getCode();
         String recordVariableName = (String) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_recordVariableName", currentUser);
-        Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(currentUser.getProvider(),scriptCode);
-    	if(scriptInterfaceClass==null){
-    		result.registerError("cannot find script with code "+scriptCode);
-    	} else {
-            Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_variables", currentUser);
-            if (context == null) {
-                context = new HashMap<String, Object>();
-            }
-			filteringJobBean.execute(result, jobInstance.getParametres(), filterCode, scriptCode,context,recordVariableName, currentUser);
-    	}
-	}
+
+        ScriptInterface scriptInterface = null;
+        try {
+            scriptInterface = scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+        } catch (InstantiationException | IllegalAccessException e) {
+            result.registerError("Faield to instantiate a sript with code " + scriptCode);
+        }
+        if (scriptInterface == null) {
+            result.registerError("cannot find script with code " + scriptCode);
+            return;
+        }
+        
+        Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_variables", currentUser);
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        filteringJobBean.execute(result, jobInstance.getParametres(), filterCode, scriptInterface, context, recordVariableName, currentUser);
+    }
 
 	@Override
 	public JobCategoryEnum getJobCategory() {

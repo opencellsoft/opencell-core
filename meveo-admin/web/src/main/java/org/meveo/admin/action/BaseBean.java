@@ -50,6 +50,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
@@ -258,6 +259,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
 
         return entity;
+    }
+    
+    public T initEntity(Long id) {
+        entity = null;
+        setObjectId(id);
+        return initEntity();
     }
 
     /**
@@ -1032,5 +1039,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     public int getActiveMainTab() {
         return activeMainTab;
-    }    
+    }
+
+    /**
+     * Get custom actions applicable to the entity - right now implemented in customFieldEntityBean only. Here provided for GUI compatibility issue only
+     * 
+     * @return A list of entity action scripts
+     */
+    public List<EntityActionScript> getCustomActions() {
+        return null;
+    }
 }

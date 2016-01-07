@@ -6,7 +6,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.ScriptInstanceErrorDto;
@@ -20,7 +19,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
-import org.meveo.model.scripts.ScriptTypeEnum;
+import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -74,21 +73,21 @@ public class ScriptInstanceApi extends BaseApi {
 
 		if (!StringUtils.isBlank(scriptInstanceDto.getType())) {
 			try {
-				scriptInstance.setScriptTypeEnum(ScriptTypeEnum.valueOf(scriptInstanceDto.getType()));
+				scriptInstance.setSourceTypeEnum(ScriptSourceTypeEnum.valueOf(scriptInstanceDto.getType()));
 			} catch (IllegalArgumentException e) {
-				throw new InvalidEnumValue(ScriptTypeEnum.class.getName(), scriptInstanceDto.getType());
+				throw new InvalidEnumValue(ScriptSourceTypeEnum.class.getName(), scriptInstanceDto.getType());
 			}
 		} else {
-			scriptInstance.setScriptTypeEnum(ScriptTypeEnum.JAVA);
+			scriptInstance.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);
 		}
 		try {
-			scriptInstance = scriptInstanceService.saveOrUpdate(scriptInstance, currentUser, currentUser.getProvider());
+			scriptInstanceService.create(scriptInstance, currentUser, currentUser.getProvider());
 		} catch (Exception e) {
               throw new MeveoApiException(e.getMessage());
 		}
 		
-		if (scriptInstance != null && scriptInstance.getError()!=null && scriptInstance.getError().booleanValue()) {
-			for (ScriptInstanceError error : scriptInstance.getScriptInstanceErrors()) {
+		if (scriptInstance != null && scriptInstance.isError()!=null && scriptInstance.isError().booleanValue()) {
+			for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
 				ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
 				result.add(errorDto);
 			}
@@ -111,9 +110,9 @@ public class ScriptInstanceApi extends BaseApi {
 		}		
 		if (!StringUtils.isBlank(scriptInstanceDto.getType())) {
 			try {
-				scriptInstance.setScriptTypeEnum(ScriptTypeEnum.valueOf(scriptInstanceDto.getType()));
+				scriptInstance.setSourceTypeEnum(ScriptSourceTypeEnum.valueOf(scriptInstanceDto.getType()));
 			} catch (IllegalArgumentException e) {
-				throw new InvalidEnumValue(ScriptTypeEnum.class.getName(), scriptInstanceDto.getType());
+				throw new InvalidEnumValue(ScriptSourceTypeEnum.class.getName(), scriptInstanceDto.getType());
 			}
 		}		
 		if(!scriptInstanceService.isUserHasSourcingRole(scriptInstance, currentUser)){
@@ -136,12 +135,12 @@ public class ScriptInstanceApi extends BaseApi {
 		scriptInstance.setDescription(scriptInstanceDto.getDescription());
 		scriptInstance.setScript(scriptInstanceDto.getScript());
 		try {
-			scriptInstance = scriptInstanceService.saveOrUpdate(scriptInstance, currentUser, currentUser.getProvider());
+			scriptInstance = scriptInstanceService.update(scriptInstance, currentUser);
 		} catch (Exception e) {
               throw new MeveoApiException(e.getMessage());
 		}
-		if (scriptInstance.getError().booleanValue()) {
-			for (ScriptInstanceError error : scriptInstance.getScriptInstanceErrors()) {
+		if (scriptInstance.isError().booleanValue()) {
+			for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
 				ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
 				result.add(errorDto);
 			}

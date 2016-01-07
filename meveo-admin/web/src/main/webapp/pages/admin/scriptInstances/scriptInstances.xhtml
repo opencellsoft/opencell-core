@@ -1,46 +1,40 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.org/seam/faces"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	 xmlns:p="http://primefaces.org/ui" 
-	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView" listener="#{scriptInstanceListBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{scriptInstanceListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<hftl:searchPanel columns="3" label="#{messages['scriptInstance.search']}"
-			backingBean="#{scriptInstanceListBean}">
+        <hftl:searchPanel columns="3" label="#{messages['scriptInstance.search']}" backingBean="#{scriptInstanceListBean}">
+            <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+        </hftl:searchPanel>
 
-			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
-		
-		</hftl:searchPanel>
+        <hftl:dataList label="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceListBean}" sortBy="code">
+            <p:column headerText="#{messages['businessEntity.code']}">
+                <h:link outcome="scriptInstanceDetail" value="#{entity.code}" disabled="#{!scriptInstanceListBean.isUserHasSourcingRole(entity)}">
+                    <f:param name="objectId" value="#{entity.id}" />
+                    <f:param name="edit" value="true" />
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                </h:link>
+            </p:column>
+            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['scriptInstance.error']}" field="error" isMessage="true" width="10%"/>
+            <p:column headerText="#{messages['enableEntity.active']}" width="10%">
+                <h:outputText value="#{messages['commons.yes']}" rendered="#{entity.active != null and entity.active.toString() == 'true'}" />
+                <h:outputText value="#{messages['commons.no']}" rendered="#{entity.active != null and entity.active.toString() == 'false'}" />
+            </p:column>
+            <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" />
+        </hftl:dataList>
 
-		<hftl:dataList label="#{messages['scriptInstance.title']}"
-			backingBean="#{scriptInstanceListBean}" sortBy="code">
-			<p:column headerText="#{messages['businessEntity.code']}">
-                    <h:link outcome="scriptInstanceDetail" value="#{entity.code}" disabled="#{!scriptInstanceListBean.isUserHasSourcingRole(entity)}">
-                        <f:param name="objectId" value="#{entity.id}" />
-                        <f:param name="edit" value="true" />
-                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                    </h:link>
-                </p:column>
-			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}" />
-		</hftl:dataList>
-
-	</ui:define>
+    </ui:define>
 
 </ui:composition>

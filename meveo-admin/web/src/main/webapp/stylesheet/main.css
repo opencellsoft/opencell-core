@@ -604,3 +604,11 @@ vertical-align:top !important;
 .minWidthCalendar input {
 	width: 90px;
 }
+
+.CodeMirror {
+	box-shaddow: inset 0px 2px 2px #8f8f8f;
+	border: 1px solid #a8a8a8;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+}

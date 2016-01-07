@@ -27,7 +27,6 @@ import org.meveo.model.notification.Notification;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.notification.NotificationService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
 @Stateless
@@ -52,7 +51,8 @@ public class InternalNotificationJobBean {
 	@Inject
 	ScriptInstanceService scriptInstanceService;
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+	@SuppressWarnings("rawtypes")
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(String filterCode, String notificationCode, JobExecutionResultImpl result, User currentUser) {
 		log.debug("Running for user={}, filterCode={}", currentUser, filterCode);
@@ -96,14 +96,11 @@ public class InternalNotificationJobBean {
 				}
 				try {
 					if (notification.getScriptInstance() != null) {
-						Class<ScriptInterface> scriptInterfaceClass = scriptInstanceService.getScriptInterface(provider, notification.getScriptInstance().getCode());
-						ScriptInterface scriptInterface = scriptInterfaceClass.newInstance();
 						Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
-						for (@SuppressWarnings("rawtypes")
-						Map.Entry entry : notification.getParams().entrySet()) {
-							paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
-						}
-						scriptInterface.execute(paramsEvaluated, provider);
+                        for (Map.Entry entry : notification.getParams().entrySet()) {
+                            paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
+                        }
+                        scriptInstanceService.execute(provider, notification.getScriptInstance().getCode(), paramsEvaluated, currentUser);
 						result.registerSucces();
 					} else {
 						log.debug("No script instance on this Notification");

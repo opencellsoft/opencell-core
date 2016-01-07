@@ -16,114 +16,74 @@
  */
 package org.meveo.model.scripts;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.io.Serializable;
 
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.ExportIdentifier;
 
-@Entity
-@ExportIdentifier({ "id" })
-@Table(name = "MEVEO_SCRIPT_INSTANCE_ERROR")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_SCRIPT_INSTANCE_ERROR_SEQ")
-public class ScriptInstanceError extends AuditableEntity  {
+public class ScriptInstanceError implements Serializable {
 
-	private static final long serialVersionUID = -5517252645289726288L;
-	@Column(name = "MESSAGE",columnDefinition="TEXT")
-	private String message;
+    private static final long serialVersionUID = -5517252645289726288L;
 
-	@Column(name = "LINE_NUMBER")
-	private long lineNumber;
-	
-	@Column(name = "COLUMN_NUMBER")
-	private long columnNumber;
-	
-	@Column(name = "SOURCE_FILE")
-	private String sourceFile;
-	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
-	private  ScriptInstance scriptInstance;
-	
-	public ScriptInstanceError(){
-		
-	}
+    private String message;
 
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
-	}
+    private long lineNumber;
 
-	/**
-	 * @param message the message to set
-	 */
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    private long columnNumber;
 
-	/**
-	 * @return the lineNumber
-	 */
-	public long getLineNumber() {
-		return lineNumber;
-	}
+    private String sourceFile;
 
-	/**
-	 * @param lineNumber the lineNumber to set
-	 */
-	public void setLineNumber(long lineNumber) {
-		this.lineNumber = lineNumber;
-	}
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
 
-	/**
-	 * @return the columnNUmber
-	 */
-	public long getColumnNumber() {
-		return columnNumber;
-	}
+    /**
+     * @param message the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	/**
-	 * @param columnNUmber the columnNUmber to set
-	 */
-	public void setColumnNumber(long columnNUmber) {
-		this.columnNumber = columnNUmber;
-	}
+    /**
+     * @return the lineNumber
+     */
+    public long getLineNumber() {
+        return lineNumber;
+    }
 
-	/**
-	 * @return the sourceFile
-	 */
-	public String getSourceFile() {
-		return sourceFile;
-	}
+    /**
+     * @param lineNumber the lineNumber to set
+     */
+    public void setLineNumber(long lineNumber) {
+        this.lineNumber = lineNumber;
+    }
 
-	/**
-	 * @param sourceFile the sourceFile to set
-	 */
-	public void setSourceFile(String sourceFile) {
-		this.sourceFile = sourceFile;
-	}
+    /**
+     * @return the columnNUmber
+     */
+    public long getColumnNumber() {
+        return columnNumber;
+    }
 
-	/**
-	 * @return the scriptInstance
-	 */
-	public ScriptInstance getScriptInstance() {
-		return scriptInstance;
-	}
+    /**
+     * @param columnNUmber the columnNUmber to set
+     */
+    public void setColumnNumber(long columnNUmber) {
+        this.columnNumber = columnNUmber;
+    }
 
-	/**
-	 * @param scriptInstance the scriptInstance to set
-	 */
-	public void setScriptInstance(ScriptInstance scriptInstance) {
-		this.scriptInstance = scriptInstance;
-	}
-	
-	
-	
+    /**
+     * @return the sourceFile
+     */
+    public String getSourceFile() {
+        return sourceFile;
+    }
+
+    /**
+     * @param sourceFile the sourceFile to set
+     */
+    public void setSourceFile(String sourceFile) {
+        this.sourceFile = sourceFile;
+    }
 }

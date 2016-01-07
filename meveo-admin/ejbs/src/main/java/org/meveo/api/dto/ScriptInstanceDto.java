@@ -46,8 +46,8 @@ public class ScriptInstanceDto extends BaseDto{
 		code = e.getCode();
 		description = e.getDescription();
 		script = e.getScript();
-		if (e.getScriptTypeEnum() != null) {
-			type = e.getScriptTypeEnum().name();
+		if (e.getSourceTypeEnum() != null) {
+			type = e.getSourceTypeEnum().name();
 		}
 		if(e.getExecutionRoles() != null){
 			for(Role role : e.getExecutionRoles()){

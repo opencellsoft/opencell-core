@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.scripts.ScriptInstance;
@@ -47,15 +49,32 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
      */
     @Inject
     private ScriptInstanceService scriptInstanceService;
-    
+
     @Inject
     private RoleService roleService;
-    
 
-	private DualListModel<Role> execRolesDM;
-	private DualListModel<Role> sourcRolesDM;
-	
-	public DualListModel<Role> getExecRolesDM() {
+    private DualListModel<Role> execRolesDM;
+    private DualListModel<Role> sourcRolesDM;
+
+
+    public void initCompilationErrors() {
+        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
+            return;
+        }
+        if (getObjectId() == null) {
+            return;
+        }
+
+        if (entity == null) {
+            initEntity();
+        }
+
+        if (entity.isError()) {
+            scriptInstanceService.compileScript(entity, true);
+        }
+    }
+
+    public DualListModel<Role> getExecRolesDM() {
 
         if (execRolesDM == null) {
             List<Role> perksSource = roleService.getAllRoles(getCurrentProvider());
@@ -68,7 +87,6 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         }
         return execRolesDM;
     }
-    
 
     public DualListModel<Role> getSourcRolesDM() {
 
@@ -82,18 +100,17 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
             sourcRolesDM = new DualListModel<Role>(perksSource, perksTarget);
         }
         return sourcRolesDM;
-    }    
-    
-	public void setExecRolesDM(DualListModel<Role> perks) {
-		getEntity().setExecutionRoles(perks.getTarget());
-		this.execRolesDM = perks;
-	}
-	
-	public void setSourcRolesDM(DualListModel<Role> perks) {
-		getEntity().setSourcingRoles(perks.getTarget());
-		this.sourcRolesDM = perks;
-	}	
-    
+    }
+
+    public void setExecRolesDM(DualListModel<Role> perks) {
+        getEntity().setExecutionRoles(perks.getTarget());
+        this.execRolesDM = perks;
+    }
+
+    public void setSourcRolesDM(DualListModel<Role> perks) {
+        getEntity().setSourcingRoles(perks.getTarget());
+        this.sourcRolesDM = perks;
+    }
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -101,19 +118,6 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     public ScriptInstanceBean() {
         super(ScriptInstance.class);
 
-    }
-
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Override
-    public ScriptInstance initEntity() {
-        log.debug("start conversation id: {}", conversation.getId());
-        ScriptInstance scriptInstance = super.initEntity();		
-        return scriptInstance;
     }
 
     /**
@@ -146,34 +150,44 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     @Override
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		String result = getListViewName();
-		try {			
-			entity = scriptInstanceService.saveOrUpdate(entity, getCurrentUser(), getCurrentProvider());
-			if(entity.getError().booleanValue()){
-				result =  "/pages/admin/scriptInstances/scriptInstanceDetail.xhtml?objectId="+entity.getId()+"&edit=true&faces-redirect=true";
-			}
-	       if (killConversation) {
-	            endConversation();
-	        }
-		} catch (Exception e) {
-			messages.error(e.getMessage());
-			result = null;
-		}
-		return result;
-	}
+        String result = getListViewName();
+        try {
+            super.saveOrUpdate(killConversation);
+
+            if (entity.isError().booleanValue()) {
+                // if (entity.isError()) {
+                // messages.error(new BundleKey("messages", "scriptInstance.compilationFailed"));
+                // }
+
+                result = null;
+            }
+            if (killConversation) {
+                endConversation();
+            }
+        } catch (Exception e) {
+            messages.error(e.getMessage());
+            result = null;
+        }
+        return result;
+    }
 
     public String execute() {
-        scriptInstanceService.test(getCurrentProvider(), entity.getCode(), null,getCurrentUser());
-        return  "/pages/admin/scriptInstances/scriptInstanceDetail.xhtml?objectId="+entity.getId()+"&edit=true&faces-redirect=true";
+        scriptInstanceService.test(getCurrentProvider(), entity.getCode(), null, getCurrentUser());
+        return null;
     }
 
     public List<String> getLogs() {
         return scriptInstanceService.getLogs(getCurrentProvider().getCode(), entity.getCode());
     }
 
-	public boolean isUserHasSourcingRole(ScriptInstance scriptInstance){		
-		return scriptInstanceService.isUserHasSourcingRole(scriptInstance, getCurrentUser());
-	}
-    
-    
+    public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {
+        return scriptInstanceService.isUserHasSourcingRole(scriptInstance, getCurrentUser());
+    }
+
+    public void testCompilation() {
+        scriptInstanceService.compileScript(entity, true);
+        if (!entity.isError()) {
+            messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
+        }
+    }
 }

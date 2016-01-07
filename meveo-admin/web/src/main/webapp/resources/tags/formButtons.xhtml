@@ -9,6 +9,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:o="http://omnifaces.org/ui" 
 	xmlns:cc="http://java.sun.com/jsf/composite">
 
 <!--
@@ -59,6 +60,9 @@
 </cc:interface>
 
 <cc:implementation>
+
+    <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
+
 	<h:panelGroup layout="block" styleClass="form-panel-actions">
 		<p:button value="#{messages['commons.edit']}" includeViewParams="true"
 			rendered="#{!cc.attrs.edit and cc.attrs.showEditButton}">
@@ -162,7 +166,18 @@
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
 		</p:button>
-		<script type="text/javascript">
+
+        <c:if test="#{! empty cc.attrs.backingBean.customActions}">
+            <ui:repeat var="customAction" value="#{cc.attrs.backingBean.customActions}">
+                <p:commandButton value="#{customAction.label}" action="#{cc.attrs.backingBean.executeCustomAction(customAction, null)}"
+                    process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}"
+                    partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="@form"
+                    rendered="#{exp:evaluateToBoolean(customAction.applicableOnEl,'entity',cc.attrs.backingBean.entity)}" />
+            </ui:repeat>
+        </c:if>
+
+
+        <script type="text/javascript">
 			//<![CDATA[
 				function handleDeleteComplete(xhr, status, args) {
 					var result = args.result;

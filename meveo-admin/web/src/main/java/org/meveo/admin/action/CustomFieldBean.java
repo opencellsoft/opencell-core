@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.admin.custom.GroupedCustomField;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.MessagesUtils;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -33,10 +33,12 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.CustomFieldValue;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.script.EntityActionScriptService;
 
 /**
  * Backing bean for support custom field instances value data entry
@@ -66,8 +68,16 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     private GroupedCustomField groupedCustomField = null;
 
+    private List<EntityActionScript> customActions = new ArrayList<EntityActionScript>();
+
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    private ResourceBundle resourceMessages;
+
+    @Inject
+    private EntityActionScriptService entityActionScriptService;
 
     public CustomFieldBean() {
     }
@@ -82,6 +92,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     public T initEntity() {
         T result = super.initEntity();
         initCustomFields();
+        initCustomActions();
         return result;
     }
 
@@ -92,6 +103,17 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         String outcome = super.saveOrUpdate(killConversation);
         updateCustomFieldsInEntity(isNew);
         return outcome;
+    }
+
+    /**
+     * Load available custom actions
+     */
+    private void initCustomActions() {
+        customActions.clear();
+        Map<String, EntityActionScript> actions = entityActionScriptService.findByAppliesTo((ICustomFieldEntity) entity, getCurrentProvider());
+        if (actions != null) {
+            customActions.addAll(actions.values());
+        }
     }
 
     /**
@@ -567,6 +589,11 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         this.customFieldValues = customFieldValues;
     }
 
+    @Override
+    public List<EntityActionScript> getCustomActions() {
+        return customActions;
+    }
+
     public List<BusinessEntity> autocompleteCustomEntityForCFV(String wildcode) {
         String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
         return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode, this.currentProvider);
@@ -609,8 +636,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                         // Fail validation on non empty values
                         if (cfi.isValueEmptyForGui()) {
 
-                            FacesMessage msg = new FacesMessage(MessagesUtils.getMessage("javax.faces.component.UIInput.REQUIRED", FacesContext.getCurrentInstance().getViewRoot()
-                                .getLocale(), cft.getDescription()));
+                            FacesMessage msg = new FacesMessage(resourceMessages.getString("javax.faces.component.UIInput.REQUIRED", cft.getDescription()));
                             msg.setSeverity(FacesMessage.SEVERITY_ERROR);
                             fc.addMessage(null, msg);
                             valid = false;
@@ -890,5 +916,28 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             customFieldNewValue.clear();
         }
 
+    }
+
+    /**
+     * Execute custom action on an entity
+     * 
+     * @param action Action to execute
+     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
+     * @param currentUser Current user
+     * @param currentProvider Current provider
+     * @return A script execution result value
+     */
+    public String executeCustomAction(EntityActionScript action, String encodedParameters) {
+
+        try {
+            entityActionScriptService.execute(entity, action.getCode(), encodedParameters, getCurrentUser(), getCurrentProvider());
+            messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
+
+        } catch (InstantiationException | IllegalAccessException | BusinessException e) {
+            log.error("Failed to execute a script {} on entity {}", action.getCode(), entity);
+            messages.error(new BundleKey("messages", "scriptInstance.actionExecutionFailed"), action.getLabel(), e.getMessage());
+        }
+
+        return null;
     }
 }

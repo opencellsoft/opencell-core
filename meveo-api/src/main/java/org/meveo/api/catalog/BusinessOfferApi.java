@@ -11,6 +11,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.BomOfferDto;
@@ -317,13 +319,18 @@ public class BusinessOfferApi extends BaseApi {
 					}
 				}
 
-				// execute bom scripts
-				if (bomEntity.getCreationScript() != null) {
-					Map<String, Object> creationScriptContext = new HashMap<>();
-					creationScriptContext.put("prefix", postData.getServiceCodePrefix());
+                // execute bom scripts
+                if (bomEntity.getCreationScript() != null) {
+                    Map<String, Object> creationScriptContext = new HashMap<>();
+                    creationScriptContext.put("prefix", postData.getServiceCodePrefix());
 
-					scriptInstanceService.execute(currentUser.getProvider(), bomEntity.getCreationScript().getCode(),
-							creationScriptContext, currentUser);
+                    try {
+                        scriptInstanceService.execute(currentUser.getProvider(), bomEntity.getCreationScript().getCode(), creationScriptContext, currentUser);
+                    
+                    } catch (InvalidPermissionException | ElementNotFoundException e) {
+                        log.error("Failed to execute a BOM creation script {}", bomEntity.getCreationScript().getCode(), e);
+                        throw new MeveoApiException(e.getMessage());
+                    }
 				}
 			}
 		} else {

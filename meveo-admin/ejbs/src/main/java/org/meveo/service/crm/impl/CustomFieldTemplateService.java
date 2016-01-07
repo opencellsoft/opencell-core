@@ -41,9 +41,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public Map<String, CustomFieldTemplate> findByAppliesTo(ICustomFieldEntity entity, Provider provider) {
         try {
             if (entity instanceof Provider) {
-                return findByAppliesTo(calculateAppliesToValue(entity), (Provider) entity);
+                return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity), (Provider) entity);
             } else {
-                return findByAppliesTo(calculateAppliesToValue(entity), provider);
+                return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity), provider);
             }
 
         } catch (CustomFieldException e) {
