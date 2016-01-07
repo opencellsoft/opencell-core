@@ -47,6 +47,9 @@ public class FileParserBeanio implements IFileParser {
 	
 	@Override
 	public boolean hasNext() throws Exception {
+		if(beanReader == null){
+			return false;
+		}
 		recordObject= null;
 		try{
 			recordObject =  beanReader.read();
