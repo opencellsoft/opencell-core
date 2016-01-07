@@ -583,9 +583,9 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 			productOfferingPrice.setPrice(price);
 
 			if (servicePrice.getKey().endsWith("_SUB")) {
-				productOfferingPrice.setPriceType(ProductOfferingPriceType.RECURRING);
-			} else if (servicePrice.getKey().endsWith("_REC")) {
 				productOfferingPrice.setPriceType(ProductOfferingPriceType.ONE_TIME);
+			} else if (servicePrice.getKey().endsWith("_REC")) {
+				productOfferingPrice.setPriceType(ProductOfferingPriceType.RECURRING);
 			}
 			
 			productOfferingPrices.add(productOfferingPrice);
