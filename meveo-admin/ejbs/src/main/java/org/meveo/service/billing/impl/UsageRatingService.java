@@ -38,10 +38,12 @@ import org.meveo.model.cache.CachedCounterPeriod;
 import org.meveo.model.cache.CachedTriggeredEDR;
 import org.meveo.model.cache.CachedUsageChargeInstance;
 import org.meveo.model.cache.CachedUsageChargeTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
@@ -78,6 +80,8 @@ public class UsageRatingService {
 	
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
 	// @PreDestroy
 	// accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -426,9 +430,15 @@ public class UsageRatingService {
 					// TODO:order charges by priority and id
 					List<CachedUsageChargeInstance> charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
 
+					boolean foundPricePlan=false;
 					for (CachedUsageChargeInstance charge : charges) {
 						CachedUsageChargeTemplate templateCache = charge.getTemplateCache();
 						log.info("try templateCache=" + templateCache.toString());
+						List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.listByEventCode(templateCache.getCode(), currentUser.getProvider());
+						if(chargePricePlans==null||chargePricePlans.size()==0){
+							continue;
+						}
+						foundPricePlan=true;
 						if (templateCache.getFilter1() == null
 								|| templateCache.getFilter1().equals(edr.getParameter1())) {
 							log.info("filter1 ok");
@@ -462,9 +472,12 @@ public class UsageRatingService {
 						}
 					}
 
-					if (!edrIsRated) {
+					if(!foundPricePlan){
 						edr.setStatus(EDRStatusEnum.REJECTED);
-						edr.setRejectReason("NO_MATCHING_CHARGE");
+						edr.setRejectReason("NO_PRIECEPLAN");
+					}else if (!edrIsRated) {
+						edr.setStatus(EDRStatusEnum.REJECTED);
+						edr.setRejectReason("NO_MATCHING_CHARGE_OR_PRICEPLAN");
 					}
 				} else {
 					edr.setStatus(EDRStatusEnum.REJECTED);
@@ -473,8 +486,8 @@ public class UsageRatingService {
 			} catch (Exception e) {
 				log.error("failed to rate usage Within Transaction",e);
 				edr.setStatus(EDRStatusEnum.REJECTED);
-				edr.setRejectReason(e.getMessage());
-				throw new BusinessException(e);
+				edr.setRejectReason((e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()));
+				//throw new BusinessException(e);
 			}
 		}
 
