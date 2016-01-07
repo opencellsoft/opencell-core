@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.account.CustomersDto;
@@ -15,6 +16,7 @@ import org.meveo.model.crm.CustomFieldInstance;
 /**
  * @author Edward P. Legaspi
  **/
+@XmlRootElement(name = "Seller")
 @XmlType(name = "Seller")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SellerDto extends BaseDto {

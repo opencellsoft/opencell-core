@@ -3,6 +3,7 @@ package org.meveo.api.dto.billing;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
@@ -10,7 +11,7 @@ import org.meveo.api.dto.BaseDto;
 /**
  * @author Edward P. Legaspi
  **/
-
+@XmlRootElement(name = "FindWalletOperations")
 @XmlType(name = "FindWalletOperations")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FindWalletOperationsDto extends BaseDto {
