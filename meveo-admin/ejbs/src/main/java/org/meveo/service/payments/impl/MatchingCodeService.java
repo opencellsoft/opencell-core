@@ -61,13 +61,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 	}
 
 	private void matching(List<AccountOperation> listOcc, BigDecimal amount, AccountOperation partialOcc, MatchingTypeEnum matchingTypeEnum, User user) throws Exception {
-		MatchingCode matchingCode = new MatchingCode();
+		MatchingCode matchingCode = new MatchingCode();		
 		BigDecimal amountToMatch = BigDecimal.ZERO;
 		for (AccountOperation accountOperation : listOcc) {
-			if (partialOcc != null && accountOperation.getId().equals(partialOcc.getId())) {
-				amountToMatch = accountOperation.getUnMatchingAmount().subtract(amount);
-				accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
-				accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
+			if (partialOcc != null && accountOperation.getId().equals(partialOcc.getId())) {				
+				accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amount));
+				accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amount));
 				accountOperation.setMatchingStatus(MatchingStatusEnum.P);
 			} else {
 				amountToMatch = accountOperation.getUnMatchingAmount();
@@ -84,7 +83,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			matchingAmount.setMatchingCode(matchingCode);
 			matchingAmount.setMatchingAmount(amountToMatch);
 			accountOperation.getMatchingAmounts().add(matchingAmount);
-			matchingCode.getMatchingAmounts().add(matchingAmount);
+			matchingCode.getMatchingAmounts().add(matchingAmount);			
 		}
 		matchingCode.setMatchingAmountDebit(amount);
 		matchingCode.setMatchingAmountCredit(amount);
@@ -189,9 +188,12 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			log.info("matchOperations successful : no partial");
 			return matchingReturnObject;
 		}
-		if( matchedAmount.compareTo(amoutCredit)>1){
+		
+		if( matchedAmount.compareTo(amoutCredit)>0){
 			matchedAmount = amoutCredit;
 		}
+		
+
 
 		if (balance.compareTo(BigDecimal.ZERO) != 0 && operationIdForPartialMatching != null) {
 			matching(listOcc, matchedAmount, accountOperationService.findById(operationIdForPartialMatching), matchingTypeEnum, user);
