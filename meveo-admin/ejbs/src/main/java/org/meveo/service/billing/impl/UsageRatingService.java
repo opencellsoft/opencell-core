@@ -477,7 +477,7 @@ public class UsageRatingService {
 						edr.setRejectReason("NO_PRIECEPLAN");
 					}else if (!edrIsRated) {
 						edr.setStatus(EDRStatusEnum.REJECTED);
-						edr.setRejectReason("NO_MATCHING_CHARGE_OR_PRICEPLAN");
+						edr.setRejectReason("NO_MATCHING_CHARGE");
 					}
 				} else {
 					edr.setStatus(EDRStatusEnum.REJECTED);
