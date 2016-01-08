@@ -399,6 +399,16 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 				accountOperation.getMatchingAmounts().add(matchingAmount);
 				matchingCode.getMatchingAmounts().add(matchingAmount);
 			}
+			MatchingAmount matchingAmount = new MatchingAmount();
+			matchingAmount.setProvider(automatedPayment.getProvider());
+			matchingAmount.updateAudit(currentUser);
+			matchingAmount.setAccountOperation(automatedPayment);
+			matchingAmount.setMatchingCode(matchingCode);
+			matchingAmount.setMatchingAmount(automatedPayment.getAmount());
+			
+			automatedPayment.getMatchingAmounts().add(matchingAmount);
+			matchingCode.getMatchingAmounts().add(matchingAmount);
+			
 			matchingCode.setMatchingAmountDebit(amount);
 			matchingCode.setMatchingAmountCredit(amount);
 			matchingCode.setMatchingDate(new Date());
