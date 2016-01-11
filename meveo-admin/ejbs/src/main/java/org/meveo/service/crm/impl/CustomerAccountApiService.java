@@ -304,83 +304,32 @@ public class CustomerAccountApiService extends AccountApiService {
 		}
 	}
 
-	public CustomerAccountDto find(String customerAccountCode, User currentUser)
-			throws Exception {
-		CustomerAccountDto customerAccountDto = new CustomerAccountDto();
+    public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
 
-		if (!StringUtils.isBlank(customerAccountCode)) {
-			Provider provider = currentUser.getProvider();
-			CustomerAccount customerAccount = customerAccountService
-					.findByCode(customerAccountCode, provider);
-			if (customerAccount == null) {
-				throw new BusinessException(
-						"Cannot find customer account with code="
-								+ customerAccountCode);
-			}
+        if (StringUtils.isBlank(customerAccountCode)) {
+            missingParameters.add("customerAccountCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
 
-			if (customerAccount.getStatus() != null) {
-				customerAccountDto.setStatus(customerAccount.getStatus().toString());
-			}
-			if (customerAccount.getPaymentMethod() != null) {
-				customerAccountDto
-						.setPaymentMethod(customerAccount.getPaymentMethod().toString());
-			}
+        }
 
-			if (customerAccount.getCreditCategory() != null) {
-				customerAccountDto.setCreditCategory(customerAccount.getCreditCategory().getCode());
-			}
+        Provider provider = currentUser.getProvider();
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+        if (customerAccount == null) {
+            throw new BusinessException("Cannot find customer account with code=" + customerAccountCode);
+        }
 
-			customerAccountDto.setDateStatus(customerAccount.getDateStatus());
-			customerAccountDto.setDateDunningLevel(customerAccount.getDateDunningLevel());
+        CustomerAccountDto customerAccountDto = new CustomerAccountDto(customerAccount);
 
-			if (customerAccount.getContactInformation() != null) {
-				customerAccountDto.getContactInformation().setEmail(customerAccount.getContactInformation().getEmail());
-				customerAccountDto.getContactInformation().setPhone(customerAccount.getContactInformation().getPhone() );
-				customerAccountDto.getContactInformation().setMobile(customerAccount.getContactInformation().getMobile());
-				customerAccountDto.getContactInformation().setFax(customerAccount.getContactInformation().getFax());
-			}
+        BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(), new Date(), customerAccount.getProvider());
 
-			if (customerAccount.getCustomer() != null) {
-				customerAccountDto.setCustomer(customerAccount.getCustomer().getCode());
-			}
+        if (balance == null) {
+            throw new BusinessException("account balance calculation failed");
+        }
 
-			if (customerAccount.getCustomFields() != null
-					&& customerAccount.getCustomFields().size() > 0) {
-				for (CustomFieldInstance cfi : customerAccount
-						.getCustomFields().values()) {
-					customerAccountDto.getCustomFields().getCustomField()
-							.addAll(CustomFieldDto.toDTO(cfi));
-				}
-			}
+        customerAccountDto.setBalance(balance);
 
-			if (customerAccount.getDunningLevel() != null) {
-				customerAccountDto.setDunningLevel(customerAccount.getDunningLevel().toString());
-			}
-			customerAccountDto.setMandateIdentification(customerAccount
-					.getMandateIdentification());
-			customerAccountDto.setMandateDate(customerAccount.getMandateDate());
-
-			BigDecimal balance = customerAccountService
-					.customerAccountBalanceDue(null, customerAccount.getCode(),
-							new Date(), customerAccount.getProvider());
-
-			if (balance == null) {
-				throw new BusinessException(
-						"account balance calculation failed");
-			}
-
-			customerAccountDto.setBalance(balance);
-		} else {
-			if (StringUtils.isBlank(customerAccountCode)) {
-				missingParameters.add("customerAccountCode");
-			}
-
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-
-		return customerAccountDto;
-	}
+        return customerAccountDto;
+    }
 
 	public void remove(String customerAccountCode, Provider provider) throws MeveoApiException {
 		if (StringUtils.isBlank(customerAccountCode)) {
