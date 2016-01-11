@@ -12,7 +12,6 @@ import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
@@ -325,95 +324,31 @@ public class CustomerAccountApiService extends AccountApiService {
 		}
 	}
 
-	public CustomerAccountDto find(String customerAccountCode, User currentUser)
-			throws Exception {
-		CustomerAccountDto customerAccountDto = new CustomerAccountDto();
+    public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
 
-		if (!StringUtils.isBlank(customerAccountCode)) {
-			Provider provider = currentUser.getProvider();
-			CustomerAccount customerAccount = customerAccountService
-					.findByCode(customerAccountCode, provider);
-			if (customerAccount == null) {
-				throw new BusinessException(
-						"Cannot find customer account with code="
-								+ customerAccountCode);
-			}
+        if (StringUtils.isBlank(customerAccountCode)) {
+            missingParameters.add("customerAccountCode");
 
-			if (customerAccount.getStatus() != null) {
-				customerAccountDto.setStatus(customerAccount.getStatus().toString());
-			}
-			if (customerAccount.getPaymentMethod() != null) {
-				customerAccountDto.setPaymentMethod(customerAccount.getPaymentMethod().toString());
-			}
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			if (customerAccount.getCreditCategory() != null) {
-				customerAccountDto.setCreditCategory(customerAccount.getCreditCategory().getCode());
-			}
+        Provider provider = currentUser.getProvider();
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+        if (customerAccount == null) {
+            throw new BusinessException("Cannot find customer account with code=" + customerAccountCode);
+        }
 
-			customerAccountDto.setDateStatus(customerAccount.getDateStatus());
-			customerAccountDto.setDateDunningLevel(customerAccount
-					.getDateDunningLevel());
+        CustomerAccountDto customerAccountDto = accountHierarchyApiService.customerAccountToDto(customerAccount);
+       
+        BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(), new Date(), customerAccount.getProvider());
 
-			if (customerAccount.getContactInformation() != null) {
-				customerAccountDto.getContactInformation()
-						.setEmail(
-								customerAccount.getContactInformation()
-										.getEmail() != null ? customerAccount
-										.getContactInformation().getEmail()
-										: null);
-				customerAccountDto.getContactInformation()
-						.setPhone(
-								customerAccount.getContactInformation()
-										.getPhone() != null ? customerAccount
-										.getContactInformation().getPhone()
-										: null);
-				customerAccountDto.getContactInformation()
-						.setMobile(
-								customerAccount.getContactInformation()
-										.getMobile() != null ? customerAccount
-										.getContactInformation().getMobile()
-										: null);
-				customerAccountDto.getContactInformation()
-						.setFax(customerAccount.getContactInformation()
-								.getFax() != null ? customerAccount
-								.getContactInformation().getFax() : null);
-			}
+        if (balance == null) {
+            throw new BusinessException("account balance calculation failed");
+        }
 
-			if (customerAccount.getCustomer() != null) {
-				customerAccountDto.setCustomer(customerAccount.getCustomer()
-						.getCode());
-			}
+        customerAccountDto.setBalance(balance);
 
-			customerAccountDto.setCustomFields(CustomFieldsDto.toDTO(customFieldInstanceService.getCustomFieldInstances(customerAccount)));
-
-			if (customerAccount.getDunningLevel() != null) {
-				customerAccountDto
-						.setDunningLevel(customerAccount.getDunningLevel().toString());
-			}
-			customerAccountDto.setMandateIdentification(customerAccount
-					.getMandateIdentification());
-			customerAccountDto.setMandateDate(customerAccount.getMandateDate());
-
-			BigDecimal balance = customerAccountService
-					.customerAccountBalanceDue(null, customerAccount.getCode(),
-							new Date(), customerAccount.getProvider());
-
-			if (balance == null) {
-				throw new BusinessException(
-						"account balance calculation failed");
-			}
-
-			customerAccountDto.setBalance(balance);
-		} else {
-			if (StringUtils.isBlank(customerAccountCode)) {
-				missingParameters.add("customerAccountCode");
-			}
-
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-
-		return customerAccountDto;
+        return customerAccountDto;
 	}
 
 	public void remove(String customerAccountCode, Provider provider) throws MeveoApiException {
