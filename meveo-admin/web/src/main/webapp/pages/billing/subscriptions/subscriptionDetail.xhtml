@@ -865,7 +865,7 @@
 											<p:tab id="medinaAccessTab"
 												title="#{messages['menu.accessPoints']}"
 												rendered="#{not empty subscriptionBean.entity.id}">
-												<p:messages id="medinaAccessMessage"></p:messages>
+<!-- 												<p:messages id="medinaAccessMessage"></p:messages> -->
 
 												<hftl:formPanel formId="accessInfoForm"
 													backingBean="#{subscriptionBean}" showFormButtons="false"
@@ -892,8 +892,14 @@
 
 														<p:dataTable value="#{subscriptionBean.access}"
 															var="entity" resizableColumns="true">
-															<hftl:column label="#{messages['access.accessUserId']}" entityView="accessDetail" objectIdParamName="accessId" valueIdField="id"
-																field="accessUserId" backView="subscriptionDetail" propagateConversation="true"/>
+															<p:column headerText="#{messages['access.accessUserId']}">
+																<h:link outcome="accessDetail" value="#{entity.accessUserId}">
+																	<f:param name="accessId" value="#{entity.id}"/>
+																	<f:param name="backView" value="subscriptionDetail"/>
+																	<f:param name="subscriptionId" value="#{subscriptionBean.entity.id}"/>
+																	<f:param name="backViewSave" value="subscriptionDetail"/>
+																</h:link>
+															</p:column>
 															<hftl:column label="#{messages['access.startDate']}"
 																field="startDate" isDate="true" />
 															<hftl:column label="#{messages['access.endDate']}"
@@ -904,7 +910,7 @@
 																</f:facet>
 																<p:commandButton id="accessDeletelink"
 																	action="#{accessBean.delete(entity.id)}"
-																	update=":hierarchyGroup,#{p:component('medinaAccessPanel')},:#{p:component('medinaAccessMessage')}"
+																	update=":hierarchyGroup,#{p:component('medinaAccessPanel')},#{p:component('accessInfoForm')}"
 																	icon="ui-icon-trash">
 																	<f:param name="subscriptionId"
 																		value="#{subscriptionBean.entity.id}" />

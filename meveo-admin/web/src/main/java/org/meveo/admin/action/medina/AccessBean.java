@@ -135,12 +135,13 @@ public class AccessBean extends CustomFieldBean<Access> {
         }
 		
         String outcome = super.saveOrUpdate(killConversation);
+        log.debug("outcome when save in access detail {} and conversation status {}",outcome,killConversation);
 
-        if (outcome != null) {
+        if (outcome == null) {
             return getEditViewName(); // "/pages/medina/access/accessDetail.xhtml?edit=true&accessId=" + entity.getId() + "&faces-redirect=true";
         }
         
-        return null;
+        return outcome;
 	}
 	
 	public void resetEntity() {
