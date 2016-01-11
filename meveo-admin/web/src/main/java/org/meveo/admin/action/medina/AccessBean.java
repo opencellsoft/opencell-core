@@ -165,4 +165,11 @@ public class AccessBean extends CustomFieldBean<Access> {
 		return Arrays.asList("provider");
 	}
 
+	public Long getSubscriptionId() {
+		return subscriptionId.get();
+	}
+
+	public void setSubscriptionId(Long subscriptionId) {
+	}
+
 }
