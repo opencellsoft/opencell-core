@@ -189,7 +189,7 @@ public abstract class AccountApiService extends BaseApi {
 
 		// check if there are required custom fields
 		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService
-				.findByAccountLevel(accountLevel, currentUser.getProvider());
+				.findByAccountLevel(accountLevel, accountEntity, currentUser.getProvider());
 		if (checkCustomFields && customFieldTemplates != null) {
 			for (CustomFieldTemplate cft : customFieldTemplates) {
 				if (cft.isValueRequired()) {

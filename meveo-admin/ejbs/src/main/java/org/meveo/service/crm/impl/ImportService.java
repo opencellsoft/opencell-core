@@ -35,7 +35,7 @@ public abstract class ImportService {
     protected void populateCustomFields(AccountLevelEnum cfType, List<CustomField> customFieldDtos, ICustomFieldEntity entity, String cfiFieldName, User currentUser) {
         // throws MissingParameterException {
 
-        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(cfType, currentUser.getProvider());
+        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(cfType, entity, currentUser.getProvider());
 
         populateCustomFields(customFieldTemplates, customFieldDtos, entity, cfiFieldName, currentUser);
     }

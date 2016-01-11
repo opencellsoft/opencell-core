@@ -97,8 +97,7 @@ public abstract class BaseApi {
 			ICustomFieldEntity entity, User currentUser, boolean checkCustomField) throws IllegalArgumentException,
 			IllegalAccessException, MissingParameterException {
 
-		List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(cfType,
-				currentUser.getProvider());
+        List<CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAccountLevel(cfType, entity, currentUser.getProvider());
 
 		populateCustomFields(customFieldTemplates, customFieldDtos, entity, cfType, currentUser, checkCustomField);
 	}

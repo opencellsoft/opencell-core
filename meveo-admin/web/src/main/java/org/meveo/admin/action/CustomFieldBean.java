@@ -471,7 +471,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     protected List<CustomFieldTemplate> getApplicateCustomFieldTemplates() {
         AccountLevelEnum accountLevel = this.getClazz().getAnnotation(CustomFieldEntity.class).accountLevel();
-        List<CustomFieldTemplate> result = customFieldTemplateService.findByAccountLevel(accountLevel);
+        List<CustomFieldTemplate> result = customFieldTemplateService.findByAccountLevel(accountLevel, (ICustomFieldEntity) entity, getCurrentProvider());
         log.debug("Found {} custom field templates by fieldType={} for {}", result.size(), accountLevel, this.getClass());
         return result;
     }

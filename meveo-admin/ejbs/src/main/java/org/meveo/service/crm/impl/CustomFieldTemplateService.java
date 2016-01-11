@@ -1,5 +1,6 @@
 package org.meveo.service.crm.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -8,6 +9,8 @@ import javax.persistence.NoResultException;
 
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -28,19 +31,31 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel) {
-        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, getCurrentProvider());
-        qb.addCriterion("accountLevel", "=", accountLevel, true);
-        qb.addOrderCriterion("description", true);
-        return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
-    }
+//    @SuppressWarnings("unchecked")
+//    public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel) {
+//        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, getCurrentProvider());
+//        qb.addCriterion("accountLevel", "=", accountLevel, true);
+//        qb.addOrderCriterion("description", true);
+//        return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
+//    }
 
     @SuppressWarnings("unchecked")
-    public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel, Provider provider) {
+    public List<CustomFieldTemplate> findByAccountLevel(AccountLevelEnum accountLevel, ICustomFieldEntity entity, Provider provider) {
+
+        Provider providerToUse = provider;
+        if (entity instanceof Provider) {
+            // Handles cases when creating a new provider
+            if (((Provider) entity).isTransient()){
+                return new ArrayList<CustomFieldTemplate>();
+            }
+            providerToUse = (Provider) entity;
+        } else if (entity instanceof IProvider && ((IProvider) entity).getProvider() != null) {
+            providerToUse = ((IProvider) entity).getProvider();
+        }
+
         QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c");
         qb.addCriterion("c.accountLevel", "=", accountLevel, true);
-        qb.addCriterionEntity("c.provider", provider);
+        qb.addCriterionEntity("c.provider", providerToUse);
         return (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
     }
 
