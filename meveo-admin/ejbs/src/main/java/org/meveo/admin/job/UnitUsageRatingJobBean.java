@@ -57,8 +57,7 @@ public class UnitUsageRatingJobBean {
             } else {
                 rejectededEdrProducer.fire(edr);
                 result.registerError(edrId, edr.getRejectReason());
-            }
-            result.registerSucces();
+            }            
         } catch (Exception e) {
             log.error("Failed to unit usage rate for {}", edrId, e);
             rejectededEdrProducer.fire("" + edrId);
