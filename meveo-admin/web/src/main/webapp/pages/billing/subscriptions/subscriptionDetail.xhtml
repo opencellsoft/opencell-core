@@ -893,7 +893,7 @@
 														<p:dataTable value="#{subscriptionBean.access}"
 															var="entity" resizableColumns="true">
 															<hftl:column label="#{messages['access.accessUserId']}" entityView="accessDetail" objectIdParamName="accessId" valueIdField="id"
-																field="accessUserId"/>
+																field="accessUserId" backView="subscriptionDetail" propagateConversation="true"/>
 															<hftl:column label="#{messages['access.startDate']}"
 																field="startDate" isDate="true" />
 															<hftl:column label="#{messages['access.endDate']}"

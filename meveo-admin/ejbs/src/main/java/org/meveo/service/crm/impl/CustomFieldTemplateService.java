@@ -16,6 +16,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
@@ -42,6 +43,8 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         try {
             if (entity instanceof Provider) {
                 return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity), (Provider) entity);
+            } else if (entity instanceof IProvider && ((IProvider) entity).getProvider() != null) {
+                return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity), ((IProvider) entity).getProvider());
             } else {
                 return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity), provider);
             }
