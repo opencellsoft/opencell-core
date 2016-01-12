@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.AccountEntity;
@@ -33,6 +34,8 @@ public abstract class AccountDto implements Serializable {
 	private NameDto name = new NameDto();
 	private AddressDto address = new AddressDto();
 	private CustomFieldsDto customFields = new CustomFieldsDto();
+	
+	@XmlTransient
 	protected boolean loaded = false;
 	
 
