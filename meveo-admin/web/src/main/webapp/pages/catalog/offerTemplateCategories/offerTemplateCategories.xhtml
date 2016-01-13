@@ -1,7 +1,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
-	template="/layout/template.xhtml">
+	template="/layout/template.xhtml" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -23,20 +26,27 @@
 				field="description" />
 			<hftl:searchField label="#{messages['enableEntity.disabled']}"
 				field="disabled" />
-
 		</hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['offerTemplateCategory.title']}"
-			noClose="false" backingBean="#{offerTemplateCategoryListBean}">
-			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['BusinessEntity.description']}"
-				field="description" />
-			<hftl:column label="#{messages['enableEntity.active']}"
-				field="active" isMessage="true" />
-			<hftl:actionsColumn
-				permission="#{identity.hasPermission('catalog','catalogManagement')}"
-				renderEnableLink="true" renderDuplicateLink="true" />
-		</hftl:dataList>
+		<h:form prependId="false">
+			<p:panel id="results_panel" width="100">
+				<p:treeTable value="#{offerTemplateCategoryListBean.hierarchy}"
+					var="entity">
+					<hftl:column backingBean="#{offerTemplateCategoryBean}"
+						label="#{messages['BusinessEntity.code']}" field="code" />
+					<hftl:column label="#{messages['commons.name']}" field="name" />
+					<hftl:column label="#{messages['BusinessEntity.description']}"
+						field="description" />
+					<hftl:column label="#{messages['enableEntity.active']}"
+						field="active" isMessage="true" />
+
+					<hftl:actionsColumn width="100"
+						permission="#{identity.hasPermission('catalog','catalogManagement')}"
+						renderEnableLink="true" renderDuplicateLink="false"
+						backingBean="#{offerTemplateCategoryBean}" />
+				</p:treeTable>
+			</p:panel>
+		</h:form>
 
 	</ui:define>
 

@@ -27,7 +27,8 @@
             showEditButton - show a default "edit" button
             showEnableDisableButton - show a default "enable/disable" button
             useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation
-            updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message 
+            updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message
+            submitActionListener - actionListener tied to submit button 
         
     Facets
         buttons - additional buttons to include    
@@ -70,9 +71,11 @@
     <c:if test="${empty(useCustomIdParam)}">
         <c:set var="useCustomIdParam" value="false" />
     </c:if>
+    <c:if test="${empty(enctype)}">
+        <c:set var="enctype" value="application/x-www-form-urlencoded" />
+    </c:if>
 
-
-    <h:form id="#{formId}">
+    <h:form id="#{formId}" enctype="#{enctype}">
         <p:panel>
             <c:if test="#{not empty(label)}">
                 <f:facet name="header">
@@ -93,7 +96,7 @@
                         submitPartialSubmitFilter="#{submitPartialSubmitFilter}" submitUpdate="#{submitUpdate}" killConversationOnSave="#{killConversationOnSave}"
                         killConversationOnBack="#{killConversationOnBack}" useCustomIdParam="#{useCustomIdParam}" objectIdParamName="#{objectIdParamName}"
                         showBackButton="#{showBackButton}" showEditButton="#{showEditButton}" showEnableDisableButton="#{showEnableDisableButton}"
-                        showDeleteButton="#{showDeleteButton}" updateConfirmationMessage="#{updateConfirmationMessage}" formId="#{formId}"/>
+                        showDeleteButton="#{showDeleteButton}" updateConfirmationMessage="#{updateConfirmationMessage}" formId="#{formId}" submitActionListener="#{submitActionListener}"/>
                 </c:if>
                 <c:if test="#{buttons}">
                     <h:panelGroup layout="block" styleClass="form-panel-actions">

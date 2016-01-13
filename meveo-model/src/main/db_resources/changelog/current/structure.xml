@@ -1134,6 +1134,27 @@
             <column name="SCRIPT_TYPE" type="varchar(20)"/>
         </addColumn>
         <sql>update MEVEO_SCRIPT_INSTANCE set SCRIPT_TYPE='ScriptInstance'</sql>
-    </changeSet>    
+    </changeSet>
+
+	<changeSet id="#1381-20160107" author="EdwardLegaspi">
+		<addColumn tableName="cat_offer_template_category">
+			<column name="OFFER_TEMPLATE_CATEGORY_ID" type="BIGINT" />
+		</addColumn>
+
+		<addForeignKeyConstraint baseColumnNames="OFFER_TEMPLATE_CATEGORY_ID"
+			baseTableName="cat_offer_template_category" constraintName="fk_offer_cat_template_offer_cat_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="cat_offer_template_category" />
+	</changeSet>
+
+	<changeSet id="#1381-20160108" author="EdwardLegaspi">
+		<addColumn tableName="cat_offer_template_category">
+			<column name="level" type="INT" />
+			<column name="image_content_type" type="VARCHAR(50)" />
+		</addColumn>
+		
+		<sql>UPDATE cat_offer_template_category SET level=1;</sql>
+	</changeSet>
           
 </databaseChangeLog>

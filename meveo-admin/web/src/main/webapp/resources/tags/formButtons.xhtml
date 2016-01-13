@@ -33,7 +33,7 @@
         updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message  
         execute - show button to invoke a execute method
         formId - form id, to distinguish buttons, defaults to 'formId'
-        
+        submitActionListener - if true add actionListener to submit button=submitActionListener()
 -->
 
 
@@ -57,10 +57,10 @@
     <cc:attribute name="submitUpdate" default="@all"/>
     <cc:attribute name="execute" default="false" />
     <cc:attribute name="formId" default="formId" />
+    <cc:attribute name="submitActionListener" default="false" />
 </cc:interface>
 
 <cc:implementation>
-
     <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
 
 	<h:panelGroup layout="block" styleClass="form-panel-actions">
@@ -90,6 +90,9 @@
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
 			icon="ui-icon-check" ajax="false">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
+			<c:if test="#{cc.attrs.submitActionListener}">
+            	<f:actionListener binding="#{cc.attrs.backingBean.submitActionListener()}"></f:actionListener>
+            </c:if>
 		</p:commandButton>
 
         <p:commandButton id="saveButtonAjax"
@@ -98,6 +101,9 @@
             action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
             icon="ui-icon-check" process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
+            <c:if test="#{cc.attrs.submitActionListener}">
+            	<f:actionListener binding="#{cc.attrs.backingBean.submitActionListener()}"></f:actionListener>
+            </c:if>
         </p:commandButton>
         
         <p:commandButton id="ExecuteButtonAjax"
@@ -106,7 +112,7 @@
             action="#{cc.attrs.backingBean.execute()}"
             process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
-        </p:commandButton>        
+        </p:commandButton>
 
 		<!-- Update with message -->
 		<p:remoteCommand id="remoteUpdateWithMessageButton" rendered="#{cc.attrs.submitPartialProcess==null}"
@@ -123,6 +129,9 @@
 			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId) and !empty(cc.attrs.updateConfirmationMessage)}"
 			value="#{messages['action.save']}" icon="ui-icon-check"
 			onclick="PF('#{cc.attrs.formId}saveButtonWithMessageDialog').show()" type="button">
+			<c:if test="#{cc.attrs.submitActionListener}">
+            	<f:actionListener binding="#{cc.attrs.backingBean.submitActionListener()}"></f:actionListener>
+            </c:if>
 		</p:commandButton>
         
 		<!-- Update the message handling when  -->
