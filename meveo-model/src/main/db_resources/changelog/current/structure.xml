@@ -1155,6 +1155,10 @@
 		</addColumn>
 		
 		<sql>UPDATE cat_offer_template_category SET level=1;</sql>
+	</changeSet>	
+	
+	<changeSet id="#1399-20160113" author="EdwardLegaspi">
+		<addUniqueConstraint columnNames="provider_id, invoice_number, invoice_type" tableName="billing_invoice" />
 	</changeSet>
           
 </databaseChangeLog>
