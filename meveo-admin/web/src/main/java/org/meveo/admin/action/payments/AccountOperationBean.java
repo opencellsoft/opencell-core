@@ -352,8 +352,8 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	
 	@Override
 	public void deleteInlist() {
-	accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
-	super.deleteInlist();	
+		//	accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
+	    super.deleteInlist();	
 	}
 
 }
