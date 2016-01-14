@@ -71,10 +71,10 @@
 			<h:outputText value="#{messages['commons.actions']}" />
 		</f:facet>
 
-		<p:tooltip for="viewlink"
+		<p:tooltip for="#{resultsId}viewlink"
 			value="#{messages['commons.view']}" showEffect="slide"
 			hideEffect="slide" />
-		<p:button id="viewlink" outcome="#{editView}"
+		<p:button id="#{resultsId}viewlink" outcome="#{editView}"
 			icon="ui-icon-search" rendered="#{renderViewLink}">
 			<f:param name="#{objectIdParamName}" value="#{entity.id}" />
 			<f:param name="edit" value="false" />
@@ -88,10 +88,10 @@
 			</c:if>
 		</p:button>
 
-		<p:tooltip for="editlink"
+		<p:tooltip for="#{resultsId}editlink"
 			value="#{messages['commons.edit']}" showEffect="slide"
 			hideEffect="slide" />
-		<p:button id="editlink" outcome="#{editView}"
+		<p:button id="#{resultsId}editlink" outcome="#{editView}"
 			icon="ui-icon-document" rendered="#{renderEditLink}">
 			<f:param name="#{objectIdParamName}" value="#{entity.id}" />
 			<f:param name="edit" value="true" />
@@ -104,24 +104,24 @@
 					value="#{backView}" />
 			</c:if>
 		</p:button>
-		<p:tooltip for="duplicatelink"
+		<p:tooltip for="#{resultsId}duplicatelink"
 			value="#{messages['commons.duplicate']}" showEffect="slide"
 			hideEffect="slide" />
 		<p:confirmDialog id="confirmDuplicateDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDuplicate']}"
 			header="#{messages['commons.duplicate']}"
 			rendered="#{renderDuplicateLink}"
-			severity="alert" widgetVar="confirmDuplicateWidget" appendTo="@(body)">
+			severity="alert" widgetVar="#{resultsId}confirmDuplicateWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="duplicateOk" value="#{messages['commons.yes']}"
-					oncomplete="PF('confirmDuplicateWidget').hide()" process="@this"
+					oncomplete="PF('#{resultsId}confirmDuplicateWidget').hide()" process="@this"
 					action="#{backingBean.duplicate()}" update="@form" />
 				<p:commandButton id="duplicateKo" value="#{messages['commons.no']}"
-					onclick="PF('confirmDuplicateWidget').hide()" type="button" />
+					onclick="PF('#{resultsId}confirmDuplicateWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
-		<p:commandButton id="duplicatelink"
-			icon="ui-icon-plus" rendered="#{renderDuplicateLink}" oncomplete="PF('confirmDuplicateWidget').show()">
+		<p:commandButton id="#{resultsId}duplicatelink"
+			icon="ui-icon-plus" rendered="#{renderDuplicateLink}" oncomplete="PF('#{resultsId}confirmDuplicateWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"/>
 			<c:if test="${propagateConversation}">
@@ -129,50 +129,50 @@
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>
 		</p:commandButton>
-		<p:commandButton id="enablelink" icon="ui-icon-circle-check"
+		<p:commandButton id="#{resultsId}enablelink" icon="ui-icon-circle-check"
 			rendered="#{renderEnableLink and entity.disabled}"
-			oncomplete="PF('confirmEnableWidget').show()">
+			oncomplete="PF('#{resultsId}confirmEnableWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"/>
 		</p:commandButton>
-		<p:commandButton id="disablelink" icon="ui-icon-circle-close"
+		<p:commandButton id="#{resultsId}disablelink" icon="ui-icon-circle-close"
 			rendered="#{renderEnableLink and not entity.disabled}"
-			oncomplete="PF('confirmDisableWidget').show()">
+			oncomplete="PF('#{resultsId}confirmDisableWidget').show()">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"/>
 		</p:commandButton>
 		
 
-		<p:tooltip for="enablelink" rendered="#{renderEnableLink}"
+		<p:tooltip for="#{resultsId}enablelink" rendered="#{renderEnableLink}"
 			value="#{messages['commons.enable']}" showEffect="slide"
 			hideEffect="slide"  />
 		<p:confirmDialog id="confirmEnableDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmEnable']}"
 			header="#{messages['commons.enable']}"
 			rendered="#{renderEnableLink}"
-			severity="alert" widgetVar="confirmEnableWidget" appendTo="@(body)">
+			severity="alert" widgetVar="#{resultsId}confirmEnableWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="enableOk" value="#{messages['commons.yes']}"
-					oncomplete="PF('confirmEnableWidget').hide()" process="@this"
+					oncomplete="PF('#{resultsId}confirmEnableWidget').hide()" process="@this"
 					action="#{backingBean.enable()}" update="@form" />
 				<p:commandButton id="enableKo" value="#{messages['commons.no']}"
-					onclick="PF('confirmEnableWidget').hide()" type="button" />
+					onclick="PF('#{resultsId}confirmEnableWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
-		<p:tooltip for="disablelink" rendered="#{renderEnableLink}"
+		<p:tooltip for="#{resultsId}disablelink" rendered="#{renderEnableLink}"
 			value="#{messages['commons.disable']}" showEffect="slide"
 			hideEffect="slide"  />
 		<p:confirmDialog id="confirmDisableDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDisable']}"
 			header="#{messages['commons.disable']}"
 			rendered="#{renderEnableLink}"
-			severity="alert" widgetVar="confirmDisableWidget" appendTo="@(body)">
+			severity="alert" widgetVar="#{resultsId}confirmDisableWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="disableOk" value="#{messages['commons.yes']}"
-					oncomplete="PF('confirmEnableWidget').hide()" process="@this"
+					oncomplete="PF('#{resultsId}confirmEnableWidget').hide()" process="@this"
 					action="#{backingBean.disable()}" update="@form" />
 				<p:commandButton id="disableKo" value="#{messages['commons.no']}"
-					onclick="PF('confirmDisableWidget').hide()" type="button" />
+					onclick="PF('#{resultsId}confirmDisableWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
 		
@@ -181,38 +181,38 @@
 				function handleDeleteComplete(xhr, status, args) {
 					var result = args.result;
 					if(typeof(result)!="undefined" && !result){
-						PF('confirmCanotDeleteWidget').show();
+						PF('#{resultsId}confirmCanotDeleteWidget').show();
 					}
 				}
 			//]]>
 		</script>	
 		<p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.deleteInlist}"
-			 name="doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"
+			 name="#{resultsId}doDelete" oncomplete="handleDeleteComplete(xhr,status,args)" update="@form"
 			 rendered="#{renderDeleteLink}"/>
-		<p:tooltip for="deletelink" rendered="#{renderDeleteLink}"
+		<p:tooltip for="#{resultsId}deletelink" rendered="#{renderDeleteLink}"
 			value="#{messages['commons.delete']}" showEffect="slide"
 			hideEffect="slide"  />
-		<p:commandButton id="deletelink" icon="ui-icon-trash"
-			oncomplete="PF('confirmDeleteWidget').show()" rendered="#{renderDeleteLink}">
+		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
+			oncomplete="PF('#{resultsId}confirmDeleteWidget').show()" rendered="#{renderDeleteLink}">
 			<f:setPropertyActionListener target="#{backingBean.entity}"
 				value="#{entity}"></f:setPropertyActionListener>
 		</p:commandButton>
 		<p:confirmDialog id="confirmDeleteDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDelete']}" header="" rendered="#{renderDeleteLink}"
-			severity="alert" widgetVar="confirmDeleteWidget" appendTo="@(body)">
+			severity="alert" widgetVar="#{resultsId}confirmDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-					oncomplete="doDelete()" onclick="PF('confirmDeleteWidget').hide()"/>
+					oncomplete="#{resultsId}doDelete()" onclick="PF('#{resultsId}confirmDeleteWidget').hide()"/>
 				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
-					onclick="PF('confirmDeleteWidget').hide()" type="button" />
+					onclick="PF('#{resultsId}confirmDeleteWidget').hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
-		<p:confirmDialog id="confirmCanotDeleteDialog" styleClass="confirm-dialog"
+		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmCanotDelete']}" header="" rendered="#{renderDeleteLink}"
-			severity="alert" widgetVar="confirmCanotDeleteWidget" appendTo="@(body)">
+			severity="alert" widgetVar="#{resultsId}confirmCanotDeleteWidget" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
-					oncomplete="PF('confirmCanotDeleteWidget').hide()" update="@this" />
+					oncomplete="PF('#{resultsId}confirmCanotDeleteWidget').hide()" update="@this" />
 			</p:panel>
 		</p:confirmDialog>
 		<ui:insert />
