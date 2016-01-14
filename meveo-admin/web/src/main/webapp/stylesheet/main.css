@@ -107,14 +107,15 @@ select[disabled] { color : #000; }
   width: 100%;
   margin-top : -15px;
   background-color: rgb(231, 229, 226);
-  background-size : 2000px 164px;
 }
 #admin-bar ul
 {
-  padding-top: 15px;
   margin-left: auto;
   margin-right: 3%;
   float : right;
+  position: absolute;
+  top: 5px;
+  right: 0;
 }
 #admin-bar ul li:first-child
 {
@@ -174,7 +175,7 @@ select[disabled] { color : #000; }
 }
 #admin-bar ul li .top-bar-home
 {
-   background-image: url(..//img/home-top-bar.png) ;
+   background-image: url(../img/home-top-bar.png) ;
    background-size: 20px 20px;
    background-repeat: no-repeat;
    display: inline-block;
@@ -185,7 +186,7 @@ select[disabled] { color : #000; }
 {
    width: 25px;
    height: 25px;
-   background-image: url(..//img/user-top-bar.png) ;
+   background-image: url(../img/user-top-bar.png) ;
    background-size: 20px 20px;
    background-repeat: no-repeat;
    display: inline-block;
