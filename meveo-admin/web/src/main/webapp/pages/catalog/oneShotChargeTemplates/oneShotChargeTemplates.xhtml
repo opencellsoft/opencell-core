@@ -11,9 +11,6 @@
 				listener="#{oneShotChargeTemplateListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
-	<ui:define name="navigation">
-		<ui:include src="/layout/navigation.xhtml" />
-	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -21,18 +18,18 @@
 
 	<ui:define name="body">
 
-		<searchPanel label="#{messages['oneShotChargeTemplate.search']}"
+		<hftl:searchPanel label="#{messages['oneShotChargeTemplate.search']}"
 			backingBean="#{oneShotChargeTemplateListBean}">
-			<searchField label="#{messages['chargeTemplate.code']}"
+			<hftl:searchField label="#{messages['chargeTemplate.code']}"
 				field="code" />
-			<searchField label="#{messages['chargeTemplate.description']}"
+			<hftl:searchField label="#{messages['chargeTemplate.description']}"
 				id="description" field="description" />
-			<!-- <searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" /> -->
-			<searchField label="#{messages['chargeTemplate.type']}"
+			<!-- <hftl:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" /> -->
+			<hftl:searchField label="#{messages['chargeTemplate.type']}"
 				field="oneShotChargeTemplateType" childField="label" />
-			<searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+			<hftl:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
 
-		</searchPanel>
+		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['oneShotChargeTemplate.title']}"
 		    noClose="false" sortBy="code"
