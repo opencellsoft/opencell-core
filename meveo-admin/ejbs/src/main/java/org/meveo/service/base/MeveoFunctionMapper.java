@@ -38,8 +38,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     private static EntityActionScriptService entityActionScriptService;
 
-    Logger log = LoggerFactory.getLogger(this.getClass());
-
     public MeveoFunctionMapper() {
 
         super();
@@ -55,11 +53,25 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCFValueByRangeOfNumbers", MeveoFunctionMapper.class.getMethod("getCFValueByRangeOfNumbers", ICustomFieldEntity.class, String.class, Object.class));
             addFunction("mv", "getCFValueByRangeOfNumbersForDate",
                 MeveoFunctionMapper.class.getMethod("getCFValueByRangeOfNumbersForDate", ICustomFieldEntity.class, String.class, Date.class, Object.class));
-            addFunction("mv", "getCFValueByMatrix", MeveoFunctionMapper.class.getMethod("getCFValueByMatrix", ICustomFieldEntity.class, String.class, Object.class, Object.class));
-            addFunction("mv", "getCFValueByMatrixForDate",
-                MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate", ICustomFieldEntity.class, String.class, Date.class, Object.class, Object.class));
+            addFunction("mv", "getCFValueByMatrix2Keys",
+                MeveoFunctionMapper.class.getMethod("getCFValueByMatrix2Keys", ICustomFieldEntity.class, String.class, Object.class, Object.class));
+            addFunction("mv", "getCFValueByMatrix3Keys",
+                MeveoFunctionMapper.class.getMethod("getCFValueByMatrix3Keys", ICustomFieldEntity.class, String.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getCFValueByMatrix4Keys",
+                MeveoFunctionMapper.class.getMethod("getCFValueByMatrix4Keys", ICustomFieldEntity.class, String.class, Object.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getCFValueByMatrix5Keys", MeveoFunctionMapper.class.getMethod("getCFValueByMatrix5Keys", ICustomFieldEntity.class, String.class, Object.class,
+                Object.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getCFValueByMatrixForDate2Keys",
+                MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate2Keys", ICustomFieldEntity.class, String.class, Date.class, Object.class, Object.class));
+            addFunction("mv", "getCFValueByMatrixForDate3Keys",
+                MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate3Keys", ICustomFieldEntity.class, String.class, Date.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getCFValueByMatrixForDate4Keys", MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate4Keys", ICustomFieldEntity.class, String.class,
+                Date.class, Object.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getCFValueByMatrixForDate5Keys", MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate5Keys", ICustomFieldEntity.class, String.class,
+                Date.class, Object.class, Object.class, Object.class, Object.class, Object.class));
 
         } catch (NoSuchMethodException | SecurityException e) {
+            Logger log = LoggerFactory.getLogger(this.getClass());
             log.error("Failed to instantiate EL custom function mv:xx", e);
         }
     }
@@ -231,7 +243,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
     /**
      * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
      */
-    public static Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo) {
+    public static Object getCFValueByMatrix2Keys(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, keyOne, keyTwo);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
@@ -243,11 +255,84 @@ public class MeveoFunctionMapper extends FunctionMapper {
     /**
      * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
      */
-    public static Object getCFValueByMatrixForDate(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo) {
+    public static Object getCFValueByMatrix3Keys(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree) {
+
+        Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, keyOne, keyTwo, keyThree);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained CF value {} by matrix for keys {}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
+     */
+    public static Object getCFValueByMatrix4Keys(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
+
+        Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, keyOne, keyTwo, keyThree, keyFour);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained CF value {} by matrix for keys {}/{}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, keyFour, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
+     */
+    public static Object getCFValueByMatrix5Keys(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
+
+        Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, keyOne, keyTwo, keyThree, keyFour, keyFive);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained CF value {} by matrix for keys {}/{}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
+     */
+    public static Object getCFValueByMatrixForDate2Keys(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, date, keyOne, keyTwo);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by matrix for keys {}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, entity, code, date);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
+     */
+    public static Object getCFValueByMatrixForDate3Keys(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree) {
+
+        Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, date, keyOne, keyTwo, keyThree);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained CF value {} by matrix for keys {}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, entity, code, date);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
+     */
+    public static Object getCFValueByMatrixForDate4Keys(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
+
+        Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, date, keyOne, keyTwo, keyThree, keyFour);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained CF value {} by matrix for keys {}/{}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, keyFour, entity, code, date);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
+     */
+    public static Object getCFValueByMatrixForDate5Keys(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour,
+            Object keyFive) {
+
+        Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, date, keyOne, keyTwo, keyThree, keyFour, keyFive);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained CF value {} by matrix for keys {}/{}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code, date);
 
         return cfValue;
     }

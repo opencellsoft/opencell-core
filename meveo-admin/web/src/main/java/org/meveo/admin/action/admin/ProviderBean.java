@@ -171,7 +171,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     	if(!getCurrentUser().hasPermission("superAdmin", "superAdminManagement")) {
     	    super.saveOrUpdate(killConversation);
         	messages.info(new BundleKey("messages", "update.successful"));
-        	return null;
+        	return "providerSelfDetail";
         }
         String outcome = super.saveOrUpdate(killConversation);
         if (outcome != null) {

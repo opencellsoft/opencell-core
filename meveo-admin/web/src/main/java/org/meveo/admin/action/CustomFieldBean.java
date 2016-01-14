@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -127,20 +127,28 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
         if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 
+            // Get custom field instances mapped by a CFT code
             Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances((ICustomFieldEntity) entity);
 
             // For each template, check if custom field value exists, and instantiate one if needed with a default value
             for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-                List<CustomFieldInstance> cfisByTemplate = cfisAsMap.get(cft.getCode());
 
+                List<CustomFieldInstance> cfisByTemplate = cfisAsMap.get(cft.getCode());
                 if (cfisByTemplate == null) {
                     cfisByTemplate = new ArrayList<>();
                 }
 
+                // Instantiate with a default value if no value found
                 if (cfisByTemplate.isEmpty() && !cft.isVersionable()) {
                     cfisByTemplate.add(CustomFieldInstance.fromTemplate(cft, (ICustomFieldEntity) entity));
                 }
 
+                // Retrieve columns for Matrix data entry
+                if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+                    populateMatrixColumns(cft.getCode(), cfisByTemplate);
+                }
+
+                // Deserialize values if applicable
                 for (CustomFieldInstance cfi : cfisByTemplate) {
                     deserializeForGUI(cft, cfi.getCfValue());
                 }
@@ -149,11 +157,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                     customFieldValues.put(cft.getCode(), cfisByTemplate);
                 } else {
                     customFieldValues.put(cft.getCode(), cfisByTemplate.get(0));
-                }
-
-                // Retrieve columns for Matrix data entry
-                if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
-                    populateMatrixColumns(cft.getCode(), cfisByTemplate);
                 }
             }
 
@@ -164,19 +167,29 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     }
 
     /**
-     * Retrieve matrix columns from custom field instances
+     * Retrieve matrix columns from custom field instances. Ignore MAP_KEY and MAP_VALUE entries.
      * 
      * @param code Custom field template code
      * @param cfis Custom field instances
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void populateMatrixColumns(String code, List<CustomFieldInstance> cfis) {
 
-        Set<String> cftColumns = new HashSet<String>();
+        Set<String> cftColumns = new LinkedHashSet<String>();
         matrixColumns.put(code, cftColumns);
 
         for (CustomFieldInstance cfi : cfis) {
-            for (Map<String, Object> columnInfo : cfi.getCfValue().getMatrixValuesForGUI().values()) {
-                cftColumns.addAll(columnInfo.keySet());
+            if (cfi.getCfValue().getMapValue() == null) {
+                continue;
+            }
+            Object columnNames = cfi.getCfValue().getMapValue().get(CustomFieldValue.MAP_KEY);
+            if (columnNames instanceof String) {
+                String[] columNamesArray = ((String) columnNames).split(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR);
+                for (String column : columNamesArray) {
+                    cftColumns.add(column);
+                }
+            } else if (columnNames instanceof Collection) {
+                cftColumns.addAll((Collection) columnNames);
             }
         }
     }
@@ -239,13 +252,18 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         }
     }
 
+    /**
+     * Deserialize map, list and entity reference values to adapt them for GUI data entry. See CustomFieldValue.xxxGUI fields for transformation description
+     * 
+     * @param cft Custom field template
+     * @param cfv Value holder to deserialize
+     */
+    @SuppressWarnings("unchecked")
     private void deserializeForGUI(CustomFieldTemplate cft, CustomFieldValue cfv) {
 
-        // Convert just Entity type field to a JPA object
-        if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
-            if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
-                cfv.setEntityReferenceValueForGUI(deserializeEntityReferenceForGUI(cfv.getEntityReferenceValue()));
-            }
+        // Convert just Entity type field to a JPA object - just Single storage fields
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+            cfv.setEntityReferenceValueForGUI(deserializeEntityReferenceForGUI(cfv.getEntityReferenceValue()));
 
             // Populate mapValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
@@ -286,18 +304,43 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             // Populate matrixValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
 
-            Map<String, Map<String, Object>> mapValues = new HashMap<String, Map<String, Object>>();
+            List<Map<String, Object>> mapValues = new ArrayList<Map<String, Object>>();
+            cfv.setMatrixValuesForGUI(mapValues);
 
             if (cfv.getMapValue() != null) {
-                for (Entry<String, Object> mapInfo : cfv.getMapValue().entrySet()) {
-                    String[] fromTo = mapInfo.getKey().split("\\" + CustomFieldInstanceService.MATRIX_VALUE_SEPARATOR);
-                    if (!mapValues.containsKey(fromTo[0])) {
-                        mapValues.put(fromTo[0], new HashMap<String, Object>());
+
+                Object columns = cfv.getMapValue().get(CustomFieldValue.MAP_KEY);
+                String[] columnArray = null;
+                if (columns instanceof String) {
+                    columnArray = ((String) columns).split(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR);
+                } else if (columns instanceof Collection) {
+                    columnArray = new String[((Collection<String>) columns).size()];
+                    int i = 0;
+                    for (String column : (Collection<String>) columns) {
+                        columnArray[i] = column;
+                        i++;
                     }
-                    mapValues.get(fromTo[0]).put(fromTo[1], mapInfo.getValue());
+                }
+
+                for (Entry<String, Object> mapItem : cfv.getMapValue().entrySet()) {
+                    if (mapItem.getKey().equals(CustomFieldValue.MAP_KEY)) {
+                        continue;
+                    }
+
+                    Map<String, Object> mapValuesItem = new HashMap<String, Object>();
+                    if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                        mapValuesItem.put(CustomFieldValue.MAP_VALUE, deserializeEntityReferenceForGUI((EntityReferenceWrapper) mapItem.getValue()));
+                    } else {
+                        mapValuesItem.put(CustomFieldValue.MAP_VALUE, mapItem.getValue());
+                    }
+
+                    String[] keys = mapItem.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
+                    for (int i = 0; i < keys.length; i++) {
+                        mapValuesItem.put(columnArray[i], keys[i]);
+                    }
+                    mapValues.add(mapValuesItem);
                 }
             }
-            cfv.setMatrixValuesForGUI(mapValues);
         }
     }
 
@@ -337,16 +380,20 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         }
     }
 
+    /**
+     * Serialize map, list and entity reference values that were adapted for GUI data entry. See CustomFieldValue.xxxGUI fields for transformation description
+     * 
+     * @param cft Custom field template
+     * @param cfv Value holder to serialize
+     */
     private void serializeForGUI(CustomFieldTemplate cft, CustomFieldValue cfv) {
 
-        // Convert just Entity type field to a JPA object
-        if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
-            if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
-                if (cfv.getEntityReferenceValueForGUI() == null) {
-                    cfv.setEntityReferenceValue(null);
-                } else {
-                    cfv.setEntityReferenceValue(new EntityReferenceWrapper(cfv.getEntityReferenceValueForGUI()));
-                }
+        // Convert JPA object to Entity reference - just Single storage fields
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+            if (cfv.getEntityReferenceValueForGUI() == null) {
+                cfv.setEntityReferenceValue(null);
+            } else {
+                cfv.setEntityReferenceValue(new EntityReferenceWrapper(cfv.getEntityReferenceValueForGUI()));
             }
 
             // Populate customFieldValue.listValue from mapValuesForGUI field
@@ -381,13 +428,21 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
             Map<String, Object> mapValue = new HashMap<String, Object>();
 
-            for (Entry<String, Map<String, Object>> mapInfo : cfv.getMatrixValuesForGUI().entrySet()) {
+            Set<String> columns = matrixColumns.get(cft.getCode());
+            mapValue.put(CustomFieldValue.MAP_KEY, columns);
 
-                for (Entry<String, Object> valueInfo : mapInfo.getValue().entrySet()) {
-                    if (!StringUtils.isBlank(valueInfo.getValue())) {
-                        mapValue.put(mapInfo.getKey() + CustomFieldInstanceService.MATRIX_VALUE_SEPARATOR + valueInfo.getKey(), valueInfo.getValue());
-                    }
+            for (Map<String, Object> mapItem : cfv.getMatrixValuesForGUI()) {
+                Object value = mapItem.get(CustomFieldValue.MAP_VALUE);
+                if (StringUtils.isBlank(value)) {
+                    continue;
                 }
+
+                StringBuilder valBuilder = new StringBuilder();
+                for (String column : columns) {
+                    valBuilder.append(valBuilder.length() == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
+                    valBuilder.append(mapItem.get(column));
+                }
+                mapValue.put(valBuilder.toString(), value);
             }
 
             cfv.setMapValue(mapValue);
@@ -543,7 +598,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                     FacesContext.getCurrentInstance().validationFailed();
                     return;
                 }
-                newKey = (from == null ? "" : from) + CustomFieldInstanceService.RON_VALUE_SEPARATOR + (to == null ? "" : to);
+                newKey = (from == null ? "" : from) + CustomFieldValue.RON_VALUE_SEPARATOR + (to == null ? "" : to);
             }
         }
 
@@ -838,30 +893,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      * @param cft Custom field template
      * @param matrixValues Matrix values
      */
-    public void addMatrixColumn(CustomFieldTemplate cft, Map<String, Map<String, Object>> matrixValues) {
+    public void addMatrixColumn(CustomFieldTemplate cft, List<Map<String, Object>> matrixValues) {
 
-        String columnValue = null;
-
-        if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
-
-            // Validate that at least one value is provided and in correct order
-            Double from = (Double) customFieldNewValue.get(cft.getCode() + "_key_from");
-            Double to = (Double) customFieldNewValue.get(cft.getCode() + "_key_to");
-
-            if (from == null && to == null) {
-                messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
-                FacesContext.getCurrentInstance().validationFailed();
-                return;
-
-            } else if (from != null && to != null && from.compareTo(to) >= 0) {
-                messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
-                FacesContext.getCurrentInstance().validationFailed();
-                return;
-            }
-            columnValue = (from == null ? "" : from) + CustomFieldInstanceService.RON_VALUE_SEPARATOR + (to == null ? "" : to);
-        } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
-            columnValue = (String) customFieldNewValue.get(cft.getCode() + "_key");
-        }
+        String columnValue = (String) customFieldNewValue.get(cft.getCode() + "_key");
 
         if (matrixColumns.get(cft.getCode()).add(columnValue)) {
             customFieldNewValue.clear();
@@ -879,43 +913,9 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      * @param cft Custom field template
      * @param matrixValues Matrix values
      */
-    public void addMatrixRow(CustomFieldTemplate cft, Map<String, Map<String, Object>> matrixValues) {
-
-        String rowValue = null;
-
-        if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
-
-            // Validate that at least one value is provided and in correct order
-            Double from = (Double) customFieldNewValue.get(cft.getCode() + "_key_from");
-            Double to = (Double) customFieldNewValue.get(cft.getCode() + "_key_to");
-
-            if (from == null && to == null) {
-                messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
-                FacesContext.getCurrentInstance().validationFailed();
-                return;
-
-            } else if (from != null && to != null && from.compareTo(to) >= 0) {
-                messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
-                FacesContext.getCurrentInstance().validationFailed();
-                return;
-            }
-            rowValue = (from == null ? "" : from) + CustomFieldInstanceService.RON_VALUE_SEPARATOR + (to == null ? "" : to);
-
-        } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
-            rowValue = (String) customFieldNewValue.get(cft.getCode() + "_key");
-        }
-
-        if (matrixValues.containsKey(rowValue)) {
-            messages.error(new BundleKey("messages", "customFieldTemplate.rowExists"));
-            FacesContext.getCurrentInstance().validationFailed();
-            return;
-
-        } else {
-            Map<String, Object> rowValues = new HashMap<String, Object>();
-            matrixValues.put(rowValue, rowValues);
-            customFieldNewValue.clear();
-        }
-
+    public void addMatrixRow(CustomFieldTemplate cft, List<Map<String, Object>> matrixValues) {
+        Map<String, Object> rowValues = new HashMap<String, Object>();
+        matrixValues.add(rowValues);
     }
 
     /**

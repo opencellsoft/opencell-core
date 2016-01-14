@@ -472,6 +472,7 @@
 		<navigation-case>
 			<from-outcome>providerSelfDetail</from-outcome>
 			<to-view-id>/pages/admin/providers/providerSelfDetail.xhtml</to-view-id>
+            <redirect include-view-params="true" />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>providerContacts</from-outcome>

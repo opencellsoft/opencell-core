@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -36,7 +35,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
 
 @Stateless
 public class EdrService extends PersistenceService<EDR> {
@@ -45,9 +43,6 @@ public class EdrService extends PersistenceService<EDR> {
 	
 	@Inject
 	private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
-
-	@Inject
-	private Logger log;
 
 	static boolean useInMemoryDeduplication = true;
 

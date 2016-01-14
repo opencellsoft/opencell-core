@@ -40,6 +40,8 @@ public class CFValueTest {
         mapValue.put("UK|New", "A1234");
         mapValue.put("LT|Old", "A12345");
         mapValue.put("LT|New", "A123456");
+        mapValue.put("LT|New|Cel", "A1234567");
+        mapValue.put("LT|New|Cel|Home", "A12345678");
 
         CustomFieldTemplate cft = new CustomFieldTemplate();
         cft.setStorageType(CustomFieldStorageTypeEnum.MATRIX);
@@ -49,9 +51,14 @@ public class CFValueTest {
         Assert.assertEquals("A12345", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "LT", "Old"));
         Assert.assertEquals("A1234", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "UK", "New"));
         Assert.assertEquals("A1", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "France", "Old"));
+        Assert.assertEquals("A1234567", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "LT", "New", "Cel"));
+        Assert.assertEquals("A12345678", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "LT", "New", "Cel", "Home"));
         Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "Arg", "Old"));
         Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, null, "Old"));
         Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "UK", null));
+        Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "France", "Old", "Some"));
+        Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "LT", "Cel", "New"));
+        Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "LT", "New", "Cel", "Homes"));
 
     }
 
@@ -87,6 +94,8 @@ public class CFValueTest {
         mapValue.put("-5<-2|<10", "A123");
         mapValue.put("-5<-2|>21", "A1234");
         mapValue.put("-5<|<-1", "A12345");
+        mapValue.put("-5<|<-1|1<8", "A123456");
+        mapValue.put("-5<|<-1|1<8|11<45.56", "A1234567");
 
         CustomFieldTemplate cft = new CustomFieldTemplate();
         cft.setStorageType(CustomFieldStorageTypeEnum.MATRIX);
@@ -95,10 +104,14 @@ public class CFValueTest {
         Assert.assertEquals("A1", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, 15, 15));
         Assert.assertEquals("A123", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, -4, 9.99));
         Assert.assertEquals("A12345", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, -2, -5));
+        Assert.assertEquals("A123456", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, -2, -5, 7.99));
+        Assert.assertEquals("A1234567", CustomFieldInstanceService.matchMatrixValue(cft, mapValue, -2, -5, 7, 45.559));
         Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, 15, 17));
         Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, "France", "Old"));
         Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, null, 15));
         Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, -3, null));
+        Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, -2, 7.99, -5));
+        Assert.assertNull(CustomFieldInstanceService.matchMatrixValue(cft, mapValue, -2, -5, 7, 45.56));
 
     }
 }

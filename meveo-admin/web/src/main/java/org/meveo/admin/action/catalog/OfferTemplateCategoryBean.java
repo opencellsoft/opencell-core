@@ -22,7 +22,6 @@ import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -32,9 +31,6 @@ import org.slf4j.Logger;
 public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCategory> {
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;

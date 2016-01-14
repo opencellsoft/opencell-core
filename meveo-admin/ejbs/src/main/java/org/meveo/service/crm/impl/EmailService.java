@@ -26,7 +26,6 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.mail.Message.RecipientType;
 import javax.mail.Multipart;
 import javax.mail.Session;
@@ -42,7 +41,6 @@ import org.meveo.model.communication.MessageSenderConfig;
 import org.meveo.model.crm.Email;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
 
 /**
  * Email service implementation.
@@ -52,9 +50,6 @@ public class EmailService extends PersistenceService<Email> {
 
 	@Resource(lookup = "java:/MeveoMail")
 	private static Session mailSession;
-
-	@Inject
-	private static Logger log;
 
 	public void sendEmail(String from, List<String> to, List<String> cc, String subject, String body, List<File> files)
 			throws BusinessException {

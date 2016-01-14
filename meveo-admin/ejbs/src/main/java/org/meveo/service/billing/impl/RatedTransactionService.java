@@ -75,13 +75,9 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.slf4j.Logger;
 
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
-
-	@Inject
-	private Logger log;
 	
 	@Inject
 	private UserAccountService userAccountService;

@@ -20,7 +20,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.text.Normalizer;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,7 +67,7 @@ public class StringUtils {
         return concatenate(separator, Arrays.asList(values));
     }
 
-    public static String concatenate(String separator, List<String> values) {
+    public static String concatenate(String separator, Collection<String> values) {
         StringBuilder sb = new StringBuilder();
         for (String s : values)
             if (!isBlank(s)) {

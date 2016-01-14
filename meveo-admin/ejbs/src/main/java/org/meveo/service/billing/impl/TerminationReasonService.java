@@ -29,9 +29,6 @@ import org.slf4j.Logger;
 @Stateless
 public class TerminationReasonService extends PersistenceService<SubscriptionTerminationReason> {
 
-	@Inject
-	private Logger log;
-
 	public SubscriptionTerminationReason findByCode(String terminationReasonCode, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(SubscriptionTerminationReason.class, "s");
 		qb.addCriterion("code", "=", terminationReasonCode, true);

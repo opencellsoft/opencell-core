@@ -108,8 +108,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private CustomFieldInstanceService customFieldInstanceService;
 
 	TransformerFactory transfac = TransformerFactory.newInstance();
-
-//	 private static Logger log = LoggerFactory.getLogger(XMLInvoiceCreator.class);
 	
 	private static DateFormat DEFAULT_DATE_FORMAT = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
 	private static String DEFAULT_DATE_PATTERN = ((SimpleDateFormat)DEFAULT_DATE_FORMAT).toLocalizedPattern();

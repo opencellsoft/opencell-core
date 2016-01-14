@@ -76,7 +76,6 @@ public class EntityActionScriptService extends CustomScriptService<EntityActionS
         for (EntityActionScript script : scripts) {
             scriptMap.put(script.getCode(), script);
         }
-        log.error("AKK found {} for appliesTo {}", scriptMap, appliesTo);
         return scriptMap;
     }
 

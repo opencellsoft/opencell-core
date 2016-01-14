@@ -46,16 +46,12 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Stateless
 public class RatingService extends BusinessService<WalletOperation>{
 
 	@PersistenceContext(unitName = "MeveoAdmin")
 	protected EntityManager entityManager;
-
-	static protected Logger log = LoggerFactory.getLogger(RatingService.class);
 
 	@Inject
 	protected CatMessagesService catMessagesService;

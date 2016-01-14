@@ -43,7 +43,7 @@
                         </p:commandButton>
 
                         <p:commandButton icon="ui-icon-search" oncomplete="PF('mapDialog').show()" update=":mapDialog"
-                            rendered="#{cacheItem.value.getClass().getSimpleName() eq 'HashMap' }" title="#{messages['commons.view']}">
+                            rendered="#{cacheItem.value.getClass().getSimpleName() eq 'HashMap' or cacheItem.value.getClass().getSimpleName() eq 'TreeMap' }" title="#{messages['commons.view']}">
                             <f:setPropertyActionListener target="#{cacheBean.selectedCacheMapItem}" value="#{cacheItem}" />
                         </p:commandButton>
                     </p:column>

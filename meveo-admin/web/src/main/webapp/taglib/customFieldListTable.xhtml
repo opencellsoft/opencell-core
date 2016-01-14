@@ -2,8 +2,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:o="http://omnifaces.org/ui"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags">
+    xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite"
+    xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags">
 
 <!-- 
     A tag displaying or editing a custom field value of type list/map and bound to CustomFieldValue type variable
@@ -114,52 +114,57 @@
 
 
         <c:if test="#{cft.storageType eq CustomFieldStorageTypeEnum.MATRIX}">
-            <p:dataTable id="customFields_map_omitFromSubmit" lazy="false" value="#{field.matrixValuesForGUI.entrySet()}" var="mapValues" editable="#{edit and !disabled}"
-                editMode="cell" reflow="false" resizableColumns="true" rowIndexVar="rowIndex">
+            <p:dataTable id="customFields_map_omitFromSubmit" lazy="false" value="#{field.matrixValuesForGUI}" var="mapValues" editable="#{edit and !disabled}" editMode="cell"
+                reflow="false" resizableColumns="true" rowIndexVar="rowIndex">
 
                 <p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
-                <p:column headerText="#{messages['commons.key']}" width="20%">
-                    <h:outputText value="#{mapValues.key}" />
-                </p:column>
                 <p:columns value="#{backingBean.getMatrixColumns(cft.code)}" var="column" headerText="#{column}">
                     <p:cellEditor>
                         <f:facet name="output">
-                            <h:outputText value="#{mapValues.value.get(column)}" styleClass="field-value" />
+                            <h:outputText value="#{mapValues[column]}" styleClass="field-value" />
                         </f:facet>
                         <f:facet name="input">
-                            <h:inputText value="#{mapValues.value[column]}" size="20" maxlength="50" />
+                            <c:if test="#{cft.mapKeyType eq CustomFieldMapKeyEnum.STRING}">
+                                <h:inputText value="#{mapValues[column]}" size="20" maxlength="50" />
+                            </c:if>
+                            <c:if test="#{cft.mapKeyType eq CustomFieldMapKeyEnum.RON}">
+                                <p:inputText value="#{mapValues[column]}" size="20" maxlength="30">
+                                    <pe:keyFilter regEx="/[0-9.&lt;]/"/>
+                                    <o:validator validatorId="javax.faces.RegularExpression" pattern="(([0-9]+)(\.[0-9]+)?)?&lt;(([0-9]+)(\.[0-9]+)?)?" message="#{messages['customFieldTemplate.ronInvalid']}" />
+                                </p:inputText>
+                            </c:if>
                         </f:facet>
                     </p:cellEditor>
                 </p:columns>
+                <p:column headerText="#{messages['commons.value']}" width="20%">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}"
+                                backingBean="#{backingBean}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" required="true"
+                                backingBean="#{backingBean}" />
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
                 <f:facet name="footer" layout="block">
                     <p:messages id="cfNewFieldsMessage" globalOnly="false" redisplay="false" />
                     <hf:namingContainer id="addNewFields" rendered="#{edit and !disabled}">
 
-                        <c:if test="#{cft.mapKeyType eq CustomFieldMapKeyEnum.STRING}">
-                            <p:inputText id="newKey" value="#{backingBean.customFieldNewValue[cft.code.concat('_key')]}" required="true" placeholder="#{messages['commons.key']}"
-                                label="#{messages['commons.key']}" size="30" maxlength="50" />
-                        </c:if>
-
-                        <c:if test="#{cft.mapKeyType eq CustomFieldMapKeyEnum.RON}">
-
-                            <p:inputText id="newRonKeyFrom" value="#{backingBean.customFieldNewValue[cft.code.concat('_key_from')]}" converter="javax.faces.Double"
-                                placeholder="#{messages['customFieldTemplate.mapKeyRonFrom']}" label="#{messages['customFieldTemplate.mapKeyRonFrom']}" size="9" maxlength="15" />
-                            <h:outputText value=" - " />
-                            <p:inputText id="newRonKeyTo" value="#{backingBean.customFieldNewValue[cft.code.concat('_key_to')]}" converter="javax.faces.Double"
-                                placeholder="#{messages['customFieldTemplate.mapKeyRonTo']}" label="#{messages['customFieldTemplate.mapKeyRonTo']}" size="9" maxlength="15" />
-                        </c:if>
+                        <p:inputText id="newKey" value="#{backingBean.customFieldNewValue[cft.code.concat('_key')]}" required="true"
+                            placeholder="#{messages['customFieldTemplate.column']}" label="#{messages['commons.key']}" size="30" maxlength="50" />
 
                         <h:outputText value=" &nbsp; " escape="false" />
                     </hf:namingContainer>
 
-                    <p:commandButton value="#{messages['customFieldTemplate.addRow']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
-                        action="#{backingBean.addMatrixRow(cft, field.matrixValuesForGUI)}">
-                        <p:resetInput target="addNewFields" />
-                    </p:commandButton>
-
                     <p:commandButton value="#{messages['customFieldTemplate.addColumn']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
                         action="#{backingBean.addMatrixColumn(cft, field.matrixValuesForGUI)}">
                         <p:resetInput target="addNewFields" />
+                    </p:commandButton>
+
+                    <p:commandButton value="#{messages['customFieldTemplate.addRow']}" partialSubmit="true" process="@this" update="customFields_map_omitFromSubmit"
+                        action="#{backingBean.addMatrixRow(cft, field.matrixValuesForGUI)}">
                     </p:commandButton>
 
                     <p:commandButton value="#{messages['commons.close']}" process="@this" rendered="#{!empty(popupWidgetVar)}" update="@this #{updateOnAddEdit}"
@@ -167,7 +172,8 @@
                     </p:commandButton>
 
                 </f:facet>
-            </p:dataTable>
+            </p:dataTable>           
+            
         </c:if>
     </hftl:decorateFormField>
 </ui:composition>

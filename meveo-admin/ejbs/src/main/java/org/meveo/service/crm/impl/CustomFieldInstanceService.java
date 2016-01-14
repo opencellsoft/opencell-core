@@ -47,9 +47,6 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class CustomFieldInstanceService extends PersistenceService<CustomFieldInstance> {
 
-    public static String MATRIX_VALUE_SEPARATOR = "|";
-    public static String RON_VALUE_SEPARATOR = "<";
-
     @Inject
     private CustomFieldTemplateService cfTemplateService;
 
@@ -197,7 +194,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
         if (cft == null) {
-            //log.trace("No CFT found {}/{}", entity, code);
+            // log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
 
@@ -780,18 +777,17 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * 
      * Map key is assumed to be the following format:
      * <ul>
-     * <li>MATRIX_STRING: <matrix first key>|<matrix second key></li>
-     * <li>MATRIX_RON: <range of numbers for the first key>|<range of numbers for the second key></li>
+     * <li>MATRIX_STRING: <matrix first key>|<matrix second key>|<matrix xx key></li>
+     * <li>MATRIX_RON: <range of numbers for the first key>|<range of numbers for the second key>|<range of numbers for the xx key></li>
      * </ul>
      * 
      * @param entity Entity to match
      * @param code Custom field code
-     * @param keyOne First key to match
-     * @param keyTwo Second key to match
+     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
      * @return Map value that matches the matrix format map key
      */
     @SuppressWarnings("unchecked")
-    public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo) {
+    public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Object... keys) {
 
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
         if (cft == null || cft.getMapKeyType() == null) {
@@ -805,9 +801,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
 
         Map<String, Object> value = (Map<String, Object>) getCFValue(entity, code, null);
-        Object valueMatched = CustomFieldInstanceService.matchMatrixValue(cft, value, keyOne, keyTwo);
+        Object valueMatched = CustomFieldInstanceService.matchMatrixValue(cft, value, keys);
 
-        log.trace("Found matrix value match {} for keyToMatch={}|{}", valueMatched, keyOne, keyTwo);
+        log.trace("Found matrix value match {} for keyToMatch={}", valueMatched, keys);
         return valueMatched;
 
     }
@@ -824,11 +820,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @param entity Entity to match
      * @param code Custom field code
      * @param date Date to match
-     * @param keyOne First key to match
-     * @param keyTwo Second key to match
+     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
      * @return Map value that matches the matrix format map key
      */
-    public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo) {
+    public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object... keys) {
 
         CustomFieldTemplate cft = customFieldsCacheContainerProvider.getCustomFieldTemplate(code, entity);
         if (cft == null || cft.getMapKeyType() == null) {
@@ -842,9 +837,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
 
         Object value = getCFValue(entity, code, date, null);
-        Object valueMatched = CustomFieldInstanceService.matchMatrixValue(cft, value, keyOne, keyTwo);
+        Object valueMatched = CustomFieldInstanceService.matchMatrixValue(cft, value, keys);
 
-        log.trace("Found matrix value match {} for period {} and keyToMatch={}|{}", valueMatched, date, keyOne, keyTwo);
+        log.trace("Found matrix value match {} for period {} and keyToMatch={}", valueMatched, date, keys);
         return valueMatched;
 
     }
@@ -952,26 +947,38 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * 
      * @param cft Custom field template
      * @param value Value to inspect
-     * @param keyOne First key to match
-     * @param keyTwo Second key to match
+     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
      * @return A value matched
      */
     @SuppressWarnings("unchecked")
-    public static Object matchMatrixValue(CustomFieldTemplate cft, Object value, Object keyOne, Object keyTwo) {
-        if (value == null || !(value instanceof Map) || keyOne == null || keyTwo == null || StringUtils.isEmpty(keyOne.toString()) || StringUtils.isEmpty(keyTwo.toString())) {
+    public static Object matchMatrixValue(CustomFieldTemplate cft, Object value, Object... keys) {
+        if (value == null || !(value instanceof Map) || keys == null || keys.length == 0) {
             return null;
         }
 
         Object valueMatched = null;
         if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
-            String mapKey = keyOne + MATRIX_VALUE_SEPARATOR + keyTwo;
+
+            String mapKey = StringUtils.join(keys, CustomFieldValue.MATRIX_KEY_SEPARATOR);
             valueMatched = ((Map<String, Object>) value).get(mapKey);
 
         } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
 
             for (Entry<String, Object> valueInfo : ((Map<String, Object>) value).entrySet()) {
-                String[] ranges = valueInfo.getKey().split("\\" + MATRIX_VALUE_SEPARATOR);
-                if (isNumberRangeMatch(ranges[0], keyOne) && isNumberRangeMatch(ranges[1], keyTwo)) {
+                String[] ranges = valueInfo.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
+                if (ranges.length != keys.length) {
+                    continue;
+                }
+
+                boolean allMatched = true;
+                for (int i = 0; i < ranges.length; i++) {
+                    if (!isNumberRangeMatch(ranges[i], keys[i])) {
+                        allMatched = false;
+                        break;
+                    }
+                }
+
+                if (allMatched) {
                     valueMatched = valueInfo.getValue();
                     break;
                 }
@@ -1014,7 +1021,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @return True if number have matched
      */
     private static boolean isNumberRangeMatch(String numberRange, Object numberToMatchObj) {
-        String[] rangeInfo = numberRange.split(RON_VALUE_SEPARATOR);
+        String[] rangeInfo = numberRange.split(CustomFieldValue.RON_VALUE_SEPARATOR);
         Double fromNumber = null;
         try {
             fromNumber = Double.parseDouble(rangeInfo[0]);
