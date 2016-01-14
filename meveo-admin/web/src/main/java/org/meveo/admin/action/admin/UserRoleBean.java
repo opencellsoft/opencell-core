@@ -101,12 +101,12 @@ public class UserRoleBean extends BaseBean<Role> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         // Update permissions
-        getEntity().getPermissions().addAll(permissionsDM.getTarget());
-        getEntity().getPermissions().removeAll(permissionsDM.getSource());
+        getEntity().getPermissions().clear();
+        getEntity().getPermissions().addAll(permissionService.refreshOrRetrieve(permissionsDM.getTarget()));
 
         // Update roles
-        getEntity().getRoles().addAll(rolesDM.getTarget());
-        getEntity().getRoles().removeAll(rolesDM.getSource());
+        getEntity().getRoles().clear();
+        getEntity().getRoles().addAll(userRoleService.refreshOrRetrieve(rolesDM.getTarget()));
 
         return super.saveOrUpdate(killConversation);
     }

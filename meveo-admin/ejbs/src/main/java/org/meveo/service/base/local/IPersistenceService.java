@@ -255,12 +255,21 @@ public interface IPersistenceService<E extends IEntity> {
 	 * Refresh entity with state from database.
 	 */
 	public void refresh(E entity);
-	
-	/**
+
+    /**
      * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
-     */    
-	public E refreshOrRetrieve(E entity);
+     * 
+     * @param entity Entity to refresh
+     */
+    public E refreshOrRetrieve(E entity);
 	
+    /**
+     * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
+     * 
+     * @param entities A list of entities to refresh
+     */
+    public List<E> refreshOrRetrieve(List<E> entities);
+    
 	public void commit();
 
 	public EntityManager getEntityManager();
