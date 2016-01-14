@@ -12,6 +12,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -53,6 +54,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCFValueByRangeOfNumbers", MeveoFunctionMapper.class.getMethod("getCFValueByRangeOfNumbers", ICustomFieldEntity.class, String.class, Object.class));
             addFunction("mv", "getCFValueByRangeOfNumbersForDate",
                 MeveoFunctionMapper.class.getMethod("getCFValueByRangeOfNumbersForDate", ICustomFieldEntity.class, String.class, Date.class, Object.class));
+            addFunction("mv", "getCFValueByMatrix", MeveoFunctionMapper.class.getMethod("getCFValueByMatrix", ICustomFieldEntity.class, String.class, String.class));
             addFunction("mv", "getCFValueByMatrix2Keys",
                 MeveoFunctionMapper.class.getMethod("getCFValueByMatrix2Keys", ICustomFieldEntity.class, String.class, Object.class, Object.class));
             addFunction("mv", "getCFValueByMatrix3Keys",
@@ -61,6 +63,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 MeveoFunctionMapper.class.getMethod("getCFValueByMatrix4Keys", ICustomFieldEntity.class, String.class, Object.class, Object.class, Object.class, Object.class));
             addFunction("mv", "getCFValueByMatrix5Keys", MeveoFunctionMapper.class.getMethod("getCFValueByMatrix5Keys", ICustomFieldEntity.class, String.class, Object.class,
                 Object.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getCFValueByMatrixForDate",
+                MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate", ICustomFieldEntity.class, String.class, Date.class, String.class));
             addFunction("mv", "getCFValueByMatrixForDate2Keys",
                 MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate2Keys", ICustomFieldEntity.class, String.class, Date.class, Object.class, Object.class));
             addFunction("mv", "getCFValueByMatrixForDate3Keys",
@@ -242,6 +246,28 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
+     * 
+     * @param entity Entity to find CF value for
+     * @param code Custom field code
+     * @param concatenatedKeys Keys concatenated by "|" sign
+     */
+    public static Object getCFValueByMatrix(ICustomFieldEntity entity, String code, String concatenatedKeys) {
+
+        if (StringUtils.isBlank(concatenatedKeys)) {
+            return null;
+        }
+
+        String[] keys = concatenatedKeys.split("|");
+
+        Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, (Object[]) keys);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained CF value {} by matrix for keys {} for {}/{}", cfValue, keys, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
      */
     public static Object getCFValueByMatrix2Keys(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo) {
 
@@ -284,6 +310,29 @@ public class MeveoFunctionMapper extends FunctionMapper {
         Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, keyOne, keyTwo, keyThree, keyFour, keyFive);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by matrix for keys {}/{}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code);
+
+        return cfValue;
+    }
+
+    /**
+     * Exposes CustomFieldInstanceService.getCFValueByMatrix() function as EL function. See CustomFieldInstanceService.getCFValueByMatrix() function for documentation
+     * 
+     * @param entity Entity to find CF value for
+     * @param code Custom field code
+     * @param date Date Value date
+     * @param concatenatedKeys Keys concatenated by "|" sign
+     */
+    public static Object getCFValueByMatrixForDate(ICustomFieldEntity entity, String code, Date date, String concatenatedKeys) {
+
+        if (StringUtils.isBlank(concatenatedKeys)) {
+            return null;
+        }
+
+        String[] keys = concatenatedKeys.split("|");
+
+        Object cfValue = getCustomFieldInstanceService().getCFValueByMatrix(entity, code, (Object[]) keys);
+        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        log.trace("Obtained CF value {} by matrix for keys {} for {}/{}", cfValue, keys, entity, code);
 
         return cfValue;
     }
