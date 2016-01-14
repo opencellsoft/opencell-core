@@ -67,6 +67,9 @@ public class DefaultObserver {
 
     @Inject
     private Logger log;
+    
+    @Inject
+    private GenericNotificationService genericNotificationService;
 
     @Inject
     private BeanManager manager;
@@ -180,10 +183,10 @@ public class DefaultObserver {
             		notif.getEventTypeFilter()==NotificationEventTypeEnum.FILE_RENAME){
             	notificationHistoryService.createNotificationByAuditable(notif, e,"", NotificationHistoryStatusEnum.SENT);
             }else if(notif.getEventTypeFilter() != NotificationEventTypeEnum.INBOUND_REQ){
-                notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
+                notificationHistoryService.createNotificationByAuditable(notif, e, "", NotificationHistoryStatusEnum.SENT);
             }
             if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ) {
-                NotificationHistory histo = notificationHistoryService.create(notif, e, "", NotificationHistoryStatusEnum.SENT);
+                NotificationHistory histo = notificationHistoryService.createNotificationByAuditable(notif, e, "", NotificationHistoryStatusEnum.SENT);
                 ((InboundRequest) e).add(histo);
             }
             if(notif instanceof JobTrigger){
@@ -217,6 +220,7 @@ public class DefaultObserver {
 
     private void checkEvent(NotificationEventTypeEnum type, BaseEntity entity) {
         for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(type, entity)) {
+        	notif = genericNotificationService.findById(notif.getId());
             fireNotification(notif, entity);
         }
     }
