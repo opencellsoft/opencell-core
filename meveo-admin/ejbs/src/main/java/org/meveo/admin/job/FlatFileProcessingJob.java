@@ -38,6 +38,7 @@ public class FlatFileProcessingJob extends Job {
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance, User currentUser) throws BusinessException {
@@ -62,7 +63,7 @@ public class FlatFileProcessingJob extends Job {
 					initContext  = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_variables", currentUser);
 				}
 			} catch (Exception e) {
-				log.warn("Cant get customFields for " + jobInstance.getJobTemplate(),e);
+				log.warn("Cant get customFields for " + jobInstance.getJobTemplate(),e.getMessage());
 			}
 
 			ArrayList<String> fileExtensions = new ArrayList<String>();

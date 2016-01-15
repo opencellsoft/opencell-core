@@ -89,7 +89,7 @@ public class BillingRunJobBean {
 			}
 		} catch (Exception e) {
 			result.registerError(e.getMessage());
-			log.error("Failed to run billing ", e);
+			log.error("Failed to run billing ", e.getMessage());
 		}
 	}
 

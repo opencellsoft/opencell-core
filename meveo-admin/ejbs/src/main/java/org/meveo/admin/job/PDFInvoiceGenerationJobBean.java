@@ -78,7 +78,7 @@ public class PDFInvoiceGenerationJobBean {
 			}catch(Exception e){
 				nbRuns = new Long(1);
 				waitingMillis = new Long(0);
-				log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e);
+				log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e.getMessage());
 			}
 
 			List<Future<String>> futures = new ArrayList<Future<String>>();
