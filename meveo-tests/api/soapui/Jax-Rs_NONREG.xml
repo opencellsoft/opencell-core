@@ -355,7 +355,7 @@
 	"index" : 0,
 	"limit" : 10,
 	"sortField" : "ASCENDING"
-}</con:request><con:originalUri>http://localhost/meveo/api/rest/accountHierarchy/find</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="createCRMAccountHierarchy" path="createCRMAccountHierarchy" id="9c93a2c6-ff35-42f2-b017-b77f4c8e7a65"><con:settings/><con:parameters/><con:method name="POST" id="bb2f9960-fdcc-4f21-818f-8210bfcd29c8" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:cre="http://192.168.10.14/meveo/api/rest/account/accountHierarchy/createCRMAccountHierarchy">cre:Response</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/xml</con:mediaType><con:params/><con:element>CRMAccountHierarchy</con:element></con:representation><con:request name="Request 1" id="80959833-57b4-4ae5-a558-05e8cb07f8ca" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/meveo</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:method name="POST" method="POST" id="b0c2fee8-1ad4-4280-bbe8-c273d659bea2"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:acc="http://localhost/meveo/api/rest/accountHierarchy">acc:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:acc="http://192.168.10.14/meveo/api/rest/account/accountHierarchy">acc:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false" id="4297a84e-10ff-4ed3-bc98-546dbb75ec46"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/accountHierarchy/find</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="createCRMAccountHierarchy" path="createCRMAccountHierarchy" id="9c93a2c6-ff35-42f2-b017-b77f4c8e7a65"><con:settings/><con:parameters/><con:method name="POST" id="bb2f9960-fdcc-4f21-818f-8210bfcd29c8" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:cre="http://192.168.10.14/meveo/api/rest/account/accountHierarchy/createCRMAccountHierarchy">cre:Response</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/xml</con:mediaType><con:params/><con:element>CRMAccountHierarchy</con:element></con:representation><con:request name="Request 1" id="80959833-57b4-4ae5-a558-05e8cb07f8ca" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/meveo</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="createOrUpdateCRMAccountHierarchy" path="createOrUpdateCRMAccountHierarchy" id="1ab16661-a5f7-4162-a937-b99a64f7a159"><con:settings/><con:parameters/><con:method name="POST" id="76ca2b01-d53c-4514-899b-4088b3689225" method="POST"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>text/html</con:mediaType><con:status>407</con:status><con:params/></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:cre="http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy">cre:Response</con:element></con:representation><con:request name="Request 1" id="e0897ec6-8c2f-4e0f-a74b-a3fcfa3d25bf" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/meveo</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:method name="POST" method="POST" id="b0c2fee8-1ad4-4280-bbe8-c273d659bea2"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:acc="http://localhost/meveo/api/rest/accountHierarchy">acc:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:acc="http://192.168.10.14/meveo/api/rest/account/accountHierarchy">acc:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false" id="4297a84e-10ff-4ed3-bc98-546dbb75ec46"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
 	"customerId" : "CUST_2",
 	"sellerCode" : "MAIN_SELLER",
 	"customerBrandCode" : "DEFAULT",
@@ -367,7 +367,7 @@
 	"billingCycleCode" : "",
 	"email" : "edward.legaspi@manaty.net",
 	"phoneNumber" : "1234567890"
-}</con:request><con:originalUri>http://localhost/meveo/api/rest/accountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="PUT" method="PUT" id="f63d205a-862d-4fa2-a98e-f081769f8fe5"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:acc="http://localhost/meveo/api/rest/accountHierarchy">acc:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false" id="1920cc8b-0ac5-444d-afd1-1a37a871e153"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/accountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="PUT" method="PUT" id="f63d205a-862d-4fa2-a98e-f081769f8fe5"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:acc="http://localhost/meveo/api/rest/accountHierarchy">acc:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false" id="1920cc8b-0ac5-444d-afd1-1a37a871e153"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
 	"customerId" : "CUST_1",
 	"sellerCode" : "MAIN_SELLER",
 	"customerBrandCode" : "DEFAULT",
@@ -430,7 +430,7 @@
 	"code": "TEST_SELLER",
 	"description": "Test seller update"
 }
-</con:request><con:originalUri>http://localhost/meveo/api/rest/seller/list</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:method name="GET" method="GET" id="0dee5bef-4630-403f-ad87-8548fade2506"><con:settings/><con:parameters><con:parameter><con:name>sellerCode</con:name><con:value>MAIN_SELLER</con:value><con:style>QUERY</con:style><con:default>MAIN_SELLER</con:default><con:description xsi:nil="true"/></con:parameter></con:parameters><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:sel="http://localhost/meveo/api/rest/seller">sel:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" id="ae23535e-e589-466c-9a88-70551daef122"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://i.meveo.info</con:endpoint><con:request/><con:originalUri>http://localhost/meveo/api/rest/seller</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="sellerCode" value="E_TEST" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>sellerCode</con:entry></con:parameterOrder></con:request></con:method><con:method name="POST" method="POST" id="613449bd-d79d-43a6-a8f5-3cd781f8e97c"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:sel="http://localhost/meveo/api/rest/seller">sel:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:sel="http://localhost/meveo/api/rest/seller">sel:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html</con:mediaType><con:status>407</con:status><con:params/></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false" id="90acdc26-7f11-43c8-83a0-b5429f3b5028"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+</con:request><con:originalUri>http://localhost/meveo/api/rest/seller/list</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:method name="GET" method="GET" id="0dee5bef-4630-403f-ad87-8548fade2506"><con:settings/><con:parameters><con:parameter><con:name>sellerCode</con:name><con:value>MAIN_SELLER</con:value><con:style>QUERY</con:style><con:default>MAIN_SELLER</con:default><con:description xsi:nil="true"/></con:parameter></con:parameters><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:sel="http://localhost/meveo/api/rest/seller">sel:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" id="ae23535e-e589-466c-9a88-70551daef122"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://i.meveo.info</con:endpoint><con:request/><con:originalUri>http://localhost/meveo/api/rest/seller</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="sellerCode" value="E_TEST" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>sellerCode</con:entry></con:parameterOrder></con:request></con:method><con:method name="POST" method="POST" id="613449bd-d79d-43a6-a8f5-3cd781f8e97c"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>401</con:status><con:params/></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:sel="http://localhost/meveo/api/rest/seller">sel:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:sel="http://localhost/meveo/api/rest/seller">sel:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html</con:mediaType><con:status>407</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false" id="90acdc26-7f11-43c8-83a0-b5429f3b5028"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
 	"code" : "SELLER1",
 	"description" : "Test",
 	"currencyCode" : "USD",
@@ -651,7 +651,7 @@
 	"code":"OFFTEMP1",
 	"description":"Test data for offer template"
 }
-</con:request><con:originalUri>http://localhost/meveo/api/rest/catalog/offerTemplate/OFF_2</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method></con:resource><con:method name="POST" method="POST" id="25e70a22-9a98-4808-9ead-56eee5980097"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:off="http://localhost/meveo/api/rest/catalog/offerTemplate">off:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:off="http://192.168.10.14/meveo/api/rest/catalog/offerTemplate">off:Response</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false" id="78b27f0d-788c-4f9f-b5c9-97a7d6f75c77"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+</con:request><con:originalUri>http://localhost/meveo/api/rest/catalog/offerTemplate/OFF_2</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method></con:resource><con:method name="POST" method="POST" id="25e70a22-9a98-4808-9ead-56eee5980097"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:off="http://localhost/meveo/api/rest/catalog/offerTemplate">off:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:off="http://192.168.10.14/meveo/api/rest/catalog/offerTemplate">off:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json" postQueryString="false" id="78b27f0d-788c-4f9f-b5c9-97a7d6f75c77"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
 	"code" : "OFF_2",
 	"description" : "OFF_2",
 	"disabled" : false,
@@ -1604,11 +1604,11 @@
 	"description": "Script instance test data",
 	"script": "test script"
 }
-</con:request><con:originalUri>http://localhost/meveo/api/rest/catalog/counterTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method></con:resource></con:resource><con:resource name="usageChargeTemplate" path="/meveo/api/rest/catalog/usageChargeTemplate" id="bddd597b-cd68-4382-9506-02d9478c1403"><con:settings/><con:parameters/><con:resource name="createOrUpdate" path="createOrUpdate" id="ba6e2ce5-800e-4127-bcd7-26cc9606d61c"><con:settings/><con:parameters/><con:method name="UsageCharge" method="POST" id="078ffc90-18d9-4413-9943-e5917145d039"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/api/rest/catalog/counterTemplate">coun:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/api/rest/catalog/counterTemplate">coun:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json" id="4376c720-f9e6-41b1-9c06-e5b2da8d7d07" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+</con:request><con:originalUri>http://localhost/meveo/api/rest/catalog/counterTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method></con:resource></con:resource><con:resource name="usageChargeTemplate" path="/meveo/api/rest/catalog/" id="bddd597b-cd68-4382-9506-02d9478c1403"><con:settings/><con:parameters/><con:resource name="createOrUpdate" path="createOrUpdate" id="ba6e2ce5-800e-4127-bcd7-26cc9606d61c"><con:settings/><con:parameters/><con:method name="UsageCharge" method="POST" id="078ffc90-18d9-4413-9943-e5917145d039"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/api/rest/catalog/counterTemplate">coun:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/api/rest/catalog/counterTemplate">coun:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json" id="4376c720-f9e6-41b1-9c06-e5b2da8d7d07" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
 	"code": "UCT_00",
 	"description": "Test data for usage charge template",
 	"invoiceSubCategory": "CMP_DATA"
-}</con:request><con:originalUri>http://localhost/meveo/api/rest/catalog/counterTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method></con:resource></con:resource><con:resource name="triggeredEdrTemplate" path="/meveo/api/rest/catalog/triggeredEdr" id="bddd597b-cd68-4382-9506-02d9478c1403"><con:settings/><con:parameters/><con:resource name="createOrUpdate" path="createOrUpdate" id="ba6e2ce5-800e-4127-bcd7-26cc9606d61c"><con:settings/><con:parameters/><con:method name="Method 1" method="POST" id="078ffc90-18d9-4413-9943-e5917145d039"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/api/rest/catalog/counterTemplate">coun:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/api/rest/catalog/counterTemplate">coun:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json" id="4376c720-f9e6-41b1-9c06-e5b2da8d7d07" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+}</con:request><con:originalUri>http://localhost/meveo/api/rest/catalog/counterTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method></con:resource><con:resource name="Create" path="usageChargeTemplate" id="6782006d-683c-47fd-a5da-a5e202c70b1b"><con:settings/><con:parameters/><con:method name="POST" id="983e87c1-7dd9-4b43-b7fc-7e7f589d268d" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html</con:mediaType><con:status>407</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" id="0f11548c-60a1-4b5e-83c5-0c1ed61a475b" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/meveo</con:endpoint><con:request/><con:originalUri>http://localhost/meveo/meveo/api/rest/catalog/usageChargeTemplate</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method></con:resource></con:resource><con:resource name="triggeredEdrTemplate" path="/meveo/api/rest/catalog/triggeredEdr" id="bddd597b-cd68-4382-9506-02d9478c1403"><con:settings/><con:parameters/><con:resource name="createOrUpdate" path="createOrUpdate" id="ba6e2ce5-800e-4127-bcd7-26cc9606d61c"><con:settings/><con:parameters/><con:method name="Method 1" method="POST" id="078ffc90-18d9-4413-9943-e5917145d039"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/api/rest/catalog/counterTemplate">coun:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/api/rest/catalog/counterTemplate">coun:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json" id="4376c720-f9e6-41b1-9c06-e5b2da8d7d07" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
 	"code": "TET_00",
 	"description": "Test data for triggered edr template",
 	"quantityEl": "1"
@@ -1797,19 +1797,19 @@
 	"currencyCode" : "USD",
 	"countryCode" : "US",
 	"languageCode" : "ENG",
-	"invoicePrefix" : "",
+	"invoicePrefix" : null,
 	"parentSeller" : ""
-}</con:request><con:originalUri>http://192.168.10.14/meveo/meveo/api/rest/seller</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="f184f4c3-da37-4162-9741-ac947845fa1f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createOrUpdate" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="S" id="b46c1715-2c2a-42a3-a8bf-1e64de0046a0"><con:settings/><con:config service="http://localhost:8080" methodName="PUT" resourcePath="/meveo/api/rest/account/accountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="S" id="571f1a0a-6ea3-44b7-a229-52f7c3cd4a7f" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+}</con:request><con:originalUri>http://192.168.10.14/meveo/meveo/api/rest/seller</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="f184f4c3-da37-4162-9741-ac947845fa1f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createOrUpdate" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="S" id="6930dbea-dc39-4a83-a9a7-1733d56204a4"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="S" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
   "crmAccountType": "S",
   "crmParentCode": "",
-  "code": "{#TestSuite#ticket}_S",
+  "code": "${#TestSuite#ticket}_S",
   "description": "Open Source Billing System",
   "externalRef1": "",
   "externalRef2": "",
   "name": {
     "title": "M",
-    "firstName": "Edward",
-    "lastName": "Legaspi"
+    "firstName": "firstName",
+    "lastName": "lastName"
   },
   "address": {
     "address1": "",
@@ -1821,7 +1821,7 @@
     "state": ""
   },
   "contactInformation": {
-    "email": "edward.legaspi@manaty.net",
+    "email": "${#TestSuite#ticket}@manaty.net",
     "phone": "",
     "mobile": "+639152154716",
     "fax": ""
@@ -1863,7 +1863,433 @@
     "issuerName": "",
     "ics": ""
   }
-}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/account/accountHierarchy/createOrUpdate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1161</con:value></con:property><con:property><con:name>currentDate</con:name><con:value>2016-01-07</con:value></con:property></con:properties></con:testSuite><con:testSuite id="7f12e5d3-c673-4b44-8886-cb62fba93a07" name="#1093_Invoicing"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="2b582d15-4eee-454f-99a9-bbcd03ae943d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CatalogCreation" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Create recurring" id="55b3c9b2-ceed-40d8-bf2b-e5bde6e8e86a"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/catalog/recurringChargeTemplate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create recurring" id="6312c29d-77cf-4473-9c19-80ccaddf7e5e" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="S_C" id="91e16f86-891c-4652-a675-754a1d2bbb29"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="S_C" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "S_C",
+  "crmParentCode": "",
+  "code": "${#TestSuite#ticket}_S_C",
+  "description": "Open Source Billing System",
+  "externalRef1": "",
+  "externalRef2": "",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "phone": "",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "terminationReason": "",
+  "subscriptionDate": "",
+  "terminationDate": "",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "caStatus": "",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "nextInvoiceDate": "",
+  "paymentTerms": "",
+  "electronicBilling": true,
+  "email": ""
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="C" id="2c3222c2-c15d-483c-ad68-5ad00f124109"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="C" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "C",
+  "crmParentCode": "${#TestSuite#ticket}_S",
+  "code": "${#TestSuite#ticket}_C",
+  "description": "Open Source Billing System",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true,
+  "email": ""
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="S_CA" id="c8659b98-393b-42d5-80f9-255b420eef73"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="S_CA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "S_CA",
+  "crmParentCode": "",
+  "code": "${#TestSuite#ticket}_S_CA",
+  "description": "Open Source Billing System",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="C_CA" id="80d96de1-6561-4449-a3d9-e98be883af50"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="C_CA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "C_CA",
+  "crmParentCode": "${#TestSuite#ticket}_S",
+  "code": "${#TestSuite#ticket}_C_CA",
+  "description": "Open Source Billing System",
+  "externalRef1": "",
+  "externalRef2": "",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="CA" id="1a7603ae-70cb-4e74-93b5-adff3aed1022"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="CA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "CA",
+  "crmParentCode": "${#TestSuite#ticket}_C",
+  "code": "${#TestSuite#ticket}_CA",
+  "description": "Open Source Billing System",
+  "externalRef1": "",
+  "externalRef2": "",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="S_BA" id="77f4a934-86b1-4d20-98f4-a84798315eba"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="S_BA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "S_BA",
+  "code": "${#TestSuite#ticket}_S_BA",
+  "description": "Open Source Billing System",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="C_BA" id="cb352601-8785-4641-b19b-dac4eb8f0cba"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="C_BA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "C_BA",
+  "crmParentCode": "${#TestSuite#ticket}_S",
+  "code": "${#TestSuite#ticket}_C_BA",
+  "description": "Open Source Billing System",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="CA_BA" id="e8755330-4d51-4154-aae4-366bef777329"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="CA_BA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "CA_BA",
+  "crmParentCode": "${#TestSuite#ticket}_C",
+  "code": "${#TestSuite#ticket}_CA_BA",
+  "description": "Open Source Billing System",
+  "externalRef1": "",
+  "externalRef2": "",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="BA" id="700a5084-d056-437c-ab33-0fc389e9ecce"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="BA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "BA",
+  "crmParentCode": "${#TestSuite#ticket}_CA",
+  "code": "${#TestSuite#ticket}_BA",
+  "description": "Open Source Billing System",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="S_UA" id="4bf73e6b-55fb-4b4a-80a4-ea73308fa1f5"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="S_UA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "S_UA",
+  "crmParentCode": "",
+  "code": "${#TestSuite#ticket}_S_UA",
+  "description": "Open Source Billing System",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="C_UA" id="2c141c6a-93e7-4410-bb3f-c3b8f349fffb"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="C_UA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "C_UA",
+  "crmParentCode": "${#TestSuite#ticket}_S",
+  "code": "${#TestSuite#ticket}_C_UA",
+  "description": "Open Source Billing System",
+  "externalRef1": "",
+  "externalRef2": "",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="CA_UA" id="afa9b68f-acf5-4c7f-a8be-ae52e50f5715"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="CA_UA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "CA_UA",
+  "crmParentCode": "${#TestSuite#ticket}_C",
+  "code": "${#TestSuite#ticket}_CA_UA",
+  "description": "Open Source Billing System",
+  "externalRef1": "",
+  "externalRef2": "",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="BA_UA" id="a617c6f1-c9b0-4fa6-adb2-d2c0c52646a6"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="BA_UA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "BA_UA",
+  "crmParentCode": "${#TestSuite#ticket}_CA",
+  "code": "${#TestSuite#ticket}_BA_UA",
+  "description": "Open Source Billing System",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="UA" id="6b1ee859-983d-461a-a361-a53ef9452bd2"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="UA" id="0bdbcd5f-1b29-4bf5-a640-7799964c1fa8" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "crmAccountType": "UA",
+  "crmParentCode": "${#TestSuite#ticket}_BA",
+  "code": "${#TestSuite#ticket}_UA",
+  "description": "Open Source Billing System",
+  "name": {
+    "title": "M",
+    "firstName": "firstName",
+    "lastName": "lastName"
+  },
+  "address": {
+    "country": "US"
+  },
+  "contactInformation": {
+    "email": "${#TestSuite#ticket}@manaty.net",
+    "mobile": "+639152154716"
+  },
+  "language": "ENG",
+  "paymentMethod": "CHECK",
+  "customerCategory": "CLIENT",
+  "customerBrand": "DEFAULT",
+  "mandateIdentification": "1234",
+  "mandateDate": "${#TestSuite#currentDate}",
+  "currency": "USD",
+  "creditCategory": "VIP",
+  "dateStatus": "${#TestSuite#currentDate}",
+  "billingCycle": "CYC_INV_MT_1",
+  "country": "US",
+  "electronicBilling": true
+}</con:request><con:originalUri>http://localhost/meveo/meveo/api/rest/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1161</con:value></con:property><con:property><con:name>currentDate</con:name><con:value>2016-01-07</con:value></con:property></con:properties></con:testSuite><con:testSuite id="7f12e5d3-c673-4b44-8886-cb62fba93a07" name="#1093_Invoicing"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="2b582d15-4eee-454f-99a9-bbcd03ae943d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CatalogCreation" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Create recurring" id="55b3c9b2-ceed-40d8-bf2b-e5bde6e8e86a"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/catalog/recurringChargeTemplate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create recurring" id="6312c29d-77cf-4473-9c19-80ccaddf7e5e" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
 	"code" : "${#TestSuite#ticket}_REC1",
 	"description" : "${#TestSuite#ticket}_REC1",
 	"invoiceSubCategory" : "SUB_DATA",
@@ -4198,7 +4624,7 @@
 			"description" : "Forfait test ${#ticket}" 
 		}
 	]
-}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/catalog/oneShotChargeTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create usage" id="eabf04ae-b6a5-461a-ab2a-332bd38a6d62"><con:settings/><con:config service="http://localhost:8080" methodName="UsageCharge" resourcePath="/meveo/api/rest/catalog/usageChargeTemplate/createOrUpdate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create usage" id="40525b4d-5035-4c9e-9891-20b7fa71a198" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/catalog/oneShotChargeTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create usage" id="eabf04ae-b6a5-461a-ab2a-332bd38a6d62"><con:settings/><con:config service="http://localhost:8080" methodName="UsageCharge" resourcePath="/meveo/api/rest/catalog/createOrUpdate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create usage" id="40525b4d-5035-4c9e-9891-20b7fa71a198" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
 	"code" : "${#TestSuite#ticket}_USAGE1",
 	"description" : "${#TestSuite#ticket}_USAGE1",
 	"invoiceSubCategory" : "SUB_DATA",
@@ -6747,7 +7173,424 @@ From=2015-07-01 To=2015-12-30</con:description><con:settings/><con:config xsi:ty
 			}
 		]
 	}
-}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/billing/subscription/activateServices</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1306</con:value></con:property></con:properties></con:testSuite><con:testSuite id="79c77fe7-7ea7-4e93-b7b6-9efce867e9ac" name="#1312 Activate Service"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="5e0f5bba-2947-43c9-a363-29507728ae19" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Create recurring" id="2b586f1c-e0bc-44f8-951f-d4b040e841ca"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/catalog/recurringChargeTemplate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create recurring" id="43bc5437-e4de-4686-b2d9-5d1ab36b8ba4" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/billing/subscription/activateServices</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1306</con:value></con:property></con:properties></con:testSuite><con:testSuite id="ae980b59-8ae7-43ac-ba62-f608c0768604" name="#1304_trouble_in_hierarchy_and_userAccount_in_subscriptionPage"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="e12585aa-6c00-4018-90e9-58690472d0cb" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer creation" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Create Offer" id="11b47ccc-0329-4b74-b212-83c2936ca3ae"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/catalog/offerTemplate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create Offer" id="8ad7d952-64d8-41fd-aefa-36a250513ff3" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"code" : "${#TestSuite#ticket}_OFFER1",
+	"description" : "${#TestSuite#ticket}_OFFER1",
+	"disabled" : false,
+	"serviceTemplates" : {}
+}
+
+    </con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/catalog/offerTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create customer" id="7e93c58b-2ce7-470b-b77f-020a94ba0de7"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/customer" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create customer" id="841666ad-2d09-415c-9ca4-f4ad01e8030d" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"code" : "${#TestSuite#ticket}_CUST",
+	"description" : "${#TestSuite#ticket}_CUST",
+	"externalRef1" : "",
+	"externalRef2" : "",
+	"name": {
+    		"title": "M",
+    		"firstName": "Firstname",
+    		"lastName": "Lastname"
+  	},
+	"address" : {
+		"address1" : "adresse 1",
+		"address2" : "",
+		"address3" : "adresse 3",
+		"zipCode" : "21000",
+		"city" : "Dijon",
+		"country" : "FR",
+		"state" : ""
+	},
+	"customerCategory" : "CLIENT",
+	"customerBrand" : "DEFAULT",
+	"seller" : "SELLER_FR",
+	 "contactInformation": {
+    		"email": "${#TestSuite#ticket}@manaty.net",
+    		"phone": "+33100000000",
+    		"mobile": "+33666666666",
+    		"fax": ""
+  	}
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/account/customer</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create customer account" id="5f3f5f5e-77ff-4aff-9b34-766fd72ff0fc"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/customerAccount" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create customer account" id="39abd24a-147e-4e59-872b-00d4a35aed19" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"customer" : "${#TestSuite#ticket}_CUST",
+	"code" : "${#TestSuite#ticket}_CA",
+	"description" : "${#TestSuite#ticket}_CA",
+	"externalRef1" : "EXTREF1",
+	"externalRef2" : "EXTREF2",
+	"address" : {
+		"address1" : "adresse 1",
+		"address2" : "",
+		"address3" : "adresse 3",
+		"zipCode" : "21000",
+		"city" : "Dijon",
+		"country" : "FR",
+		"state" : ""
+	},
+	"name" : {
+		"title" : "M",
+		"firstName" : "Firstname",
+		"lastName" : "Lastname"
+	},
+	"currency" : "EUR",
+	"language" : "FRA",
+	"paymentMethod" : "CHECK",
+	"creditCategory" : "Pro",
+	"mandateIdentification" : "",
+	"mandateDate" : ""
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/account/customerAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create billing account" id="9ec17ef8-18e5-421d-b1ba-2891851587ac"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/billingAccount" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create billing account" id="26702d5e-a037-45a4-b8d1-2a18b0e3908b" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"customerAccount" : "${#TestSuite#ticket}_CA",
+	"code" : "${#TestSuite#ticket}_BA",
+	"description" : "${#TestSuite#ticket}_BA",
+	"externalRef1" : "EXTREF1",
+	"externalRef2" : "EXTREF2",
+	"address" : {
+		"address1" : "adresse 1",
+		"address2" : "",
+		"address3" : "adresse 3",
+		"zipCode" : "21000",
+		"city" : "Dijon",
+		"country" : "FR",
+		"state" : ""
+	},
+	"name" : {
+		"title" : "M",
+		"firstName" : "Firstname",
+		"lastName" : "Lastname"
+	},
+	"billingCycle" : "CYC_INV_MT_1",
+	"country" : "FR",
+	"language" : "FRA",
+	"nextInvoiceDate" : "2016-01-20",
+	"subscriptionDate" : "2016-01-01",
+	"terminationDate" : null,
+	"paymentMethod" : "DIRECTDEBIT",
+	"paymentTerms" : "CASH",
+	"electronicBilling" : true,
+	"email" : "${#TestSuite#ticket}@manaty.net",
+	"bankCoordinates": {
+    		"bankCode": "BP",
+    		"branchCode": "LB",
+    		"accountNumber": "12",
+    		"key": "12",
+    		"iban": "12341",
+    		"bic": "12341",
+    		"accountOwner": "Mbarek",
+    		"bankName": "Bank",
+    		"bankId": "BPI1",
+    		"issuerNumber": "11",
+    		"issuerName": "BPI1",
+    		"ics": "NA1"
+  }
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/account/billingAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create user account 1" id="df35392e-33ec-4d80-bb77-dad47f1b1ac6"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/userAccount" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create user account 1" id="242ce613-d3da-483d-ac6a-580a519e339b" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"billingAccount" : "${#TestSuite#ticket}_BA",
+	"code" : "${#TestSuite#ticket}_UA",
+	"description" : "${#TestSuite#ticket}_UA",
+	"externalRef1" : "EXTREF1",
+	"externalRef2" : "EXTREF2",
+	"address" : {
+		"address1" : "adresse 1",
+		"address2" : "",
+		"address3" : "adresse 3",
+		"zipCode" : "21000",
+		"city" : "Dijon",
+		"country" : "FR",
+		"state" : ""
+	},
+	"name" : {
+		"title" : "M",
+		"firstName" : "Firstname",
+		"lastName" : "Lastname"
+	}
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/account/userAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create subscription 1" id="39ffe8ea-5c95-4a55-9cff-d629e3093e70"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/billing/subscription" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create subscription 1" id="e543eeca-352a-4f83-b150-880d9d7c496b" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"code" : "${#TestSuite#ticket}_SUB",
+	"description": "${#TestSuite#ticket}_SUB",
+	"userAccount" : "${#TestSuite#ticket}_UA",
+	"offerTemplate" : "${#TestSuite#ticket}_OFFER1",
+	"subscriptionDate" : "2016-01-21",
+	"terminationDate" : ""
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/billing/subscription</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create user account 2" id="48888291-e81d-49ea-bd21-6a6d145bbec0"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/account/userAccount" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create user account 2" id="bf656903-b4f8-449c-8826-fbd34a872259" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"billingAccount" : "${#TestSuite#ticket}_BA",
+	"code" : "${#TestSuite#ticket}_userAccount",
+	"description" : "${#TestSuite#ticket}_userAccount",
+	"externalRef1" : "EXTREF1",
+	"externalRef2" : "EXTREF2",
+	"address" : {
+		"address1" : "adresse 1",
+		"address2" : "",
+		"address3" : "adresse 3",
+		"zipCode" : "21000",
+		"city" : "Dijon",
+		"country" : "FR",
+		"state" : ""
+	},
+	"name" : {
+		"title" : "M",
+		"firstName" : "Firstname",
+		"lastName" : "Lastname"
+	}
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/account/userAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create Subscription 2" id="026af150-9d0f-47d0-9246-26d12f54b70d"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/billing/subscription" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create customer account" id="466167ba-658b-40c7-8065-026d06610f38" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"code" : "${#TestSuite#ticket}_subscription",
+	"description": "${#TestSuite#ticket}_subscription",
+	"userAccount" : "${#TestSuite#ticket}_userAccount",
+	"offerTemplate" : "${#TestSuite#ticket}_OFFER1",
+	"subscriptionDate" : "2016-02-10",
+	"terminationDate" : ""
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/account/customerAccount</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1304</con:value></con:property></con:properties></con:testSuite><con:testSuite id="069175fd-e9aa-4fec-9667-faa5bc417732" name="#1310 Charge CDR Lazy Pb"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="87f2430a-9ddf-477b-91a9-4129721847fa" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Create charge usage SENDING included" id="8ca4f206-3a2e-45b8-9072-911b5ae6f0e5"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/catalog/usageChargeTemplate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create charge usage SENDING included" id="5ced2c75-8dd0-434d-9f91-7e9b50ea34ca" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"code" : "CH_U_GP_SENDING_INCLUDED",
+	"description" : "Envoi",
+	"invoiceSubCategory" : "CMP_DATA",
+	"amountEditable" : "false",
+	"calendar" : "",
+	"disabled" : "false",
+	"inputUnitDescription" : "Unit",
+	"unitMultiplicator" : "1",
+	"unitNbDecimal" : "2",
+	"filterParam1" : "COURRIER",
+	"filterParam2" : "",
+	"filterParam3" : "",
+	"filterParam4" : "",
+	"filterExpression" : "",
+	"priority" : "1",
+	"languageDescriptions" : [
+		{
+			"languageCode": "ENG",
+			"description" : "Sending" 
+		}
+	]
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/catalog/usageChargeTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create service" id="d7877a4a-cef8-4cf8-9c7c-0b76f2a823c4"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/catalog/serviceTemplate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create service" id="ad67c4bd-b278-4615-ae20-490549fb3bfc" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "code" : "${#TestSuite#ticket}_SERVICE1",
+  "description" : "${#TestSuite#ticket}_SERVICE1",
+  "invoicingCalendar": "",
+  "serviceChargeTemplateUsages" :  {
+    "serviceChargeTemplateUsage": [
+      {
+        "code": "CH_U_GP_SENDING_INCLUDED"
+      }
+    ]
+  }
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/catalog/serviceTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create offer" id="004a22bd-66e9-47ea-9b97-0d8a9a5905a2"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/catalog/offerTemplate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create offer" id="18134891-8c1d-4db7-bd19-58e3742b1cf3" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"code" : "${#TestSuite#ticket}_OFFER1",
+	"description" : "${#TestSuite#ticket}_OFFER1",
+	"disabled" : false,
+	"serviceTemplates" : {
+	 	"serviceTemplate": [
+			{
+			"code": "${#TestSuite#ticket}_SERVICE1",
+			"description": "${#TestSuite#ticket}_SERVICE1",
+			"serviceChargeTemplateUsages" :  {
+			    "serviceChargeTemplateUsage": [
+			      {
+			        "code": "CH_U_GP_SENDING_INCLUDED"
+			      }
+			    ]
+  			}
+		]
+		}
+}
+
+    </con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/catalog/offerTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create priceplan Usage" id="340b1650-0118-47c2-b9b7-1af489cb3f60"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/catalog/pricePlan" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create priceplan Usage" id="3e91395c-b409-4c95-b831-abbe71ab0cb9" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"code": "${#TestSuite#ticket}_U1",
+     "description": "${#TestSuite#ticket}_U1",
+	"eventCode" : "CH_U_GP_SENDING_INCLUDED",
+	"seller" : "",
+	"country" : "",
+	"currency" : "",
+	"minQuantity" : "",
+	"maxQuantity" : "",
+	"offerTemplate" : "",
+	"startSubscriptionDate" : "",
+	"endSubscriptionDate" : "",
+	"startRatingDate" : "",
+	"endRatingDate" : "",
+	"minSubscriptionAgeInMonth" : "",
+	"maxSubscriptionAgeInMonth" : "",
+	"amountWithoutTax" : "10",
+	"amountWithTax" : "12",
+	"priority" : "1",
+	"criteria1" : "",
+	"criteria2" : "",
+	"criteria3" : ""
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/catalog/pricePlan</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Create Counter SENT 20 included" id="73ce2ab0-a003-4fc8-a1df-f8dfee1799fc"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/catalog/counterTemplate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create Counter SENT 20 included" id="bb5b483a-b0e0-441f-8520-f005e5122020" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"code" : "CT_GP_SENDING_INCLUDED",
+	"description" : "Compteur d'envoi inclus",
+	"calendar" : "MONTHLY",
+	"unity" : "Envois",
+	"type" : "USAGE",
+	"ceiling" : 100,
+	"disabled" : false,
+	"counterLevel" : "BA"
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/catalog/counterTemplate</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="f6b24e11-f9f5-4fb2-bb9e-37404260f9cd" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer creation" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Create Hierarchy" id="61481242-6ae2-46ee-8fb5-ec429e05de70"><con:settings/><con:config service="http://localhost:8080" methodName="Method 1" resourcePath="/meveo/api/rest/account/accountHierarchy/customerHierarchyUpdate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create Hierarchy" id="d872c098-4c0d-47b2-95d9-acd21c7cf626" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+  "sellers": {
+    "seller": [
+      {
+        "code": "SELLER_FR",
+        "description": "SELLER_FR",
+        "customers": {
+          "customer": [
+            {
+              "code": "${#TestSuite#CUST}",
+              "description": "cust",
+              "externalRef1": "e1",
+              "externalRef2": "e2",
+              "name": {
+                "title": "Mr",
+                "firstName": "",
+                "lastName": "Opener"
+              },
+              "address": {
+                "address1": "200 Open street",
+                "address2": "",
+                "address3": "",
+                "zipCode": "75005",
+                "city": "Paris",
+                "country": "FR",
+                "state": ""
+              },
+              "customFields": { },
+              "customerCategory": "CLIENT",
+              "customerBrand": "DEFAULT",
+              "seller": "SELLER_FR",
+              "mandateIdentification": "",
+              "mandateDate": "",
+              "contactInformation": {
+                "email": "",
+                "phone": "",
+                "mobile": "",
+                "fax": ""
+              },
+              "customerAccounts": {
+                "customerAccount": [
+                  {
+                    "code": "${#TestSuite#CUST}_PAYER",
+                    "description": "Payer",
+                    "externalRef1": "e1",
+                    "externalRef2": "e2",
+                    "name": {
+                      "title": "Mr",
+                      "firstName": "",
+                      "lastName": "Opener"
+                    },
+                    "address": {
+                      "address1": "200 Open street",
+                      "address2": "",
+                      "address3": "",
+                      "zipCode": "75005",
+                      "city": "Paris",
+                      "country": "FR",
+                      "state": ""
+                    },
+                    "customFields": {},
+                    "customer": "${#TestSuite#CUST}",
+                    "currency": "EUR",
+                    "language": "FRA",
+                    "status": "",
+                    "paymentMethod": "",
+                    "creditCategory": "",
+                    "dunningLevel": "",
+                    "mandateIdentification": "",
+                    "mandateDate": "",
+                    "terminationDate": "",
+                    "billingAccounts": {
+                      "billingAccount": [
+                        {
+                          "code": "${#TestSuite#CUST}_PAYER_BA",
+                          "description": "POSTPAID Bill account",
+                          "externalRef1": "e1",
+                          "externalRef2": "e2",
+                          "name": {
+                            "title": "Mr",
+                            "firstName": "",
+                            "lastName": "Opener"
+                          },
+                          "address": {
+                            "address1": "200 Open street",
+                            "address2": "",
+                            "address3": "",
+                            "zipCode": "75005",
+                            "city": "Paris",
+                            "country": "FR",
+                            "state": ""
+                          },
+                          "customFields": {},
+                          "customerAccount": "${#TestSuite#CUST}_PAYER",
+                          "billingCycle": "BILLCYCLE1",
+                          "country": "FR",
+                          "language": "FRA",
+                          "paymentMethod": "CHECK",
+                          "nextInvoiceDate": "",
+                          "subscriptionDate": "",
+                          "terminationDate": "",
+                          "paymentTerms": "",
+                          "electronicBilling": "",
+                          "status": "",
+                          "terminationReason": "",
+                          "email": "",
+                          "userAccounts": {
+                            "userAccount": [
+                              {
+                                "code": "${#TestSuite#CUST}_OPENER",
+                                "description": "Mr Opener",
+                                "customFields": {},
+                                "billingAccount": "${#TestSuite#CUST}_PAYER_BA",
+                                "subscriptionDate": "2016-02-01",
+                                "terminationDate": "",
+                                "status": "",
+                                "terminationReason": "",
+                                "subscriptions": {
+                                  "subscription": [
+                                    {
+                                      "code": "${#TestSuite#CUST}_SUB",
+                                      "description": "SUB OPENER",
+                                      "userAccount": "${#TestSuite#CUST}_OPENER",
+                                      "offerTemplate": "${#TestSuite#ticket}_OFFER1",
+                                      "subscriptionDate": "2016-02-01",
+                                      "terminationDate": "",
+                                      "status": "",
+                                      "customFields": {},
+                                      "accesses": {
+                                        "access": [
+                                          {
+                                            "code": "${#TestSuite#CUST}_SUB_AC",
+                                            "subscription": "${#TestSuite#CUST}_SUB",
+                                            "startDate": "",
+                                            "endDate": ""
+                                          }
+                                        ]
+                                      },
+                                      "services": {
+                                        "serviceInstance": [
+                                          {
+                                            "code": "${#TestSuite#ticket}_SERVICE1",
+                                            "description": "",
+                                            "status": "",
+                                            "subscriptionDate": "2016-02-01",
+                                            "terminationDate": "",
+                                            "quantity": 1,
+                                            "terminationReason": ""
+                                          }
+                                        ]
+                                      },
+                                      "terminationReason": ""
+                                    }
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/account/accountHierarchy</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="99cf1a89-8fbd-4513-9bfc-0b5551af5d17" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Charge CDRs" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Charge CDR" id="e8a99b82-23ee-4433-b16b-a83441002527"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/billing/mediation" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Charge CDR" id="849594f8-dcff-4acd-8296-9bfe6e573aba" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
+	"cdr" : [
+		"2015-10-02T11:20:00.000Z;5;${#TestSuite#CUST}_SUB_AC;COURRIER"
+	]
+}</con:request><con:originalUri>http://192.168.10.14/meveo/api/rest/billing/mediation</con:originalUri><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1310</con:value></con:property><con:property><con:name>CUST</con:name><con:value>CUST</con:value></con:property></con:properties></con:testSuite><con:testSuite id="79c77fe7-7ea7-4e93-b7b6-9efce867e9ac" name="#1312 Activate Service"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="5e0f5bba-2947-43c9-a363-29507728ae19" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Create recurring" id="2b586f1c-e0bc-44f8-951f-d4b040e841ca"><con:settings/><con:config service="http://localhost:8080" methodName="POST" resourcePath="/meveo/api/rest/catalog/recurringChargeTemplate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create recurring" id="43bc5437-e4de-4686-b2d9-5d1ab36b8ba4" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}</con:endpoint><con:request>{
 	"code" : "${#TestSuite#ticket}_REC1",
 	"description" : "${#TestSuite#ticket}_REC1",
 	"invoiceSubCategory" : "SUB_DATA",
