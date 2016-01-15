@@ -215,7 +215,7 @@
 					<c:set var="valueId" value="#{valueId[valueIdVar]}" />
 				</c:forEach>
 				<h:link id="#{attrId}_message_link" value="#{valueField}"
-					outcome="#{entityView}">
+					outcome="#{entityView}" onclick="if(this.disabled!=true){this.disabled=true;return true;} return false;">
 					<f:param name="#{objectIdParamName}" value="#{valueId}" />
 					<f:param name="edit" value="#{edit}" />
 					<c:if test="${propagateConversation}">
@@ -280,11 +280,11 @@
 						value="#{field.replaceAll('\\.','\\_')}_#{attrId}" />
 					<hf:linkToEntity linkId="#{attrId}_message_link" objectIdParamName="#{objectIdParamName}"
 						rendered="#{isMessage}" entityId="#{valueId}" entity="#{c}"
-						popupFields="#{popupFields}" value="#{valueLabel}"
+						popupFields="#{popupFields}" value="#{valueLabel}" propagateConversation="${propagateConversation}"
 						view="#{entityView}" backView="#{backView}"/>
 					<hf:linkToEntity linkId="#{attrId}_message_link"
 						rendered="#{not isMessage}" entity="#{c}" objectIdParamName="#{objectIdParamName}"
-						popupFields="#{popupFields}" entityId="#{valueId}"
+						popupFields="#{popupFields}" entityId="#{valueId}" propagateConversation="${propagateConversation}"
 						value="#{valueLabel}" view="#{entityView}" backView="#{backView}"/>
 				</c:if>
 				<br />
