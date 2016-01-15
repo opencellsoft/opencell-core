@@ -219,26 +219,11 @@ public class EntityExportImportService implements Serializable {
 
             ExportTemplate exportTemplate = new ExportTemplate();
 
-            // Automatically add provider as filtering parameter
-            if (BaseEntity.class.isAssignableFrom(clazz)) {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("provider", "provider");
-                exportTemplate.setParameters(params);
-            }
-            // Automatically export custom fields for CF related entities
-            if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
-
-                String cfSelect = "select cfi from CustomFieldInstance cfi where cfi.disabled=false and cfi.appliesToEntity=:uuid and cfi.provider=:provider";
-                Map<String, String> cfParameters = new HashMap<String, String>();
-                cfParameters.put("uuid", "#{entity.uuid}");
-                cfParameters.put("provider", "#{entity.provider}");
-
-                exportTemplate.addRelatedEntity(cfSelect, cfParameters);
-
-                exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
-            }
             exportTemplate.setName(clazz.getSimpleName());
             exportTemplate.setEntityToExport(clazz);
+
+            supplementExportTemplateWithAutomaticInfo(exportTemplate);
+
             exportImportTemplates.put(exportTemplate.getName(), exportTemplate);
         }
 
@@ -256,6 +241,7 @@ public class EntityExportImportService implements Serializable {
         List<ExportTemplate> templatesFromXml = (List<ExportTemplate>) xstream.fromXML(this.getClass().getClassLoader().getResourceAsStream("exportImportTemplates.xml"));
 
         for (ExportTemplate exportTemplate : templatesFromXml) {
+            supplementExportTemplateWithAutomaticInfo(exportTemplate);
             exportImportTemplates.put(exportTemplate.getName(), exportTemplate);
         }
 
@@ -269,6 +255,49 @@ public class EntityExportImportService implements Serializable {
         }
 
         log.info("Loaded {} export/import templates", exportImportTemplates.size());
+    }
+
+    /**
+     * Add information that can be deducted automatically from a class to be exported
+     * 
+     * @param exportTemplate Export template to supplement with information
+     */
+    @SuppressWarnings("rawtypes")
+    private void supplementExportTemplateWithAutomaticInfo(ExportTemplate exportTemplate) {
+
+        Class clazz = exportTemplate.getEntityToExport();
+        if (clazz == null) {
+            return;
+        }
+
+        // Automatically add provider as filtering parameter, if one was not added yet
+        if (BaseEntity.class.isAssignableFrom(clazz)) {
+            if (exportTemplate.getParameters() == null) {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("provider", "provider");
+                exportTemplate.setParameters(params);
+
+            } else if (!exportTemplate.getParameters().containsKey("provider")) {
+                exportTemplate.getParameters().put("provider", "provider");
+            }
+        }
+
+        // Automatically export custom fields for CF related entities
+        if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
+
+            String cfSelect = "select cfi from CustomFieldInstance cfi where cfi.disabled=false and cfi.appliesToEntity=:uuid and cfi.provider=:provider";
+            Map<String, String> cfParameters = new HashMap<String, String>();
+            cfParameters.put("uuid", "#{entity.uuid}");
+            if (Provider.class.isAssignableFrom(clazz)) {
+                cfParameters.put("provider", "#{entity}");
+            } else {
+                cfParameters.put("provider", "#{entity.provider}");
+            }
+
+            exportTemplate.addRelatedEntity(cfSelect, cfParameters);
+
+            exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
+        }
     }
 
     /**
@@ -337,7 +366,7 @@ public class EntityExportImportService implements Serializable {
     public Future<ExportImportStatistics> exportEntities(Collection<ExportTemplate> exportTemplates, Map<String, Object> parameters) {
         ExportImportStatistics exportStats = new ExportImportStatistics();
         for (ExportTemplate exportTemplate : exportTemplates) {
-            ExportImportStatistics exportStatsSingle = exportEntitiesInternal(exportTemplate, parameters, null);
+            ExportImportStatistics exportStatsSingle = exportEntitiesInternal(exportTemplate, parameters, null, null);
             exportStats.mergeStatistics(exportStatsSingle);
         }
         return new AsyncResult<ExportImportStatistics>(exportStats);
@@ -348,14 +377,17 @@ public class EntityExportImportService implements Serializable {
      * 
      * @param exportTemplates Export template
      * @param parameters Entity export (select) criteria
-     * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only.
+     * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only. dataModelToExport and
+     *        selectedEntitiesToExport are mutually exclusive.
+     * @param selectedEntitiesToExport A list of entities to export. dataModelToExport and selectedEntitiesToExport are mutually exclusive.
      * @return Export statistics
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Future<ExportImportStatistics> exportEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport) {
+    public Future<ExportImportStatistics> exportEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
+            List<? extends IEntity> selectedEntitiesToExport) {
 
-        ExportImportStatistics exportStats = exportEntitiesInternal(exportTemplate, parameters, dataModelToExport);
+        ExportImportStatistics exportStats = exportEntitiesInternal(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport);
 
         return new AsyncResult<ExportImportStatistics>(exportStats);
     }
@@ -365,10 +397,13 @@ public class EntityExportImportService implements Serializable {
      * 
      * @param exportTemplates Export template
      * @param parameters Entity export (select) criteria
-     * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only.
+     * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only. dataModelToExport and
+     *        selectedEntitiesToExport are mutually exclusive.
+     * @param selectedEntitiesToExport A list of entities to export. dataModelToExport and selectedEntitiesToExport are mutually exclusive.
      * @return Export statistics
      */
-    private ExportImportStatistics exportEntitiesInternal(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport) {
+    private ExportImportStatistics exportEntitiesInternal(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
+            List<? extends IEntity> selectedEntitiesToExport) {
 
         if (parameters == null) {
             parameters = new HashMap<String, Object>();
@@ -424,11 +459,11 @@ public class EntityExportImportService implements Serializable {
 
             // Export from a provided data model applies only in cases on non-grouped templates as it has a single entity type
             if (exportTemplate.getGroupedTemplates() == null || exportTemplate.getGroupedTemplates().isEmpty()) {
-                entityExportImportService.serializeEntities(exportTemplate, parameters, dataModelToExport, exportStats, writer);
+                entityExportImportService.serializeEntities(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, exportStats, writer);
 
             } else {
                 for (ExportTemplate groupedExportTemplate : exportTemplate.getGroupedTemplates()) {
-                    entityExportImportService.serializeEntities(groupedExportTemplate, parameters, null, exportStats, writer);
+                    entityExportImportService.serializeEntities(groupedExportTemplate, parameters, null, null, exportStats, writer);
                 }
             }
 
@@ -510,18 +545,21 @@ public class EntityExportImportService implements Serializable {
      * 
      * @param exportTemplate Export template
      * @param parameters Entity export (select) criteria
-     * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only.
+     * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only. dataModelToExport and
+     *        selectedEntitiesToExport are mutually exclusive.
+     * @param selectedEntitiesToExport A list of entities to export. dataModelToExport and selectedEntitiesToExport are mutually exclusive.
      * @param exportStats Export statistics
      * @param writer Writer for serialized entity output
      * @return
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void serializeEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
-            ExportImportStatistics exportStats, HierarchicalStreamWriter writer) {
+            List<? extends IEntity> selectedEntitiesToExport, ExportImportStatistics exportStats, HierarchicalStreamWriter writer) {
 
-        log.info("Serializing entities from export template {} and data model {}", exportTemplate.getName(), dataModelToExport != null);
+        log.info("Serializing entities from export template {} and data model {} or selected entities {}", exportTemplate.getName(), dataModelToExport != null,
+            (selectedEntitiesToExport != null && !selectedEntitiesToExport.isEmpty()));
 
-        List<? extends IEntity> entities = getEntitiesToExport(exportTemplate, parameters, dataModelToExport, 0, PAGE_SIZE);
+        List<? extends IEntity> entities = getEntitiesToExport(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, 0, PAGE_SIZE);
         if (entities.isEmpty()) {
             log.info("No entities to serialize from export template {}", exportTemplate.getName());
             return;
@@ -595,7 +633,7 @@ public class EntityExportImportService implements Serializable {
                 break;
             }
             writer.flush();
-            entities = getEntitiesToExport(exportTemplate, parameters, dataModelToExport, from, PAGE_SIZE);
+            entities = getEntitiesToExport(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, from, PAGE_SIZE);
             from += PAGE_SIZE;
             pagesProcessedByXstream++;
         }
@@ -1652,26 +1690,41 @@ public class EntityExportImportService implements Serializable {
      * @param from Starting record index
      * @param pageSize Page size
      * @param parameters Filter parameters to retrieve entities from DB
-     * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only.
+     * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only. dataModelToExport and
+     *        selectedEntitiesToExport are mutually exclusive.
+     * @param selectedEntitiesToExport A list of entities to export. dataModelToExport and selectedEntitiesToExport are mutually exclusive.
      * @return A list of entities corresponding to a page
      */
     @SuppressWarnings({ "unchecked" })
-    private List<? extends IEntity> getEntitiesToExport(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport, int from,
-            int pageSize) {
-        List<? extends IEntity> entities = null;
+    private List<? extends IEntity> getEntitiesToExport(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
+            List<? extends IEntity> selectedEntitiesToExport, int from, int pageSize) {
+        List<IEntity> entities = null;
 
-        // Retrieve next pageSize number of entities from iterator
-        if (dataModelToExport != null) {
+        if (selectedEntitiesToExport != null && !selectedEntitiesToExport.isEmpty()) {
+            if (from >= selectedEntitiesToExport.size()) {
+                return new ArrayList<IEntity>();
+            }
+
+            entities = new ArrayList<IEntity>();
+            EntityManager emLocal = getEntityManager();
+
+            List<? extends IEntity> entitiesLocal = selectedEntitiesToExport.subList(from, Math.min(from + pageSize, selectedEntitiesToExport.size()));
+            for (IEntity entity : entitiesLocal) {
+                entities.add(emLocal.find(entity.getClass(), entity.getId()));
+            }
+
+            // Retrieve next pageSize number of entities from iterator
+        } else if (dataModelToExport != null) {
             if (from >= dataModelToExport.getRowCount()) {
                 return new ArrayList<IEntity>();
             }
 
             if (dataModelToExport instanceof LazyDataModel) {
-                entities = ((LazyDataModel<? extends IEntity>) dataModelToExport).load(from, pageSize, null, null, null);
+                entities = (List<IEntity>) ((LazyDataModel<? extends IEntity>) dataModelToExport).load(from, pageSize, null, null, null);
 
             } else {
                 List<? extends IEntity> modelData = (List<? extends IEntity>) dataModelToExport.getWrappedData();
-                entities = modelData.subList(from, Math.min(from + pageSize, modelData.size()));
+                entities = (List<IEntity>) modelData.subList(from, Math.min(from + pageSize, modelData.size()));
 
             }
 

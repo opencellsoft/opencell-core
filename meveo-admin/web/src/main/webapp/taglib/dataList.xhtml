@@ -141,7 +141,9 @@
                 <c:if test="#{exportToXml}">
                     <p:commandButton id="#{formId}exportToXml" value="#{messages['export.exportToXml']}" update=":#{p:component('exportParametersDialog')}"
                         oncomplete="PF('exportParametersDialog').show()">
+                        <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{null}" />
                         <f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{dataModel}" />
+                        <f:setPropertyActionListener target="#{entityExportImportBean.selectedEntitiesToExport}" value="#{backingBean.selectedEntities}" />                        
                     </p:commandButton>
                 </c:if>
 

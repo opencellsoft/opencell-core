@@ -80,6 +80,8 @@ public class EntityExportImportBean implements Serializable {
 
     private DataModel<? extends IEntity> dataModelToExport;
 
+    private List<? extends IEntity> selectedEntitiesToExport;
+
     /** Entity selection for export search criteria. */
     protected Map<String, Object> exportParameters = initExportParameters();
 
@@ -125,14 +127,29 @@ public class EntityExportImportBean implements Serializable {
         // Determine applicable template by matching a class name
         if (dataModelToExport.getRowCount() > 0) {
             selectedExportTemplate = getExportImportTemplateForClass(dataModelToExport.iterator().next().getClass());
-        } else {
-            selectedExportTemplate = null;
+            // } else { Now that dataModelToExport or selectedEntitiesToExport can be set, dont reset selectedExportTemplate value
+            // selectedExportTemplate = null;
         }
     }
 
     @SuppressWarnings("rawtypes")
     public DataModel getDataModelToExport() {
         return dataModelToExport;
+    }
+
+    public void setSelectedEntitiesToExport(List<? extends IEntity> selectedEntitiesToExport) {
+        this.selectedEntitiesToExport = selectedEntitiesToExport;
+
+        // Determine applicable template by matching a class name
+        if (selectedEntitiesToExport != null && !selectedEntitiesToExport.isEmpty()) {
+            selectedExportTemplate = getExportImportTemplateForClass(selectedEntitiesToExport.get(0).getClass());
+            // } else {
+            // selectedExportTemplate = null;
+        }
+    }
+
+    public List<? extends IEntity> getSelectedEntitiesToExport() {
+        return selectedEntitiesToExport;
     }
 
     /**
@@ -261,7 +278,7 @@ public class EntityExportImportBean implements Serializable {
         parameters.put("provider", currentProvider);
 
         try {
-            exportImportFuture = entityExportImportService.exportEntities(exportTemplate, parameters, null);
+            exportImportFuture = entityExportImportService.exportEntities(exportTemplate, parameters, null, null);
             messages.info(new BundleKey("messages", "export.exported"), exportTemplate.getName());
 
         } catch (Exception e) {
@@ -289,10 +306,9 @@ public class EntityExportImportBean implements Serializable {
             exportParameters.put("provider", currentProvider);
         }
 
-
         try {
 
-            exportImportFuture = entityExportImportService.exportEntities(selectedExportTemplate, exportParameters, dataModelToExport);
+            exportImportFuture = entityExportImportService.exportEntities(selectedExportTemplate, exportParameters, dataModelToExport, selectedEntitiesToExport);
             messages.info(new BundleKey("messages", "export.exported"), selectedExportTemplate.getName());
 
         } catch (Exception e) {
