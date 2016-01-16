@@ -218,8 +218,8 @@
                                                 maxlength="50" rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}"/>
                                     </h:panelGroup>                                                
                                                 
-												
-
+							     </p:fieldset>		
+                                 <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft" >
                                                     <hftl:formField
                                                         label="#{messages['billingAccount.nextInvoiceDate']}"
                                                         field="nextInvoiceDate" newLine="true"/>
@@ -227,14 +227,14 @@
                                                         label="#{messages['billingAccount.subscriptionDate']}"
                                                         field="subscriptionDate" />
 													<hftl:formField label="#{messages['billingAccount.status']}"
-														field="status" doNotShowOnNew="true" edit="false"/>
+														field="status" doNotShowOnNew="true" allowEdit="false"/>
 													<hftl:formField
 														label="#{messages['billingAccount.statusDate']}"
-														field="statusDate" doNotShowOnNew="true" edit="false" />
+														field="statusDate" doNotShowOnNew="true" allowEdit="false" />
 													<hftl:formField
 														label="#{messages['billingAccount.terminationDate']}"
-														field="terminationDate" doNotShowOnNew="true" edit="false"/>
-                                    </p:fieldset>
+														field="terminationDate" doNotShowOnNew="true" allowEdit="false" rendered="#{billingAccountBean.entity.terminationDate!=null}"/>
+                                  </p:fieldset>
                                 </p:tab>
 
 										<p:tab id="tab1"
@@ -510,15 +510,15 @@
 		<p:dialog id="billingAccountTerminationPopup"
 			header="#{messages['billingAccount.accountTermination']}"
 			widgetVar="dlg_billingAccountTerminationPopup" modal="true" appendTo="@(body)" closeOnEscape="true"
-			width="400">
+			width="600">
             <hftl:formPanel edit="true" backingBean="#{billingAccountBean}"
 				styleClass="formPanel" formId="termFrm" showFormButtons="false"
 				useCustomIdParam="true">
 					<hftl:formField label="#{messages['serviceInstance.code']}"
-						field="code" size="50" edit="false" />
+						field="code" size="50" edit="false" componentWidth="25"/>
 					<hftl:formField
 						label="#{messages['serviceInstance.terminationDate']}"
-						field="terminationDate" required="true" edit="true" />
+						field="terminationDate" required="true" edit="true"  componentWidth="25"/>
 					<hftl:formField label="Motifs " field="terminationReason"
 						valueLabelField="description" required="true"  edit="true"
 						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
@@ -527,7 +527,7 @@
 						<p:commandButton action="#{billingAccountBean.terminateAccount()}"
 							value="#{messages['button.terminateButton']}"
 							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_billingAccountTerminationPopup').hide()"
-							update=":parentTab:formId :termFrm:messages">
+							update="@form">
 						</p:commandButton>
 						<p:commandButton immediate="true"
 							onclick="PF('dlg_billingAccountTerminationPopup').hide()" type="button"

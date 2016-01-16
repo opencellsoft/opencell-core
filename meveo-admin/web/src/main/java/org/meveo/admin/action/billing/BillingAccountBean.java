@@ -35,7 +35,6 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.model.billing.BankCoordinates;
@@ -208,20 +207,20 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		return billingAccountService;
 	}
 
-	public void terminateAccount() {
+	public String terminateAccount() {
 		log.debug("terminateAccount billingAccountId: {}", entity.getId());
 		try {
 
 		    entity = billingAccountService.attach(entity);
 			entity = billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-		} catch (BusinessException e) {
-			log.error("error occured while terminating account ",e);
-			messages.error(e.getMessage());
+			
 		} catch (Exception e) {
-			log.error("error generated while terminating account ",e);
-			messages.error(e.getMessage());
+			log.error("Failed to terminate account ",e);
+			messages.error(new BundleKey("messages", "resiliation.resiliateUnsuccessful"), e.getMessage());
 		}
+
+        return getEditViewName();
 	}
 
 	public String cancelAccount() {
@@ -230,15 +229,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		    entity = billingAccountService.attach(entity);
             entity = billingAccountService.billingAccountCancellation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?billingAccountId=" + entity.getId() + "&edit=true";
-		} catch (BusinessException e) {
-			log.error("error occured while canceling account ",e);
-			messages.error(e.getMessage());
-		} catch (Exception e) {
-			log.error("error g while canceling account ",e);
-			messages.error(e.getMessage());
-		}
-		return null;
+					
+        } catch (Exception e) {
+            log.error("Failed to cancel account ", e);
+            messages.error(new BundleKey("messages", "cancellation.cancelUnsuccessful"), e.getMessage());
+        }
+		return getEditViewName();
 	}
 
 	public String closeAccount() {
@@ -246,15 +242,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		try {
 			entity = billingAccountService.closeBillingAccount(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?billingAccountId=" + entity.getId() + "&edit=true";
-		} catch (BusinessException e) {
-			log.error("error occured while closing account ",e);
-			messages.error(e.getMessage());
-		} catch (Exception e) {
-			log.error("error generated while closing account ",e);
-			messages.error(e.getMessage());
-		}
-		return null;
+			
+        } catch (Exception e) {
+            log.error("Failed to close account ", e);
+            messages.error(new BundleKey("messages", "close.closeUnsuccessful"), e.getMessage());
+        }
+        return getEditViewName();
 	}
 
 	// TODO: @Factory("getInvoices")

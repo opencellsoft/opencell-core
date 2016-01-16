@@ -220,14 +220,12 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 		try {
 			customerAccountService.closeCustomerAccount(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "customerAccount.closeSuccessful"));
-		} catch (BusinessException e) {
-			log.error("failed to close customer account",e);
-			messages.error(e.getMessage());
-		} catch (Exception e) {
-			log.error("error while closing customer account",e);
-			messages.error(e.getMessage());
+			
+        } catch (Exception e) {
+            log.error("Failed to close account ", e);
+            messages.error(new BundleKey("messages", "close.closeUnsuccessful"), e.getMessage());
 		}
-		return null;
+        return getEditViewName();
 	}
 
 	/**

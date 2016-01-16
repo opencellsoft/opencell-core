@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -206,20 +207,18 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		return entity;
 	}
 
-	public void terminateAccount() {
-		log.debug("resiliateAccount userAccountId:" + entity.getId());
-		try {
-		    entity = userAccountService.attach(entity);
-		    entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(),
-					entity.getTerminationReason(), getCurrentUser());
-			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-		} catch (BusinessException e) {
-			log.error("error generated while terminating account ",e);
-			messages.error(e.getMessage());
-		} catch (Exception e) {
-			log.error("failed terminating account ",e);
-			messages.error(e.getMessage());
-		}
+    public String terminateAccount() {
+        log.debug("resiliateAccount userAccountId:" + entity.getId());
+        try {
+            entity = userAccountService.attach(entity);
+            entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
+            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+
+        } catch (Exception e) {
+            log.error("Failed to terminate account ", e);
+            messages.error(new BundleKey("messages", "resiliation.resiliateUnsuccessful"), e.getMessage());
+        }
+        return getEditViewName();
 	}
 
 	public String cancelAccount() {
@@ -228,15 +227,12 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		    entity = userAccountService.attach(entity);
             entity = userAccountService.userAccountCancellation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
-		} catch (BusinessException e) {
-			log.error("error generated while canceling account ",e);
-			messages.error(e.getMessage());
-		} catch (Exception e) {
-			log.error("failed to cancel account ",e);
-			messages.error(e.getMessage());
-		}
-		return null;
+			        
+        } catch (Exception e) {
+            log.error("Failed to cancel account ", e);
+            messages.error(new BundleKey("messages", "cancellation.cancelUnsuccessful"), e.getMessage());
+        }
+        return getEditViewName();
 	}
 
 	public String reactivateAccount() {
@@ -245,15 +241,13 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		    entity = userAccountService.attach(entity);
             entity = userAccountService.userAccountReactivation(entity, new Date(), getCurrentUser());
 			messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
-			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=true";
-		} catch (BusinessException e) {
-			log.error("failed to reactivate account ",e);
-			messages.error(e.getMessage());
-		} catch (Exception e) {
-			log.error("error occurred while reactivating account ",e);
-			messages.error(e.getMessage());
+			
+        } catch (Exception e) {
+            log.error("Failed to reactivate account ", e);
+            messages.error(new BundleKey("messages", "reactivation.reactivateUnsuccessful"), e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
 		}
-		return null;
+        return getEditViewName();
 	}
 
 	public LazyDataModel<WalletOperation> getWalletOperationsNoInvoiced() {

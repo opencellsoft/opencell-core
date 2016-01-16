@@ -169,6 +169,19 @@
                                                 maxlength="50" rendered="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.isCompany}"/>
                                     </h:panelGroup>    
 								</p:fieldset>
+                                <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft" >
+                                    <hftl:formField
+                                        label="#{messages['billingAccount.subscriptionDate']}"
+                                        field="subscriptionDate" />
+                                    <hftl:formField label="#{messages['billingAccount.status']}"
+                                        field="status" doNotShowOnNew="true" allowEdit="false"/>
+                                    <hftl:formField
+                                        label="#{messages['billingAccount.statusDate']}"
+                                        field="statusDate" doNotShowOnNew="true" allowEdit="false" />
+                                    <hftl:formField
+                                        label="#{messages['billingAccount.terminationDate']}"
+                                        field="terminationDate" doNotShowOnNew="true" allowEdit="false" rendered="#{userAccountBean.entity.terminationDate!=null}"/>
+                                  </p:fieldset>
 							</p:tab>
 
 							<p:tab title="#{messages['billingAccount.tab.information']}" id="tab1">
@@ -426,15 +439,15 @@
 		<p:dialog id="userAccountTerminationPopup"
 			header="#{messages['userAccount.accountTermination']}"
 			widgetVar="dlg_userAccountTerminationPopup" modal="true" appendTo="@(body)" closeOnEscape="true"
-			width="400">
+			width="700">
 			<hftl:formPanel id="termPanel" edit="true" backingBean="#{userAccountBean}"
 				styleClass="formPanel" formId="termFrm" showFormButtons="false"
 				useCustomIdParam="true">
 					<hftl:formField label="#{messages['serviceInstance.code']}"
-						field="code" size="50" edit="false" />
+						field="code" size="50" edit="false" componentWidth="25"/>
 					<hftl:formField
 						label="#{messages['serviceInstance.terminationDate']}"
-						field="terminationDate" required="true" edit="true" />
+						field="terminationDate" required="true" edit="true" componentWidth="25"/>
 					<hftl:formField label="Motifs " field="terminationReason"
 						valueLabelField="description" required="true"  edit="true"
 						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
@@ -444,7 +457,7 @@
 						<p:commandButton action="#{userAccountBean.terminateAccount()}"
 							value="#{messages['button.terminateButton']}"
 							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_userAccountTerminationPopup').hide()"
-							update=":userAccountFormId :termFrm:messages">
+							update="@form">
 						</p:commandButton>
 						<p:commandButton immediate="true"
 							onclick="PF('dlg_userAccountTerminationPopup').hide()" type="button"
