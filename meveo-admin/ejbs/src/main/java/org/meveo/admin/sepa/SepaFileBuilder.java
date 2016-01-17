@@ -72,7 +72,7 @@ public class SepaFileBuilder {
 				+ ddRequestLOT.getId());
 		groupHeader
 				.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
-		groupHeader.setNbOfTxs(ddRequestLOT.getInvoicesNumber());
+		groupHeader.setNbOfTxs(ddRequestLOT.getDdrequestItems().size());
 		groupHeader.setCtrlSum(ddRequestLOT.getInvoicesAmount().setScale(2,
 				RoundingMode.HALF_UP));
 		InitgPty initgPty = new InitgPty();
