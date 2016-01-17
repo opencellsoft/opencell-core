@@ -48,6 +48,7 @@ import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf.LclInstrm;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf.SvcLvl;
 import org.meveo.admin.util.ArConfig;
+import org.meveo.commons.utils.ParamBean;
 //import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
@@ -92,7 +93,7 @@ public class SepaFileBuilder {
 		Message.getPmtInf().add(PaymentInformation);
 		PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference()
 				+ "-" + dDRequestItem.getId());
-		PaymentInformation.setPmtMtd("DD");
+		PaymentInformation.setPmtMtd(ParamBean.getInstance().getProperty("sepa.PmtMtd", "TRF"));
 		PaymentInformation.setNbOfTxs(dDRequestItem.getInvoices().size());
 		PaymentInformation.setCtrlSum(dDRequestItem.getAmountInvoices()
 				.setScale(2, RoundingMode.HALF_UP));
