@@ -232,12 +232,15 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 	}
 
 	public String getDDFileName(DDRequestLOT ddRequestLot){
-		String fileName = ArConfig.getDDRequestFileNamePrefix()
-				+ ddRequestLot.getId();
+		String fileName = ArConfig.getDDRequestFileNamePrefix()+ ddRequestLot.getId();
 		fileName = fileName + "_" + ddRequestLot.getProvider().getCode();
-		fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")
-				+ ArConfig.getDDRequestFileNameExtension();
-		String outputDir = ArConfig.getDDRequestOutputDirectory();
+		fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")+ ArConfig.getDDRequestFileNameExtension();
+		
+		String outputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo");
+		
+		outputDir = outputDir+ File.separator + getCurrentProvider().getCode() + File.separator +ArConfig.getDDRequestOutputDirectory();
+		outputDir = outputDir.replaceAll("\\..", "");
+		
 		log.info("DDRequest output directory=" + outputDir);
 		File dir = new File(outputDir);
 		if (!dir.exists()) {
