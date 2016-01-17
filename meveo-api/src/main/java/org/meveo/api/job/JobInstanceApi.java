@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.job.JobInstanceDto;
@@ -89,8 +90,15 @@ public class JobInstanceApi extends BaseApi {
 		if (jobCustomFields != null) {
 			customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
 		}
+		
+		jobInstance.updateAudit(currentUser);
+		jobInstance.setProvider(provider);
 
-        jobInstanceService.create(jobInstance, currentUser, provider);
+        try {
+			jobInstanceService.create(jobInstance);
+		} catch (BusinessException e1) {
+			throw new MeveoApiException(e1.getMessage());
+		}
         
 		// Populate customFields
         try {
@@ -155,8 +163,8 @@ public class JobInstanceApi extends BaseApi {
 				customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values(), provider);
 			}
 
-
-			jobInstance = jobInstanceService.update(jobInstance, currentUser);
+			jobInstance.updateAudit(currentUser);
+			jobInstance = jobInstanceService.update(jobInstance);
             
             // Populate customFields
             try {

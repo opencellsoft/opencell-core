@@ -171,10 +171,6 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 			ic = new InitialContext();
 			if (jobEntries.containsKey(jobInstance.getJobCategoryEnum())) {
 
-				if (getCurrentUser() == null) {
-					throw new BusinessException("User must be logged in to perform this action.");
-				}
-
 				super.create(jobInstance);
 				HashMap<String, String> jobs = jobEntries.get(jobInstance.getJobCategoryEnum());
 				if (jobs.containsKey(jobInstance.getJobTemplate()) && jobInstance.isActive()) {
