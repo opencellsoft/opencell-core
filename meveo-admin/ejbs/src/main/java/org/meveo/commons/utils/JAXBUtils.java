@@ -28,6 +28,7 @@ import javax.xml.bind.Unmarshaller;
  * 
  * @author anasseh
  * @created 23.12.2010
+ * 
  */
 public class JAXBUtils {
 
@@ -40,9 +41,17 @@ public class JAXBUtils {
     }
     
     public static void marshaller(Object obj, File file) throws JAXBException {
+    	marshaller(obj, file, null);
+    }
+
+	public static void marshaller(Object obj, File file, String schemaLocation) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(obj.getClass());
         Marshaller marshaller = jc.createMarshaller();
         marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
+        if(schemaLocation != null){
+        	 marshaller.setProperty( Marshaller.JAXB_SCHEMA_LOCATION,schemaLocation);        	
+        }
         marshaller.marshal(obj, file);
-    }
+		
+	}
 }

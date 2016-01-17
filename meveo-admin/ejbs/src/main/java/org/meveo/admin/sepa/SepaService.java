@@ -25,6 +25,7 @@ import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
@@ -276,8 +277,8 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 		for (DDRequestItem ddrequestItem : ddrequestItems) {
 			sepaFileBuilder.addPaymentInformation(Message, ddrequestItem);
 		}
-
-		JAXBUtils.marshaller(document, new File(fileName));
+        String schemaLocation  = ParamBean.getInstance().getProperty("sepa.schemaLocation.pain008", "https://github.com/w2c/sepa-sdd-xml-generator/blob/master/validation_schemes/pain.008.001.02.xsd");
+		JAXBUtils.marshaller(document, new File(fileName), schemaLocation);
 		return fileName;
 	}
 
