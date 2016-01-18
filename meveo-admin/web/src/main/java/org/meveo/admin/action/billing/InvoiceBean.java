@@ -677,10 +677,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		}
 
 		super.saveOrUpdate(false);
-
+		invoiceService.commit();
+		
 		if (isDetailed()) {
-			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),
-					getCurrentUser(), true);
+			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, new Date(),getCurrentUser(), true);
 		} else {
 			if (entity.getAmountWithoutTax() == null) {
 				invoiceService.recomputeAggregates(entity, getCurrentUser());
