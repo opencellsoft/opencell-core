@@ -104,11 +104,10 @@ public class SepaFileBuilder {
 		ServiceLevel.setCd("SEPA");
 		LclInstrm LocalInstrument = new LclInstrm();
 		PaymentTypeInformation.setLclInstrm(LocalInstrument);
-		LocalInstrument.setCd("CORE");
+		LocalInstrument.setCd(ParamBean.getInstance().getProperty("sepa.LclInstrm", "CORE"));
 		PaymentTypeInformation.setSeqTp("FRST");
 
-		PaymentInformation.setReqdColltnDt(DateUtils
-				.dateToXMLGregorianCalendar(new Date())); // à revoir
+		PaymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendar(new Date())); // à revoir
 
 		BankCoordinates providerBC = provider.getBankCoordinates();
 		Cdtr Creditor = new Cdtr();
