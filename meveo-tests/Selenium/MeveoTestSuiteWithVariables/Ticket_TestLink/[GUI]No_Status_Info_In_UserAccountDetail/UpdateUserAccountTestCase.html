@@ -42,102 +42,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>${ChooseBillingAccount}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ChooseBillingAccount}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>id=billingAccountPopup_title</td>
-	<td>Billing account search</td>
+	<td>verifyText</td>
+	<td>id=userAccountFormId:userAccountTab:billingAccountSelectId</td>
+	<td>${BillingAccount}</td>
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>id=billingAccountPopup_title</td>
-	<td>Billing account search</td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>id=billingAccountPopuppopupForm:searchField1</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>id=billingAccountPopuppopupForm:searchField1</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>id=billingAccountPopuppopupForm:searchField1</td>
-	<td>${BillingAccount}</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=billingAccountPopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
-	<td>${BillingAccount}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForTextPresent</td>
-	<td>${BillingAccount}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>${BillingAccount}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=billingAccountPopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
-	<td>${BillingAccount}</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForNotVisible</td>
-	<td>id=billingAccountPopup</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ChooseBillingAccount}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForValue</td>
 	<td>id=userAccountFormId:userAccountTab:billingAccountSelectId</td>
 	<td>${BillingAccount}</td>
 </tr>
