@@ -136,22 +136,26 @@ public class MeasurableQuantity extends BusinessEntity {
 	
 	public Date getNextMeasureDate(){
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(lastMeasureDate);
-        switch(measurementPeriod){
-        case DAILY:
-        	calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
-        	break;
-        case WEEKLY:
-        	calendar.add(java.util.Calendar.WEEK_OF_YEAR, 1);
-        	break;
-        case MONTHLY:
-        	calendar.add(java.util.Calendar.MONTH, 1);
-        	break;
-        case YEARLY:
-        	calendar.add(java.util.Calendar.YEAR, 1);
-        	break;
-        }
-        return calendar.getTime();
+        Date result = new Date();
+        if(lastMeasureDate!=null){
+        	calendar.setTime(lastMeasureDate);
+	        switch(measurementPeriod){
+		        case DAILY:
+		        	calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
+		        	break;
+		        case WEEKLY:
+		        	calendar.add(java.util.Calendar.WEEK_OF_YEAR, 1);
+		        	break;
+		        case MONTHLY:
+		        	calendar.add(java.util.Calendar.MONTH, 1);
+		        	break;
+		        case YEARLY:
+		        	calendar.add(java.util.Calendar.YEAR, 1);
+		        	break;
+		    }
+	        result=calendar.getTime();
+	    }
+        return result;
 	}
 	
 	public void increaseMeasureDate(){
