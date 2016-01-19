@@ -40,6 +40,18 @@ public class MeasuredValue extends BaseEntity {
 	@XmlTransient
 	private Date date;
 
+	@Column(name = "DIMENSION_1", length = 255)
+	private String dimension1;
+
+	@Column(name = "DIMENSION_2", length = 255)
+	private String dimension2;
+
+	@Column(name = "DIMENSION_3", length = 255)
+	private String dimension3;
+
+	@Column(name = "DIMENSION_4", length = 255)
+	private String dimension4;
+
 	@Column(name = "VALUE", precision = NB_PRECISION, scale = NB_DECIMALS)
 	@XmlTransient
 	private BigDecimal value;
@@ -66,6 +78,38 @@ public class MeasuredValue extends BaseEntity {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public String getDimension1() {
+		return dimension1;
+	}
+
+	public void setDimension1(String dimension1) {
+		this.dimension1 = dimension1;
+	}
+
+	public String getDimension2() {
+		return dimension2;
+	}
+
+	public void setDimension2(String dimension2) {
+		this.dimension2 = dimension2;
+	}
+
+	public String getDimension3() {
+		return dimension3;
+	}
+
+	public void setDimension3(String dimension3) {
+		this.dimension3 = dimension3;
+	}
+
+	public String getDimension4() {
+		return dimension4;
+	}
+
+	public void setDimension4(String dimension4) {
+		this.dimension4 = dimension4;
 	}
 
 	public BigDecimal getValue() {

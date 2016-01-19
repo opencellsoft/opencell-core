@@ -109,6 +109,7 @@ public class DWHQueryBean {
 
 			try {
 				while (mq.getLastMeasureDate() == null || mq.getNextMeasureDate().before(toDate)) {
+					log.debug("resolve query:{}, nextMeasureDate={}, lastMeasureDate={}, provider={} ", mq.getSqlQuery(),mq.getNextMeasureDate(),mq.getLastMeasureDate(),provider.getId());
 					String queryStr = mq.getSqlQuery().replaceAll("#\\{date\\}", df.format(mq.getNextMeasureDate()));
 					queryStr = queryStr.replaceAll("#\\{dateTime\\}", tf.format(mq.getNextMeasureDate()));
 					queryStr = queryStr.replaceAll("#\\{nextDate\\}", df.format(mq.getLastMeasureDate()));
@@ -123,11 +124,35 @@ public class DWHQueryBean {
 								: MeasurementPeriodEnum.DAILY;
 						BigDecimal value = BigDecimal.ZERO;
 						Date date = mq.getNextMeasureDate();
+						String dimension1 = mq.getDimension1();
+						String dimension2 = mq.getDimension2();
+						String dimension3 = mq.getDimension3();
+						String dimension4 = mq.getDimension4();
 						if (res instanceof Object[]) {
 							Object[] resTab = (Object[]) res;
 							value = new BigDecimal("" + resTab[0]);
-							if (resTab.length > 1) {
-								date = (Date) resTab[1];
+							int i=1;
+							if (resTab.length > i) {
+								try{
+									date = (Date) resTab[1];
+									i++;
+								} catch(Exception e){}
+							}
+							if (resTab.length > i) {
+								dimension1 = resTab[i]==null?"":resTab[i].toString();
+								i++;
+							}
+							if (resTab.length > 3) {
+								dimension2 = resTab[i]==null?"":resTab[i].toString();
+								i++;
+							}
+							if (resTab.length > 4) {
+								dimension3 = resTab[i]==null?"":resTab[i].toString();
+								i++;
+							}
+							if (resTab.length > 5) {
+								dimension4 = resTab[i]==null?"":resTab[i].toString();
+								i++;
 							}
 						} else {
 							value = new BigDecimal("" + res);
@@ -142,6 +167,10 @@ public class DWHQueryBean {
 						mv.setMeasurementPeriod(mve);
 						mv.setValue(value);
 						mv.setDate(date);
+						mv.setDimension1(dimension1);
+						mv.setDimension2(dimension2);
+						mv.setDimension3(dimension3);
+						mv.setDimension4(dimension4);
 						if (mv.getId() == null) {
 							mvService.create(mv, currentUser, provider);
 						}
@@ -150,6 +179,7 @@ public class DWHQueryBean {
 					result.registerSucces();
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				result.registerError("Measurable quantity with code " + measurableQuantityCode
 						+ " contain invalid SQL query: " + e.getMessage());
 				log.info("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query: "
