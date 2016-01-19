@@ -1160,5 +1160,13 @@
 	<changeSet id="#1399-20160113" author="EdwardLegaspi">
 		<addUniqueConstraint columnNames="provider_id, invoice_number, invoice_type" tableName="billing_invoice" />
 	</changeSet>
-          
+    
+    <changeSet id="#1424_20160119" author="SebastienMichea">
+        <addColumn tableName="DWH_MEASURED_VALUE">
+            <column name="DIMENSION_1" type="VARCHAR(255)"/>
+            <column name="DIMENSION_2" type="VARCHAR(255)"/>
+            <column name="DIMENSION_3" type="VARCHAR(255)"/>
+            <column name="DIMENSION_4" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>    
 </databaseChangeLog>
