@@ -573,25 +573,26 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 		productOffering.setProductOfferingPrice(new ArrayList<ProductOfferingPrice>());// empty
 
 		// prices
-		List<ProductOfferingPrice> productOfferingPrices = new ArrayList<>();
-		for (Entry<String, BigDecimal> servicePrice : servicePrices.entrySet()) {
-			Price price = new Price();
-			price.setTaxIncludedAmount(servicePrice.getValue());
+		if (servicePrices != null && servicePrices.entrySet() != null) {
+			List<ProductOfferingPrice> productOfferingPrices = new ArrayList<>();
+			for (Entry<String, BigDecimal> servicePrice : servicePrices.entrySet()) {
+				Price price = new Price();
+				price.setTaxIncludedAmount(servicePrice.getValue());
 
-			ProductOfferingPrice productOfferingPrice = new ProductOfferingPrice();
-			productOfferingPrice.setPriceName(servicePrice.getKey());
-			productOfferingPrice.setPrice(price);
+				ProductOfferingPrice productOfferingPrice = new ProductOfferingPrice();
+				productOfferingPrice.setPriceName(servicePrice.getKey());
+				productOfferingPrice.setPrice(price);
 
-			if (servicePrice.getKey().endsWith("_SUB")) {
-				productOfferingPrice.setPriceType(ProductOfferingPriceType.ONE_TIME);
-			} else if (servicePrice.getKey().endsWith("_REC")) {
-				productOfferingPrice.setPriceType(ProductOfferingPriceType.RECURRING);
+				if (servicePrice.getKey().endsWith("_SUB")) {
+					productOfferingPrice.setPriceType(ProductOfferingPriceType.ONE_TIME);
+				} else if (servicePrice.getKey().contains("_REC")) {
+					productOfferingPrice.setPriceType(ProductOfferingPriceType.RECURRING);
+				}
+
+				productOfferingPrices.add(productOfferingPrice);
 			}
-			
-			productOfferingPrices.add(productOfferingPrice);
+			productOffering.setProductOfferingPrice(productOfferingPrices);
 		}
-
-		productOffering.setProductOfferingPrice(productOfferingPrices);
 
 		return productOffering;
 	}

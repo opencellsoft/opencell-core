@@ -43,7 +43,7 @@ public class CatalogApi extends BaseApi {
 
 		for (OfferTemplate offerTemplate : offerTemplates) {
 			Map<String, BigDecimal> servicePrices = new HashMap<>();
-			
+
 			for (ServiceTemplate st : offerTemplate.getServiceTemplates()) {
 				if (st.getServiceSubscriptionCharges() != null) {
 					BigDecimal totalPriceOneShotCharges = new BigDecimal(0);
@@ -65,7 +65,7 @@ public class CatalogApi extends BaseApi {
 
 						totalPriceOneShotCharges = totalPriceOneShotCharges.add(chargePricePlans);
 					}
-					
+
 					servicePrices.put(st.getCode() + "_SUB", totalPriceOneShotCharges);
 				}
 
@@ -90,10 +90,12 @@ public class CatalogApi extends BaseApi {
 						totalPriceRecurringCharges = totalPriceRecurringCharges.add(chargePricePlans);
 					}
 
-					servicePrices.put(st.getCode() + "_REC", totalPriceRecurringCharges);
+					servicePrices.put(st.getCode() + "_REC_"
+							+ (st.getInvoicingCalendar() == null ? "" : st.getInvoicingCalendar().getCode()),
+							totalPriceRecurringCharges);
 				}
 			}
-			
+
 			offerPrices.put(offerTemplate.getCode(), servicePrices);
 		}
 
