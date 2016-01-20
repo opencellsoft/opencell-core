@@ -472,7 +472,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		BigDecimal quantity = chargeInstance.getServiceInstance() == null ? null : chargeInstance.getServiceInstance().getQuantity();
 		BigDecimal inputQuantity = quantity;
-		quantity = NumberUtil.getInChargeUnit(quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal());
+		quantity = NumberUtil.getInChargeUnit(quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());
 		
 		if (Boolean.TRUE.equals(recurringChargeTemplate.getSubscriptionProrata())) {
 			Date periodStart = applicationDate;
@@ -587,7 +587,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 		BigDecimal inputQuantity = quantity;
-		quantity = NumberUtil.getInChargeUnit(quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal());
+		quantity = NumberUtil.getInChargeUnit(quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());
 
 		Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
@@ -749,7 +749,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				quantity = quantity.negate();
 			}
 			BigDecimal inputQuantity = quantity;
-			quantity = NumberUtil.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal());
+			quantity = NumberUtil.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
 			
 			log.debug("applyReccuringCharge : nextapplicationDate={}, param2={} -> quantity={}", nextapplicationDate, param2, quantity);
 
@@ -829,7 +829,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 			BigDecimal inputQuantity = quantity;
-			quantity = NumberUtil.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal());
+			quantity = NumberUtil.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
 			
 			ApplicationTypeEnum applicationTypeEnum = ApplicationTypeEnum.RECURRENT;
 			Date periodStart = applicationDate;
@@ -948,7 +948,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Date endDate = DateUtils.addDaysToDate(nextapplicationDate, -1);
 			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 			BigDecimal inputQuantity = quantity;
-			quantity = NumberUtil.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal());
+			quantity = NumberUtil.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
 			
 			if (nextapplicationDate.getTime() > endAgreementDate.getTime() && applicationDate.getTime() < endAgreementDate.getTime()) {
 				Date endAgreementDateModified = DateUtils.addDaysToDate(endAgreementDate, 1);

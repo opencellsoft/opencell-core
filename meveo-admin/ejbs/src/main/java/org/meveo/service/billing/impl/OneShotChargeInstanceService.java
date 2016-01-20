@@ -179,7 +179,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		}
 		
 		BigDecimal inputQuantity = quantity;
-		quantity = NumberUtil.getInChargeUnit(quantity, chargetemplate.getUnitMultiplicator(), chargetemplate.getUnitNbDecimal());
+		quantity = NumberUtil.getInChargeUnit(quantity, chargetemplate.getUnitMultiplicator(), chargetemplate.getUnitNbDecimal(),chargetemplate.getRoundingMode());
 
 		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(chargetemplate.getCode(),
 				chargetemplate.getDescription(), effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
@@ -215,7 +215,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			throws BusinessException {
 		BigDecimal inputQuantity = quantity;
 		quantity = NumberUtil.getInChargeUnit(quantity, oneShotChargeInstance.getChargeTemplate().getUnitMultiplicator(), oneShotChargeInstance.getChargeTemplate()
-				.getUnitNbDecimal());
+				.getUnitNbDecimal(),oneShotChargeInstance.getChargeTemplate().getRoundingMode());
 		walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effetDate, creator);
 	}
 
@@ -264,7 +264,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		}		
 		log.debug("matchingCharge amount withoutTax {}",matchingCharge.getAmountWithoutTax());
 		BigDecimal inputQuantity = BigDecimal.ONE;
-		BigDecimal quantity = NumberUtil.getInChargeUnit(inputQuantity, oneShotChargeTemplate.getUnitMultiplicator(), oneShotChargeTemplate.getUnitNbDecimal());
+		BigDecimal quantity = NumberUtil.getInChargeUnit(inputQuantity, oneShotChargeTemplate.getUnitMultiplicator(), oneShotChargeTemplate.getUnitNbDecimal(),oneShotChargeTemplate.getRoundingMode());
 		
 		WalletOperation op = walletOperationService.oneShotWalletOperation(subscription, matchingCharge, inputQuantity, quantity, new Date(), currentUser);
 		op.setStatus(WalletOperationStatusEnum.TREATED);
