@@ -23,16 +23,15 @@ public class NumberUtil {
 		}
 
 		BigDecimal result = unitValue.multiply(unitMultiplicator);
-
-		if (unitNbDecimal.compareTo(2) > 0) {
-			if (RoundingModeEnum.DOWN == roundingModeEnum) {
-				result = result.setScale(unitNbDecimal, RoundingMode.FLOOR);
-			} else if (RoundingModeEnum.UP == roundingModeEnum) {
-				result = result.setScale(unitNbDecimal, RoundingMode.CEILING);
-			} else {
-				result = result.setScale(unitNbDecimal, RoundingMode.HALF_UP);
-			}
+		
+		if (RoundingModeEnum.DOWN == roundingModeEnum) {
+			result = result.setScale(unitNbDecimal, RoundingMode.FLOOR);
+		} else if (RoundingModeEnum.UP == roundingModeEnum) {
+			result = result.setScale(unitNbDecimal, RoundingMode.CEILING);
+		} else {
+			result = result.setScale(unitNbDecimal, RoundingMode.HALF_UP);
 		}
+
 		return result;
 	}
 }

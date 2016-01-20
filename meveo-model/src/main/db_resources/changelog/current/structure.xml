@@ -1172,7 +1172,7 @@
 
 	<changeSet id="#1365_20160119" author="anasseh">
 		<addColumn tableName="CAT_CHARGE_TEMPLATE">
-			<column name="ROUNDING_MODE" type="VARCHAR(255)" />
+			<column name="ROUNDING_MODE" type="VARCHAR(255)" defaultValue="NEAREST" />
 		</addColumn>
 
 		<sql>UPDATE CAT_CHARGE_TEMPLATE SET ROUNDING_MODE='NEAREST';</sql>
