@@ -90,8 +90,8 @@ public class CatalogApi extends BaseApi {
 						totalPriceRecurringCharges = totalPriceRecurringCharges.add(chargePricePlans);
 					}
 
-					servicePrices.put(st.getCode() + "_REC_"
-							+ (st.getInvoicingCalendar() == null ? "" : st.getInvoicingCalendar().getCode()),
+					servicePrices.put(st.getCode() + "_REC"
+							+ (st.getInvoicingCalendar() == null ? "" : "_" + st.getInvoicingCalendar().getCode()),
 							totalPriceRecurringCharges);
 				}
 			}
