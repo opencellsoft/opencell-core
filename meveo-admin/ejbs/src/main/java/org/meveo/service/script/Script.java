@@ -7,30 +7,30 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 
+public abstract class Script implements ScriptInterface {
 
+    public static String RESULT_GUI_OUTCOME = "GUI_OUTCOME";
+    public static String RESULT_GUI_MESSAGE_KEY = "GUI_MESSAGE_KEY";
+    public static String RESULT_GUI_MESSAGE = "GUI_MESSAGE";
+    public static String RESULT_VALUE = "RESULT_VALUE";
+    public static String CONTEXT_ENTITY = "CONTEXT_ENTITY";
 
-public abstract class Script  implements ScriptInterface{
+    @Override
+    public void init(Map<String, Object> methodContext, Provider provider, User user) throws BusinessException {
 
-    public void init(Map<String,Object> methodContext,Provider provider,User user){
-    }
-    
-    public void init(Map<String,Object> methodContext,Provider provider){
-    }
-    
-    public void execute(Map<String,Object> methodContext,Provider provider,User user) throws BusinessException{
-    		execute(methodContext,provider);
-    }
-    
-    public void execute(Map<String,Object> methodContext,Provider provider) throws BusinessException{
-    }
-    
-    public void finalize(Map<String,Object> methodContext,Provider provider,User user){
     }
 
-    public void finalize(Map<String,Object> methodContext,Provider provider){
+    @Override
+    public void execute(Map<String, Object> methodContext, Provider provider, User user) throws BusinessException {
+
     }
 
-	public  Object getServiceInterface(String serviceInterfaceName){		
-		return EjbUtils.getServiceInterface(serviceInterfaceName);
-	}
+    @Override
+    public void finalize(Map<String, Object> methodContext, Provider provider, User user) throws BusinessException {
+
+    }
+
+    protected Object getServiceInterface(String serviceInterfaceName) {
+        return EjbUtils.getServiceInterface(serviceInterfaceName);
+    }
 }

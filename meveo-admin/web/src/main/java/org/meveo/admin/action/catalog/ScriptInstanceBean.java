@@ -172,7 +172,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     }
 
     public String execute() {
-        scriptInstanceService.test(getCurrentProvider(), entity.getCode(), null, getCurrentUser());
+        scriptInstanceService.test(entity.getCode(), null, getCurrentUser(), getCurrentProvider());
         return null;
     }
 

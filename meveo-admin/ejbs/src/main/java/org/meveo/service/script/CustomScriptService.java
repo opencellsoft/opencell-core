@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.persistence.NoResultException;
 import javax.tools.Diagnostic;
@@ -33,11 +34,14 @@ import javax.tools.JavaFileObject;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
@@ -45,7 +49,7 @@ import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.base.BusinessService;
 
-public abstract class CustomScriptService<T extends CustomScript, SI> extends BusinessService<T> {
+public abstract class CustomScriptService<T extends CustomScript, SI extends ScriptInterface> extends BusinessService<T> {
 
     protected final Class<SI> scriptInterfaceClass;
 
@@ -368,5 +372,115 @@ public abstract class CustomScriptService<T extends CustomScript, SI> extends Bu
             className = StringUtils.patternMacher("public class (.*) implements", src);
         }
         return className;
+    }
+
+    /**
+     * Execute action on an entity
+     * 
+     * @param entity Entity to execute action on
+     * @param scriptCode Script to execute, identified by a code
+     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
+     * @param currentUser Current user
+     * @param currentProvider Current provider
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws ElementNotFoundException Script not found
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters, User currentUser, Provider currentProvider) throws InvalidPermissionException,
+            ElementNotFoundException, BusinessException {
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+
+        if (!StringUtils.isBlank(encodedParameters)) {
+            StringTokenizer tokenizer = new StringTokenizer(encodedParameters, "&");
+            while (tokenizer.hasMoreElements()) {
+                String paramValue = tokenizer.nextToken();
+                String[] paramValueSplit = paramValue.split("=");
+                if (paramValueSplit.length == 2) {
+                    parameters.put(paramValueSplit[0], paramValueSplit[1]);
+                } else {
+                    parameters.put(paramValueSplit[0], null);
+                }
+            }
+
+        }
+        return execute(entity, scriptCode, parameters, currentUser, currentProvider);
+    }
+
+    /**
+     * Execute action on an entity
+     * 
+     * @param entity Entity to execute action on
+     * @param scriptCode Script to execute, identified by a code
+     * @param parameters Additional parameters
+     * @param currentUser Current user
+     * @param currentProvider Current provider
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws ElementNotFoundException Script not found
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider)
+            throws InvalidPermissionException, ElementNotFoundException, BusinessException {
+
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+        context.put(Script.CONTEXT_ENTITY, entity);
+
+        log.debug("Script {} on entity {} to be executed with parameters {}", scriptCode, entity, context);
+
+        Map<String, Object> result = execute(scriptCode, context, currentUser, currentProvider);
+        log.trace("Script {} on entity {} executed with parameters {}", scriptCode, entity, context);
+        return result;
+    }
+
+    /**
+     * Execute action on an entity
+     * 
+     * @param entity Entity to execute action on
+     * @param scriptCode Script to execute, identified by a code
+     * @param context Method context
+     * @param currentUser Current user
+     * @param currentProvider Current provider
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws ElementNotFoundException Script not found
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws InvalidPermissionException,
+            ElementNotFoundException, BusinessException {
+
+        SI classInstance;
+        try {
+            classInstance = getScriptInstance(currentProvider, scriptCode);
+            
+        } catch (InstantiationException | IllegalAccessException e) {
+            log.error("Failed to instantiate script {}", scriptCode, e);
+            throw new BusinessException("Failed to instantiate script " + scriptCode);
+        }
+        classInstance.execute(context, currentProvider, currentUser);
+        log.trace("Script {} executed with parameters {}", scriptCode, context);
+        return context;
+    }
+
+    /**
+     * Execute a class that extends Script
+     * 
+     * @param compiledScript Compiled script class
+     * @param context Method context
+     * @param currentUser Current user
+     * @param currentProvider Current provider
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws BusinessException Any execution exception
+     */
+    protected Map<String, Object> execute(SI compiledScript, Map<String, Object> context, User currentUser, Provider currentProvider) throws BusinessException {
+        if (context == null) {
+            context = new HashMap<String, Object>();
+        }
+
+        compiledScript.execute(context, currentProvider, currentUser);
+        return context;
     }
 }

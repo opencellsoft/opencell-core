@@ -15,6 +15,11 @@ public class EntityActionScript extends CustomScript {
 
     private static final long serialVersionUID = -1640429569087958881L;
 
+    private static String CODE_SEPARATOR = "|";
+
+    /**
+     * Code value without the appliesTo part. Code field consists of <localCode>_<appliesTo>
+     */
     @Transient
     private String localCode;
 
@@ -29,20 +34,19 @@ public class EntityActionScript extends CustomScript {
     @Size(max = 50)
     private String label;
 
-//    @Override
-//    public void setCode(String code) {
-//        super.setCode(code);
-//        getLocalCodeForRead();
-//    }
+    public void setCode(String localCode, String appliesTo) {
+        super.setCode(EntityActionScript.composeCode(localCode, appliesTo));
+        this.localCode = localCode;
+    }
 
     public String getLocalCode() {
         return localCode;
     }
 
     public String getLocalCodeForRead() {
-        // Parse code, which consists of <localCode>_<appliesTo> to determine localCode value
+        // Parse code, which consists of <localCode>|<appliesTo> to determine localCode value
         if (localCode == null && code != null) {
-            localCode = code.split("_")[0];
+            localCode = code.split("\\" + CODE_SEPARATOR)[0];
         }
         return localCode;
     }
@@ -109,5 +113,9 @@ public class EntityActionScript extends CustomScript {
     @Override
     public String toString() {
         return String.format("EntityActionScript [id=%s, appliesTo=%s, code=%s]", id, appliesTo, code);
+    }
+
+    public static String composeCode(String scriptCode, String appliesTo) {
+        return scriptCode + CODE_SEPARATOR + appliesTo;
     }
 }

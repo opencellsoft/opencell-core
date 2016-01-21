@@ -30,7 +30,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 	private CalendarApi calendarApi;
 
 	@Override
-	@ApiOperation(value = "This function create a charged calendar", response = ActionStatus.class)
+	@ApiOperation(value = "Create a calendar", response = ActionStatus.class)
 	public ActionStatus create(CalendarDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -51,7 +51,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 	}
 
 	@Override
-	@ApiOperation(value = "This function update a charged calendar given a calendar name", response = ActionStatus.class)
+	@ApiOperation(value = "Update a calendar", response = ActionStatus.class)
 	public ActionStatus update(CalendarDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -72,7 +72,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 	}
 
 	@Override
-	@ApiOperation(value = "This function search for a charged calendar given a calendar name", response = GetCalendarResponse.class)
+	@ApiOperation(value = "Search for a calendar given a calendar code", response = GetCalendarResponse.class)
 	public GetCalendarResponse find(@ApiParam(value = "calendar code") String calendarCode) {
 		GetCalendarResponse result = new GetCalendarResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
@@ -94,7 +94,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 	}
 
 	@Override
-	@ApiOperation(value = "This function remove a charged calendar given a calendar name", response = ActionStatus.class)
+	@ApiOperation(value = "Remove a calendar given a calendar code", response = ActionStatus.class)
 	public ActionStatus remove(@ApiParam(value = "calendar code") String calendarCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -115,7 +115,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 	}
 
 	@Override
-	@ApiOperation(value = "This function create a charged calendar or updates it if it exists", response = ActionStatus.class)
+	@ApiOperation(value = "Create a calendar or updates it if it exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(CalendarDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

@@ -11,19 +11,23 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
+import org.meveo.api.dto.EntityActionScriptDto;
+import org.meveo.api.dto.EntityCustomizationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.script.EntityActionScriptService;
+import org.meveo.util.EntityCustomizationUtils;
 
 /**
  * @author Andrius Karpavicius
@@ -44,7 +48,13 @@ public class CustomEntityApi extends BaseApi {
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
+    private EntityActionScriptService entityActionScriptService;
+
+    @Inject
     private CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    private ScriptInstanceApi scriptInstanceApi;
 
     public void createEntityTemplate(CustomEntityTemplateDto dto, User currentUser) throws MeveoApiException {
 
@@ -67,7 +77,13 @@ public class CustomEntityApi extends BaseApi {
 
         if (dto.getFields() != null) {
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {
-                customFieldTemplateApi.create(cftDto, currentUser, cet);
+                customFieldTemplateApi.create(cftDto, cet.getCftPrefix(), currentUser);
+            }
+        }
+
+        if (dto.getActions() != null) {
+            for (EntityActionScriptDto actionDto : dto.getActions()) {
+                scriptInstanceApi.create(actionDto, cet.getCftPrefix(), currentUser);
             }
         }
     }
@@ -92,52 +108,19 @@ public class CustomEntityApi extends BaseApi {
         cet = CustomEntityTemplateDto.fromDTO(dto, cet);
         cet = customEntityTemplateService.update(cet, currentUser);
 
-        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
-
-        // Create, update or remove fields as necessary
-        List<CustomFieldTemplate> cftsToRemove = new ArrayList<CustomFieldTemplate>();
-        if (dto.getFields() != null && !dto.getFields().isEmpty()) {
-
-            boolean found = false;
-            for (CustomFieldTemplate cft : cetFields.values()) {
-                for (CustomFieldTemplateDto cftDto : dto.getFields()) {
-                    if (cftDto.getCode().equals(cft.getCode())) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                // Old field is no longer needed. Remove by id, as CFT might come detached from cache
-                if (!found) {
-                    cftsToRemove.add(cft);
-                }
-            }
-            // Update or create custom field templates
-            for (CustomFieldTemplateDto cftDto : dto.getFields()) {
-                customFieldTemplateApi.createOrUpdate(cftDto, currentUser, cet);
-            }
-
-            for (CustomFieldTemplate cft : cftsToRemove) {
-                customFieldTemplateService.remove(cft.getId());
-            }
-
-        } else {
-            for (CustomFieldTemplate cft : cetFields.values()) {
-                customFieldTemplateService.remove(cft.getId());
-            }
-        }
+        synchronizeCustomFieldsAndActions(cet.getCftPrefix(), dto.getFields(), dto.getActions(), currentUser);
 
     }
 
-    public void removeEntityTemplate(String code, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+    public void removeEntityTemplate(String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+            missingParameters.add("customEntityTemplateCode");
         }
         if (!missingParameters.isEmpty()) {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
 
-        CustomEntityTemplate cet = customEntityTemplateService.findByCode(code, provider);
+        CustomEntityTemplate cet = customEntityTemplateService.findByCode(code, currentUser.getProvider());
         if (cet != null) {
             // Related custom field templates will be removed along with CET
             customEntityTemplateService.remove(cet);
@@ -146,22 +129,24 @@ public class CustomEntityApi extends BaseApi {
         }
     }
 
-    public CustomEntityTemplateDto findEntityTemplate(String code, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+    public CustomEntityTemplateDto findEntityTemplate(String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+            missingParameters.add("customEntityTemplateCode");
         }
         if (!missingParameters.isEmpty()) {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
 
-        CustomEntityTemplate cet = customEntityTemplateService.findByCode(code, provider);
+        CustomEntityTemplate cet = customEntityTemplateService.findByCode(code, currentUser.getProvider());
 
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
-        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), provider);
+        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
 
-        return CustomEntityTemplateDto.toDTO(cet, cetFields.values());
+        Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
+
+        return CustomEntityTemplateDto.toDTO(cet, cetFields.values(), cetActions.values());
     }
 
     public void createOrUpdateEntityTemplate(CustomEntityTemplateDto postData, User currentUser) throws MeveoApiException {
@@ -244,18 +229,18 @@ public class CustomEntityApi extends BaseApi {
 
     }
 
-    public void removeEntityInstance(String cetCode, String code, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+    public void removeEntityInstance(String cetCode, String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
         if (StringUtils.isBlank(cetCode)) {
-            missingParameters.add("cetCode");
+            missingParameters.add("customEntityTemplateCode");
         }
         if (!missingParameters.isEmpty()) {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
 
-        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, provider);
+        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, currentUser.getProvider());
         if (cei != null) {
             customEntityInstanceService.remove(cei);
         } else {
@@ -263,18 +248,18 @@ public class CustomEntityApi extends BaseApi {
         }
     }
 
-    public CustomEntityInstanceDto findEntityInstance(String cetCode, String code, Provider provider) throws EntityDoesNotExistsException, MissingParameterException {
+    public CustomEntityInstanceDto findEntityInstance(String cetCode, String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
         if (StringUtils.isBlank(cetCode)) {
-            missingParameters.add("cetCode");
+            missingParameters.add("customEntityTemplateCode");
         }
         if (!missingParameters.isEmpty()) {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
 
-        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, provider);
+        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, currentUser.getProvider());
 
         if (cei == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
@@ -289,5 +274,145 @@ public class CustomEntityApi extends BaseApi {
         } else {
             updateEntityInstance(dto, currentUser);
         }
+    }
+
+    public List<CustomEntityTemplateDto> listCustomEntityTemplates(String code, User currentUser) {
+
+        List<CustomEntityTemplate> cets = null;
+        if (StringUtils.isBlank(code)) {
+            cets = customEntityTemplateService.list(currentUser.getProvider());
+        } else {
+            cets = customEntityTemplateService.findByCodeLike(code, currentUser.getProvider());
+        }
+
+        List<CustomEntityTemplateDto> cetDtos = new ArrayList<CustomEntityTemplateDto>();
+
+        for (CustomEntityTemplate cet : cets) {
+
+            Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
+            Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(cet.getCftPrefix(), currentUser.getProvider());
+
+            cetDtos.add(CustomEntityTemplateDto.toDTO(cet, cetFields.values(), cetActions.values()));
+        }
+
+        return cetDtos;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void customizeEntity(EntityCustomizationDto dto, User currentUser) throws MeveoApiException {
+
+        if (StringUtils.isBlank(dto.getClassname())) {
+            missingParameters.add("className");
+        }
+
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        Class clazz;
+        try {
+            clazz = Class.forName(dto.getClassname());
+        } catch (ClassNotFoundException e) {
+            throw new EntityDoesNotExistsException("Customizable entity of class " + dto.getClassname() + " not found");
+        }
+
+        String appliesTo = EntityCustomizationUtils.getAppliesToPrefix(clazz);
+
+        synchronizeCustomFieldsAndActions(appliesTo, dto.getFields(), dto.getActions(), currentUser);
+    }
+
+    private void synchronizeCustomFieldsAndActions(String appliesTo, List<CustomFieldTemplateDto> fields, List<EntityActionScriptDto> actions, User currentUser)
+            throws MeveoApiException {
+
+        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo, currentUser.getProvider());
+
+        // Create, update or remove fields as necessary
+        List<CustomFieldTemplate> cftsToRemove = new ArrayList<CustomFieldTemplate>();
+        if (fields != null && !fields.isEmpty()) {
+
+            for (CustomFieldTemplate cft : cetFields.values()) {
+                boolean found = false;
+                for (CustomFieldTemplateDto cftDto : fields) {
+                    if (cftDto.getCode().equals(cft.getCode())) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                // Old field is no longer needed. Remove by id, as CFT might come detached from cache
+                if (!found) {
+                    cftsToRemove.add(cft);
+                }
+            }
+            // Update or create custom field templates
+            for (CustomFieldTemplateDto cftDto : fields) {
+                customFieldTemplateApi.createOrUpdate(cftDto, appliesTo, currentUser);
+            }
+
+        } else {
+            cftsToRemove.addAll(cetFields.values());
+        }
+
+        for (CustomFieldTemplate cft : cftsToRemove) {
+            customFieldTemplateService.remove(cft.getId());
+        }
+
+        Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(appliesTo, currentUser.getProvider());
+
+        // Create, update or remove fields as necessary
+        List<EntityActionScript> actionsToRemove = new ArrayList<EntityActionScript>();
+        if (actions != null && !actions.isEmpty()) {
+
+            for (EntityActionScript action : cetActions.values()) {
+                boolean found = false;
+                for (EntityActionScriptDto actionDto : actions) {
+                    if (actionDto.getCode().equals(action.getLocalCodeForRead())) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                // Old action is no longer needed. Remove by id, as Action might come detached from cache
+                if (!found) {
+                    actionsToRemove.add(action);
+                }
+            }
+            // Update or create custom field templates
+            for (EntityActionScriptDto actionDto : actions) {
+                scriptInstanceApi.createOrUpdate(actionDto, appliesTo, currentUser);
+            }
+
+        } else {
+            actionsToRemove.addAll(cetActions.values());
+        }
+
+        for (EntityActionScript action : actionsToRemove) {
+            entityActionScriptService.remove(action.getId());
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public EntityCustomizationDto findEntityCustomizations(String customizedEntityClass, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+        if (StringUtils.isBlank(customizedEntityClass)) {
+            missingParameters.add("customizedEntityClass");
+        }
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        Class clazz;
+        try {
+            clazz = Class.forName(customizedEntityClass);
+        } catch (ClassNotFoundException e) {
+            throw new EntityDoesNotExistsException("Customizable entity of class " + customizedEntityClass + " not found");
+        }
+
+        String appliesTo = EntityCustomizationUtils.getAppliesToPrefix(clazz);
+
+        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo, currentUser.getProvider());
+
+        Map<String, EntityActionScript> cetActions = entityActionScriptService.findByAppliesTo(appliesTo, currentUser.getProvider());
+
+        return EntityCustomizationDto.toDTO(clazz, cetFields.values(), cetActions.values());
     }
 }

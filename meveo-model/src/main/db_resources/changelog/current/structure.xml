@@ -1177,4 +1177,8 @@
 
 		<sql>UPDATE CAT_CHARGE_TEMPLATE SET ROUNDING_MODE='NEAREST';</sql>
 	</changeSet>    
+    
+    <changeSet id="#1104_20160102-1" author="AndriusKarpavicius">
+        <dropTable tableName="meveo_script_instance_error"/>
+    </changeSet>      
 </databaseChangeLog>

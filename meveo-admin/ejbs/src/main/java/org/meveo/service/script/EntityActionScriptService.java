@@ -3,7 +3,6 @@ package org.meveo.service.script;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -11,12 +10,9 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
-import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.EntityActionScript;
@@ -26,7 +22,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
 @Singleton
 @Startup
-public class EntityActionScriptService extends CustomScriptService<EntityActionScript, EntityActionInterface> {
+public class EntityActionScriptService extends CustomScriptService<EntityActionScript, ScriptInterface> {
 
     @Inject
     private ResourceBundle resourceMessages;
@@ -82,7 +78,7 @@ public class EntityActionScriptService extends CustomScriptService<EntityActionS
     /**
      * Find a specific entity action/script by a code
      * 
-     * @param code Entity action/script code
+     * @param code Entity action/script code. MUST be in a format of <localCode>|<appliesTo>
      * @param entity Entity that entity actions/scripts apply to
      * @param provider Provider
      * @return Entity action/script
@@ -95,7 +91,7 @@ public class EntityActionScriptService extends CustomScriptService<EntityActionS
     /**
      * Find a specific entity action/script by a code
      * 
-     * @param code Entity action/script code
+     * @param code Entity action/script code. MUST be in a format of <localCode>|<appliesTo>
      * @param appliesTo Entity (CFT appliesTo code) that entity actions/scripts apply to
      * @param provider Provider
      * @return Entity action/script
@@ -148,60 +144,5 @@ public class EntityActionScriptService extends CustomScriptService<EntityActionS
         compile(scriptInstances);
     }
 
-    /**
-     * Execute action on an entity
-     * 
-     * @param entity Entity to execute action on
-     * @param scriptCode Script to execute, identified by a code
-     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
-     * @param currentUser Current user
-     * @param currentProvider Current provider
-     * @return A script execution result value
-     * @throws BusinessException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    public Object execute(IEntity entity, String scriptCode, String encodedParameters, User currentUser, Provider currentProvider) throws InstantiationException,
-            IllegalAccessException, BusinessException {
 
-        Map<String, Object> parameters = new HashMap<String, Object>();
-
-        if (!StringUtils.isEmpty(encodedParameters)) {
-            StringTokenizer tokenizer = new StringTokenizer(encodedParameters, "&");
-            while (tokenizer.hasMoreElements()) {
-                String paramValue = tokenizer.nextToken();
-                String[] paramValueSplit = paramValue.split("=");
-                if (paramValueSplit.length == 2) {
-                    parameters.put(paramValueSplit[0], paramValueSplit[1]);
-                } else {
-                    parameters.put(paramValueSplit[0], null);
-                }
-            }
-
-        }
-        return execute(entity, scriptCode, parameters, currentUser, currentProvider);
-    }
-
-    /**
-     * Execute action on an entity
-     * 
-     * @param entity Entity to execute action on
-     * @param scriptCode Script to execute, identified by a code
-     * @param parameters Additional parameters
-     * @param currentUser Current user
-     * @param currentProvider Current provider
-     * @return A script execution result value
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws BusinessException
-     */
-    public Object execute(IEntity entity, String scriptCode, Map<String, Object> parameters, User currentUser, Provider currentProvider) throws InstantiationException,
-            IllegalAccessException, BusinessException {
-
-        EntityActionInterface classInstance = getScriptInstance(currentProvider, scriptCode);
-        Object result = classInstance.execute(entity, parameters, currentUser, currentProvider);
-
-        log.debug("Script {} on entity {} returned {}", scriptCode, entity, result);
-        return result;
-    }
 }

@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.CurrentProviderBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.scripts.EntityActionScript;
@@ -20,6 +19,7 @@ import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.EntityActionScriptService;
+import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -105,14 +105,14 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
      * @return
      * @throws ClassNotFoundException
      */
-    @SuppressWarnings("unchecked")
     public CustomizedEntity getCustomizedEntity() throws ClassNotFoundException {
 
         if (customizedEntity == null && entityClassName != null && !CustomEntityTemplate.class.getName().equals(entityClassName)) {
             entityClass = Class.forName(entityClassName);
             customizedEntity = new CustomizedEntity(entityClass.getSimpleName(), entityClass, null, null);
+            cetPrefix = EntityCustomizationUtils.getAppliesToPrefix(entityClass);
+
             if (Job.class.isAssignableFrom(entityClass)) {
-                cetPrefix = Job.CFT_PREFIX + "_" + entityClass.getSimpleName();
 
                 // Check and instantiate missing custom field templates for a given job
                 Job job = jobInstanceService.getJobByName(entityClass.getSimpleName());
@@ -120,10 +120,6 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
                 // Create missing custom field templates if needed
                 customFieldTemplateService.createMissingTemplates(cetPrefix, jobCustomFields.values(), getCurrentProvider());
-
-            } else {
-
-                cetPrefix = ((CustomFieldEntity) entityClass.getAnnotation(CustomFieldEntity.class)).cftCodePrefix();
             }
         }
 
@@ -180,7 +176,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     public void refreshFields() {
         groupedFields = null;
     }
-    
+
     public void refreshActions() {
         entityActions = null;
     }

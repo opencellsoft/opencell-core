@@ -28,7 +28,7 @@ public class CustomersResponseDto extends BaseResponse {
 
 	@Override
 	public String toString() {
-		return "ListCustomerResponseDto [customers=" + customers + ", toString()=" + super.toString() + "]";
+		return "CustomersResponseDto [customers=" + customers + ", toString()=" + super.toString() + "]";
 	}
 
 }

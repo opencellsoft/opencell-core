@@ -11,7 +11,7 @@ import org.meveo.api.dto.CustomEntityInstanceDto;
  **/
 @XmlRootElement(name = "GetCustomEntityInstanceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetCustomEntityInstanceResponseDto extends BaseResponse {
+public class CustomEntityInstanceResponseDto extends BaseResponse {
 
     private static final long serialVersionUID = 7328605270701696329L;
 

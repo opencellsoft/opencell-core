@@ -43,7 +43,7 @@ public class EntityActionScriptBean extends BaseBean<EntityActionScript> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         if (entity.isTransient()) {
-            entity.setCode(entity.getLocalCode() + "_" + entity.getAppliesTo());
+            entity.setCode(entity.getLocalCode(), entity.getAppliesTo());
         }
         EntityActionScript actionDuplicate = entityActionScriptService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo(), getCurrentProvider());
         if (actionDuplicate != null && !actionDuplicate.getId().equals(entity.getId())) {

@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.api.BaseApi;
@@ -325,9 +326,9 @@ public class BusinessOfferApi extends BaseApi {
                     creationScriptContext.put("prefix", postData.getServiceCodePrefix());
 
                     try {
-                        scriptInstanceService.execute(currentUser.getProvider(), bomEntity.getCreationScript().getCode(), creationScriptContext, currentUser);
+                        scriptInstanceService.execute(bomEntity.getCreationScript().getCode(), creationScriptContext, currentUser, currentUser.getProvider());
                     
-                    } catch (InvalidPermissionException | ElementNotFoundException e) {
+                    } catch (BusinessException e) {
                         log.error("Failed to execute a BOM creation script {}", bomEntity.getCreationScript().getCode(), e);
                         throw new MeveoApiException(e.getMessage());
                     }

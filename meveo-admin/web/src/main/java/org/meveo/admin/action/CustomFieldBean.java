@@ -39,6 +39,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.script.EntityActionScriptService;
+import org.meveo.service.script.Script;
 
 /**
  * Backing bean for support custom field instances value data entry
@@ -930,11 +931,25 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     public String executeCustomAction(EntityActionScript action, String encodedParameters) {
 
         try {
-            entityActionScriptService.execute(entity, action.getCode(), encodedParameters, getCurrentUser(), getCurrentProvider());
-            messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
+            Map<String, Object> result = entityActionScriptService.execute(entity, action.getCode(), encodedParameters, getCurrentUser(), getCurrentProvider());
 
-        } catch (InstantiationException | IllegalAccessException | BusinessException e) {
-            log.error("Failed to execute a script {} on entity {}", action.getCode(), entity);
+            // Display a message accordingly on what is set in result
+            if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+                messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
+
+            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+                messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
+
+            } else {
+                messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
+            }
+
+            if (result.containsKey(Script.RESULT_GUI_OUTCOME)) {
+                return (String) result.get(Script.RESULT_GUI_OUTCOME);
+            }
+
+        } catch (BusinessException e) {
+            log.error("Failed to execute a script {} on entity {}", action.getCode(), entity, e);
             messages.error(new BundleKey("messages", "scriptInstance.actionExecutionFailed"), action.getLabel(), e.getMessage());
         }
 

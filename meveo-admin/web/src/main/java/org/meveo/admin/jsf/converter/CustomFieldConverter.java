@@ -1,6 +1,5 @@
 package org.meveo.admin.jsf.converter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +11,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.job.Job;
 import org.slf4j.Logger;
 
 /**
@@ -23,9 +24,6 @@ public class CustomFieldConverter implements Converter {
 
 	private List<String> customFields =Arrays.asList("ACCT_CUST", "ACCT_BA", "ACCT_CA", "ACCT_UA", "CHARGE", "SUB",
 			"SELLER", "SERVICE", "CA", "UA", "JOB", "CE", "OFFER", "BA", "ACC", "PROVIDER", "CUST");
-
-	private static final String JOB="JOB";
-	private static final String CE="CE";
 	
 	@Inject
 	private ResourceBundle resourceBundle;
@@ -51,10 +49,11 @@ public class CustomFieldConverter implements Converter {
 		if(StringUtils.isEmpty(value)){
 			return "";
 		}
-		if(value.indexOf(JOB+"_")>=0){
-			value=JOB;
-		}else if(value.indexOf(CE+"_")>=0){
-			value=CE;
+		if(value.indexOf(Job.CFT_PREFIX+"_")>=0){
+			value=Job.CFT_PREFIX;
+			
+		}else if(value.indexOf(CustomEntityTemplate.CFT_PREFIX+"_")>=0){
+			value=CustomEntityTemplate.CFT_PREFIX;
 		}
 		log.debug("cft 's value {}",value);
 		if(customFields.contains(value)){

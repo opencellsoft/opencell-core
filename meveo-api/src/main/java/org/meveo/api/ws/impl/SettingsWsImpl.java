@@ -9,7 +9,6 @@ import org.meveo.api.CalendarApi;
 import org.meveo.api.CatMessagesApi;
 import org.meveo.api.CountryApi;
 import org.meveo.api.CurrencyApi;
-import org.meveo.api.CustomEntityApi;
 import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.InvoiceCategoryApi;
 import org.meveo.api.InvoiceSubCategoryApi;
@@ -20,7 +19,6 @@ import org.meveo.api.OccTemplateApi;
 import org.meveo.api.PermissionApi;
 import org.meveo.api.ProviderApi;
 import org.meveo.api.RoleApi;
-import org.meveo.api.ScriptInstanceApi;
 import org.meveo.api.TaxApi;
 import org.meveo.api.UserApi;
 import org.meveo.api.dto.ActionStatus;
@@ -30,8 +28,6 @@ import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CatMessagesDto;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.CustomEntityInstanceDto;
-import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
@@ -47,8 +43,6 @@ import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.dto.response.GetCurrencyResponse;
-import org.meveo.api.dto.response.GetCustomEntityInstanceResponseDto;
-import org.meveo.api.dto.response.GetCustomEntityTemplateResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
@@ -71,7 +65,6 @@ import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.SettingsWs;
-import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.SellerApiService;
 
 /**
@@ -82,13 +75,7 @@ import org.meveo.service.crm.impl.SellerApiService;
 public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
 	@Inject
-	private ScriptInstanceApi scriptInstanceApi;
-
-	@Inject
 	private CustomFieldTemplateApi customFieldTemplateApi;
-
-    @Inject
-    private CustomEntityApi customEntityTemplateApi;
 
 	@Inject
 	private CountryApi countryApi;
@@ -1305,7 +1292,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customFieldTemplateApi.create(postData, getCurrentUser(), null);
+			customFieldTemplateApi.create(postData, null, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1325,7 +1312,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customFieldTemplateApi.update(postData, getCurrentUser(), null);
+			customFieldTemplateApi.update(postData, null,getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1484,13 +1471,13 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	@Override
 	public ActionStatus createOrUpdateCustomFieldTemplate(CustomFieldTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		try {
-			customFieldTemplateApi.createOrUpdate(postData, getCurrentUser(), null);
-		}catch (MeveoApiException e) {
+        try {
+            customFieldTemplateApi.createOrUpdate(postData, null, getCurrentUser());
+        } catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-		} catch (Exception e) {
+        } catch (Exception e) {
 			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -1640,164 +1627,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		return result;
 		
 	}
-
-    @Override
-    public GetCustomEntityTemplateResponseDto findCustomEntityTemplate(String code) {
-
-        GetCustomEntityTemplateResponseDto result = new GetCustomEntityTemplateResponseDto();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-
-        try {
-            result.setCustomEntityTemplate(customEntityTemplateApi.findEntityTemplate(code, getCurrentUser().getProvider()));
-
-        } catch (Exception e) {
-            super.processException(e, result.getActionStatus());
-        }
-
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
-
-    @Override
-    public ActionStatus removeCustomEntityTemplate(String code) {
-
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            customEntityTemplateApi.removeEntityTemplate(code, getCurrentUser().getProvider());
-
-        } catch (Exception e) {
-            super.processException(e, result);
-        }
-
-        log.debug("RESPONSE={}", result);
-        return result;
-
-    }
-    
-    @Override
-    public ActionStatus createCustomEntityTemplate(CustomEntityTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            customEntityTemplateApi.createEntityTemplate(postData, getCurrentUser());
-
-        } catch (Exception e) {
-            super.processException(e, result);
-        }
-
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
-    
-    @Override
-    public ActionStatus updateCustomEntityTemplate(CustomEntityTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            customEntityTemplateApi.updateEntityTemplate(postData, getCurrentUser());
-
-        } catch (Exception e) {
-            super.processException(e, result);
-        }
-
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
-
-    @Override
-    public ActionStatus createOrUpdateCustomEntityTemplate(CustomEntityTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            customEntityTemplateApi.createOrUpdateEntityTemplate(postData, getCurrentUser());
-
-        } catch (Exception e) {
-            super.processException(e, result);
-        }
-
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
-
-    @Override
-    public GetCustomEntityInstanceResponseDto findCustomEntityInstance(String cetCode, String code) {
-
-        GetCustomEntityInstanceResponseDto result = new GetCustomEntityInstanceResponseDto();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-
-        try {
-            result.setCustomEntityInstance(customEntityTemplateApi.findEntityInstance(cetCode, code,
-                getCurrentUser(CustomEntityTemplate.getPermissionResourceName(cetCode), "read").getProvider()));
-
-        } catch (Exception e) {
-            super.processException(e, result.getActionStatus());
-        }
-
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
-
-    @Override
-    public ActionStatus removeCustomEntityInstance(String cetCode, String code) {
-
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            customEntityTemplateApi.removeEntityInstance(cetCode, code, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(cetCode), "modify").getProvider());
-
-        } catch (Exception e) {
-            super.processException(e, result);
-        }
-
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
-
-    @Override
-    public ActionStatus createCustomEntityInstance(CustomEntityInstanceDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            customEntityTemplateApi.createEntityInstance(dto, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify"));
-            
-        } catch (Exception e) {
-            super.processException(e, result);
-        }
-
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
-
-    @Override
-    public ActionStatus updateCustomEntityInstance(CustomEntityInstanceDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            customEntityTemplateApi.updateEntityInstance(dto, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify"));
-            
-        } catch (Exception e) {
-            super.processException(e, result);
-        }
-
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
-
-    @Override
-    public ActionStatus createOrUpdateCustomEntityInstance(CustomEntityInstanceDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            customEntityTemplateApi.createOrUpdateEntityInstance(dto, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify"));
-            
-        } catch (Exception e) {
-            super.processException(e, result);
-        }
-
-        log.debug("RESPONSE={}", result);
-        return result;
-    }
 
 	@Override
 	public PermissionResponseDto listPermissions() {

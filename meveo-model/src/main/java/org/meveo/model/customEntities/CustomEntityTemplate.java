@@ -21,6 +21,8 @@ public class CustomEntityTemplate extends BusinessEntity implements Comparable<C
 
     private static final long serialVersionUID = 8281478284763353310L;
 
+    public static String CFT_PREFIX = "CE";
+
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
@@ -33,7 +35,7 @@ public class CustomEntityTemplate extends BusinessEntity implements Comparable<C
     }
 
     public String getCftPrefix() {
-        return "CE_" + getCode();
+        return CFT_PREFIX + "_" + getCode();
     }
 
     public String getPermissionResourceName() {

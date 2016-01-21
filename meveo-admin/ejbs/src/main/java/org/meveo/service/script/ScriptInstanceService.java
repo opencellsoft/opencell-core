@@ -105,42 +105,28 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
     /**
      * Execute the script identified by a script code. No init nor finalize methods are called.
      * 
-     * @param provider Provider
      * @param scriptCode ScriptInstanceCode
-     * @param context Context parameters
-     * @param user User executor
-     * @throws InvalidPermissionException 
-     * @throws ElementNotFoundException 
+     * @param context Context parameters (optional)
+     * @param currentUser User executor
+     * @param currentProvider Provider
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws ElementNotFoundException Script not found
+     * @throws BusinessException Any execution exception
      */
-    public void execute(Provider provider, String scriptCode, Map<String, Object> context, User userExecutor) throws InvalidPermissionException, ElementNotFoundException {
+    @Override
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws InvalidPermissionException,
+            ElementNotFoundException, BusinessException {
 
-        ScriptInstance scriptInstance = findByCode(scriptCode, provider);
+        // Check access to the script
+        ScriptInstance scriptInstance = findByCode(scriptCode, currentProvider);
         if (scriptInstance == null) {
             log.debug("ScriptInstance with {} does not exist", scriptCode);
             throw new ElementNotFoundException(scriptCode, "ScriptInstance");
         }
         isUserHasExecutionRole(scriptInstance, getCurrentUser());
-        try {
-            execute(getScriptInstance(provider, scriptCode), context, provider, userExecutor);
-        } catch (Exception e) {
-            log.error("Script execution failed", e);
-        }
-    }
 
-    /**
-     * Execute a class that extends Script
-     * 
-     * @param scriptClass
-     * @param context
-     * @param provider
-     * @param user User executor
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws BusinessException
-     */
-    private void execute(ScriptInterface script, Map<String, Object> context, Provider provider, User userExecutor) throws InstantiationException, IllegalAccessException,
-            BusinessException {
-        script.execute(context, provider, userExecutor);
+        return super.execute(scriptCode, context, currentUser, currentProvider);
     }
 
     /**
@@ -150,16 +136,16 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @param scriptCode
      * @param context
      */
-    public void test(Provider provider, String scriptCode, Map<String, Object> context, User userExecutor) {
+    public void test(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) {
         try {
-            clearLogs(provider.getCode(), scriptCode);
-            ScriptInstance scriptInstance = findByCode(scriptCode, provider);
-            isUserHasExecutionRole(scriptInstance, userExecutor);
+            clearLogs(currentProvider.getCode(), scriptCode);
+            ScriptInstance scriptInstance = findByCode(scriptCode, currentProvider);
+            isUserHasExecutionRole(scriptInstance, currentUser);
             String javaSrc = scriptInstance.getScript();
-            javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\"" + provider.getCode()
+            javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\"" + currentProvider.getCode()
                     + "\",\"" + scriptCode + "\",\"ScriptInstanceService\");//");
             Class<ScriptInterface> compiledScript = compileJavaSource(javaSrc, getPackageName(scriptInstance.getScript()) + "." + getClassName(scriptInstance.getScript()));
-            execute(compiledScript.newInstance(), context, provider, userExecutor);
+            execute(compiledScript.newInstance(), context, currentUser, currentProvider);
 
         } catch (Exception e) {
             log.error("Script test failed", e);

@@ -10,8 +10,6 @@ import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CatMessagesDto;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.CustomEntityInstanceDto;
-import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
@@ -27,8 +25,6 @@ import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.dto.response.GetCurrencyResponse;
-import org.meveo.api.dto.response.GetCustomEntityInstanceResponseDto;
-import org.meveo.api.dto.response.GetCustomEntityTemplateResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
@@ -323,43 +319,6 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createOrUpdateCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
-
-	// Custom entity templates
-
-	@WebMethod
-	GetCustomEntityTemplateResponseDto findCustomEntityTemplate(@WebParam(name = "code") String code);
-
-	@WebMethod
-	ActionStatus removeCustomEntityTemplate(@WebParam(name = "code") String code);
-
-	@WebMethod
-	ActionStatus createCustomEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
-
-	@WebMethod
-	ActionStatus updateCustomEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
-
-	@WebMethod
-	ActionStatus createOrUpdateCustomEntityTemplate(
-			@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
-
-	// Custom entity instances
-
-	@WebMethod
-	GetCustomEntityInstanceResponseDto findCustomEntityInstance(@WebParam(name = "cetCode") String cetCode,
-			@WebParam(name = "code") String code);
-
-	@WebMethod
-	ActionStatus removeCustomEntityInstance(@WebParam(name = "cetCode") String cetCode,
-			@WebParam(name = "code") String code);
-
-	@WebMethod
-	ActionStatus createCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
-
-	@WebMethod
-	ActionStatus updateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
-
-	@WebMethod
-	ActionStatus createOrUpdateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
 
 	// permission
 

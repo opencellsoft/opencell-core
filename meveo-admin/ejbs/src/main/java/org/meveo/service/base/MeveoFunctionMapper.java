@@ -14,12 +14,15 @@ import javax.naming.NamingException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.script.EntityActionScriptService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +41,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
     private static CustomFieldInstanceService customFieldInstanceService;
 
     private static EntityActionScriptService entityActionScriptService;
+
+    private static ScriptInstanceService scriptInstanceService;
 
     public MeveoFunctionMapper() {
 
@@ -73,6 +78,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 Date.class, Object.class, Object.class, Object.class, Object.class));
             addFunction("mv", "getCFValueByMatrixForDate5Keys", MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate5Keys", ICustomFieldEntity.class, String.class,
                 Date.class, Object.class, Object.class, Object.class, Object.class, Object.class));
+
+            addFunction("mv", "executeAction", MeveoFunctionMapper.class.getMethod("executeAction", IEntity.class, String.class, String.class, User.class, Provider.class));
 
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
@@ -144,6 +151,26 @@ public class MeveoFunctionMapper extends FunctionMapper {
             }
         }
         return entityActionScriptService;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ScriptInstanceService getScriptInstanceService() {
+
+        if (scriptInstanceService == null) {
+            try {
+                InitialContext initialContext = new InitialContext();
+                BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+
+                Bean<ScriptInstanceService> bean = (Bean<ScriptInstanceService>) beanManager.resolve(beanManager.getBeans(ScriptInstanceService.class));
+                scriptInstanceService = (ScriptInstanceService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+
+            } catch (NamingException e) {
+                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+                log.error("Unable to access ScriptInstanceService", e);
+                throw new RuntimeException(e);
+            }
+        }
+        return scriptInstanceService;
     }
 
     /**
@@ -396,15 +423,30 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param currentProvider Current provider
      * @return A script execution result value
      */
-    public static Object executeEntityAction(IEntity entity, String scriptCode, String encodedParameters, User currentUser, Provider currentProvider) {
+    public static Object executeAction(IEntity entity, String scriptCode, String encodedParameters, User currentUser, Provider currentProvider) {
 
-        Object result = null;
+        Map<String, Object> result = null;
 
         try {
-            result = getEntityActionScriptService().execute(entity, scriptCode, encodedParameters, currentUser, currentProvider);
-        } catch (InstantiationException | IllegalAccessException | BusinessException e) {
+            try {
+                result = getEntityActionScriptService().execute(entity, scriptCode, encodedParameters, currentUser, currentProvider);
+            } catch (ElementNotFoundException enf) {
+                result = null;
+            }
+
+            try {
+                result = getScriptInstanceService().execute(entity, scriptCode, encodedParameters, currentUser, currentProvider);
+            } catch (ElementNotFoundException enf) {
+                result = null;
+            }
+
+        } catch (BusinessException e) {
             Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
-            log.error("Failed to execute a script {} on entity {}", scriptCode, entity);
+            log.error("Failed to execute a script {} on entity {}", scriptCode, entity, e);
+        }
+
+        if (result != null && result.containsKey(Script.RESULT_VALUE)) {
+            return result.get(Script.RESULT_VALUE);
         }
 
         return result;

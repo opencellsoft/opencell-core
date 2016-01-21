@@ -39,7 +39,6 @@ public abstract class CustomScript extends BusinessEntity {
     @Column(name = "SRC_TYPE")
     private ScriptSourceTypeEnum sourceTypeEnum = ScriptSourceTypeEnum.JAVA;
 
-//    @OneToMany(mappedBy = "script", orphanRemoval = true, fetch = FetchType.EAGER)
     @Transient
     private List<ScriptInstanceError> scriptErrors = new ArrayList<ScriptInstanceError>();
 

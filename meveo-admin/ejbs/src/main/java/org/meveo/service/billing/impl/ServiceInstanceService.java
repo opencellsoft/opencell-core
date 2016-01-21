@@ -306,8 +306,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			Map<String, Object> scriptContext = new HashMap<>();
 			scriptContext.put("serviceInstance", serviceInstance);
 
-			scriptInstanceService.execute(creator.getProvider(), serviceInstance.getServiceTemplate()
-					.getActivationScript().getCode(), scriptContext, creator);
+			scriptInstanceService.execute(serviceInstance.getServiceTemplate()
+					.getActivationScript().getCode(), scriptContext, creator, creator.getProvider());
 		}
 	}
 
@@ -339,8 +339,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			scriptContext.put("terminationDate", terminationDate);
 			scriptContext.put("terminationReason", terminationReason);
 
-			scriptInstanceService.execute(user.getProvider(), serviceInstance.getServiceTemplate()
-					.getTerminationScript().getCode(), scriptContext, user);
+			scriptInstanceService.execute(serviceInstance.getServiceTemplate()
+					.getTerminationScript().getCode(), scriptContext, user, user.getProvider());
 		}
 
 		String serviceCode = serviceInstance.getCode();

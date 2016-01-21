@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CustomEntityInstanceDto;
-import org.meveo.api.dto.response.GetCustomEntityInstanceResponseDto;
+import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
@@ -27,22 +27,22 @@ public interface CustomEntityInstanceRs extends IBaseRs {
 
     @POST
     @Path("/{customEntityTemplateCode}")
-    ActionStatus create(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto postData);
+    ActionStatus create(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto dto);
 
     @PUT
     @Path("/{customEntityTemplateCode}")
-    ActionStatus update(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto postData);
+    ActionStatus update(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto dto);
 
     @DELETE
-    @Path("/{customEntityTemplateCode}/{customEntityInstanceCode}")
-    ActionStatus remove(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("customEntityInstanceCode") String customEntityInstanceCode);
+    @Path("/{customEntityTemplateCode}/{code}")
+    ActionStatus remove(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 
     @GET
-    @Path("/{customEntityTemplateCode}/{customEntityInstanceCode}")
-    GetCustomEntityInstanceResponseDto find(@PathParam("customEntityTemplateCode") String customEntityTemplateCode,
-            @PathParam("customEntityInstanceCode") String customEntityInstanceCode);
+    @Path("/{customEntityTemplateCode}/{code}")
+    CustomEntityInstanceResponseDto find(@PathParam("customEntityTemplateCode") String customEntityTemplateCode,
+            @PathParam("code") String code);
 
     @POST
     @Path("/{customEntityTemplateCode}/createOrUpdate")
-    ActionStatus createOrUpdate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto postData);
+    ActionStatus createOrUpdate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto dto);
 }

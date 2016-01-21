@@ -28,11 +28,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
-import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -70,9 +68,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
 			scriptContext.put("subscription", subscription);
 
 			try {
-                scriptInstanceService.execute(provider, subscription.getOffer().getSubscriptionScript().getCode(),
-                		scriptContext, creator);
-            } catch (InvalidPermissionException | ElementNotFoundException e) {
+                scriptInstanceService.execute(subscription.getOffer().getSubscriptionScript().getCode(),
+                		scriptContext, creator, provider);
+            } catch (BusinessException e) {
                 log.error("Failed to execute a script {}", subscription.getOffer().getSubscriptionScript().getCode(), e);
             }
 		}
@@ -194,8 +192,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
 			scriptContext.put("terminationDate", terminationDate);
 			scriptContext.put("terminationReason", terminationReason);
 
-			scriptInstanceService.execute(user.getProvider(), subscription.getOffer().getTerminationScript().getCode(),
-					scriptContext, user);
+			scriptInstanceService.execute(subscription.getOffer().getTerminationScript().getCode(),
+					scriptContext, user, user.getProvider());
 		}
 
 		List<ServiceInstance> serviceInstances = subscription

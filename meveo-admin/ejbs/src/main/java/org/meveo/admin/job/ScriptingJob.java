@@ -49,7 +49,7 @@ public class ScriptingJob extends Job {
             if (context == null) {
                 context = new HashMap<String, Object>();
             }
-            scriptInstanceService.execute(currentUser.getProvider(), scriptCode, context, currentUser);
+            scriptInstanceService.execute(scriptCode, context, currentUser, currentUser.getProvider());
         } catch (Exception e) {
             result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
         }

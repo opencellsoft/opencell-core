@@ -12,27 +12,20 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.scripts.EntityActionScript;
 
 /**
  * @author Andrius Karpavicius
  **/
 
-@XmlRootElement(name = "CustomEntityTemplate")
+@XmlRootElement(name = "EntityCustomization")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomEntityTemplateDto extends BaseDto {
+public class EntityCustomizationDto extends BaseDto {
 
-    private static final long serialVersionUID = -6633504145323452803L;
-
-    @XmlAttribute(required = true)
-    private String code;
+    private static final long serialVersionUID = 5242092476533516746L;
 
     @XmlAttribute(required = true)
-    private String name;
-
-    @XmlAttribute(required = false)
-    private String description;
+    private String classname;
 
     @XmlElementWrapper(name = "fields")
     @XmlElement(name = "field")
@@ -42,32 +35,16 @@ public class CustomEntityTemplateDto extends BaseDto {
     @XmlElement(name = "action")
     private List<EntityActionScriptDto> actions;
 
-    public CustomEntityTemplateDto() {
+    public EntityCustomizationDto() {
 
     }
 
-    public String getCode() {
-        return code;
+    public String getClassname() {
+        return classname;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setClassname(String classname) {
+        this.classname = classname;
     }
 
     public List<CustomFieldTemplateDto> getFields() {
@@ -94,11 +71,10 @@ public class CustomEntityTemplateDto extends BaseDto {
      * @param cetActions Actions (EntityActionScript) available on CustomEntityTemplate
      * @return A CustomEntityTemplateDto object with fields set
      */
-    public static CustomEntityTemplateDto toDTO(CustomEntityTemplate cet, Collection<CustomFieldTemplate> cetFields, Collection<EntityActionScript> cetActions) {
-        CustomEntityTemplateDto dto = new CustomEntityTemplateDto();
-        dto.setCode(cet.getCode());
-        dto.setName(cet.getName());
-        dto.setDescription(cet.getDescription());
+    @SuppressWarnings("rawtypes")
+    public static EntityCustomizationDto toDTO(Class clazz, Collection<CustomFieldTemplate> cetFields, Collection<EntityActionScript> cetActions) {
+        EntityCustomizationDto dto = new EntityCustomizationDto();
+        dto.setClassname(clazz.getName());
 
         if (cetFields != null) {
             List<CustomFieldTemplateDto> fields = new ArrayList<CustomFieldTemplateDto>();
@@ -119,28 +95,10 @@ public class CustomEntityTemplateDto extends BaseDto {
         return dto;
     }
 
-    /**
-     * Convert CustomEntityTemplateDto to a CustomEntityTemplate instance. Note: does not convert custom fields that are part of DTO
-     * 
-     * @param dto CustomEntityTemplateDto object to convert
-     * @param cetToUpdate CustomEntityTemplate to update with values from dto, or if null create a new one
-     * @return A new or updated CustomEntityTemplate instance
-     */
-    public static CustomEntityTemplate fromDTO(CustomEntityTemplateDto dto, CustomEntityTemplate cetToUpdate) {
-        CustomEntityTemplate cet = new CustomEntityTemplate();
-        if (cetToUpdate != null) {
-            cet = cetToUpdate;
-        }
-        cet.setCode(dto.getCode());
-        cet.setName(dto.getName());
-        cet.setDescription(dto.getDescription());
-
-        return cet;
-    }
-
     @Override
     public String toString() {
-        return "CustomEntityTemplateDto [code=" + code + ", name=" + name + ", description=" + description + ", fields=" + fields + "]";
+        final int maxLen = 10;
+        return String.format("EntityCustomizationDto [classname=%s, fields=%s, actions=%s]", classname, fields != null ? fields.subList(0, Math.min(fields.size(), maxLen)) : null,
+            actions != null ? actions.subList(0, Math.min(actions.size(), maxLen)) : null);
     }
-
 }

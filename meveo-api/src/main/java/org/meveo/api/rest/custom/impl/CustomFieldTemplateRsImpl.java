@@ -2,6 +2,7 @@ package org.meveo.api.rest.custom.impl;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -26,112 +27,112 @@ import org.meveo.api.rest.impl.BaseRs;
 @Api(value = "/customFieldTemplate", tags = "customFieldTemplate")
 public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemplateRs {
 
-	@Inject
-	private CustomFieldTemplateApi customFieldTemplateApi;
+    @Inject
+    private CustomFieldTemplateApi customFieldTemplateApi;
 
-	@Override
-	@ApiOperation(value = "")
-	public ActionStatus create(CustomFieldTemplateDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    @ApiOperation(value = "Define a new custom field", response = ActionStatus.class)
+    public ActionStatus create(CustomFieldTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			customFieldTemplateApi.create(postData, getCurrentUser(), null);
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            customFieldTemplateApi.create(postData, null, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-	@Override
-	@ApiOperation(value = "")
-	public ActionStatus update(CustomFieldTemplateDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    @ApiOperation(value = "Update existing custom field definition", response = ActionStatus.class)
+    public ActionStatus update(CustomFieldTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			customFieldTemplateApi.update(postData, getCurrentUser(), null);
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            customFieldTemplateApi.update(postData, null, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-	@Override
-	@ApiOperation(value = "")
-	public ActionStatus remove(String customFieldTemplateCode, String appliesTo) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    @ApiOperation(value = "Remove custom field definition given its code and entity it applies to", response = ActionStatus.class)
+    public ActionStatus remove(@ApiParam(value = "Custom field template code") String customFieldTemplateCode, @ApiParam(value = "Entity custom field applies to") String appliesTo) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser().getProvider());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser().getProvider());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-	@Override
-	@ApiOperation(value = "")
-	public GetCustomFieldTemplateReponseDto find(String customFieldTemplateCode, String appliesTo) {
-		GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
+    @Override
+    @ApiOperation(value = "Get custom field definition", response = GetCustomFieldTemplateReponseDto.class)
+    public GetCustomFieldTemplateReponseDto find(@ApiParam(value = "Custom field template code") String customFieldTemplateCode,
+            @ApiParam(value = "Entity custom field applies to") String appliesTo) {
+        GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
-		try {
-			result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo,
-					getCurrentUser().getProvider()));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+        try {
+            result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo, getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-	@Override
-	@ApiOperation(value = "")
-	public ActionStatus createOrUpdate(CustomFieldTemplateDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    @ApiOperation(value = "Define new or update existing custom field definition", response = ActionStatus.class)
+    public ActionStatus createOrUpdate(CustomFieldTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			customFieldTemplateApi.createOrUpdate(postData, getCurrentUser(), null);
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            customFieldTemplateApi.createOrUpdate(postData, null, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 }
