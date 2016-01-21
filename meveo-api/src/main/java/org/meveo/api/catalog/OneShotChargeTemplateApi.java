@@ -16,6 +16,7 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
+import org.meveo.api.dto.catalog.RoundingModeDtoEnum;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -116,7 +117,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
 					}
 				}
 			}
-
+			if(postData.getRoundingModeDtoEnum() == null){
+				postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
+			}
 			OneShotChargeTemplate chargeTemplate = new OneShotChargeTemplate();
 			chargeTemplate.setCode(postData.getCode());
 			chargeTemplate.setDescription(postData.getDescription());
@@ -230,7 +233,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
 					}
 				}
 			}
-
+			if(postData.getRoundingModeDtoEnum() == null){
+				postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
+			}
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
 			chargeTemplate.setAmountEditable(postData.getAmountEditable());

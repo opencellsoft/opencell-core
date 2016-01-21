@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.catalog.RoundingModeDtoEnum;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -84,6 +85,9 @@ public class UsageChargeTemplateApi extends BaseApi {
 				}
 			}
 
+			if(postData.getRoundingModeDtoEnum() == null){
+				postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
+			}
 			UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
 			chargeTemplate.setCode(postData.getCode());
 			chargeTemplate.setDescription(postData.getDescription());
@@ -192,7 +196,9 @@ public class UsageChargeTemplateApi extends BaseApi {
 					}
 				}
 			}
-
+			if(postData.getRoundingModeDtoEnum() == null){
+				postData.setRoundingModeDtoEnum(RoundingModeDtoEnum.NEAREST);
+			}
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
 			chargeTemplate.setAmountEditable(postData.getAmountEditable());
