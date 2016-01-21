@@ -46,6 +46,7 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
 	private String ratingUnitDescription;
 	private BigDecimal unitMultiplicator;
 	private int unitNbDecimal;
+	private RoundingModeDtoEnum roundingModeDtoEnum;
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
@@ -68,7 +69,7 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
 				triggeredEdrs.getTriggeredEdr().add(new TriggeredEdrTemplateDto(edrTemplate));
 			}
 		}
-		
+		roundingModeDtoEnum = RoundingModeDtoEnum.valueOf(e.getRoundingMode().name());
 		customFields = CustomFieldsDto.toDTO(customFieldInstances);
 	}
 
@@ -103,7 +104,7 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
 				+ ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription
 				+ ", ratingUnitDescription=" + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator
 				+ ", unitNbDecimal=" + unitNbDecimal + ", customFields=" + customFields + ", triggeredEdrs="
-				+ triggeredEdrs + "]";
+				+ triggeredEdrs + ",roundingModeDtoEnum="+roundingModeDtoEnum+"]";
 	}
 
 	public Boolean getAmountEditable() {
@@ -176,6 +177,14 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	public RoundingModeDtoEnum getRoundingModeDtoEnum() {
+		return roundingModeDtoEnum;
+	}
+
+	public void setRoundingModeDtoEnum(RoundingModeDtoEnum roundingModeDtoEnum) {
+		this.roundingModeDtoEnum = roundingModeDtoEnum;
 	}
 
 }
