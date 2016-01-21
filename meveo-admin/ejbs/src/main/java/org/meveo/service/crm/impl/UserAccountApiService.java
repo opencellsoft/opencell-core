@@ -60,9 +60,10 @@ public class UserAccountApiService extends AccountApiService {
 
 			userAccount.setBillingAccount(billingAccount);
 			userAccount.setProvider(currentUser.getProvider());
+			userAccount.setExternalRef1(postData.getExternalRef1());
+			userAccount.setExternalRef2(postData.getExternalRef2());
 			
 			try {
-				
 				userAccountService.createUserAccount(billingAccount,
 						userAccount, currentUser);
 			} catch (AccountAlreadyExistsException e) {
@@ -122,6 +123,13 @@ public class UserAccountApiService extends AccountApiService {
 							BillingAccount.class, postData.getBillingAccount());
 				}
 				userAccount.setBillingAccount(billingAccount);
+			}
+			
+			if (!StringUtils.isBlank(postData.getExternalRef1())) {
+				userAccount.setExternalRef1(postData.getExternalRef1());
+			}
+			if (!StringUtils.isBlank(postData.getExternalRef1())) {
+				userAccount.setExternalRef2(postData.getExternalRef2());
 			}
 			
 			updateAccount(userAccount, postData, currentUser, checkCustomFields);

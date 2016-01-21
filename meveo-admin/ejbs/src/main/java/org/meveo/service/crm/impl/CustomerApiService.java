@@ -100,6 +100,8 @@ public class CustomerApiService extends AccountApiService {
 			customer.setMandateDate(postData.getMandateDate());
 			customer.setMandateIdentification(postData
 					.getMandateIdentification());
+			customer.setExternalRef1(postData.getExternalRef1());
+			customer.setExternalRef2(postData.getExternalRef2());
 
 			if (postData.getContactInformation() != null) {
 				customer.getContactInformation().setEmail(
@@ -213,6 +215,13 @@ public class CustomerApiService extends AccountApiService {
 			if (!StringUtils.isBlank(postData.getMandateIdentification())) {
 				customer.setMandateIdentification(postData
 						.getMandateIdentification());
+			}
+			
+			if (!StringUtils.isBlank(postData.getExternalRef1())) {
+				customer.setExternalRef1(postData.getExternalRef1());
+			}
+			if (!StringUtils.isBlank(postData.getExternalRef2())) {
+				customer.setExternalRef2(postData.getExternalRef2());
 			}
 
 			if (postData.getContactInformation() != null) {

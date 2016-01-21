@@ -62,9 +62,6 @@ public class CustomerAccountApiService extends AccountApiService {
 	@Inject
 	private TradingLanguageService tradingLanguageService;
 	
-	@Inject
-	private CustomFieldInstanceService customFieldInstanceService;
-	
 	@EJB
 	private AccountHierarchyApiService accountHierarchyApiService;
 
@@ -131,6 +128,8 @@ public class CustomerAccountApiService extends AccountApiService {
 			customerAccount.setMandateDate(postData.getMandateDate());
 			customerAccount.setMandateIdentification(postData
 					.getMandateIdentification());
+			customerAccount.setExternalRef1(postData.getExternalRef1());
+			customerAccount.setExternalRef2(postData.getExternalRef2());
 
 			if (postData.getContactInformation() != null) {
 				customerAccount.getContactInformation().setEmail(
@@ -284,6 +283,13 @@ public class CustomerAccountApiService extends AccountApiService {
 			if (!StringUtils.isBlank(postData.getMandateIdentification())) {
 				customerAccount.setMandateIdentification(postData
 						.getMandateIdentification());
+			}
+			
+			if (!StringUtils.isBlank(postData.getExternalRef1())) {
+				customerAccount.setExternalRef1(postData.getExternalRef1());
+			}
+			if (!StringUtils.isBlank(postData.getExternalRef2())) {
+				customerAccount.setExternalRef2(postData.getExternalRef2());
 			}
 
 			customerAccountService.updateAudit(customerAccount, currentUser);

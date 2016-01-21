@@ -147,6 +147,8 @@ public class BillingAccountApiService extends AccountApiService {
 						.getElectronicBilling());
 			}
 			billingAccount.setEmail(postData.getEmail());
+			billingAccount.setExternalRef1(postData.getExternalRef1());
+			billingAccount.setExternalRef2(postData.getExternalRef2());
 
 			if (postData.getBankCoordinates() != null) {
 				billingAccount.getBankCoordinates().setBankCode(
@@ -309,6 +311,13 @@ public class BillingAccountApiService extends AccountApiService {
 					log.warn("InvalidEnum for paymentTerm with name={}",
 							postData.getPaymentTerms());
 				}
+			}
+			
+			if (!StringUtils.isBlank(postData.getExternalRef1())) {
+				billingAccount.setExternalRef1(postData.getExternalRef1());
+			}
+			if (!StringUtils.isBlank(postData.getExternalRef2())) {
+				billingAccount.setExternalRef2(postData.getExternalRef2());
 			}
 			
 			updateAccount(billingAccount, postData, currentUser, checkCustomFields);

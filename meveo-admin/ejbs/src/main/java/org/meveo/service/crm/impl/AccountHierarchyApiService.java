@@ -2,7 +2,6 @@ package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -839,7 +838,7 @@ public class AccountHierarchyApiService extends BaseApi {
 
 		// custom fields
 		if (postData.getCustomFields() != null) {
-			for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+			for (@SuppressWarnings("unused") CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 //				qb.addCriterion("KEY(c.customFields)", "=", cfDto.getCode(), true); // TODO FIX me - custom fields are no longer tied to entity
 			}
 		}
@@ -2155,6 +2154,8 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerDto.setName(name);
 			customerDto.setAddress(address);
 			customerDto.setContactInformation(contactInformation);
+			customerDto.setExternalRef1(postData.getExternalRef1());
+			customerDto.setExternalRef2(postData.getExternalRef2());
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
@@ -2198,6 +2199,8 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerAccountDto.setName(name);
 			customerAccountDto.setAddress(address);
 			customerAccountDto.setContactInformation(contactInformation);
+			customerAccountDto.setExternalRef1(postData.getExternalRef1());
+			customerAccountDto.setExternalRef2(postData.getExternalRef2());
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
@@ -2258,6 +2261,8 @@ public class AccountHierarchyApiService extends BaseApi {
 			}
 			billingAccountDto.setName(name);
 			billingAccountDto.setAddress(address);
+			billingAccountDto.setExternalRef1(postData.getExternalRef1());
+			billingAccountDto.setExternalRef2(postData.getExternalRef2());
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
@@ -2293,6 +2298,8 @@ public class AccountHierarchyApiService extends BaseApi {
 			userAccountDto.setStatus(postData.getUaStatus());
 			userAccountDto.setName(name);
 			userAccountDto.setAddress(address);
+			userAccountDto.setExternalRef1(postData.getExternalRef1());
+			userAccountDto.setExternalRef2(postData.getExternalRef2());
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
@@ -2394,6 +2401,8 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerDto.setName(name);
 			customerDto.setAddress(address);
 			customerDto.setContactInformation(contactInformation);
+			customerDto.setExternalRef1(postData.getExternalRef1());
+			customerDto.setExternalRef2(postData.getExternalRef2());
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
@@ -2437,6 +2446,8 @@ public class AccountHierarchyApiService extends BaseApi {
 			customerAccountDto.setName(name);
 			customerAccountDto.setAddress(address);
 			customerAccountDto.setContactInformation(contactInformation);
+			customerAccountDto.setExternalRef1(postData.getExternalRef1());
+			customerAccountDto.setExternalRef2(postData.getExternalRef2());
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
@@ -2497,6 +2508,8 @@ public class AccountHierarchyApiService extends BaseApi {
 			}
 			billingAccountDto.setName(name);
 			billingAccountDto.setAddress(address);
+			billingAccountDto.setExternalRef1(postData.getExternalRef1());
+			billingAccountDto.setExternalRef2(postData.getExternalRef2());
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
@@ -2532,6 +2545,8 @@ public class AccountHierarchyApiService extends BaseApi {
 			userAccountDto.setStatus(postData.getUaStatus());
 			userAccountDto.setName(name);
 			userAccountDto.setAddress(address);
+			userAccountDto.setExternalRef1(postData.getExternalRef1());
+			userAccountDto.setExternalRef2(postData.getExternalRef2());
 
 			CustomFieldsDto cfsDto = new CustomFieldsDto();
 			if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
