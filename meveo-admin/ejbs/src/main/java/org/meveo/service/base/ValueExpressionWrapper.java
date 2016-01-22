@@ -108,7 +108,7 @@ public class ValueExpressionWrapper {
         expression = StringUtils.trim(expression);
 
         if (expression.indexOf("#{") < 0) {
-            log.debug("the expression '{}' doesnt contain any EL", expression);
+            log.debug("the expression '{}' doesn't contain any EL", expression);
             if (resultClass.equals(String.class)) {
                 return expression;
             } else if (resultClass.equals(Double.class)) {

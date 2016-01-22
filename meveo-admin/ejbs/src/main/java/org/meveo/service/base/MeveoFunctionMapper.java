@@ -79,7 +79,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCFValueByMatrixForDate5Keys", MeveoFunctionMapper.class.getMethod("getCFValueByMatrixForDate5Keys", ICustomFieldEntity.class, String.class,
                 Date.class, Object.class, Object.class, Object.class, Object.class, Object.class));
 
-            addFunction("mv", "executeAction", MeveoFunctionMapper.class.getMethod("executeAction", IEntity.class, String.class, String.class, User.class, Provider.class));
+            addFunction("mv", "executeScript", MeveoFunctionMapper.class.getMethod("executeScript", IEntity.class, String.class, String.class, User.class, Provider.class));
 
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
@@ -414,7 +414,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
     }
 
     /**
-     * Execute action on an entity
+     * Execute script on an entity
      * 
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
@@ -423,7 +423,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param currentProvider Current provider
      * @return A script execution result value
      */
-    public static Object executeAction(IEntity entity, String scriptCode, String encodedParameters, User currentUser, Provider currentProvider) {
+    public static Object executeScript(IEntity entity, String scriptCode, String encodedParameters, User currentUser, Provider currentProvider) {
 
         Map<String, Object> result = null;
 
