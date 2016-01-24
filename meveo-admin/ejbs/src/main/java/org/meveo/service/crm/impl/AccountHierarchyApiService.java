@@ -2659,7 +2659,6 @@ public class AccountHierarchyApiService extends BaseApi {
 
         dto.setCustomFields(CustomFieldsDto.toDTO(customFieldInstanceService.getCustomFieldInstances(account)));
 
-        dto.setLoaded(true);
     }
 
     public CustomerDto customerToDto(Customer customer) {
