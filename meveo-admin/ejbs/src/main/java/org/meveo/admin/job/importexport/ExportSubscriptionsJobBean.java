@@ -86,7 +86,7 @@ public class ExportSubscriptionsJobBean {
         Subscription dto = new Subscription();
         if (sub != null) {
             dto.setSubscriptionDate ( sub.getSubscriptionDate() == null ? null : DateUtils.formatDateWithPattern(sub.getSubscriptionDate(), dateFormat));
-            dto.setEndAgreementDate ( sub.getEndAgrementDate() == null ? null : DateUtils.formatDateWithPattern(sub.getEndAgrementDate(), dateFormat));
+            dto.setEndAgreementDate ( sub.getEndAgreementDate() == null ? null : DateUtils.formatDateWithPattern(sub.getEndAgreementDate(), dateFormat));
             dto.setDescription ( sub.getDescription());
             dto.setCustomFields ( CustomFields.toDTO(customFieldInstanceService.getCustomFieldInstances(sub)));
             dto.setCode ( sub.getCode());

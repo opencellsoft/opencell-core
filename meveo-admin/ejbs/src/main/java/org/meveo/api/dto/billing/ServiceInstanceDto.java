@@ -28,6 +28,7 @@ public class ServiceInstanceDto extends BaseDto {
 	private Date terminationDate;
 	private BigDecimal quantity;
 	private String terminationReason;
+	private Date endAgreementDate;
 
 	public ServiceInstanceDto() {
 
@@ -43,6 +44,7 @@ public class ServiceInstanceDto extends BaseDto {
 		if (e.getSubscriptionTerminationReason() != null) {
 			terminationReason = e.getSubscriptionTerminationReason().getCode();
 		}
+		endAgreementDate = e.getEndAgreementDate();
 	}
 
 	public String getCode() {
@@ -107,4 +109,11 @@ public class ServiceInstanceDto extends BaseDto {
 		this.description = description;
 	}
 
+	public Date getEndAgreementDate() {
+        return endAgreementDate;
+    }
+	
+	public void setEndAgreementDate(Date endAgreementDate) {
+        this.endAgreementDate = endAgreementDate;
+    }
 }

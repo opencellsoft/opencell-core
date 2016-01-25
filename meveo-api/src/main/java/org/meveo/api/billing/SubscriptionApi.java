@@ -114,6 +114,7 @@ public class SubscriptionApi extends BaseApi {
 
             subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
+			subscription.setEndAgreementDate(postData.getEndAgreementDate());
 
 			subscriptionService.create(subscription, currentUser, provider);
 			
@@ -175,7 +176,7 @@ public class SubscriptionApi extends BaseApi {
 			subscription.setDescription(postData.getDescription());
 			subscription.setSubscriptionDate(postData.getSubscriptionDate());
 			subscription.setTerminationDate(postData.getTerminationDate());
-
+			subscription.setEndAgreementDate(postData.getEndAgreementDate());
 
             subscription = subscriptionService.update(subscription, currentUser);
             
@@ -656,6 +657,7 @@ public class SubscriptionApi extends BaseApi {
 
         dto.setSubscriptionDate ( subscription.getSubscriptionDate());
         dto.setTerminationDate ( subscription.getTerminationDate());
+        dto.setEndAgreementDate(subscription.getEndAgreementDate());
 
         if (subscription.getAccessPoints() != null) {
             for (Access ac : subscription.getAccessPoints()) {

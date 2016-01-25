@@ -39,6 +39,9 @@ public class SubscriptionDto extends BaseDto {
     private Date subscriptionDate;
 
     private Date terminationDate;
+    
+    private Date endAgreementDate;
+    
     private String status;
 
     @XmlElement(required = false)
@@ -94,6 +97,14 @@ public class SubscriptionDto extends BaseDto {
 
     public void setTerminationDate(Date terminationDate) {
         this.terminationDate = terminationDate;
+    }
+    
+    public Date getEndAgreementDate() {
+        return endAgreementDate;
+    }
+    
+    public void setEndAgreementDate(Date endAgreementDate) {
+        this.endAgreementDate = endAgreementDate;
     }
 
     @Override

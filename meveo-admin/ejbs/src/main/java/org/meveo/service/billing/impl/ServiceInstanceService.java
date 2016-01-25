@@ -273,9 +273,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		if ((serviceEngAgreementDate == null)) {
-			serviceInstance.setEndAgrementDate(subscription.getEndAgrementDate());
+			serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
 		} else {
-			serviceInstance.setEndAgrementDate(serviceEngAgreementDate);
+			serviceInstance.setEndAgreementDate(serviceEngAgreementDate);
 		}
 
 		// apply subscription charges
@@ -367,20 +367,20 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 			Date endDate = terminationDate;
 			
-			if (applyAgreement && serviceInstance.getEndAgrementDate() != null 
-					&& terminationDate.before(serviceInstance.getEndAgrementDate())) {
-					endDate = serviceInstance.getEndAgrementDate();
+			if (applyAgreement && serviceInstance.getEndAgreementDate() != null 
+					&& terminationDate.before(serviceInstance.getEndAgreementDate())) {
+					endDate = serviceInstance.getEndAgreementDate();
 			}
 			log.debug("chargeDate={}, storedNextChargeDate={}, enDate {}", chargeDate,storedNextChargeDate,endDate);
 			if (endDate.after(nextChargeDate)) {
 				walletOperationService.applyChargeAgreement(recurringChargeInstance,
 						recurringChargeInstance.getRecurringChargeTemplate(),endDate, user);
 			} else if (applyReimbursment) {
-				Date endAgrementDate = recurringChargeInstance.getServiceInstance().getEndAgrementDate();
-				log.debug("terminationDate={}, endAgrementDate={}, nextChargeDate={}", terminationDate,endAgrementDate,nextChargeDate);
-				if (applyAgreement && endAgrementDate != null && terminationDate.before(endAgrementDate)) {
-					if (endAgrementDate.before(nextChargeDate)) {
-						recurringChargeInstance.setTerminationDate(endAgrementDate);
+				Date endAgreementDate = recurringChargeInstance.getServiceInstance().getEndAgreementDate();
+				log.debug("terminationDate={}, endAgreementDate={}, nextChargeDate={}", terminationDate,endAgreementDate,nextChargeDate);
+				if (applyAgreement && endAgreementDate != null && terminationDate.before(endAgreementDate)) {
+					if (endAgreementDate.before(nextChargeDate)) {
+						recurringChargeInstance.setTerminationDate(endAgreementDate);
 						walletOperationService.applyReimbursment(recurringChargeInstance, user);
 					}
 

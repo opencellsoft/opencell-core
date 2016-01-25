@@ -128,7 +128,7 @@ public class SubscriptionImportService extends ImportService{
 		
 		subscription.setSubscriptionDate(DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),
 				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
-		subscription.setEndAgrementDate(DateUtils.parseDateWithPattern(jaxbSubscription.getEndAgreementDate(),
+		subscription.setEndAgreementDate(DateUtils.parseDateWithPattern(jaxbSubscription.getEndAgreementDate(),
 				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
 		subscription.setStatusDate(DateUtils.parseDateWithPattern(jaxbSubscription.getStatus().getDate(),
 				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));

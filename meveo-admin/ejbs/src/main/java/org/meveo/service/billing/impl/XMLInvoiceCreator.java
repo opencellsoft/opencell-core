@@ -500,8 +500,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 					Element endAgreementTag = doc.createElement("endAgreementDate");
 					Text endAgreementText = null;
-					if (subscription.getEndAgrementDate() != null) {
-						endAgreementText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getEndAgrementDate(), 
+					if (subscription.getEndAgreementDate() != null) {
+						endAgreementText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), 
 								paramBean.getProperty("reporting.dateFormat", DEFAULT_DATE_PATTERN)));
 					} else {
 						endAgreementText = doc.createTextNode("");

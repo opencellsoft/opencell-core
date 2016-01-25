@@ -91,7 +91,7 @@ public class Subscription extends BusinessCFEntity{
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "END_AGREMENT_DATE")
-	private Date endAgrementDate;
+	private Date endAgreementDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUB_TERMIN_REASON_ID", nullable = true)
@@ -100,12 +100,12 @@ public class Subscription extends BusinessCFEntity{
 	@Column(name = "DEFAULT_LEVEL")
 	private Boolean defaultLevel = true;
 
-	public Date getEndAgrementDate() {
-		return endAgrementDate;
+	public Date getEndAgreementDate() {
+		return endAgreementDate;
 	}
 
-	public void setEndAgrementDate(Date endAgrementDate) {
-		this.endAgrementDate = endAgrementDate;
+	public void setEndAgreementDate(Date endAgreementDate) {
+		this.endAgreementDate = endAgreementDate;
 	}
 
 	public UserAccount getUserAccount() {

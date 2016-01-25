@@ -82,7 +82,7 @@ public class ServiceInstance extends BusinessEntity {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "END_AGREMENT_DATE")
-	private Date endAgrementDate;
+	private Date endAgreementDate;
 
 	@OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	// TODO : Add orphanRemoval annotation.
@@ -111,12 +111,12 @@ public class ServiceInstance extends BusinessEntity {
 	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
 	protected BigDecimal quantity = BigDecimal.ONE;
 
-	public Date getEndAgrementDate() {
-		return endAgrementDate;
+	public Date getEndAgreementDate() {
+		return endAgreementDate;
 	}
 
-	public void setEndAgrementDate(Date endAgrementDate) {
-		this.endAgrementDate = endAgrementDate;
+	public void setEndAgreementDate(Date endAgreementDate) {
+		this.endAgreementDate = endAgreementDate;
 	}
 
 	public Subscription getSubscription() {

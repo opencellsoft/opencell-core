@@ -1608,7 +1608,9 @@ public class AccountHierarchyApiService extends BaseApi {
 																subscription.setTerminationDate(subscriptionDto
 																		.getTerminationDate());
 															}
-
+                                                            if (!StringUtils.isBlank(subscriptionDto.getEndAgreementDate())) {
+                                                                subscription.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
+                                                            }
 
 															boolean isNewSubscription = subscription.isTransient();
 															if (isNewSubscription) {
@@ -1795,6 +1797,7 @@ public class AccountHierarchyApiService extends BaseApi {
 																			serviceInstance
 																					.setSubscriptionDate(serviceInstanceDto
 																							.getSubscriptionDate());
+																			serviceInstance.setEndAgreementDate(serviceInstanceDto.getEndAgreementDate());
 																			serviceInstance
 																					.setQuantity(serviceInstanceDto
 																							.getQuantity() == null ? BigDecimal.ONE
