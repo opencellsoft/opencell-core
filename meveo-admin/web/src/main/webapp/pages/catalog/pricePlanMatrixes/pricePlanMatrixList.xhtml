@@ -13,7 +13,7 @@
 				jQuery('.panels').equalHeights();
 			});
 		</script>
-		<p:dataTable id="datatable_pp_results" var="entity" value="#{pricePlanMatrixBean.getPricePlanMatrixList(chargeTemplateBean.entity)}" 
+		<p:dataTable id="datatable_pp_results_omitFromSubmit" var="entity" value="#{pricePlanMatrixBean.getPricePlanMatrixList(chargeTemplateBean.entity)}" 
 			paginator="true" rows="10" editable="true" editMode="cell" widgetVar="cellEntity_pp" label="#{messages['pricePlanMatrix.title']}"
 			scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}" 
             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -26,7 +26,7 @@
 			<f:facet name="header">
 				<p:commandButton id="toggler1" type="button" style="float:right" disabled="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
 					icon="ui-icon-calculator"/>
-				<p:columnToggler datasource="datatable_pp_results" trigger="toggler1" />
+				<p:columnToggler datasource="datatable_pp_results_omitFromSubmit" trigger="toggler1" />
 			</f:facet>
 			<p:column exportable="true" toggleable="false">
 				<f:facet name="header">
@@ -400,7 +400,7 @@
 			<f:param name="chargeId" value="#{chargeTemplateBean.entity.id}" />
 			 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
            </p:button> 
-			 <p:commandButton update=":#{p:component('datatable_pp_results')}" icon="ui-icon-trash" action="#{pricePlanMatrixBean.delete(entity.id)}"> 
+			 <p:commandButton update=":#{p:component('datatable_pp_results_omitFromSubmit')}" icon="ui-icon-trash" action="#{pricePlanMatrixBean.delete(entity.id)}"> 
 			<p:confirm header="#{messages['message.confirmation']}"
 				message="#{messages['commons.confirmDelete']}"
 				icon="ui-icon-alert" />
