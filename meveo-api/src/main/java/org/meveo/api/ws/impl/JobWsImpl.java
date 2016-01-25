@@ -10,6 +10,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
+import org.meveo.api.dto.response.job.TimerEntityResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.JobApi;
 import org.meveo.api.job.JobInstanceApi;
@@ -22,191 +23,230 @@ import org.meveo.model.jobs.JobInstanceInfoDto;
 @Interceptors({ LoggingInterceptor.class })
 public class JobWsImpl extends BaseWs implements JobWs {
 
-	@Inject
-	private JobApi jobApi;
-	
-	@Inject
-	private TimerEntityApi timerEntityApi;
-	
-	@Inject
-	private JobInstanceApi jobInstanceApi;
+    @Inject
+    private JobApi jobApi;
 
-	@Override
-	public ActionStatus execute(JobInstanceInfoDto jobInstanceInfoDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Inject
+    private TimerEntityApi timerEntityApi;
 
-		try {
-			Long resultId = jobApi.executeJob(jobInstanceInfoDto, getCurrentUser());
-			result.setMessage(resultId == null ? "NOTHING_TO_DO" : String.valueOf(resultId));
-		} catch (MeveoApiException e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occured while executing timer ",e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while executing timer ",e);
-		}
+    @Inject
+    private JobInstanceApi jobInstanceApi;
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-	
-	@Override
-	public ActionStatus create(JobInstanceDto jobInstanceDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		try {
-			jobInstanceApi.create(jobInstanceDto, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+    @Override
+    public ActionStatus execute(JobInstanceInfoDto jobInstanceInfoDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-	
-	@Override
-	public ActionStatus createTimer(TimerEntityDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            Long resultId = jobApi.executeJob(jobInstanceInfoDto, getCurrentUser());
+            result.setMessage(resultId == null ? "NOTHING_TO_DO" : String.valueOf(resultId));
+        } catch (MeveoApiException e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occured while executing timer ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while executing timer ", e);
+        }
 
-		try {
-			timerEntityApi.create(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-	
-	@Override
-	public ActionStatus update(JobInstanceDto jobInstanceDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		try {
-			jobInstanceApi.update(jobInstanceDto, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+    @Override
+    public ActionStatus create(JobInstanceDto jobInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            jobInstanceApi.create(jobInstanceDto, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-	
-	@Override
-	public ActionStatus createOrUpdateJobInstance(JobInstanceDto jobInstanceDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		try {
-			jobInstanceApi.createOrUpdate(jobInstanceDto, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-	
-	@Override
-	public ActionStatus updateTimer(TimerEntityDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createTimer(TimerEntityDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			timerEntityApi.update(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            timerEntityApi.create(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-	
-	@Override
-	public ActionStatus createOrUpdateTimer(TimerEntityDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-		try {
-			timerEntityApi.createOrUpdate(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+    @Override
+    public ActionStatus update(JobInstanceDto jobInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            jobInstanceApi.update(jobInstanceDto, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-	
-	@Override
-	public JobInstanceResponseDto findJobInstance(String jobInstanceCode) {
-		JobInstanceResponseDto result = new JobInstanceResponseDto();
-		
-		try {
-			result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode, getCurrentUser().getProvider()));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error occurred while getting webhook notification ",e);
-		} catch (Exception e) {
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-			log.error("error generated while getting webhook notification ",e);
-		}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-	
-	@Override
-	public ActionStatus removeJobInstance(String jobInstanceCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		
-		try {
-			jobInstanceApi.remove(jobInstanceCode, getCurrentUser().getProvider());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+    @Override
+    public ActionStatus createOrUpdateJobInstance(JobInstanceDto jobInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            jobInstanceApi.createOrUpdate(jobInstanceDto, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
+
+    @Override
+    public ActionStatus updateTimer(TimerEntityDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            timerEntityApi.update(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdateTimer(TimerEntityDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            timerEntityApi.createOrUpdate(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
+
+    @Override
+    public JobInstanceResponseDto findJobInstance(String jobInstanceCode) {
+        JobInstanceResponseDto result = new JobInstanceResponseDto();
+
+        try {
+            result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode, getCurrentUser().getProvider()));
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
+
+    @Override
+    public ActionStatus removeJobInstance(String jobInstanceCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            jobInstanceApi.remove(jobInstanceCode, getCurrentUser().getProvider());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
+
+    @Override
+    public TimerEntityResponseDto findTimer(String timerCode) {
+        TimerEntityResponseDto result = new TimerEntityResponseDto();
+
+        try {
+            result.setTimerEntity(timerEntityApi.find(timerCode, getCurrentUser()));
+
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
+
+    @Override
+    public ActionStatus removeTimer(String timerCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            timerEntityApi.remove(timerCode, getCurrentUser());
+
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 }

@@ -18,110 +18,105 @@ import org.meveo.service.job.TimerEntityService;
 @Stateless
 public class TimerEntityApi extends BaseApi {
 
-	@Inject
-	private TimerEntityService timerEntityService;
+    @Inject
+    private TimerEntityService timerEntityService;
 
+    public void create(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(timerEntityDto.getCode()) || StringUtils.isBlank(timerEntityDto.getHour()) || StringUtils.isBlank(timerEntityDto.getMinute())
+                || StringUtils.isBlank(timerEntityDto.getSecond()) || StringUtils.isBlank(timerEntityDto.getYear()) || StringUtils.isBlank(timerEntityDto.getMonth())
+                || StringUtils.isBlank(timerEntityDto.getDayOfMonth()) || StringUtils.isBlank(timerEntityDto.getDayOfWeek())) {
 
+            if (StringUtils.isBlank(timerEntityDto.getHour())) {
+                missingParameters.add("hour");
+            }
+            if (StringUtils.isBlank(timerEntityDto.getMinute())) {
+                missingParameters.add("minute");
+            }
+            if (StringUtils.isBlank(timerEntityDto.getSecond())) {
+                missingParameters.add("second");
+            }
+            if (StringUtils.isBlank(timerEntityDto.getYear())) {
+                missingParameters.add("year");
+            }
+            if (StringUtils.isBlank(timerEntityDto.getMonth())) {
+                missingParameters.add("month");
+            }
+            if (StringUtils.isBlank(timerEntityDto.getDayOfMonth())) {
+                missingParameters.add("dayOfMonth");
+            }
+            if (StringUtils.isBlank(timerEntityDto.getDayOfWeek())) {
+                missingParameters.add("dayOfWeek");
+            }
 
-	public void create(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException {
-		if ( StringUtils.isBlank(timerEntityDto.getCode()) || StringUtils.isBlank(timerEntityDto.getHour()) 
-				||StringUtils.isBlank(timerEntityDto.getMinute()) || StringUtils.isBlank(timerEntityDto.getSecond())
-				|| StringUtils.isBlank(timerEntityDto.getYear()) || StringUtils.isBlank(timerEntityDto.getMonth()) 
-				|| StringUtils.isBlank(timerEntityDto.getDayOfMonth())|| StringUtils.isBlank(timerEntityDto.getDayOfWeek())) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
 
-			if (StringUtils.isBlank(timerEntityDto.getHour())) {
-				missingParameters.add("hour");
-			}
-			if (StringUtils.isBlank(timerEntityDto.getMinute())) {
-				missingParameters.add("minute");
-			}
-			if (StringUtils.isBlank(timerEntityDto.getSecond())) {
-				missingParameters.add("second");
-			}
-			if (StringUtils.isBlank(timerEntityDto.getYear())) {
-				missingParameters.add("year");
-			}
-			if (StringUtils.isBlank(timerEntityDto.getMonth())) {
-				missingParameters.add("month");
-			}
-			if (StringUtils.isBlank(timerEntityDto.getDayOfMonth())) {
-				missingParameters.add("dayOfMonth");
-			}
-			if (StringUtils.isBlank(timerEntityDto.getDayOfWeek())) {
-				missingParameters.add("dayOfWeek");
-			}
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
+        Provider provider = currentUser.getProvider();
 
-		}
+        if (timerEntityService.findByCode(timerEntityDto.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(TimerEntity.class, timerEntityDto.getCode());
+        }
 
-		Provider provider = currentUser.getProvider();
+        TimerEntity timerEntity = TimerEntityDto.fromDTO(timerEntityDto, null);
 
-		if (timerEntityService.findByCode(timerEntityDto.getCode(), provider) != null) {
-			throw new EntityAlreadyExistsException(TimerEntity.class, timerEntityDto.getCode());
-		}
+        timerEntityService.create(timerEntity, currentUser, provider);
+    }
 
-		TimerEntity timerEntity = new TimerEntity();
-		timerEntity.setCode(timerEntityDto.getCode());
-		timerEntity.setDescription(timerEntityDto.getDescription());
-		timerEntity.setHour(timerEntityDto.getHour());
-		timerEntity.setMinute(timerEntityDto.getMinute());
-		timerEntity.setSecond(timerEntityDto.getSecond());
-		timerEntity.setYear(timerEntityDto.getYear());
-		timerEntity.setMonth(timerEntityDto.getMonth());
-		timerEntity.setDayOfMonth(timerEntityDto.getDayOfMonth());
-		timerEntity.setDayOfWeek(timerEntityDto.getDayOfWeek());
+    public void update(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException {
 
-		timerEntityService.create(timerEntity, currentUser, provider);
-	}
-	
-	public void update(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException {
-		
-		String timerEntityCode = timerEntityDto.getCode();
-		Provider provider = currentUser.getProvider();
-		
-		if (StringUtils.isBlank(timerEntityCode)) {
-			missingParameters.add("Code");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		} 
-		
-		TimerEntity timerEntity = timerEntityService.findByCode(timerEntityCode, provider);
-		if (timerEntity == null) {
-			throw new EntityDoesNotExistsException(TimerEntity.class, timerEntityCode);
-		}
-		
-		timerEntity.setYear(timerEntityDto.getYear());
-		timerEntity.setMonth(timerEntityDto.getMonth());
-		timerEntity.setDayOfMonth(timerEntityDto.getDayOfMonth());
-		timerEntity.setDayOfWeek(timerEntityDto.getDayOfWeek());
-		timerEntity.setHour(timerEntityDto.getHour());
-		timerEntity.setMinute(timerEntityDto.getMinute());
-		timerEntity.setSecond(timerEntityDto.getSecond());
-		
-		timerEntityService.update(timerEntity, currentUser);
-		
-	}
-	
-	public void createOrUpdate(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException {
-		
-		if (timerEntityService.findByCode(timerEntityDto.getCode(), currentUser.getProvider()) == null) {
-			create(timerEntityDto, currentUser);
-		} else {
-			update(timerEntityDto, currentUser);
-		}
-	}
-	public TimerEntityDto find(String timerEntityCode,User currentUser) throws MeveoApiException{
-		TimerEntityDto result=new TimerEntityDto();
-		if (!StringUtils.isBlank(timerEntityCode)) {
-			TimerEntity timerEntity=timerEntityService.findByCode(timerEntityCode, currentUser.getProvider());
-			if(timerEntity==null){
-				throw new EntityDoesNotExistsException(timerEntityCode.getClass(), timerEntityCode);
-			}
-			result=new TimerEntityDto(timerEntity);
-		}else{
-			missingParameters.add("code");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-		return result;
-	}
+        String timerEntityCode = timerEntityDto.getCode();
+        Provider provider = currentUser.getProvider();
+
+        if (StringUtils.isBlank(timerEntityCode)) {
+            missingParameters.add("Code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        TimerEntity timerEntity = timerEntityService.findByCode(timerEntityCode, provider);
+        if (timerEntity == null) {
+            throw new EntityDoesNotExistsException(TimerEntity.class, timerEntityCode);
+        }
+
+        timerEntity = TimerEntityDto.fromDTO(timerEntityDto, timerEntity);
+
+        timerEntityService.update(timerEntity, currentUser);
+    }
+
+    public void createOrUpdate(TimerEntityDto timerEntityDto, User currentUser) throws MeveoApiException {
+
+        if (timerEntityService.findByCode(timerEntityDto.getCode(), currentUser.getProvider()) == null) {
+            create(timerEntityDto, currentUser);
+        } else {
+            update(timerEntityDto, currentUser);
+        }
+    }
+
+    public TimerEntityDto find(String timerEntityCode, User currentUser) throws MeveoApiException {
+        TimerEntityDto result = new TimerEntityDto();
+        if (StringUtils.isBlank(timerEntityCode)) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+        TimerEntity timerEntity = timerEntityService.findByCode(timerEntityCode, currentUser.getProvider());
+        if (timerEntity == null) {
+            throw new EntityDoesNotExistsException(timerEntityCode.getClass(), timerEntityCode);
+        }
+        result = new TimerEntityDto(timerEntity);
+
+        return result;
+    }
+
+    public void remove(String timerEntityCode, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(timerEntityCode)) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+        TimerEntity timerEntity = timerEntityService.findByCode(timerEntityCode, currentUser.getProvider());
+        if (timerEntity == null) {
+            throw new EntityDoesNotExistsException(timerEntityCode.getClass(), timerEntityCode);
+        }
+
+        timerEntityService.remove(timerEntity);
+    }
 }

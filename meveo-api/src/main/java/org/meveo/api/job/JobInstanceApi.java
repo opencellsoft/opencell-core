@@ -191,58 +191,48 @@ public class JobInstanceApi extends BaseApi {
 		}
 	}
 	
-	/**
-	 * Retrieves a Job Instance base on the code if it is existing.
-	 * @param code
-	 * @param provider
-	 * @return
-	 * @throws MeveoApiException
-	 */
-	public JobInstanceDto find(String code, Provider provider) throws MeveoApiException {
-		
-		if (!StringUtils.isBlank(code)) {
-			JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
-			if (jobInstance != null) {
-				JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, customFieldInstanceService.getCustomFieldInstances(jobInstance));
-				return jobInstanceDto;
-			} 
-			
-			throw new EntityDoesNotExistsException(JobInstance.class, code);
-			
-		} else {
-			if (StringUtils.isBlank(code)) {
-				missingParameters.add("code");
-			}
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-		
-	}
-	
-	/**
-	 * 
-	 * Removes a Job Instance base on a code.
-	 * 
-	 * @param code
-	 * @param provider
-	 * @throws MeveoApiException
-	 */
-	public void remove(String code, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
-			
-			if (jobInstance == null) {
-				throw new EntityDoesNotExistsException(JobInstance.class, code);
-			}
-			jobInstanceService.remove(jobInstance);
-			
-		} else {
-			if (StringUtils.isBlank(code)) {
-				missingParameters.add("code");
-			}
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
-	
+	    /**
+     * Retrieves a Job Instance base on the code if it is existing.
+     * 
+     * @param code
+     * @param provider
+     * @return
+     * @throws MeveoApiException
+     */
+    public JobInstanceDto find(String code, Provider provider) throws MeveoApiException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+        
+        JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
+        if (jobInstance == null) {
+            throw new EntityDoesNotExistsException(JobInstance.class, code);
+        }
+        
+        JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, customFieldInstanceService.getCustomFieldInstances(jobInstance));
+        return jobInstanceDto;
+
+    }
+
+    /**
+     * 
+     * Removes a Job Instance base on a code.
+     * 
+     * @param code
+     * @param provider
+     * @throws MeveoApiException
+     */
+    public void remove(String code, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+        JobInstance jobInstance = jobInstanceService.findByCode(code, provider);
+        if (jobInstance == null) {
+            throw new EntityDoesNotExistsException(JobInstance.class, code);
+        }
+        jobInstanceService.remove(jobInstance);
+    }
 }

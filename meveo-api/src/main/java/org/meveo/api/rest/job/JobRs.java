@@ -15,6 +15,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
+import org.meveo.api.dto.response.job.TimerEntityResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 import org.meveo.model.jobs.JobInstanceInfoDto;
@@ -28,42 +29,49 @@ import org.meveo.model.jobs.JobInstanceInfoDto;
 @RSSecured
 public interface JobRs extends IBaseRs {
 
-	@POST
-	@Path("/execute")
-	ActionStatus execute(JobInstanceInfoDto postData);
+    @POST
+    @Path("/execute")
+    ActionStatus execute(JobInstanceInfoDto postData);
 
-	@Path("/create")
-	@POST
-	ActionStatus create(JobInstanceDto postData);
+    @Path("/create")
+    @POST
+    ActionStatus create(JobInstanceDto postData);
 
-	@Path("/")
-	@PUT
-	ActionStatus update(JobInstanceDto postData);
+    @Path("/")
+    @PUT
+    ActionStatus update(JobInstanceDto postData);
 
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(JobInstanceDto postData);
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(JobInstanceDto postData);
 
-	@GET
-	@Path("/")
-	JobInstanceResponseDto find(@QueryParam("jobInstanceCode") String jobInstanceCode);
+    @GET
+    @Path("/")
+    JobInstanceResponseDto find(@QueryParam("jobInstanceCode") String jobInstanceCode);
 
-	@DELETE
-	@Path("/{jobInstanceCode}")
-	ActionStatus remove(@PathParam("jobInstanceCode") String jobInstanceCode);
+    @DELETE
+    @Path("/{jobInstanceCode}")
+    ActionStatus remove(@PathParam("jobInstanceCode") String jobInstanceCode);
 
-	// timer
+    // timer
 
-	@Path("/createTimer")
-	@POST
-	ActionStatus createTimer(TimerEntityDto postData);
+    @Path("/timer/")
+    @POST
+    ActionStatus createTimer(TimerEntityDto postData);
 
-	@Path("/updateTimer")
-	@PUT
-	ActionStatus updateTimer(TimerEntityDto postData);
+    @Path("/timer/")
+    @PUT
+    ActionStatus updateTimer(TimerEntityDto postData);
 
-	@Path("/createOrUpdateTimer")
-	@POST
-	ActionStatus createOrUpdateTimer(TimerEntityDto postData);
+    @Path("/timer/createOrUpdate/")
+    @POST
+    ActionStatus createOrUpdateTimer(TimerEntityDto postData);
 
+    @GET
+    @Path("/timer/")
+    public TimerEntityResponseDto findTimer(@QueryParam("timerCode") String timerCode);
+
+    @DELETE
+    @Path("/timer/{timerCode}")
+    public ActionStatus removeTimer(@PathParam("timerCode") String timerCode);
 }
