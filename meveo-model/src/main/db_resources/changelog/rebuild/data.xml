@@ -1352,232 +1352,232 @@
             <column name="id" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:03:59.123" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="allemand" />
+            <column name="description_en" value="Deutsch" />
             <column name="language_code" value="DEU" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="2" />
             <column name="created" valueDate="2015-03-19 00:03:59.205" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="anglais" />
+            <column name="description_en" value="English" />
             <column name="language_code" value="ENG" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="3" />
             <column name="created" valueDate="2015-03-19 00:03:59.23" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="arabe" />
+            <column name="description_en" value="Arabic" />
             <column name="language_code" value="ARA" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="4" />
             <column name="created" valueDate="2015-03-19 00:03:59.251" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="bulgare" />
+            <column name="description_en" value="Bulgarian" />
             <column name="language_code" value="BUL" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="5" />
             <column name="created" valueDate="2015-03-19 00:03:59.272" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="catalan" />
+            <column name="description_en" value="Catalan" />
             <column name="language_code" value="CAT" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="6" />
             <column name="created" valueDate="2015-03-19 00:03:59.293" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="chinois" />
+            <column name="description_en" value="Chinese" />
             <column name="language_code" value="ZHO" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="7" />
             <column name="created" valueDate="2015-03-19 00:03:59.315" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="danois" />
+            <column name="description_en" value="Danish" />
             <column name="language_code" value="DAN" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="8" />
             <column name="created" valueDate="2015-03-19 00:03:59.335" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="espagnol" />
+            <column name="description_en" value="Spanish" />
             <column name="language_code" value="SPA" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="9" />
             <column name="created" valueDate="2015-03-19 00:03:59.355" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="estonien" />
+            <column name="description_en" value="Estonian" />
             <column name="language_code" value="EST" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="10" />
             <column name="created" valueDate="2015-03-19 00:03:59.376" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="féroïen" />
+            <column name="description_en" value="Faroese" />
             <column name="language_code" value="FAO" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="11" />
             <column name="created" valueDate="2015-03-19 00:03:59.399" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="finlandais" />
+            <column name="description_en" value="Finnish" />
             <column name="language_code" value="FIN" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="12" />
             <column name="created" valueDate="2015-03-19 00:03:59.441" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="français" />
+            <column name="description_en" value="French" />
             <column name="language_code" value="FRA" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="13" />
             <column name="created" valueDate="2015-03-19 00:03:59.463" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="grec" />
+            <column name="description_en" value="Greek" />
             <column name="language_code" value="ELL" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="14" />
             <column name="created" valueDate="2015-03-19 00:03:59.484" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="hindi" />
+            <column name="description_en" value="Hindi" />
             <column name="language_code" value="HIN" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="15" />
             <column name="created" valueDate="2015-03-19 00:03:59.505" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="hongrois" />
+            <column name="description_en" value="Hungarian" />
             <column name="language_code" value="HUN" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="16" />
             <column name="created" valueDate="2015-03-19 00:03:59.527" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="islandais" />
+            <column name="description_en" value="Icelandic" />
             <column name="language_code" value="ISL" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="17" />
             <column name="created" valueDate="2015-03-19 00:03:59.548" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="italien" />
+            <column name="description_en" value="Italian" />
             <column name="language_code" value="ITA" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="18" />
             <column name="created" valueDate="2015-03-19 00:03:59.569" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="japonais" />
+            <column name="description_en" value="Japanese" />
             <column name="language_code" value="JPN" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="19" />
             <column name="created" valueDate="2015-03-19 00:03:59.59" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="letton" />
+            <column name="description_en" value="Latvian" />
             <column name="language_code" value="LAV" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="20" />
             <column name="created" valueDate="2015-03-19 00:03:59.612" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="lituanien" />
+            <column name="description_en" value="Lithuanian" />
             <column name="language_code" value="LIT" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="21" />
             <column name="created" valueDate="2015-03-19 00:03:59.634" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="néerlandais" />
+            <column name="description_en" value="Dutch" />
             <column name="language_code" value="NLD" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="22" />
             <column name="created" valueDate="2015-03-19 00:03:59.655" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="norvégien" />
+            <column name="description_en" value="Norwegian" />
             <column name="language_code" value="NOR" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="23" />
             <column name="created" valueDate="2015-03-19 00:03:59.677" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="polonais" />
+            <column name="description_en" value="Polish" />
             <column name="language_code" value="POL" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="24" />
             <column name="created" valueDate="2015-03-19 00:03:59.702" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="portugais" />
+            <column name="description_en" value="Portuguese" />
             <column name="language_code" value="POR" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="25" />
             <column name="created" valueDate="2015-03-19 00:03:59.724" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="roumain" />
+            <column name="description_en" value="Romanian" />
             <column name="language_code" value="RON" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="26" />
             <column name="created" valueDate="2015-03-19 00:03:59.744" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="russe" />
+            <column name="description_en" value="Russian" />
             <column name="language_code" value="RUS" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="27" />
             <column name="created" valueDate="2015-03-19 00:03:59.766" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="serbe" />
+            <column name="description_en" value="Serbian" />
             <column name="language_code" value="SRP" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="28" />
             <column name="created" valueDate="2015-03-19 00:03:59.787" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="slovaque" />
+            <column name="description_en" value="Slovak" />
             <column name="language_code" value="SLK" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="29" />
             <column name="created" valueDate="2015-03-19 00:03:59.808" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="slovène" />
+            <column name="description_en" value="Slovene" />
             <column name="language_code" value="SLV" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="30" />
             <column name="created" valueDate="2015-03-19 00:03:59.83" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="suédois" />
+            <column name="description_en" value="Swedish" />
             <column name="language_code" value="SWE" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="31" />
             <column name="created" valueDate="2015-03-19 00:03:59.851" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="tchèque" />
+            <column name="description_en" value="Czech" />
             <column name="language_code" value="CES" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="32" />
             <column name="created" valueDate="2015-03-19 00:03:59.872" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="turc" />
+            <column name="description_en" value="Turkish" />
             <column name="language_code" value="TUR" />
         </insert>
         <insert tableName="adm_language">
             <column name="id" valueNumeric="33" />
             <column name="created" valueDate="2015-03-19 00:03:59.872" />
             <column name="version" valueNumeric="1" />
-            <column name="description_en" value="Croate" />
-            <column name="language_code" value="hrv" />
+            <column name="description_en" value="Croatian" />
+            <column name="language_code" value="HRV" />
         </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-countries">
