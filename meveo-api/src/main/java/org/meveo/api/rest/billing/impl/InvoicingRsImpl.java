@@ -194,13 +194,15 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Validates a billing run. Sets the next invoice date of a billing account to the next calendar date.")
-	public ActionStatus validateBillingRun(@ApiParam(value = "billing run id") Long billingRunId) {
+	@ApiOperation(value = "Depending on the status of the billing run, produce the preinvoicing report, the postInvoicing report or validates a billing run. Sets the next invoice date of a billing account to the next calendar date.")
+	public ActionStatus validateBillingRun(@ApiParam(value = "billing run id") Long billingRunId
+			,@ApiParam(value = "Number of billing accounts in batch processed by each thread when computing the post invoicing report (by default 100)") Long nbRuns
+			,@ApiParam(value = "nb of millisecond between thread poll (default 1000)") Long waitingMillis) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		log.info("validateBillingRun request={}", billingRunId);
 		try {
 
-			invoicingApi.validateBillingRun(billingRunId, getCurrentUser());
+			invoicingApi.validateBillingRun(billingRunId, getCurrentUser(),nbRuns,waitingMillis);
 
 		} catch (MissingParameterException mpe) {
 			result.setErrorCode(mpe.getErrorCode());

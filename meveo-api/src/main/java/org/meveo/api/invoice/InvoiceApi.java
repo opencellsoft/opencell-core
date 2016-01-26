@@ -531,7 +531,11 @@ public class InvoiceApi extends BaseApi {
 	}
 
 	public void validateBR(BillingRun billingRun, User user) throws BusinessException {
-		billingRunService.validate(billingRun, user);
+		try {
+			billingRunService.validate(billingRun, user,100,1000);
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
 	}
 
 	public void createAgregatesAndInvoice(Long billingRunId,
@@ -578,15 +582,12 @@ public class InvoiceApi extends BaseApi {
 		}
 
 		if (billingAccount.getBillingRun() != null
-				&& (billingAccount.getStatus().equals(BillingRunStatusEnum.NEW)
-						|| billingAccount.getStatus().equals(
-								BillingRunStatusEnum.ON_GOING)
-						|| billingAccount.getStatus().equals(
-								BillingRunStatusEnum.TERMINATED) || billingAccount
-						.getStatus().equals(BillingRunStatusEnum.WAITING))) {
+				&& (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
+						|| billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.PREVALIDATED)
+						|| billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.POSTVALIDATED))) {
 
 			throw new BusinessApiException(
-					"BillingAccount already in an invoicing");
+					"The billingAccount is already in an billing run with status "+billingAccount.getBillingRun().getStatus());
 		}
 
 		List<Long> baIds = new ArrayList<Long>();
@@ -605,14 +606,14 @@ public class InvoiceApi extends BaseApi {
 		updateBAtotalAmount(billingAccount, billingRun, currentUser);
 		log.info("updateBillingAccountTotalAmounts ok");
 
-		billingRun = updateBR(billingRun, BillingRunStatusEnum.ON_GOING, 1, 1);
+		billingRun = updateBR(billingRun, BillingRunStatusEnum.PREVALIDATED, 1, 1);
 		log.info("update billingRun ON_GOING");
 
 		createAgregatesAndInvoice(billingRun.getId(),
 				billingRun.getLastTransactionDate(), currentUser);
 		log.info("createAgregatesAndInvoice ok");
 
-		billingRun = updateBR(billingRun, BillingRunStatusEnum.TERMINATED,
+		billingRun = updateBR(billingRun, BillingRunStatusEnum.POSTINVOICED,
 				null, null);
 		log.info("update billingRun TERMINATED");
 

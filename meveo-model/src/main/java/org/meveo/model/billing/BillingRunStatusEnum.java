@@ -18,13 +18,13 @@ package org.meveo.model.billing;
 
 public enum BillingRunStatusEnum {
 
-	NEW(1, "BillingRunStatusEnum.new"), WAITING(2,
-			"BillingRunStatusEnum.waiting"), ON_GOING(3,
-			"BillingRunStatusEnum.onGoing"), CANCELED(4,
-			"BillingRunStatusEnum.canceled"), TERMINATED(5,
-			"BillingRunStatusEnum.terminated"), CONFIRMED(6,
-			"BillingRunStatusEnum.confirmed"), VALIDATED(7,
-			"BillingRunStatusEnum.validated");
+	NEW(1, "BillingRunStatusEnum.new"), //the BR just got created
+	PREINVOICED(2,"BillingRunStatusEnum.preinvoiced"),  // the preinvoicing report have been generated
+	PREVALIDATED(3,"BillingRunStatusEnum.prevalidated"), //the preinvoicing report have been validated
+	CANCELED(4,"BillingRunStatusEnum.canceled"), // the BR is cancelled, end of the process
+	POSTINVOICED(5,"BillingRunStatusEnum.postinvoiced"), // the invoices and postinvoicing report have been generated
+	POSTVALIDATED(6,"BillingRunStatusEnum.postvalidated"), // the postinvoicing report have been validated
+	VALIDATED(7,"BillingRunStatusEnum.validated");//the invoices are assigned an invoice number, end of the process
 
 	private Integer id;
 	private String label;

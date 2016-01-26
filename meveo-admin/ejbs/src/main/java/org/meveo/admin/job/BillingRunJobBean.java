@@ -1,9 +1,9 @@
 package org.meveo.admin.job;
 
-import static org.meveo.model.billing.BillingRunStatusEnum.CONFIRMED;
+import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
-import static org.meveo.model.billing.BillingRunStatusEnum.ON_GOING;
-import static org.meveo.model.billing.BillingRunStatusEnum.WAITING;
+import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.PREINVOICED;
 
 import java.util.Date;
 import java.util.List;
@@ -51,7 +51,7 @@ public class BillingRunJobBean {
 			parameter=billingCycleCode;
 		}
 		try {
-			List<BillingRun> billruns = billingRunService.getBillingRuns(provider,parameter, CONFIRMED,NEW,ON_GOING,WAITING);
+			List<BillingRun> billruns = billingRunService.getBillingRuns(provider,parameter, POSTVALIDATED,NEW,PREVALIDATED,PREINVOICED);
 			boolean notTerminatedBillRun = false;
 			if (billruns != null&&billruns.size()>0) {
 				notTerminatedBillRun = true;
@@ -83,7 +83,7 @@ public class BillingRunJobBean {
 					billingRunService.create(billingRun, currentUser, provider);
 					result.registerSucces();
 				} else {
-					result.registerError("Cannot find billingCycle wit code '" + parameter
+					result.registerError("Cannot find billingCycle with code '" + parameter
 							+ "' (this code should be the parameter of the job)");
 				}
 			}

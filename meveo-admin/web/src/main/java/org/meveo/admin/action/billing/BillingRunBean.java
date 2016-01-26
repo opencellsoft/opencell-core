@@ -202,7 +202,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	public String confirmInvoicing() {
 		try {
 			// statusMessages.add("facturation confirmee avec succes");
-			entity.setStatus(BillingRunStatusEnum.ON_GOING);
+			entity.setStatus(BillingRunStatusEnum.PREVALIDATED);
 			billingRunService.update(entity);
 			return "billingRuns";
 
@@ -215,43 +215,14 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String validateInvoicing() {
 		try {
-			entity.setStatus(BillingRunStatusEnum.CONFIRMED);
+			entity.setStatus(BillingRunStatusEnum.POSTVALIDATED);
 			billingRunService.update(entity);
 			if (launchInvoicingRejectedBA) {
-				BillingRun billingRun = new BillingRun();
-				billingRun.setStatus(BillingRunStatusEnum.NEW);
-				billingRun.setProcessDate(new Date());
-				BillingCycle billingCycle = entity.getBillingCycle();
-				if (billingCycle != null && billingCycle.getInvoiceDateProductionDelay() != null) {
-					billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), billingCycle.getInvoiceDateProductionDelay()));
-				} else {
-					billingRun.setInvoiceDate(entity.getProcessDate());
-				}
-				if (billingCycle != null && billingCycle.getTransactionDateDelay() != null) {
-					billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), billingCycle.getTransactionDateDelay()));
-				} else {
-					billingRun.setLastTransactionDate(billingRun.getProcessDate());
-				}
-				billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
-				billingRun.setProvider(getCurrentProvider());
-				String selectedBillingAccounts = "";
-				String sep = "";
-				boolean isBillable = false;
-				for (RejectedBillingAccount ba : entity.getRejectedBillingAccounts()) {
-					selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
-					sep = ",";
-					if (!isBillable && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), billingRun.getLastTransactionDate())) {
-						isBillable = true;
-						break;
-					}
-				}
+				boolean isBillable =  billingRunService.launchInvoicingRejectedBA(entity);
 				if (!isBillable) {
 					messages.error(new BundleKey("messages", "error.invoicing.noTransactions"));
 					return null;
 				}
-				log.info("selectedBillingAccounts=" + selectedBillingAccounts);
-				billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
-				billingRunService.create(billingRun);
 			}
 			return "billingRuns";
 

@@ -44,7 +44,7 @@ public interface InvoicingRs extends IBaseRs {
 	
 	@POST
 	@Path("/validateBillingRun")
-	ActionStatus validateBillingRun(@WebParam(name = "billingRunId") Long billingRunId);
+	ActionStatus validateBillingRun(@WebParam(name = "billingRunId") Long billingRunId,@WebParam(name = "nbRuns") Long nbRuns,@WebParam(name = "waitingMillis") Long waitingMillis);
 	
 	@POST
 	@Path("/cancelBillingRun")

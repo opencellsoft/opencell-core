@@ -33,6 +33,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.RatedTxInvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
@@ -51,10 +52,13 @@ import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.crm.Email;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -75,10 +79,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
-
 	@Inject
 	private ResourceBundle resourceMessages;
 
+	@Inject
+	private InvoicingAsync invoicingAsync;
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
 		log.debug("start generatePreInvoicingReports.......");
@@ -372,9 +377,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c");
 		qb.startOrClause();
 		qb.addCriterionEnum("c.status", BillingRunStatusEnum.NEW);
-		qb.addCriterionEnum("c.status", BillingRunStatusEnum.ON_GOING);
-		qb.addCriterionEnum("c.status", BillingRunStatusEnum.TERMINATED);
-		qb.addCriterionEnum("c.status", BillingRunStatusEnum.WAITING);
+		qb.addCriterionEnum("c.status", BillingRunStatusEnum.PREVALIDATED);
+		qb.addCriterionEnum("c.status", BillingRunStatusEnum.POSTINVOICED);
+		qb.addCriterionEnum("c.status", BillingRunStatusEnum.PREINVOICED);
 		qb.endOrClause();
 		qb.addCriterionEntity("c.provider", provider);
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
@@ -524,6 +529,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void createAgregatesAndInvoice(Long billingRunId,Date lastTransactionDate, User currentUser,long nbRuns,long waitingMillis) throws BusinessException, Exception {
 		List<BillingAccount> billingAccounts = getEntityManager()
@@ -546,27 +552,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void validate(BillingRun billingRun, User user) throws BusinessException {
-		billingRun = findById(billingRun.getId(), true);
-		user = getEntityManager().find(User.class, user.getId());
-		for (Invoice invoice : billingRun.getInvoices()) {
-			invoiceService.setInvoiceNumber(invoice, user);
-			BillingAccount billingAccount = invoice.getBillingAccount();
-			Date initCalendarDate = billingAccount.getSubscriptionDate();
-			if(initCalendarDate==null){
-				initCalendarDate=billingAccount.getAuditable().getCreated();
-			}
-			Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
-			billingAccount.setNextInvoiceDate(nextCalendarDate);
-			billingAccount.updateAudit(user);
-			
-			invoiceService.update(invoice, user);
-		}
 
-		billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
-		billingRun.updateAudit(user);
-	}
 
 	public BillingRun launchExceptionalInvoicing(List<Long> billingAccountIds, Date invoiceDate,Date lastTransactionDate,BillingProcessTypesEnum processType,User currentUser) throws BusinessException{
 		log.info("launchExceptionelInvoicing...");
@@ -618,4 +604,117 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		commit();
 		return billingRun;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void validate(BillingRun billingRun,User currentUser,long nbRuns,long waitingMillis) throws Exception{
+		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
+			refreshOrRetrieve(billingRun);
+			List<BillingAccount> billingAccounts = getBillingAccounts(billingRun);
+			log.info("Nb billingAccounts to process={}",
+					(billingAccounts != null ? billingAccounts.size() : 0));
+
+			if (billingAccounts != null && billingAccounts.size() > 0) {
+				int billableBA = 0;
+				SubListCreator subListCreator = new SubListCreator(billingAccounts,(int)nbRuns);
+				List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
+				while (subListCreator.isHasNext()) {
+					Future<Integer> count = invoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun, currentUser);
+					asyncReturns.add(count);
+					try {
+						Thread.sleep(waitingMillis);
+					} catch (InterruptedException e) {
+						log.error("", e);
+					} 
+				}
+
+				for(Future<Integer> futureItsNow : asyncReturns){
+					billableBA+= futureItsNow.get().intValue();	
+				}
+
+				log.info("Total billableBA:"+billableBA);
+
+				updateBillingRun(billingRun.getId(),currentUser,billingAccounts.size(),billableBA,BillingRunStatusEnum.PREINVOICED,new Date());
+
+				if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
+						|| billingRun.getProvider().isAutomaticInvoicing()) {
+					createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns,waitingMillis);										
+					updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.POSTINVOICED,null);
+				}
+			}
+		} else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
+			createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns,waitingMillis);								
+			updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.POSTINVOICED,null);
+		} else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
+			refreshOrRetrieve(billingRun);
+			for (Invoice invoice : billingRun.getInvoices()) {
+				invoiceService.setInvoiceNumber(invoice, currentUser);
+				BillingAccount billingAccount = invoice.getBillingAccount();
+				Date initCalendarDate = billingAccount.getSubscriptionDate();
+				if(initCalendarDate==null){
+					initCalendarDate=billingAccount.getAuditable().getCreated();
+				}
+				Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
+				billingAccount.setNextInvoiceDate(nextCalendarDate);
+				billingAccount.updateAudit(currentUser);
+				invoiceService.update(invoice, currentUser);
+			}
+			billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
+			billingRun.updateAudit(currentUser);
+		}
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void updateBillingRun(Long billingRunId ,User currentUser,Integer sizeBA,Integer billableBA,BillingRunStatusEnum status,Date dateStatus) {
+		BillingRun billingRun = findById(billingRunId, currentUser.getProvider());
+
+		if(sizeBA != null){
+			billingRun.setBillingAccountNumber(sizeBA);
+		}
+		if(billableBA != null){
+			billingRun.setBillableBillingAcountNumber(billableBA);
+		}
+		if(dateStatus != null){
+			billingRun.setProcessDate(dateStatus);
+		}
+		billingRun.setStatus(status);
+		billingRun.updateAudit(currentUser);
+		updateNoCheck(billingRun);
+	}
+
+	public boolean launchInvoicingRejectedBA(BillingRun br) throws BusinessException {
+		boolean result = false;
+		BillingRun billingRun = new BillingRun();
+		billingRun.setStatus(BillingRunStatusEnum.NEW);
+		billingRun.setProcessDate(new Date());
+		BillingCycle billingCycle = br.getBillingCycle();
+		if (billingCycle != null && billingCycle.getInvoiceDateProductionDelay() != null) {
+			billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), billingCycle.getInvoiceDateProductionDelay()));
+		} else {
+			billingRun.setInvoiceDate(br.getProcessDate());
+		}
+		if (billingCycle != null && billingCycle.getTransactionDateDelay() != null) {
+			billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), billingCycle.getTransactionDateDelay()));
+		} else {
+			billingRun.setLastTransactionDate(billingRun.getProcessDate());
+		}
+		billingRun.setProcessType(br.getProcessType());
+		billingRun.setProvider(br.getProvider());
+		String selectedBillingAccounts = "";
+		String sep = "";
+		for (RejectedBillingAccount ba : br.getRejectedBillingAccounts()) {
+			selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
+			sep = ",";
+			if (!result && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), billingRun.getLastTransactionDate())) {
+				result = true;
+				break;
+			}
+		}
+		if (result) {
+			log.debug("selectedBillingAccounts=" + selectedBillingAccounts);
+			billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
+			create(billingRun);
+		}
+		return result;
+	}
+
 }

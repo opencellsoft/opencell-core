@@ -190,7 +190,7 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
 		log.info("validateBillingRun request={}",billingRunId);
 		try {
 			
-			invoicingApi.validateBillingRun(billingRunId, getCurrentUser());
+			invoicingApi.validateBillingRun(billingRunId, getCurrentUser(),null,null);
 			
 		}catch(MissingParameterException mpe){
 			result.setErrorCode(mpe.getErrorCode());
