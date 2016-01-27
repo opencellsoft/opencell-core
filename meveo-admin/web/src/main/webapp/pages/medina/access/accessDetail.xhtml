@@ -6,16 +6,24 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
-	
+
     <ui:define name="metadata">
-		<f:metadata>
-			<f:viewParam name="accessId" value="#{accessBean.objectIdFromSet}" />
-			<f:viewParam name="subscriptionId" value="#{accessBean.subscriptionId}"></f:viewParam>
-            <f:viewParam name="backView" value="#{accessBean.backViewSave}"/>
-		</f:metadata>
-	</ui:define>
-	
-	<ui:define name="navigation">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{accessBean.preRenderView}" />
+
+            <f:viewParam name="accessId" value="#{accessBean.objectIdFromSet}" />
+            <f:viewParam name="subscriptionId" value="#{accessBean.subscriptionId}" />
+            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectIdFromSet}" />
+            <f:viewParam name="userAccountId" value="#{userAccountBean.objectIdFromSet}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectIdFromSet}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectIdFromSet}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectIdFromSet}" />
+            <f:viewParam name="mainTab" value="#{accessBean.activeMainTab}" />
+            <f:viewParam name="tab" value="#{accessBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 

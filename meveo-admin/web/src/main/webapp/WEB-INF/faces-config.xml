@@ -1128,6 +1128,21 @@
 			<to-view-id>/pages/medina/access/accessDetail.xhtml</to-view-id>
             <redirect include-view-params="true" />
 		</navigation-case>
+        <navigation-case>
+           <from-outcome>accessDetailFromSubscription</from-outcome>
+           <to-view-id>/pages/medina/access/accessDetail.xhtml
+           </to-view-id>
+           <redirect include-view-params="true">
+            <view-param>
+             <name>edit</name>
+             <value>true</value>
+            </view-param>
+            <view-param>
+             <name>backView</name>
+             <value>subscriptionDetail</value>
+            </view-param>
+           </redirect>
+        </navigation-case>        
 		<navigation-case>
 			<from-outcome>importedFiles</from-outcome>
 			<to-view-id>/pages/medina/importedFile/importedFiles.xhtml</to-view-id>

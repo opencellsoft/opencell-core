@@ -893,12 +893,9 @@
 														<p:dataTable value="#{subscriptionBean.access}"
 															var="entity" resizableColumns="true">
 															<p:column headerText="#{messages['access.accessUserId']}">
-																<h:link outcome="accessDetail" value="#{entity.accessUserId}">
-																	<f:param name="accessId" value="#{entity.id}"/>
-																	<f:param name="backView" value="subscriptionDetail"/>
-																	<f:param name="subscriptionId" value="#{subscriptionBean.entity.id}"/>
-																	<f:param name="backViewSave" value="subscriptionDetail"/>
-																</h:link>
+																<h:link outcome="accessDetailFromSubscription" value="#{entity.accessUserId}">
+                                                                    <f:param name="accessId" value="#{entity.id}"/>
+                                                                </h:link>
 															</p:column>
 															<hftl:column label="#{messages['access.startDate']}"
 																field="startDate" isDate="true" />
