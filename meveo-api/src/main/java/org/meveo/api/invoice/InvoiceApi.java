@@ -532,7 +532,7 @@ public class InvoiceApi extends BaseApi {
 
 	public void validateBR(BillingRun billingRun, User user) throws BusinessException {
 		try {
-			billingRunService.validate(billingRun, user,100,1000);
+			billingRunService.validate(billingRun.getId(), user,1,0);
 		} catch (Exception e) {
 			throw new BusinessException(e);
 		}

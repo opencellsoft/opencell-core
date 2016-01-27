@@ -160,16 +160,15 @@ public class InvoicingApi extends BaseApi {
 		return postInvoicingReportsDTO;
 	}
 	
-	public void validateBillingRun(Long billingRunId, User currentUser,Long nbRuns,Long waitingMillis) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException, BusinessException{
-		BillingRun billingRun  = getBillingRun( billingRunId, currentUser);
+	public void validateBillingRun(Long billingRunId, User currentUser,Long nbRuns,Long waitingMillis) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException, BusinessException{		
 		if(nbRuns==null){
-			nbRuns = new Long(100);
+			nbRuns = new Long(1);
 		}
 		if(waitingMillis==null){
-			waitingMillis=new Long(1000);
+			waitingMillis=new Long(0);
 		}
 		try{
-		billingRunService.validate(billingRun, currentUser,nbRuns,waitingMillis);
+			billingRunService.validate(billingRunId, currentUser,nbRuns,waitingMillis);
 		} catch(Exception e){
 			throw new BusinessException(e);
 		}

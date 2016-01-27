@@ -60,7 +60,7 @@ public class InvoicingJobBean {
 
 			for (BillingRun billingRun : billingRuns) {
 				try {
-					billingRunService.validate(billingRun, currentUser,nbRuns.longValue(),waitingMillis.longValue());
+					billingRunService.validate(billingRun.getId(), currentUser,nbRuns.longValue(),waitingMillis.longValue());
 					result.registerSucces();
 				} catch (Exception e) {
 					log.error("Failed to run invoicing", e);

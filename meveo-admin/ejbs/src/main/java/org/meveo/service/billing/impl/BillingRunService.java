@@ -606,7 +606,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void validate(BillingRun billingRun,User currentUser,long nbRuns,long waitingMillis) throws Exception{
+	public void validate(Long billingRunId,User currentUser,long nbRuns,long waitingMillis) throws Exception{
+		BillingRun billingRun = findById(billingRunId);
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 			refreshOrRetrieve(billingRun);
 			List<BillingAccount> billingAccounts = getBillingAccounts(billingRun);
