@@ -40,6 +40,7 @@ import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.omnifaces.cdi.ViewScoped;
@@ -164,6 +165,9 @@ public class CacheBean implements Serializable {
      * @param cacheName Cache name
      */
     public void refresh(String cacheName) {
+    	if(StringUtils.isBlank(cacheName)){
+    		cacheName= null;
+    	}
         walletCacheContainerProvider.refreshCache(cacheName);
         cdrEdrProcessingCacheContainerProvider.refreshCache(cacheName);
         notificationCacheContainerProvider.refreshCache(cacheName);
