@@ -21,6 +21,7 @@ import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.GetCountryResponse;
@@ -358,4 +359,7 @@ public interface SettingsWs extends IBaseWs {
 	
 	@WebMethod
 	public ActionStatus createOrUpdateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+	
+	@WebMethod
+	public DescriptionsResponseDto listDescriptions();
 }

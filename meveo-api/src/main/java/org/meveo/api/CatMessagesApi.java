@@ -1,12 +1,14 @@
 package org.meveo.api;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CatMessagesDto;
+import org.meveo.api.dto.response.CatMessagesListDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -373,9 +375,29 @@ public class CatMessagesApi extends BaseApi {
 					getMissingParametersExceptionMessage());
 		}
 		
-
+		
 	}
-
+	
+	public CatMessagesListDto list(Provider provider) {
+		CatMessagesListDto catMessagesListDto = new CatMessagesListDto();
+		List<CatMessages> catMessagesList = catMessagesService.list();
+		
+		if (catMessagesList != null && !catMessagesList.isEmpty()) {
+			for (CatMessages cm: catMessagesList) {
+				CatMessagesDto cmd = new CatMessagesDto();
+				cmd.setBasicDescription(cm.getDescription());
+				cmd.setCatMessagesCode(cm.getMessageCode());
+				cmd.setDescriptionTranslation(cm.getEntityDescription());
+				cmd.setEntityCode(cm.getEntityCode());
+				cmd.setLanguageCode(cm.getLanguageCode());
+				cmd.setObjectType(cm.getObjectType());
+				catMessagesListDto.getCatMessage().add(cmd);
+			}
+		}
+		
+		return catMessagesListDto;
+	}
+	
 	protected Map<String, String> getObjectTypes() {
 		if (result.isEmpty()) {
 			result.put("Titles and civilities", "Title_*");
