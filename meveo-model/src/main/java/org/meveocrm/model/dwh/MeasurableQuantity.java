@@ -133,6 +133,25 @@ public class MeasurableQuantity extends BusinessEntity {
 		this.lastMeasureDate = lastMeasureDate;
 	}
 
+	public Date getPreviousDate(Date date){
+	       GregorianCalendar calendar = new GregorianCalendar();
+	       calendar.setTime(date);
+	        switch(measurementPeriod){
+		        case DAILY:
+		        	calendar.add(java.util.Calendar.DAY_OF_MONTH, -1);
+		        	break;
+		        case WEEKLY:
+		        	calendar.add(java.util.Calendar.WEEK_OF_YEAR, -1);
+		        	break;
+		        case MONTHLY:
+		        	calendar.add(java.util.Calendar.MONTH, -1);
+		        	break;
+		        case YEARLY:
+		        	calendar.add(java.util.Calendar.YEAR, -1);
+		        	break;
+		    }
+	        return calendar.getTime();
+	}
 	
 	public Date getNextMeasureDate(){
         GregorianCalendar calendar = new GregorianCalendar();
