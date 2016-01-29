@@ -433,4 +433,20 @@ public class Invoice extends AuditableEntity {
 		this.invoiceAdjustmentCurrentProviderNb = invoiceAdjustmentCurrentProviderNb;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Invoice other = (Invoice) obj;
+		if (other.getId() == null) {
+			return false;
+		} else if (!other.getId().equals(this.getId())) {
+			return false;
+		}
+		return true;
+	}
 }
