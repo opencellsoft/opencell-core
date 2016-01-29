@@ -268,14 +268,7 @@ public class ServiceTemplateApi extends BaseApi {
 			serviceTemplate.setInvoicingCalendar(invoicingCalendar);
 			serviceTemplate.setProvider(provider);
 
-			if (!StringUtils.isBlank(postData.getActivationScriptCode())) {
-				serviceTemplate.setActivationScript(scriptInstanceService.findByCode(
-						postData.getActivationScriptCode(), currentUser.getProvider()));
-			}
-			if (!StringUtils.isBlank(postData.getTerminationScriptCode())) {
-				serviceTemplate.setTerminationScript(scriptInstanceService.findByCode(
-						postData.getTerminationScriptCode(), currentUser.getProvider()));
-			}
+			
 		
             serviceTemplateService.create(serviceTemplate, currentUser, provider);
             
@@ -321,15 +314,7 @@ public class ServiceTemplateApi extends BaseApi {
 			}
 			serviceTemplate.setDescription(postData.getDescription());			
 
-			if (!StringUtils.isBlank(postData.getActivationScriptCode())) {
-				serviceTemplate.setActivationScript(scriptInstanceService.findByCode(
-						postData.getActivationScriptCode(), currentUser.getProvider()));
-			}
-			if (!StringUtils.isBlank(postData.getTerminationScriptCode())) {
-				serviceTemplate.setTerminationScript(scriptInstanceService.findByCode(
-						postData.getTerminationScriptCode(), currentUser.getProvider()));
-			}
-
+			
 			Calendar invoicingCalendar = null;
 			if(postData.getInvoicingCalendar()!=null){
 				invoicingCalendar = calendarService.findByCode(

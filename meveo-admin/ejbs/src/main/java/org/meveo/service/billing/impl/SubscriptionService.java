@@ -44,13 +44,13 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.medina.impl.AccessService;
-import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.offer.OfferScriptService;
 
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
 	
 	@Inject
-	private ScriptInstanceService scriptInstanceService;
+	private OfferScriptService scriptInstanceService;
 
 	@EJB
 	private ServiceInstanceService serviceInstanceService;
@@ -63,15 +63,15 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		super.create(subscription, creator, provider);
 
 		// execute subscription script
-		if (subscription.getOffer().getSubscriptionScript() != null) {
+		if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript()!=null) {
 			Map<String, Object> scriptContext = new HashMap<>();
 			scriptContext.put("subscription", subscription);
 
 			try {
-                scriptInstanceService.execute(subscription.getOffer().getSubscriptionScript().getCode(),
+                scriptInstanceService.subscribe(subscription.getOffer().getBusinessOfferModel().getScript().getCode(),
                 		scriptContext, creator, provider);
             } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", subscription.getOffer().getSubscriptionScript().getCode(), e);
+                log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
             }
 		}
 	}
@@ -186,13 +186,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		}
 		
 		// execute termination script
-		if (subscription.getOffer().getTerminationScript() != null) {
+		if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
 			Map<String, Object> scriptContext = new HashMap<>();
 			scriptContext.put("subscription", subscription);
 			scriptContext.put("terminationDate", terminationDate);
 			scriptContext.put("terminationReason", terminationReason);
 
-			scriptInstanceService.execute(subscription.getOffer().getTerminationScript().getCode(),
+			scriptInstanceService.terminate(subscription.getOffer().getBusinessOfferModel().getScript().getCode(),
 					scriptContext, user, user.getProvider());
 		}
 

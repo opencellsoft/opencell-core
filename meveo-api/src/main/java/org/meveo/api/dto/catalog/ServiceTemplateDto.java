@@ -43,9 +43,6 @@ public class ServiceTemplateDto implements Serializable {
 	
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	private String activationScriptCode;
-	private String terminationScriptCode;
-	
 	public ServiceTemplateDto() {
 	}
 
@@ -53,13 +50,6 @@ public class ServiceTemplateDto implements Serializable {
 		code = serviceTemplate.getCode();
 		description = serviceTemplate.getDescription();
 		invoicingCalendar=serviceTemplate.getInvoicingCalendar()==null?null:serviceTemplate.getInvoicingCalendar().getCode();
-
-		if (serviceTemplate.getActivationScript() != null) {
-			activationScriptCode = serviceTemplate.getActivationScript().getCode();
-		}
-		if (serviceTemplate.getTerminationScript() != null) {
-			terminationScriptCode = serviceTemplate.getTerminationScript().getCode();
-		}
 
 		// set serviceChargeTemplateRecurrings
 		if (serviceTemplate.getServiceRecurringCharges().size() > 0) {
@@ -216,19 +206,4 @@ public class ServiceTemplateDto implements Serializable {
 		this.customFields = customFields;
 	}
 
-	public String getActivationScriptCode() {
-		return activationScriptCode;
-	}
-
-	public void setActivationScriptCode(String activationScriptCode) {
-		this.activationScriptCode = activationScriptCode;
-	}
-
-	public String getTerminationScriptCode() {
-		return terminationScriptCode;
-	}
-
-	public void setTerminationScriptCode(String terminationScriptCode) {
-		this.terminationScriptCode = terminationScriptCode;
-	}
 }

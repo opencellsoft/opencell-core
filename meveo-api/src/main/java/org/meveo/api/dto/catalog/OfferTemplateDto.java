@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
@@ -34,8 +35,7 @@ public class OfferTemplateDto implements Serializable {
 	
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 	
-	private String subscriptionScriptCode;
-	private String terminationScriptCode;
+	//FIXME add BOM
 
 	public OfferTemplateDto() {
 
@@ -45,16 +45,12 @@ public class OfferTemplateDto implements Serializable {
 		code = e.getCode();
 		description = e.getDescription();
 		disabled = e.isDisabled();
-		if (e.getSubscriptionScript() != null) {
-			subscriptionScriptCode = e.getSubscriptionScript().getCode();
-		}
-		if (e.getTerminationScript() != null) {
-			terminationScriptCode = e.getTerminationScript().getCode();
-		}
+		
 
-		if (e.getServiceTemplates() != null && e.getServiceTemplates().size() > 0) {
-			for (ServiceTemplate st : e.getServiceTemplates()) {
-				serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getCode()));
+		if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
+			for (OfferServiceTemplate st : e.getOfferServiceTemplates()) {
+			//FIXME
+				//serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getCode()));
 			}
 		}
 
@@ -105,22 +101,6 @@ public class OfferTemplateDto implements Serializable {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
-	}
-
-	public String getSubscriptionScriptCode() {
-		return subscriptionScriptCode;
-	}
-
-	public void setSubscriptionScriptCode(String subscriptionScriptCode) {
-		this.subscriptionScriptCode = subscriptionScriptCode;
-	}
-
-	public String getTerminationScriptCode() {
-		return terminationScriptCode;
-	}
-
-	public void setTerminationScriptCode(String terminationScriptCode) {
-		this.terminationScriptCode = terminationScriptCode;
 	}
 
 }

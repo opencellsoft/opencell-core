@@ -11,10 +11,8 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
-import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -22,6 +20,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
@@ -243,11 +242,11 @@ public class OrderApi {
 	}
 
 	private ServiceTemplate findServiceTemplateByCode(OfferTemplate offerTemplate, String serviceCode) {
-		List<ServiceTemplate> serviceTemplates = offerTemplate.getServiceTemplates();
+		List<OfferServiceTemplate> serviceTemplates = offerTemplate.getOfferServiceTemplates();
 		if (serviceTemplates != null) {
-			for (ServiceTemplate serviceTemplate : serviceTemplates) {
-				if (serviceTemplate.getCode().equalsIgnoreCase(serviceCode)) {
-					return serviceTemplate;
+			for (OfferServiceTemplate serviceTemplate : serviceTemplates) {
+				if (serviceTemplate.getServiceTemplate().getCode().equalsIgnoreCase(serviceCode)) {
+					return serviceTemplate.getServiceTemplate();
 				}
 			}
 		}

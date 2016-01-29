@@ -55,15 +55,7 @@ public class OfferTemplateApi extends BaseApi {
 			offerTemplate.setDescription(postData.getDescription());
 			offerTemplate.setDisabled(postData.isDisabled());
 
-			if (!StringUtils.isBlank(postData.getSubscriptionScriptCode())) {
-				offerTemplate.setSubscriptionScript(scriptInstanceService.findByCode(
-						postData.getSubscriptionScriptCode(), currentUser.getProvider()));
-			}
-			if (!StringUtils.isBlank(postData.getTerminationScriptCode())) {
-				offerTemplate.setTerminationScript(scriptInstanceService.findByCode(
-						postData.getTerminationScriptCode(), currentUser.getProvider()));
-			}
-
+		
 			// check service templates
 			if (postData.getServiceTemplates() != null
 					&& postData.getServiceTemplates().getServiceTemplate().size() > 0) {
@@ -77,8 +69,8 @@ public class OfferTemplateApi extends BaseApi {
 
 					serviceTemplates.add(serviceTemplate);
 				}
-
-				offerTemplate.setServiceTemplates(serviceTemplates);
+//FIXME
+		//		offerTemplate.setServiceTemplates(serviceTemplates);
 			}
 
             offerTemplateService.create(offerTemplate, currentUser, provider);
@@ -114,15 +106,6 @@ public class OfferTemplateApi extends BaseApi {
 
 			offerTemplate.setDescription(postData.getDescription());
 			offerTemplate.setDisabled(postData.isDisabled());
-			
-			if (!StringUtils.isBlank(postData.getSubscriptionScriptCode())) {
-				offerTemplate.setSubscriptionScript(scriptInstanceService.findByCode(
-						postData.getSubscriptionScriptCode(), currentUser.getProvider()));
-			}
-			if (!StringUtils.isBlank(postData.getTerminationScriptCode())) {
-				offerTemplate.setTerminationScript(scriptInstanceService.findByCode(
-						postData.getTerminationScriptCode(), currentUser.getProvider()));
-			}
 
 			// check service templates
 			if (postData.getServiceTemplates() != null
@@ -137,9 +120,9 @@ public class OfferTemplateApi extends BaseApi {
 
 					serviceTemplates.add(serviceTemplate);
 				}
-
-				offerTemplate.getServiceTemplates().clear();
-				offerTemplate.setServiceTemplates(serviceTemplates);
+//FIXME
+				//offerTemplate.getServiceTemplates().clear();
+				//offerTemplate.setServiceTemplates(serviceTemplates);
 			}
 			
 			// populate customFields

@@ -13,9 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 
-/**
- * @author Edward P. Legaspi
- **/
+
 @XmlRootElement(name = "BomOffer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BomOfferDto extends BaseDto {

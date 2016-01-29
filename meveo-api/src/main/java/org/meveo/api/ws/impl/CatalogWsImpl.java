@@ -11,7 +11,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.catalog.BomEntityApi;
+import org.meveo.api.catalog.BusinessOfferModelApi;
 import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.ChargeTemplateApi;
 import org.meveo.api.catalog.CounterTemplateApi;
@@ -24,7 +24,7 @@ import org.meveo.api.catalog.TriggeredEdrApi;
 import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.catalog.BomEntityDto;
+import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
@@ -62,7 +62,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	private BusinessOfferApi businessOfferApi;
 
 	@Inject
-	private BomEntityApi bomEntityApi;
+	private BusinessOfferModelApi bomEntityApi;
 
 	@Inject
 	private TriggeredEdrApi triggeredEdrApi;
@@ -1014,7 +1014,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus createBomEntity(BomEntityDto postData) {
+	public ActionStatus createBomEntity(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -1034,7 +1034,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus updateBomEntity(BomEntityDto postData) {
+	public ActionStatus updateBomEntity(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -1094,7 +1094,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus createOrUpdateBomEntity(BomEntityDto postData) {
+	public ActionStatus createOrUpdateBomEntity(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {

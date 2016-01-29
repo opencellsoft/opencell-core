@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.bom.BOMEntity;
+import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferService;
@@ -18,12 +18,9 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
 
-/**
- * @author Edward P. Legaspi
- **/
 @Named
 @ViewScoped
-public class BusinessOfferBean extends BaseBean<BOMEntity> {
+public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 
 	private static final long serialVersionUID = 8222060379099238520L;
 
@@ -37,11 +34,11 @@ public class BusinessOfferBean extends BaseBean<BOMEntity> {
 	DualListModel<ServiceTemplate> dualListModel = new DualListModel<>();
 
 	public BusinessOfferBean() {
-		super(BOMEntity.class);
+		super(BusinessOfferModel.class);
 	}
 
 	@Override
-	protected IPersistenceService<BOMEntity> getPersistenceService() {
+	protected IPersistenceService<BusinessOfferModel> getPersistenceService() {
 		return bomEntityService;
 	}
 
@@ -68,8 +65,8 @@ public class BusinessOfferBean extends BaseBean<BOMEntity> {
 
 	public DualListModel<ServiceTemplate> getServiceTemplates() {
 		List<ServiceTemplate> targetList = new ArrayList<>();
-
-		dualListModel.setSource(entity.getOfferTemplate().getServiceTemplates());
+//FIXME
+		//dualListModel.setSource(entity.getOfferTemplate().getServiceTemplates());
 		dualListModel.setTarget(targetList);
 
 		return dualListModel;

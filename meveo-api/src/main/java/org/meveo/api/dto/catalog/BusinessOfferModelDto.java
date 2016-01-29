@@ -9,18 +9,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 
-/**
- * @author Edward P. Legaspi
- **/
-@XmlRootElement(name = "BomEntity")
+@XmlRootElement(name = "BusinessOfferModel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BomEntityDto extends BaseDto {
+public class BusinessOfferModelDto extends BaseDto {
 
 	private static final long serialVersionUID = -7023791262640948222L;
 
 	@NotNull
 	@XmlAttribute(required = true)
-	private String bomCode;
+	private String code;
 
 	@XmlAttribute
 	private String description;
@@ -29,7 +26,7 @@ public class BomEntityDto extends BaseDto {
 	@XmlElement(required = true)
 	private String offerTemplateCode;
 
-	private String creationScriptCode;
+	private String scriptCode;
 
 	public String getOfferTemplateCode() {
 		return offerTemplateCode;
@@ -39,18 +36,10 @@ public class BomEntityDto extends BaseDto {
 		this.offerTemplateCode = offerTemplateCode;
 	}
 
-	public String getBomCode() {
-		return bomCode;
-	}
-
-	public void setBomCode(String bomCode) {
-		this.bomCode = bomCode;
-	}
-
 	@Override
 	public String toString() {
-		return "BomEntityDto [bomCode=" + bomCode + ", description=" + description + ", offerTemplateCode="
-				+ offerTemplateCode + ", creationScriptCode=" + creationScriptCode + "]";
+		return "BusinessOfferModelDto [code=" + code + ", description=" + description + ", offerTemplateCode="
+				+ offerTemplateCode + ", scriptCode=" + scriptCode + "]";
 	}
 
 	public String getDescription() {
@@ -61,12 +50,21 @@ public class BomEntityDto extends BaseDto {
 		this.description = description;
 	}
 
-	public String getCreationScriptCode() {
-		return creationScriptCode;
+	public String getCode() {
+		return code;
 	}
 
-	public void setCreationScriptCode(String creationScriptCode) {
-		this.creationScriptCode = creationScriptCode;
+	public void setCode(String code) {
+		this.code = code;
 	}
+
+	public String getScriptCode() {
+		return scriptCode;
+	}
+
+	public void setScriptCode(String scriptCode) {
+		this.scriptCode = scriptCode;
+	}
+
 
 }

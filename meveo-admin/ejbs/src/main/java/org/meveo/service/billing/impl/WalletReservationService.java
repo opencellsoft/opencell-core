@@ -14,6 +14,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
@@ -197,9 +198,9 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 			String param1, String param2, String param3, BigDecimal quantity) throws BusinessException {
 		BigDecimal servicesSum = new BigDecimal(0);
 
-		for (ServiceTemplate st : offerTemplate.getServiceTemplates()) {
+		for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
 			servicesSum = servicesSum.add(realtimeChargingService.getActivationServicePrice(
-					userAccount.getBillingAccount(), st, subscriptionDate, offerTemplate.getCode(), quantity, param1,
+					userAccount.getBillingAccount(), st.getServiceTemplate(), subscriptionDate, offerTemplate.getCode(), quantity, param1,
 					param2, param3, true));
 		}
 

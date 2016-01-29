@@ -23,8 +23,6 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -34,8 +32,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
@@ -43,7 +39,6 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ObservableEntity
@@ -58,10 +53,6 @@ public class OfferTemplate extends BusinessCFEntity {
 	@Size(max = 100)
 	private String name;
 
-	@Version
-	@Column(name = "ENTITY_VERSION")
-	private Integer entityVersion;
-
 	@Column(name = "image")
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
@@ -71,31 +62,19 @@ public class OfferTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "CAT_OFFER_TEMPLATE_CAT_ID")
 	private OfferTemplateCategory offerTemplateCategory;
 
-	@Column(name = "BOM_CODE", length = 60)
-	private String bomCode;
-
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private OfferTemplateStatusEnum status = OfferTemplateStatusEnum.PUBLISHED;
+	@Column(name = "BUSINESS_OFFER_MODEL_ID", length = 60)
+	private BusinessOfferModel businessOfferModel;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_OFFER_SERV_TEMPLATES", joinColumns = @JoinColumn(name = "OFFER_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"))
-	private List<ServiceTemplate> serviceTemplates;
+	@JoinTable(name = "CAT_OFFER_SERV_ASSOC", joinColumns = @JoinColumn(name = "OFFER_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_SERVICE_TEMPLATE_ID"))
+	private List<OfferServiceTemplate> offerServiceTemplates;
 
-	@ManyToOne
-	@JoinColumn(name = "TERMINATION_SCRIPT_INSTANCE_ID")
-	private ScriptInstance terminationScript;
-
-	@ManyToOne
-	@JoinColumn(name = "SUBSCRIPTION_SCRIPT_INSTANCE_ID")
-	private ScriptInstance subscriptionScript;
-
-	public List<ServiceTemplate> getServiceTemplates() {
-		return serviceTemplates;
+	public List<OfferServiceTemplate> getOfferServiceTemplates() {
+		return offerServiceTemplates;
 	}
 
-	public void setServiceTemplates(List<ServiceTemplate> serviceTemplates) {
-		this.serviceTemplates = serviceTemplates;
+	public void setOfferServiceTemplates(List<OfferServiceTemplate> offerServiceTemplates) {
+		this.offerServiceTemplates = offerServiceTemplates;
 	}
 
 	@Override
@@ -103,44 +82,12 @@ public class OfferTemplate extends BusinessCFEntity {
 		return null;
 	}
 
-	public String getBomCode() {
-		return bomCode;
-	}
 
-	public void setBomCode(String bomCode) {
-		this.bomCode = bomCode;
-	}
-
-	public ScriptInstance getSubscriptionScript() {
-		return subscriptionScript;
-	}
-
-	public void setSubscriptionScript(ScriptInstance subscriptionScript) {
-		this.subscriptionScript = subscriptionScript;
-	}
-
-	public ScriptInstance getTerminationScript() {
-		return terminationScript;
-	}
-
-	public void setTerminationScript(ScriptInstance terminationScript) {
-		this.terminationScript = terminationScript;
-	}
-
-	public void addServiceTemplate(ServiceTemplate serviceTemplate) {
-		if (getServiceTemplates() == null) {
-			serviceTemplates = new ArrayList<ServiceTemplate>();
+	public void addOfferServiceTemplate(OfferServiceTemplate serviceTemplate) {
+		if (getOfferServiceTemplates() == null) {
+			offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 		}
-
-		serviceTemplates.add(serviceTemplate);
-	}
-
-	public OfferTemplateStatusEnum getStatus() {
-		return status;
-	}
-
-	public void setStatus(OfferTemplateStatusEnum status) {
-		this.status = status;
+		offerServiceTemplates.add(serviceTemplate);
 	}
 
 	public OfferTemplateCategory getOfferTemplateCategory() {
@@ -167,11 +114,12 @@ public class OfferTemplate extends BusinessCFEntity {
 		this.image = image;
 	}
 
-	public Integer getEntityVersion() {
-		return entityVersion;
+	public BusinessOfferModel getBusinessOfferModel() {
+		return businessOfferModel;
 	}
 
-	public void setEntityVersion(Integer entityVersion) {
-		this.entityVersion = entityVersion;
+	public void setBusinessOfferModel(BusinessOfferModel businessOfferModel) {
+		this.businessOfferModel = businessOfferModel;
 	}
+
 }

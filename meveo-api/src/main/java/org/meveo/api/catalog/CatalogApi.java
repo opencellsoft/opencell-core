@@ -11,6 +11,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.BaseApi;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
@@ -53,7 +54,8 @@ public class CatalogApi extends BaseApi {
 	private Map<String, BigDecimal> getOfferPrices(OfferTemplate offerTemplate) {
 		Map<String, BigDecimal> servicePrices = new HashMap<>();
 
-		for (ServiceTemplate st : offerTemplate.getServiceTemplates()) {
+		for (OfferServiceTemplate ost : offerTemplate.getOfferServiceTemplates()) {
+			ServiceTemplate st=ost.getServiceTemplate();
 			if (st.getServiceSubscriptionCharges() != null) {
 				BigDecimal totalPriceOneShotCharges = new BigDecimal(0);
 				for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : st

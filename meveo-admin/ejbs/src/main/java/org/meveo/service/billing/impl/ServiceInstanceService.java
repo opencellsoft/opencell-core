@@ -51,13 +51,13 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.service.ServiceScriptService;
 
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	
 	@Inject
-	private ScriptInstanceService scriptInstanceService;
+	private ServiceScriptService scriptInstanceService;
 
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
@@ -302,12 +302,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		update(serviceInstance, creator);
 
 		// execute subscription script
-		if (serviceInstance.getServiceTemplate().getActivationScript() != null) {
+		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript()!=null) {
 			Map<String, Object> scriptContext = new HashMap<>();
 			scriptContext.put("serviceInstance", serviceInstance);
-
-			scriptInstanceService.execute(serviceInstance.getServiceTemplate()
-					.getActivationScript().getCode(), scriptContext, creator, creator.getProvider());
+            
+			scriptInstanceService.activate(serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), scriptContext, creator, creator.getProvider());
 		}
 	}
 
@@ -332,15 +331,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			terminationDate = new Date();
 		}
 
-		// execute subscription script
-		if (serviceInstance.getServiceTemplate().getTerminationScript() != null) {
+		// execute termination script
+		if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
 			Map<String, Object> scriptContext = new HashMap<>();
 			scriptContext.put("serviceInstance", serviceInstance);
 			scriptContext.put("terminationDate", terminationDate);
 			scriptContext.put("terminationReason", terminationReason);
 
-			scriptInstanceService.execute(serviceInstance.getServiceTemplate()
-					.getTerminationScript().getCode(), scriptContext, user, user.getProvider());
+			scriptInstanceService.terminate(
+					serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), scriptContext, user, user.getProvider());
 		}
 
 		String serviceCode = serviceInstance.getCode();

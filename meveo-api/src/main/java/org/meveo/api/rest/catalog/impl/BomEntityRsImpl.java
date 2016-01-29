@@ -8,10 +8,10 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.catalog.BomEntityApi;
+import org.meveo.api.catalog.BusinessOfferModelApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.catalog.BomEntityDto;
+import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.response.catalog.GetBomEntityResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -27,11 +27,11 @@ import org.meveo.api.rest.impl.BaseRs;
 public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 
 	@Inject
-	private BomEntityApi bomEntityApi;
+	private BusinessOfferModelApi bomEntityApi;
 
 	@Override
 	@ApiOperation(value = "")
-	public ActionStatus create(BomEntityDto postData) {
+	public ActionStatus create(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -52,7 +52,7 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 
 	@Override
 	@ApiOperation(value = "")
-	public ActionStatus update(BomEntityDto postData) {
+	public ActionStatus update(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -115,7 +115,7 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 
 	@Override
 	@ApiOperation(value = "")
-	public ActionStatus createOrUpdate(BomEntityDto postData) {
+	public ActionStatus createOrUpdate(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {

@@ -23,7 +23,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.bom.BOMEntity;
+import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -48,9 +48,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
 
-/**
- * @author Edward P. Legaspi
- **/
+
 @Stateless
 public class BusinessOfferApi extends BaseApi {
 
@@ -92,30 +90,29 @@ public class BusinessOfferApi extends BaseApi {
 
 	public void createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
 		validate(postData);
-
+		//FIXME
+		/*
 		if (!StringUtils.isBlank(postData.getBomCode()) && postData.getServicesToActivate() != null
 				&& postData.getServicesToActivate().size() != 0) {
 			// find bom
-			BOMEntity bomEntity = bomEntityService.findByCode(postData.getBomCode(), currentUser.getProvider());
+			BusinessOfferModel bomEntity = bomEntityService.findByCode(postData.getBomCode(), currentUser.getProvider());
 			if (bomEntity == null) {
-				throw new EntityDoesNotExistsException(BOMEntity.class, postData.getBomCode());
+				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
 			}
 
 			// get the offer from bom
 			OfferTemplate bomOffer = bomEntity.getOfferTemplate();
-			if (bomOffer.getServiceTemplates() == null || bomOffer.getServiceTemplates().size() == 0) {
+			if (bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().size() == 0) {
 				throw new MeveoApiException("NO_SERVICE_TEMPLATES");
 			}
 
 			OfferTemplate newOfferTemplate = new OfferTemplate();
 			newOfferTemplate.setCode(postData.getOfferCode());
-			newOfferTemplate.setBomCode(postData.getBomCode());
+			
+			newOfferTemplate.setBusinessOfferModel(postData.getBomCode());
 
 			if (bomOffer.getSubscriptionScript() != null) {
 				newOfferTemplate.setSubscriptionScript(bomOffer.getSubscriptionScript());
-			}
-			if (bomOffer.getTerminationScript() != null) {
-				newOfferTemplate.setTerminationScript(bomOffer.getTerminationScript());
 			}
 
 			// get the services from bom offer
@@ -344,5 +341,6 @@ public class BusinessOfferApi extends BaseApi {
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
+		*/
 	}
 }

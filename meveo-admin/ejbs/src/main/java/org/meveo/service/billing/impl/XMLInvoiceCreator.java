@@ -68,6 +68,7 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
@@ -552,7 +553,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	}
 
 	private void addServices(OfferTemplate offerTemplate, Invoice invoice, Document doc, Element invoiceTag) {
-		if (offerTemplate.getServiceTemplates() != null && offerTemplate.getServiceTemplates().size() > 0) {
+		if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
 			NodeList serviceList = doc.getElementsByTagName("services");
 
 			Element servicesTag = null;
@@ -563,7 +564,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				invoiceTag.appendChild(servicesTag);
 			}
 
-			for (ServiceTemplate serviceTemplate : offerTemplate.getServiceTemplates()) {
+			for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
+				ServiceTemplate serviceTemplate=offerServiceTemplate.getServiceTemplate();
 				Element serviceTag = doc.createElement("service");
 				serviceTag.setAttribute("id", serviceTemplate.getId() + "");
 				serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");

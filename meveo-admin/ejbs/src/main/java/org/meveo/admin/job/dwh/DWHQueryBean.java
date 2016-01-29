@@ -108,12 +108,15 @@ public class DWHQueryBean {
 			}
 
 			try {
-				while (mq.getLastMeasureDate() == null || mq.getNextMeasureDate().before(toDate)) {
+				if(mq.getLastMeasureDate()==null){
+					mq.setLastMeasureDate(mq.getPreviousDate(toDate));
+				}
+				while (mq.getNextMeasureDate().before(toDate)) {
 					log.debug("resolve query:{}, nextMeasureDate={}, lastMeasureDate={}, provider={} ", mq.getSqlQuery(),mq.getNextMeasureDate(),mq.getLastMeasureDate(),provider.getId());
-					String queryStr = mq.getSqlQuery().replaceAll("#\\{date\\}", df.format(mq.getNextMeasureDate()));
-					queryStr = queryStr.replaceAll("#\\{dateTime\\}", tf.format(mq.getNextMeasureDate()));
-					queryStr = queryStr.replaceAll("#\\{nextDate\\}", df.format(mq.getLastMeasureDate()));
-					queryStr = queryStr.replaceAll("#\\{nextDateTime\\}", tf.format(mq.getLastMeasureDate()));
+					String queryStr = mq.getSqlQuery().replaceAll("#\\{date\\}", df.format(mq.getLastMeasureDate()));
+					queryStr = queryStr.replaceAll("#\\{dateTime\\}", tf.format(mq.getLastMeasureDate()));
+					queryStr = queryStr.replaceAll("#\\{nextDate\\}", df.format(mq.getNextMeasureDate()));
+					queryStr = queryStr.replaceAll("#\\{nextDateTime\\}", tf.format(mq.getNextMeasureDate()));
 					queryStr = queryStr.replaceAll("#\\{provider\\}", "" + provider.getId());
 					log.debug("execute query:{}", queryStr);
 					Query query = em.createNativeQuery(queryStr);

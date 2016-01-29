@@ -1,4 +1,4 @@
-package org.meveo.model.bom;
+package org.meveo.model.catalog;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -7,19 +7,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.admin.MeveoModule;
+import org.meveo.model.scripts.OfferModelScript;
 
-/**
- * @author Edward P. Legaspi
- **/
 @Entity
 @ObservableEntity
-@Table(name = "CAT_BOM_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_BOM_ENTITY_SEQ")
-public class BOMEntity extends BusinessEntity {
+@Table(name = "CAT_BUSINESS_OFFER_MODEL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_BUSINESS_OFFER_MODEL_SEQ")
+public class BusinessOfferModel extends MeveoModule {
 
 	private static final long serialVersionUID = 683873220792653929L;
 
@@ -29,7 +25,7 @@ public class BOMEntity extends BusinessEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
-	private ScriptInstance creationScript;
+	private OfferModelScript script;
 
 	public OfferTemplate getOfferTemplate() {
 		return offerTemplate;
@@ -39,12 +35,14 @@ public class BOMEntity extends BusinessEntity {
 		this.offerTemplate = offerTemplate;
 	}
 
-	public ScriptInstance getCreationScript() {
-		return creationScript;
+	public OfferModelScript getScript() {
+		return script;
 	}
 
-	public void setCreationScript(ScriptInstance creationScript) {
-		this.creationScript = creationScript;
+	public void setScript(OfferModelScript script) {
+		this.script = script;
 	}
+
+
 
 }

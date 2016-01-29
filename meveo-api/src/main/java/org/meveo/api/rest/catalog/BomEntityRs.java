@@ -12,7 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.catalog.BomEntityDto;
+import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.response.catalog.GetBomEntityResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
@@ -28,11 +28,11 @@ public interface BomEntityRs extends IBaseRs {
 
 	@Path("/")
 	@POST
-	ActionStatus create(BomEntityDto postData);
+	ActionStatus create(BusinessOfferModelDto postData);
 
 	@Path("/")
 	@PUT
-	ActionStatus update(BomEntityDto postData);
+	ActionStatus update(BusinessOfferModelDto postData);
 
 	@Path("/")
 	@GET
@@ -44,6 +44,6 @@ public interface BomEntityRs extends IBaseRs {
 
 	@Path("/createOrUpdate")
 	@POST
-	ActionStatus createOrUpdate(BomEntityDto postData);
+	ActionStatus createOrUpdate(BusinessOfferModelDto postData);
 
 }

@@ -40,6 +40,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -201,8 +202,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		}
 		
 		List<ServiceInstance> serviceInstances = entity.getServiceInstances();
-		for (ServiceTemplate serviceTemplate : entity.getOffer().getServiceTemplates()) {
-		    if (serviceTemplate.isDisabled()){
+		for (OfferServiceTemplate offerServiceTemplate : entity.getOffer().getOfferServiceTemplates()) {
+			ServiceTemplate serviceTemplate=offerServiceTemplate.getServiceTemplate();
+			if (serviceTemplate.isDisabled()){
 		        continue;
 		    }
 		    

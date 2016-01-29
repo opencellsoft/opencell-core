@@ -107,7 +107,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 			throw new BusinessException("OfferTemplate with code=" + offerCode + " does not exists.");
 		}
 
-		if (offerTemplate.getServiceTemplates() == null || offerTemplate.getServiceTemplates().size() < 1) {
+		if (offerTemplate.getOfferServiceTemplates() == null || offerTemplate.getOfferServiceTemplates().size() < 1) {
 			throw new BusinessException("OfferTemplate doesn't have linked serviceTemplate.");
 		}
 
@@ -216,7 +216,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 			throw new BusinessException("OfferTemplate with code=" + offerCode + " does not exists.");
 		}
 
-		if (offerTemplate.getServiceTemplates() == null || offerTemplate.getServiceTemplates().size() < 1) {
+		if (offerTemplate.getOfferServiceTemplates() == null || offerTemplate.getOfferServiceTemplates().size() < 1) {
 			throw new BusinessException("OfferTemplate doesn't have linked serviceTemplate.");
 		}
 

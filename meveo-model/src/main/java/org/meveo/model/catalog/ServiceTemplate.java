@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -37,7 +38,6 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ObservableEntity
@@ -79,13 +79,9 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "INVOICING_CALENDAR_ID")
 	private Calendar invoicingCalendar;
 	
-	@ManyToOne
-	@JoinColumn(name = "TERMINATION_SCRIPT_INSTANCE_ID")
-	private ScriptInstance terminationScript;
+	@Column(name = "BUSINESS_SERVICE_MODEL_ID", length = 60)
+	private BusinessServiceModel businessServiceModel;
 
-	@ManyToOne
-	@JoinColumn(name = "ACTIVATION_SCRIPT_INSTANCE_ID")
-	private ScriptInstance activationScript;
 	
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
@@ -191,19 +187,13 @@ public class ServiceTemplate extends BusinessCFEntity {
         return null;
 	}
 
-	public ScriptInstance getActivationScript() {
-		return activationScript;
+	public BusinessServiceModel getBusinessServiceModel() {
+		return businessServiceModel;
 	}
 
-	public void setActivationScript(ScriptInstance activationScript) {
-		this.activationScript = activationScript;
+	public void setBusinessServiceModel(BusinessServiceModel businessServiceModel) {
+		this.businessServiceModel = businessServiceModel;
 	}
 
-	public ScriptInstance getTerminationScript() {
-		return terminationScript;
-	}
-
-	public void setTerminationScript(ScriptInstance terminationScript) {
-		this.terminationScript = terminationScript;
-	}
+    
 }

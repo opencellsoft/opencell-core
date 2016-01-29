@@ -5,7 +5,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.catalog.BomEntityDto;
+import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
@@ -196,10 +196,10 @@ public interface CatalogWs extends IBaseWs {
 	// bom
 
 	@WebMethod
-	ActionStatus createBomEntity(@WebParam(name = "bomEntity") BomEntityDto postData);
+	ActionStatus createBomEntity(@WebParam(name = "bomEntity") BusinessOfferModelDto postData);
 
 	@WebMethod
-	ActionStatus updateBomEntity(@WebParam(name = "bomEntity") BomEntityDto postData);
+	ActionStatus updateBomEntity(@WebParam(name = "bomEntity") BusinessOfferModelDto postData);
 
 	@WebMethod
 	GetBomEntityResponseDto findBomEntity(@WebParam(name = "bomEntityCode") String bomEntityCode);
@@ -208,7 +208,7 @@ public interface CatalogWs extends IBaseWs {
 	ActionStatus removeBomEntity(@WebParam(name = "bomEntityCode") String bomEntityCode);
 
 	@WebMethod
-	ActionStatus createOrUpdateBomEntity(@WebParam(name = "bomEntity") BomEntityDto postData);
+	ActionStatus createOrUpdateBomEntity(@WebParam(name = "bomEntity") BusinessOfferModelDto postData);
 
 	// bom offer
 

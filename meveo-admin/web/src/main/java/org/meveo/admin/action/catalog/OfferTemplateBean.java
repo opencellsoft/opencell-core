@@ -28,6 +28,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -80,9 +81,10 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         if (perks == null) {
             List<ServiceTemplate> perksSource = serviceTemplateService.listActive();
             List<ServiceTemplate> perksTarget = new ArrayList<ServiceTemplate>();
-            if (getEntity().getServiceTemplates() != null) {
-                perksTarget.addAll(getEntity().getServiceTemplates());
-            }
+            //FIXME
+            //if (getEntity().getServiceTemplates() != null) {
+            //    perksTarget.addAll(getEntity().getServiceTemplates());
+            //}
             perksSource.removeAll(perksTarget);
             perks = new DualListModel<ServiceTemplate>(perksSource, perksTarget);
         }
@@ -116,7 +118,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	}
 
 	public void setDualListModel(DualListModel<ServiceTemplate> perks) {
-		getEntity().setServiceTemplates((List<ServiceTemplate>) perks.getTarget());
+		//FIXME
+		//getEntity().setServiceTemplates((List<ServiceTemplate>) perks.getTarget());
 		this.perks = perks;
 	}
 
@@ -140,18 +143,19 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             entity = offerTemplateService.refreshOrRetrieve(entity);
 
             // Lazy load related values first 
-			entity.getServiceTemplates().size();
+			entity.getOfferServiceTemplates().size();
 
 			// Detach and clear ids of entity and related entities
             offerTemplateService.detach(entity);
             entity.setId(null);
             String sourceAppliesToEntity = entity.clearUuid();
                         
-			List<ServiceTemplate> serviceTemplates=entity.getServiceTemplates();
-			entity.setServiceTemplates(new ArrayList<ServiceTemplate>());
-			for(ServiceTemplate serviceTemplate:serviceTemplates){
-				serviceTemplateService.detach(serviceTemplate);
-				entity.getServiceTemplates().add(serviceTemplate);
+			List<OfferServiceTemplate> serviceTemplates=entity.getOfferServiceTemplates();
+			entity.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
+			for(OfferServiceTemplate serviceTemplate:serviceTemplates){
+				//FIXME
+				//serviceTemplateService.detach(serviceTemplate);
+				entity.getOfferServiceTemplates().add(serviceTemplate);
 			}
 			entity.setCode(entity.getCode()+"_copy");
 			

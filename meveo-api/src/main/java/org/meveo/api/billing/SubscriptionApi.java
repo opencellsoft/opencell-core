@@ -335,7 +335,7 @@ public class SubscriptionApi extends BaseApi {
 				}
 				
 				OfferTemplate offer=serviceInstance.getSubscription().getOffer(); 
-				if (offer!=null &&!offer.getServiceTemplates().contains(serviceInstance.getServiceTemplate())) {
+				if (offer!=null &&!offer.getOfferServiceTemplates().contains(serviceInstance.getServiceTemplate())) {
 					throw new MeveoApiException("Service "+serviceInstance.getCode()+" is not associated with Offer");
 				}
 
