@@ -20,7 +20,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
@@ -684,13 +684,13 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
 				.setProductSpecCharRelationship(new ArrayList<SpecificationCharacteristicRelationship>());// leav
 		productSpecCharacteristic
 				.setProductSpecCharacteristicValue(new ArrayList<SpecificationCharacteristicValue>());
-
-		if (offer.getServiceTemplates() != null){
-			for (ServiceTemplate service : offer.getServiceTemplates()) {
+		          
+		if (offer.getOfferServiceTemplates() != null){
+			for (OfferServiceTemplate service : offer.getOfferServiceTemplates()) {
 				SpecificationCharacteristicValue specCharacteristicValue = new SpecificationCharacteristicValue();
 				specCharacteristicValue.setValueType(CharacteristicValueType.STRING);
 				specCharacteristicValue.setDefaultValue(Boolean.FALSE);
-				specCharacteristicValue.setValue(service.getCode());
+				specCharacteristicValue.setValue(service.getServiceTemplate() == null? null : service.getServiceTemplate().getCode());
 				specCharacteristicValue.setUnitOfMeasure("unit");
 				specCharacteristicValue
 						.setValueFrom(offer.getAuditable() != null ? "" + offer.getAuditable().getCreated() : null);
