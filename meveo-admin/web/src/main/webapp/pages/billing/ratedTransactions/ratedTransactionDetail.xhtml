@@ -47,10 +47,8 @@
 			column1Label="#{messages['role.id']}"
 			column1="id"
 		    formField1Label="#{messages['BusinessEntity.code']}"
-			formField2="code" column2Label="#{messages['BusinessEntity.code']}"
-			column2="code"
-			column3Label="#{messages['BusinessEntity.description']}"
-			column3="description">
+			formField2="invoiceNumber" column2Label="#{messages['invoice.invoiceNumber']}"
+			column2="invoiceNumber">
 		  </hftl:entityPopup>
 		  
 		  <hftl:entityPopup id="billingAccountPopup"
@@ -102,7 +100,7 @@
 			<hftl:formField id="priceplanSelectId" label="#{messages['ratedTransaction.pricePlan']}" field="priceplan" valueLabelField="code"  popup="true" popupId="searchPricePlanPopup" disabled="true" />
 			<hftl:formField id="walletId" label="#{messages['ratedTransaction.wallet']}" field="wallet" valueLabelField="code"  popup="true" popupId="searchWalletInstancePopup" disabled="true" /> 
 			<hftl:formField label="#{messages['invoiceSubCategory.title']}" id="invoiceSubCategoryId" field="invoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" /> 
-			<hftl:formField label="#{messages['ratedTransaction.invoice']}" id="invoice" field="invoice" valueLabelField="code" popup="true" popupId="searchInvoicePopup" clearButton="true" /> 
+			<hftl:formField label="#{messages['ratedTransaction.invoice']}" id="invoice" field="invoice" valueLabelField="invoiceNumber" popup="true" popupId="searchInvoicePopup" clearButton="true" /> 
 			<hftl:formField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount" valueLabelField="code" popup="true"  popupId="billingAccountPopup" clearButton="true" />
 			<hftl:formField label="#{messages['billingRun.panel']}" id="billingRunId" field="billingRun" valueLabelField="id" popup="true" popupId="searchBillingRunPopup" clearButton="true" renderNewButton="false" />
 		    <hftl:formField label="#{messages['ratedTransaction.edr']}" id="edrId" field="edr" valueLabelField="id" popup="true" popupId="searchEdrPopup" clearButton="true" renderNewButton="false" />
