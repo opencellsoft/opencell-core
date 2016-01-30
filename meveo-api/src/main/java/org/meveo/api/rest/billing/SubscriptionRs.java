@@ -30,49 +30,87 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface SubscriptionRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	ActionStatus create(SubscriptionDto postData);
+    /**
+     * Create a subscription. It does not activate it
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/")
+    ActionStatus create(SubscriptionDto postData);
 
-	@PUT
-	@Path("/")
-	ActionStatus update(SubscriptionDto postData);
+    /**
+     * Updates a subscription. It cannot update a subscription with status=RESILIATED
+     * 
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/")
+    ActionStatus update(SubscriptionDto postData);
 
-	@POST
-	@Path("/instantiateServices")
-	ActionStatus instantiateServices(InstantiateServicesRequestDto postData);
+    @POST
+    @Path("/instantiateServices")
+    ActionStatus instantiateServices(InstantiateServicesRequestDto postData);
 
-	@POST
-	@Path("/activateServices")
-	ActionStatus activateServices(ActivateServicesRequestDto postData);
+    /**
+     * Activate services. Subscription should not be in status (RESILIATED OR CANCELLED). This service allows to override the charge instance price before activation. This service
+     * is actually a 2 step process: service instantiation then activation. If service.subscriptionDate is not set a service is only instantiated else it's instantiated then
+     * activated.
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/activateServices")
+    ActionStatus activateServices(ActivateServicesRequestDto postData);
 
-	@POST
-	@Path("/applyOneShotChargeInstance")
-	ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData);
+    /**
+     * Apply one shot charge. Subscription should not be in status (RESILIATED OR CANCELLED).
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/applyOneShotChargeInstance")
+    ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData);
 
-	@POST
-	@Path("/terminate")
-	ActionStatus terminateSubscription(TerminateSubscriptionRequestDto postData);
+    /**
+     * Terminate a subscription. If subscription status is RESILIATED, an error is thrown
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/terminate")
+    ActionStatus terminateSubscription(TerminateSubscriptionRequestDto postData);
 
-	@POST
-	@Path("/terminateServices")
-	ActionStatus terminateServices(TerminateSubscriptionServicesRequestDto postData);
+    /**
+     * Terminate a list of services. If a service is already TERMINATED, an error is thrown.
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/terminateServices")
+    ActionStatus terminateServices(TerminateSubscriptionServicesRequestDto postData);
 
-	/**
-	 * List Subscription filter by userAccountCode.
-	 * 
-	 * @param userAccountCode
-	 * @return
-	 */
-	@GET
-	@Path("/list")
-	SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode);
+    /**
+     * List Subscription filter by userAccountCode.
+     * 
+     * @param userAccountCode
+     * @return
+     */
+    @GET
+    @Path("/list")
+    SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode);
 
-	@GET
-	@Path("/")
-	GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode);
-	
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(SubscriptionDto postData);
+    @GET
+    @Path("/")
+    GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode);
+
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(SubscriptionDto postData);
 }

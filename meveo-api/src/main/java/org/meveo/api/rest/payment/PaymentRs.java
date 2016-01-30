@@ -20,13 +20,24 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface PaymentRs extends IBaseRs {
 
-	@POST
-	@Path("/create")
-	public ActionStatus create(PaymentDto postData);
+    /**
+     * Creates automated payment. It also process if a payment is matching or not
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/create")
+    public ActionStatus create(PaymentDto postData);
 
-	@GET
-	@Path("/customerPayment")
-	public CustomerPaymentsResponse list(
-			@QueryParam("customerAccountCode") String customerAccountCode);
+    /**
+     * Returns a list of account operations along with the balance of a customer
+     * 
+     * @param customerAccountCode
+     * @return
+     */
+    @GET
+    @Path("/customerPayment")
+    public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode);
 
 }

@@ -1,7 +1,5 @@
 package org.meveo.api.rest.payment.impl;
 
-import io.swagger.annotations.Api;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -24,7 +22,6 @@ import org.meveo.api.rest.payment.AccountOperationRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/accountOperation", tags = "accountOperation")
 public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs {
 
 	@Inject

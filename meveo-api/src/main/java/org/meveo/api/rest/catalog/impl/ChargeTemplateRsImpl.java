@@ -1,9 +1,5 @@
 package org.meveo.api.rest.catalog.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -22,15 +18,13 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/catalog/chargeTemplate", tags = "charges")
 public class ChargeTemplateRsImpl extends BaseRs implements ChargeTemplateRs {
 
 	@Inject
 	private ChargeTemplateApi chargeTemplateApi;
 
 	@Override
-	@ApiOperation(value = "Finds a charge template", response = GetChargeTemplateResponseDto.class)
-	public GetChargeTemplateResponseDto find(@ApiParam(value = "charge template code") String chargeTemplateCode) {
+	public GetChargeTemplateResponseDto find(String chargeTemplateCode) {
 		GetChargeTemplateResponseDto result = new GetChargeTemplateResponseDto();
 
 		try {

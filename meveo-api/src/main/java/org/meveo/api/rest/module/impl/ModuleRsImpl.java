@@ -1,8 +1,5 @@
 package org.meveo.api.rest.module.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -25,14 +22,14 @@ import org.meveo.api.rest.module.ModuleRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/module", tags = "module")
+
 public class ModuleRsImpl extends BaseRs implements ModuleRs {
 
 	@Inject
 	private ModuleApi moduleApi;
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus create(ModuleDto moduleData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
@@ -51,7 +48,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus update(ModuleDto moduleDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
@@ -70,7 +67,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus delete(String code) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
@@ -89,7 +86,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public MeveoModuleDtosResponse list() {
 		MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
@@ -105,7 +102,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public MeveoModuleDtoResponse get(String code) {
 		MeveoModuleDtoResponse result = new MeveoModuleDtoResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);

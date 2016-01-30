@@ -1,9 +1,5 @@
 package org.meveo.api.rest.custom.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -27,15 +23,13 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/customEntityInstance", tags = "customEntityInstance")
 public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityInstanceRs {
 
     @Inject
     private CustomEntityApi customEntityApi;
 
     @Override
-    @ApiOperation(value = "Create a new custom entity instance")
-    public ActionStatus create(@ApiParam(value = "Custom entity template code") String customEntityTemplateCode, CustomEntityInstanceDto dto) {
+    public ActionStatus create(String customEntityTemplateCode, CustomEntityInstanceDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -63,8 +57,7 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
     }
 
     @Override
-    @ApiOperation(value = "Update existing custom entity instance")
-    public ActionStatus update(@ApiParam(value = "Custom entity template code") String customEntityTemplateCode, CustomEntityInstanceDto dto) {
+    public ActionStatus update(String customEntityTemplateCode, CustomEntityInstanceDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -92,8 +85,7 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
     }
 
     @Override
-    @ApiOperation(value = "Remove existing custom entity instance identified by a code")
-    public ActionStatus remove(@ApiParam(value = "Custom entity template code") String customEntityTemplateCode, @ApiParam(value = "Entity code") String code) {
+    public ActionStatus remove(String customEntityTemplateCode, String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -120,8 +112,7 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
     }
 
     @Override
-    @ApiOperation(value = "Find existing custom entity instance identified by a code")
-    public CustomEntityInstanceResponseDto find(@ApiParam(value = "Custom entity template code") String customEntityTemplateCode, @ApiParam(value = "Entity code") String code) {
+    public CustomEntityInstanceResponseDto find(String customEntityTemplateCode, String code) {
         CustomEntityInstanceResponseDto result = new CustomEntityInstanceResponseDto();
 
         try {
@@ -148,8 +139,7 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
     }
 
     @Override
-    @ApiOperation(value = "Create a new or update existing custom entity instance")
-    public ActionStatus createOrUpdate(@ApiParam(value = "Custom entity template code") String customEntityTemplateCode, CustomEntityInstanceDto dto) {
+    public ActionStatus createOrUpdate(String customEntityTemplateCode, CustomEntityInstanceDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {

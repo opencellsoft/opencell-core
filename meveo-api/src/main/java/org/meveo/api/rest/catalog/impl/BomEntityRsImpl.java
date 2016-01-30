@@ -1,8 +1,5 @@
 package org.meveo.api.rest.catalog.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -23,14 +20,13 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/catalog/bomEntity", tags = "bomEntity")
 public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 
 	@Inject
 	private BusinessOfferModelApi bomEntityApi;
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus create(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -51,7 +47,7 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus update(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -72,7 +68,7 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public GetBomEntityResponseDto find(String bomEntityCode) {
 		GetBomEntityResponseDto result = new GetBomEntityResponseDto();
 
@@ -93,7 +89,7 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus remove(String bomEntityCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -114,7 +110,7 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createOrUpdate(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

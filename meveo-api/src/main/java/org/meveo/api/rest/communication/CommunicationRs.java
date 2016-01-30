@@ -11,15 +11,20 @@ import org.meveo.api.dto.communication.CommunicationRequestDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
-
 @Path("Communication")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
 public interface CommunicationRs extends IBaseRs {
-	
+
+    /**
+     * Receives inbout communication from external source given the rest url above. MEVEO handles it by throwing an inbount communication event with the communicationRequestDto.
+     * 
+     * @param communicationRequestDto
+     * @return
+     */
     @POST
     @Path("/inbound")
     public ActionStatus inboundCommunication(CommunicationRequestDto communicationRequestDto);
-    
+
 }

@@ -9,7 +9,12 @@ import org.meveo.api.dto.ActionStatus;
  **/
 public interface IBaseWs {
 
-	@WebMethod
-	public ActionStatus index();
+    /**
+     * Get version of application ws
+     * 
+     * @return Action status with version number as a message ws
+     */
+    @WebMethod
+    public ActionStatus index();
 
 }

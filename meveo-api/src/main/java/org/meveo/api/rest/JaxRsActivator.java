@@ -20,27 +20,24 @@ import org.slf4j.LoggerFactory;
 @ApplicationPath("/api/rest")
 public class JaxRsActivator extends Application {
 
-	private Logger log = LoggerFactory.getLogger(JaxRsActivator.class);
+    private Logger log = LoggerFactory.getLogger(JaxRsActivator.class);
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public Set<Class<?>> getClasses() {
-		Set<Class<?>> resources = new HashSet();
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    public Set<Class<?>> getClasses() {
+        Set<Class<?>> resources = new HashSet();
 
-		Reflections reflections = new Reflections("org.meveo.api.rest");
-		Set<Class<? extends BaseRs>> allClasses = reflections.getSubTypesOf(BaseRs.class);
+        Reflections reflections = new Reflections("org.meveo.api.rest");
+        Set<Class<? extends BaseRs>> allClasses = reflections.getSubTypesOf(BaseRs.class);
 
-		log.debug("Documenting {} rest services...", allClasses.size());
+        log.debug("Documenting {} rest services...", allClasses.size());
 
-		resources.addAll(allClasses);
+        resources.addAll(allClasses);
 
-		resources.add(RESTSecurityInterceptor.class);
-		resources.add(RESTCorsRequestFilter.class);
-		resources.add(RESTCorsResponseFilter.class);
+        resources.add(RESTSecurityInterceptor.class);
+        resources.add(RESTCorsRequestFilter.class);
+        resources.add(RESTCorsResponseFilter.class);
 
-		resources.add(io.swagger.jaxrs.listing.ApiListingResource.class);
-		resources.add(io.swagger.jaxrs.listing.SwaggerSerializers.class);
-
-		return resources;
-	}
+        return resources;
+    }
 }

@@ -28,7 +28,7 @@ import org.meveo.api.rest.security.RSSecured;
 public interface InvoiceCategoryRs extends IBaseRs {
 
 	/**
-	 * Create invoice category.
+	 * Create invoice category. Description per language can be defined
 	 * 
 	 * @param postData
 	 * @return

@@ -1,7 +1,5 @@
 package org.meveo.api.ws.impl;
 
-import io.swagger.annotations.ApiOperation;
-
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
@@ -361,7 +359,6 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
      * @return
      */
     @Override
-    @ApiOperation(value = "Remove entity action definition given its code and entity it applies to", response = ActionStatus.class)
     public ActionStatus removeAction(String actionCode, String appliesTo) {
 
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -440,7 +437,6 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Customize a standard Meveo entity definition by adding fields and/or custom actions", response = ActionStatus.class)
     public ActionStatus customizeEntity(EntityCustomizationDto dto) {
 
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");

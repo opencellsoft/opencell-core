@@ -1,9 +1,5 @@
 package org.meveo.api.rest.catalog.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import java.util.Date;
 
 import javax.enterprise.context.RequestScoped;
@@ -30,14 +26,13 @@ import org.meveo.model.shared.DateUtils;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/catalog/oneShotChargeTemplate", tags = "oneShotChargeTemplate")
+
 public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotChargeTemplateRs {
 
 	@Inject
 	private OneShotChargeTemplateApi oneShotChargeTemplateApi;
 
 	@POST
-	@ApiOperation(value = "Function to create a one shot charge", response = ActionStatus.class)
 	public ActionStatus create(OneShotChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -58,7 +53,6 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
 	}
 
 	@Override
-	@ApiOperation(value = "Function to update a one shot charge given a code", response = ActionStatus.class)
 	public ActionStatus update(OneShotChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -79,13 +73,12 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
 	}
 
 	@Override
-	@ApiOperation(value = "Function to list a one shot charge given a country, seller code and date", response = OneShotChargeTemplateWithPriceListDto.class, responseContainer = "List")
 	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(
-			@ApiParam(value = "language code") @QueryParam("languageCode") String languageCode,
-			@ApiParam(value = "country code") @QueryParam("countryCode") String countryCode,
-			@ApiParam(value = "currency code") @QueryParam("currencyCode") String currencyCode,
-			@ApiParam(value = "seller code") @QueryParam("sellerCode") String sellerCode,
-			@ApiParam(value = "date") @QueryParam("date") String date) throws MeveoApiException {
+			 @QueryParam("languageCode") String languageCode,
+			 @QueryParam("countryCode") String countryCode,
+			 @QueryParam("currencyCode") String currencyCode,
+			 @QueryParam("sellerCode") String sellerCode,
+			 @QueryParam("date") String date) throws MeveoApiException {
 
 		Date subscriptionDate = DateUtils.parseDateWithPattern(date, "yyyy-MM-dd");
 
@@ -94,9 +87,8 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
 	}
 
 	@Override
-	@ApiOperation(value = "Function to find a one shot charge given a code", response = GetOneShotChargeTemplateResponseDto.class)
 	public GetOneShotChargeTemplateResponseDto find(
-			@ApiParam(value = "one shot charge template code") String oneShotChargeTemplateCode) {
+			String oneShotChargeTemplateCode) {
 		GetOneShotChargeTemplateResponseDto result = new GetOneShotChargeTemplateResponseDto();
 
 		try {
@@ -117,8 +109,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
 	}
 
 	@Override
-	@ApiOperation(value = "Function to remove a one shot charge given a code", response = ActionStatus.class)
-	public ActionStatus remove(@ApiParam(value = "one shot charge template code") String oneShotChargeTemplateCode) {
+	public ActionStatus remove(String oneShotChargeTemplateCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -138,7 +129,6 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
 	}
 
 	@Override
-	@ApiOperation(value = "Creates a recurring charge template or update if already exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(OneShotChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

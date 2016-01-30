@@ -17,8 +17,7 @@ import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * * Web service for managing {@link org.meveo.model.billing.Language} and
- * {@link org.meveo.model.billing.TradingLanguage}.
+ * * Web service for managing {@link org.meveo.model.billing.Language} and {@link org.meveo.model.billing.TradingLanguage}.
  * 
  * @author Edward P. Legaspi
  **/
@@ -28,47 +27,53 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface LanguageRs extends IBaseRs {
 
-	/**
-	 * Create language.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/")
-	public ActionStatus create(LanguageDto postData);
+    /**
+     * Creates tradingLanguage base on language code. If the language code does not exists, a language record is created.
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/")
+    public ActionStatus create(LanguageDto postData);
 
-	/**
-	 * Search language given a code.
-	 * 
-	 * @param languageCode
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	public GetLanguageResponse find(@QueryParam("languageCode") String languageCode);
+    /**
+     * Search language given a code.
+     * 
+     * @param languageCode
+     * @return
+     */
+    @GET
+    @Path("/")
+    public GetLanguageResponse find(@QueryParam("languageCode") String languageCode);
 
-	/**
-	 * Remove language with a given code.
-	 * 
-	 * @param languageCode
-	 * @return
-	 */
-	@DELETE
-	@Path("/{languageCode}")
-	public ActionStatus remove(@PathParam("languageCode") String languageCode);
+    /**
+     * Does not delete a language but the tradingLanguage associated to it.
+     * 
+     * @param languageCode
+     * @return
+     */
+    @DELETE
+    @Path("/{languageCode}")
+    public ActionStatus remove(@PathParam("languageCode") String languageCode);
 
-	/**
-	 * Update language.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@PUT
-	@Path("/")
-	public ActionStatus update(LanguageDto postData);
+    /**
+     * modify a language. Same input parameter as create. The language and trading Language are created if they don't exists. The operation fails if the tradingLanguage is null.
+     * 
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/")
+    public ActionStatus update(LanguageDto postData);
 
-	@POST
-	@Path("/createOrUpdate")
-	public ActionStatus createOrUpdate(LanguageDto postData);
+    /**
+     * Create or update a language if it doesn't exists
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/createOrUpdate")
+    public ActionStatus createOrUpdate(LanguageDto postData);
 }

@@ -33,6 +33,7 @@ import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -49,7 +50,6 @@ import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.admin.MeveoModule;
 import org.meveo.model.admin.MeveoModuleItem;
@@ -106,7 +106,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
      * @throws MeveoApiException
      * @throws RemoteAuthenticationException
      */
-    public List<ModuleDto> downloadModulesFromMeveoInstance(MeveoInstance meveoInstance) throws MeveoApiException, RemoteAuthenticationException {
+    public List<ModuleDto> downloadModulesFromMeveoInstance(MeveoInstance meveoInstance) throws BusinessException, RemoteAuthenticationException {
         List<ModuleDto> result = null;
         try {
             String url = "api/rest/module/list";
@@ -123,14 +123,14 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
                     throw new RemoteAuthenticationException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
                 } else {
-                    throw new MeveoApiException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
+                    throw new BusinessException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
                 }
             }
 
             MeveoModuleDtosResponse resultDto = response.readEntity(MeveoModuleDtosResponse.class);
             log.debug("response {}", resultDto);
             if (resultDto == null || ActionStatusEnum.SUCCESS != resultDto.getActionStatus().getStatus()) {
-                throw new MeveoApiException("Code " + resultDto.getActionStatus().getErrorCode() + ", info " + resultDto.getActionStatus().getMessage());
+                throw new BusinessException("Code " + resultDto.getActionStatus().getErrorCode() + ", info " + resultDto.getActionStatus().getMessage());
             }
             result = resultDto.getModuleDtoList();
             if (result != null) {
@@ -145,7 +145,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
 
         } catch (Exception e) {
             log.error("Fail to communicate {}. Reason {}", meveoInstance.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
-            throw new MeveoApiException("Fail to communicate " + meveoInstance.getCode() + ". Error " + (e == null ? e.getClass().getSimpleName() : e.getMessage()));
+            throw new BusinessException("Fail to communicate " + meveoInstance.getCode() + ". Error " + (e == null ? e.getClass().getSimpleName() : e.getMessage()));
         }
     }
 
@@ -157,7 +157,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
      * @throws MeveoApiException
      * @throws RemoteAuthenticationException
      */
-    public void exportModule2MeveoInstance(MeveoModule module, MeveoInstance meveoInstance, User currentUser) throws MeveoApiException, RemoteAuthenticationException {
+    public void exportModule2MeveoInstance(MeveoModule module, MeveoInstance meveoInstance, User currentUser) throws BusinessException, RemoteAuthenticationException {
         log.debug("export module {} to {}", module, meveoInstance);
         final String url = "api/rest/module/createOrUpdate";
 
@@ -168,12 +168,12 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
             ActionStatus actionStatus = response.readEntity(ActionStatus.class);
             log.debug("response {}", actionStatus);
             if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
-                throw new MeveoApiException("Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+                throw new BusinessException("Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
             }
         } catch (Exception e) {
             log.error("Error when export module {} to {}. Reason {}", module.getCode(), meveoInstance.getCode(),
                 (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
-            throw new MeveoApiException("Fail to communicate " + meveoInstance.getCode() + ". Error " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+            throw new BusinessException("Fail to communicate " + meveoInstance.getCode() + ". Error " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
         }
     }
 
@@ -305,7 +305,7 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
      * @return
      * @throws MeveoApiException
      */
-    private Response exportDto2MeveoInstance(String url, MeveoInstance meveoInstance, BaseDto dto) throws MeveoApiException {
+    private Response exportDto2MeveoInstance(String url, MeveoInstance meveoInstance, BaseDto dto) throws BusinessException {
         String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
         String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
         String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";
@@ -320,13 +320,13 @@ public class MeveoModuleService extends BusinessService<MeveoModule> {
                 if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
                     throw new RemoteAuthenticationException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
                 } else {
-                    throw new MeveoApiException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
+                    throw new BusinessException("Http status " + response.getStatus() + ", info " + response.getStatusInfo().getReasonPhrase());
                 }
             }
             return response;
         } catch (Exception e) {
-            log.error("Fail to communicate {}. Reason {}", meveoInstance.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
-            throw new MeveoApiException("Failed to communicate " + meveoInstance.getCode() + ". Error " + e.getMessage());
+            log.error("Failed to communicate {}. Reason {}", meveoInstance.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
+            throw new BusinessException("Failed to communicate " + meveoInstance.getCode() + ". Error " + e.getMessage());
         }
     }
 }

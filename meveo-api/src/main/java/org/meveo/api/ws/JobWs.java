@@ -6,10 +6,10 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
-import org.meveo.model.jobs.JobInstanceInfoDto;
 
 @WebService
 public interface JobWs extends IBaseWs {

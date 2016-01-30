@@ -1,107 +1,105 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>meveo</artifactId>
-		<groupId>org.manaty</groupId>
-		<version>4.2</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
-	<artifactId>meveo-model</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>meveo</artifactId>
+        <groupId>org.manaty</groupId>
+        <version>4.2</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>meveo-model</artifactId>
 
-	<packaging>jar</packaging>
-	<name>MEVEO Model</name>
-	
-	<properties>	
-		<liquibase.changeLogFile>src/main/db_resources/changelog/db.current.xml</liquibase.changeLogFile>
-	</properties>
-	
-	
-	<build>
-		<plugins>
-<!-- 			<plugin> -->
-<!-- 				<artifactId>maven-jar-plugin</artifactId> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<version>2.4</version> -->
-<!-- 			</plugin> -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>1.3.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>schemagen</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<includes>
-								<include>src/java/main/org/meveo/model/jaxb/customer/Sellers.java</include>
-							</includes>
-							<outputDirectory>${project.build.directory}/schemas</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.mojo
-										</groupId>
-										<artifactId>
-											jaxb2-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.3.1,)
-										</versionRange>
-										<goals>
-											<goal>schemagen</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.liquibase</groupId>
-					<artifactId>liquibase-maven-plugin</artifactId>
-					<version>3.3.2</version>
-					<configuration>
-						<changeLogFile>${liquibase.changeLogFile}</changeLogFile>
-						<driver>${db.driver}</driver>
-						<url>${db.url}</url>
-						<username>${db.username}</username>
-						<password>${db.password}</password>
-<!--  						<referenceUrl>hibernate:ejb3:MeveoAdmin</referenceUrl> -->
-						<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-					</configuration>
-<!-- 					<dependencies>					 -->
-<!-- 						<dependency> -->
-<!-- 				            <groupId>org.liquibase.ext</groupId> -->
-<!-- 				            <artifactId>liquibase-hibernate4</artifactId> -->
-<!-- 				            <version>3.5</version> -->
-<!-- 				        </dependency> -->
-<!-- 					</dependencies> -->
-				</plugin>				
-			</plugins>
-		</pluginManagement>
-	</build>
+    <packaging>jar</packaging>
+    <name>MEVEO Model</name>
+
+    <properties>
+        <liquibase.changeLogFile>src/main/db_resources/changelog/db.current.xml</liquibase.changeLogFile>
+    </properties>
+
+
+    <build>
+        <plugins>
+            <!-- <plugin> -->
+            <!-- <artifactId>maven-jar-plugin</artifactId> -->
+            <!-- <groupId>org.apache.maven.plugins</groupId> -->
+            <!-- <version>2.4</version> -->
+            <!-- </plugin> -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>1.3.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>schemagen</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <includes>
+                                <include>src/java/main/org/meveo/model/jaxb/customer/Sellers.java</include>
+                            </includes>
+                            <outputDirectory>${project.build.directory}/schemas</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            jaxb2-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.3.1,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>schemagen</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-maven-plugin</artifactId>
+                    <version>3.3.2</version>
+                    <configuration>
+                        <changeLogFile>${liquibase.changeLogFile}</changeLogFile>
+                        <driver>${db.driver}</driver>
+                        <url>${db.url}</url>
+                        <username>${db.username}</username>
+                        <password>${db.password}</password>
+                        <!-- <referenceUrl>hibernate:ejb3:MeveoAdmin</referenceUrl> -->
+                        <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+                    </configuration>
+                    <!-- <dependencies> -->
+                    <!-- <dependency> -->
+                    <!-- <groupId>org.liquibase.ext</groupId> -->
+                    <!-- <artifactId>liquibase-hibernate4</artifactId> -->
+                    <!-- <version>3.5</version> -->
+                    <!-- </dependency> -->
+                    <!-- </dependencies> -->
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
     <dependencies>
 
         <dependency>
@@ -112,98 +110,91 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.10</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-        
-<!-- 		<dependency> -->
-<!-- 			<groupId>cn.guoyukun.jdbc</groupId> -->
-<!-- 			<artifactId>oracle-ojdbc6</artifactId> -->
-<!-- 			<version>11.2.0.3.0</version> -->
-<!-- 		</dependency> -->
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.7</version>
-		</dependency>
-				
-		<!-- Import the CDI API, we use provided scope as the API is included in 
-			JBoss AS 7 -->
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <!-- <dependency> -->
+        <!-- <groupId>cn.guoyukun.jdbc</groupId> -->
+        <!-- <artifactId>oracle-ojdbc6</artifactId> -->
+        <!-- <version>11.2.0.3.0</version> -->
+        <!-- </dependency> -->
 
-		<!-- Import the JPA API, we use provided scope as the API is included in 
-			JBoss AS 7 -->
-		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
 
-		<!-- JSR-303 (Bean Validation) Implementation -->
-		<!-- Provides portable constraints such as @Email -->
-		<!-- Hibernate Validator is shipped in JBoss AS 7 -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- Import the CDI API, we use provided scope as the API is included in JBoss AS 7 -->
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<!-- Import the EJB API, we use provided scope as the API is included in 
-			JBoss AS 7 -->
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <!-- Import the JPA API, we use provided scope as the API is included in JBoss AS 7 -->
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.7</version>
-		</dependency>
-		
-		<!-- TESTING dependencies -->
-		<dependency>
-			<groupId>org.dbunit</groupId>
-			<artifactId>dbunit</artifactId>
-			<version>2.4.9</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<dependency>
-	         <groupId>org.reflections</groupId>
-	         <artifactId>reflections</artifactId>
-	         <scope>test</scope>
-	    </dependency>
-	</dependencies>
+        <!-- JSR-303 (Bean Validation) Implementation -->
+        <!-- Provides portable constraints such as @Email -->
+        <!-- Hibernate Validator is shipped in JBoss AS 7 -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-	<profiles>
-		<profile>
-			<id>rebuild</id>
-			<properties>
-				<liquibase.changeLogFile>src/main/db_resources/changelog/db.rebuild.xml</liquibase.changeLogFile>
-			</properties>
-		</profile>
-	</profiles>
+        <!-- Import the EJB API, we use provided scope as the API is included in JBoss AS 7 -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <!-- TESTING dependencies -->
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>rebuild</id>
+            <properties>
+                <liquibase.changeLogFile>src/main/db_resources/changelog/db.rebuild.xml</liquibase.changeLogFile>
+            </properties>
+        </profile>
+    </profiles>
 </project>

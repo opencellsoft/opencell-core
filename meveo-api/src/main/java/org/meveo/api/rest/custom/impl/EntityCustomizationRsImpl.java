@@ -1,9 +1,5 @@
 package org.meveo.api.rest.custom.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -33,7 +29,6 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/entityCustomization", tags = "entityCustomization")
 public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomizationRs {
 
     @Inject
@@ -46,7 +41,6 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     private ScriptInstanceApi scriptInstanceApi;
 
     @Override
-    @ApiOperation(value = "Define a new custom entity template including fields and applicable actions", response = ActionStatus.class)
     public ActionStatus createEntityTemplate(CustomEntityTemplateDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -68,7 +62,6 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Update custom entity template definition", response = ActionStatus.class)
     public ActionStatus updateEntityTemplate(CustomEntityTemplateDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -89,8 +82,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Remove custom entity template definition given its code", response = ActionStatus.class)
-    public ActionStatus removeEntityTemplate(@ApiParam(value = "Custom entity template code") String customEntityTemplateCode) {
+    public ActionStatus removeEntityTemplate(String customEntityTemplateCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -110,8 +102,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Get custom entity template definition including its fields and applicable actions", response = CustomEntityTemplateResponseDto.class)
-    public CustomEntityTemplateResponseDto findEntityTemplate(@ApiParam(value = "Custom entity template code") String customEntityTemplateCode) {
+    public CustomEntityTemplateResponseDto findEntityTemplate(String customEntityTemplateCode) {
         CustomEntityTemplateResponseDto result = new CustomEntityTemplateResponseDto();
 
         try {
@@ -131,7 +122,6 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Define new or update existing custom entity template definition", response = ActionStatus.class)
     public ActionStatus createOrUpdateEntityTemplate(CustomEntityTemplateDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -152,8 +142,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "List custom entity template definitions", response = CustomEntityTemplatesResponseDto.class)
-    public CustomEntityTemplatesResponseDto listEntityTemplates(@ApiParam(value = "An optional and partial custom entity template code ") String code) {
+    public CustomEntityTemplatesResponseDto listEntityTemplates(String code) {
 
         CustomEntityTemplatesResponseDto result = new CustomEntityTemplatesResponseDto();
 
@@ -176,7 +165,6 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Customize a standard Meveo entity definition by adding fields and/or custom actions", response = ActionStatus.class)
     public ActionStatus customizeEntity(EntityCustomizationDto dto) {
 
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -200,8 +188,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Get customizations made on a standard Meveo entity given its class")
-    public EntityCustomizationResponseDto findEntityCustomizations(@ApiParam(value = "Standard Meveo entity class name") String customizedEntityClass) {
+    public EntityCustomizationResponseDto findEntityCustomizations(String customizedEntityClass) {
 
         EntityCustomizationResponseDto result = new EntityCustomizationResponseDto();
 
@@ -223,7 +210,6 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Define a new custom field", response = ActionStatus.class)
     public ActionStatus createField(CustomFieldTemplateDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -244,7 +230,6 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Update existing custom field definition", response = ActionStatus.class)
     public ActionStatus updateField(CustomFieldTemplateDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -265,9 +250,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Remove custom field definition given its code and entity it applies to", response = ActionStatus.class)
-    public ActionStatus removeField(@ApiParam(value = "Custom field template code") String customFieldTemplateCode,
-            @ApiParam(value = "Entity custom field applies to") String appliesTo) {
+    public ActionStatus removeField(String customFieldTemplateCode, String appliesTo) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -287,9 +270,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Get custom field definition", response = GetCustomFieldTemplateReponseDto.class)
-    public GetCustomFieldTemplateReponseDto findField(@ApiParam(value = "Custom field template code") String customFieldTemplateCode,
-            @ApiParam(value = "Entity custom field applies to") String appliesTo) {
+    public GetCustomFieldTemplateReponseDto findField(String customFieldTemplateCode, String appliesTo) {
         GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
         try {
@@ -309,7 +290,6 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Define new or update existing custom field definition", response = ActionStatus.class)
     public ActionStatus createOrUpdateField(CustomFieldTemplateDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -330,7 +310,6 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Define a new entity action", response = ActionStatus.class)
     public ActionStatus createAction(EntityActionScriptDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -352,7 +331,6 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Update existing entity action definition", response = ActionStatus.class)
     public ActionStatus updateAction(EntityActionScriptDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -374,8 +352,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Remove entity action definition given its code and entity it applies to", response = ActionStatus.class)
-    public ActionStatus removeAction(@ApiParam(value = "Entity action code") String actionCode, @ApiParam(value = "Entity that action applies to") String appliesTo) {
+    public ActionStatus removeAction(String actionCode, String appliesTo) {
 
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -397,8 +374,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Get entity action definition", response = GetCustomFieldTemplateReponseDto.class)
-    public EntityActionScriptResponseDto findAction(@ApiParam(value = "Entity action code") String actionCode, @ApiParam(value = "Entity that action applies to") String appliesTo) {
+    public EntityActionScriptResponseDto findAction(String actionCode, String appliesTo) {
 
         EntityActionScriptResponseDto result = new EntityActionScriptResponseDto();
 
@@ -420,7 +396,6 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    @ApiOperation(value = "Define new or update existing entity action definition", response = ActionStatus.class)
     public ActionStatus createOrUpdateAction(EntityActionScriptDto dto) {
 
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");

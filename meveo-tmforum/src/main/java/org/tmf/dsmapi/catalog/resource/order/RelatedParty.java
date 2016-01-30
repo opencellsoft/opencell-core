@@ -3,12 +3,14 @@ package org.tmf.dsmapi.catalog.resource.order;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 
-@XmlRootElement
+@XmlRootElement(name="RelatedPartyOrder")
+@XmlType(name="RelatedPartyOrder")
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class RelatedParty implements Serializable {
 

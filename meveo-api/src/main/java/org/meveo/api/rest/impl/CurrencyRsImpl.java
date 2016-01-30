@@ -1,9 +1,5 @@
 package org.meveo.api.rest.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -23,14 +19,12 @@ import org.meveo.api.rest.CurrencyRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/currency", tags = "tradingCurrency")
 public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 
 	@Inject
 	private CurrencyApi currencyApi;
 
 	@Override
-	@ApiOperation(value = "Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created.", response = ActionStatus.class)
 	public ActionStatus create(CurrencyDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -51,8 +45,7 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Function use to find a currency given a currency code", response = GetCurrencyResponse.class)
-	public GetCurrencyResponse find(@ApiParam(value = "language code") String languageCode) {
+	public GetCurrencyResponse find( String languageCode) {
 		GetCurrencyResponse result = new GetCurrencyResponse();
 
 		try {
@@ -72,8 +65,7 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 	}
 
 	@Override
-	@ApiOperation(value = "This function does not delete a currency but the tradingCurrency associated to it", response = ActionStatus.class)
-	public ActionStatus remove(@ApiParam(value = "language code") String languageCode) {
+	public ActionStatus remove(String languageCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -93,7 +85,6 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Function use to modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists.  The operation fails if the tradingCurrency is null", response = ActionStatus.class)
 	public ActionStatus update(CurrencyDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -114,7 +105,6 @@ public class CurrencyRsImpl extends BaseRs implements CurrencyRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Create or update a currency if it doesn't exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(CurrencyDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

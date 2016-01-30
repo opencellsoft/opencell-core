@@ -1,9 +1,5 @@
 package org.meveo.api.rest.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -23,14 +19,12 @@ import org.meveo.api.rest.BillingCycleRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/billingCycle", tags = "billingCycle")
 public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
 
 	@Inject
 	private BillingCycleApi billingCycleApi;
 
 	@Override
-	@ApiOperation(value = "This function create a billing cycle", response = ActionStatus.class)
 	public ActionStatus create(BillingCycleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -51,7 +45,6 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
 	}
 
 	@Override
-	@ApiOperation(value = "This function update a billing cycle given a code", response = ActionStatus.class)
 	public ActionStatus update(BillingCycleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -72,8 +65,7 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
 	}
 
 	@Override
-	@ApiOperation(value = "This function search for a billing cycle given a code", response = GetBillingCycleResponse.class)
-	public GetBillingCycleResponse find(@ApiParam("billing cycle code") String billingCycleCode) {
+	public GetBillingCycleResponse find( String billingCycleCode) {
 		GetBillingCycleResponse result = new GetBillingCycleResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
@@ -94,8 +86,7 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
 	}
 
 	@Override
-	@ApiOperation(value = "This function remove a billing cycle given a code", response = ActionStatus.class)
-	public ActionStatus remove(@ApiParam("billing cycle code") String billingCycleCode) {
+	public ActionStatus remove(String billingCycleCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -115,7 +106,6 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
 	}
 
 	@Override
-	@ApiOperation(value = "This function create a billing cycle or update if it exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(BillingCycleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

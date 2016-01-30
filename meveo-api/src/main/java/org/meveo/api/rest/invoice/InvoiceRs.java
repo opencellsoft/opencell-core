@@ -21,7 +21,7 @@ import org.meveo.api.rest.security.RSSecured;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.Invoice}.
- *  
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/invoice")
@@ -30,48 +30,75 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface InvoiceRs extends IBaseRs {
 
-	/**
-	 * Create invoice.
-	 * 
-	 * @param invoiceDto
-	 * @return
-	 */
-	@POST
-	@Path("/")
-	public InvoiceCreationResponse create(InvoiceDto invoiceDto);
+    /**
+     * Create invoice. Invoice number depends on invoice type
+     * 
+     * @param invoiceDto
+     * @return
+     */
+    @POST
+    @Path("/")
+    public InvoiceCreationResponse create(InvoiceDto invoiceDto);
 
-	/**
-	 * Search for a list of invoice given a customer account code.
-	 * @param customerAccountCode
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	public CustomerInvoicesResponse find(
-			@QueryParam("customerAccountCode") String customerAccountCode);
-	
-	
-	@POST
-	@Path("/generateInvoice")
-	public GenerateInvoiceResponseDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
-	
-	
-	@POST
-	@Path("/getXMLInvoice")
-	public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber);
-	
-	@POST
-	@Path("/getXMLInvoiceWithType")
-	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(@FormParam("invoiceNumber") String invoiceNumber,
-			@FormParam("invoiceType") String invoiceType);
-	
-	@POST
-	@Path("/getPdfInvoice")
-	public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber);
+    /**
+     * Search for a list of invoice given a customer account code.
+     * 
+     * @param customerAccountCode Customer account code
+     * @return
+     */
+    @GET
+    @Path("/")
+    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode);
 
-	@POST
-	@Path("/getPdfInvoiceWithType")
-	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@FormParam("invoiceNumber") String invoiceNumber,
-			@FormParam("invoiceType") String invoiceType);
-	
+    /**
+     * This operation generates rated transaction given a billing account and invoicing date, updates billing account amounts and generates aggregates and invoice.
+     * 
+     * @param generateInvoiceRequestDto Contains the code of the billing account, invoicing and last transaction date
+     * @return
+     */
+    @POST
+    @Path("/generateInvoice")
+    public GenerateInvoiceResponseDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
+
+    /**
+     * Finds an invoice and return it as xml string
+     * 
+     * @param invoiceNumber Invoice number
+     * @return
+     */
+    @POST
+    @Path("/getXMLInvoice")
+    public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber);
+
+    /**
+     * Finds an invoice and return it as xml string
+     * 
+     * @param invoiceNumber Invoice number
+     * @param invoiceType Invoice type
+     * @return
+     */
+    @POST
+    @Path("/getXMLInvoiceWithType")
+    public GetXmlInvoiceResponseDto findXMLInvoiceWithType(@FormParam("invoiceNumber") String invoiceNumber, @FormParam("invoiceType") String invoiceType);
+
+    /**
+     * Finds an invoice and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
+     * 
+     * @param invoiceNumber Invoice number
+     * @return
+     */
+    @POST
+    @Path("/getPdfInvoice")
+    public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber);
+
+    /**
+     * Finds an invoice and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
+     * 
+     * @param invoiceNumber Invoice number
+     * @param invoiceType Invoice type
+     * @return
+     */
+    @POST
+    @Path("/getPdfInvoiceWithType")
+    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@FormParam("invoiceNumber") String invoiceNumber, @FormParam("invoiceType") String invoiceType);
 }

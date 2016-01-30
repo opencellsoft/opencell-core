@@ -1,8 +1,5 @@
 package org.meveo.api.rest.catalog.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -23,14 +20,14 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/catalog/triggeredEdr", tags = "triggeredEdr")
+
 public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
 
 	@Inject
 	private TriggeredEdrApi triggeredEdrApi;
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus create(TriggeredEdrTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -51,7 +48,7 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus update(TriggeredEdrTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -72,7 +69,7 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public GetTriggeredEdrResponseDto find(String triggeredEdrCode) {
 		GetTriggeredEdrResponseDto result = new GetTriggeredEdrResponseDto();
 
@@ -93,7 +90,7 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus remove(String triggeredEdrCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -114,7 +111,7 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createOrUpdate(TriggeredEdrTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

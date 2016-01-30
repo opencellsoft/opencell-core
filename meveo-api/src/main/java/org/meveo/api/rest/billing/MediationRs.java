@@ -19,23 +19,54 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface MediationRs extends IBaseRs {
 
-	@POST
-	@Path("/registerCdrList")
-	ActionStatus registerCdrList(CdrListDto postData);
+    /**
+     * Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/registerCdrList")
+    ActionStatus registerCdrList(CdrListDto postData);
 
-	@POST
-	@Path("/chargeCdr")
-	ActionStatus chargeCdr(String cdr);
+    /**
+     * Same as registerCDR, but at the same process rate the edr created
+     * 
+     * @param cdr
+     * @return
+     */
+    @POST
+    @Path("/chargeCdr")
+    ActionStatus chargeCdr(String cdr);
 
-	@POST
-	@Path("/reserveCdr")
-	CdrReservationResponseDto reserveCdr(String cdr);
+    /**
+     * Allows the user to reserve a cdr, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity
+     * (PREPAID_RESRV_DELAY_MS)
+     * 
+     * @param cdr
+     * @return
+     */
+    @POST
+    @Path("/reserveCdr")
+    CdrReservationResponseDto reserveCdr(String cdr);
 
-	@POST
-	@Path("/confirmReservation")
-	ActionStatus confirmReservation(PrepaidReservationDto reservationDto);
+    /**
+     * Confirms the reservation
+     * 
+     * @param reservationDto
+     * @return
+     */
+    @POST
+    @Path("/confirmReservation")
+    ActionStatus confirmReservation(PrepaidReservationDto reservationDto);
 
-	@POST
-	@Path("/cancelReservation")
-	ActionStatus cancelReservation(PrepaidReservationDto reservationDto);
+    /**
+     * Cancels the reservation
+     * 
+     * @param reservationDto
+     * @return
+     */
+    @POST
+    @Path("/cancelReservation")
+    ActionStatus cancelReservation(PrepaidReservationDto reservationDto);
 }

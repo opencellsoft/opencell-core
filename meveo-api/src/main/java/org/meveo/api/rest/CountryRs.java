@@ -17,8 +17,7 @@ import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.Country} and
- * {@link org.meveo.model.billing.TradingCountry}.
+ * Web service for managing {@link org.meveo.model.billing.Country} and {@link org.meveo.model.billing.TradingCountry}.
  * 
  * @author Edward P. Legaspi
  **/
@@ -28,52 +27,49 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CountryRs extends IBaseRs {
 
-	/**
-	 * Create {@link org.meveo.model.billing.Country} and
-	 * {@link org.meveo.model.billing.TradingCountry}.
-	 * 
-	 * @param countryDto
-	 * @return
-	 */
-	@POST
-	@Path("/")
-	public ActionStatus create(CountryDto countryDto);
+    /**
+     * Creates a tradingCountry base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created
+     * 
+     * @param countryDto
+     * @return
+     */
+    @POST
+    @Path("/")
+    public ActionStatus create(CountryDto countryDto);
 
-	/**
-	 * Search country with a given country code.
-	 * 
-	 * @param countryCode
-	 * @return {@link org.meveo.api.dto.response.GetCountryResponse}.
-	 */
-	@GET
-	@Path("/")
-	public GetCountryResponse find(@QueryParam("countryCode") String countryCode);
+    /**
+     * Search country with a given country code.
+     * 
+     * @param countryCode
+     * @return {@link org.meveo.api.dto.response.GetCountryResponse}.
+     */
+    @GET
+    @Path("/")
+    public GetCountryResponse find(@QueryParam("countryCode") String countryCode);
 
-	/**
-	 * Remove country with a given country and currency code. 
-	 * 
-	 * @param countryCode
-	 * @param currencyCode
-	 * @return
-	 */
-	@DELETE
-	@Path("/{countryCode}/{currencyCode}")
-	public ActionStatus remove(@PathParam("countryCode") String countryCode,
-			@PathParam("currencyCode") String currencyCode);
+    /**
+     * Does not delete a country but the tradingCountry associated to it.
+     * 
+     * @param countryCode
+     * @param currencyCode
+     * @return
+     */
+    @DELETE
+    @Path("/{countryCode}/{currencyCode}")
+    public ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode);
 
-	/**
-	 * Update {@link org.meveo.model.billing.Country} and
-	 * {@link org.meveo.model.billing.TradingCountry}.
-	 * 
-	 * @param countryDto
-	 * @return
-	 */
-	@PUT
-	@Path("/")
-	public ActionStatus update(CountryDto countryDto);
-	
-	@POST
-	@Path("/createOrUpdate")
-	public ActionStatus createOrUpdate(CountryDto countryDto);
+    /**
+     * Modify a country. Same input parameter as create. The country and tradingCountry are created if they don't exists. The operation fails if the tradingCountry is null.
+     * 
+     * @param countryDto
+     * @return
+     */
+    @PUT
+    @Path("/")
+    public ActionStatus update(CountryDto countryDto);
+
+    @POST
+    @Path("/createOrUpdate")
+    public ActionStatus createOrUpdate(CountryDto countryDto);
 
 }

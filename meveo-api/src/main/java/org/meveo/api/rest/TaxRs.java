@@ -28,7 +28,7 @@ import org.meveo.api.rest.security.RSSecured;
 public interface TaxRs extends IBaseRs {
 
 	/**
-	 * Create tax.
+	 * Create tax. Description per language can be defined
 	 * 
 	 * @param postData
 	 * @return
@@ -38,7 +38,7 @@ public interface TaxRs extends IBaseRs {
 	public ActionStatus create(TaxDto postData);
 
 	/**
-	 * Update tax.
+	 * Update tax. Description per language can be defined
 	 * @param postData
 	 * @return
 	 */

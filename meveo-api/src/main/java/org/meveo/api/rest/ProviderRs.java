@@ -29,53 +29,79 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface ProviderRs extends IBaseRs {
 
-	/**
-	 * Create provider.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/")
-	ActionStatus create(ProviderDto postData);
+    /**
+     * Create provider.
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/")
+    ActionStatus create(ProviderDto postData);
 
-	/**
-	 * Search for provider with a given code.
-	 * 
-	 * @param providerCode
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	GetProviderResponse find(@QueryParam("providerCode") String providerCode);
+    /**
+     * Search for provider with a given code.
+     * 
+     * @param providerCode
+     * @return
+     */
+    @GET
+    @Path("/")
+    GetProviderResponse find(@QueryParam("providerCode") String providerCode);
 
-	/**
-	 * Update provider.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@PUT
-	@Path("/")
-	ActionStatus update(ProviderDto postData);
+    /**
+     * Update provider.
+     * 
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/")
+    ActionStatus update(ProviderDto postData);
 
-	@GET
-	@Path("/getTradingConfiguration")
-	GetTradingConfigurationResponseDto findTradingConfiguration();
+    /**
+     * Returns list of trading countries, currencies and languages
+     * 
+     * @return
+     */
+    @GET
+    @Path("/getTradingConfiguration")
+    GetTradingConfigurationResponseDto findTradingConfiguration();
 
-	@GET
-	@Path("/getInvoicingConfiguration")
-	GetInvoicingConfigurationResponseDto findInvoicingConfiguration();
+    /**
+     * Returns list of invoicing configuration (calendars, taxes, invoice categories, invoice sub categories, billing cycles and termination reasons
+     * 
+     * @return
+     */
+    @GET
+    @Path("/getInvoicingConfiguration")
+    GetInvoicingConfigurationResponseDto findInvoicingConfiguration();
 
-	@GET
-	@Path("/getCustomerConfiguration")
-	GetCustomerConfigurationResponseDto findCustomerConfiguration();
+    /**
+     * Returns list of customer brands, categories and titles
+     * 
+     * @return
+     */
+    @GET
+    @Path("/getCustomerConfiguration")
+    GetCustomerConfigurationResponseDto findCustomerConfiguration();
 
-	@GET
-	@Path("/getCustomerAccountConfiguration")
-	GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration();
-	
-	@POST
-	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(ProviderDto postData);
+    /**
+     * Returns list of payment method and credit categories
+     * 
+     * @return
+     */
+    @GET
+    @Path("/getCustomerAccountConfiguration")
+    GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration();
+
+    /**
+     * Create or update a provider if it doesn't exists
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(ProviderDto postData);
 }

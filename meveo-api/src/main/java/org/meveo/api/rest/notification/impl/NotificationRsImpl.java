@@ -1,8 +1,5 @@
 package org.meveo.api.rest.notification.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -24,14 +21,14 @@ import org.meveo.api.rest.notification.NotificationRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/notification", tags = "notification")
+
 public class NotificationRsImpl extends BaseRs implements NotificationRs {
 
 	@Inject
 	private NotificationApi notificationApi;
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus create(NotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -53,7 +50,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus update(NotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -75,7 +72,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public GetNotificationResponseDto find(String notificationCode) {
 		GetNotificationResponseDto result = new GetNotificationResponseDto();
 
@@ -97,7 +94,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus remove(String notificationCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -119,7 +116,6 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
-	@ApiOperation(value = "", responseContainer = "List")
 	public NotificationHistoriesResponseDto listNotificationHistory() {
 		NotificationHistoriesResponseDto result = new NotificationHistoriesResponseDto();
 
@@ -141,7 +137,6 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
-	@ApiOperation(value = "", responseContainer = "List")
 	public InboundRequestsResponseDto listInboundRequest() {
 		InboundRequestsResponseDto result = new InboundRequestsResponseDto();
 
@@ -163,7 +158,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createOrUpdate(NotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

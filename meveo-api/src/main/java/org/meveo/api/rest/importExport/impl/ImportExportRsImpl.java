@@ -3,10 +3,13 @@ package org.meveo.api.rest.importExport.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -21,6 +24,7 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.response.utilities.FieldsNotImportedStringCollectionDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.api.exception.LoginException;
 import org.meveo.api.logging.LoggingInterceptor;
@@ -130,7 +134,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
         if (future.isDone()) {
             try {
                 log.info("Remote import execution {} status is {}", executionId, future.get());
-                return new ImportExportResponseDto(executionId, future.get());
+                return exportImportStatisticsToDto(executionId, future.get());
 
             } catch (InterruptedException | ExecutionException e) {
                 return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.GENERIC_API_EXCEPTION, "Failed while executing import " + e.getClass().getName() + " "
@@ -156,5 +160,28 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
                 executionResults.remove(key);
             }
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public ImportExportResponseDto exportImportStatisticsToDto(String executionId, ExportImportStatistics statistics) {
+        ImportExportResponseDto dto = new ImportExportResponseDto(executionId);
+
+        if (statistics.getException() != null) {
+            dto.setExceptionMessage(statistics.getException().getClass().getSimpleName() + ": " + statistics.getException().getMessage());
+        }
+        dto.setFailureMessageKey(statistics.getErrorMessageKey());
+
+        if (!statistics.getFieldsNotImported().isEmpty()) {
+            dto.setFieldsNotImported(new HashMap<String, FieldsNotImportedStringCollectionDto>());
+            for (Map.Entry<String, Collection<String>> entry : statistics.getFieldsNotImported().entrySet()) {
+                dto.getFieldsNotImported().put(entry.getKey(), new FieldsNotImportedStringCollectionDto(entry.getValue()));
+            }
+        }
+        dto.setSummary(new HashMap<String, Integer>());
+        for (Entry<Class, Integer> summaryInfo : statistics.getSummary().entrySet()) {
+            dto.getSummary().put(summaryInfo.getKey().getName(), summaryInfo.getValue());
+        }
+
+        return dto;
     }
 }

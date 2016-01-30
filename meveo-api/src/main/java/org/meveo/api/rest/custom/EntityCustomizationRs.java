@@ -33,18 +33,42 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface EntityCustomizationRs extends IBaseRs {
 
+    /**
+     * Define a new custom entity template including fields and applicable actions
+     * 
+     * @param dto
+     * @return
+     */
     @POST
     @Path("/entity/")
     public ActionStatus createEntityTemplate(CustomEntityTemplateDto dto);
 
+    /**
+     * Update custom entity template definition
+     * 
+     * @param dto
+     * @return
+     */
     @PUT
     @Path("/entity/")
     public ActionStatus updateEntityTemplate(CustomEntityTemplateDto dto);
 
+    /**
+     * Remove custom entity template definition given its code
+     * 
+     * @param customEntityTemplateCode
+     * @return
+     */
     @DELETE
     @Path("/entity/{customEntityTemplateCode}")
     public ActionStatus removeEntityTemplate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
 
+    /**
+     * Get custom entity template definition including its fields and applicable actions
+     * 
+     * @param customEntityTemplateCode
+     * @return
+     */
     @GET
     @Path("/entity/{customEntityTemplateCode}")
     public CustomEntityTemplateResponseDto findEntityTemplate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
@@ -52,60 +76,139 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * List custom entity templates.
      * 
-     * @param code Custom entity template code
+     * @param customEntityTemplateCode An optional and partial custom entity template code
      */
     @GET
     @Path("/entity/list")
     public CustomEntityTemplatesResponseDto listEntityTemplates(@QueryParam("customEntityTemplateCode") String customEntityTemplateCode);
 
+    /**
+     * Define new or update existing custom entity template definition
+     * 
+     * @param dto
+     * @return
+     */
     @POST
     @Path("/cet/createOrUpdate")
     public ActionStatus createOrUpdateEntityTemplate(CustomEntityTemplateDto dto);
 
+    /**
+     * Customize a standard Meveo entity definition by adding fields and/or custom actions
+     * 
+     * @param dto
+     * @return
+     */
     @PUT
     @Path("/customize/")
     public ActionStatus customizeEntity(EntityCustomizationDto dto);
 
+    /**
+     * Get customizations made on a standard Meveo entity given its class
+     * 
+     * @param customizedEntityClass Standard Meveo entity class name
+     * @return
+     */
     @GET
     @Path("/customize/{customizedEntityClass}")
     public EntityCustomizationResponseDto findEntityCustomizations(@PathParam("customizedEntityClass") String customizedEntityClass);
 
+    /**
+     * Define a new custom field
+     * 
+     * @param postData
+     * @return
+     */
     @POST
     @Path("/field/")
     public ActionStatus createField(CustomFieldTemplateDto postData);
 
+    /**
+     * Update existing custom field definition
+     */
     @PUT
     @Path("/field/")
     public ActionStatus updateField(CustomFieldTemplateDto postData);
 
+    /**
+     * Remove custom field definition given its code and entity it applies to
+     * 
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity custom field applies to
+     * @return
+     */
     @DELETE
     @Path("/field/{customFieldTemplateCode}/{appliesTo}")
     public ActionStatus removeField(@PathParam("customFieldTemplateCode") String customFieldTemplateCode, @PathParam("appliesTo") String appliesTo);
 
+    /**
+     * Get custom field definition
+     * 
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity custom field applies to
+     * @return
+     */
     @GET
     @Path("/field/")
     public GetCustomFieldTemplateReponseDto findField(@QueryParam("customFieldTemplateCode") String customFieldTemplateCode, @QueryParam("appliesTo") String appliesTo);
 
+    /**
+     * Define new or update existing custom field definition
+     * 
+     * @param postData
+     * @return
+     */
     @POST
     @Path("/field/createOrUpdate")
     public ActionStatus createOrUpdateField(CustomFieldTemplateDto postData);
 
+    /**
+     * Define a new entity action
+     * 
+     * @param postData
+     * @return
+     */
     @POST
     @Path("/action/")
     public ActionStatus createAction(EntityActionScriptDto postData);
 
+    /**
+     * Update existing entity action definition
+     * 
+     * @param dto
+     * @return
+     */
     @PUT
     @Path("/action/")
     public ActionStatus updateAction(EntityActionScriptDto dto);
 
+    /**
+     * Remove entity action definition given its code and entity it applies to
+     * 
+     * @param actionCode Entity action code
+     * @param appliesTo Entity that action applies to
+     * @return
+     */
     @DELETE
     @Path("/action/{actionCode}/{appliesTo}")
     public ActionStatus removeAction(@PathParam("actionCode") String actionCode, @PathParam("appliesTo") String appliesTo);
 
+    /**
+     * Get entity action definition
+     * 
+     * @param actionCode Entity action code
+     * @param appliesTo Entity that action applies to
+     * @return
+     */
     @GET
     @Path("/action/")
     public EntityActionScriptResponseDto findAction(@QueryParam("actionCode") String actionCode, @QueryParam("appliesTo") String appliesTo);
 
+    /**
+     * Define new or update existing entity action definition
+     * 
+     * @param dto
+     * @return
+     */
     @POST
     @Path("/action/createOrUpdate")
     public ActionStatus createOrUpdateAction(EntityActionScriptDto dto);

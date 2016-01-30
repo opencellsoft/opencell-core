@@ -10,8 +10,13 @@ import org.meveo.api.dto.ActionStatus;
  **/
 public interface IBaseRs {
 
-	@GET
-	@Path("/version")
-	public ActionStatus index();
+    /**
+     * Get version of application
+     * 
+     * @return Action status with version number as a message
+     */
+    @GET
+    @Path("/version")
+    public ActionStatus index();
 
 }

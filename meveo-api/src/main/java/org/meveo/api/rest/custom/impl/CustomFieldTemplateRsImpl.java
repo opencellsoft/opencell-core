@@ -1,9 +1,5 @@
 package org.meveo.api.rest.custom.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -24,14 +20,12 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/customFieldTemplate", tags = "customFieldTemplate")
 public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemplateRs {
 
     @Inject
     private CustomFieldTemplateApi customFieldTemplateApi;
 
     @Override
-    @ApiOperation(value = "Define a new custom field", response = ActionStatus.class)
     public ActionStatus create(CustomFieldTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -52,7 +46,6 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
     }
 
     @Override
-    @ApiOperation(value = "Update existing custom field definition", response = ActionStatus.class)
     public ActionStatus update(CustomFieldTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -73,8 +66,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
     }
 
     @Override
-    @ApiOperation(value = "Remove custom field definition given its code and entity it applies to", response = ActionStatus.class)
-    public ActionStatus remove(@ApiParam(value = "Custom field template code") String customFieldTemplateCode, @ApiParam(value = "Entity custom field applies to") String appliesTo) {
+    public ActionStatus remove(String customFieldTemplateCode, String appliesTo) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -94,9 +86,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
     }
 
     @Override
-    @ApiOperation(value = "Get custom field definition", response = GetCustomFieldTemplateReponseDto.class)
-    public GetCustomFieldTemplateReponseDto find(@ApiParam(value = "Custom field template code") String customFieldTemplateCode,
-            @ApiParam(value = "Entity custom field applies to") String appliesTo) {
+    public GetCustomFieldTemplateReponseDto find(String customFieldTemplateCode, String appliesTo) {
         GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
         try {
@@ -116,7 +106,6 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
     }
 
     @Override
-    @ApiOperation(value = "Define new or update existing custom field definition", response = ActionStatus.class)
     public ActionStatus createOrUpdate(CustomFieldTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

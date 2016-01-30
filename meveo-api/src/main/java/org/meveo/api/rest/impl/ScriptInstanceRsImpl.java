@@ -1,8 +1,5 @@
 package org.meveo.api.rest.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -23,14 +20,14 @@ import org.meveo.api.rest.ScriptInstanceRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/scriptInstance", tags = "scriptInstance")
+
 public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
 
     @Inject
     private ScriptInstanceApi scriptInstanceApi;
 
     @Override
-    @ApiOperation(value = "")
+    
     public ScriptInstanceReponseDto create(ScriptInstanceDto postData) {
         ScriptInstanceReponseDto result = new ScriptInstanceReponseDto();
         try {
@@ -52,7 +49,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ScriptInstanceReponseDto update(ScriptInstanceDto postData) {
         ScriptInstanceReponseDto result = new ScriptInstanceReponseDto();
         try {
@@ -73,7 +70,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ActionStatus remove(String scriptInstanceCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -93,7 +90,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public GetScriptInstanceResponseDto find(String scriptInstanceCode) {
         GetScriptInstanceResponseDto result = new GetScriptInstanceResponseDto();
         try {
@@ -113,7 +110,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ScriptInstanceReponseDto createOrUpdate(ScriptInstanceDto postData) {
         ScriptInstanceReponseDto result = new ScriptInstanceReponseDto();
         try {

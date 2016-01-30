@@ -14,22 +14,17 @@ import org.meveo.api.notification.JobTriggerApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.JobTriggerRs;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 /**
  * @author Tyshan Shi
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/notification/jobTrigger", tags = "notif_jobTrigger")
 public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 
 	@Inject
 	private JobTriggerApi jobTriggerApi;
 
 	@Override
-	@ApiOperation(value = "create a job trigger")
 	public ActionStatus create(JobTriggerDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -51,7 +46,7 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus update(JobTriggerDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -73,7 +68,7 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public GetJobTriggerResponseDto find(String notificationCode) {
 		GetJobTriggerResponseDto result = new GetJobTriggerResponseDto();
 
@@ -95,7 +90,7 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus remove(String notificationCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -117,7 +112,7 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createOrUpdate(JobTriggerDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

@@ -1,7 +1,5 @@
 package org.meveo.api.rest.impl;
 
-import io.swagger.annotations.Api;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -18,7 +16,7 @@ import org.meveo.api.rest.RoleRs;
 
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/role", tags = "role")
+
 public class RoleRsImpl extends BaseRs implements RoleRs {
 
 	@Inject

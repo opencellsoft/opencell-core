@@ -1,8 +1,5 @@
 package org.meveo.api.rest.job.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -11,6 +8,7 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.JobInstanceDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
@@ -21,14 +19,12 @@ import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.job.JobRs;
-import org.meveo.model.jobs.JobInstanceInfoDto;
 
 /**
  * @author Edward P. Legaspi
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/job", tags = "job")
 public class JobRsImpl extends BaseRs implements JobRs {
 
     @Inject
@@ -41,7 +37,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     private TimerEntityApi timerEntityApi;
 
     @Override
-    @ApiOperation(value = "")
+    
     public ActionStatus execute(JobInstanceInfoDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -62,7 +58,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ActionStatus create(JobInstanceDto jobInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -82,7 +78,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ActionStatus createTimer(TimerEntityDto timerEntityDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -102,7 +98,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ActionStatus update(JobInstanceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -122,7 +118,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ActionStatus createOrUpdate(JobInstanceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -142,7 +138,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public JobInstanceResponseDto find(String jobInstanceCode) {
         JobInstanceResponseDto result = new JobInstanceResponseDto();
 
@@ -163,7 +159,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ActionStatus remove(String jobInstanceCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -184,7 +180,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ActionStatus updateTimer(TimerEntityDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -205,7 +201,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ActionStatus createOrUpdateTimer(TimerEntityDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -226,7 +222,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public TimerEntityResponseDto findTimer(String timerCode) {
         TimerEntityResponseDto result = new TimerEntityResponseDto();
 
@@ -248,7 +244,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    @ApiOperation(value = "")
+    
     public ActionStatus removeTimer(String timerCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

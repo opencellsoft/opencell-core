@@ -1,460 +1,434 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>meveo-admin</artifactId>
-		<groupId>org.manaty</groupId>
-		<version>4.2</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
-	<artifactId>meveo-admin-web</artifactId>
-	<name>MEVEO Admin Web Application - Web Module</name>
-	<packaging>war</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>meveo-admin</artifactId>
+        <groupId>org.manaty</groupId>
+        <version>4.2</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>meveo-admin-web</artifactId>
+    <name>MEVEO Admin Web Application - Web Module</name>
+    <packaging>war</packaging>
 
-	<build>
-		<finalName>meveo</finalName>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<excludes>
-					<exclude>**/import-*.sql</exclude>
-					<exclude>**/jasper/*</exclude>
-				</excludes>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/resources/jasper</directory>
-				<includes>
-					<include>**/*</include>
-				</includes>
-				<targetPath>./jasper</targetPath>
-				<filtering>false</filtering>
-			</resource>
-		</resources>
+    <build>
+        <finalName>meveo</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/import-*.sql</exclude>
+                    <exclude>**/jasper/*</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources/jasper</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <targetPath>./jasper</targetPath>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
 
-		<plugins>
-		       
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.0.1</version>
-				 <configuration>
-				 <packagingExcludes>**/import*.sql</packagingExcludes>
-			       <failOnMissingWebXml>false</failOnMissingWebXml>
-			        <archive>
-			        <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
-			        </archive>
-			      </configuration>
-				<executions>
-					<execution>
-						<id>prepare-war</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>exploded</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		       
-		     <plugin>
-	            <artifactId>maven-antrun-plugin</artifactId>
-	            <configuration>
-	                <tasks>
-	                    <copy file="../lib/flatworm-3.0.2.jar" tofile="${project.build.directory}/meveo/WEB-INF/lib/flatworm-3.0.2.jar"/>
-	                </tasks>
-	            </configuration>
-	            <executions>
-	                <execution>
-	                    <phase>install</phase>
-	                    <goals>
-	                        <goal>run</goal>
-	                    </goals>
-	                </execution>
-	            </executions>
-        	</plugin>
-        
-        	<!-- Primefaces Theme - Modena -->
-<!--         	<plugin> -->
-<!-- 	            <artifactId>maven-antrun-plugin</artifactId> -->
-<!-- 	            <configuration> -->
-<!-- 	                <tasks> -->
-<!-- 	                    <copy file="../lib/modena-theme-1.0.1.jar" tofile="${project.build.directory}/meveo/WEB-INF/lib/modena-theme-1.0.1.jar"/> -->
-<!-- 	                </tasks> -->
-<!-- 	            </configuration> -->
-<!-- 	            <executions> -->
-<!-- 	                <execution> -->
-<!-- 	                    <phase>install</phase> -->
-<!-- 	                    <goals> -->
-<!-- 	                        <goal>run</goal> -->
-<!-- 	                    </goals> -->
-<!-- 	                </execution> -->
-<!-- 	            </executions> -->
-<!--         	</plugin> -->
-        	
-        	
-        	<!-- Primefaces Theme - Modena -->
-<!--         	<plugin> -->
-<!-- 	            <artifactId>maven-antrun-plugin</artifactId> -->
-<!-- 	            <configuration> -->
-<!-- 	                <tasks> -->
-<!-- 	                    <copy file="../lib/modena-theme-1.0.1.jar" tofile="${project.build.directory}/meveo/WEB-INF/lib/modena-theme-1.0.1.jar"/> -->
-<!-- 	                </tasks> -->
-<!-- 	            </configuration> -->
-<!-- 	            <executions> -->
-<!-- 	                <execution> -->
-<!-- 	                    <phase>install</phase> -->
-<!-- 	                    <goals> -->
-<!-- 	                        <goal>run</goal> -->
-<!-- 	                    </goals> -->
-<!-- 	                </execution> -->
-<!-- 	            </executions> -->
-<!--         	</plugin> -->
-        
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.3</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<doCheck>false</doCheck>
-					<doUpdate>false</doUpdate>
-					<shortRevisionLength>41</shortRevisionLength>
-				</configuration>
-			</plugin>
+        <plugins>
 
-			<plugin>
-				<groupId>com.google.code.maven-replacer-plugin</groupId>
-				<artifactId>replacer</artifactId>
-				<version>1.5.3</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<includes>
-<!-- 						<include>${project.build.directory}/**/persistence.xml</include> -->
-						<include>${project.build.directory}/**/layout/*.xhtml</include>
-					</includes>
-					<replacements>
-						<replacement>
-							<token>@VERSION_NUMBER@</token>
-							<value>${project.version}</value>
-						</replacement> 
-						<replacement>
-                       <token>@BUILD_NUMBER@</token>
-                       <value>${buildNumber}</value>
-                       </replacement> 
-					</replacements>
-				</configuration>
-			</plugin> 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.0.1</version>
+                <configuration>
+                    <packagingExcludes>**/import*.sql</packagingExcludes>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <archive>
+                        <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-war</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exploded</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<configuration>
-							<target>
-								<copy file="src/main/resources/import-${dbtype}.sql"
-									tofile="${project.build.directory}/meveo/WEB-INF/classes/import.sql" />
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>  
-        			<encoding>${project.build.sourceEncoding}</encoding>  
-    			</configuration>  
-			</plugin>
-		</plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <configuration>
+                    <tasks>
+                        <copy file="../lib/flatworm-3.0.2.jar" tofile="${project.build.directory}/meveo/WEB-INF/lib/flatworm-3.0.2.jar" />
+                    </tasks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-	</build>
+            <!-- Primefaces Theme - Modena -->
+            <!-- <plugin> -->
+            <!-- <artifactId>maven-antrun-plugin</artifactId> -->
+            <!-- <configuration> -->
+            <!-- <tasks> -->
+            <!-- <copy file="../lib/modena-theme-1.0.1.jar" tofile="${project.build.directory}/meveo/WEB-INF/lib/modena-theme-1.0.1.jar"/> -->
+            <!-- </tasks> -->
+            <!-- </configuration> -->
+            <!-- <executions> -->
+            <!-- <execution> -->
+            <!-- <phase>install</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>run</goal> -->
+            <!-- </goals> -->
+            <!-- </execution> -->
+            <!-- </executions> -->
+            <!-- </plugin> -->
 
-	<dependencies>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.1.0.Final</version>
-		</dependency>
 
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
-		</dependency>
-		
-		    <dependency>
-			    <groupId>commons-codec</groupId>
-			    <artifactId>commons-codec</artifactId>
-			    <version>1.10</version>
-			</dependency>
+            <!-- Primefaces Theme - Modena -->
+            <!-- <plugin> -->
+            <!-- <artifactId>maven-antrun-plugin</artifactId> -->
+            <!-- <configuration> -->
+            <!-- <tasks> -->
+            <!-- <copy file="../lib/modena-theme-1.0.1.jar" tofile="${project.build.directory}/meveo/WEB-INF/lib/modena-theme-1.0.1.jar"/> -->
+            <!-- </tasks> -->
+            <!-- </configuration> -->
+            <!-- <executions> -->
+            <!-- <execution> -->
+            <!-- <phase>install</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>run</goal> -->
+            <!-- </goals> -->
+            <!-- </execution> -->
+            <!-- </executions> -->
+            <!-- </plugin> -->
 
-		<!-- Import the CDI API, we use provided scope as the API is included in 
-			JBoss AS 7 -->
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <shortRevisionLength>41</shortRevisionLength>
+                </configuration>
+            </plugin>
 
-		<!-- Import the EJB API, we use provided scope as the API is included in 
-			JBoss AS 7 -->
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <!-- <include>${project.build.directory}/**/persistence.xml</include> -->
+                        <include>${project.build.directory}/**/layout/*.xhtml</include>
+                    </includes>
+                    <replacements>
+                        <replacement>
+                            <token>@VERSION_NUMBER@</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                        <replacement>
+                            <token>@BUILD_NUMBER@</token>
+                            <value>${buildNumber}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
 
-		<dependency>
-			<groupId>org.jboss.spec.javax.el</groupId>
-			<artifactId>jboss-el-api_2.2_spec</artifactId>
-		</dependency>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <copy file="src/main/resources/import-${dbtype}.sql" tofile="${project.build.directory}/meveo/WEB-INF/classes/import.sql" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
 
-		<dependency>
-			<groupId>org.manaty</groupId>
-			<artifactId>meveo-model</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.manaty</groupId>
-			<artifactId>meveo-admin-ejbs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.meveo</groupId>
-			<artifactId>meveo-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.omnifaces</groupId>
-			<artifactId>omnifaces</artifactId>
-			<version>2.0</version>
-		</dependency>
-	    <dependency>
-	        <groupId>org.primefaces</groupId>
-	        <artifactId>primefaces</artifactId>
-	    </dependency>
-		<dependency>
-			<groupId>org.primefaces.extensions</groupId>
-			<artifactId>primefaces-extensions</artifactId>
-		</dependency>
-		
-		<dependency>
-		    <groupId>org.primefaces.extensions</groupId>
-		    <artifactId>resources-codemirror</artifactId>
-		    <version>3.2.0</version>
-		</dependency>
+    </build>
 
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>1.3</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections-maven</artifactId>
-			<version>0.9.8</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xstream</groupId>
-					<artifactId>xstream</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xpp3</groupId>
-					<artifactId>xpp3</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>antlr</groupId>
-					<artifactId>antlr</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.seam.security</groupId>
-			<artifactId>seam-security</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
-		  <groupId>com.lapis.jsfexporter</groupId>
-		    <artifactId>jsf-exporter-core</artifactId>
-		    <version>1.0.2.Final</version>
-		</dependency>
-		
-		<dependency>
-		    <groupId>com.lapis.jsfexporter</groupId>
-		    <artifactId>export-type-csv</artifactId>
-		    <version>1.0.2.Final</version>
-		</dependency>
-		
-		<dependency>
-		    <groupId>com.lapis.jsfexporter</groupId>
-		    <artifactId>export-source-primefaces</artifactId>
-		    <version>1.0.2.Final</version>
-		</dependency>
-
-		<!-- rest core library -->
+    <dependencies>
         <dependency>
-        	<groupId>org.jboss.resteasy</groupId>
-        	<artifactId>resteasy-jaxrs</artifactId>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
         </dependency>
 
-		<!-- JAXB support -->
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxb-provider</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>jaxrs-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-multipart-provider</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.infinispan</groupId>
-			<artifactId>infinispan-core</artifactId>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>jboss-logging</artifactId>
-					<groupId>org.jboss.logging</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>	
-			
-		<!-- <dependency>
-			<groupId>net.sf.flexjson</groupId>
-			<artifactId>flexjson</artifactId>
-			<version>2.0</version>
-		</dependency> -->
-
-		<dependency>
-			<groupId>com.googlecode.json-simple</groupId>
-			<artifactId>json-simple</artifactId>
-			<version>1.1</version>
-		</dependency>
-		
-				<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.1</version>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
         </dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.9.2</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.solder</groupId>
-			<artifactId>solder-impl</artifactId>
-		</dependency>
-		
-		
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+
+        <!-- Import the CDI API, we use provided scope as the API is included in JBoss AS 7 -->
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Import the EJB API, we use provided scope as the API is included in JBoss AS 7 -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.el</groupId>
+            <artifactId>jboss-el-api_2.2_spec</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.manaty</groupId>
+            <artifactId>meveo-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.manaty</groupId>
+            <artifactId>meveo-admin-ejbs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.meveo</groupId>
+            <artifactId>meveo-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.omnifaces</groupId>
+            <artifactId>omnifaces</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.primefaces.extensions</groupId>
+            <artifactId>primefaces-extensions</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.primefaces.extensions</groupId>
+            <artifactId>resources-codemirror</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections-maven</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xpp3</groupId>
+                    <artifactId>xpp3</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>antlr</groupId>
+                    <artifactId>antlr</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.seam.security</groupId>
+            <artifactId>seam-security</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.lapis.jsfexporter</groupId>
+            <artifactId>jsf-exporter-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.lapis.jsfexporter</groupId>
+            <artifactId>export-type-csv</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.lapis.jsfexporter</groupId>
+            <artifactId>export-source-primefaces</artifactId>
+        </dependency>
+
+        <!-- rest core library -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+        </dependency>
+
+        <!-- JAXB support -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxb-provider</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>jaxrs-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-multipart-provider</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jboss-logging</artifactId>
+                    <groupId>org.jboss.logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- <dependency> <groupId>net.sf.flexjson</groupId> <artifactId>flexjson</artifactId> <version>2.0</version> </dependency> -->
+
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.solder</groupId>
+            <artifactId>solder-impl</artifactId>
+        </dependency>
+
+
         <!-- Primefaces Theme -->
-<!-- 		<dependency> -->
-<!-- 		    <groupId>org.primefaces.themes</groupId> -->
-<!-- 		    <artifactId>humanity</artifactId> -->
-<!-- 		    <version>1.0.10</version> -->
-<!-- 		</dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.primefaces.themes</groupId> -->
+        <!-- <artifactId>humanity</artifactId> -->
+        <!-- <version>1.0.10</version> -->
+        <!-- </dependency> -->
 
-	</dependencies>
+    </dependencies>
 
-	<profiles>
-		<profile>
-			<id>development</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-				<property>
-					<name>env</name>
-					<value>dev</value>
-				</property>
-			</activation>
-		</profile>
+    <profiles>
+        <profile>
+            <id>development</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>env</name>
+                    <value>dev</value>
+                </property>
+            </activation>
+        </profile>
 
-		<profile>
-			<id>integration</id>
-			<activation>
-				<property>
-					<name>env</name>
-					<value>integr</value>
-				</property>
-			</activation>
-		</profile>
+        <profile>
+            <id>integration</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>integr</value>
+                </property>
+            </activation>
+        </profile>
 
-		<profile>
-			<id>production</id>
-			<activation>
-				<property>
-					<name>env</name>
-					<value>prod</value>
-				</property>
-			</activation>
-		</profile>
+        <profile>
+            <id>production</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>prod</value>
+                </property>
+            </activation>
+        </profile>
 
-		<profile>
-			<!-- An optional Arquillian testing profile that executes tests in your 
-				JBoss AS instance -->
-			<!-- This profile will start a new JBoss AS instance, and execute the 
-				test, shutting it down when done -->
-			<!-- Run with: mvn clean test -Parq-jbossas-managed -->
-			<id>arq-jbossas-managed</id>
-			<dependencies>
-				<dependency>
-					<groupId>org.jboss.as</groupId>
-					<artifactId>jboss-as-arquillian-container-managed</artifactId>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
+        <profile>
+            <!-- An optional Arquillian testing profile that executes tests in your JBoss AS instance -->
+            <!-- This profile will start a new JBoss AS instance, and execute the test, shutting it down when done -->
+            <!-- Run with: mvn clean test -Parq-jbossas-managed -->
+            <id>arq-jbossas-managed</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.as</groupId>
+                    <artifactId>jboss-as-arquillian-container-managed</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

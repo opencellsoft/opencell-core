@@ -1,8 +1,5 @@
 package org.meveo.api.rest.notification.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -22,14 +19,14 @@ import org.meveo.api.rest.notification.WebHookNotificationRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/notification/webhook", tags = "notif_webhook")
+
 public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotificationRs {
 
 	@Inject
 	private WebhookNotificationApi webhookNotificationApi;
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus create(WebhookNotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -51,7 +48,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus update(WebhookNotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -73,7 +70,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public GetWebHookNotificationResponseDto find(String notificationCode) {
 		GetWebHookNotificationResponseDto result = new GetWebHookNotificationResponseDto();
 
@@ -95,7 +92,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus remove(String notificationCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -117,7 +114,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createOrUpdate(WebhookNotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

@@ -63,6 +63,11 @@ public interface CustomerAccountRs extends IBaseRs {
 	@Path("/list")
 	CustomerAccountsResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
 
+	/**
+	 * Performs dunning exclusion to customer account
+	 * @param DunningInclusionExclusionDto
+	 * @return
+	 */
 	@PUT
 	@Path("/dunningInclusionExclusion")
 	ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto DunningInclusionExclusionDto);

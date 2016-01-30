@@ -1,9 +1,5 @@
 package org.meveo.api.rest.catalog.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -24,14 +20,12 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/catalog/counterTemplate", tags = "counterTemplate")
 public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 
 	@Inject
 	private CounterTemplateApi counterTemplateApi;
 
 	@Override
-	@ApiOperation(value = "Function to create an counter template", response = ActionStatus.class)
 	public ActionStatus create(CounterTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -52,7 +46,6 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Function to update an counter template given a code", response = ActionStatus.class)
 	public ActionStatus update(CounterTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -73,8 +66,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Function to find an counter template given a code", response = GetCounterTemplateResponseDto.class)
-	public GetCounterTemplateResponseDto find(@ApiParam(value = "counter template code") String counterTemplateCode) {
+	public GetCounterTemplateResponseDto find(String counterTemplateCode) {
 		GetCounterTemplateResponseDto result = new GetCounterTemplateResponseDto();
 
 		try {
@@ -94,8 +86,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Function to remove an counter template given a code", response = ActionStatus.class)
-	public ActionStatus remove(@ApiParam(value = "counter template code") String counterTemplateCode) {
+	public ActionStatus remove( String counterTemplateCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -115,7 +106,6 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Creates a counter template or update if already exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(CounterTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

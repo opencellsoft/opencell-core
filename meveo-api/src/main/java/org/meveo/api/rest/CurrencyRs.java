@@ -17,8 +17,7 @@ import org.meveo.api.dto.response.GetCurrencyResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.Currency} and
- * {@link org.meveo.model.billing.TradingCurrency}.
+ * Web service for managing {@link org.meveo.model.billing.Currency} and {@link org.meveo.model.billing.TradingCurrency}.
  * 
  * @author Edward P. Legaspi
  **/
@@ -28,52 +27,49 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CurrencyRs extends IBaseRs {
 
-	/**
-	 * Create {@link org.meveo.model.billing.Currency} and
-	 * {@link org.meveo.model.billing.TradingCurrency}.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@POST
-	@Path("/")
-	public ActionStatus create(CurrencyDto postData);
+    /**
+     * Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created
+     * 
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/")
+    public ActionStatus create(CurrencyDto postData);
 
-	/**
-	 * Search currency with a given currency code.
-	 * 
-	 * @param currencyCode
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	public GetCurrencyResponse find(
-			@QueryParam("currencyCode") String currencyCode);
+    /**
+     * Search currency with a given currency code.
+     * 
+     * @param currencyCode
+     * @return
+     */
+    @GET
+    @Path("/")
+    public GetCurrencyResponse find(@QueryParam("currencyCode") String currencyCode);
 
-	/**
-	 * Remove currency with a given currency code.
-	 * 
-	 * @param currencyCode
-	 * @return
-	 */
-	@DELETE
-	@Path("/{currencyCode}")
-	public ActionStatus remove(@PathParam("currencyCode") String currencyCode);
+    /**
+     * Remove currency with a given currency code.
+     * 
+     * @param currencyCode
+     * @return
+     */
+    @DELETE
+    @Path("/{currencyCode}")
+    public ActionStatus remove(@PathParam("currencyCode") String currencyCode);
 
-	/**
-	 * Update {@link org.meveo.model.billing.Currency} and
-	 * {@link org.meveo.model.billing.TradingCurrency}.
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@PUT
-	@Path("/")
-	public ActionStatus update(CurrencyDto postData);
-	
-	
-	@POST
-	@Path("/createOrUpdate")
-	public ActionStatus createOrUpdate(CurrencyDto postData);
+    /**
+     * Modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists. The operation fails if the tradingCurrency is
+     * null
+     * 
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/")
+    public ActionStatus update(CurrencyDto postData);
+
+    @POST
+    @Path("/createOrUpdate")
+    public ActionStatus createOrUpdate(CurrencyDto postData);
 
 }

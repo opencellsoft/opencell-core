@@ -1,8 +1,5 @@
 package org.meveo.api.rest.notification.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -22,14 +19,13 @@ import org.meveo.api.rest.notification.EmailNotificationRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/notification/email", tags = "notif_email")
 public class EmailNotificationRsImpl extends BaseRs implements EmailNotificationRs {
 
 	@Inject
 	private EmailNotificationApi emailNotificationApi;
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus create(EmailNotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -51,7 +47,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus update(EmailNotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -73,7 +69,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public GetEmailNotificationResponseDto find(String notificationCode) {
 		GetEmailNotificationResponseDto result = new GetEmailNotificationResponseDto();
 
@@ -95,7 +91,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus remove(String notificationCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -117,7 +113,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createOrUpdate(EmailNotificationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

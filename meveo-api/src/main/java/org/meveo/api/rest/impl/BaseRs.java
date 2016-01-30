@@ -1,7 +1,5 @@
 package org.meveo.api.rest.impl;
 
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -33,89 +31,89 @@ import org.slf4j.LoggerFactory;
  **/
 public abstract class BaseRs implements IBaseRs {
 
-	protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Inject
-	@MeveoParamBean
-	protected ParamBean paramBean;
+    @Inject
+    @MeveoParamBean
+    protected ParamBean paramBean;
 
-	@Inject
-	@RSUser
-	private Instance<User> currentUserInstance;
+    @Inject
+    @RSUser
+    private Instance<User> currentUserInstance;
 
-	@Context
-	protected HttpServletRequest httpServletRequest;
+    @Context
+    protected HttpServletRequest httpServletRequest;
 
-	// one way to get HttpServletResponse
-	@Context
-	protected HttpServletResponse httpServletResponse;
+    // one way to get HttpServletResponse
+    @Context
+    protected HttpServletResponse httpServletResponse;
 
-	protected final String RESPONSE_DELIMITER = " - ";
+    protected final String RESPONSE_DELIMITER = " - ";
 
-	@GET
-	@Path("/version")
-	@ApiOperation(value = "Returns the current MEVEO API version")
-	public ActionStatus index() {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "MEVEO API Rest Web Service V4.2");
-		return result;
-	}
+    public ActionStatus index() {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "MEVEO API Rest Web Service V4.2");
+        return result;
+    }
 
-	@GET
-	@Path("/user")
-	@ApiOperation(value = "Returns the authenticated user")
-	public ActionStatus user() {
-		ActionStatus result = new ActionStatus();
+    /**
+     * Returns teh authenticated user
+     * @return
+     */
+    @GET
+    @Path("/user")
+    public ActionStatus user() {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			result = new ActionStatus(ActionStatusEnum.SUCCESS, "WS User is=" + getCurrentUser().toString());
-		} catch (MeveoApiException e) {
+        try {
+            result = new ActionStatus(ActionStatusEnum.SUCCESS, "WS User is=" + getCurrentUser().toString());
+        } catch (MeveoApiException e) {
 
-		}
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public User getCurrentUser() throws MeveoApiException {
+    public User getCurrentUser() throws MeveoApiException {
 
-		if (currentUserInstance.isUnsatisfied() || currentUserInstance.get() == null) {
-			throw new LoginException("Authentication failed! User does not exists!");
-		}
+        if (currentUserInstance.isUnsatisfied() || currentUserInstance.get() == null) {
+            throw new LoginException("Authentication failed! User does not exists!");
+        }
 
-		User currentUser = currentUserInstance.get();
+        User currentUser = currentUserInstance.get();
 
-		return currentUser;
-	}
+        return currentUser;
+    }
 
-	protected Response.ResponseBuilder createResponseFromMeveoApiException(MeveoApiException e, ActionStatus result) {
-		Response.ResponseBuilder responseBuilder = null;
+    protected Response.ResponseBuilder createResponseFromMeveoApiException(MeveoApiException e, ActionStatus result) {
+        Response.ResponseBuilder responseBuilder = null;
 
-		if (e instanceof EntityDoesNotExistsException) {
-			responseBuilder = Response.status(Response.Status.NOT_FOUND).entity(result);
-		} else if (e instanceof EntityAlreadyExistsException) {
-			responseBuilder = Response.status(Response.Status.FOUND).entity(result);
-		} else if (e instanceof MissingParameterException) {
-			responseBuilder = Response.status(Response.Status.PRECONDITION_FAILED).entity(result);
-		} else {
-			responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(result);
-		}
+        if (e instanceof EntityDoesNotExistsException) {
+            responseBuilder = Response.status(Response.Status.NOT_FOUND).entity(result);
+        } else if (e instanceof EntityAlreadyExistsException) {
+            responseBuilder = Response.status(Response.Status.FOUND).entity(result);
+        } else if (e instanceof MissingParameterException) {
+            responseBuilder = Response.status(Response.Status.PRECONDITION_FAILED).entity(result);
+        } else {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(result);
+        }
 
-		return responseBuilder;
-	}
+        return responseBuilder;
+    }
 
-	protected ResponseBuilder createResponseFromMeveoApiException(MeveoApiException e, BaseResponse result) {
-		Response.ResponseBuilder responseBuilder = null;
+    protected ResponseBuilder createResponseFromMeveoApiException(MeveoApiException e, BaseResponse result) {
+        Response.ResponseBuilder responseBuilder = null;
 
-		if (e instanceof EntityDoesNotExistsException) {
-			responseBuilder = Response.status(Response.Status.NOT_FOUND).entity(result);
-		} else if (e instanceof EntityAlreadyExistsException) {
-			responseBuilder = Response.status(Response.Status.FOUND).entity(result);
-		} else if (e instanceof MissingParameterException) {
-			responseBuilder = Response.status(Response.Status.PRECONDITION_FAILED).entity(result);
-		} else {
-			responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(result);
-		}
+        if (e instanceof EntityDoesNotExistsException) {
+            responseBuilder = Response.status(Response.Status.NOT_FOUND).entity(result);
+        } else if (e instanceof EntityAlreadyExistsException) {
+            responseBuilder = Response.status(Response.Status.FOUND).entity(result);
+        } else if (e instanceof MissingParameterException) {
+            responseBuilder = Response.status(Response.Status.PRECONDITION_FAILED).entity(result);
+        } else {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(result);
+        }
 
-		return responseBuilder;
-	}
+        return responseBuilder;
+    }
 
 }

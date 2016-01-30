@@ -1,9 +1,5 @@
 package org.meveo.api.rest.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -23,14 +19,12 @@ import org.meveo.api.rest.CalendarRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/calendar", tags = "calendar")
 public class CalendarRsImpl extends BaseRs implements CalendarRs {
 
 	@Inject
 	private CalendarApi calendarApi;
 
 	@Override
-	@ApiOperation(value = "Create a calendar", response = ActionStatus.class)
 	public ActionStatus create(CalendarDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -51,7 +45,6 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Update a calendar", response = ActionStatus.class)
 	public ActionStatus update(CalendarDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -72,8 +65,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Search for a calendar given a calendar code", response = GetCalendarResponse.class)
-	public GetCalendarResponse find(@ApiParam(value = "calendar code") String calendarCode) {
+	public GetCalendarResponse find(String calendarCode) {
 		GetCalendarResponse result = new GetCalendarResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
@@ -94,8 +86,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Remove a calendar given a calendar code", response = ActionStatus.class)
-	public ActionStatus remove(@ApiParam(value = "calendar code") String calendarCode) {
+	public ActionStatus remove(String calendarCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -115,7 +106,6 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Create a calendar or updates it if it exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(CalendarDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

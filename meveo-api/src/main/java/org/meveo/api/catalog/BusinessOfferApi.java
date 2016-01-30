@@ -1,40 +1,13 @@
 package org.meveo.api.catalog;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
-import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.BomOfferDto;
-import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
-import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
-import org.meveo.model.catalog.ServiceChargeTemplateTermination;
-import org.meveo.model.catalog.ServiceChargeTemplateUsage;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.TriggeredEDRTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.catalog.impl.BusinessOfferService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;

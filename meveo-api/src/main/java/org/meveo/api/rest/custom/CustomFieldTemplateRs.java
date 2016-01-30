@@ -26,22 +26,54 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CustomFieldTemplateRs extends IBaseRs {
 
+    /**
+     * Define a new custom field
+     * 
+     * @param postData
+     * @return
+     */
     @POST
     @Path("/")
     ActionStatus create(CustomFieldTemplateDto postData);
 
+    /**
+     * Update existing custom field definition
+     * 
+     * @param postData
+     * @return
+     */
     @PUT
     @Path("/")
     ActionStatus update(CustomFieldTemplateDto postData);
 
+    /**
+     * Remove custom field definition given its code and entity it applies to
+     * 
+     * @param customFieldTemplateCode
+     * @param appliesTo
+     * @return
+     */
     @DELETE
     @Path("/{customFieldTemplateCode}/{appliesTo}")
     ActionStatus remove(@PathParam("customFieldTemplateCode") String customFieldTemplateCode, @PathParam("appliesTo") String appliesTo);
 
+    /**
+     * Get custom field definition
+     * 
+     * @param customFieldTemplateCode
+     * @param appliesTo
+     * @return
+     */
     @GET
     @Path("/")
     GetCustomFieldTemplateReponseDto find(@QueryParam("customFieldTemplateCode") String customFieldTemplateCode, @QueryParam("appliesTo") String appliesTo);
 
+    /**
+     * Define new or update existing custom field definition
+     * 
+     * @param postData
+     * @return
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(CustomFieldTemplateDto postData);

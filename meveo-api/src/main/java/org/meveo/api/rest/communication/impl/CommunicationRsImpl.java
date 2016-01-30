@@ -1,8 +1,5 @@
 package org.meveo.api.rest.communication.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -18,32 +15,29 @@ import org.meveo.api.rest.impl.BaseRs;
 
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "Communication", tags="communication")
 public class CommunicationRsImpl extends BaseRs implements CommunicationRs {
 
-	@Inject
-	CommunicationApi communicationApi;
+    @Inject
+    CommunicationApi communicationApi;
 
-	@Override
-	@ApiOperation(value = "Receives inbout communication from external source given the rest url above. MEVEO handles it by throwing an inbount communication event with the communicationRequestDto.")
-	public ActionStatus inboundCommunication(CommunicationRequestDto communicationRequestDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus inboundCommunication(CommunicationRequestDto communicationRequestDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			communicationApi.inboundCommunication(communicationRequestDto);
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error occurred while updating notification ", e);
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-			log.error("error generated while updating notification ", e);
-		}
+        try {
+            communicationApi.inboundCommunication(communicationRequestDto);
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error occurred while updating notification ", e);
+        } catch (Exception e) {
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+            log.error("error generated while updating notification ", e);
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
-
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 }

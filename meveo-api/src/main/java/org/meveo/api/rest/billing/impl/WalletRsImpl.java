@@ -1,8 +1,5 @@
 package org.meveo.api.rest.billing.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -28,14 +25,14 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/billing/wallet", tags = "wallet")
+
 public class WalletRsImpl extends BaseRs implements WalletRs {
 
 	@Inject
 	private WalletApi walletApi;
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus currentBalance(WalletBalanceDto postData) {
 		ActionStatus result = new ActionStatus();
 
@@ -55,7 +52,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus reservedBalance(WalletBalanceDto postData) {
 		ActionStatus result = new ActionStatus();
 
@@ -94,7 +91,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createReservation(WalletReservationDto postData) {
 		ActionStatus result = new ActionStatus();
 
@@ -114,7 +111,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus updateReservation(WalletReservationDto postData) {
 		ActionStatus result = new ActionStatus();
 
@@ -134,7 +131,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus cancelReservation(Long reservationId) {
 		ActionStatus result = new ActionStatus();
 
@@ -154,7 +151,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus confirmReservation(WalletReservationDto postData) {
 		ActionStatus result = new ActionStatus();
 
@@ -174,7 +171,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createOperation(WalletOperationDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -195,7 +192,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData) {
 		FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
 
@@ -215,7 +212,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createWalletTemplate(WalletTemplateDto postData) {
 		ActionStatus result = new ActionStatus();
 
@@ -235,7 +232,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus updateWalletTemplate(WalletTemplateDto postData) {
 		ActionStatus result = new ActionStatus();
 
@@ -255,7 +252,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public GetWalletTemplateResponseDto findWalletTemplate(String walletTemplateCode) {
 		GetWalletTemplateResponseDto result = new GetWalletTemplateResponseDto();
 
@@ -275,7 +272,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus removeWalletTemplate(String walletTemplateCode) {
 		ActionStatus result = new ActionStatus();
 
@@ -295,7 +292,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createOrUpdateWalletTemplate(WalletTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

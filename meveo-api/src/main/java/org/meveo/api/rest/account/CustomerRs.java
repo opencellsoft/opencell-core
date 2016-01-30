@@ -46,7 +46,7 @@ public interface CustomerRs extends IBaseRs {
 	ActionStatus remove(@PathParam("customerCode") String customerCode);
 
 	/**
-	 * List CustomerAccount filter by customerCode.
+	 * Filters are: category, seller, brand and provider
 	 * 
 	 * @param customerCode
 	 * @return

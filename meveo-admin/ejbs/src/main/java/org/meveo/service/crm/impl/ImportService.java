@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;

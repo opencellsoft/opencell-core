@@ -1,8 +1,5 @@
 package org.meveo.api.rest.account.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -24,14 +21,13 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/account/billingAccount", tags = "billingAccount")
 public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 
 	@Inject
 	private BillingAccountApi billingAccountApi;
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus create(BillingAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -52,7 +48,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus update(BillingAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -73,7 +69,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public GetBillingAccountResponseDto find(String billingAccountCode) {
 		GetBillingAccountResponseDto result = new GetBillingAccountResponseDto();
 
@@ -94,7 +90,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus remove(String billingAccountCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -115,7 +111,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public BillingAccountsResponseDto listByCustomerAccount(String customerAccountCode) {
 		BillingAccountsResponseDto result = new BillingAccountsResponseDto();
 
@@ -137,7 +133,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 	}
 
 	@Override
-	@ApiOperation(value = "")
+	
 	public ActionStatus createOrUpdate(BillingAccountDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

@@ -1,9 +1,5 @@
 package org.meveo.api.rest.impl;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -27,7 +23,6 @@ import org.meveo.api.rest.CountryRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-@Api(value = "/country", tags = "tradingCountry")
 public class CountryRsImpl extends BaseRs implements CountryRs {
 
 	@Inject
@@ -40,7 +35,6 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 	 * @return @see ActionStatus
 	 */
 	@Override
-	@ApiOperation(value = "This function allows to creates a tradingCountry base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created", response = ActionStatus.class)
 	public ActionStatus create(CountryDto countryDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -61,8 +55,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Function use to modify a country. Same input parameter as create. The country and tradingCountry are created if they don't exists. The operation fails if the tradingCountry is null.", response = GetCountryResponse.class)
-	public GetCountryResponse find(@ApiParam(value = "country code") @QueryParam("countryCode") String countryCode) {
+	public GetCountryResponse find(@QueryParam("countryCode") String countryCode) {
 		GetCountryResponse result = new GetCountryResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
@@ -83,9 +76,8 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 	}
 
 	@Override
-	@ApiOperation(value = "This function does not delete a country but the tradingCountry associated to it.", response = ActionStatus.class)
-	public ActionStatus remove(@ApiParam(value = "country code") @PathParam("countryCode") String countryCode,
-			@ApiParam(value = "currency code") @PathParam("currencyCode") String currencyCode) {
+	public ActionStatus remove(@PathParam("countryCode") String countryCode,
+			 @PathParam("currencyCode") String currencyCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -105,7 +97,6 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Updates trading country. Creates trading currency if it doesn't exists", response = ActionStatus.class)
 	public ActionStatus update(CountryDto countryDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -126,7 +117,6 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 	}
 
 	@Override
-	@ApiOperation(value = "Create or update a country if it doesn't exists", response = ActionStatus.class)
 	public ActionStatus createOrUpdate(CountryDto countryDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

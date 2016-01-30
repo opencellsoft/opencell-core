@@ -8,6 +8,7 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.JobInstanceDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
@@ -17,7 +18,6 @@ import org.meveo.api.job.JobInstanceApi;
 import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.ws.JobWs;
-import org.meveo.model.jobs.JobInstanceInfoDto;
 
 @WebService(serviceName = "JobWs", endpointInterface = "org.meveo.api.ws.JobWs")
 @Interceptors({ LoggingInterceptor.class })

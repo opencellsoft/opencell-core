@@ -1,57 +1,29 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>meveo</artifactId>
-		<groupId>org.manaty</groupId>
-		<relativePath>../pom.xml</relativePath>
-		<version>4.2</version>
-	</parent>
-	<artifactId>meveo-admin</artifactId>
-	<packaging>pom</packaging>
-	<name>MEVEO Admin Web Application</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>meveo</artifactId>
+        <groupId>org.manaty</groupId>
+        <relativePath>../pom.xml</relativePath>
+        <version>4.2</version>
+    </parent>
+    <artifactId>meveo-admin</artifactId>
+    <packaging>pom</packaging>
+    <name>MEVEO Admin Web Application</name>
 
-	<modules>
-		<module>ejbs</module>
-		<module>web</module>
-	</modules>
+    <modules>
+        <module>ejbs</module>
+        <module>web</module>
+    </modules>
 
-	<properties>
-		<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
-		<manaty.serverArchiveName>meveo-admin-ejb</manaty.serverArchiveName>
-		<manaty.unpackEarModules>false</manaty.unpackEarModules>
-	</properties>
+    <properties>
+        <manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
+        <manaty.serverArchiveName>meveo-admin-ejb</manaty.serverArchiveName>
+        <manaty.unpackEarModules>false</manaty.unpackEarModules>
+    </properties>
 
-	<build>
-		<filters>
-			<filter>${project.basedir}/../src/filters/${manaty.filterFile}</filter>
-		</filters>
-	</build>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.manaty</groupId>
-				<artifactId>meveo-admin-ejbs</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.parent.groupId}</groupId>
-				<artifactId>meveo-admin-web</artifactId>
-				<type>war</type>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.manaty</groupId>
-				<artifactId>meveo-model</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.faces</groupId>
-				<artifactId>jsf-api</artifactId>
-				<version>2.1.7</version>
-				<scope>compile</scope>
-			</dependency>		
-		</dependencies>
-	</dependencyManagement>
+    <build>
+        <filters>
+            <filter>${project.basedir}/../src/filters/${manaty.filterFile}</filter>
+        </filters>
+    </build>
 </project>
