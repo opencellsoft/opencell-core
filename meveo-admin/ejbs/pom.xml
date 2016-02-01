@@ -422,13 +422,14 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.blackbear</groupId>
-            <artifactId>flatworm</artifactId>
-            <version>3.0.2</version>
-            <!-- <scope>system</scope> -->
-            <!-- <systemPath>${project.basedir}/../lib/flatworm-3.0.2.jar</systemPath> -->
-        </dependency>
+
+	<dependency>
+		<groupId>com.blackbear</groupId>
+		<artifactId>flatworm</artifactId>
+		<version>3.0.2</version>
+		<scope>system</scope>
+		<systemPath>${project.basedir}/../lib/flatworm-3.0.2.jar</systemPath>
+	</dependency>
 
         <dependency>
             <groupId>junit</groupId>

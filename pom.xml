@@ -483,15 +483,7 @@
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jaxrs</artifactId>
                 <version>1.5.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.blackbear</groupId>
-                <artifactId>flatworm</artifactId>
-                <version>3.0.2</version>
-                <scope>system</scope>
-                <systemPath>${project.basedir}/lib/flatworm-3.0.2.jar</systemPath>
-            </dependency>
+            </dependency>          
 
         </dependencies>
     </dependencyManagement>
