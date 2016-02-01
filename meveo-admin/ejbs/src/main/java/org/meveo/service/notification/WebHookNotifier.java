@@ -89,20 +89,17 @@ public class WebHookNotifier {
             	paramQuery+=sep+URLEncoder.encode(paramKey, "UTF-8")+"="+URLEncoder.encode(params.get(paramKey), "UTF-8");
             	sep="&";
             }
-            
+            String bodyEL_evaluated = null;
+            log.debug("paramQuery={}",paramQuery);
             if(WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()){
             	url+="?"+paramQuery;
-            } else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
-            	String bodyEL = webHook.getBodyEL();
-				bodyEL = evaluate(bodyEL, e, context);
-	            if (bodyEL != null && !StringUtils.isBlank(bodyEL)) {	            	
-	            	paramQuery += "&body=" + bodyEL;
-	            }
-            } else {
-            	log.debug("paramQuery={}",paramQuery);
-            	
-            }
-            
+            } else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {            	
+            	bodyEL_evaluated = evaluate(webHook.getBodyEL(), e, context);
+				log.debug("Evaluated BodyEL={}",bodyEL_evaluated);
+				if(StringUtils.isBlank(bodyEL_evaluated)){
+					paramQuery += "&"+ bodyEL_evaluated;
+				}				
+            } 
 			log.debug("webhook url: {}", url);
 			URL obj = new URL(url);
 
@@ -117,8 +114,7 @@ public class WebHookNotifier {
 			for (String key : headers.keySet()) {
 		        conn.setRequestProperty(key, headers.get(key));
 			}
-			
-			
+						
 			
 			if (WebHookMethodEnum.HTTP_GET == webHook.getHttpMethod()) {
 				conn.setRequestMethod("GET");

@@ -1304,6 +1304,10 @@
 			baseTableName="cat_service_template" constraintName="fk_cat_service_template_bsm"
 			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_business_serv_model" />
-	</changeSet>   
-	   
+	</changeSet>  
+	
+	<changeSet id="#1186_20160201" author="anasseh">
+	    <modifyDataType columnName="BODY_EL" newDataType="VARCHAR(2000)"
+			tableName="ADM_NOTIF_WEBHOOKS" /> 
+	   	</changeSet>
 </databaseChangeLog>

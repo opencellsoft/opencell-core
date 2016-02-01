@@ -54,7 +54,8 @@ public class WebHook extends Notification {
     @Size(max = 255)
     private String password;
 
-    @Column(name = "BODY_EL", length = 255)
+    @Column(name = "BODY_EL",  length = 2000)
+    @Size(max = 2000)
 	private String bodyEL = null;
     
     @ElementCollection(fetch = FetchType.EAGER)
