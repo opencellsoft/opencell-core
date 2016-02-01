@@ -1180,5 +1180,130 @@
     
     <changeSet id="#1104_20160102-1" author="AndriusKarpavicius">
         <dropTable tableName="meveo_script_instance_error"/>
-    </changeSet>      
+    </changeSet>
+
+	<changeSet id="#1450_20160202" author="EdwardLegaspi">
+		<createTable tableName="cat_business_offer_model">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="offer_template_id" type="BIGINT" />
+			<column name="script_instance_id" type="BIGINT" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id" constraintName="pk_cat_bom"
+			tableName="cat_business_offer_model" />
+		<addForeignKeyConstraint baseColumnNames="id"
+			baseTableName="cat_business_offer_model" constraintName="fk_cat_bom_meveo_module"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_module" />
+		<addForeignKeyConstraint baseColumnNames="offer_template_id"
+			baseTableName="cat_business_offer_model" constraintName="fk_cat_bom_offer_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+		<addForeignKeyConstraint baseColumnNames="script_instance_id"
+			baseTableName="cat_business_offer_model" constraintName="fk_cat_bom_meveo_script_instance"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+
+		<createTable tableName="cat_business_serv_model">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="service_template_id" type="BIGINT" />
+			<column name="script_instance_id" type="BIGINT" />
+		</createTable>
+
+		<addPrimaryKey columnNames="id" constraintName="pk_cat_bsm"
+			tableName="cat_business_serv_model" />
+		<addForeignKeyConstraint baseColumnNames="id"
+			baseTableName="cat_business_serv_model" constraintName="fk_cat_bsm_meveo_module"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_module" />
+		<addForeignKeyConstraint baseColumnNames="service_template_id"
+			baseTableName="cat_business_serv_model" constraintName="fk_cat_bsm_service_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+		<addForeignKeyConstraint baseColumnNames="script_instance_id"
+			baseTableName="cat_business_serv_model" constraintName="fk_cat_bsm_meveo_script_instance"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+
+		<createTable tableName="cat_offer_service_template">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="offer_template_id" type="BIGINT" />
+			<column name="service_template_id" type="BIGINT" />
+			<column name="mandatory" type="BOOL" />
+		</createTable>
+
+		<createSequence sequenceName="cat_offer_serv_templt_seq" />
+		<addPrimaryKey columnNames="id"
+			constraintName="pk_cat_offer_service_template" tableName="cat_offer_service_template" />
+		<addForeignKeyConstraint baseColumnNames="offer_template_id"
+			baseTableName="cat_offer_service_template" constraintName="fk_cat_ost_offer_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+		<addForeignKeyConstraint baseColumnNames="service_template_id"
+			baseTableName="cat_offer_service_template" constraintName="fk_cat_ost_service_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+		<createTable tableName="cat_offer_serv_incomp">
+			<column name="offer_template_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="offer_service_template_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="offer_template_id"
+			baseTableName="cat_offer_serv_incomp" constraintName="fk_cat_os_incomp_offer_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="cat_offer_service_template" />
+		<addForeignKeyConstraint baseColumnNames="offer_service_template_id"
+			baseTableName="cat_offer_serv_incomp" constraintName="fk_cat_os_incomp_service_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+		<createTable tableName="cat_offer_serv_assoc">
+			<column name="offer_template_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="offer_service_template_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="offer_template_id"
+			baseTableName="cat_offer_serv_assoc" constraintName="fk_cat_os_assoc_offer_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+		<addForeignKeyConstraint baseColumnNames="offer_service_template_id"
+			baseTableName="cat_offer_serv_assoc" constraintName="fk_cat_os_assoc_service_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+
+		<addColumn tableName="cat_offer_template">
+			<column name="business_offer_model_id" type="BIGINT"></column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="business_offer_model_id"
+			baseTableName="cat_offer_template" constraintName="fk_cat_offer_template_bom"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_business_offer_model" />
+
+		<addColumn tableName="cat_service_template">
+			<column name="business_service_model_id" type="BIGINT"></column>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="business_service_model_id"
+			baseTableName="cat_service_template" constraintName="fk_cat_service_template_bsm"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_business_serv_model" />
+	</changeSet>   
+	   
 </databaseChangeLog>

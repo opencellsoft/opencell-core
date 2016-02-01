@@ -3,9 +3,7 @@ package org.meveo.model.catalog;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.MeveoModule;
@@ -13,8 +11,7 @@ import org.meveo.model.scripts.ServiceModelScript;
 
 @Entity
 @ObservableEntity
-@Table(name = "CAT_BUSINESS_SERV_MODEL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_BUSINESS_SERV_MODEL_SEQ")
+@Table(name = "CAT_BUSINESS_SERV_MODEL")
 public class BusinessServiceModel extends MeveoModule {
 
 	private static final long serialVersionUID = 683873220792653929L;
@@ -43,5 +40,4 @@ public class BusinessServiceModel extends MeveoModule {
 		this.script = script;
 	}
 
-	
 }

@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -31,6 +33,7 @@ import org.meveo.model.ObservableEntity;
 @ExportIdentifier({ "code", "provider" })
 @Table(name = "MEVEO_MODULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_MODULE_SEQ")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class MeveoModule extends BusinessEntity implements Serializable {
 
 	/**

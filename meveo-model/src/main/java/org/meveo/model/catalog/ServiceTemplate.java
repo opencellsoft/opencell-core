@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -47,9 +46,9 @@ import org.meveo.model.ObservableEntity;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
 @NamedQueries({			
 @NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", 
-	           query = "select count(*) from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv) and s.provider=:provider"),
+	           query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate from OfferTemplate o join o.offerServiceTemplates serv) and s.provider=:provider"),
 @NamedQuery(name = "serviceTemplate.getServicesWithNotOffer", 
-	           query = "from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.serviceTemplates serv) and s.provider=:provider"),
+	           query = "from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.offerServiceTemplates serv) and s.provider=:provider"),
 @NamedQuery(name = "serviceTemplate.getServicesWithRecurringsByChargeTemplate",
 	           query = "from ServiceTemplate s left join s.serviceRecurringCharges c where c.chargeTemplate=:chargeTemplate")
 //@NamedQuery(name = "serviceTemplate.getServicesWithSubscriptionsByChargeTemplate", 
@@ -79,7 +78,8 @@ public class ServiceTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "INVOICING_CALENDAR_ID")
 	private Calendar invoicingCalendar;
 	
-	@Column(name = "BUSINESS_SERVICE_MODEL_ID", length = 60)
+	@ManyToOne
+	@JoinColumn(name = "BUSINESS_SERVICE_MODEL_ID")
 	private BusinessServiceModel businessServiceModel;
 
 	

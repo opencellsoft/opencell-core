@@ -62,7 +62,8 @@ public class OfferTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "CAT_OFFER_TEMPLATE_CAT_ID")
 	private OfferTemplateCategory offerTemplateCategory;
 
-	@Column(name = "BUSINESS_OFFER_MODEL_ID", length = 60)
+	@ManyToOne
+	@JoinColumn(name = "BUSINESS_OFFER_MODEL_ID")
 	private BusinessOfferModel businessOfferModel;
 
 	@ManyToMany(fetch = FetchType.LAZY)
