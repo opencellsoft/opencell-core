@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=searchPanel:buttonNew</td>
+	<td>id=searchPanel:searchForm:buttonNew</td>
 	<td>NewSellers</td>
 </tr>
 <tr>
@@ -33,13 +33,18 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=sellerFormId:tabView:description</td>
+	<td>//*[contains(@id, 'description')]</td>
 	<td>descriptionSeller</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'invoicePrefix_text')]</td>
+	<td>//*[contains(@id, 'invoicePrefix')]</td>
 	<td>InvoicePrefix</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'invoiceSequenceSize_input')]</td>
+	<td>InvoiceSequenceSize</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -48,28 +53,43 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=sellerFormId:tabView:trCurrencySelectId_label</td>
+	<td>//*[contains(@id, 'invoiceAdjustmentPrefix')]</td>
+	<td>InvoiceAdjustmentPrefix</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'currentInvoiceAdjustmentNb_input')]</td>
+	<td>CurrentInvoiceAdjustmentNumber</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'invoiceAdjustmentSequenceSize_input')]</td>
+	<td>InvoiceAdjustmentSequenceSize</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'trCurrencySelectId_label')]</td>
 	<td>Currency</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=sellerFormId:tabView:trCountrySelectId_label</td>
+	<td>//*[contains(@id, 'trCountrySelectId_label')]</td>
 	<td>Country</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=sellerFormId:tabView:trLanguageSelectId_label</td>
+	<td>//*[contains(@id, 'trLanguageSelectId_label')]</td>
 	<td>Language</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=sellerFormId:tabView:parentSelectId_label</td>
+	<td>//*[contains(@id, 'parentSelectId_label')]</td>
 	<td>ParentSeller</td>
 </tr>
 <tr>
 	<td>store</td>
 	<td>id=searchPanel:searchForm:seller:txt:code_text</td>
-	<td>SearchWithCode</td>
+	<td>searchWithCode</td>
 </tr>
 <tr>
 	<td>store</td>

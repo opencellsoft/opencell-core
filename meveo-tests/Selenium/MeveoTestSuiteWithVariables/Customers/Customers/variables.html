@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=searchPanel:buttonNew</td>
+	<td>id=searchPanel:searchForm:buttonNew</td>
 	<td>NewCustomers</td>
 </tr>
 <tr>
@@ -48,8 +48,13 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=formCustomer:tabView:parentSelectId_label</td>
+	<td>//*[contains(@id, 'parentSelectId_label')]</td>
 	<td>SelectParentSeller</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'contactInformation_email_text')]</td>
+	<td>EmailCus</td>
 </tr>
 <tr>
 	<td>store</td>
@@ -115,6 +120,11 @@
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
 	<td>UnCheck</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>false</td>
+	<td>CustomerBool</td>
 </tr>
 </tbody></table>
 </body>

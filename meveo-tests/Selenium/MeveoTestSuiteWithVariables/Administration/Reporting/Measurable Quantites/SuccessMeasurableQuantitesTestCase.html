@@ -13,43 +13,143 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${MeasurableQuantities}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>02</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Dimension1Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Dimension1}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Dimension1}</td>
-	<td>1</td>
+	<td>${Dimension1Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Dimension2Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Dimension2}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Dimension2}</td>
-	<td>2</td>
+	<td>${Dimension2Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Dimension3Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Dimension3}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Dimension3}</td>
-	<td>3</td>
+	<td>${Dimension3Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Dimension4Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Dimension4}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Dimension4}</td>
-	<td>4</td>
+	<td>${Dimension4Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${SQLQueryBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SQLQuery}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${SQLQuery}</td>
-	<td>select count(*) from billing_subscription where status='CREATED'</td>
+	<td>${SQLQueryValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MeasurementPeriodBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SelectMeasurementPeriod}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -58,13 +158,43 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Daily&quot;)</td>
+	<td>css=li:contains(&quot;${MeasurementPeriodValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${LastMeasureBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${LastMeasure}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${LastMeasure}</td>
-	<td>02/09/2015</td>
+	<td>${LastMeasureValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${EditableBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Editable}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -72,9 +202,34 @@
 	<td></td>
 </tr>
 <tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>${CodeValue}</td>
 </tr>
 </tbody></table>
 </body>

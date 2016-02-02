@@ -158,12 +158,12 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${SubCode}</td>
+	<td>${codeText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${SubCode}</td>
+	<td>${codeText}</td>
 	<td>${Code}</td>
 </tr>
 <tr>
@@ -245,6 +245,21 @@
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>

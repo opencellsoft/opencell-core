@@ -18,22 +18,22 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=searchPanel:buttonNew</td>
+	<td>id=searchPanel:searchForm:buttonNew</td>
 	<td>NewAccessPoints</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=formId:tabView:accessUserId_txt</td>
+	<td>//*[contains(@id, 'accessUserId_txt')]</td>
 	<td>AccessPointCode</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>id=formId:tabView:selectLink</td>
+	<td>id=formId:tabView:subscriptionId_selectLink</td>
 	<td>SelectSubscription</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'accessUserId_txt')]</td>
+	<td>//*[contains(@id, 'accessUserId_text')]</td>
 	<td>searchWithAccessPointCode</td>
 </tr>
 <tr>
@@ -80,6 +80,11 @@
 	<td>store</td>
 	<td>xpath=/html/body/div[1]/div/div/form/div[1]/div[2]/table/tbody/tr/td[1]/div/div[2]/span</td>
 	<td>UnCheck</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'saveAccessBackSubDetail')]</td>
+	<td>SaveAccessBackSubDetail</td>
 </tr>
 </tbody></table>
 </body>

@@ -12,13 +12,183 @@
 <tr><td rowspan="1" colspan="3">UpdateJobInstancesTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>if</td>
+	<td>${JobCategoryBool}==true</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>${saveButtonWhenUpdate}</td>
+	<td>${searchJobCategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${searchJobCategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//*[contains(@id, 'jobCategory_panel')]/div/ul/li[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${buttonSearch}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${BackToListJobIntance}</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeText}</td>
+	<td>${CodeValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${descriptionText}</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${TimerBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ChooseTimer}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${TimerValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ActiveBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ClickActive}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${ParametresBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${Parametres}</td>
+	<td>${ParametresValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${NextJobBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${ChooseNextJob}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li:contains(&quot;${NextJobValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveButtonWhenUpdateAjax}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

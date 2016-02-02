@@ -13,63 +13,148 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${Timers}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>01</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>Description for 01</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Hour}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Hour}</td>
-	<td>*</td>
+	<td>${HourValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Minute}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Minute}</td>
-	<td>0</td>
+	<td>${MinuteValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Second}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Second}</td>
-	<td>0</td>
+	<td>${SecondValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Year}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Year}</td>
-	<td>*</td>
+	<td>${YearValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Month}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Month}</td>
-	<td>*</td>
+	<td>${MonthValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${DayOfMonth}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${DayOfMonth}</td>
-	<td>*</td>
+	<td>${DayOfMonthValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${DayOfWeek}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${DayOfWeek}</td>
-	<td>*</td>
+	<td>${DayOfWeekValue}</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>

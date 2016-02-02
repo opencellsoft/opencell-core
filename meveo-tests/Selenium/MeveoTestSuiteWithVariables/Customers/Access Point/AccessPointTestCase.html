@@ -23,7 +23,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${NewAccessPoints}</td>
+	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
@@ -235,6 +235,11 @@
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${AccCode}')]</td>
+	<td>${AccCode}</td>
 </tr>
 </tbody></table>
 </body>

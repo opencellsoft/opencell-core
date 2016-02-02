@@ -143,12 +143,12 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${BillAccCode}</td>
+	<td>${codeText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${BillAccCode}</td>
+	<td>${codeText}</td>
 	<td>${Code}</td>
 </tr>
 <tr>
@@ -652,11 +652,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>//label[contains(@for, 'email')]/span</td>
-	<td>exact:*</td>
-</tr>
-<tr>
 	<td>endIf</td>
 	<td></td>
 	<td></td>
@@ -687,61 +682,6 @@
 	<td>${EmailValue}</td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'Custom fields')]</td>
-	<td>Custom fields</td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>//a[contains(text(),'Custom fields')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//a[contains(text(),'Custom fields')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CRMAccountTypeBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${CRMAccountType}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${CRMAccountType}</td>
-	<td>${CRMAccountTypeValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CRMParentAccountCodeBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${CRMParentAccountCode}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${CRMParentAccountCode}</td>
-	<td>${CRMParentAccountCodeValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreateAjax}</td>
 	<td></td>
@@ -760,6 +700,21 @@
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>

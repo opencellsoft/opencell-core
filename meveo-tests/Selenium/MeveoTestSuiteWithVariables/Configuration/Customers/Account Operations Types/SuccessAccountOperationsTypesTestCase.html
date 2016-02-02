@@ -13,33 +13,78 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
+	<td>${AccountOperationsType}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>_acc_type_01</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>_acc_type_description</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AccountCode}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AccountCode}</td>
-	<td>000000</td>
+	<td>${AccountCodeValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AccountCodeCustomerSideBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AccountCodeCustomerSide}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AccountCodeCustomerSide}</td>
-	<td>0000001</td>
+	<td>${AccountCodeCustomerSideValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Category}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -48,13 +93,33 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[37]/div/ul/li[2]</td>
+	<td>${CreditCategoryValue}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>

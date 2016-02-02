@@ -12,29 +12,79 @@
 <tr><td rowspan="1" colspan="3">ModifiedContactTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>id=datatable_results:0:code_id_message_link</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>Acc_Type_01</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>Acc_Type_01_description</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AccountCode}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AccountCode}</td>
-	<td>99999</td>
+	<td>${AccountCodeValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${AccountCodeCustomerSideBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${AccountCodeCustomerSide}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${AccountCodeCustomerSide}</td>
-	<td>000065464</td>
+	<td>${AccountCodeCustomerSideValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Category}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -43,12 +93,27 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=/html/body/div[37]/div/ul/li[3]</td>
+	<td>${DebitCategoryValue}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>

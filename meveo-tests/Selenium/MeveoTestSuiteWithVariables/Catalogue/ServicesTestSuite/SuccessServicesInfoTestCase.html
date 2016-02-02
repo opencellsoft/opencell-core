@@ -198,7 +198,7 @@
 </tr>
 <tr>
 	<td>waitForValue</td>
-	<td>id=tabView:formPanelRecurringCharge:formRecurringCharge:recurringChargeTemplateSelectedId:entityFieldSingle:chargeTemplate_entity</td>
+	<td>id=tabView:formRecurringCharge:recurringChargeTemplateSelectedId</td>
 	<td>${RecurringChargeCode}</td>
 </tr>
 <tr>
@@ -268,17 +268,17 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>id=searchUsageChargeTemplatePopuppopupForm:searchField1</td>
+	<td>document.searchUsageChargeTemplatePopuppopupForm.elements[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>id=searchUsageChargeTemplatePopuppopupForm:searchField1</td>
+	<td>document.searchUsageChargeTemplatePopuppopupForm.elements[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>id=searchUsageChargeTemplatePopuppopupForm:searchField1</td>
+	<td>document.searchUsageChargeTemplatePopuppopupForm.elements[1]</td>
 	<td>${UsageChargeCode}</td>
 </tr>
 <tr>
@@ -348,7 +348,7 @@
 </tr>
 <tr>
 	<td>waitForValue</td>
-	<td>id=tabView:formPanelUsageCharge:formUsageCharge:usageChargeTemplateSelectedId:entityFieldSingle:chargeTemplate_entity</td>
+	<td>id=tabView:formUsageCharge:usageChargeTemplateSelectedId</td>
 	<td>${UsageChargeCode}</td>
 </tr>
 <tr>
@@ -410,6 +410,21 @@
 	<td>assertText</td>
 	<td>id=tabView:datatable_serviceUsageCharges_results:0:chargeTemplate_code_chargeTemplate_id_message_link</td>
 	<td>${UsageChargeCode}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>

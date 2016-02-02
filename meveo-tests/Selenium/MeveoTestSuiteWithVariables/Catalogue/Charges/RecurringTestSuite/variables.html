@@ -23,17 +23,17 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[3]/div/div/div/div[2]/span</td>
+	<td>//*[contains(@id, 'subscriptionProrata_bool')]</td>
 	<td>ProratedAtSubscription</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[4]/div/div/div/div[2]/span</td>
+	<td>//*[contains(@id, 'terminationProrata_bool')]</td>
 	<td>ProratedAtTermination</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[5]/div/div/div/div[2]/span</td>
+	<td>//*[contains(@id, 'applyInAdvance_bool')]</td>
 	<td>CycleForward</td>
 </tr>
 <tr>
@@ -43,27 +43,32 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'inputUnitDescription_text')]</td>
+	<td>//*[contains(@id, 'inputUnitDescription_txt')]</td>
 	<td>InputUnitDescription</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'ratingUnitDescription_text')]</td>
+	<td>//*[contains(@id, 'ratingUnitDescription_txt')]</td>
 	<td>RatingUnitDescription</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'unitMultiplicator_number')]</td>
+	<td>//*[contains(@id, 'unitMultiplicator_number_input')]</td>
 	<td>UnitMultiplicator</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'unitNbDecimal_number_spinner_input')]</td>
+	<td>//*[contains(@id, 'unitNbDecimal_number_input')]</td>
 	<td>UnitNbDecimal</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>//div[@id='formPanel:reccuringChargeId:tabView:invoiceSubCategorySelectedId:entityFieldSingle:invoiceSubCategory_entity']/div[3]/span</td>
+	<td>//*[contains(@id, 'roundingMode_enum_label')]</td>
+	<td>RoundingMode</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'invoiceSubCategorySelectedId_label')]</td>
 	<td>ChooseSubcategory</td>
 </tr>
 <tr>
@@ -73,7 +78,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[15]/div/div/div/div[1]/ul/li[1]</td>
+	<td>id=reccuringChargeId:tabView:edrTemplates_list</td>
 	<td>ChooseTriggeredEDR</td>
 </tr>
 <tr>
@@ -98,7 +103,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/div/div/div[1]/span[14]/div/div/div/div[2]/span</td>
+	<td>//*[contains(@id, 'amountEditable_bool')]</td>
 	<td>IsAmountOverridable</td>
 </tr>
 <tr>

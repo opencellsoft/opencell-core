@@ -12,74 +12,234 @@
 <tr><td rowspan="1" colspan="3">ModifiedContactTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>id=datatable_results:0:code_id_message_link</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeText}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>Contact_01</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${FirstNameBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${FirstName}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${FirstName}</td>
-	<td>Test_01</td>
+	<td>${FirstNameValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${LastNameBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${LastName}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${LastName}</td>
-	<td>Contact_01</td>
+	<td>${LastNameValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${descriptionText}</td>
-	<td>_description_contact_01</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${emailText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${emailText}</td>
-	<td>contact_01@test.com</td>
+	<td>${EmailValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${genericMailText}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${genericMailText}</td>
-	<td>generic_contact_01@test.com</td>
+	<td>${GenericMailValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${PhoneBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${phone}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${phone}</td>
-	<td>0123457896</td>
+	<td>${PhoneValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${MobileBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${mobile}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${mobile}</td>
-	<td>1234580880</td>
+	<td>${MobileValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Address1Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Address1}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Address1}</td>
-	<td>Tunisia</td>
+	<td>${Address1Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Address2Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Address2}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${Address2}</td>
-	<td>Charguia_2</td>
+	<td>${Address2Value}</td>
 </tr>
 <tr>
-	<td>type</td>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${Address3Bool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
 	<td>${Address3}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
+	<td>${Address3}</td>
+	<td>${Address3Value}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
 	<td>${zipCode}</td>
-	<td>1050</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${zipCode}</td>
+	<td>${ZipCodeValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${City}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>${City}</td>
-	<td>Tunis</td>
+	<td>${CityValue}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${CountryBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${Country}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -88,12 +248,32 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=li:contains(&quot;Tunisia&quot;)</td>
+	<td>css=li:contains(&quot;${CountryValue}&quot;)</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
 	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 </tbody></table>
