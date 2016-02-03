@@ -4,7 +4,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.PermissionApi;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PermissionResponseDto;
@@ -26,7 +26,7 @@ public class PermissionRsImpl extends BaseRs implements PermissionRs {
 		try {
 			result.setPermissionsDto(permissionApi.list(getCurrentUser().getProvider()));
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}

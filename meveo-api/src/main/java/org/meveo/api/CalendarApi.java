@@ -109,7 +109,7 @@ public class CalendarApi extends BaseApi {
 				}
 				
 				if(!CalendarPeriod.isValidPeriodUnit(postData.getPeriodUnit())) {
-					throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid periodUnit value. Must be="
+					throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid periodUnit value. Must be="
 							+ Arrays.toString(CalendarPeriod.VALID_PERIOD_UNITS.toArray()));
 				}
 
@@ -214,7 +214,7 @@ public class CalendarApi extends BaseApi {
             } else if (calendar instanceof CalendarPeriod) {
 				
 				if(!StringUtils.isBlank(postData.getPeriodUnit()) && !CalendarPeriod.isValidPeriodUnit(postData.getPeriodUnit())) {
-					throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid periodUnit value. Must be =[" + CalendarPeriod.VALID_PERIOD_UNITS.toArray()
+					throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid periodUnit value. Must be =[" + CalendarPeriod.VALID_PERIOD_UNITS.toArray()
 							+ "]");
 				}
 

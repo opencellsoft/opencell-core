@@ -7,7 +7,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.SellersDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
@@ -259,7 +259,7 @@ public class SellerApiService extends BaseApi {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
 				throw new DeleteReferencedEntityException(Seller.class, sellerCode);
 			}
-			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
 		}
 	}
 

@@ -13,7 +13,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.account.AccountHierarchyTypeEnum;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -40,7 +40,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValue;
+import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
@@ -1979,7 +1979,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		}
 
 		if (!validLevel) {
-			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "INVALID_LEVEL_TYPE");
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "INVALID_LEVEL_TYPE");
 		}
 
 		return result;
@@ -2104,7 +2104,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		try {
 			accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
 		} catch (IllegalArgumentException e) {
-			throw new InvalidEnumValue(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
+			throw new InvalidEnumValueException(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
@@ -2351,7 +2351,7 @@ public class AccountHierarchyApiService extends BaseApi {
 		try {
 			accountHierarchyTypeEnum = AccountHierarchyTypeEnum.valueOf(postData.getCrmAccountType());
 		} catch (IllegalArgumentException e) {
-			throw new InvalidEnumValue(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
+			throw new InvalidEnumValueException(AccountHierarchyTypeEnum.class.getName(), postData.getCrmAccountType());
 		}
 
 		if (accountHierarchyTypeEnum.getHighLevel() == 4) {
@@ -2603,7 +2603,7 @@ public class AccountHierarchyApiService extends BaseApi {
 			accountHierarchyTypeEnum = AccountHierarchyTypeEnum
 					.valueOf(postData.getCrmAccountType());
 		} catch (IllegalArgumentException e) {
-			throw new InvalidEnumValue(
+			throw new InvalidEnumValueException(
 					AccountHierarchyTypeEnum.class.getName(),
 					postData.getCrmAccountType());
 		}

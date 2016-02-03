@@ -10,7 +10,7 @@ import javax.jws.WebService;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.BusinessOfferModelApi;
 import org.meveo.api.catalog.ChargeTemplateApi;
@@ -102,7 +102,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -122,7 +122,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -142,7 +142,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -162,7 +162,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -182,7 +182,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -202,7 +202,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -222,7 +222,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -242,7 +242,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -262,7 +262,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -282,7 +282,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -303,7 +303,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -337,7 +337,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -357,7 +357,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -377,7 +377,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -397,7 +397,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -417,7 +417,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -437,7 +437,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -457,7 +457,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -478,7 +478,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -498,7 +498,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -518,7 +518,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -538,7 +538,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -558,7 +558,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -578,7 +578,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -598,7 +598,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -626,11 +626,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 					errMsg += cv.getPropertyPath() + " " + cv.getMessage() + ",";
 				}
 				errMsg = errMsg.substring(0, errMsg.length() - 1);
-				result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
+				result.setErrorCode(MeveoApiErrorCodeEnum.INVALID_PARAMETER);
 				result.setStatus(ActionStatusEnum.FAIL);
 				result.setMessage(errMsg);
 			} else {
-				result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+				result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 				result.setStatus(ActionStatusEnum.FAIL);
 				result.setMessage(e.getMessage());
 			}
@@ -639,7 +639,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -667,11 +667,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 					errMsg += cv.getPropertyPath() + " " + cv.getMessage() + ",";
 				}
 				errMsg = errMsg.substring(0, errMsg.length() - 1);
-				result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
+				result.setErrorCode(MeveoApiErrorCodeEnum.INVALID_PARAMETER);
 				result.setStatus(ActionStatusEnum.FAIL);
 				result.setMessage(errMsg);
 			} else {
-				result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+				result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 				result.setStatus(ActionStatusEnum.FAIL);
 				result.setMessage(e.getMessage());
 			}
@@ -680,7 +680,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -701,7 +701,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -721,7 +721,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -741,7 +741,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -761,7 +761,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -781,7 +781,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -801,7 +801,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -822,7 +822,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -843,7 +843,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -871,11 +871,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 					errMsg += cv.getPropertyPath() + " " + cv.getMessage() + ",";
 				}
 				errMsg = errMsg.substring(0, errMsg.length() - 1);
-				result.setErrorCode(MeveoApiErrorCode.INVALID_PARAMETER);
+				result.setErrorCode(MeveoApiErrorCodeEnum.INVALID_PARAMETER);
 				result.setStatus(ActionStatusEnum.FAIL);
 				result.setMessage(errMsg);
 			} else {
-				result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+				result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 				result.setStatus(ActionStatusEnum.FAIL);
 				result.setMessage(e.getMessage());
 			}
@@ -884,7 +884,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -904,7 +904,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -924,7 +924,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -944,7 +944,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -964,7 +964,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -984,7 +984,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -1004,7 +1004,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -1024,7 +1024,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -1044,7 +1044,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -1064,7 +1064,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
@@ -1084,7 +1084,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -1104,7 +1104,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -1124,7 +1124,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}

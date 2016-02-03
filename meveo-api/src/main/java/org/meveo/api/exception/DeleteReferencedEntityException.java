@@ -1,6 +1,6 @@
 package org.meveo.api.exception;
 
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -11,17 +11,17 @@ public class DeleteReferencedEntityException extends MeveoApiException {
 
 	public DeleteReferencedEntityException(String entityName, String code) {
 		super(entityName + " with code=" + code + " is refenced");
-		setErrorCode(MeveoApiErrorCode.DELETE_REFERENCED_ENTITY_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.DELETE_REFERENCED_ENTITY_EXCEPTION);
 	}
 
 	public DeleteReferencedEntityException(String message) {
 		super(message);
-		setErrorCode(MeveoApiErrorCode.DELETE_REFERENCED_ENTITY_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.DELETE_REFERENCED_ENTITY_EXCEPTION);
 	}
 
 	public DeleteReferencedEntityException(Class<?> clazz, String code) {
 		super(clazz.getSimpleName() + " with code=" + code + " is refenced.");
-		setErrorCode(MeveoApiErrorCode.DELETE_REFERENCED_ENTITY_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.DELETE_REFERENCED_ENTITY_EXCEPTION);
 	}
 
 

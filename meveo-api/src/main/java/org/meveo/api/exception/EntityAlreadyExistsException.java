@@ -1,6 +1,6 @@
 package org.meveo.api.exception;
 
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -11,24 +11,24 @@ public class EntityAlreadyExistsException extends MeveoApiException {
 
 	public EntityAlreadyExistsException(String entityName, String code) {
 		super(entityName + " with code=" + code + " already exists.");
-		setErrorCode(MeveoApiErrorCode.ENTITY_ALREADY_EXISTS_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
 	}
 
 	public EntityAlreadyExistsException(String message) {
 		super(message);
-		setErrorCode(MeveoApiErrorCode.ENTITY_ALREADY_EXISTS_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
 	}
 
 	public EntityAlreadyExistsException(Class<?> clazz, String code) {
 		super(clazz.getSimpleName() + " with code=" + code + " already exists.");
-		setErrorCode(MeveoApiErrorCode.ENTITY_ALREADY_EXISTS_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
 	}
 
 	public EntityAlreadyExistsException(Class<?> clazz, String value,
 			String field) {
 		super(clazz.getSimpleName() + " with " + field + "=" + value
 				+ " already exists.");
-		setErrorCode(MeveoApiErrorCode.ENTITY_ALREADY_EXISTS_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.ENTITY_ALREADY_EXISTS_EXCEPTION);
 	}
 
 }

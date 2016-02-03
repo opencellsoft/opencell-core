@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.BaseResponse;
 
@@ -46,7 +47,7 @@ public class ImportExportResponseDto extends BaseResponse {
         super();
     }
 
-    public ImportExportResponseDto(ActionStatusEnum status, String errorCode, String message) {
+    public ImportExportResponseDto(ActionStatusEnum status, MeveoApiErrorCodeEnum errorCode, String message) {
         super(status, errorCode, message);
     }
 

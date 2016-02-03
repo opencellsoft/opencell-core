@@ -238,6 +238,14 @@
                 <version>0.9.8</version>
             </dependency>
 
+<!--             <dependency> -->
+<!--                 <groupId>com.blackbear</groupId> -->
+<!--                 <artifactId>flatworm</artifactId> -->
+<!--                 <version>3.0.2</version> -->
+<!--                 <scope>system</scope> -->
+<!--                 <systemPath>${project.basedir}/../lib/flatworm-3.0.2.jar</systemPath> -->
+<!--             </dependency> -->
+
             <!-- rest core library -->
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
@@ -483,7 +491,7 @@
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jaxrs</artifactId>
                 <version>1.5.4</version>
-            </dependency>          
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -541,8 +549,19 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.10.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.7</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>

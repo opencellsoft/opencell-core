@@ -1,6 +1,6 @@
 package org.meveo.api.exception;
 
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 
 public class MissingParameterException extends MeveoApiException {
 
@@ -8,7 +8,7 @@ public class MissingParameterException extends MeveoApiException {
 
 	public MissingParameterException(String message) {
 		super(message);
-		setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+		setErrorCode(MeveoApiErrorCodeEnum.MISSING_PARAMETER);
 	}
 
 }

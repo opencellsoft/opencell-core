@@ -8,7 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.RoundingModeDtoEnum;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
@@ -79,7 +79,7 @@ public class UsageChargeTemplateApi extends BaseApi {
 						}
 
 						if (!match) {
-							throw new MeveoApiException(MeveoApiErrorCode.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+							throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
 						}
 					}
 				}
@@ -193,7 +193,7 @@ public class UsageChargeTemplateApi extends BaseApi {
 						}
 
 						if (!match) {
-							throw new MeveoApiException(MeveoApiErrorCode.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+							throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
 						}
 					}
 				}
@@ -236,7 +236,7 @@ public class UsageChargeTemplateApi extends BaseApi {
 						}
 
 						if (!match) {
-							throw new MeveoApiException(MeveoApiErrorCode.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+							throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
 						}
 					}
 

@@ -1,6 +1,6 @@
 package org.meveo.api.exception;
 
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -11,12 +11,12 @@ public class BusinessApiException extends MeveoApiException {
 
 	public BusinessApiException() {
 		super("Business exception");
-		setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
 	}
 	
 	public BusinessApiException(String message) {
 		super(message);
-		setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
 	}
 
 }

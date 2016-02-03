@@ -83,7 +83,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
 						if (!match) {
 							throw new MeveoApiException(
-									MeveoApiErrorCode.GENERIC_API_EXCEPTION,
+									MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION,
 									"Language "
 											+ ld.getLanguageCode()
 											+ " is not supported by the provider.");
@@ -166,7 +166,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
 						if (!match) {
 							throw new MeveoApiException(
-									MeveoApiErrorCode.GENERIC_API_EXCEPTION,
+									MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION,
 									"Language "
 											+ ld.getLanguageCode()
 											+ " is not supported by the provider.");

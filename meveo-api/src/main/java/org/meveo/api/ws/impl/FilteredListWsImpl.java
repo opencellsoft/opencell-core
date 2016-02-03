@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.filter.FilteredListDto;
 import org.meveo.api.dto.response.billing.FilteredListResponseDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -34,11 +34,11 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 			result.getActionStatus().setMessage(response);
 		} catch (MeveoApiException e) {
 			log.debug("RESPONSE={}", e.getMessage());
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
 			log.debug("RESPONSE={}", e.getMessage());
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 
@@ -53,11 +53,11 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 			result.getActionStatus().setMessage(response);
 		} catch (MeveoApiException e) {
 			log.debug("RESPONSE={}", e.getMessage());
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
 			log.debug("RESPONSE={}", e.getMessage());
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
 

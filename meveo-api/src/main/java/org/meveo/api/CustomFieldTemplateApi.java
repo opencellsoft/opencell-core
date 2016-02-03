@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValue;
+import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.admin.User;
@@ -191,7 +191,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
     }
 
-    protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, User currentUser, String appliesTo, CustomFieldTemplate cftToUpdate) throws InvalidEnumValue {
+    protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, User currentUser, String appliesTo, CustomFieldTemplate cftToUpdate) throws InvalidEnumValueException {
 
         // Set default values
         if (CustomFieldTypeEnum.STRING.name().equals(dto.getFieldType()) && dto.getMaxValue() == null) {
@@ -218,14 +218,14 @@ public class CustomFieldTemplateApi extends BaseApi {
         try {
             cft.setFieldType(CustomFieldTypeEnum.valueOf(dto.getFieldType()));
         } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValue(CustomFieldTypeEnum.class.getName(), dto.getFieldType());
+            throw new InvalidEnumValueException(CustomFieldTypeEnum.class.getName(), dto.getFieldType());
         }
 
         cft.setDefaultValue(dto.getDefaultValue());
         try {
             cft.setStorageType(CustomFieldStorageTypeEnum.valueOf(dto.getStorageType()));
         } catch (IllegalArgumentException e) {
-            throw new InvalidEnumValue(CustomFieldStorageTypeEnum.class.getName(), dto.getStorageType());
+            throw new InvalidEnumValueException(CustomFieldStorageTypeEnum.class.getName(), dto.getStorageType());
         }
         cft.setValueRequired(dto.isValueRequired());
         cft.setVersionable(dto.isVersionable());
@@ -249,7 +249,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             try {
                 cft.setMapKeyType(CustomFieldMapKeyEnum.valueOf(dto.getMapKeyType()));
             } catch (IllegalArgumentException e) {
-                throw new InvalidEnumValue(CustomFieldMapKeyEnum.class.getName(), dto.getMapKeyType());
+                throw new InvalidEnumValueException(CustomFieldMapKeyEnum.class.getName(), dto.getMapKeyType());
             }
         } else {
             cft.setMapKeyType(null);

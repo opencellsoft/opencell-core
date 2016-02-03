@@ -7,7 +7,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
@@ -111,7 +111,7 @@ public class BillingAccountApiService extends AccountApiService {
 						.getPaymentMethod());
 			} catch (IllegalArgumentException e) {
 				throw new MeveoApiException(
-						MeveoApiErrorCode.BUSINESS_API_EXCEPTION,
+						MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION,
 						"Invalid payment method=" + postData.getPaymentMethod());
 			}
 
@@ -131,7 +131,7 @@ public class BillingAccountApiService extends AccountApiService {
 					log.error("InvalidEnum for paymentTerm with name={}",
 							postData.getPaymentTerms());
 					throw new MeveoApiException(
-							MeveoApiErrorCode.INVALID_ENUM_VALUE,
+							MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE,
 							"Enum for PaymentTerm with name="
 									+ postData.getPaymentTerms()
 									+ " does not exists.");
@@ -294,7 +294,7 @@ public class BillingAccountApiService extends AccountApiService {
 					log.error("InvalidEnum for paymentMethod with name={}",
 							postData.getPaymentMethod());
 					throw new MeveoApiException(
-							MeveoApiErrorCode.INVALID_ENUM_VALUE,
+							MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE,
 							"Enum for PaymentMethod with name="
 									+ postData.getPaymentMethod()
 									+ " does not exists.");
@@ -479,7 +479,7 @@ public class BillingAccountApiService extends AccountApiService {
 			if(e.getMessage().indexOf("ConstraintViolationException") > -1){
 				throw new DeleteReferencedEntityException(BillingAccount.class,billingAccountCode);
 			}
-			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION,"Cannot delete entity");			
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION,"Cannot delete entity");			
 		}			
 	}
 

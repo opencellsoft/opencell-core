@@ -429,10 +429,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
         context.put(Script.CONTEXT_ENTITY, entity);
 
-        log.debug("Script {} on entity {} to be executed with parameters {}", scriptCode, entity, context);
-
         Map<String, Object> result = execute(scriptCode, context, currentUser, currentProvider);
-        log.trace("Script {} on entity {} executed with parameters {}", scriptCode, entity, context);
         return result;
     }
 
@@ -451,11 +448,11 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      */
     public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser, Provider currentProvider) throws InvalidPermissionException,
             ElementNotFoundException, BusinessException {
-
+        log.trace("Script {} to be executed with parameters {}", scriptCode, context);
         SI classInstance;
         try {
             classInstance = getScriptInstance(currentProvider, scriptCode);
-            
+
         } catch (InstantiationException | IllegalAccessException e) {
             log.error("Failed to instantiate script {}", scriptCode, e);
             throw new BusinessException("Failed to instantiate script " + scriptCode);
