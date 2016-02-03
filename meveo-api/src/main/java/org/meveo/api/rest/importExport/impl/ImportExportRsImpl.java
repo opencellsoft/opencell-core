@@ -22,7 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.utilities.FieldsNotImportedStringCollectionDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
@@ -63,12 +63,12 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
             Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
             List<InputPart> inputParts = uploadForm.get("file");
             if (inputParts == null) {
-                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.MISSING_PARAMETER, "Missing a file. File is expected as part name 'file'");
+                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.MISSING_PARAMETER, "Missing a file. File is expected as part name 'file'");
             }
             InputPart inputPart = inputParts.get(0);
             String fileName = getFileName(inputPart.getHeaders());
             if (fileName == null) {
-                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.MISSING_PARAMETER, "Missing a file name");
+                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.MISSING_PARAMETER, "Missing a file name");
             }
 
             // Convert the uploaded file from inputstream to a file
@@ -81,7 +81,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
             } catch (IOException e) {
                 log.error("Failed to save uploaded {} file to temp file {}", fileName, tempFile, e);
-                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.GENERIC_API_EXCEPTION, e.getClass().getName() + " " + e.getMessage());
+                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getClass().getName() + " " + e.getMessage());
             }
             String executionId = (new Date()).getTime() + "_" + fileName;
 
@@ -94,11 +94,11 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
         } catch (LoginException | RemoteAuthenticationException e) {
             log.error("Failed to authenticate for a rest call {}", e.getMessage());
-            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.AUTHENTICATION_AUTHORIZATION_EXCEPTION, e.getMessage());
+            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION, e.getMessage());
 
         } catch (Exception e) {
             log.error("Failed to import data from rest call", e);
-            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.GENERIC_API_EXCEPTION, e.getClass().getName() + " " + e.getMessage());
+            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getClass().getName() + " " + e.getMessage());
         }
 
     }
@@ -128,7 +128,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
         Future<ExportImportStatistics> future = executionResults.get(executionId);
         if (future == null) {
-            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.INVALID_PARAMETER, "Execution with id " + executionId + " has expired");
+            return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.INVALID_PARAMETER, "Execution with id " + executionId + " has expired");
         }
 
         if (future.isDone()) {
@@ -137,7 +137,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
                 return exportImportStatisticsToDto(executionId, future.get());
 
             } catch (InterruptedException | ExecutionException e) {
-                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCode.GENERIC_API_EXCEPTION, "Failed while executing import " + e.getClass().getName() + " "
+                return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Failed while executing import " + e.getClass().getName() + " "
                         + e.getMessage());
             }
         } else {

@@ -158,12 +158,12 @@
             <groupId>org.manaty</groupId>
             <artifactId>meveo-model</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.meveo</groupId>
             <artifactId>meveo-api-dto</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.sun.faces</groupId>
             <artifactId>jsf-api</artifactId>
@@ -423,13 +423,13 @@
             <artifactId>json-simple</artifactId>
         </dependency>
 
-	<dependency>
-		<groupId>com.blackbear</groupId>
-		<artifactId>flatworm</artifactId>
-		<version>3.0.2</version>
-		<scope>system</scope>
-		<systemPath>${project.basedir}/../lib/flatworm-3.0.2.jar</systemPath>
-	</dependency>
+        <dependency>
+            <groupId>com.blackbear</groupId>
+            <artifactId>flatworm</artifactId>
+            <version>3.0.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../lib/flatworm-3.0.2.jar</systemPath>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

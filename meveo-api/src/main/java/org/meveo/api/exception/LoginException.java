@@ -1,6 +1,6 @@
 package org.meveo.api.exception;
 
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -14,12 +14,12 @@ public class LoginException extends MeveoApiException {
 	
 	public LoginException(String message) {
 		super(message);
-		setErrorCode(MeveoApiErrorCode.AUTHENTICATION_AUTHORIZATION_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION);
 	}
 
 	public LoginException(String user, String message) {
 		super(message);
-		setErrorCode(MeveoApiErrorCode.AUTHENTICATION_AUTHORIZATION_EXCEPTION);
+		setErrorCode(MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION);
 	}
 
 }

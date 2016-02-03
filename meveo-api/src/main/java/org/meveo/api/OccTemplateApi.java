@@ -46,7 +46,7 @@ public class OccTemplateApi extends BaseApi {
 				occTemplate.setOccCategory(OperationCategoryEnum.valueOf(postData.getOccCategory()));
 			} catch (IllegalArgumentException e) {
 				log.error("InvalidEnum for type with name={}", postData.getOccCategory());
-				throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for OperationCategoryEnum with name=" + postData.getOccCategory() + " does not exists.");
+				throw new MeveoApiException(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE, "Enum for OperationCategoryEnum with name=" + postData.getOccCategory() + " does not exists.");
 			} 
 
 			occTemplateService.create(occTemplate, currentUser,
@@ -91,7 +91,7 @@ public class OccTemplateApi extends BaseApi {
 				occTemplate.setOccCategory(OperationCategoryEnum.valueOf(postData.getOccCategory()));
 			} catch (IllegalArgumentException e) {
 				log.error("InvalidEnum for type with name={}", postData.getOccCategory());
-				throw new MeveoApiException(MeveoApiErrorCode.INVALID_ENUM_VALUE, "Enum for OperationCategoryEnum with name=" + postData.getOccCategory() + " does not exists.");
+				throw new MeveoApiException(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE, "Enum for OperationCategoryEnum with name=" + postData.getOccCategory() + " does not exists.");
 			}
 
 			occTemplateService.update(occTemplate, currentUser);

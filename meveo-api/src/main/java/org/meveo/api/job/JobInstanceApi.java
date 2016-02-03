@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -74,14 +74,14 @@ public class JobInstanceApi extends BaseApi {
              TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode(),provider); 
              jobInstance.setTimerEntity(timerEntity);
               if(timerEntity==null ){
-             throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + postData.getTimerCode());
+             throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + postData.getTimerCode());
              }}
         
          if (!StringUtils.isBlank(postData.getFollowingJob())) {
             JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJob(),provider);
             jobInstance.setFollowingJob(nextJob);
             if(nextJob==null ){
-              throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
+              throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
             }
         }         
 
@@ -145,7 +145,7 @@ public class JobInstanceApi extends BaseApi {
                 TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode(), provider);
                 jobInstance.setTimerEntity(timerEntity);
                 if (timerEntity == null) {
-                    throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + postData.getTimerCode());
+                    throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + postData.getTimerCode());
                 }
             }
 
@@ -153,7 +153,7 @@ public class JobInstanceApi extends BaseApi {
                 JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJob(), provider);
                 jobInstance.setFollowingJob(nextJob);
                 if (nextJob == null) {
-                    throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
+                    throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
                 }
             }
 			

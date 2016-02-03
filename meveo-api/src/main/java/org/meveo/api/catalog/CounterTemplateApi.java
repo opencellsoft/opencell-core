@@ -7,7 +7,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValue;
+import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -59,7 +59,7 @@ public class CounterTemplateApi extends BaseApi {
 				try {
 					counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData.getType()));
 				} catch (IllegalArgumentException e) {
-					throw new InvalidEnumValue(CounterTypeEnum.class.getName(), postData.getType());
+					throw new InvalidEnumValueException(CounterTypeEnum.class.getName(), postData.getType());
 				}
 			}
 			counterTemplate.setCeiling(postData.getCeiling());
@@ -69,7 +69,7 @@ public class CounterTemplateApi extends BaseApi {
 				try {
 					counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData.getCounterLevel()));
 				} catch (IllegalArgumentException e) {
-					throw new InvalidEnumValue(CounterTemplateLevel.class.getName(), postData.getCounterLevel());
+					throw new InvalidEnumValueException(CounterTemplateLevel.class.getName(), postData.getCounterLevel());
 				}
 			}
 			counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
@@ -118,7 +118,7 @@ public class CounterTemplateApi extends BaseApi {
 				try {
 					counterTemplate.setCounterType(CounterTypeEnum.valueOf(postData.getType()));
 				} catch (IllegalArgumentException e) {
-					throw new InvalidEnumValue(CounterTypeEnum.class.getName(), postData.getType());
+					throw new InvalidEnumValueException(CounterTypeEnum.class.getName(), postData.getType());
 				}
 			}
 			counterTemplate.setCeiling(postData.getCeiling());
@@ -128,7 +128,7 @@ public class CounterTemplateApi extends BaseApi {
 				try {
 					counterTemplate.setCounterLevel(CounterTemplateLevel.valueOf(postData.getCounterLevel()));
 				} catch (IllegalArgumentException e) {
-					throw new InvalidEnumValue(CounterTemplateLevel.class.getName(), postData.getCounterLevel());
+					throw new InvalidEnumValueException(CounterTemplateLevel.class.getName(), postData.getCounterLevel());
 				}
 			}
 			counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());

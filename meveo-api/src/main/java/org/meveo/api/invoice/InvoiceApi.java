@@ -24,7 +24,7 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValue;
+import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
@@ -167,7 +167,7 @@ public class InvoiceApi extends BaseApi {
 							.getType());
 				} catch (IllegalArgumentException e) {
 					log.error("enum: {}", e);
-					throw new InvalidEnumValue(InvoiceTypeEnum.class.getName(),
+					throw new InvalidEnumValueException(InvoiceTypeEnum.class.getName(),
 							invoiceDTO.getType());
 				}
 			}
@@ -635,7 +635,7 @@ public class InvoiceApi extends BaseApi {
 
 	public String getXMLInvoice(String invoiceNumber, String invoiceType, User currentUser)
 			throws FileNotFoundException, MissingParameterException,
-			EntityDoesNotExistsException, BusinessException, InvalidEnumValue {
+			EntityDoesNotExistsException, BusinessException, InvalidEnumValueException {
 		log.debug("getXMLInvoice  invoiceNumber:{}", invoiceNumber);
 		if (StringUtils.isBlank(invoiceNumber)) {
 			missingParameters.add("invoiceNumber");
@@ -647,7 +647,7 @@ public class InvoiceApi extends BaseApi {
 		try {
 			invoiceTypeEnum = InvoiceTypeEnum.valueOf(invoiceType);
 		} catch (IllegalArgumentException e) {
-			throw new InvalidEnumValue(InvoiceTypeEnum.class.getName(), invoiceType);
+			throw new InvalidEnumValueException(InvoiceTypeEnum.class.getName(), invoiceType);
 		}
 
 		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceTypeEnum,
@@ -692,7 +692,7 @@ public class InvoiceApi extends BaseApi {
 		try {
 			invoiceTypeEnum = InvoiceTypeEnum.valueOf(invoiceType);
 		} catch (IllegalArgumentException e) {
-			throw new InvalidEnumValue(InvoiceTypeEnum.class.getName(), invoiceType);
+			throw new InvalidEnumValueException(InvoiceTypeEnum.class.getName(), invoiceType);
 		}
 
 		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceTypeEnum,

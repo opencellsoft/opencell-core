@@ -81,7 +81,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
@@ -2069,7 +2069,7 @@ public class EntityExportImportService implements Serializable {
             }
             ImportExportResponseDto resultDto = response.readEntity(ImportExportResponseDto.class);
             if (resultDto.isFailed()) {
-                if (MeveoApiErrorCode.AUTHENTICATION_AUTHORIZATION_EXCEPTION.equals(resultDto.getActionStatus().getErrorCode())) {
+                if (MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION.equals(resultDto.getActionStatus().getErrorCode())) {
                     throw new RemoteAuthenticationException(resultDto.getFailureMessage());
                 }
                 throw new RemoteImportException(resultDto.getFailureMessage());

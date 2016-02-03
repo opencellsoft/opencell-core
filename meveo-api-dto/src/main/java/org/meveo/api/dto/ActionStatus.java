@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.meveo.api.MeveoApiErrorCodeEnum;
+
 /**
  * Determine the status of the MEVEO API web service response.
  * 
@@ -20,16 +22,15 @@ public class ActionStatus {
      * Tells whether the instance of this <code>ActionStatus</code> object ok or not.
      */
     @XmlElement(required = true)
-//    @Enumerated(EnumType.STRING)
     private ActionStatusEnum status;
 
     /**
-     * {@link https://www.assembla.com/spaces/meveo/wiki/Error_Codes}.
+     * An error code
      */
-    private String errorCode;
+    private MeveoApiErrorCodeEnum errorCode;
 
     /**
-     * Customer message.
+     * A detailed error message if applicable
      */
     @XmlElement(required = true)
     private String message;
@@ -56,7 +57,7 @@ public class ActionStatus {
      * @param errorCode
      * @param message
      */
-    public ActionStatus(ActionStatusEnum status, String errorCode, String message) {
+    public ActionStatus(ActionStatusEnum status, MeveoApiErrorCodeEnum errorCode, String message) {
         this.status = status;
         this.errorCode = errorCode;
         this.message = message;
@@ -79,14 +80,15 @@ public class ActionStatus {
     }
 
     /**
-     * Error code 
+     * Error code
+     * 
      * @return Error code
      */
-    public String getErrorCode() {
+    public MeveoApiErrorCodeEnum getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(MeveoApiErrorCodeEnum errorCode) {
         this.errorCode = errorCode;
     }
 

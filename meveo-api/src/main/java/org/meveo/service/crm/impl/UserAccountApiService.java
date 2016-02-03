@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
@@ -193,7 +193,7 @@ public class UserAccountApiService extends AccountApiService {
 			if(e.getMessage().indexOf("ConstraintViolationException") > -1){
 				throw new DeleteReferencedEntityException(UserAccount.class,userAccountCode);
 			}
-			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION,"Cannot delete entity");			
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION,"Cannot delete entity");			
 		}			
 	}
 

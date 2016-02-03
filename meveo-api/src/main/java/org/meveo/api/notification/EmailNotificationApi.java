@@ -7,7 +7,8 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValue;
+import org.meveo.api.exception.InvalidEnumValueException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -54,7 +55,7 @@ public class EmailNotificationApi extends BaseApi {
 			try {
 				Class.forName(postData.getClassNameFilter());
 			} catch (Exception e) {
-				throw new MeveoApiException("INVALID_CLASS_NAME", "INVALID_CLASS_NAME");
+				throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
 			}
 
 			NotificationEventTypeEnum notificationEventType = null;
@@ -62,7 +63,7 @@ public class EmailNotificationApi extends BaseApi {
 				notificationEventType = NotificationEventTypeEnum.valueOf(postData.getEventTypeFilter());
 			} catch (IllegalArgumentException e) {
 				log.error("enum: {}", e);
-				throw new InvalidEnumValue(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
+				throw new InvalidEnumValueException(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
 			}
 
 			CounterTemplate counterTemplate = null;
@@ -146,7 +147,7 @@ public class EmailNotificationApi extends BaseApi {
 			try {
 				Class.forName(postData.getClassNameFilter());
 			} catch (Exception e) {
-				throw new MeveoApiException("INVALID_CLASS_NAME", "INVALID_CLASS_NAME");
+				throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
 			}
 
 			NotificationEventTypeEnum notificationEventType = null;
@@ -154,7 +155,7 @@ public class EmailNotificationApi extends BaseApi {
 				notificationEventType = NotificationEventTypeEnum.valueOf(postData.getEventTypeFilter());
 			} catch (IllegalArgumentException e) {
 				log.error("enum: {}", e);
-				throw new InvalidEnumValue(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
+				throw new InvalidEnumValueException(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
 			}
 
 			CounterTemplate counterTemplate = null;

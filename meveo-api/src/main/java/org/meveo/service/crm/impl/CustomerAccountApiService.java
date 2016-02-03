@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
@@ -270,7 +270,7 @@ public class CustomerAccountApiService extends AccountApiService {
 							.valueOf(postData.getPaymentMethod()));
 				} catch (IllegalArgumentException e) {
 					log.warn("PaymentMethodEnum={}",
-							MeveoApiErrorCode.INVALID_ENUM_VALUE);
+							MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE);
 				}
 			}
 			if (!StringUtils.isBlank(postData.getCreditCategory())) {
@@ -373,7 +373,7 @@ public class CustomerAccountApiService extends AccountApiService {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
 				throw new DeleteReferencedEntityException(CustomerAccount.class, customerAccountCode);
 			}
-			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
 		}
 
 	}
@@ -556,7 +556,7 @@ public class CustomerAccountApiService extends AccountApiService {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
 				throw new DeleteReferencedEntityException(CreditCategory.class, code);
 			}
-			throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
 		}
 	}
 

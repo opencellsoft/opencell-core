@@ -19,7 +19,7 @@ import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValue;
+import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -545,7 +545,7 @@ public class WalletApi extends BaseApi {
 			try {
 				wt.setWalletType(BillingWalletTypeEnum.valueOf(postData.getWalletType()));
 			} catch (IllegalArgumentException e) {
-				throw new InvalidEnumValue(BillingWalletTypeEnum.class.getName(), postData.getWalletType());
+				throw new InvalidEnumValueException(BillingWalletTypeEnum.class.getName(), postData.getWalletType());
 			}
 			wt.setConsumptionAlertSet(postData.isConsumptionAlertSet());
 			wt.setFastRatingLevel(postData.getFastRatingLevel());
@@ -575,7 +575,7 @@ public class WalletApi extends BaseApi {
 			try {
 				wt.setWalletType(BillingWalletTypeEnum.valueOf(postData.getWalletType()));
 			} catch (IllegalArgumentException e) {
-				throw new InvalidEnumValue(BillingWalletTypeEnum.class.getName(), postData.getWalletType());
+				throw new InvalidEnumValueException(BillingWalletTypeEnum.class.getName(), postData.getWalletType());
 			}
 			wt.setConsumptionAlertSet(postData.isConsumptionAlertSet());
 			wt.setFastRatingLevel(postData.getFastRatingLevel());

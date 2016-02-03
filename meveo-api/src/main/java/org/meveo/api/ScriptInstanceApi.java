@@ -12,7 +12,7 @@ import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.ScriptInstanceErrorDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValue;
+import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -43,7 +43,7 @@ public class ScriptInstanceApi extends BaseApi {
     private RoleService roleService;
 
     public List<ScriptInstanceErrorDto> create(ScriptInstanceDto scriptInstanceDto, User currentUser) throws MissingParameterException, EntityAlreadyExistsException,
-            InvalidEnumValue, MeveoApiException {
+            InvalidEnumValueException, MeveoApiException {
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(scriptInstanceDto);
 
@@ -69,7 +69,7 @@ public class ScriptInstanceApi extends BaseApi {
     }
 
     public List<ScriptInstanceErrorDto> create(EntityActionScriptDto scriptDto, String appliesTo, User currentUser) throws MissingParameterException, EntityAlreadyExistsException,
-            InvalidEnumValue, MeveoApiException {
+            InvalidEnumValueException, MeveoApiException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndSetAppliesTo(scriptDto, appliesTo);
@@ -95,7 +95,7 @@ public class ScriptInstanceApi extends BaseApi {
     }
 
     public List<ScriptInstanceErrorDto> update(ScriptInstanceDto scriptInstanceDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException,
-            InvalidEnumValue, MeveoApiException {
+            InvalidEnumValueException, MeveoApiException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(scriptInstanceDto);
@@ -125,7 +125,7 @@ public class ScriptInstanceApi extends BaseApi {
     }
 
     public List<ScriptInstanceErrorDto> update(EntityActionScriptDto scriptDto, String appliesTo, User currentUser) throws MissingParameterException, EntityDoesNotExistsException,
-            InvalidEnumValue, MeveoApiException {
+            InvalidEnumValueException, MeveoApiException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndSetAppliesTo(scriptDto, appliesTo);
@@ -222,7 +222,7 @@ public class ScriptInstanceApi extends BaseApi {
     }
 
     public List<ScriptInstanceErrorDto> createOrUpdate(ScriptInstanceDto postData, User currentUser) throws MissingParameterException, EntityAlreadyExistsException,
-            InvalidEnumValue, EntityDoesNotExistsException, MeveoApiException {
+            InvalidEnumValueException, EntityDoesNotExistsException, MeveoApiException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(postData);
@@ -241,7 +241,7 @@ public class ScriptInstanceApi extends BaseApi {
     }
 
     public List<ScriptInstanceErrorDto> createOrUpdate(EntityActionScriptDto postData, String appliesTo, User currentUser) throws MissingParameterException,
-            EntityAlreadyExistsException, InvalidEnumValue, EntityDoesNotExistsException, MeveoApiException {
+            EntityAlreadyExistsException, InvalidEnumValueException, EntityDoesNotExistsException, MeveoApiException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndSetAppliesTo(postData, appliesTo);
@@ -308,10 +308,10 @@ public class ScriptInstanceApi extends BaseApi {
      * @param dto ScriptInstanceDto object to convert
      * @param scriptInstanceToUpdate ScriptInstance to update with values from dto, or if null create a new one
      * @return A new or updated ScriptInstance object
-     * @throws InvalidEnumValue
+     * @throws InvalidEnumValueException
      * @throws EntityDoesNotExistsException
      */
-    public ScriptInstance scriptInstanceFromDTO(ScriptInstanceDto dto, ScriptInstance scriptInstanceToUpdate, User currentUser) throws InvalidEnumValue,
+    public ScriptInstance scriptInstanceFromDTO(ScriptInstanceDto dto, ScriptInstance scriptInstanceToUpdate, User currentUser) throws InvalidEnumValueException,
             EntityDoesNotExistsException {
 
         ScriptInstance scriptInstance = new ScriptInstance();
@@ -326,7 +326,7 @@ public class ScriptInstanceApi extends BaseApi {
             try {
                 scriptInstance.setSourceTypeEnum(ScriptSourceTypeEnum.valueOf(dto.getType()));
             } catch (IllegalArgumentException e) {
-                throw new InvalidEnumValue(ScriptSourceTypeEnum.class.getName(), dto.getType());
+                throw new InvalidEnumValueException(ScriptSourceTypeEnum.class.getName(), dto.getType());
             }
         } else {
             scriptInstance.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);
@@ -356,9 +356,9 @@ public class ScriptInstanceApi extends BaseApi {
      * @param dto EntityActionScriptDto object to convert
      * @param scriptToUpdate EntityActionScript to update with values from dto, or if null create a new one
      * @return A new or updated EntityActionScript object
-     * @throws InvalidEnumValue
+     * @throws InvalidEnumValueException
      */
-    public EntityActionScript entityActionScriptFromDTO(EntityActionScriptDto dto, EntityActionScript scriptToUpdate, User currentUser) throws InvalidEnumValue {
+    public EntityActionScript entityActionScriptFromDTO(EntityActionScriptDto dto, EntityActionScript scriptToUpdate, User currentUser) throws InvalidEnumValueException {
 
         EntityActionScript scriptInstance = new EntityActionScript();
         if (scriptToUpdate != null) {
@@ -375,7 +375,7 @@ public class ScriptInstanceApi extends BaseApi {
             try {
                 scriptInstance.setSourceTypeEnum(ScriptSourceTypeEnum.valueOf(dto.getType()));
             } catch (IllegalArgumentException e) {
-                throw new InvalidEnumValue(ScriptSourceTypeEnum.class.getName(), dto.getType());
+                throw new InvalidEnumValueException(ScriptSourceTypeEnum.class.getName(), dto.getType());
             }
         } else {
             scriptInstance.setSourceTypeEnum(ScriptSourceTypeEnum.JAVA);

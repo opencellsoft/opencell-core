@@ -7,7 +7,8 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.notification.WebhookNotificationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValue;
+import org.meveo.api.exception.InvalidEnumValueException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -55,7 +56,7 @@ public class WebhookNotificationApi extends BaseApi {
 			try {
 				Class.forName(postData.getClassNameFilter());
 			} catch (Exception e) {
-				throw new MeveoApiException("INVALID_CLASS_NAME", "INVALID_CLASS_NAME");
+				throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
 			}
 
 			NotificationEventTypeEnum notificationEventType = null;
@@ -63,7 +64,7 @@ public class WebhookNotificationApi extends BaseApi {
 				notificationEventType = NotificationEventTypeEnum.valueOf(postData.getEventTypeFilter());
 			} catch (IllegalArgumentException e) {
 				log.error("enum: {}", e);
-				throw new InvalidEnumValue(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
+				throw new InvalidEnumValueException(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
 			}
 
 			CounterTemplate counterTemplate = null;
@@ -88,7 +89,7 @@ public class WebhookNotificationApi extends BaseApi {
 				webHook.setHttpMethod(WebHookMethodEnum.valueOf(postData.getHttpMethod()));
 			} catch (IllegalArgumentException e) {
 				log.error("error while setting httpMethod ",e);
-				throw new InvalidEnumValue(WebHookMethodEnum.class.getName(), postData.getHttpMethod());
+				throw new InvalidEnumValueException(WebHookMethodEnum.class.getName(), postData.getHttpMethod());
 			}
 			webHook.setUsername(postData.getUsername());
 			webHook.setPassword(postData.getPassword());
@@ -164,7 +165,7 @@ public class WebhookNotificationApi extends BaseApi {
 			try {
 				Class.forName(postData.getClassNameFilter());
 			} catch (Exception e) {
-				throw new MeveoApiException("INVALID_CLASS_NAME", "INVALID_CLASS_NAME");
+				throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
 			}
 
 			NotificationEventTypeEnum notificationEventType = null;
@@ -172,7 +173,7 @@ public class WebhookNotificationApi extends BaseApi {
 				notificationEventType = NotificationEventTypeEnum.valueOf(postData.getEventTypeFilter());
 			} catch (IllegalArgumentException e) {
 				log.error("enum: {}", e);
-				throw new InvalidEnumValue(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
+				throw new InvalidEnumValueException(NotificationEventTypeEnum.class.getName(), postData.getEventTypeFilter());
 			}
 
 			CounterTemplate counterTemplate = null;
@@ -194,7 +195,7 @@ public class WebhookNotificationApi extends BaseApi {
 				webHook.setHttpMethod(WebHookMethodEnum.valueOf(postData.getHttpMethod()));
 			} catch (IllegalArgumentException e) {
 				log.error("error generated while setting http method",e);
-				throw new InvalidEnumValue(WebHookMethodEnum.class.getName(), postData.getHttpMethod());
+				throw new InvalidEnumValueException(WebHookMethodEnum.class.getName(), postData.getHttpMethod());
 			}
 			webHook.setUsername(postData.getUsername());
 			webHook.setPassword(postData.getPassword());

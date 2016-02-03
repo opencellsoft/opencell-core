@@ -12,7 +12,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidEnumValue;
+import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -91,7 +91,7 @@ public class PaymentApi extends BaseApi {
 		try {
 			paymentMethod=PaymentMethodEnum.valueOf(paymentDto.getPaymentMethod());
 		} catch (Exception e) {
-			throw new InvalidEnumValue(PaymentMethodEnum.class.getName(), paymentDto.getPaymentMethod());
+			throw new InvalidEnumValueException(PaymentMethodEnum.class.getName(), paymentDto.getPaymentMethod());
 		}
 
 		Provider provider = currentUser.getProvider();

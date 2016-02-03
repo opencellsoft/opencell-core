@@ -2,6 +2,7 @@ package org.meveo.api.dto.response;
 
 import java.io.Serializable;
 
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 
@@ -23,7 +24,7 @@ public abstract class BaseResponse implements Serializable {
         actionStatus = new ActionStatus();
     }
 
-    public BaseResponse(ActionStatusEnum status, String errorCode, String message) {
+    public BaseResponse(ActionStatusEnum status, MeveoApiErrorCodeEnum errorCode, String message) {
         actionStatus = new ActionStatus(status, errorCode, message);
     }
 

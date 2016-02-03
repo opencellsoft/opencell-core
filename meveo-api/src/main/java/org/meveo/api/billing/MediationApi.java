@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
@@ -106,9 +106,9 @@ public class MediationApi extends BaseApi {
 					} catch (BusinessException e) {
 						log.error("Exception rating edr={}",e);
 						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
-							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE, e.getMessage());
+							throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
 						} else {
-							throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, e.getMessage());
+							throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
 						}
 
 					}
@@ -170,9 +170,9 @@ public class MediationApi extends BaseApi {
 					} catch (BusinessException e) {
 						log.error("Exception rating edr={}", e);
 						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
-							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE, e.getMessage());
+							throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
 						} else {
-							throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, e.getMessage());
+							throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
 						}
 
 					}
@@ -219,9 +219,9 @@ public class MediationApi extends BaseApi {
 					} catch (BusinessException e) {
 						log.error("Exception rating edr={}",e);
 						if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
-							throw new MeveoApiException(MeveoApiErrorCode.INSUFFICIENT_BALANCE, e.getMessage());
+							throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
 						} else {
-							throw new MeveoApiException(MeveoApiErrorCode.BUSINESS_API_EXCEPTION, e.getMessage());
+							throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
 						}
 
 					}

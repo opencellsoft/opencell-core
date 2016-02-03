@@ -15,16 +15,6 @@
 
     <dependencies>
 
-        <!-- Primeface and xtream are used for api documention generation -->
-        <!-- <dependency> -->
-        <!-- <groupId>org.primefaces</groupId> -->
-        <!-- <artifactId>primefaces</artifactId> -->
-        <!-- </dependency> -->
-        <!-- <dependency> -->
-        <!-- <groupId>com.thoughtworks.xstream</groupId> -->
-        <!-- <artifactId>xstream</artifactId> -->
-        <!-- </dependency> -->
-
         <!-- Import the CDI API, we use provided scope as the API is included in JBoss AS 7 -->
         <dependency>
             <groupId>javax.enterprise</groupId>
@@ -141,14 +131,26 @@
     <profiles>
         <profile>
             <id>api</id>
+            <!-- Dependencies for api documention generation -->
             <dependencies>
                 <dependency>
                     <groupId>org.manaty</groupId>
                     <artifactId>meveo-model</artifactId>
                 </dependency>
+                <dependency>
+                    <groupId>org.primefaces</groupId>
+                    <artifactId>primefaces</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.reflections</groupId>
+                    <artifactId>reflections</artifactId>
+                </dependency>
             </dependencies>
             <build>
-
 
                 <plugins>
                     <plugin>

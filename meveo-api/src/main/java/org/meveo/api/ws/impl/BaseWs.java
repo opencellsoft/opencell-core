@@ -10,7 +10,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.commons.codec.binary.Base64;
-import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.LoginException;
@@ -40,7 +40,7 @@ public abstract class BaseWs {
 		try {
 			getCurrentUser();
 		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+			result.setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
 			result.setMessage(e.getMessage());
 		}
 
@@ -134,7 +134,7 @@ public abstract class BaseWs {
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(e.getMessage());
         } else {
-            status.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+            status.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(e.getMessage());
         }
