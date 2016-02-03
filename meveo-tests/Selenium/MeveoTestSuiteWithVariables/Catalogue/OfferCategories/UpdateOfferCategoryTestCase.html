@@ -58,17 +58,47 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${descriptionOffer}</td>
+	<td>${Name}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionOffer}</td>
+	<td>${Name}</td>
+	<td>${NameValue}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionOfferCat}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${descriptionOfferCat}</td>
 	<td>${Description}</td>
 </tr>
 <tr>
+	<td>if</td>
+	<td>${OfferTemplateCategoryBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${OfferTemplateCategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${OfferTemplateCategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>${saveButtonWhenUpdateAjax}</td>
+	<td>${saveButtonWhenUpdate}</td>
 	<td></td>
 </tr>
 <tr>

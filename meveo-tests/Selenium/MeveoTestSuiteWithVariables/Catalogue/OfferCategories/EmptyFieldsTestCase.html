@@ -4,33 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>UpdateOfferTestCase</title>
+<title>EmptyFieldsTestCase</title>
 </head>
+
+
+
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">UpdateOfferTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">EmptyFieldsTestCase</td></tr>
 </thead><tbody>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
 <tr>
 	<td>assertText</td>
 	<td>${Informations}</td>
@@ -54,42 +37,42 @@
 <tr>
 	<td>type</td>
 	<td>${codeText}</td>
-	<td>${Code}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${descriptionOffer}</td>
+	<td>${Name}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${descriptionOffer}</td>
-	<td>${Description}</td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${saveButtonWhenUpdateAjax}</td>
+	<td>${Name}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>assertElementPresent</td>
+	<td>${descriptionOfferCat}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
+	<td>type</td>
+	<td>${descriptionOfferCat}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
+	<td>assertElementPresent</td>
+	<td>${OfferTemplateCategory}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
+	<td>click</td>
+	<td>${OfferTemplateCategory}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveButtonWhenCreate}</td>
+	<td></td>
 </tr>
 </tbody></table>
 </body>

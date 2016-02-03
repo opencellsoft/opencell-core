@@ -4,26 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://i.meveo.info/" />
-<title>UpdateOfferTestCase</title>
+<title>SuccessTestCase</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">UpdateOfferTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">SuccessTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
-	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${MeveoModules}</td>
 	<td></td>
 </tr>
 <tr>
@@ -32,48 +22,63 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>${Informations}</td>
-	<td>Informations</td>
+	<td>clickAndWait</td>
+	<td>${buttonNew}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${Informations}</td>
+	<td>${codeText}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeText}</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>if</td>
+	<td>${DescriptionBool}==true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${DescriptionModule}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${DescriptionModule}</td>
+	<td>${DescriptionValue}</td>
+</tr>
+<tr>
+	<td>endIf</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${License}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${Informations}</td>
+	<td>${License}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>${codeText}</td>
+	<td>click</td>
+	<td>${LicenseValue}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${codeText}</td>
-	<td>${Code}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${descriptionOffer}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${descriptionOffer}</td>
-	<td>${Description}</td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${saveButtonWhenUpdateAjax}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>click</td>
+	<td>${saveButtonWhenCreate}</td>
 	<td></td>
 </tr>
 <tr>
@@ -82,12 +87,27 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
+	<td>assertElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
 	<td></td>
 </tr>
 <tr>
+	<td>assertElementPresent</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${backButton}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>verifyText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
 </tr>
