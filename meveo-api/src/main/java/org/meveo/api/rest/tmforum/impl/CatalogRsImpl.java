@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.CatalogApi;
 import org.meveo.api.dto.catalog.BomOfferDto;
@@ -71,6 +72,8 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 		try {
 			productOffering = catalogApi.findProductOffering(id, getCurrentUser(), uriInfo,
 					Category.createProto(uriInfo));
+		} catch (MeveoApiException e) {
+			return Response.status(Status.NOT_FOUND).entity(MeveoApiErrorCode.ENTITY_DOES_NOT_EXISTS_EXCEPTION).build();
 		} catch (Exception e) {
 		}
 		if (productOffering == null) {

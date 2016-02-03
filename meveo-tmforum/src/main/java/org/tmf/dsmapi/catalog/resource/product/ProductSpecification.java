@@ -631,8 +631,9 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
     	try{
     	productSpecification.setId(offer.getCode());
 		productSpecification.setVersion(String.format("%d.0", offer.getVersion() == null ? 0 : offer.getVersion()));
-		productSpecification.setHref(String.format("%s%s%s", uriInfo.getAbsolutePath().toString(),
-				"/catalogManager/productSpecification/", offer.getCode()));
+		productSpecification.setHref(String.format("%scatalogManagement/productSpecification/%s",
+				uriInfo.getBaseUri().toString(), offer.getCode()));
+		
 		productSpecification.setName(offer.getCode());
 		productSpecification.setDescription(offer.getDescription());
 		productSpecification

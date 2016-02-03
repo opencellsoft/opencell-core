@@ -536,8 +536,9 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 		ProductOffering productOffering = new ProductOffering();
 		productOffering.setId(offer.getCode());
 		productOffering.setVersion(String.format("%d.0", offer.getVersion() == null ? 0 : offer.getVersion()));
-		productOffering.setHref(String.format("%s%s%s", uriInfo.getAbsolutePath(), "/catalogManager/productOffering/",
-				offer.getCode()));
+		productOffering.setHref(String.format("%scatalogManagement/productOffering/%s",
+				uriInfo.getBaseUri().toString(), offer.getCode()));
+		     
 		productOffering.setName(offer.getCode());
 		productOffering.setDescription(offer.getDescription());
 		productOffering.setLastUpdate(offer.getAuditable() != null ? offer.getAuditable().getLastModified() : null);

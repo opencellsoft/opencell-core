@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.BaseApi;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -32,8 +33,12 @@ public class CatalogApi extends BaseApi {
 	@Inject
 	private PricePlanMatrixService pricePlanMatrixService;
 
-	public ProductOffering findProductOffering(String code, User currentUser, UriInfo uriInfo, Category category) {
+	public ProductOffering findProductOffering(String code, User currentUser, UriInfo uriInfo, Category category)
+			throws EntityDoesNotExistsException {
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, currentUser.getProvider());
+		if (offerTemplate == null) {
+			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
+		}
 		Map<String, BigDecimal> servicePrices = getOfferPrices(offerTemplate);
 		return offerTemplate == null ? null : ProductOffering.parseFromOfferTemplate(offerTemplate, uriInfo, category,
 				servicePrices);

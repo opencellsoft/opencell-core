@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.poi.hssf.record.chart.CategorySeriesAxisRecord;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
@@ -183,7 +183,7 @@ public class Category extends AbstractCatalogEntity implements Serializable {
 
         category.setId("1");
         category.setVersion("1.0");
-        category.setHref(String.format("%s/%s", uriInfo.getAbsolutePath(), category.getId()));
+        category.setHref(String.format("%scatalogManagement/category/%s", uriInfo.getBaseUri().toString(), category.getId()));
         category.setName("Default");
         category.setDescription("Default category");
         category.setLastUpdate(new Date ());
