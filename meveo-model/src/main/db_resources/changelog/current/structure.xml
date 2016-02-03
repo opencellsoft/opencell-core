@@ -1325,5 +1325,10 @@
 			onUpdate="NO ACTION" referencedColumnNames="id"
 			referencedTableName="cat_offer_service_template" />
 	</changeSet>
-	
+     <changeSet id="#1464-20160203" author="anasseh">		
+		<modifyDataType columnName="INVOICE_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_SELLER" />	
+		<modifyDataType columnName="INVOICE_ADJUSTMENT_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_SELLER" />
+		<modifyDataType columnName="INVOICE_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_PROVIDER" />	
+		<modifyDataType columnName="INVOICE_ADJUSTMENT_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_PROVIDER" />																																
+	</changeSet>	
 </databaseChangeLog>
