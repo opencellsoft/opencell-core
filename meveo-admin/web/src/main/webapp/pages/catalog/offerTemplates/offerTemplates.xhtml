@@ -1,37 +1,54 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
-    template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{offerTemplateListBean.preRenderView}" />
-        </f:metadata>
-    </ui:define>
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{offerTemplateListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
 
-    <ui:define name="body">
+	<ui:define name="body">
 
-        <hftl:searchPanel label="#{messages['offerTemplate.search']}" backingBean="#{offerTemplateListBean}">
-            <hftl:searchField label="#{messages['offerTemplate.code']}" field="code" />
-            <hftl:searchField label="#{messages['offerTemplate.description']}" field="description" />
-            <hftl:searchField label="#{messages['commons.status']}" field="status" />
-            <hftl:searchField label="#{messages['offerTemplate.template']}" field="bomCode" valueLabelField="name"
-                listElements="#{offerTemplateBean.listAll()}" valueField="code" />
-            <hftl:searchField label="#{messages['offerTemplate.category']}" field="offerTemplateCategory" valueLabelField="description"
-                listBean="#{offerTemplateCategoryListBean}" />
-            <hftl:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
-        </hftl:searchPanel>
+		<hftl:searchPanel label="#{messages['offerTemplate.search']}"
+			backingBean="#{offerTemplateListBean}">
+			<hftl:searchField label="#{messages['offerTemplate.code']}"
+				field="code" />
+			<hftl:searchField label="#{messages['offerTemplate.description']}"
+				field="description" />
+			<hftl:searchField label="#{messages['commons.status']}"
+				field="status" />
+			<hftl:searchField label="#{messages['offerTemplate.template']}"
+				field="bomCode" valueLabelField="name"
+				listElements="#{offerTemplateBean.listAll()}" valueField="code" />
+			<hftl:searchField label="#{messages['offerTemplate.category']}"
+				field="offerTemplateCategory" valueLabelField="description"
+				listBean="#{offerTemplateCategoryListBean}" />
+			<hftl:searchField label="#{messages['enableEntity.disabled']}"
+				field="disabled" />
+		</hftl:searchPanel>
 
-        <hftl:dataList label="#{messages['offerTemplate.title']}" noClose="false" backingBean="#{offerTemplateListBean}">
-            <hftl:column label="#{messages['offerTemplate.code']}" field="code" />
-            <hftl:column label="#{messages['offerTemplate.description']}" field="description" />
-            <hftl:column label="#{messages['offerTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" valueLabelField="code" valueIdField="id"
-                entityView="serviceTemplateDetail" />
-            <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-            <hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" renderEnableLink="true" renderDuplicateLink="true" />
-        </hftl:dataList>
+		<hftl:dataList label="#{messages['offerTemplate.title']}"
+			noClose="false" backingBean="#{offerTemplateListBean}">
+			<hftl:column label="#{messages['offerTemplate.code']}" field="code" />
+			<hftl:column label="#{messages['offerTemplate.description']}"
+				field="description" />
+			<hftl:column label="#{messages['offerTemplate.serviceTemplates']}"
+				field="offerServiceTemplates" isList="true"
+				valueLabelField="serviceTemplate.code"
+				valueIdField="serviceTemplate.id" entityView="serviceTemplateDetail" />
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('catalog','catalogManagement')}"
+				renderEnableLink="true" renderDuplicateLink="true" />
+		</hftl:dataList>
 
-    </ui:define>
+	</ui:define>
 
 </ui:composition>

@@ -1310,4 +1310,20 @@
 	    <modifyDataType columnName="BODY_EL" newDataType="VARCHAR(2000)"
 			tableName="ADM_NOTIF_WEBHOOKS" /> 
 	   	</changeSet>
+
+	<changeSet id="#1450_20160202-1" author="EdwardLegaspi">
+		<addPrimaryKey columnNames="offer_template_id, offer_service_template_id"
+			constraintName="pk_cat_offer_serv_incomp" tableName="cat_offer_serv_incomp" />
+		<addPrimaryKey columnNames="offer_template_id, offer_service_template_id"
+			constraintName="pk_cat_offer_serv_assoc" tableName="cat_offer_serv_assoc" />
+
+		<dropForeignKeyConstraint baseTableName="cat_offer_serv_assoc"
+			constraintName="fk_cat_os_assoc_service_template" />
+		<addForeignKeyConstraint baseColumnNames="offer_service_template_id"
+			baseTableName="cat_offer_serv_assoc" constraintName="fk_cat_os_assoc_offer_service_template"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id"
+			referencedTableName="cat_offer_service_template" />
+	</changeSet>
+	
 </databaseChangeLog>

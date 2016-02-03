@@ -1,23 +1,31 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
-            <f:viewParam name="tab" value="#{offerTemplateBean.activeTab}"/>
-        </f:metadata>
-    </ui:define>
-    
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
+			<f:viewParam name="tab" value="#{offerTemplateBean.activeTab}" />
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
+		<hftl:entityPopup id="searchServiceTemplatePopup"
+			header="#{messages['offerServiceTemplate.serviceTemplate']}"
+			updateField=":tabView:serviceForm:serviceTemplateCode"
+			selection="#{offerTemplateBean.offerServiceTemplate.serviceTemplate}"
+			backingBean="#{serviceTemplateBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"></hftl:entityPopup>
+
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -28,29 +36,132 @@
 			</h:form>
 		</p:panel>
 
-		<hftl:formPanel ajaxSubmit="true" submitPartialProcess=":formId:tabView"
-			label="#{messages['offerTemplate.offerTemplatePanel']}"
-			backingBean="#{offerTemplateBean}" showEnableDisableButton="true" 
-			updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
+		<p:panel header="#{messages['offerTemplate.offerTemplatePanel']}">
 
 			<p:tabView id="tabView" activeIndex="#{offerTemplateBean.activeTab}">
 				<p:tab title="#{messages['customer.tab.information']}">
-					<hftl:formField label="#{messages['offerTemplate.code']}"
-						field="code" required="true" validateUnique="true" />
-					<hftl:formField label="#{messages['offerTemplate.description']}"
-						field="description" required="true" useConverter="false"
-						id="description" maxlength="50" />
-					<hftl:formField label="#{messages['enableEntity.disabled']}"
-						doNotShowOnNew="true" allowEdit="false" field="disabled"
-						isMessage="true" />
-					<hftl:formField label="#{messages['offerTemplate.serviceTemplates']}"
-						field="serviceTemplates" listType="pickUpList"
-						valueLabelField="code" newLine="true" />
+					<hftl:formPanel ajaxSubmit="true"
+						submitPartialProcess=":tabView:formId:informationTab"
+						label="#{messages['offerTemplate.offerTemplatePanel']}"
+						backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
+						updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
+						<p:tabView id="informationTab"
+							activeIndex="#{offerTemplateBean.activeTab}">
+							<p:tab title="#{messages['customer.tab.information']}">
+
+								<hftl:formField label="#{messages['offerTemplate.code']}"
+									field="code" required="true" validateUnique="true" />
+								<hftl:formField label="#{messages['offerTemplate.description']}"
+									field="description" required="true" useConverter="false"
+									id="description" maxlength="50" />
+								<hftl:formField label="#{messages['enableEntity.disabled']}"
+									doNotShowOnNew="true" allowEdit="false" field="disabled"
+									isMessage="true" />
+								<!-- 					<hftl:formField label="#{messages['offerTemplate.serviceTemplates']}" -->
+								<!-- 						field="serviceTemplates" listType="pickUpList" -->
+								<!-- 						valueLabelField="code" newLine="true" /> -->
+
+							</p:tab>
+							<hftl:customFields backingBean="#{offerTemplateBean}"
+								messagesId=":tabView:formId:messages" />
+						</p:tabView>
+					</hftl:formPanel>
 				</p:tab>
 
-                <hftl:customFields backingBean="#{offerTemplateBean}" messagesId=":formId:messages" />
+				<p:tab title="#{messages['menu.serviceTemplates']}"
+					rendered="#{offerTemplateBean.entity.id!=null}">
+					<p:panel styleClass="form-panel">
+						<hftl:decorateFormField fieldId="offerTemplateCode"
+							label="#{messages['offerTemplate.code']}">
+							<h:outputText id="offerTemplateCode"
+								value="#{offerTemplateBean.entity.code}" required="true"
+								disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{offerTemplateBean.edit}" />
+						</hftl:decorateFormField>
+						<hftl:decorateFormField fieldId="offerTemplateDescription"
+							label="#{messages['offerTemplate.description']}">
+							<h:outputText id="offerTemplateDescription"
+								value="#{offerTemplateBean.entity.description}" required="true"
+								disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{offerTemplateBean.edit}" />
+						</hftl:decorateFormField>
+					</p:panel>
 
+					<h:panelGroup id="servicesPanel">
+						<hftl:dataList id="servicesTable"
+							backingBean="#{offerServiceTemplateBean}"
+							dataModel="#{offerTemplateBean.entity.offerServiceTemplates}"
+							resultsId="services_results" exportToXml="false">
+							<hftl:column
+								label="#{messages['offerServiceTemplate.serviceTemplate']}"
+								field="serviceTemplate.code" entityView="serviceTemplateDetail" />
+							<hftl:column
+								label="#{messages['offerServiceTemplate.mandatory']}"
+								field="mandatory" />
+							<p:column styleClass="actions-column"
+								rendered="#{offerTemplateBean.edit}">
+								<f:facet name="header">
+									<h:outputText value="#{messages['commons.actions']}" />
+								</f:facet>
+								<p:commandButton update=":tabView:serviceForm"
+									action="#{offerTemplateBean.editOfferServiceTemplate(entity)}"
+									icon="ui-icon-document" />
+								<p:commandButton
+									action="#{offerTemplateBean.deleteOfferServiceTemplate(entity)}"
+									icon="ui-icon-trash" update=":tabView:servicesPanel" />
+							</p:column>
+						</hftl:dataList>
+					</h:panelGroup>
+
+					<p:panel rendered="#{offerTemplateBean.edit}">
+						<hftl:formPanel formId="serviceForm"
+							edit="#{offerTemplateBean.edit}"
+							backingBean="#{offerTemplateBean}"
+							entity="#{offerTemplateBean.offerServiceTemplate}"
+							showFormButtons="false" ajaxSubmit="true">
+							<hftl:formField
+								label="#{messages['offerServiceTemplate.serviceTemplate']}"
+								id="serviceTemplateCode" field="serviceTemplate"
+								valueLabelField="code" popup="true"
+								popupId="searchServiceTemplatePopup" clearButton="true"
+								required="true" />
+							<hftl:formField
+								label="#{messages['offerServiceTemplate.mandatory']}"
+								id="mandatory" field="mandatory" />
+							<hftl:formField id="incompServices"
+								label="#{messages['serviceTemplate.title']}"
+								field="incompatibleServices" listType="pickUpList"
+								valueLabelField="code" required="false"
+								dualListModel="#{offerTemplateBean.incompatibleServices}"
+								newLine="true" />
+
+							<ui:param name="buttons" value="true" />
+							<ui:define name="buttons">
+								<p:commandButton
+									rendered="#{offerTemplateBean.offerServiceTemplate.id==null}"
+									action="#{offerTemplateBean.saveOfferServiceTemplate()}"
+									value="#{messages['action.addSave']}"
+									update=":tabView:servicesPanel :tabView:serviceForm">
+								</p:commandButton>
+								<p:commandButton
+									rendered="#{offerTemplateBean.offerServiceTemplate.id!=null}"
+									action="#{offerTemplateBean.saveOfferServiceTemplate()}"
+									value="#{messages['action.update']}"
+									update=":tabView:servicesPanel :tabView:serviceForm" />
+								<p:commandButton value="#{messages['action.cancel']}"
+									action="#{offerTemplateBean.newOfferServiceTemplate}"
+									update=":tabView:serviceForm" />
+								<p:button id="buttonBack" value="#{messages['action.back']}"
+									outcome="#{offerTemplateBean.back()}" includeViewParams="true">
+									<f:param name="cid"
+										value="#{javax.enterprise.context.conversation.id}" />
+								</p:button>
+							</ui:define>
+						</hftl:formPanel>
+					</p:panel>
+				</p:tab>
 			</p:tabView>
-        </hftl:formPanel>
-    </ui:define>
+		</p:panel>
+
+	</ui:define>
 </ui:composition>

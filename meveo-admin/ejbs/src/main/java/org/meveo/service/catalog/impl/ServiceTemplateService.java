@@ -20,8 +20,10 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
@@ -34,20 +36,33 @@ import org.meveo.service.base.BusinessService;
 public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 
 	public void removeByCode(EntityManager em, String code, Provider provider) {
-		Query query = em
-				.createQuery("DELETE ServiceTemplate t WHERE t.code=:code AND t.provider=:provider");
+		Query query = em.createQuery("DELETE ServiceTemplate t WHERE t.code=:code AND t.provider=:provider");
 		query.setParameter("code", code);
 		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
-	
-	public  int getNbServiceWithNotOffer(Provider provider) { 
-		return ((Long)getEntityManager().createNamedQuery(
-				"serviceTemplate.getNbServiceWithNotOffer",Long.class).setParameter("provider", provider).getSingleResult()).intValue();
+
+	public int getNbServiceWithNotOffer(Provider provider) {
+		return ((Long) getEntityManager().createNamedQuery("serviceTemplate.getNbServiceWithNotOffer", Long.class)
+				.setParameter("provider", provider).getSingleResult()).intValue();
+	}
+
+	public List<ServiceTemplate> getServicesWithNotOffer(Provider provider) {
+		return (List<ServiceTemplate>) getEntityManager()
+				.createNamedQuery("serviceTemplate.getServicesWithNotOffer", ServiceTemplate.class)
+				.setParameter("provider", provider).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ServiceTemplate> listAllActiveExcept(ServiceTemplate st, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(ServiceTemplate.class, "s", null, provider);
+		qb.addCriterion("id", "<>", st.getId(), true);
+
+		try {
+			return (List<ServiceTemplate>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
 		}
-	
-	public  List<ServiceTemplate> getServicesWithNotOffer(Provider provider) { 
-		return (List<ServiceTemplate>)getEntityManager().createNamedQuery("serviceTemplate.getServicesWithNotOffer",ServiceTemplate.class).setParameter("provider", provider).getResultList();
-		}
-	
+	}
+
 }

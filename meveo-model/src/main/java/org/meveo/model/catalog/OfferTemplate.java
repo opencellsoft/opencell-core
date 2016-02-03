@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -66,9 +67,9 @@ public class OfferTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "BUSINESS_OFFER_MODEL_ID")
 	private BusinessOfferModel businessOfferModel;
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinTable(name = "CAT_OFFER_SERV_ASSOC", joinColumns = @JoinColumn(name = "OFFER_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_SERVICE_TEMPLATE_ID"))
-	private List<OfferServiceTemplate> offerServiceTemplates;
+	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 
 	public List<OfferServiceTemplate> getOfferServiceTemplates() {
 		return offerServiceTemplates;
@@ -82,7 +83,6 @@ public class OfferTemplate extends BusinessCFEntity {
 	public ICustomFieldEntity getParentCFEntity() {
 		return null;
 	}
-
 
 	public void addOfferServiceTemplate(OfferServiceTemplate serviceTemplate) {
 		if (getOfferServiceTemplates() == null) {
@@ -121,6 +121,11 @@ public class OfferTemplate extends BusinessCFEntity {
 
 	public void setBusinessOfferModel(BusinessOfferModel businessOfferModel) {
 		this.businessOfferModel = businessOfferModel;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
 	}
 
 }
