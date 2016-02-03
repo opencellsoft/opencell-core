@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
 
 /**
@@ -49,8 +48,7 @@ public class OfferTemplateDto implements Serializable {
 
 		if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
 			for (OfferServiceTemplate st : e.getOfferServiceTemplates()) {
-			//FIXME
-				//serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getCode()));
+				serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getServiceTemplate().getCode()));
 			}
 		}
 

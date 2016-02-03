@@ -15,13 +15,14 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -34,12 +35,12 @@ public class OfferTemplateApi extends BaseApi {
 
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
-    
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-    
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
+
+	@Inject
+	private CustomFieldInstanceService customFieldInstanceService;
+
+	@Inject
+	private OfferServiceTemplateService offerServiceTemplateService;
 
 	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
@@ -55,11 +56,12 @@ public class OfferTemplateApi extends BaseApi {
 			offerTemplate.setDescription(postData.getDescription());
 			offerTemplate.setDisabled(postData.isDisabled());
 
-		
+			offerTemplateService.create(offerTemplate, currentUser, provider);
+
 			// check service templates
 			if (postData.getServiceTemplates() != null
 					&& postData.getServiceTemplates().getServiceTemplate().size() > 0) {
-				List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
+				List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 				for (ServiceTemplateDto serviceTemplateDto : postData.getServiceTemplates().getServiceTemplate()) {
 					ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(),
 							provider);
@@ -67,21 +69,38 @@ public class OfferTemplateApi extends BaseApi {
 						throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateDto.getCode());
 					}
 
-					serviceTemplates.add(serviceTemplate);
+					if (offerTemplate.getOfferServiceTemplates() != null) {
+						// check if exists
+						boolean found = false;
+						for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
+							if (offerServiceTemplate.getServiceTemplate().equals(serviceTemplate)) {
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+							OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
+							offerServiceTemplate.setOfferTemplate(offerTemplate);
+							offerServiceTemplate.setServiceTemplate(serviceTemplate);
+							offerServiceTemplate.setProvider(currentUser.getProvider());
+							offerServiceTemplateService.create(offerServiceTemplate, currentUser);
+							offerServiceTemplates.add(offerServiceTemplate);
+						}
+					}
 				}
-//FIXME
-		//		offerTemplate.setServiceTemplates(serviceTemplates);
+				if (offerServiceTemplates.size() > 0) {
+					offerTemplate.setOfferServiceTemplates(offerServiceTemplates);
+				}
+				offerTemplateService.update(offerTemplate, currentUser);
 			}
 
-            offerTemplateService.create(offerTemplate, currentUser, provider);
-            
 			// populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), offerTemplate, true, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
-            }
+			try {
+				populateCustomFields(postData.getCustomFields(), offerTemplate, true, currentUser);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				log.error("Failed to associate custom field instance to an entity", e);
+				throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			}
 
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
@@ -110,7 +129,7 @@ public class OfferTemplateApi extends BaseApi {
 			// check service templates
 			if (postData.getServiceTemplates() != null
 					&& postData.getServiceTemplates().getServiceTemplate().size() > 0) {
-				List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
+				List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 				for (ServiceTemplateDto serviceTemplateDto : postData.getServiceTemplates().getServiceTemplate()) {
 					ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode(),
 							provider);
@@ -118,20 +137,25 @@ public class OfferTemplateApi extends BaseApi {
 						throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateDto.getCode());
 					}
 
-					serviceTemplates.add(serviceTemplate);
+					OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
+					offerServiceTemplate.setOfferTemplate(offerTemplate);
+					offerServiceTemplate.setServiceTemplate(serviceTemplate);
+					offerServiceTemplate.setProvider(currentUser.getProvider());
+					offerServiceTemplateService.create(offerServiceTemplate, currentUser);
+
+					offerServiceTemplates.add(offerServiceTemplate);
 				}
-//FIXME
-				//offerTemplate.getServiceTemplates().clear();
-				//offerTemplate.setServiceTemplates(serviceTemplates);
+				offerTemplate.setOfferServiceTemplates(offerServiceTemplates);
+				offerTemplateService.update(offerTemplate, currentUser);
 			}
-			
+
 			// populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), offerTemplate, false, currentUser);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
-            }
+			try {
+				populateCustomFields(postData.getCustomFields(), offerTemplate, false, currentUser);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				log.error("Failed to associate custom field instance to an entity", e);
+				throw new MeveoApiException("Failed to associate custom field instance to an entity");
+			}
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -151,7 +175,8 @@ public class OfferTemplateApi extends BaseApi {
 				throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 			}
 
-			return new OfferTemplateDto(offerTemplate, customFieldInstanceService.getCustomFieldInstances(offerTemplate));
+			return new OfferTemplateDto(offerTemplate,
+					customFieldInstanceService.getCustomFieldInstances(offerTemplate));
 		} else {
 			missingParameters.add("offerTemplateCode");
 
@@ -173,16 +198,17 @@ public class OfferTemplateApi extends BaseApi {
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 	}
-	
+
 	/**
 	 * Create or updates the OfferTemplate based on code
+	 * 
 	 * @param postData
 	 * @param currentUser
 	 * @throws MeveoApiException
 	 */
 	public void createOrUpdate(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
-		
+
 		if (offerTemplate == null) {
 			create(postData, currentUser);
 		} else {
