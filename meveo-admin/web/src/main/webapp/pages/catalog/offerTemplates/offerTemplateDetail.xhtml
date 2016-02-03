@@ -68,7 +68,7 @@
 					</hftl:formPanel>
 				</p:tab>
 
-				<p:tab title="#{messages['menu.serviceTemplates']}"
+				<p:tab title="#{messages['menu.serviceTemplates']}" id="tab1"
 					rendered="#{offerTemplateBean.entity.id!=null}">
 					<p:panel styleClass="form-panel">
 						<hftl:decorateFormField fieldId="offerTemplateCode"
@@ -98,6 +98,10 @@
 							<hftl:column
 								label="#{messages['offerServiceTemplate.mandatory']}"
 								field="mandatory" />
+							<hftl:column
+								label="#{messages['offerServiceTemplate.incompatibleServices']}"
+								field="incompatibleServices" isList="true"
+								valueLabelField="code" valueIdField="id" />
 							<p:column styleClass="actions-column"
 								rendered="#{offerTemplateBean.edit}">
 								<f:facet name="header">
@@ -108,7 +112,8 @@
 									icon="ui-icon-document" />
 								<p:commandButton
 									action="#{offerTemplateBean.deleteOfferServiceTemplate(entity)}"
-									icon="ui-icon-trash" update=":tabView:servicesPanel" />
+									icon="ui-icon-trash"
+									update=":tabView:servicesPanel :tabView:serviceForm" />
 							</p:column>
 						</hftl:dataList>
 					</h:panelGroup>
@@ -142,6 +147,7 @@
 									action="#{offerTemplateBean.saveOfferServiceTemplate()}"
 									value="#{messages['action.addSave']}"
 									update=":tabView:servicesPanel :tabView:serviceForm">
+									<f:param name="objectId" value="#{offerTemplateBean.entity.id}"></f:param>
 								</p:commandButton>
 								<p:commandButton
 									rendered="#{offerTemplateBean.offerServiceTemplate.id!=null}"

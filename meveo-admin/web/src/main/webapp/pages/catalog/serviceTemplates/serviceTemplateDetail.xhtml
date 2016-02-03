@@ -187,7 +187,7 @@
 											rendered="#{serviceRecurringChargeTemplate.id==null}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
 											value="#{messages['action.addSave']}"
-											update=":tabView:serviceRecurringChargeTempalte_panel,:tabView:formRecurringCharge ,:tabView:serviceRecurringChargediv" />
+											update=":tabView:serviceRecurringChargeTempalte_panel, :tabView:serviceRecurringChargediv" />
 										<p:commandButton
 											rendered="#{serviceRecurringChargeTemplate.id!=null}"
 											action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"

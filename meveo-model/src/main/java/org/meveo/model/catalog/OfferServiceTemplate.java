@@ -3,7 +3,6 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,7 +35,7 @@ public class OfferServiceTemplate extends BaseEntity {
 	@Column(name = "MANDATORY")
 	private boolean mandatory;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_OFFER_SERV_INCOMP", joinColumns = @JoinColumn(name = "OFFER_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_SERVICE_TEMPLATE_ID"))
 	private List<ServiceTemplate> incompatibleServices = new ArrayList<>();
 

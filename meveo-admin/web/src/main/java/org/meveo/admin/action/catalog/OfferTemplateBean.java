@@ -40,7 +40,6 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.omnifaces.cdi.ViewScoped;
-import org.omnifaces.util.Messages;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -115,7 +114,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
 	 */
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "offerServiceTemplates");
+		return Arrays.asList("provider");
 	}
 
 	public void setDualListModel(DualListModel<ServiceTemplate> perks) {
@@ -194,7 +193,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		log.info("saveOfferServiceTemplate getObjectId={}", getObjectId());
 
 		try {
-			if (offerServiceTemplate != null) {
+			if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() != null) {
 				for (OfferServiceTemplate inc : getEntity().getOfferServiceTemplates()) {
 					if (inc.getServiceTemplate().getCode()
 							.equalsIgnoreCase(offerServiceTemplate.getServiceTemplate().getCode())
@@ -206,16 +205,18 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 					offerServiceTemplateService.update(offerServiceTemplate);
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
-					offerServiceTemplate.setOfferTemplate(getEntity());
+					offerServiceTemplate.setOfferTemplate(entity);
 					offerServiceTemplateService.create(offerServiceTemplate);
-					getEntity().addOfferServiceTemplate(offerServiceTemplate);
+					entity.addOfferServiceTemplate(offerServiceTemplate);
 					entity = getPersistenceService().update(entity);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
+			} else {
+				messages.error(new BundleKey("messages", "save.unsuccessful"));
 			}
 		} catch (Exception e) {
 			log.error("exception when saving offer service template !", e.getMessage());
-			Messages.addGlobalError(e.getMessage(), new Object[] {});
+			messages.error(new BundleKey("messages", "save.unsuccessful"));
 		}
 
 		offerServiceTemplate = new OfferServiceTemplate();

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -67,7 +66,7 @@ public class OfferTemplate extends BusinessCFEntity {
 	@JoinColumn(name = "BUSINESS_OFFER_MODEL_ID")
 	private BusinessOfferModel businessOfferModel;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_OFFER_SERV_ASSOC", joinColumns = @JoinColumn(name = "OFFER_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_SERVICE_TEMPLATE_ID"))
 	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 
