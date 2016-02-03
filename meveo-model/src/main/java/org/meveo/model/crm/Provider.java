@@ -150,13 +150,13 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 	@Basic(fetch = FetchType.LAZY)
 	private Blob logo;
 
-	@Column(name = "INVOICE_PREFIX", length = 50)
+	@Column(name = "INVOICE_PREFIX", length = 2000)
 	private String invoicePrefix;
 
 	@Column(name = "CURRENT_INVOICE_NB")
 	private Long currentInvoiceNb;
 
-	@Column(name = "INVOICE_ADJUSTMENT_PREFIX", length = 50)
+	@Column(name = "INVOICE_ADJUSTMENT_PREFIX", length = 2000)
 	private String invoiceAdjustmentPrefix;
 
 	@Column(name = "CURRENT_INVOICE_ADJUSTMENT_NB")
