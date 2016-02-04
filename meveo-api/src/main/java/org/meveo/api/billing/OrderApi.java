@@ -70,14 +70,15 @@ public class OrderApi {
 					}
 					UserAccount userAccount = userAccountService.findByCode(billingAccountId, provider);
 					if (userAccount == null) {
-						throw new EntityDoesNotExistsException(UserAccount.class, "userAccount");
+						throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
 					}
 					log.debug("find userAccount by {}", billingAccountId);
 
-					OfferTemplate offerTemplate = offerTemplateService
-							.findByCode(orderItem.getProductOffering().getId(), provider);
+					OfferTemplate offerTemplate = offerTemplateService.findByCode(orderItem.getProductOffering()
+							.getId(), provider);
 					if (offerTemplate == null) {
-						throw new EntityDoesNotExistsException(OfferTemplate.class, "offerTemplate");
+						throw new EntityDoesNotExistsException(OfferTemplate.class, orderItem.getProductOffering()
+								.getId());
 					}
 					log.debug("find offerTemplate by {}", orderItem.getProductOffering().getId());
 					Subscription subscription = subscriptionService.findByCode(orderItem.getId(), provider);
@@ -109,8 +110,7 @@ public class OrderApi {
 							throw new MeveoApiException(
 									"Sub's userAccount doesn't match with orderitem's billingAccount");
 						}
-						if (!subscription.getOffer().getCode()
-								.equalsIgnoreCase(orderItem.getProductOffering().getId())) {
+						if (!subscription.getOffer().getCode().equalsIgnoreCase(orderItem.getProductOffering().getId())) {
 							throw new MeveoApiException("Sub's offer doesn't match with orderitem's productOffer");
 						}
 						List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
