@@ -38,7 +38,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
 import org.meveo.model.catalog.CalendarInterval;
-import org.meveo.model.catalog.CalendarInterval.CalendarIntervalTypeEnum;
+import org.meveo.model.catalog.CalendarIntervalTypeEnum;
 import org.meveo.model.catalog.CalendarJoin;
 import org.meveo.model.catalog.CalendarPeriod;
 import org.meveo.model.catalog.CalendarYearly;

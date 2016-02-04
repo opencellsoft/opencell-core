@@ -35,16 +35,13 @@ public class CalendarPeriod extends Calendar {
     private Integer periodLength = 30;
 
     /**
-     * month = 2
-	 * day of month = 5
-	 * second = 13
-	 * hour = 9
-	 * minute = 12
+     * java.util.Calendar.MONTH = 2 java.util.Calendar.DAY_OF_MONTH = 5 java.util.Calendar.HOUR_OF_DAY = 11 java.util.Calendar.MINUTE = 12 java.util.Calendar.SECOND = 13
      */
     @Column(name = "PERIOD_UNIT")
     private Integer periodUnit = java.util.Calendar.DAY_OF_MONTH;
-    
-	public static List<Integer> VALID_PERIOD_UNITS = Arrays.asList(2, 5, 9, 12, 13);
+
+    public static List<Integer> VALID_PERIOD_UNITS = Arrays.asList(java.util.Calendar.MONTH, java.util.Calendar.DAY_OF_MONTH, java.util.Calendar.HOUR_OF_DAY,
+        java.util.Calendar.MINUTE, java.util.Calendar.SECOND);
 
     @Column(name = "NB_PERIODS")
     private Integer nbPeriods = 0;
@@ -152,7 +149,7 @@ public class CalendarPeriod extends Calendar {
         }
 
         return null;
-    }    
+    }
 
     @Override
     public Date previousPeriodEndDate(Date date) {
@@ -163,9 +160,8 @@ public class CalendarPeriod extends Calendar {
     public Date nextPeriodStartDate(Date date) {
         return null;
     }
-    
-	public static boolean isValidPeriodUnit(Integer unit) {
-		return VALID_PERIOD_UNITS.contains(unit);
-	}
-	
+
+    public static boolean isValidPeriodUnit(Integer unit) {
+        return VALID_PERIOD_UNITS.contains(unit);
+    }
 }

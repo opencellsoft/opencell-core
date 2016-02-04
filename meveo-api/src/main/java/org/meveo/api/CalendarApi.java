@@ -1,7 +1,6 @@
 package org.meveo.api;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -9,11 +8,13 @@ import javax.inject.Inject;
 
 import org.meveo.api.dto.CalendarDateIntervalDto;
 import org.meveo.api.dto.CalendarDto;
+import org.meveo.api.dto.CalendarTypeEnum;
 import org.meveo.api.dto.DayInYearDto;
 import org.meveo.api.dto.HourInDayDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -22,7 +23,6 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
 import org.meveo.model.catalog.CalendarInterval;
-import org.meveo.model.catalog.CalendarInterval.CalendarIntervalTypeEnum;
 import org.meveo.model.catalog.CalendarJoin;
 import org.meveo.model.catalog.CalendarJoin.CalendarJoinTypeEnum;
 import org.meveo.model.catalog.CalendarPeriod;
@@ -51,213 +51,242 @@ public class CalendarApi extends BaseApi {
     private HourInDayService hourInDayService;
 
     public void create(CalendarDto postData, User currentUser) throws MeveoApiException {
-        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getCalendarType())) {
-            Provider provider = currentUser.getProvider();
 
-            if (calendarService.findByCode(postData.getCode(), provider) != null) {
-                throw new EntityAlreadyExistsException(Calendar.class, postData.getCode());
-            }
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getCalendarType())) {
+            missingParameters.add("calendarType");
+        }
 
-            if ("YEARLY".equalsIgnoreCase(postData.getCalendarType())) {
-
-                CalendarYearly calendar = new CalendarYearly();
-                calendar.setCode(postData.getCode());
-                calendar.setDescription(postData.getDescription());
-                if (postData.getDays() != null && postData.getDays().size() > 0) {
-                    List<DayInYear> days = new ArrayList<DayInYear>();
-                    for (DayInYearDto d : postData.getDays()) {
-                        try {
-                            DayInYear dayInYear = dayInYearService.findByMonthAndDay(MonthEnum.valueOf(d.getMonth()), d.getDay());
-                            if (dayInYear != null) {
-                                days.add(dayInYear);
-                            }
-                        } catch (IllegalArgumentException e) {
-                            log.warn("failed to find by month and day", e);
-                        }
-                    }
-
-                    calendar.setDays(days);
-                }
-
-                calendarService.create(calendar, currentUser, provider);
-
-            } else if ("DAILY".equalsIgnoreCase(postData.getCalendarType())) {
-
-                CalendarDaily calendar = new CalendarDaily();
-                calendar.setCode(postData.getCode());
-                calendar.setDescription(postData.getDescription());
-
-                if (postData.getHours() != null && postData.getHours().size() > 0) {
-                    List<HourInDay> hours = new ArrayList<HourInDay>();
-                    for (HourInDayDto d : postData.getHours()) {
-                        HourInDay hourInDay = hourInDayService.findByHourAndMin(d.getHour(), d.getMin());
-                        if (hourInDay != null) {
-                            hours.add(hourInDay);
-                        }
-                    }
-
-                    calendar.setHours(hours);
-                }
-
-                calendarService.create(calendar, currentUser, provider);
-
-            } else if ("PERIOD".equalsIgnoreCase(postData.getCalendarType())) {
-            	
-				if (StringUtils.isBlank(postData.getPeriodUnit())) {
-					missingParameters.add("periodUnit");
-					throw new MissingParameterException(getMissingParametersExceptionMessage());
-				}
-				
-				if(!CalendarPeriod.isValidPeriodUnit(postData.getPeriodUnit())) {
-					throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid periodUnit value. Must be="
-							+ Arrays.toString(CalendarPeriod.VALID_PERIOD_UNITS.toArray()));
-				}
-
-                CalendarPeriod calendar = new CalendarPeriod();
-                calendar.setCode(postData.getCode());
-                calendar.setDescription(postData.getDescription());
-                calendar.setPeriodLength(postData.getPeriodLength());
-                calendar.setNbPeriods(postData.getNbPeriods());
-                calendar.setPeriodUnit(postData.getPeriodUnit());
-
-                calendarService.create(calendar, currentUser, provider);
-                            
-            } else if ("INTERVAL".equalsIgnoreCase(postData.getCalendarType())) {
-
-                CalendarInterval calendar = new CalendarInterval();
-                calendar.setCode(postData.getCode());
-                calendar.setDescription(postData.getDescription());
-                calendar.setIntervalType(CalendarIntervalTypeEnum.valueOf(postData.getIntervalType()));
-
-                if (postData.getIntervals() != null && postData.getIntervals().size() > 0) {
-                    List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
-                    for (CalendarDateIntervalDto interval : postData.getIntervals()) {
-                            intervals.add(new CalendarDateInterval(calendar, interval.getIntervalBegin(), interval.getIntervalEnd()));
-                    }
-
-                    calendar.setIntervals(intervals);
-                }
-
-                calendarService.create(calendar, currentUser, provider);
-
-            } else if ("JOIN".equalsIgnoreCase(postData.getCalendarType())) {
-
-                Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code(), provider);
-                Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code(), provider);
-
-                CalendarJoin calendar = new CalendarJoin();
-                calendar.setCode(postData.getCode());
-                calendar.setDescription(postData.getDescription());
-                calendar.setJoinType(CalendarJoinTypeEnum.valueOf(postData.getJoinType()));
-                calendar.setJoinCalendar1(cal1);
-                calendar.setJoinCalendar2(cal2);
-
-                calendarService.create(calendar, currentUser, provider);
-            } else {
-            	throw new BusinessApiException("invalid calendar type, possible values YEARLY, DAILY, PERIOD, INTERVAL, JOIN");
-            }
-            
-
-        } else {
-            if (StringUtils.isBlank(postData.getCode())) {
-                missingParameters.add("code");
-            }
-            if (StringUtils.isBlank(postData.getCalendarType())) {
-                missingParameters.add("calendarType");
-            }
-            
+        if (!missingParameters.isEmpty()) {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
+
+        Provider provider = currentUser.getProvider();
+
+        if (calendarService.findByCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(Calendar.class, postData.getCode());
+        }
+
+        if (postData.getCalendarType() == CalendarTypeEnum.YEARLY) {
+
+            CalendarYearly calendar = new CalendarYearly();
+            calendar.setCode(postData.getCode());
+            calendar.setDescription(postData.getDescription());
+            if (postData.getDays() != null && postData.getDays().size() > 0) {
+                List<DayInYear> days = new ArrayList<DayInYear>();
+                for (DayInYearDto d : postData.getDays()) {
+                    try {
+                        DayInYear dayInYear = dayInYearService.findByMonthAndDay(MonthEnum.valueOf(d.getMonth()), d.getDay());
+                        if (dayInYear != null) {
+                            days.add(dayInYear);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        log.warn("failed to find by month and day", e);
+                    }
+                }
+
+                calendar.setDays(days);
+            }
+
+            calendarService.create(calendar, currentUser, provider);
+
+        } else if (postData.getCalendarType() == CalendarTypeEnum.DAILY) {
+
+            CalendarDaily calendar = new CalendarDaily();
+            calendar.setCode(postData.getCode());
+            calendar.setDescription(postData.getDescription());
+
+            if (postData.getHours() != null && postData.getHours().size() > 0) {
+                List<HourInDay> hours = new ArrayList<HourInDay>();
+                for (HourInDayDto d : postData.getHours()) {
+                    HourInDay hourInDay = hourInDayService.findByHourAndMin(d.getHour(), d.getMin());
+                    if (hourInDay == null) {
+                        hourInDay = new HourInDay(d.getHour(), d.getMin());
+                    }
+                    hours.add(hourInDay);
+                }
+
+                calendar.setHours(hours);
+            }
+
+            calendarService.create(calendar, currentUser, provider);
+
+        } else if (postData.getCalendarType() == CalendarTypeEnum.PERIOD) {
+
+            if (StringUtils.isBlank(postData.getPeriodUnit())) {
+                missingParameters.add("periodUnit");
+                throw new MissingParameterException(getMissingParametersExceptionMessage());
+            }
+
+            CalendarPeriod calendar = new CalendarPeriod();
+            calendar.setCode(postData.getCode());
+            calendar.setDescription(postData.getDescription());
+            calendar.setPeriodLength(postData.getPeriodLength());
+            calendar.setNbPeriods(postData.getNbPeriods());
+            calendar.setPeriodUnit(postData.getPeriodUnit().getUnitValue());
+
+            calendarService.create(calendar, currentUser, provider);
+
+        } else if (postData.getCalendarType() == CalendarTypeEnum.INTERVAL) {
+
+            CalendarInterval calendar = new CalendarInterval();
+            calendar.setCode(postData.getCode());
+            calendar.setDescription(postData.getDescription());
+            calendar.setIntervalType(postData.getIntervalType());
+
+            if (postData.getIntervals() != null && postData.getIntervals().size() > 0) {
+                List<CalendarDateInterval> intervals = new ArrayList<CalendarDateInterval>();
+                for (CalendarDateIntervalDto interval : postData.getIntervals()) {
+                    intervals.add(new CalendarDateInterval(calendar, interval.getIntervalBegin(), interval.getIntervalEnd()));
+                }
+
+                calendar.setIntervals(intervals);
+            }
+
+            calendarService.create(calendar, currentUser, provider);
+
+        } else if (postData.getCalendarType().isJoin()) {
+
+            if (StringUtils.isBlank(postData.getJoinCalendar1Code())) {
+                missingParameters.add("joinCalendar1Code");
+            }
+            if (StringUtils.isBlank(postData.getJoinCalendar2Code())) {
+                missingParameters.add("joinCalendar2Code");
+            }
+
+            if (!missingParameters.isEmpty()) {
+                throw new MissingParameterException(getMissingParametersExceptionMessage());
+            }
+
+            Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code(), provider);
+            Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code(), provider);
+
+            if (cal1 == null) {
+                throw new InvalidParameterException("joinCalendar1Code", postData.getJoinCalendar1Code());
+            }
+            if (cal2 == null) {
+                throw new InvalidParameterException("joinCalendar2Code", postData.getJoinCalendar2Code());
+            }
+
+            CalendarJoin calendar = new CalendarJoin();
+            calendar.setCode(postData.getCode());
+            calendar.setDescription(postData.getDescription());
+            calendar.setJoinType(CalendarJoinTypeEnum.valueOf(postData.getCalendarType().name()));
+            calendar.setJoinCalendar1(cal1);
+            calendar.setJoinCalendar2(cal2);
+
+            calendarService.create(calendar, currentUser, provider);
+        } else {
+            throw new BusinessApiException("invalid calendar type, possible values YEARLY, DAILY, PERIOD, INTERVAL, JOIN");
+        }
+
     }
 
     public void update(CalendarDto postData, User currentUser) throws MeveoApiException {
-        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getCalendarType())) {
-            Provider provider = currentUser.getProvider();
 
-            Calendar calendar = calendarService.findByCode(postData.getCode(), provider);
-            if (calendar == null) {
-                throw new EntityDoesNotExistsException(Calendar.class, postData.getCode());
-            }
-
-            calendar.setDescription(postData.getDescription());
-
-            if (calendar instanceof CalendarYearly) {
-                if (postData.getDays() != null && postData.getDays().size() > 0) {
-                    List<DayInYear> days = new ArrayList<DayInYear>();
-                    for (DayInYearDto d : postData.getDays()) {
-                        try {
-                            DayInYear dayInYear = dayInYearService.findByMonthAndDay(MonthEnum.valueOf(d.getMonth()), d.getDay());
-                            if (dayInYear != null) {
-                                days.add(dayInYear);
-                            }
-                        } catch (IllegalArgumentException e) {
-                            log.warn("failed to find by month and day", e);
-                        }
-                    }
-
-                    ((CalendarYearly) calendar).setDays(days);
-                }
-
-            } else if (calendar instanceof CalendarYearly) {
-                if (postData.getHours() != null && postData.getHours().size() > 0) {
-                    List<HourInDay> hours = new ArrayList<HourInDay>();
-                    for (HourInDayDto d : postData.getHours()) {
-                        HourInDay hourInDay = hourInDayService.findByHourAndMin(d.getHour(), d.getMin());
-                        if (hourInDay != null) {
-                            hours.add(hourInDay);
-                        }
-                    }
-
-                    ((CalendarDaily) calendar).setHours(hours);
-                }
-
-            } else if (calendar instanceof CalendarPeriod) {
-				
-				if(!StringUtils.isBlank(postData.getPeriodUnit()) && !CalendarPeriod.isValidPeriodUnit(postData.getPeriodUnit())) {
-					throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid periodUnit value. Must be =[" + CalendarPeriod.VALID_PERIOD_UNITS.toArray()
-							+ "]");
-				}
-
-                ((CalendarPeriod) calendar).setPeriodLength(postData.getPeriodLength());
-                ((CalendarPeriod) calendar).setNbPeriods(postData.getNbPeriods());
-				if (!StringUtils.isBlank(postData.getPeriodUnit())) {
-					((CalendarPeriod) calendar).setPeriodUnit(postData.getPeriodUnit());
-				}
-            
-            } else if (calendar instanceof CalendarInterval) {
-
-                CalendarInterval calendarInterval = (CalendarInterval) calendar;
-                calendarInterval.setIntervalType(CalendarIntervalTypeEnum.valueOf(postData.getIntervalType()));
-
-                calendarInterval.getIntervals().clear();
-                
-                if (postData.getIntervals() != null && postData.getIntervals().size() > 0) {
-                    for (CalendarDateIntervalDto interval : postData.getIntervals()) {
-                        calendarInterval.getIntervals().add(new CalendarDateInterval(calendarInterval, interval.getIntervalBegin(), interval.getIntervalEnd()));
-                    }
-                }
-
-            } else if (calendar instanceof CalendarJoin) {
-
-                Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code(), provider);
-                Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code(), provider);
-
-                CalendarJoin calendarJoin = (CalendarJoin) calendar;
-                calendarJoin.setJoinType(CalendarJoinTypeEnum.valueOf(postData.getJoinType()));
-                calendarJoin.setJoinCalendar1(cal1);
-                calendarJoin.setJoinCalendar2(cal2);
-            }
-
-            calendarService.update(calendar, currentUser);
-
-        } else {
-            if (StringUtils.isBlank(postData.getCode())) {
-                missingParameters.add("code");
-            }
-            if (StringUtils.isBlank(postData.getCalendarType())) {
-                missingParameters.add("calendarType");
-            }
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
         }
+        if (StringUtils.isBlank(postData.getCalendarType())) {
+            missingParameters.add("calendarType");
+        }
+
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        Provider provider = currentUser.getProvider();
+
+        Calendar calendar = calendarService.findByCode(postData.getCode(), provider);
+        if (calendar == null) {
+            throw new EntityDoesNotExistsException(Calendar.class, postData.getCode());
+        }
+
+        calendar.setDescription(postData.getDescription());
+
+        if (calendar instanceof CalendarYearly) {
+            if (postData.getDays() != null && postData.getDays().size() > 0) {
+                List<DayInYear> days = new ArrayList<DayInYear>();
+                for (DayInYearDto d : postData.getDays()) {
+                    try {
+                        DayInYear dayInYear = dayInYearService.findByMonthAndDay(MonthEnum.valueOf(d.getMonth()), d.getDay());
+                        if (dayInYear != null) {
+                            days.add(dayInYear);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        log.warn("failed to find by month and day", e);
+                    }
+                }
+
+                ((CalendarYearly) calendar).setDays(days);
+            }
+
+        } else if (calendar instanceof CalendarYearly) {
+            if (postData.getHours() != null && postData.getHours().size() > 0) {
+                List<HourInDay> hours = new ArrayList<HourInDay>();
+                for (HourInDayDto d : postData.getHours()) {
+                    HourInDay hourInDay = hourInDayService.findByHourAndMin(d.getHour(), d.getMin());
+                    if (hourInDay != null) {
+                        hours.add(hourInDay);
+                    }
+                }
+
+                ((CalendarDaily) calendar).setHours(hours);
+            }
+
+        } else if (calendar instanceof CalendarPeriod) {
+
+            ((CalendarPeriod) calendar).setPeriodLength(postData.getPeriodLength());
+            ((CalendarPeriod) calendar).setNbPeriods(postData.getNbPeriods());
+            if (!StringUtils.isBlank(postData.getPeriodUnit())) {
+                ((CalendarPeriod) calendar).setPeriodUnit(postData.getPeriodUnit().getUnitValue());
+            }
+
+        } else if (calendar instanceof CalendarInterval) {
+
+            CalendarInterval calendarInterval = (CalendarInterval) calendar;
+            calendarInterval.setIntervalType(postData.getIntervalType());
+
+            calendarInterval.getIntervals().clear();
+
+            if (postData.getIntervals() != null && postData.getIntervals().size() > 0) {
+                for (CalendarDateIntervalDto interval : postData.getIntervals()) {
+                    calendarInterval.getIntervals().add(new CalendarDateInterval(calendarInterval, interval.getIntervalBegin(), interval.getIntervalEnd()));
+                }
+            }
+
+        } else if (calendar instanceof CalendarJoin) {
+
+            if (StringUtils.isBlank(postData.getJoinCalendar1Code())) {
+                missingParameters.add("joinCalendar1Code");
+            }
+            if (StringUtils.isBlank(postData.getJoinCalendar2Code())) {
+                missingParameters.add("joinCalendar2Code");
+            }
+
+            if (!missingParameters.isEmpty()) {
+                throw new MissingParameterException(getMissingParametersExceptionMessage());
+            }
+
+            Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code(), provider);
+            Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code(), provider);
+
+            if (cal1 == null) {
+                throw new InvalidParameterException("joinCalendar1Code", postData.getJoinCalendar1Code());
+            }
+            if (cal2 == null) {
+                throw new InvalidParameterException("joinCalendar2Code", postData.getJoinCalendar2Code());
+            }
+
+            CalendarJoin calendarJoin = (CalendarJoin) calendar;
+            calendarJoin.setJoinType(CalendarJoinTypeEnum.valueOf(postData.getCalendarType().name()));
+            calendarJoin.setJoinCalendar1(cal1);
+            calendarJoin.setJoinCalendar2(cal2);
+        }
+
+        calendarService.update(calendar, currentUser);
     }
 
     public CalendarDto find(String calendarCode, Provider provider) throws MeveoApiException {
@@ -297,17 +326,16 @@ public class CalendarApi extends BaseApi {
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
     }
-    
+
     public void createOrUpdate(CalendarDto postData, User currentUser) throws MeveoApiException {
-    	Calendar calendar = calendarService.findByCode(postData.getCode(), 
-    			currentUser.getProvider());
-    	if (calendar == null) {
-    		//create
-    		create(postData, currentUser);
-    	} else {
-    		//update
-    		update(postData, currentUser);
-    	}
+        Calendar calendar = calendarService.findByCode(postData.getCode(), currentUser.getProvider());
+        if (calendar == null) {
+            // create
+            create(postData, currentUser);
+        } else {
+            // update
+            update(postData, currentUser);
+        }
     }
 
 }

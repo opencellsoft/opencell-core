@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.meveo.model.catalog.CalendarInterval.CalendarIntervalTypeEnum;
 import org.meveo.model.catalog.CalendarJoin.CalendarJoinTypeEnum;
 import org.meveo.model.shared.DateUtils;
 

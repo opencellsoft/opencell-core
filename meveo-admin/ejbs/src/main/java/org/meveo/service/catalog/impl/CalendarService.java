@@ -23,7 +23,6 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 

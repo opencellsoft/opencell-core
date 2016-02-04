@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.model.BaseProviderlessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.catalog.CalendarInterval.CalendarIntervalTypeEnum;
 
 /**
  * Represents a single interval of time for Interval based calendar. Time can be specified as weekday, hour/minute, month/day

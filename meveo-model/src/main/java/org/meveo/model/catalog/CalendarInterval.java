@@ -43,14 +43,6 @@ import javax.persistence.OrderBy;
 @DiscriminatorValue("INTERVAL")
 public class CalendarInterval extends Calendar {
 
-    public enum CalendarIntervalTypeEnum {
-        DAY, HOUR, WDAY;
-
-        public String getLabel() {
-            return "CalendarIntervalTypeEnum." + this.name();
-        }
-    }
-
     private static final long serialVersionUID = 1L;
 
     @Column(name = "INTERVAL_TYPE")

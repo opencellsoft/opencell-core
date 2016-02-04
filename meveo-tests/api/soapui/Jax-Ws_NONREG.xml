@@ -6875,16 +6875,34 @@
          </user>
       </ws:createOrUpdateUser>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateUser"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://meveo.cloudapp.net/meveo/CatalogWs?wsdl" id="4ca1b71a-5a39-44e5-a167-afc247acc785" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://meveo.cloudapp.net/meveo/CatalogWs?wsdl"><con:part><con:url>http://meveo.cloudapp.net/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
-  <wsdl:import location="http://meveo.cloudapp.net/meveo/CatalogWs?wsdl=CatalogWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateUser"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/meveo/CatalogWs?wsdl" id="4ca1b71a-5a39-44e5-a167-afc247acc785" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/CatalogWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+  <wsdl:import location="http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="CatalogWsSoapBinding" type="ns1:CatalogWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="createBomEntity">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createBomEntity">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createBomEntityResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeTriggeredEdr">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeTriggeredEdr">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeTriggeredEdrResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findBomEntity">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findBomEntity">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findBomEntityResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -6960,6 +6978,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateBomEntity">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateBomEntity">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateBomEntityResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateTriggeredEdr">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateTriggeredEdr">
@@ -6978,21 +7005,21 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findServiceTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findServiceTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findServiceTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createServiceTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createServiceTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createServiceTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findServiceTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findServiceTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findServiceTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -7032,6 +7059,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateBomEntity">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateBomEntity">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateBomEntityResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateOfferTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateOfferTemplate">
@@ -7068,21 +7104,120 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findOneShotChargeTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findOneShotChargeTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findOneShotChargeTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createOrUpdateServiceTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateServiceTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createOrUpdateServiceTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOfferFromBOM">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOfferFromBOM">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOfferFromBOMResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeCounterTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeCounterTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeCounterTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCounterTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createCounterTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createCounterTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listOneShotChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listOneShotChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listOneShotChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findOfferTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findOfferTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findOfferTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeBomEntity">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeBomEntity">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeBomEntityResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createPricePlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createPricePlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createPricePlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findCounterTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findCounterTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findCounterTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateServiceTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateServiceTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateServiceTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findTriggeredEdr">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findTriggeredEdr">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findTriggeredEdrResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateRecurringChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateRecurringChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateRecurringChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findOneShotChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findOneShotChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findOneShotChargeTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -7104,15 +7239,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="removeCounterTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeCounterTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="removeCounterTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findUsageChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findUsageChargeTemplate">
@@ -7122,39 +7248,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createCounterTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createCounterTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createCounterTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createOrUpdateUsageChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateUsageChargeTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createOrUpdateUsageChargeTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findOfferTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findOfferTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findOfferTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="listOneShotChargeTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="listOneShotChargeTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="listOneShotChargeTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -7194,33 +7293,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createPricePlan">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createPricePlan">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createPricePlanResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="findCounterTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findCounterTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findCounterTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateServiceTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateServiceTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateServiceTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findChargeTemplate">
@@ -7230,30 +7302,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findTriggeredEdr">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findTriggeredEdr">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findTriggeredEdrResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeOfferTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeOfferTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeOfferTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateRecurringChargeTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateRecurringChargeTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateRecurringChargeTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -7278,19 +7332,22 @@
   </wsdl:binding>
   <wsdl:service name="CatalogWs">
     <wsdl:port binding="tns:CatalogWsSoapBinding" name="CatalogWsImplPort">
-      <soap:address location="http://meveo.cloudapp.net/meveo/CatalogWs"/>
+      <soap:address location="http://localhost:8080/meveo/CatalogWs"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://meveo.cloudapp.net/meveo/CatalogWs?wsdl=CatalogWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
-      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="ActionStatus" type="tns:ActionStatus"/>
+      <xs:element name="BomOffer" type="tns:bomOfferDto"/>
+      <xs:element name="BusinessOfferModel" type="tns:businessOfferModelDto"/>
       <xs:element name="ChargeTemplate" type="tns:chargeTemplateDto"/>
       <xs:element name="CounterTemplate" type="tns:counterTemplateDto"/>
       <xs:element name="CustomField" type="tns:customFieldDto"/>
       <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
       <xs:element name="CustomFields" type="tns:customFieldsDto"/>
       <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
+      <xs:element name="GetBomEntityResponse" type="tns:getBomEntityResponseDto"/>
       <xs:element name="GetChargeTemplateResponse" type="tns:getChargeTemplateResponseDto"/>
       <xs:element name="GetCounterTemplateResponse" type="tns:getCounterTemplateResponseDto"/>
       <xs:element name="GetOfferTemplateResponse" type="tns:getOfferTemplateResponseDto"/>
@@ -7313,12 +7370,18 @@
       <xs:element name="TriggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
       <xs:element name="TriggeredEdrTemplates" type="tns:triggeredEdrTemplatesDto"/>
       <xs:element name="UsageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+      <xs:element name="createBomEntity" type="tns:createBomEntity"/>
+      <xs:element name="createBomEntityResponse" type="tns:createBomEntityResponse"/>
       <xs:element name="createCounterTemplate" type="tns:createCounterTemplate"/>
       <xs:element name="createCounterTemplateResponse" type="tns:createCounterTemplateResponse"/>
+      <xs:element name="createOfferFromBOM" type="tns:createOfferFromBOM"/>
+      <xs:element name="createOfferFromBOMResponse" type="tns:createOfferFromBOMResponse"/>
       <xs:element name="createOfferTemplate" type="tns:createOfferTemplate"/>
       <xs:element name="createOfferTemplateResponse" type="tns:createOfferTemplateResponse"/>
       <xs:element name="createOneShotChargeTemplate" type="tns:createOneShotChargeTemplate"/>
       <xs:element name="createOneShotChargeTemplateResponse" type="tns:createOneShotChargeTemplateResponse"/>
+      <xs:element name="createOrUpdateBomEntity" type="tns:createOrUpdateBomEntity"/>
+      <xs:element name="createOrUpdateBomEntityResponse" type="tns:createOrUpdateBomEntityResponse"/>
       <xs:element name="createOrUpdateCounterTemplate" type="tns:createOrUpdateCounterTemplate"/>
       <xs:element name="createOrUpdateCounterTemplateResponse" type="tns:createOrUpdateCounterTemplateResponse"/>
       <xs:element name="createOrUpdateOfferTemplate" type="tns:createOrUpdateOfferTemplate"/>
@@ -7345,6 +7408,8 @@
       <xs:element name="createTriggeredEdrResponse" type="tns:createTriggeredEdrResponse"/>
       <xs:element name="createUsageChargeTemplate" type="tns:createUsageChargeTemplate"/>
       <xs:element name="createUsageChargeTemplateResponse" type="tns:createUsageChargeTemplateResponse"/>
+      <xs:element name="findBomEntity" type="tns:findBomEntity"/>
+      <xs:element name="findBomEntityResponse" type="tns:findBomEntityResponse"/>
       <xs:element name="findChargeTemplate" type="tns:findChargeTemplate"/>
       <xs:element name="findChargeTemplateResponse" type="tns:findChargeTemplateResponse"/>
       <xs:element name="findCounterTemplate" type="tns:findCounterTemplate"/>
@@ -7369,6 +7434,8 @@
       <xs:element name="listOneShotChargeTemplateResponse" type="tns:listOneShotChargeTemplateResponse"/>
       <xs:element name="listPricePlanByEventCode" type="tns:listPricePlanByEventCode"/>
       <xs:element name="listPricePlanByEventCodeResponse" type="tns:listPricePlanByEventCodeResponse"/>
+      <xs:element name="removeBomEntity" type="tns:removeBomEntity"/>
+      <xs:element name="removeBomEntityResponse" type="tns:removeBomEntityResponse"/>
       <xs:element name="removeCounterTemplate" type="tns:removeCounterTemplate"/>
       <xs:element name="removeCounterTemplateResponse" type="tns:removeCounterTemplateResponse"/>
       <xs:element name="removeOfferTemplate" type="tns:removeOfferTemplate"/>
@@ -7385,6 +7452,8 @@
       <xs:element name="removeTriggeredEdrResponse" type="tns:removeTriggeredEdrResponse"/>
       <xs:element name="removeUsageChargeTemplate" type="tns:removeUsageChargeTemplate"/>
       <xs:element name="removeUsageChargeTemplateResponse" type="tns:removeUsageChargeTemplateResponse"/>
+      <xs:element name="updateBomEntity" type="tns:updateBomEntity"/>
+      <xs:element name="updateBomEntityResponse" type="tns:updateBomEntityResponse"/>
       <xs:element name="updateCounterTemplate" type="tns:updateCounterTemplate"/>
       <xs:element name="updateCounterTemplateResponse" type="tns:updateCounterTemplateResponse"/>
       <xs:element name="updateOfferTemplate" type="tns:updateOfferTemplate"/>
@@ -7401,6 +7470,38 @@
       <xs:element name="updateTriggeredEdrResponse" type="tns:updateTriggeredEdrResponse"/>
       <xs:element name="updateUsageChargeTemplate" type="tns:updateUsageChargeTemplate"/>
       <xs:element name="updateUsageChargeTemplateResponse" type="tns:updateUsageChargeTemplateResponse"/>
+      <xs:complexType name="createBomEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="bomEntity" type="tns:businessOfferModelDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="businessOfferModelDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="offerTemplateCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="scriptCode" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="createBomEntityResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ActionStatus">
+        <xs:sequence>
+          <xs:element name="status" type="tns:actionStatusEnum"/>
+          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
+          <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="removeTriggeredEdr">
         <xs:sequence>
           <xs:element minOccurs="0" name="triggeredEdrCode" type="xs:string"/>
@@ -7408,14 +7509,31 @@
       </xs:complexType>
       <xs:complexType name="removeTriggeredEdrResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="actionStatus">
+      <xs:complexType name="findBomEntity">
         <xs:sequence>
-          <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
-          <xs:element name="message" type="xs:string"/>
+          <xs:element minOccurs="0" name="bomEntityCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findBomEntityResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getBomEntityResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBomEntityResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="bomEntity" type="tns:businessOfferModelDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeUsageChargeTemplate">
@@ -7425,7 +7543,7 @@
       </xs:complexType>
       <xs:complexType name="removeUsageChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeOneShotChargeTemplate">
@@ -7435,7 +7553,7 @@
       </xs:complexType>
       <xs:complexType name="removeOneShotChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeRecurringChargeTemplate">
@@ -7445,7 +7563,7 @@
       </xs:complexType>
       <xs:complexType name="removeRecurringChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOneShotChargeTemplate">
@@ -7464,20 +7582,25 @@
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="chargeTemplateDto">
-        <xs:sequence>
-          <xs:element name="invoiceSubCategory" type="xs:string"/>
-          <xs:element name="disabled" type="xs:boolean"/>
-          <xs:element minOccurs="0" name="amountEditable" type="xs:boolean"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
-          <xs:element minOccurs="0" name="inputUnitDescription" type="xs:string"/>
-          <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
-          <xs:element minOccurs="0" name="unitMultiplicator" type="xs:decimal"/>
-          <xs:element name="unitNbDecimal" type="xs:int"/>
-          <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
-          <xs:element minOccurs="0" name="triggeredEdrs" type="tns:triggeredEdrTemplatesDto"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="invoiceSubCategory" type="xs:string"/>
+              <xs:element name="disabled" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="amountEditable" type="xs:boolean"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
+              <xs:element minOccurs="0" name="inputUnitDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="unitMultiplicator" type="xs:decimal"/>
+              <xs:element name="unitNbDecimal" type="xs:int"/>
+              <xs:element minOccurs="0" name="roundingModeDtoEnum" type="tns:roundingModeDtoEnum"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+              <xs:element minOccurs="0" name="triggeredEdrs" type="tns:triggeredEdrTemplatesDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="languageDescriptionDto">
         <xs:sequence>
@@ -7520,7 +7643,6 @@
           <xs:element minOccurs="0" name="entityReferenceValue" type="tns:entityReferenceDto"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string"/>
         <xs:attribute name="valueDate" type="xs:dateTime"/>
         <xs:attribute name="valuePeriodStartDate" type="xs:dateTime"/>
         <xs:attribute name="valuePeriodEndDate" type="xs:dateTime"/>
@@ -7562,7 +7684,7 @@
       </xs:complexType>
       <xs:complexType name="createOneShotChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOfferTemplate">
@@ -7659,7 +7781,7 @@
       </xs:complexType>
       <xs:complexType name="createOfferTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updatePricePlan">
@@ -7698,7 +7820,7 @@
       </xs:complexType>
       <xs:complexType name="updatePricePlanResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdatePricePlan">
@@ -7708,7 +7830,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdatePricePlanResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateTriggeredEdr">
@@ -7718,7 +7840,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateTriggeredEdrResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateTriggeredEdr">
@@ -7728,7 +7850,17 @@
       </xs:complexType>
       <xs:complexType name="updateTriggeredEdrResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateBomEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="bomEntity" type="tns:businessOfferModelDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateBomEntityResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findServiceTemplate">
@@ -7750,11 +7882,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType abstract="true" name="baseResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="createServiceTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="serviceTemplate" type="tns:serviceTemplateDto"/>
@@ -7762,7 +7889,7 @@
       </xs:complexType>
       <xs:complexType name="createServiceTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCounterTemplate">
@@ -7785,7 +7912,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateCounterTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeServiceTemplate">
@@ -7795,7 +7922,7 @@
       </xs:complexType>
       <xs:complexType name="removeServiceTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createTriggeredEdr">
@@ -7805,7 +7932,7 @@
       </xs:complexType>
       <xs:complexType name="createTriggeredEdrResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findRecurringChargeTemplate">
@@ -7841,6 +7968,16 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="updateBomEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="bomEntity" type="tns:businessOfferModelDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateBomEntityResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createRecurringChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
@@ -7848,7 +7985,7 @@
       </xs:complexType>
       <xs:complexType name="createRecurringChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateOfferTemplate">
@@ -7858,7 +7995,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateOfferTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateUsageChargeTemplate">
@@ -7882,7 +8019,7 @@
       </xs:complexType>
       <xs:complexType name="updateUsageChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="index">
@@ -7890,27 +8027,8 @@
       </xs:complexType>
       <xs:complexType name="indexResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findOneShotChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="oneShotChargeTemplateCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findOneShotChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getOneShotChargeTemplateResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getOneShotChargeTemplateResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createOrUpdateRecurringChargeTemplate">
         <xs:sequence>
@@ -7919,7 +8037,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateRecurringChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateServiceTemplate">
@@ -7929,27 +8047,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateServiceTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateOneShotChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateOneShotChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateCounterTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateCounterTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCounterTemplate">
@@ -7959,61 +8057,65 @@
       </xs:complexType>
       <xs:complexType name="removeCounterTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="findUsageChargeTemplate">
+      <xs:complexType name="createOfferFromBOM">
         <xs:sequence>
-          <xs:element minOccurs="0" name="usageChargeTemplateCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="bomOffer" type="tns:bomOfferDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="findUsageChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getUsageChargeTemplateResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getUsageChargeTemplateResponseDto">
+      <xs:complexType name="bomOfferDto">
         <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
+          <xs:extension base="tns:baseDto">
             <xs:sequence>
-              <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+              <xs:element minOccurs="0" name="bomVersion" type="xs:string"/>
+              <xs:element name="offerCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="offerCustomFields" type="tns:customFieldsDto"/>
+              <xs:element minOccurs="0" name="serviceCodePrefix" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="servicesToActivate" nillable="true" type="xs:string"/>
+              <xs:element name="serviceCFVs">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element minOccurs="0" name="key" type="xs:string"/>
+                          <xs:element minOccurs="0" name="value" type="tns:customFieldsDto"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
             </xs:sequence>
+            <xs:attribute name="bomCode" type="xs:string" use="required"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="updateOfferTemplate">
+      <xs:complexType name="createOfferFromBOMResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateOfferTemplateResponse">
+      <xs:complexType name="findOfferTemplate">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="offerTemplateCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listPricePlanByEventCode">
+      <xs:complexType name="findOfferTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="eventCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="return" type="tns:getOfferTemplateResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listPricePlanByEventCodeResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:pricePlanMatrixesResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="pricePlanMatrixesResponseDto">
+      <xs:complexType name="getOfferTemplateResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="pricePlanMatrixes" type="tns:PricePlans"/>
+              <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="PricePlans">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="pricePlanMatrix" nillable="true" type="tns:pricePlanDto"/>
-        </xs:sequence>
       </xs:complexType>
       <xs:complexType name="listOneShotChargeTemplate">
         <xs:sequence>
@@ -8044,35 +8146,6 @@
           <xs:element minOccurs="0" name="taxDescription" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="findOfferTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="offerTemplateCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findOfferTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getOfferTemplateResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getOfferTemplateResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateUsageChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateUsageChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="createCounterTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
@@ -8080,27 +8153,17 @@
       </xs:complexType>
       <xs:complexType name="createCounterTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createUsageChargeTemplate">
+      <xs:complexType name="removeBomEntity">
         <xs:sequence>
-          <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+          <xs:element minOccurs="0" name="bomEntityCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="createUsageChargeTemplateResponse">
+      <xs:complexType name="removeBomEntityResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateOneShotChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateOneShotChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createPricePlan">
@@ -8110,7 +8173,7 @@
       </xs:complexType>
       <xs:complexType name="createPricePlanResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findCounterTemplate">
@@ -8139,27 +8202,8 @@
       </xs:complexType>
       <xs:complexType name="updateServiceTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="chargeTemplateCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getChargeTemplateResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getChargeTemplateResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="chargeTemplate" type="tns:chargeTemplateDto"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="findTriggeredEdr">
         <xs:sequence>
@@ -8187,8 +8231,149 @@
       </xs:complexType>
       <xs:complexType name="updateRecurringChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findOneShotChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="oneShotChargeTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findOneShotChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getOneShotChargeTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getOneShotChargeTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updateOneShotChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateOneShotChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCounterTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCounterTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findUsageChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="usageChargeTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findUsageChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getUsageChargeTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getUsageChargeTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateUsageChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateUsageChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listPricePlanByEventCode">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="eventCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listPricePlanByEventCodeResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:pricePlanMatrixesResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="pricePlanMatrixesResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="pricePlanMatrixes" type="tns:PricePlans"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="PricePlans">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="pricePlanMatrix" nillable="true" type="tns:pricePlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateOfferTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateOfferTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createUsageChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createUsageChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOneShotChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOneShotChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="chargeTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getChargeTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getChargeTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="chargeTemplate" type="tns:chargeTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="removeOfferTemplate">
         <xs:sequence>
@@ -8197,7 +8382,7 @@
       </xs:complexType>
       <xs:complexType name="removeOfferTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findPricePlan">
@@ -8226,7 +8411,7 @@
       </xs:complexType>
       <xs:complexType name="removePricePlanResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:simpleType name="actionStatusEnum">
@@ -8235,22 +8420,38 @@
           <xs:enumeration value="FAIL"/>
         </xs:restriction>
       </xs:simpleType>
+      <xs:simpleType name="meveoApiErrorCodeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ENTITY_DOES_NOT_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="ENTITY_ALREADY_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="DELETE_REFERENCED_ENTITY_EXCEPTION"/>
+          <xs:enumeration value="MISSING_PARAMETER"/>
+          <xs:enumeration value="INVALID_PARAMETER"/>
+          <xs:enumeration value="INVALID_ENUM_VALUE"/>
+          <xs:enumeration value="DUPLICATE_ACCESS"/>
+          <xs:enumeration value="INSUFFICIENT_BALANCE"/>
+          <xs:enumeration value="GENERIC_API_EXCEPTION"/>
+          <xs:enumeration value="BUSINESS_API_EXCEPTION"/>
+          <xs:enumeration value="AUTHENTICATION_AUTHORIZATION_EXCEPTION"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="roundingModeDtoEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="NEAREST"/>
+          <xs:enumeration value="DOWN"/>
+          <xs:enumeration value="UP"/>
+        </xs:restriction>
+      </xs:simpleType>
     </xs:schema>
   </wsdl:types>
-  <wsdl:message name="findTriggeredEdr">
-    <wsdl:part element="ns1:findTriggeredEdr" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeServiceTemplateResponse">
-    <wsdl:part element="ns1:removeServiceTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createServiceTemplateResponse">
     <wsdl:part element="ns1:createServiceTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateRecurringChargeTemplate">
-    <wsdl:part element="ns1:updateRecurringChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:findRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateRecurringChargeTemplate">
+    <wsdl:part element="ns1:updateRecurringChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findUsageChargeTemplate">
     <wsdl:part element="ns1:findUsageChargeTemplate" name="parameters"></wsdl:part>
@@ -8261,26 +8462,23 @@
   <wsdl:message name="createOrUpdatePricePlan">
     <wsdl:part element="ns1:createOrUpdatePricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findTriggeredEdrResponse">
-    <wsdl:part element="ns1:findTriggeredEdrResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:removeRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findTriggeredEdrResponse">
+    <wsdl:part element="ns1:findTriggeredEdrResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findPricePlanResponse">
     <wsdl:part element="ns1:findPricePlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateTriggeredEdr">
-    <wsdl:part element="ns1:createOrUpdateTriggeredEdr" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateUsageChargeTemplateResponse">
-    <wsdl:part element="ns1:createOrUpdateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findOfferTemplateResponse">
-    <wsdl:part element="ns1:findOfferTemplateResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createOfferFromBOM">
+    <wsdl:part element="ns1:createOfferFromBOM" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOfferTemplate">
     <wsdl:part element="ns1:createOfferTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findOfferTemplateResponse">
+    <wsdl:part element="ns1:findOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateTriggeredEdrResponse">
     <wsdl:part element="ns1:updateTriggeredEdrResponse" name="parameters"></wsdl:part>
@@ -8288,29 +8486,17 @@
   <wsdl:message name="updateUsageChargeTemplateResponse">
     <wsdl:part element="ns1:updateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createBomEntity">
+    <wsdl:part element="ns1:createBomEntity" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findServiceTemplate">
     <wsdl:part element="ns1:findServiceTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateCounterTemplateResponse">
-    <wsdl:part element="ns1:updateCounterTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOfferTemplateResponse">
-    <wsdl:part element="ns1:createOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createRecurringChargeTemplate">
     <wsdl:part element="ns1:createRecurringChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateCounterTemplateResponse">
-    <wsdl:part element="ns1:createOrUpdateCounterTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateOfferTemplate">
-    <wsdl:part element="ns1:createOrUpdateOfferTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateRecurringChargeTemplateResponse">
-    <wsdl:part element="ns1:updateRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findUsageChargeTemplateResponse">
-    <wsdl:part element="ns1:findUsageChargeTemplateResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createOfferTemplateResponse">
+    <wsdl:part element="ns1:createOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:createOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
@@ -8318,23 +8504,23 @@
   <wsdl:message name="createPricePlan">
     <wsdl:part element="ns1:createPricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateOneShotChargeTemplateResponse">
-    <wsdl:part element="ns1:createOrUpdateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findRecurringChargeTemplate">
     <wsdl:part element="ns1:findRecurringChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateOneShotChargeTemplate">
     <wsdl:part element="ns1:createOrUpdateOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="listPricePlanByEventCodeResponse">
-    <wsdl:part element="ns1:listPricePlanByEventCodeResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:removeOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="listPricePlanByEventCodeResponse">
+    <wsdl:part element="ns1:listPricePlanByEventCodeResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createTriggeredEdr">
     <wsdl:part element="ns1:createTriggeredEdr" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBomEntityResponse">
+    <wsdl:part element="ns1:createBomEntityResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdatePricePlanResponse">
     <wsdl:part element="ns1:createOrUpdatePricePlanResponse" name="parameters"></wsdl:part>
@@ -8345,29 +8531,20 @@
   <wsdl:message name="createPricePlanResponse">
     <wsdl:part element="ns1:createPricePlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeRecurringChargeTemplate">
-    <wsdl:part element="ns1:removeRecurringChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:createRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeUsageChargeTemplate">
-    <wsdl:part element="ns1:removeUsageChargeTemplate" name="parameters"></wsdl:part>
+  <wsdl:message name="removeRecurringChargeTemplate">
+    <wsdl:part element="ns1:removeRecurringChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeBomEntity">
+    <wsdl:part element="ns1:removeBomEntity" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listOneShotChargeTemplate">
     <wsdl:part element="ns1:listOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOneShotChargeTemplate">
-    <wsdl:part element="ns1:createOneShotChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateOfferTemplateResponse">
-    <wsdl:part element="ns1:updateOfferTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateServiceTemplate">
     <wsdl:part element="ns1:createOrUpdateServiceTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeCounterTemplate">
-    <wsdl:part element="ns1:removeCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findServiceTemplateResponse">
     <wsdl:part element="ns1:findServiceTemplateResponse" name="parameters"></wsdl:part>
@@ -8381,53 +8558,20 @@
   <wsdl:message name="createUsageChargeTemplateResponse">
     <wsdl:part element="ns1:createUsageChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findChargeTemplateResponse">
-    <wsdl:part element="ns1:findChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeOfferTemplateResponse">
-    <wsdl:part element="ns1:removeOfferTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateServiceTemplate">
-    <wsdl:part element="ns1:updateServiceTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateServiceTemplateResponse">
-    <wsdl:part element="ns1:createOrUpdateServiceTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removePricePlan">
-    <wsdl:part element="ns1:removePricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCounterTemplate">
     <wsdl:part element="ns1:createCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createUsageChargeTemplate">
-    <wsdl:part element="ns1:createUsageChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateTriggeredEdr">
     <wsdl:part element="ns1:updateTriggeredEdr" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateCounterTemplate">
-    <wsdl:part element="ns1:updateCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateOfferTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findPricePlan">
-    <wsdl:part element="ns1:findPricePlan" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateOneShotChargeTemplateResponse">
-    <wsdl:part element="ns1:updateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="listPricePlanByEventCode">
-    <wsdl:part element="ns1:listPricePlanByEventCode" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateUsageChargeTemplate">
     <wsdl:part element="ns1:createOrUpdateUsageChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateTriggeredEdrResponse">
-    <wsdl:part element="ns1:createOrUpdateTriggeredEdrResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findOfferTemplate">
     <wsdl:part element="ns1:findOfferTemplate" name="parameters"></wsdl:part>
@@ -8435,11 +8579,11 @@
   <wsdl:message name="updateOneShotChargeTemplate">
     <wsdl:part element="ns1:updateOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateUsageChargeTemplate">
-    <wsdl:part element="ns1:updateUsageChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createServiceTemplate">
     <wsdl:part element="ns1:createServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findBomEntityResponse">
+    <wsdl:part element="ns1:findBomEntityResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateRecurringChargeTemplate">
     <wsdl:part element="ns1:createOrUpdateRecurringChargeTemplate" name="parameters"></wsdl:part>
@@ -8453,26 +8597,17 @@
   <wsdl:message name="removeUsageChargeTemplateResponse">
     <wsdl:part element="ns1:removeUsageChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findCounterTemplateResponse">
-    <wsdl:part element="ns1:findCounterTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeCounterTemplateResponse">
     <wsdl:part element="ns1:removeCounterTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeServiceTemplate">
-    <wsdl:part element="ns1:removeServiceTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateOfferTemplate">
-    <wsdl:part element="ns1:updateOfferTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="index">
     <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeOneShotChargeTemplate">
-    <wsdl:part element="ns1:removeOneShotChargeTemplate" name="parameters"></wsdl:part>
+  <wsdl:message name="updateOfferTemplate">
+    <wsdl:part element="ns1:updateOfferTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateServiceTemplateResponse">
     <wsdl:part element="ns1:updateServiceTemplateResponse" name="parameters"></wsdl:part>
@@ -8480,14 +8615,17 @@
   <wsdl:message name="createOrUpdateCounterTemplate">
     <wsdl:part element="ns1:createOrUpdateCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateBomEntity">
+    <wsdl:part element="ns1:createOrUpdateBomEntity" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeTriggeredEdrResponse">
     <wsdl:part element="ns1:removeTriggeredEdrResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeOfferTemplate">
-    <wsdl:part element="ns1:removeOfferTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="listOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:listOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeOfferTemplate">
+    <wsdl:part element="ns1:removeOfferTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removePricePlanResponse">
     <wsdl:part element="ns1:removePricePlanResponse" name="parameters"></wsdl:part>
@@ -8498,13 +8636,126 @@
   <wsdl:message name="updatePricePlan">
     <wsdl:part element="ns1:updatePricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeServiceTemplateResponse">
+    <wsdl:part element="ns1:removeServiceTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findTriggeredEdr">
+    <wsdl:part element="ns1:findTriggeredEdr" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateTriggeredEdr">
+    <wsdl:part element="ns1:createOrUpdateTriggeredEdr" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateUsageChargeTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCounterTemplateResponse">
+    <wsdl:part element="ns1:updateCounterTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCounterTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateCounterTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateOfferTemplate">
+    <wsdl:part element="ns1:createOrUpdateOfferTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateRecurringChargeTemplateResponse">
+    <wsdl:part element="ns1:updateRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findUsageChargeTemplateResponse">
+    <wsdl:part element="ns1:findUsageChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateOneShotChargeTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBomEntity">
+    <wsdl:part element="ns1:updateBomEntity" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeUsageChargeTemplate">
+    <wsdl:part element="ns1:removeUsageChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOfferFromBOMResponse">
+    <wsdl:part element="ns1:createOfferFromBOMResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOneShotChargeTemplate">
+    <wsdl:part element="ns1:createOneShotChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateOfferTemplateResponse">
+    <wsdl:part element="ns1:updateOfferTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCounterTemplate">
+    <wsdl:part element="ns1:removeCounterTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findChargeTemplateResponse">
+    <wsdl:part element="ns1:findChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeOfferTemplateResponse">
+    <wsdl:part element="ns1:removeOfferTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateServiceTemplate">
+    <wsdl:part element="ns1:updateServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateServiceTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateServiceTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removePricePlan">
+    <wsdl:part element="ns1:removePricePlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createUsageChargeTemplate">
+    <wsdl:part element="ns1:createUsageChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBomEntityResponse">
+    <wsdl:part element="ns1:updateBomEntityResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCounterTemplate">
+    <wsdl:part element="ns1:updateCounterTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findPricePlan">
+    <wsdl:part element="ns1:findPricePlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateOneShotChargeTemplateResponse">
+    <wsdl:part element="ns1:updateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listPricePlanByEventCode">
+    <wsdl:part element="ns1:listPricePlanByEventCode" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateTriggeredEdrResponse">
+    <wsdl:part element="ns1:createOrUpdateTriggeredEdrResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateBomEntityResponse">
+    <wsdl:part element="ns1:createOrUpdateBomEntityResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateUsageChargeTemplate">
+    <wsdl:part element="ns1:updateUsageChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findBomEntity">
+    <wsdl:part element="ns1:findBomEntity" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCounterTemplateResponse">
+    <wsdl:part element="ns1:findCounterTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeServiceTemplate">
+    <wsdl:part element="ns1:removeServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeOneShotChargeTemplate">
+    <wsdl:part element="ns1:removeOneShotChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeBomEntityResponse">
+    <wsdl:part element="ns1:removeBomEntityResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createTriggeredEdrResponse">
     <wsdl:part element="ns1:createTriggeredEdrResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:portType name="CatalogWs">
+    <wsdl:operation name="createBomEntity">
+      <wsdl:input message="ns1:createBomEntity" name="createBomEntity"></wsdl:input>
+      <wsdl:output message="ns1:createBomEntityResponse" name="createBomEntityResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeTriggeredEdr">
       <wsdl:input message="ns1:removeTriggeredEdr" name="removeTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:removeTriggeredEdrResponse" name="removeTriggeredEdrResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findBomEntity">
+      <wsdl:input message="ns1:findBomEntity" name="findBomEntity"></wsdl:input>
+      <wsdl:output message="ns1:findBomEntityResponse" name="findBomEntityResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeUsageChargeTemplate">
       <wsdl:input message="ns1:removeUsageChargeTemplate" name="removeUsageChargeTemplate"></wsdl:input>
@@ -8542,6 +8793,10 @@
       <wsdl:input message="ns1:updateTriggeredEdr" name="updateTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:updateTriggeredEdrResponse" name="updateTriggeredEdrResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateBomEntity">
+      <wsdl:input message="ns1:createOrUpdateBomEntity" name="createOrUpdateBomEntity"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateBomEntityResponse" name="createOrUpdateBomEntityResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findServiceTemplate">
       <wsdl:input message="ns1:findServiceTemplate" name="findServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:findServiceTemplateResponse" name="findServiceTemplateResponse"></wsdl:output>
@@ -8566,6 +8821,10 @@
       <wsdl:input message="ns1:findRecurringChargeTemplate" name="findRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:findRecurringChargeTemplateResponse" name="findRecurringChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateBomEntity">
+      <wsdl:input message="ns1:updateBomEntity" name="updateBomEntity"></wsdl:input>
+      <wsdl:output message="ns1:updateBomEntityResponse" name="updateBomEntityResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createRecurringChargeTemplate">
       <wsdl:input message="ns1:createRecurringChargeTemplate" name="createRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:createRecurringChargeTemplateResponse" name="createRecurringChargeTemplateResponse"></wsdl:output>
@@ -8582,10 +8841,6 @@
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
       <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findOneShotChargeTemplate">
-      <wsdl:input message="ns1:findOneShotChargeTemplate" name="findOneShotChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:findOneShotChargeTemplateResponse" name="findOneShotChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createOrUpdateRecurringChargeTemplate">
       <wsdl:input message="ns1:createOrUpdateRecurringChargeTemplate" name="createOrUpdateRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateRecurringChargeTemplateResponse" name="createOrUpdateRecurringChargeTemplateResponse"></wsdl:output>
@@ -8594,53 +8849,29 @@
       <wsdl:input message="ns1:createOrUpdateServiceTemplate" name="createOrUpdateServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateServiceTemplateResponse" name="createOrUpdateServiceTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateOneShotChargeTemplate">
-      <wsdl:input message="ns1:updateOneShotChargeTemplate" name="updateOneShotChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:updateOneShotChargeTemplateResponse" name="updateOneShotChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateCounterTemplate">
-      <wsdl:input message="ns1:updateCounterTemplate" name="updateCounterTemplate"></wsdl:input>
-      <wsdl:output message="ns1:updateCounterTemplateResponse" name="updateCounterTemplateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeCounterTemplate">
       <wsdl:input message="ns1:removeCounterTemplate" name="removeCounterTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeCounterTemplateResponse" name="removeCounterTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findUsageChargeTemplate">
-      <wsdl:input message="ns1:findUsageChargeTemplate" name="findUsageChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:findUsageChargeTemplateResponse" name="findUsageChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateOfferTemplate">
-      <wsdl:input message="ns1:updateOfferTemplate" name="updateOfferTemplate"></wsdl:input>
-      <wsdl:output message="ns1:updateOfferTemplateResponse" name="updateOfferTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="listPricePlanByEventCode">
-      <wsdl:input message="ns1:listPricePlanByEventCode" name="listPricePlanByEventCode"></wsdl:input>
-      <wsdl:output message="ns1:listPricePlanByEventCodeResponse" name="listPricePlanByEventCodeResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="listOneShotChargeTemplate">
-      <wsdl:input message="ns1:listOneShotChargeTemplate" name="listOneShotChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:listOneShotChargeTemplateResponse" name="listOneShotChargeTemplateResponse"></wsdl:output>
+    <wsdl:operation name="createOfferFromBOM">
+      <wsdl:input message="ns1:createOfferFromBOM" name="createOfferFromBOM"></wsdl:input>
+      <wsdl:output message="ns1:createOfferFromBOMResponse" name="createOfferFromBOMResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findOfferTemplate">
       <wsdl:input message="ns1:findOfferTemplate" name="findOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:findOfferTemplateResponse" name="findOfferTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createOrUpdateUsageChargeTemplate">
-      <wsdl:input message="ns1:createOrUpdateUsageChargeTemplate" name="createOrUpdateUsageChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateUsageChargeTemplateResponse" name="createOrUpdateUsageChargeTemplateResponse"></wsdl:output>
+    <wsdl:operation name="listOneShotChargeTemplate">
+      <wsdl:input message="ns1:listOneShotChargeTemplate" name="listOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:listOneShotChargeTemplateResponse" name="listOneShotChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCounterTemplate">
       <wsdl:input message="ns1:createCounterTemplate" name="createCounterTemplate"></wsdl:input>
       <wsdl:output message="ns1:createCounterTemplateResponse" name="createCounterTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createUsageChargeTemplate">
-      <wsdl:input message="ns1:createUsageChargeTemplate" name="createUsageChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createUsageChargeTemplateResponse" name="createUsageChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateOneShotChargeTemplate">
-      <wsdl:input message="ns1:createOrUpdateOneShotChargeTemplate" name="createOrUpdateOneShotChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateOneShotChargeTemplateResponse" name="createOrUpdateOneShotChargeTemplateResponse"></wsdl:output>
+    <wsdl:operation name="removeBomEntity">
+      <wsdl:input message="ns1:removeBomEntity" name="removeBomEntity"></wsdl:input>
+      <wsdl:output message="ns1:removeBomEntityResponse" name="removeBomEntityResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createPricePlan">
       <wsdl:input message="ns1:createPricePlan" name="createPricePlan"></wsdl:input>
@@ -8654,10 +8885,6 @@
       <wsdl:input message="ns1:updateServiceTemplate" name="updateServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateServiceTemplateResponse" name="updateServiceTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findChargeTemplate">
-      <wsdl:input message="ns1:findChargeTemplate" name="findChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:findChargeTemplateResponse" name="findChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findTriggeredEdr">
       <wsdl:input message="ns1:findTriggeredEdr" name="findTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:findTriggeredEdrResponse" name="findTriggeredEdrResponse"></wsdl:output>
@@ -8665,6 +8892,46 @@
     <wsdl:operation name="updateRecurringChargeTemplate">
       <wsdl:input message="ns1:updateRecurringChargeTemplate" name="updateRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateRecurringChargeTemplateResponse" name="updateRecurringChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findOneShotChargeTemplate">
+      <wsdl:input message="ns1:findOneShotChargeTemplate" name="findOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findOneShotChargeTemplateResponse" name="findOneShotChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateOneShotChargeTemplate">
+      <wsdl:input message="ns1:updateOneShotChargeTemplate" name="updateOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateOneShotChargeTemplateResponse" name="updateOneShotChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCounterTemplate">
+      <wsdl:input message="ns1:updateCounterTemplate" name="updateCounterTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateCounterTemplateResponse" name="updateCounterTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findUsageChargeTemplate">
+      <wsdl:input message="ns1:findUsageChargeTemplate" name="findUsageChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findUsageChargeTemplateResponse" name="findUsageChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateUsageChargeTemplate">
+      <wsdl:input message="ns1:createOrUpdateUsageChargeTemplate" name="createOrUpdateUsageChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateUsageChargeTemplateResponse" name="createOrUpdateUsageChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listPricePlanByEventCode">
+      <wsdl:input message="ns1:listPricePlanByEventCode" name="listPricePlanByEventCode"></wsdl:input>
+      <wsdl:output message="ns1:listPricePlanByEventCodeResponse" name="listPricePlanByEventCodeResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateOfferTemplate">
+      <wsdl:input message="ns1:updateOfferTemplate" name="updateOfferTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateOfferTemplateResponse" name="updateOfferTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createUsageChargeTemplate">
+      <wsdl:input message="ns1:createUsageChargeTemplate" name="createUsageChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createUsageChargeTemplateResponse" name="createUsageChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOneShotChargeTemplate">
+      <wsdl:input message="ns1:createOrUpdateOneShotChargeTemplate" name="createOrUpdateOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateOneShotChargeTemplateResponse" name="createOrUpdateOneShotChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findChargeTemplate">
+      <wsdl:input message="ns1:findChargeTemplate" name="findChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findChargeTemplateResponse" name="findChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removeOfferTemplate">
       <wsdl:input message="ns1:removeOfferTemplate" name="removeOfferTemplate"></wsdl:input>
@@ -9440,7 +9707,7 @@
          </counterTemplate>\r
       </ws:createOrUpdateCounterTemplate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateCounterTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://meveo.cloudapp.net/meveo/AccountWs?wsdl" id="7396bbb9-e90e-4f2b-bb94-362fd57a2512" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://meveo.cloudapp.net/meveo/AccountWs?wsdl"><con:part><con:url>http://meveo.cloudapp.net/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateCounterTemplate"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="0b9dfdce-118a-4096-a404-69f94c84cb39" isOneWay="false" action="" name="createBomEntity" bindingOperationName="createBomEntity" type="Request-Response" outputName="createBomEntityResponse" inputName="createBomEntity" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="7fdd17b0-305e-485e-8990-6b1231acaf44" isOneWay="false" action="" name="findBomEntity" bindingOperationName="findBomEntity" type="Request-Response" outputName="findBomEntityResponse" inputName="findBomEntity" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="d05c476a-9c81-4096-97cb-d0700912f04c" isOneWay="false" action="" name="createOrUpdateBomEntity" bindingOperationName="createOrUpdateBomEntity" type="Request-Response" outputName="createOrUpdateBomEntityResponse" inputName="createOrUpdateBomEntity" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="1b021316-c62e-424e-9244-5ea74dcaa2f3" isOneWay="false" action="" name="updateBomEntity" bindingOperationName="updateBomEntity" type="Request-Response" outputName="updateBomEntityResponse" inputName="updateBomEntity" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="c144bdf4-9c7e-42c0-8367-fbf7843e439b" isOneWay="false" action="" name="createOfferFromBOM" bindingOperationName="createOfferFromBOM" type="Request-Response" outputName="createOfferFromBOMResponse" inputName="createOfferFromBOM" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="0b54a012-9bc5-42cd-ad4a-472ffa2d2b7a" isOneWay="false" action="" name="removeBomEntity" bindingOperationName="removeBomEntity" type="Request-Response" outputName="removeBomEntityResponse" inputName="removeBomEntity" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://meveo.cloudapp.net/meveo/AccountWs?wsdl" id="7396bbb9-e90e-4f2b-bb94-362fd57a2512" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://meveo.cloudapp.net/meveo/AccountWs?wsdl"><con:part><con:url>http://meveo.cloudapp.net/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://meveo.cloudapp.net/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -21132,12 +21399,9 @@
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCalendar>
-         <!--Optional:-->
          <calendar code="SOAP_CAL1">
-            <!--Optional:-->
             <description>BILLING</description>
             <calendarType>YEARLY</calendarType>
-            <!--Zero or more repetitions:-->
              <days day="1" month="JANUARY"/>
                <days day="1" month="FEBRUARY"/>
                <days day="1" month="MARCH"/>
@@ -21337,7 +21601,7 @@
       </ws:createWalletTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="05a92c8d-40cd-4734-8099-da04dec3c24e"/><con:assertion type="Simple Contains" id="5e5d8283-d75a-4417-8bec-71cd6fb887bc" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
-</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Copy of createOfferTemplate" id="b7327200-525b-4caa-baec-31ee29100955"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Copy of createOfferTemplate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="3a9b445d-2b3f-4b86-9bfc-12016532470e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create OfferTemplate" id="b7327200-525b-4caa-baec-31ee29100955"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOfferTemplate</con:operation><con:request name="Create OfferTemplate" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="3a9b445d-2b3f-4b86-9bfc-12016532470e"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOfferTemplate>
@@ -21836,7 +22100,192 @@
       </ws:removeCounterTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="Simple Contains" id="8146cffb-0509-4246-a8e9-c0c1e4d0c006" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removeCounterTemplate"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>catalog</con:value></con:property><con:property><con:name>index</con:name><con:value>1</con:value></con:property></con:properties><con:setupScript>
-testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite name="SettingsWsSoapBinding TestSuite" id="c6fa8b71-b2da-428e-84cc-92fd0953a4b8"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createCurrency TestCase" searchProperties="true" id="a0ee974f-cde4-4494-877f-5a7e70a3ce3a"><con:settings/><con:testStep type="request" name="createCurrency" id="15d5668f-6893-49bd-b9a0-6af39753ecd1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCurrency</con:operation><con:request name="createCurrency" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f425485f-e177-4da0-9da7-29daf9d4eb35"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite name="SettingsWsSoapBinding TestSuite" id="c6fa8b71-b2da-428e-84cc-92fd0953a4b8"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="0afe0527-2df8-4499-9955-73e6ebedbcf6" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Calendar" searchProperties="true"><con:settings/><con:testStep type="request" name="Create Yearly calendar" id="785fe40a-4d1e-491b-b958-ad64ec4c8ca3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceSubCategory</con:operation><con:request name="Create Yearly calendar" id="17b35bbb-ee8d-42dc-a7e8-3b788979cebf"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCalendar>
+         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_YEARLY">
+            <description>Yearly calendar</description>
+            <calendarType>YEARLY</calendarType>
+             <days day="1" month="JANUARY"/>
+               <days day="1" month="FEBRUARY"/>
+               <days day="1" month="MARCH"/>
+               <days day="1" month="APRIL"/>
+               <days day="1" month="MAY"/>
+               <days day="1" month="JUNE"/>
+               <days day="1" month="JULY"/>
+               <days day="1" month="AUGUST"/>
+               <days day="1" month="SEPTEMBER"/>
+               <days day="1" month="OCTOBER"/>
+               <days day="1" month="NOVEMBER"/>
+               <days day="1" month="DECEMBER"/>
+         </calendar>
+      </ws:createCalendar>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="58eb22a7-1698-4d78-a13c-a5f2fe95eb84"/><con:assertion type="Simple Contains" id="079041a1-546f-427d-9f22-cde353742d7f" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Daily calendar" id="db2b6b5a-40fe-4458-9623-b93fd3a08b78"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCalendar</con:operation><con:request name="Create Daily calendar" id="317012eb-05d4-41cb-b3af-5032c64f12cd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCalendar>\r
+         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_DAILY">\r
+            <description>Daily calendar</description>\r
+            <calendarType>DAILY</calendarType>\r
+            <hours hour="8" min="10"/>\r
+            <hours hour="12" min="30"/>
+            <hours hour="18" min="00"/>
+         </calendar>\r
+      </ws:createCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1bd34966-1cd9-4807-a2a8-43372d44870d"/><con:assertion type="Simple Contains" id="7e237a94-4771-41d2-b932-ed067d90d157" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Period Month calendar" id="62a5f38a-ee71-48f6-a4a7-f63b8d7a3a50"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCalendar</con:operation><con:request name="Create Period Month calendar" id="317012eb-05d4-41cb-b3af-5032c64f12cd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCalendar>\r
+         <!--Optional:-->\r
+         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_PERIOD_MONTH">\r
+            <description>Period Month calendar</description>\r
+            <calendarType>PERIOD</calendarType>\r
+            <periodLength>5</periodLength>\r
+            <periodUnit>MONTH</periodUnit>\r
+            <nbPeriods>5</nbPeriods>\r
+         </calendar>\r
+      </ws:createCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1bd34966-1cd9-4807-a2a8-43372d44870d"/><con:assertion type="Simple Contains" id="7e237a94-4771-41d2-b932-ed067d90d157" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Interval Hour calendar" id="8eff053b-259e-4568-8e0d-bb3d841885e4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCalendar</con:operation><con:request name="Create Interval Hour calendar" id="317012eb-05d4-41cb-b3af-5032c64f12cd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCalendar>\r
+         <!--Optional:-->\r
+         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_INTERVAL_HOUR">\r
+            <description>Interval hour calendar</description>\r
+            <calendarType>INTERVAL</calendarType>\r
+            <intervalType>HOUR</intervalType>\r
+            <intervals intervalBegin="520" intervalEnd="1558"/>\r
+            <intervals intervalBegin="2000" intervalEnd="2100"/>
+         </calendar>\r
+      </ws:createCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1bd34966-1cd9-4807-a2a8-43372d44870d"/><con:assertion type="Simple Contains" id="7e237a94-4771-41d2-b932-ed067d90d157" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Join Intersect calendar" id="4084e5b1-6958-4544-989c-edbb913b5bdc"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCalendar</con:operation><con:request name="Create Join Intersect calendar" id="317012eb-05d4-41cb-b3af-5032c64f12cd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCalendar>\r
+         <!--Optional:-->\r
+         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_INTERSECT">\r
+            <description>Intersect calendar</description>\r
+            <calendarType>INTERSECT</calendarType>\r
+            <joinCalendar1Code>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_YEARLY</joinCalendar1Code>\r
+            <joinCalendar2Code>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_INTERVAL_HOUR</joinCalendar2Code>\r
+         </calendar>\r
+      </ws:createCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1bd34966-1cd9-4807-a2a8-43372d44870d"/><con:assertion type="Simple Contains" id="7e237a94-4771-41d2-b932-ed067d90d157" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Join Union calendar" id="79739b1f-c7ee-45e6-b36c-74ff16cb7d63"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCalendar</con:operation><con:request name="Create Join Union calendar" id="317012eb-05d4-41cb-b3af-5032c64f12cd"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCalendar>\r
+         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_UNION">\r
+            <description>Union calendar</description>\r
+            <calendarType>UNION</calendarType>\r
+            <joinCalendar1Code>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_YEARLY</joinCalendar1Code>\r
+            <joinCalendar2Code>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_PERIOD_MONTH</joinCalendar2Code>\r
+         </calendar>\r
+      </ws:createCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="1bd34966-1cd9-4807-a2a8-43372d44870d"/><con:assertion type="Simple Contains" id="7e237a94-4771-41d2-b932-ed067d90d157" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Yearly calendar" id="9873a532-b50f-435b-9656-5cdbc44fe724"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCalendar</con:operation><con:request name="Find Yearly calendar" id="534ef00a-6f40-4523-aaf2-a349df617891"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCalendar>\r
+         <calendarCode>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_YEARLY</calendarCode>\r
+      </ws:findCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b3e53013-5eff-4d27-b542-3d1a725be8d1"/><con:assertion type="Simple Contains" id="0cbeaf3b-e923-4132-b89b-b0c7e545d1b9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="49381e57-6bf6-42c1-ae34-174ed4c91372" name="Contains 1"><con:configuration><token><![CDATA[         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_YEARLY">
+               <description>Yearly calendar</description>
+               <calendarType>YEARLY</calendarType>
+               <days day="1" month="JANUARY"/>
+               <days day="1" month="FEBRUARY"/>
+               <days day="1" month="MARCH"/>
+               <days day="1" month="APRIL"/>
+               <days day="1" month="MAY"/>
+               <days day="1" month="JUNE"/>
+               <days day="1" month="JULY"/>
+               <days day="1" month="AUGUST"/>
+               <days day="1" month="SEPTEMBER"/>
+               <days day="1" month="OCTOBER"/>
+               <days day="1" month="NOVEMBER"/>
+               <days day="1" month="DECEMBER"/>
+            </calendar>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Dailly calendar" id="39935538-9588-49b2-9f33-fed20b3514f0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCalendar</con:operation><con:request name="Find Dailly calendar" id="534ef00a-6f40-4523-aaf2-a349df617891"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCalendar>\r
+         <calendarCode>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_DAILY</calendarCode>\r
+      </ws:findCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b3e53013-5eff-4d27-b542-3d1a725be8d1"/><con:assertion type="Simple Contains" id="0cbeaf3b-e923-4132-b89b-b0c7e545d1b9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="49381e57-6bf6-42c1-ae34-174ed4c91372" name="Contains 1"><con:configuration><token><![CDATA[         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_DAILY">
+               <description>Daily calendar</description>
+               <calendarType>DAILY</calendarType>
+               <hours hour="8" min="10"/>
+               <hours hour="12" min="30"/>
+               <hours hour="18" min="0"/>
+            </calendar>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Period Month calendar" id="177ff4db-cce1-4ee8-92b9-3a4e237d6d62"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCalendar</con:operation><con:request name="Find Period Month calendar" id="534ef00a-6f40-4523-aaf2-a349df617891"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCalendar>\r
+         <calendarCode>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_PERIOD_MONTH</calendarCode>\r
+      </ws:findCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b3e53013-5eff-4d27-b542-3d1a725be8d1"/><con:assertion type="Simple Contains" id="0cbeaf3b-e923-4132-b89b-b0c7e545d1b9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="49381e57-6bf6-42c1-ae34-174ed4c91372" name="Contains 1"><con:configuration><token><![CDATA[         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_PERIOD_MONTH">
+               <description>Period Month calendar</description>
+               <calendarType>PERIOD</calendarType>
+               <periodLength>5</periodLength>
+               <periodUnit>MONTH</periodUnit>
+               <nbPeriods>5</nbPeriods>
+            </calendar>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Interval Hour calendar" id="0e518e6d-8e33-4335-bde7-bd9083f4b228"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCalendar</con:operation><con:request name="Find Interval Hour calendar" id="534ef00a-6f40-4523-aaf2-a349df617891"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCalendar>\r
+         <calendarCode>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_INTERVAL_HOUR</calendarCode>\r
+      </ws:findCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b3e53013-5eff-4d27-b542-3d1a725be8d1"/><con:assertion type="Simple Contains" id="0cbeaf3b-e923-4132-b89b-b0c7e545d1b9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="49381e57-6bf6-42c1-ae34-174ed4c91372" name="Contains 1"><con:configuration><token><![CDATA[         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_INTERVAL_HOUR">
+               <description>Interval hour calendar</description>
+               <calendarType>INTERVAL</calendarType>
+               <intervalType>HOUR</intervalType>
+               <intervals intervalBegin="520" intervalEnd="1558"/>
+               <intervals intervalBegin="2000" intervalEnd="2100"/>
+            </calendar>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Join Intersect calendar" id="8521bf57-0f41-47dd-b5ea-c515ed506422"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCalendar</con:operation><con:request name="Find Join Intersect calendar" id="534ef00a-6f40-4523-aaf2-a349df617891"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCalendar>\r
+         <calendarCode>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_INTERSECT</calendarCode>\r
+      </ws:findCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b3e53013-5eff-4d27-b542-3d1a725be8d1"/><con:assertion type="Simple Contains" id="0cbeaf3b-e923-4132-b89b-b0c7e545d1b9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="49381e57-6bf6-42c1-ae34-174ed4c91372" name="Contains 1"><con:configuration><token><![CDATA[         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_INTERSECT">
+               <description>Intersect calendar</description>
+               <calendarType>INTERSECT</calendarType>
+               <joinCalendar1Code>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_YEARLY</joinCalendar1Code>
+               <joinCalendar2Code>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_INTERVAL_HOUR</joinCalendar2Code>
+            </calendar>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Find Join Union calendar" id="7480900b-2897-439f-b84c-dbbe76b6116c"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>findCalendar</con:operation><con:request name="Find Join Union calendar" id="534ef00a-6f40-4523-aaf2-a349df617891"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCalendar>\r
+         <calendarCode>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_UNION</calendarCode>\r
+      </ws:findCalendar>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b3e53013-5eff-4d27-b542-3d1a725be8d1"/><con:assertion type="Simple Contains" id="0cbeaf3b-e923-4132-b89b-b0c7e545d1b9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status>
+</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="49381e57-6bf6-42c1-ae34-174ed4c91372" name="Contains 1"><con:configuration><token><![CDATA[         <calendar code="${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_UNION">
+               <description>Union calendar</description>
+               <calendarType>UNION</calendarType>
+               <joinCalendar1Code>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_YEARLY</joinCalendar1Code>
+               <joinCalendar2Code>${#TestSuite#ticket}_${#TestSuite#index}_CALENDAR_PERIOD_MONTH</joinCalendar2Code>
+            </calendar>
+]]></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="createCurrency TestCase" searchProperties="true" id="a0ee974f-cde4-4494-877f-5a7e70a3ce3a"><con:settings/><con:testStep type="request" name="createCurrency" id="15d5668f-6893-49bd-b9a0-6af39753ecd1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createCurrency</con:operation><con:request name="createCurrency" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f425485f-e177-4da0-9da7-29daf9d4eb35"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCurrency>
@@ -22537,7 +22986,7 @@ testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toIntege
          </customField>
       </ws:createCustomFieldTemplate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b184c9f7-6f3c-40a3-a955-29d8c6514af3"/><con:assertion type="Simple Contains" id="37e96ccd-a4b9-42f0-9b28-cf25d243fdd1" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>settings</con:value></con:property><con:property><con:name>index</con:name><con:value>1</con:value></con:property></con:properties><con:setupScript>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b184c9f7-6f3c-40a3-a955-29d8c6514af3"/><con:assertion type="Simple Contains" id="37e96ccd-a4b9-42f0-9b28-cf25d243fdd1" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>settings</con:value></con:property><con:property><con:name>index</con:name><con:value>5</con:value></con:property></con:properties><con:setupScript>
 testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript></con:testSuite><con:testSuite name="MediationWsSoapBinding TestSuite" id="fbb0bb42-1e4e-4ab6-9429-999c2be71444"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="index TestCase" searchProperties="true" id="ad5d9ba0-54d2-4e19-aeab-778616702bfe"><con:settings/><con:testStep type="request" name="index" id="fafaaee1-f4a3-49df-8792-2dcace76eeda"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>MediationWsSoapBinding</con:interface><con:operation>index</con:operation><con:request name="index" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="f7d3c378-6d12-4f0f-842f-2339a5fa13ad"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/MediationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
