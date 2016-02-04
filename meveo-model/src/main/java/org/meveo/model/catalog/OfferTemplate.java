@@ -122,9 +122,20 @@ public class OfferTemplate extends BusinessCFEntity {
 		this.businessOfferModel = businessOfferModel;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
+    /**
+     * Check if offer contains a given service template
+     * 
+     * @param serviceTemplate Service template to match
+     * @return True if offer contains a given service template
+     */
+    public boolean containsServiceTemplate(ServiceTemplate serviceTemplate) {
+
+        for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+            if (offerServiceTemplate.getServiceTemplate().equals(serviceTemplate)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
