@@ -21,6 +21,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.tmf.dsmapi.catalog.resource.category.Category;
+import org.tmf.dsmapi.catalog.resource.product.Price;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
 
@@ -39,75 +40,128 @@ public class CatalogApi extends BaseApi {
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 		}
-		Map<String, BigDecimal> servicePrices = getOfferPrices(offerTemplate);
+		Map<String, Price> servicePrices = getOfferPrices(offerTemplate, currentUser);
 		return offerTemplate == null ? null : ProductOffering.parseFromOfferTemplate(offerTemplate, uriInfo, category,
 				servicePrices);
 	}
 
-	public List<ProductOffering> findProductOfferings(UriInfo uriInfo, Category category) {
+	public List<ProductOffering> findProductOfferings(UriInfo uriInfo, Category category, User currentUser) {
 		List<OfferTemplate> offerTemplates = offerTemplateService.list();
-		Map<String, Map<String, BigDecimal>> offerPrices = new HashMap<>();
+		Map<String, Map<String, Price>> offerPrices = new HashMap<>();
 
 		for (OfferTemplate offerTemplate : offerTemplates) {
-			Map<String, BigDecimal> servicePrices = getOfferPrices(offerTemplate);
+			Map<String, Price> servicePrices = getOfferPrices(offerTemplate, currentUser);
 			offerPrices.put(offerTemplate.getCode(), servicePrices);
 		}
 
 		return ProductOffering.parseFromOfferTemplates(offerTemplates, uriInfo, category, offerPrices);
 	}
 
-	private Map<String, BigDecimal> getOfferPrices(OfferTemplate offerTemplate) {
-		Map<String, BigDecimal> servicePrices = new HashMap<>();
+	private Map<String, Price> getOfferPrices(OfferTemplate offerTemplate, User currentUser) {
+		Map<String, Price> servicePrices = new HashMap<>();
 
 		for (OfferServiceTemplate ost : offerTemplate.getOfferServiceTemplates()) {
-			ServiceTemplate st=ost.getServiceTemplate();
+			ServiceTemplate st = ost.getServiceTemplate();
 			if (st.getServiceSubscriptionCharges() != null) {
-				BigDecimal totalPriceOneShotCharges = new BigDecimal(0);
+				Price price = new Price();
+				price.setDutyFreeAmount(new BigDecimal(0));
+				price.setTaxIncludedAmount(new BigDecimal(0));
+
 				for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : st
 						.getServiceSubscriptionCharges()) {
-					BigDecimal chargePricePlans = new BigDecimal(0);
-
 					List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(
 							offerTemplate, serviceChargeTemplateSubscription.getChargeTemplate().getCode());
+					if (serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory()
+							.getInvoiceSubcategoryCountries() != null
+							&& serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory()
+									.getInvoiceSubcategoryCountries().get(0).getTax() != null) {
+						price.setTaxRate(serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory()
+								.getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
+					}
+
 					if (offerPricePlans != null && offerPricePlans.size() > 0) {
-						chargePricePlans = offerPricePlans.get(0).getAmountWithTax();
+						price.setDutyFreeAmount(price.getDutyFreeAmount().add(
+								offerPricePlans.get(0).getAmountWithoutTax()));
+						if (!currentUser.getProvider().isEntreprise()) {
+							price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
+									offerPricePlans.get(0).getAmountWithTax()));
+						}
 					} else {
 						List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null,
 								serviceChargeTemplateSubscription.getChargeTemplate().getCode());
 						if (pricePlans != null && pricePlans.size() > 0) {
-							chargePricePlans = pricePlans.get(0).getAmountWithTax();
+							price.setDutyFreeAmount(price.getDutyFreeAmount().add(
+									pricePlans.get(0).getAmountWithoutTax()));
+							if (!currentUser.getProvider().isEntreprise()) {
+								price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
+										pricePlans.get(0).getAmountWithTax()));
+							}
 						}
 					}
-
-					totalPriceOneShotCharges = totalPriceOneShotCharges.add(chargePricePlans);
 				}
 
-				servicePrices.put(st.getCode() + "_SUB", totalPriceOneShotCharges);
+				if (currentUser.getProvider().isEntreprise()) {
+					if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
+						BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
+						price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
+					} else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
+						price.setTaxIncludedAmount(price.getDutyFreeAmount());
+					} else {
+						price.setTaxIncludedAmount(new BigDecimal(0));
+					}
+				}
+				servicePrices.put(st.getCode() + "_SUB", price);
 			}
 
 			if (st.getServiceRecurringCharges() != null) {
-				BigDecimal totalPriceRecurringCharges = new BigDecimal(0);
-				for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : st.getServiceRecurringCharges()) {
-					BigDecimal chargePricePlans = new BigDecimal(0);
+				Price price = new Price();
+				price.setDutyFreeAmount(new BigDecimal(0));
+				price.setTaxIncludedAmount(new BigDecimal(0));
 
+				for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : st.getServiceRecurringCharges()) {
 					List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(
 							offerTemplate, serviceChargeTemplateRecurring.getChargeTemplate().getCode());
+					if (serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory()
+							.getInvoiceSubcategoryCountries() != null
+							&& serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory()
+									.getInvoiceSubcategoryCountries().get(0).getTax() != null) {
+						price.setTaxRate(serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory()
+								.getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
+					}
+
 					if (offerPricePlans != null && offerPricePlans.size() > 0) {
-						chargePricePlans = offerPricePlans.get(0).getAmountWithTax();
+						price.setDutyFreeAmount(price.getDutyFreeAmount().add(
+								offerPricePlans.get(0).getAmountWithoutTax()));
+						if (!currentUser.getProvider().isEntreprise()) {
+							price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
+									offerPricePlans.get(0).getAmountWithTax()));
+						}
 					} else {
 						List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null,
 								serviceChargeTemplateRecurring.getChargeTemplate().getCode());
 						if (pricePlans != null && pricePlans.size() > 0) {
-							chargePricePlans = pricePlans.get(0).getAmountWithTax();
+							price.setDutyFreeAmount(price.getDutyFreeAmount().add(
+									pricePlans.get(0).getAmountWithoutTax()));
+							if (!currentUser.getProvider().isEntreprise()) {
+								price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
+										pricePlans.get(0).getAmountWithTax()));
+							}
 						}
 					}
-
-					totalPriceRecurringCharges = totalPriceRecurringCharges.add(chargePricePlans);
 				}
 
+				if (currentUser.getProvider().isEntreprise()) {
+					if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
+						BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
+						price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
+					} else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
+						price.setTaxIncludedAmount(price.getDutyFreeAmount());
+					} else {
+						price.setTaxIncludedAmount(new BigDecimal(0));
+					}
+				}
 				servicePrices.put(st.getCode() + "_REC"
-						+ (st.getInvoicingCalendar() == null ? "" : "_" + st.getInvoicingCalendar().getCode()),
-						totalPriceRecurringCharges);
+						+ (st.getInvoicingCalendar() == null ? "" : "_" + st.getInvoicingCalendar().getCode()), price);
 			}
 		}
 

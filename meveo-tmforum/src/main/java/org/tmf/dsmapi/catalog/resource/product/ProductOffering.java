@@ -1,7 +1,6 @@
 package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,64 +36,151 @@ import org.tmf.dsmapi.commons.Utilities;
 import org.tmf.dsmapi.commons.annotation.EntityReferenceProperty;
 
 /**
- *
- * @author pierregauthier
- *
- *         { "id": "42", "version": "3.43", "href":
- *         "http://serverlocation:port/catalogManagement/productOffering/42",
- *         "name": "Virtual Storage Medium", "description":
- *         "Virtual Storage Medium", "lastUpdate": "2013-04-19T16:42:23-04:00",
- *         "lifecycleStatus": "Active", "validFor": { "startDateTime":
- *         "2013-04-19T16:42:23-04:00", "endDateTime":
- *         "2013-06-19T00:00:00-04:00" }, "isBundle": "true", "category": [ {
- *         "id": "12", "version": "2.0", "href":
- *         "http://serverlocation:port/catalogManagement/category/12", "name":
- *         "Cloud offerings" } ], "channel": [ { "id": "13", "href":
- *         "http://serverlocation:port/marketSales/channel/13", "name":
- *         "Online Channel" } ], "place": [ { "id": "12", "href":
- *         "http://serverlocation:port/marketSales/place/12", "name": "France" }
- *         ], "bundledProductOffering": [ { "id": "15", "href":
- *         "http://serverlocation:port/catalogManagement/productOffering/15",
- *         "lifecycleStatus": "Active", "name": "Offering 15" }, { "id": "64",
- *         "href":
- *         "http://serverlocation:port/catalogManagement/productOffering/64",
- *         "lifecycleStatus": "Active", "name": "Offering 64" } ],
- *         "serviceLevelAgreement": { "id": "28", "href":
- *         "http://serverlocation:port/slaManagement/serviceLevelAgreement/28",
- *         "name": "Standard SLA" }, "productSpecification": { "id": "13",
- *         "href":
- *         "http://serverlocation:port/catalogManagement/productSpecification/13"
- *         , "version": "2.0", "name": "specification product 1" },
- *         "serviceCandidate": [ { "id": "13", "href":
- *         "http://serverlocation:port/catalogManagement/serviceCandidate/13",
- *         "version": "2.0", "name": "specification service 1" } ],
- *         "resourceCandidate": [ { "id": "13", "href":
- *         "http://serverlocation:port/catalogManagement/resourceCandidate/13",
- *         "version": "2.0", "name": "specification resource 1" } ],
- *         "productOfferingTerm": [ { "name": "12 Month", "description":
- *         "12 month contract", "duration": "12", "validFor": { "startDateTime":
- *         "2013-04-19T16:42:23-04:00", "endDateTime":
- *         "2013-06-19T00:00:00-04:00" } } ], "productOfferingPrice": [ {
- *         "name": "Monthly Price", "description": "monthlyprice", "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime":
- *         "2013-06-19T00:00:00-04:00" }, "priceType": "recurring",
- *         "unitOfMeasure": "", "price": { "taxIncludedAmount": "12.00",
- *         "dutyFreeAmount": "10.00", "taxRate": "20.00", "currencyCode": "EUR",
- *         "percentage": 0 }, "recurringChargePeriod": "monthly" }, { "name":
- *         "Usage Price", "description": "usageprice", "validFor": {
- *         "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime":
- *         "2013-06-19T00:00:00-04:00" }, "priceType": "usage", "unitOfMeasure":
- *         "second", "price": { "taxIncludedAmount": "12.00", "dutyFreeAmount":
- *         "10.00", "taxRate": "20.00", "currencyCode": "EUR", "percentage": 0
- *         }, "recurringChargePeriod": "", "productOfferPriceAlteration": {
- *         "name": "Shipping Discount", "description":
- *         "One time shipping discount", "validFor": { "startDateTime":
- *         "2013-04-19T16:42:23.0Z" }, "priceType": "One Time discount",
- *         "unitOfMeasure": "", "price": { "percentage": 100 },
- *         "recurringChargePeriod": "", "priceCondition":
- *         "apply if total amount of the  order is greater than 300.00" } } ] }
- *
- */
+*
+* @author pierregauthier
+*
+* {
+*     "id": "42",
+*     "version": "3.43",
+*     "href": "http://serverlocation:port/catalogManagement/productOffering/42",
+*     "name": "Virtual Storage Medium",
+*     "description": "Virtual Storage Medium",
+*     "lastUpdate": "2013-04-19T16:42:23-04:00",
+*     "lifecycleStatus": "Active",
+*     "validFor": {
+*         "startDateTime": "2013-04-19T16:42:23-04:00",
+*         "endDateTime": "2013-06-19T00:00:00-04:00"
+*     },
+*     "isBundle": "true",
+*     "category": [
+*         {
+*             "id": "12",
+*             "version": "2.0",
+*             "href": "http://serverlocation:port/catalogManagement/category/12",
+*             "name": "Cloud offerings"
+*         }
+*     ],
+*     "channel": [
+*         {
+*             "id": "13",
+*             "href": "http://serverlocation:port/marketSales/channel/13",
+*             "name": "Online Channel"
+*         }
+*     ],
+*     "place": [
+*         {
+*             "id": "12",
+*             "href": "http://serverlocation:port/marketSales/place/12",
+*             "name": "France"
+*         }
+*     ],
+*     "bundledProductOffering": [
+*         {
+*             "id": "15",
+*             "href": "http://serverlocation:port/catalogManagement/productOffering/15",
+*             "lifecycleStatus": "Active",
+*             "name": "Offering 15"
+*         },
+*         {
+*             "id": "64",
+*             "href": "http://serverlocation:port/catalogManagement/productOffering/64",
+*             "lifecycleStatus": "Active",
+*             "name": "Offering 64"
+*         }
+*     ],
+*     "serviceLevelAgreement": {
+*         "id": "28",
+*         "href": "http://serverlocation:port/slaManagement/serviceLevelAgreement/28",
+*         "name": "Standard SLA"
+*     },
+*     "productSpecification": {
+*         "id": "13",
+*         "href": "http://serverlocation:port/catalogManagement/productSpecification/13",
+*         "version": "2.0",
+*         "name": "specification product 1"
+*     },
+*     "serviceCandidate": [
+*         {
+*             "id": "13",
+*             "href": "http://serverlocation:port/catalogManagement/serviceCandidate/13",
+*             "version": "2.0",
+*             "name": "specification service 1"
+*         }
+*     ],
+*     "resourceCandidate": [
+*         {
+*             "id": "13",
+*             "href": "http://serverlocation:port/catalogManagement/resourceCandidate/13",
+*             "version": "2.0",
+*             "name": "specification resource 1"
+*         }
+*     ],
+*     "productOfferingTerm": [
+*         {
+*             "name": "12 Month",
+*             "description": "12 month contract",
+*             "duration": "12",
+*             "validFor": {
+*                 "startDateTime": "2013-04-19T16:42:23-04:00",
+*                 "endDateTime": "2013-06-19T00:00:00-04:00"
+*             }
+*         }
+*     ],
+*     "productOfferingPrice": [
+*         {
+*             "name": "Monthly Price",
+*             "description": "monthlyprice",
+*             "validFor": {
+*                 "startDateTime": "2013-04-19T16:42:23-04:00",
+*                 "endDateTime": "2013-06-19T00:00:00-04:00"
+*             },
+*             "priceType": "recurring",
+*             "unitOfMeasure": "",
+*             "price": {
+*                 "taxIncludedAmount": "12.00",
+*                 "dutyFreeAmount": "10.00",
+*                 "taxRate": "20.00",
+*                 "currencyCode": "EUR",
+*                 "percentage": 0
+*             },
+*             "recurringChargePeriod": "monthly"
+*         },
+*         {
+*             "name": "Usage Price",
+*             "description": "usageprice",
+*             "validFor": {
+*                 "startDateTime": "2013-04-19T16:42:23-04:00",
+*                 "endDateTime": "2013-06-19T00:00:00-04:00"
+*             },
+*             "priceType": "usage",
+*             "unitOfMeasure": "second",
+*             "price": {
+*                 "taxIncludedAmount": "12.00",
+*                 "dutyFreeAmount": "10.00",
+*                 "taxRate": "20.00",
+*                 "currencyCode": "EUR",
+*                 "percentage": 0
+*             },
+*             "recurringChargePeriod": "",
+*             "productOfferPriceAlteration": {
+*                 "name": "Shipping Discount",
+*                 "description": "One time shipping discount",
+*                 "validFor": {
+*                     "startDateTime": "2013-04-19T16:42:23.0Z"
+*                 },
+*                 "priceType": "One Time discount",
+*                 "unitOfMeasure": "",
+*                 "price": {
+*                     "percentage": 100
+*                 },
+*                 "recurringChargePeriod": "",
+*                 "priceCondition": "apply if total amount of the  order is greater than 300.00"
+*             }
+*         }
+*     ]
+* }
+*
+*/
 @MappedSuperclass
 @XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -532,7 +618,7 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 	}
 
 	public static ProductOffering parseFromOfferTemplate(OfferTemplate offer, UriInfo uriInfo, Category category,
-			Map<String, BigDecimal> servicePrices) {
+			Map<String, Price> servicePrices) {
 		ProductOffering productOffering = new ProductOffering();
 		productOffering.setId(offer.getCode());
 		productOffering.setVersion(String.format("%d.0", offer.getVersion() == null ? 0 : offer.getVersion()));
@@ -576,9 +662,11 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 		// prices
 		if (servicePrices != null && servicePrices.entrySet() != null) {
 			List<ProductOfferingPrice> productOfferingPrices = new ArrayList<>();
-			for (Entry<String, BigDecimal> servicePrice : servicePrices.entrySet()) {
+			for (Entry<String, Price> servicePrice : servicePrices.entrySet()) {
 				Price price = new Price();
-				price.setTaxIncludedAmount(servicePrice.getValue());
+				price.setTaxIncludedAmount(servicePrice.getValue().getTaxIncludedAmount());
+				price.setDutyFreeAmount(servicePrice.getValue().getDutyFreeAmount());
+				price.setTaxRate(servicePrice.getValue().getTaxRate());
 
 				ProductOfferingPrice productOfferingPrice = new ProductOfferingPrice();
 				productOfferingPrice.setPriceName(servicePrice.getKey());
@@ -599,7 +687,7 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 	}
 
 	public static List<ProductOffering> parseFromOfferTemplates(List<OfferTemplate> offerTemplates, UriInfo uriInfo,
-			Category category, Map<String, Map<String, BigDecimal>> offerPrices) {
+			Category category, Map<String, Map<String, Price>> offerPrices) {
 		if (offerTemplates != null) {
 			List<ProductOffering> productOfferings = new ArrayList<ProductOffering>();
 			for (OfferTemplate offerTemplate : offerTemplates) {

@@ -60,9 +60,14 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	public List<ProductOffering> findProductOfferings() {
 		log.debug("find productOfferings ... ");
-		List<ProductOffering> productOfferings = catalogApi
-				.findProductOfferings(uriInfo, Category.createProto(uriInfo));
-		return productOfferings;
+		List<ProductOffering> productOfferings;
+		try {
+			productOfferings = catalogApi
+					.findProductOfferings(uriInfo, Category.createProto(uriInfo), getCurrentUser());
+			return productOfferings;
+		} catch (MeveoApiException e) {
+			return null;
+		}
 	}
 
 	@Override
