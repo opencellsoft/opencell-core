@@ -1,5 +1,6 @@
 <enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" slug="meveoApi" xsi:noNamespaceSchemaLocation="http://enunciate.webcohesion.com/schemas/enunciate-2.2.0.xsd">
-    <title>Meveo REST and WS API</title>
+    <title>opencell REST and WS API</title>
+    <description>opencell API</description>
 
     <api-classes>
         <include pattern="org.meveo.api.**" />

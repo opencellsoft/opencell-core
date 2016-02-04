@@ -41,6 +41,10 @@
             <artifactId>meveo-admin-ejbs</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.manaty</groupId>
+            <artifactId>meveo-model</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.meveo</groupId>
             <artifactId>meveo-api-dto</artifactId>
         </dependency>
@@ -136,6 +140,8 @@
                 <dependency>
                     <groupId>org.manaty</groupId>
                     <artifactId>meveo-model</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>sources</classifier>
                 </dependency>
                 <dependency>
                     <groupId>org.primefaces</groupId>
