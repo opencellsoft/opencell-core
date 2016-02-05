@@ -5,8 +5,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.rest.security.RSSecured;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 
@@ -15,7 +15,7 @@ import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @RSSecured
 public interface OrderRs {
-	
+
 	@POST
-	ActionStatus createOrder(ProductOrder productOrder);
+	Response createOrder(ProductOrder productOrder);
 }
