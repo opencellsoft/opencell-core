@@ -46,7 +46,7 @@ public class CatalogApi extends BaseApi {
 	}
 
 	public List<ProductOffering> findProductOfferings(UriInfo uriInfo, Category category, User currentUser) {
-		List<OfferTemplate> offerTemplates = offerTemplateService.list();
+		List<OfferTemplate> offerTemplates = offerTemplateService.list(currentUser.getProvider());
 		Map<String, Map<String, Price>> offerPrices = new HashMap<>();
 
 		for (OfferTemplate offerTemplate : offerTemplates) {
@@ -173,8 +173,8 @@ public class CatalogApi extends BaseApi {
 		return offerTemplate == null ? null : ProductSpecification.parseFromOfferTemplate(offerTemplate, uriInfo);
 	}
 
-	public List<ProductSpecification> findProductSpecifications(UriInfo uriInfo) {
-		List<OfferTemplate> offerTemplates = offerTemplateService.list();
+	public List<ProductSpecification> findProductSpecifications(User currentUser, UriInfo uriInfo) {
+		List<OfferTemplate> offerTemplates = offerTemplateService.list(currentUser.getProvider());
 		return ProductSpecification.parseFromOfferTemplates(offerTemplates, uriInfo);
 	}
 

@@ -90,7 +90,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	@Override
 	public List<ProductSpecification> findProductSpecifications() {
 		log.debug("find productSpecifications ... ");
-		return catalogApi.findProductSpecifications(uriInfo);
+		return catalogApi.findProductSpecifications(getCurrentUser(), uriInfo);
 	}
 
 	@Override
