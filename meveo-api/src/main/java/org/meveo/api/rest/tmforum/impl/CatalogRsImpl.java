@@ -87,11 +87,15 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 		return Response.ok().entity(productOffering).build();
 	}
 
-	@Override
-	public List<ProductSpecification> findProductSpecifications() {
-		log.debug("find productSpecifications ... ");
-		return catalogApi.findProductSpecifications(getCurrentUser(), uriInfo);
-	}
+    @Override
+    public List<ProductSpecification> findProductSpecifications() {
+        log.debug("find productSpecifications ... ");
+        try {
+            return catalogApi.findProductSpecifications(getCurrentUser(), uriInfo);
+        } catch (MeveoApiException e) {
+            return null;
+        }
+    }
 
 	@Override
 	public Response findProductSpecificationById(String id) {
