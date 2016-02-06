@@ -140,22 +140,21 @@ public class DWHQueryBean {
 									date = (Date) resTab[1];
 									i++;
 								} catch(Exception e){}
-							}
-							if (resTab.length > i) {
-								dimension1 = resTab[i]==null?"":resTab[i].toString();
-								i++;
-							}
-							if (resTab.length > 3) {
-								dimension2 = resTab[i]==null?"":resTab[i].toString();
-								i++;
-							}
-							if (resTab.length > 4) {
-								dimension3 = resTab[i]==null?"":resTab[i].toString();
-								i++;
-							}
-							if (resTab.length > 5) {
-								dimension4 = resTab[i]==null?"":resTab[i].toString();
-								i++;
+								if (resTab.length > i) {
+									dimension1 = resTab[i]==null?"":resTab[i].toString();
+									i++;
+									if (resTab.length > i) {
+										dimension2 = resTab[i]==null?"":resTab[i].toString();
+										i++;
+										if (resTab.length > i) {
+											dimension3 = resTab[i]==null?"":resTab[i].toString();
+											i++;
+											if (resTab.length > i) {
+												dimension4 = resTab[i]==null?"":resTab[i].toString();
+											}
+										}
+									}
+								}
 							}
 						} else {
 							value = new BigDecimal("" + res);
