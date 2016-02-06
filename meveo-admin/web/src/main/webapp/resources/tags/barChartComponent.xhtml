@@ -11,22 +11,17 @@
 	xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface componentType="formField">
-	<cc:attribute name="barChartEntityModel" />
+	<cc:attribute name="model" />
 </cc:interface>
 
 <cc:implementation>
-
 	<ui:fragment>
-
-
-		<p:chart type="bar" id="mainBarChart"
-			model="#{cc.attrs.barChartEntityModel.model}"
-			style="#{cc.attrs.barChartEntityModel.barChart.style}"
-			styleClass="#{cc.attrs.barChartEntityModel.barChart.styleClass}" />
-
-
-
-
+				<p:chart type="bar"
+					model="#{cc.attrs.model.model}"
+					style="#{cc.attrs.model.chart.style}"
+					barPadding="#{cc.attrs.model.chart.barPadding}"
+					barMargin="#{cc.attrs.model.chart.barMargin}"
+					styleClass="#{cc.attrs.model.chart.styleClass}" />
 	</ui:fragment>
 
 </cc:implementation>

@@ -31,64 +31,9 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="3">
-
-				<ui:repeat var="bar" value="#{barChartBean.barChartEntityModels}"
+				<ui:repeat var="chart" value="#{chartBean.chartEntityModels}"
 					varStatus="i">
-
-					<h:form rendered="#{bar.barChart.isVisible}">
-						<p:outputPanel style="width:500px;">
-							<hf:barChartComponent barChartEntityModel="#{bar}" />
-							<!-- chartBackingBean="#{barChartBean}" -->
-						</p:outputPanel>
-						<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
-						<p:calendar id="filterFrom" value="#{bar.minDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
-							<p:ajax event="dateSelect" update="@form"
-								listener="#{barChartBean.setModel(i.index)}" />
-						</p:calendar>
-						<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
-						<p:calendar id="filterTo" value="#{bar.maxDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
-							<p:ajax event="dateSelect" update="@form"
-								listener="#{barChartBean.setModel(i.index)}" />
-						</p:calendar>
-					</h:form>
-				</ui:repeat>
-
-				<ui:repeat var="line" value="#{lineChartBean.lineChartEntityModels}"
-					varStatus="i">
-					<h:form rendered="#{line.lineChart.isVisible}">
-						<p:outputPanel style="width:500px;">
-							<hf:lineChartComponent lineChartEntityModel="#{line}"></hf:lineChartComponent>
-						</p:outputPanel>
-						<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
-						<p:calendar id="filterFrom" value="#{line.minDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
-							<p:ajax event="dateSelect" update="@form"
-								listener="#{lineChartBean.setModel(i.index)}" />
-						</p:calendar>
-						<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
-						<p:calendar id="filterTo" value="#{line.maxDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
-							<p:ajax event="dateSelect" update="@form"
-								listener="#{lineChartBean.setModel(i.index)}" />
-						</p:calendar>
-					</h:form>
-				</ui:repeat>
-
-				<ui:repeat var="pie" value="#{pieChartBean.pieChartEntityModels}"
-					varStatus="i">
-					<h:form rendered="#{pie.pieChart.isVisible}">
-						<p:outputPanel style="width:500px;">
-							<hf:pieChartComponent pieChartEntityModel="#{pie}"></hf:pieChartComponent>
-						</p:outputPanel>
-						<p:outputLabel value="#{messages['chart.from']}"></p:outputLabel>
-						<p:calendar id="filterFrom" value="#{pie.minDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
-							<p:ajax event="dateSelect" update="@form"
-								listener="#{pieChartBean.setModel(i.index)}" />
-						</p:calendar>
-						<p:outputLabel value="#{messages['chart.to']}"></p:outputLabel>
-						<p:calendar id="filterTo" value="#{pie.maxDate}" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
-							<p:ajax event="dateSelect" update="@form"
-								listener="#{pieChartBean.setModel(i.index)}" />
-						</p:calendar>
-					</h:form>
+						<hf:chartComponent model="#{chart}" chartBean="#{chartBean}" index="#{i.index}"/>
 				</ui:repeat>
 			</h:panelGrid>
 			<h:panelGrid columns="2" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
@@ -143,7 +88,7 @@
 			 </hftl:dataList>
 			</h:panelGrid>
 
-			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrRecurringWithNotPricePlan!=0}">
+			<h:panelGrid columns="1" rendered="#{configIssuesReportingBean.getNbrRecurringWithNotPricePlan()!=0}">
 			<h:outputLabel value="#{messages['recurringChargeTemplate.title']}"/>
 			<hftl:dataList resultsId="recurring_panel" checkMany="true" exportToXml="false"
 			 backingBean="#{recurringChargeTemplateBean}" sortBy="code" dataModel="#{configIssuesReportingBean.recurringWithNotPricePlanList}">

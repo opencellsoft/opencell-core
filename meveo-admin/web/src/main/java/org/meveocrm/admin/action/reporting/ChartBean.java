@@ -19,42 +19,23 @@ package org.meveocrm.admin.action.reporting;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
-import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.model.dwh.BarChart;
 import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.LineChart;
 import org.meveocrm.model.dwh.PieChart;
-import org.meveocrm.services.dwh.ChartService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.chart.ChartModel;
 
 @Named
 @ViewScoped
-public class ChartBean extends BaseBean<Chart> {
+public class ChartBean extends ChartEntityBean<Chart,ChartModel,ChartEntityModel<Chart, ChartModel>> {
 
 	private static final long serialVersionUID = 2585685452044860823L;
 
-	@Inject
-	ChartService chartService;
-
-	public ChartBean() {
-		super(Chart.class);
-
-	}
-
-	protected IPersistenceService<Chart> getPersistenceService() {
-		return chartService;
-	}
 	
-	@Override
-	protected String getListViewName() {
-		return "charts";
-	}
-
 	public String getEditView(Chart chart) {
 
 		if (chart instanceof BarChart) {
