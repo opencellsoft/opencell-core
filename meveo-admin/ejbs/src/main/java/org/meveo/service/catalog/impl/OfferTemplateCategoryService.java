@@ -9,13 +9,14 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class OfferTemplateCategoryService extends PersistenceService<OfferTemplateCategory> {
+public class OfferTemplateCategoryService extends BusinessService<OfferTemplateCategory> {
 
 	@Override
 	public void create(OfferTemplateCategory e, User creator, Provider provider) {
