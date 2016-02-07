@@ -37,38 +37,38 @@
 					<p:ajax event="dateSelect" update="@form"
 						listener="#{chartBean.setModel(cc.attrs.index)}" />
 				</p:calendar>
-				<ui:fragment rendered="#{chartBean.dimension1List.size()>0}">
+				<ui:fragment rendered="#{cc.attrs.model.dimension1List.size()>0}">
 			    	<p:outputLabel value="#{cc.attrs.model.chart.measurableQuantity.dimension1}"></p:outputLabel>
 					<p:selectOneMenu  value="#{cc.attrs.model.dimension1}" id="dimension1_list" >
 					  <f:selectItem itemLabel="" itemValue="" />
-					  <f:selectItems value="#{chartBean.dimension1List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
+					  <f:selectItems value="#{cc.attrs.model.dimension1List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
                       <p:ajax event="valueChange" update="@form"
 						listener="#{chartBean.setModel(cc.attrs.index)}" />
 					</p:selectOneMenu>
 				</ui:fragment> 
-				<ui:fragment rendered="#{chartBean.dimension2List.size()>0}">
+				<ui:fragment rendered="#{cc.attrs.model.dimension2List.size()>0}">
 			    	<p:outputLabel value="#{cc.attrs.model.chart.measurableQuantity.dimension2}"></p:outputLabel>
 					<p:selectOneMenu  value="#{cc.attrs.model.dimension2}" id="dimension2_list" >
 					  <f:selectItem itemLabel="" itemValue="" />
-					  <f:selectItems value="#{chartBean.dimension2List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
+					  <f:selectItems value="#{cc.attrs.model.dimension2List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
                       <p:ajax event="valueChange" update="@form"
 						listener="#{chartBean.setModel(cc.attrs.index)}" />
 					</p:selectOneMenu>
 				</ui:fragment> 
-				<ui:fragment rendered="#{chartBean.dimension3List.size()>0}">
+				<ui:fragment rendered="#{cc.attrs.model.dimension3List.size()>0}">
 			    	<p:outputLabel value="#{cc.attrs.model.chart.measurableQuantity.dimension3}"></p:outputLabel>
 					<p:selectOneMenu  value="#{cc.attrs.model.dimension3}" id="dimension3_list" >
 					  <f:selectItem itemLabel="" itemValue="" />
-					  <f:selectItems value="#{chartBean.dimension3List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
+					  <f:selectItems value="#{cc.attrs.model.dimension3List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
                       <p:ajax event="valueChange" update="@form"
 						listener="#{chartBean.setModel(cc.attrs.index)}" />
 					</p:selectOneMenu>
 				</ui:fragment> 
-				<ui:fragment rendered="#{chartBean.dimension4List.size()>0}">
+				<ui:fragment rendered="#{cc.attrs.model.dimension4List.size()>0}">
 			    	<p:outputLabel value="#{cc.attrs.model.chart.measurableQuantity.dimension4}"></p:outputLabel>
 					<p:selectOneMenu  value="#{cc.attrs.model.dimension4}" id="dimension4_list" >
 					  <f:selectItem itemLabel="" itemValue="" />
-					  <f:selectItems value="#{chartBean.dimension4List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
+					  <f:selectItems value="#{cc.attrs.model.dimension4List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
                       <p:ajax event="valueChange" update="@form"
 						listener="#{chartBean.setModel(cc.attrs.index)}" />
 					</p:selectOneMenu>

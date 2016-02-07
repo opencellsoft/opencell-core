@@ -1,7 +1,9 @@
 package org.meveocrm.admin.action.reporting;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.meveocrm.model.dwh.Chart;
 import org.primefaces.model.chart.ChartModel;
@@ -19,6 +21,12 @@ public class ChartEntityModel <C extends Chart,M extends ChartModel>{
 	private String dimension2;
 	private String dimension3;
 	private String dimension4;
+
+
+	private List<String> dimension1List = new ArrayList<String>();
+	private List<String> dimension2List = new ArrayList<String>();
+	private List<String> dimension3List = new ArrayList<String>();
+	private List<String> dimension4List = new ArrayList<String>();
 
 	public ChartEntityModel() {
 		setRange(new Date());
@@ -97,6 +105,37 @@ public class ChartEntityModel <C extends Chart,M extends ChartModel>{
 
 	public void setDimension4(String dimension4) {
 		this.dimension4 = dimension4;
+	}
+	public List<String> getDimension1List() {
+		return dimension1List;
+	}
+
+	public void setDimension1List(List<String> dimension1List) {
+		this.dimension1List = dimension1List;
+	}
+
+	public List<String> getDimension2List() {
+		return dimension2List;
+	}
+
+	public void setDimension2List(List<String> dimension2List) {
+		this.dimension2List = dimension2List;
+	}
+
+	public List<String> getDimension3List() {
+		return dimension3List;
+	}
+
+	public void setDimension3List(List<String> dimension3List) {
+		this.dimension3List = dimension3List;
+	}
+
+	public List<String> getDimension4List() {
+		return dimension4List;
+	}
+
+	public void setDimension4List(List<String> dimension4List) {
+		this.dimension4List = dimension4List;
 	}
 
 }
