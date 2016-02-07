@@ -35,7 +35,14 @@ public class ChartBean extends ChartEntityBean<Chart,ChartModel,ChartEntityModel
 
 	private static final long serialVersionUID = 2585685452044860823L;
 
-	
+	public ChartBean() {
+		super(Chart.class);
+	}
+
+	public ChartBean(Class<Chart> clazz) {
+		super(clazz);
+	}
+
 	public String getEditView(Chart chart) {
 
 		if (chart instanceof BarChart) {

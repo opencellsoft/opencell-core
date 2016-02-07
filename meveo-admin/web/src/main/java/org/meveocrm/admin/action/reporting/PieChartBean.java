@@ -15,5 +15,12 @@ public class PieChartBean extends ChartEntityBean<PieChart,PieChartModel,PieChar
 	 */
 	private static final long serialVersionUID = 3731010636973175230L;
 
+	public PieChartBean() {
+		super(PieChart.class);
+	}
+
+	public PieChartBean(Class<PieChart> clazz) {
+		super(clazz);
+	}
 
 }

@@ -1,10 +1,15 @@
 
 package org.meveocrm.admin.action.reporting;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -27,8 +32,8 @@ import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.LineChartModel;
 import org.primefaces.model.chart.PieChartModel;
 
-
-public  class ChartEntityBean<T extends Chart,CM extends ChartModel,EM extends ChartEntityModel<T,CM>> extends BaseBean<T> {
+public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends ChartEntityModel<T, CM>>
+		extends BaseBean<T> {
 
 	@Inject
 	protected ChartService<T> chartService;
@@ -40,7 +45,11 @@ public  class ChartEntityBean<T extends Chart,CM extends ChartModel,EM extends C
 
 	protected List<EM> chartEntityModels = new ArrayList<EM>();
 
-	
+	private List<String> dimension1List = new ArrayList<String>();
+	private List<String> dimension2List = new ArrayList<String>();
+	private List<String> dimension3List = new ArrayList<String>();
+	private List<String> dimension4List = new ArrayList<String>();
+
 	private static final long serialVersionUID = 5241132812597358412L;
 
 	public ChartEntityBean() {
@@ -60,10 +69,100 @@ public  class ChartEntityBean<T extends Chart,CM extends ChartModel,EM extends C
 	protected String getListViewName() {
 		return "charts";
 	}
-	
-	@SuppressWarnings("unchecked")
-	public List<EM> initChartModelList() {
 
+	@SuppressWarnings("unchecked")
+	public EM buildChargeEntityModel(Date fromDate, Date toDate, MeasurableQuantity mq, T chart, String dimension1,
+			String dimension2, String dimension3, String dimension4) {
+		log.debug(
+				"buildChargeEntityModel {} from {} to {}, dimension1={}, dimension2={},"
+						+ " dimension3={}, dimension4={}",
+				mq.getCode(), fromDate, toDate, dimension1, dimension2, dimension3, dimension4);
+		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null, fromDate, toDate, null, mq);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		ChartSeries mvSeries = new ChartSeries();
+
+		mvSeries.setLabel(sdf.format(fromDate.getTime()));
+		boolean empty=mvs.size()==0;
+		if (!empty) {
+			empty=true;
+			Map<String, BigDecimal> aggregatedValues = new HashMap<String, BigDecimal>();
+			for (MeasuredValue measuredValue : mvs) {
+				String key = sdf.format(measuredValue.getDate());
+				log.debug("md key={}, aggVal={}, dim1={},dim2={},dim3={},dim4={},", key, aggregatedValues.get(key),
+						measuredValue.getDimension1(), measuredValue.getDimension2(), measuredValue.getDimension3(),
+						measuredValue.getDimension4());
+				if (measuredValue.getValue() != null
+						&& (StringUtils.isBlank(dimension1) || dimension1.equals(measuredValue.getDimension1()))
+						&& (StringUtils.isBlank(dimension2) || dimension2.equals(measuredValue.getDimension2()))
+						&& (StringUtils.isBlank(dimension3) || dimension3.equals(measuredValue.getDimension3()))
+						&& (StringUtils.isBlank(dimension4) || dimension4.equals(measuredValue.getDimension4()))) {
+					// TODO we should only add if the measurable quantity is
+					// additive
+					if (aggregatedValues.containsKey(key) && aggregatedValues.get(key) != null) {
+						aggregatedValues.put(key, aggregatedValues.get(key).add(measuredValue.getValue()));
+						log.debug("md key={}, aggVal>{}", key, aggregatedValues.get(key));
+					} else {
+						aggregatedValues.put(key, measuredValue.getValue());
+						log.debug("md key={}, aggVal={}", key, aggregatedValues.get(key));
+					}
+					if(empty){
+						empty=false;
+					}
+				}
+			}
+			List<String> keyList = new ArrayList<String>(aggregatedValues.keySet());
+			Collections.sort(keyList);
+			Collections.reverseOrder();
+			for (String key : keyList) {
+				mvSeries.set(key, aggregatedValues.get(key));
+			}
+			dimension1List = mvService.getDimensionList(1, fromDate, toDate, mq);
+			dimension2List = mvService.getDimensionList(2, fromDate, toDate, mq);
+			dimension3List = mvService.getDimensionList(3, fromDate, toDate, mq);
+			dimension4List = mvService.getDimensionList(4, fromDate, toDate, mq);
+		}
+		if(empty){
+			mvSeries.set("NO RECORDS", 0);
+			log.info("No measured values found for : " + mq.getCode());
+		}
+		boolean isAdmin = chart.getAuditable().getCreator().hasRole("administrateur");
+		boolean equalUser = chart.getAuditable().getCreator().getId() == getCurrentUser().getId();
+		boolean sameRoleWithChart = chart.getRole() != null ? getCurrentUser().hasRole(chart.getRole().getDescription())
+				: false;
+		chart.setVisible(isAdmin || equalUser || sameRoleWithChart);
+		if (chart instanceof BarChart) {
+			BarChartModel chartModel = new BarChartModel();
+			chartModel.addSeries(mvSeries);
+			chartModel.setTitle(mq.getDescription());
+			configureBarChartModel(chartModel, (BarChart) chart);
+			BarChartEntityModel chartEntityModel = new BarChartEntityModel();
+			chartEntityModel.setModel(chartModel);
+			chartEntityModel.setChart((BarChart) chart);
+			return (EM) chartEntityModel;
+		} else if (chart instanceof LineChart) {
+			LineChartModel chartModel = new LineChartModel();
+			chartModel.addSeries(mvSeries);
+			chartModel.setTitle(mq.getDescription());
+			configureLineChartModel(chartModel, (LineChart) chart);
+			LineChartEntityModel chartEntityModel = new LineChartEntityModel();
+			chartEntityModel.setModel(chartModel);
+			chartEntityModel.setChart((LineChart) chart);
+			return (EM) chartEntityModel;
+		} else if (chart instanceof PieChart) {
+			PieChartModel chartModel = new PieChartModel();
+			chartModel.setTitle(mq.getDescription());
+			configurePieChartModel(chartModel, (PieChart) chart);
+			PieChartEntityModel chartEntityModel = new PieChartEntityModel();
+			chartEntityModel.setModel(chartModel);
+			chartEntityModel.setChart((PieChart) chart);
+			return (EM) chartEntityModel;
+		}
+		return null;
+	}
+
+	public List<EM> initChartModelList() {
+		log.debug("initChartModelList");
 		Calendar fromDate = Calendar.getInstance();
 		fromDate.set(Calendar.DAY_OF_MONTH, 1);
 		Calendar toDate = Calendar.getInstance();
@@ -75,120 +174,26 @@ public  class ChartEntityBean<T extends Chart,CM extends ChartModel,EM extends C
 
 		for (T chart : chartList) {
 			MeasurableQuantity mq = chart.getMeasurableQuantity();
-			List<MeasuredValue> mvs = mvService
-					.getByDateAndPeriod(null, fromDate.getTime(), toDate.getTime(), null, mq);
-
-
-			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
-			ChartSeries mvSeries = new ChartSeries();
-
-			mvSeries.setLabel(sdf.format(fromDate.getTime()));
-
-			if (mvs.size() > 0) {
-				for (MeasuredValue measuredValue : mvs) {
-					mvSeries.set(sdf.format(measuredValue.getDate()), measuredValue.getValue());
-				}
-			} else {
-				mvSeries.set("NO RECORDS", 0);
-				log.info("No measured values found for : " + mq.getCode());
-			}
-			boolean isAdmin = chart.getAuditable().getCreator().hasRole("administrateur");
-			boolean equalUser = chart.getAuditable().getCreator().getId() == getCurrentUser().getId();
-			boolean sameRoleWithChart = chart.getRole() != null ? getCurrentUser().hasRole(
-					chart.getRole().getDescription()) : false;
-			chart.setVisible(isAdmin || equalUser || sameRoleWithChart);
-			if(chart instanceof BarChart){
-				BarChartModel chartModel = new BarChartModel();
-				chartModel.addSeries(mvSeries);
-				chartModel.setTitle(mq.getDescription());
-				configureBarChartModel(chartModel, (BarChart)chart);
-				BarChartEntityModel chartEntityModel = new BarChartEntityModel();
-				chartEntityModel.setModel(chartModel);
-				chartEntityModel.setChart((BarChart) chart);
-				chartEntityModels.add((EM) chartEntityModel);
-				log.debug("add barChart model {}",mq.getCode());
-			} else if (chart instanceof LineChart){
-				LineChartModel chartModel = new LineChartModel();
-				chartModel.addSeries(mvSeries);
-				chartModel.setTitle(mq.getDescription());
-				configureLineChartModel(chartModel, (LineChart)chart);
-				LineChartEntityModel chartEntityModel = new LineChartEntityModel();
-				chartEntityModel.setModel(chartModel);
-				chartEntityModel.setChart((LineChart) chart);
-				chartEntityModels.add((EM) chartEntityModel);
-				log.debug("add lineChart model {}",mq.getCode());
-			} else if (chart instanceof PieChart){
-				PieChartModel chartModel = new PieChartModel();
-				chartModel.setTitle(mq.getDescription());
-				configurePieChartModel(chartModel, (PieChart)chart);
-				PieChartEntityModel chartEntityModel = new PieChartEntityModel();
-				chartEntityModel.setModel(chartModel);
-				chartEntityModel.setChart((PieChart) chart);
-				chartEntityModels.add((EM) chartEntityModel);
-				log.debug("add pieChart model {}",mq.getCode());
-			}
+			EM chartEntityModel = buildChargeEntityModel(fromDate.getTime(), toDate.getTime(), mq, chart, null, null,
+					null, null);
+			chartEntityModels.add(chartEntityModel);
+			log.debug("add model {}", mq.getCode());
 		}
 		return chartEntityModels;
 	}
 
-
-
-
-	@SuppressWarnings("unchecked")
 	public EM getChartEntityModel() {
+		log.debug("getChartEntityModel");
 		if (chartEntityModel == null) {
-			if(entity instanceof BarChart){
-				chartEntityModel = (EM) new BarChartEntityModel();
-			}
-		}
-		if (entity != null) {
-			if (entity.getMeasurableQuantity() != null) {
+			if (entity != null && entity.getMeasurableQuantity() != null) {
 				Calendar fromDate = Calendar.getInstance();
 				fromDate.set(Calendar.DAY_OF_MONTH, 1);
 				Calendar toDate = Calendar.getInstance();
 				toDate.setTime(fromDate.getTime());
 				toDate.add(Calendar.MONTH, 1);
-
 				MeasurableQuantity mq = getEntity().getMeasurableQuantity();
-				List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null, fromDate.getTime(), toDate.getTime(),
-						null, mq);
-
-
-				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
-				ChartSeries mvSeries = new ChartSeries();
-
-				mvSeries.setLabel(sdf.format(fromDate.getTime()));
-				if (mvs.size() > 0) {
-					for (MeasuredValue measuredValue : mvs) {
-						mvSeries.set(sdf.format(measuredValue.getDate()), measuredValue.getValue());
-					}
-
-				} else {
-					mvSeries.set("NO RECORDS", 0);
-					mvSeries.set("SAMPLE RECORD", 10);
-					mvSeries.set("SAMPLE RECORD 1", 20);
-
-					log.info("No measured values found for : " + mq.getCode());
-				}
-				if(entity instanceof BarChart){
-					BarChartModel chartModel = new BarChartModel();
-					chartModel.addSeries(mvSeries);
-					chartModel.setTitle(mq.getDescription());
-					configureBarChartModel(chartModel, (BarChart) entity);
-					chartEntityModel.setModel((CM) chartModel);
-				} else if(entity instanceof LineChart){
-					LineChartModel chartModel = new LineChartModel();
-					chartModel.addSeries(mvSeries);
-					chartModel.setTitle(mq.getDescription());
-					configureLineChartModel(chartModel, (LineChart) entity);
-					chartEntityModel.setModel((CM) chartModel);
-				} else if(entity instanceof PieChart){
-					PieChartModel chartModel = new PieChartModel();
-					chartModel.setTitle(mq.getDescription());
-					configurePieChartModel(chartModel, (PieChart) entity);
-					chartEntityModel.setModel((CM) chartModel);
-				}
-				chartEntityModel.setChart(getEntity());
+				chartEntityModel = buildChargeEntityModel(fromDate.getTime(), toDate.getTime(), mq, entity, null, null,
+						null, null);
 			}
 		}
 		return chartEntityModel;
@@ -198,48 +203,12 @@ public  class ChartEntityBean<T extends Chart,CM extends ChartModel,EM extends C
 		this.chartEntityModel = chartEntityModel;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setModel(Integer modelIndex) {
+		log.debug("setModel index={}", modelIndex);
 		EM curr = chartEntityModels.get(modelIndex);
 		MeasurableQuantity mq = curr.getChart().getMeasurableQuantity();
-		if (!curr.getMinDate().before(curr.getMaxDate())) {
-			curr.setMaxDate(curr.getMinDate());
-		}
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(curr.getMaxDate());
-		cal.add(Calendar.DATE, 1);
-
-		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null, curr.getMinDate(), cal.getTime(), null, mq);
-
-
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
-		ChartSeries mvSeries = new ChartSeries();
-
-		mvSeries.setLabel(sdf.format(curr.getMinDate()));
-
-		if (mvs.size() > 0) {
-			for (MeasuredValue measuredValue : mvs) {
-				mvSeries.set(sdf.format(measuredValue.getDate()), measuredValue.getValue());
-			}
-
-		} else {
-			mvSeries.set("NO RECORDS", 0);
-			log.info("No measured values found for : " + mq.getCode());
-		}
-		if(curr.getChart() instanceof BarChart){
-			BarChartModel chartModel = new BarChartModel();
-			chartModel.addSeries(mvSeries);
-			chartModel.setTitle(mq.getDescription());
-			configureBarChartModel(chartModel, (BarChart) curr.getChart());
-			curr.setModel((CM) chartModel);
-		} else if(curr.getChart() instanceof LineChart){
-			LineChartModel chartModel = new LineChartModel();
-			chartModel.addSeries(mvSeries);
-			chartModel.setTitle(mq.getDescription());
-			configureLineChartModel(chartModel, (LineChart) curr.getChart());
-			curr.setModel((CM) chartModel);
-		}
-		curr.setChart(curr.getChart());
+		curr.setModel(buildChargeEntityModel(curr.getMinDate(), curr.getMaxDate(), mq, curr.getChart(),
+				curr.getDimension1(), curr.getDimension2(), curr.getDimension3(), curr.getDimension4()).getModel());
 	}
 
 	public List<EM> getChartEntityModels() {
@@ -251,6 +220,38 @@ public  class ChartEntityBean<T extends Chart,CM extends ChartModel,EM extends C
 
 	public void setChartEntityModels(List<EM> chartEntityModels) {
 		this.chartEntityModels = chartEntityModels;
+	}
+
+	public List<String> getDimension1List() {
+		return dimension1List;
+	}
+
+	public void setDimension1List(List<String> dimension1List) {
+		this.dimension1List = dimension1List;
+	}
+
+	public List<String> getDimension2List() {
+		return dimension2List;
+	}
+
+	public void setDimension2List(List<String> dimension2List) {
+		this.dimension2List = dimension2List;
+	}
+
+	public List<String> getDimension3List() {
+		return dimension3List;
+	}
+
+	public void setDimension3List(List<String> dimension3List) {
+		this.dimension3List = dimension3List;
+	}
+
+	public List<String> getDimension4List() {
+		return dimension4List;
+	}
+
+	public void setDimension4List(List<String> dimension4List) {
+		this.dimension4List = dimension4List;
 	}
 
 	private void configureBarChartModel(BarChartModel chartModel, BarChart barChart) {
@@ -314,10 +315,10 @@ public  class ChartEntityBean<T extends Chart,CM extends ChartModel,EM extends C
 
 		Axis yAxis = chartModel.getAxis(AxisType.Y);
 		if (!StringUtils.isBlank(lineChart.getYaxisLabel())) {
-			xAxis.setLabel(lineChart.getYaxisLabel());
+			yAxis.setLabel(lineChart.getYaxisLabel());
 		}
 		yAxis.setMin(lineChart.getMinY());
-		yAxis.setMax(lineChart.getMaxY() != 0 ? lineChart.getMaxY() : null);
+		yAxis.setMax(lineChart.getMaxY() > 0 ? lineChart.getMaxY() : null);
 		if (lineChart.getYaxisAngle() != null) {
 			yAxis.setTickAngle(lineChart.getYaxisAngle());
 		}
@@ -335,7 +336,7 @@ public  class ChartEntityBean<T extends Chart,CM extends ChartModel,EM extends C
 			chartModel.setDatatipFormat(lineChart.getDatatipFormat());
 		}
 	}
-	
+
 	private void configurePieChartModel(PieChartModel chartModel, PieChart pieChart) {
 		if (pieChart.getExtender() != null) {
 			chartModel.setExtender(pieChart.getExtender());

@@ -16,4 +16,11 @@ public class BarChartBean extends ChartEntityBean<BarChart,BarChartModel,BarChar
 	 */
 	private static final long serialVersionUID = 8644183603983960104L;
 
+	public BarChartBean() {
+		super(BarChart.class);
+	}
+
+	public BarChartBean(Class<BarChart> clazz) {
+		super(clazz);
+	}
 }
