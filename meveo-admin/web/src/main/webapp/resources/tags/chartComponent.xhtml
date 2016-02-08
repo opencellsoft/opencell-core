@@ -20,8 +20,8 @@
 
 	<ui:fragment>
 
-		<h:form rendered="#{cc.attrs.model.chart.isVisible}">
-			<p:outputPanel style="width:#{cc.attrs.model.chart.width};">
+		<h:form rendered="#{cc.attrs.model.chart.isVisible}" style="width:#{cc.attrs.model.chart.width};height:#{cc.attrs.model.chart.width};overflow:auto">
+			<p:outputPanel>
 			    <ui:fragment rendered="#{(cc.attrs.model.chart.class.simpleName eq 'BarChart')}">
 			        <hf:barChartComponent model="#{cc.attrs.model}"/>
 			    </ui:fragment>

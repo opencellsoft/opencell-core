@@ -1354,4 +1354,10 @@
 		</addColumn>
 		<sql>UPDATE DWH_CHART SET WIDTH='500px';</sql>
 	</changeSet>
+     <changeSet id="#barchart-20160208" author="smichea">		
+		<addColumn tableName="dwh_chart">
+			<column name="height" type="VARCHAR(10)"></column>
+		</addColumn>
+		<sql>UPDATE DWH_CHART SET HEIGHT='300px';</sql>
+	</changeSet>
 </databaseChangeLog>

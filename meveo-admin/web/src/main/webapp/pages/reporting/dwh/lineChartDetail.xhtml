@@ -49,6 +49,7 @@
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
 			<hftl:formField label="#{messages['commons.width']}" field="width" />
+			<hftl:formField label="#{messages['commons.height']}" field="height" />
 			<hftl:formField label="#{messages['chart.style']}" field="style" />
 			<hftl:formField label="#{messages['chart.styleClass']}"
 				field="styleClass" />
@@ -93,7 +94,7 @@
 			<hftl:formField label="#{messages['lineChart.datatipFormat']}"
 				field="datatipFormat" />
 
-			<p:commandButton id="showPreview"
+			<!-- <p:commandButton id="showPreview"
 				action="#{lineChartBean.getChartEntityModel()}"
 				value="#{messages['page.chart.preview']}" update="@all"></p:commandButton>
 
@@ -101,8 +102,8 @@
 				rendered="#{lineChartBean.chartEntityModel.model != null}"
 				style="margin:50px">
 				<p:chart type="line" model="#{lineChartBean.chartEntityModel.model}"
-					style="#{entity.style}" styleClass="#{entity.style}" />
-			</p:outputPanel>
+					style="#{entity.style}" styleClass="#{entity.style}" responsive="true"/>
+			</p:outputPanel> -->
 
 		</hftl:formPanel>
 

@@ -42,6 +42,9 @@ public class Chart extends BusinessEntity {
 
 	@Column(name="WIDTH", length = 10)
 	String width = "500px";
+
+	@Column(name="HEIGHT", length = 10)
+	String height = "300px";
 	
 	@Column(name = "CSS_STYLE", length = 1000)
 	String style;
@@ -88,6 +91,14 @@ public class Chart extends BusinessEntity {
 
 	public void setWidth(String width) {
 		this.width = width;
+	}
+
+	public String getHeight() {
+		return height;
+	}
+
+	public void setHeight(String height) {
+		this.height = height;
 	}
 
 	public String getStyle() {

@@ -69,10 +69,10 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 	public EM buildChargeEntityModel(Date fromDate, Date toDate, MeasurableQuantity mq, T chart, String dimension1,
 			String dimension2, String dimension3, String dimension4) {
 		EM result=null;
-		log.debug(
-				"buildChargeEntityModel {} from {} to {}, dimension1={}, dimension2={},"
-						+ " dimension3={}, dimension4={}",
-				mq.getCode(), fromDate, toDate, dimension1, dimension2, dimension3, dimension4);
+		//log.debug(
+		//		"buildChargeEntityModel {} from {} to {}, dimension1={}, dimension2={},"
+		//				+ " dimension3={}, dimension4={}",
+		//		mq.getCode(), fromDate, toDate, dimension1, dimension2, dimension3, dimension4);
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null, fromDate, toDate, null, mq);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
@@ -85,9 +85,9 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			Map<String, BigDecimal> aggregatedValues = new HashMap<String, BigDecimal>();
 			for (MeasuredValue measuredValue : mvs) {
 				String key = sdf.format(measuredValue.getDate());
-				log.debug("md key={}, aggVal={}, dim1={},dim2={},dim3={},dim4={},", key, aggregatedValues.get(key),
-						measuredValue.getDimension1(), measuredValue.getDimension2(), measuredValue.getDimension3(),
-						measuredValue.getDimension4());
+				//log.debug("md key={}, aggVal={}, dim1={},dim2={},dim3={},dim4={},", key, aggregatedValues.get(key),
+				//		measuredValue.getDimension1(), measuredValue.getDimension2(), measuredValue.getDimension3(),
+				//		measuredValue.getDimension4());
 				if (measuredValue.getValue() != null
 						&& (StringUtils.isBlank(dimension1) || dimension1.equals(measuredValue.getDimension1()))
 						&& (StringUtils.isBlank(dimension2) || dimension2.equals(measuredValue.getDimension2()))
@@ -97,10 +97,10 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 					// additive
 					if (aggregatedValues.containsKey(key) && aggregatedValues.get(key) != null) {
 						aggregatedValues.put(key, aggregatedValues.get(key).add(measuredValue.getValue()));
-						log.debug("md key={}, aggVal>{}", key, aggregatedValues.get(key));
+						//log.debug("md key={}, aggVal>{}", key, aggregatedValues.get(key));
 					} else {
 						aggregatedValues.put(key, measuredValue.getValue());
-						log.debug("md key={}, aggVal={}", key, aggregatedValues.get(key));
+						//log.debug("md key={}, aggVal={}", key, aggregatedValues.get(key));
 					}
 					if(empty){
 						empty=false;

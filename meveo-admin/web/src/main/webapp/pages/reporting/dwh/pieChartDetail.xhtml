@@ -49,6 +49,7 @@
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
 			<hftl:formField label="#{messages['commons.width']}" field="width" />
+			<hftl:formField label="#{messages['commons.height']}" field="height" />
 			<hftl:formField label="#{messages['chart.style']}" field="style" />
 			<hftl:formField label="#{messages['chart.styleClass']}"
 				field="styleClass" />
@@ -80,7 +81,7 @@
 
 
 
-			<p:commandButton id="showPreview"
+			<!-- <p:commandButton id="showPreview"
 				action="#{pieChartBean.getChartEntityModel()}"
 				value="#{messages['page.chart.preview']}" update="@all"></p:commandButton>
 
@@ -88,8 +89,8 @@
 				rendered="#{pieChartBean.chartEntityModel.model != null}"
 				style="margin:50px">
 				<p:chart type="pie" model="#{pieChartBean.chartEntityModel.model}"
-					style="#{entity.style}" styleClass="#{entity.style}" />
-			</p:outputPanel>
+					style="#{entity.style}" styleClass="#{entity.styleClass}" responsive="true" />
+			</p:outputPanel> -->
 		</hftl:formPanel>
 
 

@@ -17,25 +17,23 @@
 		<p:panel>
 
 
-
-			<h:panelGrid columns="2" style="width:100%;text-align:center;">
-				<!-- REMOVED FOR NOW -->
-                <!--
+			<!-- REMOVED FOR NOW -->
+			  <!--<h:panelGrid columns="2" style="width:100%;text-align:center;">
+				
+              
                 <h:graphicImage value="/img/MeveoOpenCell.png" style="border:0px;" />
 				<p:columnChart value="#{dashboard.customerAccount}" var="customerAccounts" xfield="#{customerAccounts.month}">
 					<p:chartSeries label="#{messages['dashboard.customerAccounts']}" value="#{customerAccounts.amount}" />
 				</p:columnChart >
-               -->
 
+			</h:panelGrid>-->
 
-			</h:panelGrid>
-
-			<h:panelGrid columns="3">
+			<div style="display:flex">
 				<ui:repeat var="chart" value="#{chartBean.chartEntityModels}"
 					varStatus="i">
 						<hf:chartComponent model="#{chart}" chartBean="#{chartBean}" index="#{i.index}"/>
 				</ui:repeat>
-			</h:panelGrid>
+			</div>
 			<h:panelGrid columns="2" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 			<h:panelGrid styleClass="panelGrid-column100">
 			<p:accordionPanel activeIndex="null" dynamic="true" cache="false" id="chargeTemplate">
