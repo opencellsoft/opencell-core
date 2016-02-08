@@ -79,7 +79,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 				}
 			}
 		} catch (MeveoApiException e) {
-			log.error("MeveoApiException caught while retrieving categories: " + e.getMessage());			
+			log.error("MeveoApiException caught while retrieving categories: " + e.getMessage());
 		} catch (Exception e) {
 			log.error("Exception caught while retrieving categories: " + e.getMessage());
 		}
