@@ -14,7 +14,8 @@
         <module>meveo-tmforum</module>
         <module>meveo-admin</module>
         <module>meveo-api</module>
-    </modules>
+        <module>meveo-client</module>
+  </modules>
 
     <properties>
         <!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific configuration (e.g. import.sql) -->
