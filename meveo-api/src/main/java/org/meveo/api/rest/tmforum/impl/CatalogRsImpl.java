@@ -52,7 +52,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public List<Category> findCategories() {
 		List<Category> categories = new ArrayList<Category>();
 		try {
-			List<OfferTemplateCategoryDto> offerTemplateCategoryDtos =  offerTemplateCategoryApi.list();
+			List<OfferTemplateCategoryDto> offerTemplateCategoryDtos =  offerTemplateCategoryApi.list(uriInfo);
 			if (offerTemplateCategoryDtos != null && offerTemplateCategoryDtos.size() > 0) {
 				for (OfferTemplateCategoryDto otcd: offerTemplateCategoryDtos) {
 					Category category = new Category();
@@ -97,7 +97,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 		
 		Category category = null;
 		try {
-			OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findById(id, getCurrentUser());
+			OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findById(id, getCurrentUser(), uriInfo);
 			if (otcd == null) {
 				return Response.status(Status.NOT_FOUND).build();
 			}

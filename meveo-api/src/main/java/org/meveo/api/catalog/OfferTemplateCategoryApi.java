@@ -26,9 +26,6 @@ import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 
 @Stateless
 public class OfferTemplateCategoryApi extends BaseApi {
-	
-	@Context
-	private UriInfo uriInfo;
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;
@@ -182,6 +179,36 @@ public class OfferTemplateCategoryApi extends BaseApi {
 				throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
 			}
 			
+			offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory);
+		} else {
+			missingParameters.add("code");
+			throw new MissingParameterException(getMissingParametersExceptionMessage());
+		}
+		
+		return offerTemplateCategoryDto;
+		
+	}
+	
+	/**
+	 * 
+	 * @param code
+	 * @param provider
+	 * @return
+	 * @throws MeveoApiException
+	 */
+	public OfferTemplateCategoryDto find(String code, Provider provider, UriInfo uriInfo) throws MeveoApiException {
+		
+		OfferTemplateCategoryDto offerTemplateCategoryDto = null;
+		
+		if (!StringUtils.isBlank(code)) {
+			
+			OfferTemplateCategory offerTemplateCategory 
+				= offerTemplateCategoryService.findByCode(code, provider);
+			
+			if (offerTemplateCategory == null) {
+				throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
+			}
+			
 			offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, uriInfo.getBaseUri().toString());
 		} else {
 			missingParameters.add("code");
@@ -255,6 +282,26 @@ public class OfferTemplateCategoryApi extends BaseApi {
 		List<OfferTemplateCategory> offerTemplateCategories = offerTemplateCategoryService.list();
 		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
 			for (OfferTemplateCategory offerTemplateCategory: offerTemplateCategories) {
+				OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory);
+				offerTemplateCategoryDtos.add(offerTemplateCategoryDto);
+			}
+		}
+		
+		return offerTemplateCategoryDtos;
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @return
+	 * @throws MeveoApiException
+	 */
+	public List<OfferTemplateCategoryDto> list(UriInfo uriInfo) throws MeveoApiException {
+		List<OfferTemplateCategoryDto> offerTemplateCategoryDtos = new ArrayList<OfferTemplateCategoryDto>();
+		
+		List<OfferTemplateCategory> offerTemplateCategories = offerTemplateCategoryService.list();
+		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
+			for (OfferTemplateCategory offerTemplateCategory: offerTemplateCategories) {
 				OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, uriInfo.getBaseUri().toString());
 				offerTemplateCategoryDtos.add(offerTemplateCategoryDto);
 			}
@@ -271,6 +318,34 @@ public class OfferTemplateCategoryApi extends BaseApi {
 	 * @throws MeveoApiException
 	 */
 	public OfferTemplateCategoryDto findById(String offerTemplateCategoryId, User currentUser) throws MeveoApiException {
+		OfferTemplateCategoryDto offerTemplateCategoryDto = null;
+		
+		if (!StringUtils.isBlank(offerTemplateCategoryId)) {
+			try {
+				long id = Integer.parseInt(offerTemplateCategoryId);
+				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findById(id);
+				if (offerTemplateCategory == null) {
+					throw new EntityDoesNotExistsException(OfferTemplateCategory.class, id);
+				}
+				offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory);
+				
+			} catch (NumberFormatException nfe) {
+				throw new MeveoApiException("Passed offerTemplateCategoryId is invalid.");
+			}
+			
+		}
+		
+		return offerTemplateCategoryDto;
+	}
+	
+	/**
+	 * 
+	 * @param offerTemplateCategoryId
+	 * @param currentUser
+	 * @return
+	 * @throws MeveoApiException
+	 */
+	public OfferTemplateCategoryDto findById(String offerTemplateCategoryId, User currentUser, UriInfo uriInfo) throws MeveoApiException {
 		OfferTemplateCategoryDto offerTemplateCategoryDto = null;
 		
 		if (!StringUtils.isBlank(offerTemplateCategoryId)) {
