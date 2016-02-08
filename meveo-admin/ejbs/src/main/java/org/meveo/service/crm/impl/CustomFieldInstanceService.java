@@ -34,6 +34,7 @@ import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.CustomFieldMatrixColumn;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
@@ -775,11 +776,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     /**
      * Match for a given entity's custom field (non-versionable values) map's key as the matrix value and return a map value.
      * 
-     * Map key is assumed to be the following format:
-     * <ul>
-     * <li>MATRIX_STRING: <matrix first key>|<matrix second key>|<matrix xx key></li>
-     * <li>MATRIX_RON: <range of numbers for the first key>|<range of numbers for the second key>|<range of numbers for the xx key></li>
-     * </ul>
+     * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * 
+     * <matrix first key>|<matrix second key>|<matrix xx key>|<range of numbers for the third key></li>
      * 
      * @param entity Entity to match
      * @param code Custom field code
@@ -811,11 +810,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     /**
      * Match for a given entity's custom field (versionable values) map's key as the matrix value and return a map value.
      * 
-     * Map key is assumed to be the following format:
-     * <ul>
-     * <li>MATRIX_STRING: <matrix first key>|<matrix second key></li>
-     * <li>MATRIX_RON: <range of numbers for the first key>|<range of numbers for the second key></li>
-     * </ul>
+     * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * 
+     * <matrix first key>|<matrix second key>|<matrix xx key>|<range of numbers for the third key></li>
      * 
      * @param entity Entity to match
      * @param code Custom field code
@@ -939,11 +936,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     /**
      * Match for a given value map's key as the matrix value and return a map value.
      * 
-     * Map key is assumed to be the following format:
-     * <ul>
-     * <li>MATRIX_STRING: <matrix first key>|<matrix second key></li>
-     * <li>MATRIX_RON: <range of numbers for the first key>|<range of numbers for the second key></li>
-     * </ul>
+     * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * 
+     * <matrix first key>|<matrix second key>|<range of numbers for the third key></li>
      * 
      * @param cft Custom field template
      * @param value Value to inspect
@@ -957,31 +952,26 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
 
         Object valueMatched = null;
-        if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
 
-            String mapKey = StringUtils.join(keys, CustomFieldValue.MATRIX_KEY_SEPARATOR);
-            valueMatched = ((Map<String, Object>) value).get(mapKey);
+        for (Entry<String, Object> valueInfo : ((Map<String, Object>) value).entrySet()) {
+            String[] keysParsed = valueInfo.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
+            if (keysParsed.length != keys.length) {
+                continue;
+            }
 
-        } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
-
-            for (Entry<String, Object> valueInfo : ((Map<String, Object>) value).entrySet()) {
-                String[] ranges = valueInfo.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
-                if (ranges.length != keys.length) {
-                    continue;
-                }
-
-                boolean allMatched = true;
-                for (int i = 0; i < ranges.length; i++) {
-                    if (!isNumberRangeMatch(ranges[i], keys[i])) {
-                        allMatched = false;
-                        break;
-                    }
-                }
-
-                if (allMatched) {
-                    valueMatched = valueInfo.getValue();
+            boolean allMatched = true;
+            for (int i = 0; i < keysParsed.length; i++) {
+                CustomFieldMatrixColumn matrixColumn = cft.getMatrixColumnByIndex(i);
+                if (matrixColumn == null || (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.STRING && !keysParsed[i].equals(keys[i]))
+                        || (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.RON && !isNumberRangeMatch(keysParsed[i], keys[i]))) {
+                    allMatched = false;
                     break;
                 }
+            }
+
+            if (allMatched) {
+                valueMatched = valueInfo.getValue();
+                break;
             }
         }
 

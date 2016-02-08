@@ -1,8 +1,13 @@
 package org.meveo.model.crm;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -16,6 +21,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
@@ -48,9 +54,19 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Column(name = "VALUE_REQUIRED")
     private boolean valueRequired;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_VAL")
     private Map<String, String> listValues = new HashMap<String, String>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_MCOLS", joinColumns = { @JoinColumn(name = "CFT_ID") })
+    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "CODE", nullable = false, length = 20)),
+            @AttributeOverride(name = "label", column = @Column(name = "LABEL", nullable = false, length = 50)),
+            @AttributeOverride(name = "keyType", column = @Column(name = "KEY_TYPE", nullable = false, length = 10)) })
+    private List<CustomFieldMatrixColumn> matrixColumns = new ArrayList<CustomFieldMatrixColumn>();
+
+    @Transient
+    private boolean matrixColumnsSorted;
 
     @Column(name = "VERSIONABLE")
     private boolean versionable;
@@ -134,6 +150,52 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setListValues(Map<String, String> listValues) {
         this.listValues = listValues;
+    }
+
+    public List<CustomFieldMatrixColumn> getMatrixColumns() {
+        return matrixColumns;
+    }
+
+    public void setMatrixColumns(List<CustomFieldMatrixColumn> matrixColumns) {
+        this.matrixColumns = matrixColumns;
+    }
+
+    public void addMatrixColumn() {
+        CustomFieldMatrixColumn column = new CustomFieldMatrixColumn();
+        column.setPosition(matrixColumns.size() + 1);
+        this.matrixColumns.add(column);
+    }
+
+    public void removeMatrixColumn(CustomFieldMatrixColumn columnToRemove) {
+        this.matrixColumns.remove(columnToRemove);
+
+        // Reorder position
+        for (CustomFieldMatrixColumn column : matrixColumns) {
+            if (column.getPosition() > columnToRemove.getPosition()) {
+                column.setPosition(column.getPosition() - 1);
+            }
+        }
+    }
+
+    public List<CustomFieldMatrixColumn> getMatrixColumnsSorted() {
+        if (!matrixColumnsSorted) {
+            Collections.sort(matrixColumns);
+        }
+        return matrixColumns;
+    }
+
+    /**
+     * Find a corresponding matrix column by its index (position). Note: result might differ if matrix column was added and value was not updated
+     * 
+     * @param index Index to return the column for
+     * @return Matched matrix column
+     */
+    public CustomFieldMatrixColumn getMatrixColumnByIndex(int index) {
+        if (index >= matrixColumns.size()) {
+            return null;
+        }
+        getMatrixColumnsSorted();
+        return matrixColumns.get(index);
     }
 
     public void setVersionable(boolean versionable) {
@@ -341,6 +403,6 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Override
     public String toString() {
-        return String.format("CustomFieldTemplate [id=%s, appliesTo=%s, code=%s]", id, appliesTo, code);
+        return String.format("CustomFieldTemplate [id=%s, appl)iesTo=%s, code=%s]", id, appliesTo, code);
     }
 }

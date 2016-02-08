@@ -1330,5 +1330,21 @@
 		<modifyDataType columnName="INVOICE_ADJUSTMENT_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_SELLER" />
 		<modifyDataType columnName="INVOICE_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_PROVIDER" />	
 		<modifyDataType columnName="INVOICE_ADJUSTMENT_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_PROVIDER" />																																
-	</changeSet>	
+	</changeSet>
+    <changeSet id="#1360_20160206" author="AndriusKarpavicius">
+        <createTable tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS">
+            <column name="CFT_ID" type="BIGINT" />
+            <column name="POSITION" type="INT" />
+            <column name="CODE" type="VARCHAR(20)" />
+            <column name="LABEL" type="VARCHAR(50)" />
+            <column name="KEY_TYPE" type="INT" />
+        </createTable>
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS" columnName="POSITION" />
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS" columnName="CFT_ID" />
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS" columnName="CODE" />
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS" columnName="LABEL" />
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS" columnName="KEY_TYPE" />
+        <addForeignKeyConstraint constraintName="FK_CFT_MCOLS_CFT" referencedTableName="CRM_CUSTOM_FIELD_TMPL" baseColumnNames="CFT_ID" baseTableName="CRM_CUSTOM_FIELD_TMPL_MCOLS"
+            referencedColumnNames="ID" />
+    </changeSet>
 </databaseChangeLog>
