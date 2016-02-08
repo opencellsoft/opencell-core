@@ -40,6 +40,9 @@ public class Chart extends BusinessEntity {
 	@JoinColumn(name = "MSR_QTY_ID")
 	MeasurableQuantity measurableQuantity;
 
+	@Column(name="WIDTH", length = 10)
+	String width = "500px";
+	
 	@Column(name = "CSS_STYLE", length = 1000)
 	String style;
 
@@ -77,6 +80,14 @@ public class Chart extends BusinessEntity {
 
 	public void setMeasurableQuantity(MeasurableQuantity measurableQuantity) {
 		this.measurableQuantity = measurableQuantity;
+	}
+
+	public String getWidth() {
+		return width;
+	}
+
+	public void setWidth(String width) {
+		this.width = width;
 	}
 
 	public String getStyle() {

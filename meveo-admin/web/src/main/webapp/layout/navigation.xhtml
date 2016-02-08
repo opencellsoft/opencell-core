@@ -358,20 +358,20 @@
 				<p:menuitem id="charts" value="#{messages['menu.charts']}"
 					outcome="charts" />
 
-				<p:menuitem id="cache"
-					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-					outcome="caches" value="#{messages['menu.cacheInfo']}" />
 
 			</p:submenu>
 
 			<p:submenu id="tools" label="#{messages['menu.tools']}"
 				rendered="#{identity.hasPermission('superAdmin','superAdminManagement') || identity.hasPermission('administration','administrationVisualization')}">
-
-				<p:menuitem id="export" outcome="export"
-					value="#{messages['menu.export']}" />
 				<p:menuitem id="import" outcome="import"
 					value="#{messages['menu.import']}" />
+				<p:menuitem id="export" outcome="export"
+					value="#{messages['menu.export']}" />
 			</p:submenu>
+
+			<p:menuitem id="cache"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+				outcome="caches" value="#{messages['menu.cacheInfo']}" />
 
 		</p:submenu>
 	</p:menubar>

@@ -21,21 +21,26 @@ public class BarChart extends Chart {
 	@Column(name="LEGEND_POSITION")
 	LegendPositionEnum legendPosition;
 	
+
+	@Column(name="BARPADDING")
 	int barPadding = 8;
-	
+
+	@Column(name="BARMARGIN")
 	int barMargin = 10;
-	
+
+	@Column(name="ORIENTATION")
 	OrientationEnum orientation;
-	
 
 	//Enables stacked display of bars
 	@Column(name="STACKED")
 	boolean stacked;
 	
 	//Minimum boundary value.
+	@Column(name="MIN")
 	Double min;
 	
 	//Minimum boundary value.
+	@Column(name="MAX")
 	Double max;
 
 	//Whether line segments should be broken at null

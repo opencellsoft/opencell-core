@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformation>
+  <info>
+    <name>Retrieve recurring wallet operations</name>
+    <description/>
+    <extended_description/>
+    <trans_version/>
+    <trans_type>Normal</trans_type>
+    <trans_status>0</trans_status>
+    <directory>&#x2f;</directory>
+    <parameters>
+        <parameter>
+            <name>PROVIDER_ID</name>
+            <default_value>1</default_value>
+            <description>provider id &#x28;not code&#x29;</description>
+        </parameter>
+        <parameter>
+            <name>REPORT_DATE</name>
+            <default_value>new Date&#x28;&#x29;</default_value>
+            <description>report date</description>
+        </parameter>
+    </parameters>
+    <log>
+<trans-log-table><connection/>
+<schema/>
+<table/>
+<size_limit_lines/>
+<interval/>
+<timeout_days/>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STATUS</id><enabled>Y</enabled><name>STATUS</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name><subject/></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name><subject/></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name><subject/></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name><subject/></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name><subject/></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name><subject/></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>STARTDATE</id><enabled>Y</enabled><name>STARTDATE</name></field><field><id>ENDDATE</id><enabled>Y</enabled><name>ENDDATE</name></field><field><id>LOGDATE</id><enabled>Y</enabled><name>LOGDATE</name></field><field><id>DEPDATE</id><enabled>Y</enabled><name>DEPDATE</name></field><field><id>REPLAYDATE</id><enabled>Y</enabled><name>REPLAYDATE</name></field><field><id>LOG_FIELD</id><enabled>Y</enabled><name>LOG_FIELD</name></field><field><id>EXECUTING_SERVER</id><enabled>N</enabled><name>EXECUTING_SERVER</name></field><field><id>EXECUTING_USER</id><enabled>N</enabled><name>EXECUTING_USER</name></field><field><id>CLIENT</id><enabled>N</enabled><name>CLIENT</name></field></trans-log-table>
+<perf-log-table><connection/>
+<schema/>
+<table/>
+<interval/>
+<timeout_days/>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>SEQ_NR</id><enabled>Y</enabled><name>SEQ_NR</name></field><field><id>LOGDATE</id><enabled>Y</enabled><name>LOGDATE</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STEPNAME</id><enabled>Y</enabled><name>STEPNAME</name></field><field><id>STEP_COPY</id><enabled>Y</enabled><name>STEP_COPY</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>INPUT_BUFFER_ROWS</id><enabled>Y</enabled><name>INPUT_BUFFER_ROWS</name></field><field><id>OUTPUT_BUFFER_ROWS</id><enabled>Y</enabled><name>OUTPUT_BUFFER_ROWS</name></field></perf-log-table>
+<channel-log-table><connection/>
+<schema/>
+<table/>
+<timeout_days/>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>LOG_DATE</id><enabled>Y</enabled><name>LOG_DATE</name></field><field><id>LOGGING_OBJECT_TYPE</id><enabled>Y</enabled><name>LOGGING_OBJECT_TYPE</name></field><field><id>OBJECT_NAME</id><enabled>Y</enabled><name>OBJECT_NAME</name></field><field><id>OBJECT_COPY</id><enabled>Y</enabled><name>OBJECT_COPY</name></field><field><id>REPOSITORY_DIRECTORY</id><enabled>Y</enabled><name>REPOSITORY_DIRECTORY</name></field><field><id>FILENAME</id><enabled>Y</enabled><name>FILENAME</name></field><field><id>OBJECT_ID</id><enabled>Y</enabled><name>OBJECT_ID</name></field><field><id>OBJECT_REVISION</id><enabled>Y</enabled><name>OBJECT_REVISION</name></field><field><id>PARENT_CHANNEL_ID</id><enabled>Y</enabled><name>PARENT_CHANNEL_ID</name></field><field><id>ROOT_CHANNEL_ID</id><enabled>Y</enabled><name>ROOT_CHANNEL_ID</name></field></channel-log-table>
+<step-log-table><connection/>
+<schema/>
+<table/>
+<timeout_days/>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>LOG_DATE</id><enabled>Y</enabled><name>LOG_DATE</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STEPNAME</id><enabled>Y</enabled><name>STEPNAME</name></field><field><id>STEP_COPY</id><enabled>Y</enabled><name>STEP_COPY</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>LOG_FIELD</id><enabled>N</enabled><name>LOG_FIELD</name></field></step-log-table>
+<metrics-log-table><connection/>
+<schema/>
+<table/>
+<timeout_days/>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>LOG_DATE</id><enabled>Y</enabled><name>LOG_DATE</name></field><field><id>METRICS_DATE</id><enabled>Y</enabled><name>METRICS_DATE</name></field><field><id>METRICS_CODE</id><enabled>Y</enabled><name>METRICS_CODE</name></field><field><id>METRICS_DESCRIPTION</id><enabled>Y</enabled><name>METRICS_DESCRIPTION</name></field><field><id>METRICS_SUBJECT</id><enabled>Y</enabled><name>METRICS_SUBJECT</name></field><field><id>METRICS_TYPE</id><enabled>Y</enabled><name>METRICS_TYPE</name></field><field><id>METRICS_VALUE</id><enabled>Y</enabled><name>METRICS_VALUE</name></field></metrics-log-table>
+    </log>
+    <maxdate>
+      <connection/>
+      <table/>
+      <field/>
+      <offset>0.0</offset>
+      <maxdiff>0.0</maxdiff>
+    </maxdate>
+    <size_rowset>10000</size_rowset>
+    <sleep_time_empty>50</sleep_time_empty>
+    <sleep_time_full>50</sleep_time_full>
+    <unique_connections>N</unique_connections>
+    <feedback_shown>Y</feedback_shown>
+    <feedback_size>50000</feedback_size>
+    <using_thread_priorities>Y</using_thread_priorities>
+    <shared_objects_file/>
+    <capture_step_performance>N</capture_step_performance>
+    <step_performance_capturing_delay>1000</step_performance_capturing_delay>
+    <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
+    <dependencies>
+    </dependencies>
+    <partitionschemas>
+    </partitionschemas>
+    <slaveservers>
+    </slaveservers>
+    <clusterschemas>
+    </clusterschemas>
+  <created_user>-</created_user>
+  <created_date>2016&#x2f;01&#x2f;13 10&#x3a;05&#x3a;28.191</created_date>
+  <modified_user>-</modified_user>
+  <modified_date>2016&#x2f;01&#x2f;13 10&#x3a;05&#x3a;28.191</modified_date>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA&#x3d;</key_for_session_key>
+    <is_key_private>N</is_key_private>
+  </info>
+  <notepads>
+  </notepads>
+  <connection>
+    <name>dwh</name>
+    <server>5.196.68.30</server>
+    <type>POSTGRESQL</type>
+    <access>Native</access>
+    <database>jasper</database>
+    <port>5432</port>
+    <username>jasper</username>
+    <password>Encrypted 2be98afc86aa7f2e4cb79a471cd82aac8</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>5432</attribute></attribute>
+      <attribute><code>PRESERVE_RESERVED_WORD_CASE</code><attribute>N</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>i.meveo.info</name>
+    <server>i.meveo.info</server>
+    <type>POSTGRESQL</type>
+    <access>Native</access>
+    <database>integrmeveo</database>
+    <port>5432</port>
+    <username>integrmeveo</username>
+    <password>Encrypted 2be98afc86ace9c90ae1ebc7ddb84aad5</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>5432</attribute></attribute>
+      <attribute><code>PRESERVE_RESERVED_WORD_CASE</code><attribute>N</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <order>
+  <hop> <from>Read wallet ops</from><to>Compute HashId</to><enabled>Y</enabled> </hop>
+  <hop> <from>Compute HashId</from><to>Insert &#x2f; Update</to><enabled>Y</enabled> </hop>
+  </order>
+  <step>
+    <name>Compute HashId</name>
+    <type>UserDefinedJavaClass</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+
+    <definitions>
+        <definition>
+        <class_type>TRANSFORM_CLASS</class_type>
+
+        <class_name>Processor</class_name>
+
+        <class_source><![CDATA[import java.security.*;
+
+public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws KettleException
+{
+    // First, get a row from the default input hop
+    //
+    Object[] r = getRow();
+
+    // If the row object is null, we are done processing.
+    //
+    if (r == null) {
+      setOutputDone();
+      return false;
+    }
+
+    // It is always safest to call createOutputRow() to ensure that your output row's Object[] is large
+    // enough to handle any new fields you are creating in this step.
+    //
+    Object[] outputRow = createOutputRow(r, data.outputRowMeta.size());
+
+    String providerCode = get(Fields.In, "provider_code").getString(r);
+    String code = get(Fields.In, "code").getString(r);
+	String created =  get(Fields.In, "created").getString(r);
+	String operationDate = get(Fields.In, "operation_date").getString(r);
+    String mrrDate = get(Fields.In, "mrr_date").getString(r);
+    String subCode = get(Fields.In, "sub_code").getString(r);
+    String base = providerCode+"_"+code+"_"+created+"_"+operationDate+"_"+subCode+"_"+mrrDate;
+    String hashId ="";
+    try{
+    MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(base.getBytes("UTF-8"));
+        StringBuffer hexString = new StringBuffer();
+
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if(hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        hashId = hexString.toString();
+    } catch(Exception e){}
+    get(Fields.Out, "hash_id").setValue(outputRow, hashId);
+
+    // putRow will send the row on to the default output hop.
+    //
+    putRow(data.outputRowMeta, outputRow);
+
+    return true;
+}
+]]></class_source>
+        </definition>
+    </definitions>
+    <fields>
+        <field>
+        <field_name>hash_id</field_name>
+
+        <field_type>String</field_type>
+
+        <field_length>256</field_length>
+
+        <field_precision>-1</field_precision>
+
+        </field>
+    </fields><clear_result_fields>N</clear_result_fields>
+<info_steps></info_steps><target_steps></target_steps><usage_parameters></usage_parameters>     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>304</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Insert &#x2f; Update</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dwh</connection>
+    <commit>100</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema>public</schema>
+      <table>dwh_rec_wallet_op</table>
+      <key>
+        <name>operation_type</name>
+        <field>operation_type</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>created</name>
+        <field>created</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>code</name>
+        <field>code</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>operation_date</name>
+        <field>operation_date</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>provider_code</name>
+        <field>provider_code</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>sub_code</name>
+        <field>sub_code</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>seller_code</name>
+        <field>seller_code</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>ua_code</name>
+        <field>ua_code</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>ba_code</name>
+        <field>ba_code</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>ca_code</name>
+        <field>ca_code</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>cust_code</name>
+        <field>cust_code</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>updated</name>
+        <rename>updated</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>amount_tax</name>
+        <rename>amount_tax</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>amount_with_tax</name>
+        <rename>amount_with_tax</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>amount_without_tax</name>
+        <rename>amount_without_tax</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>end_date</name>
+        <rename>end_date</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>offer_code</name>
+        <rename>offer_code</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>operation_date</name>
+        <rename>operation_date</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>quantity</name>
+        <rename>quantity</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>start_date</name>
+        <rename>start_date</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>status</name>
+        <rename>status</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>subscription_date</name>
+        <rename>subscription_date</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>tax_percent</name>
+        <rename>tax_percent</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>mrr_date</name>
+        <rename>mrr_date</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>mrr_value</name>
+        <rename>mrr_value</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>invoicing_date</name>
+        <rename>invoicing_date</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>hash_id</name>
+        <rename>hash_id</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>operation_type</name>
+        <rename>operation_type</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>created</name>
+        <rename>created</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>provider_code</name>
+        <rename>provider_code</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>code</name>
+        <rename>code</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>description</name>
+        <rename>desciption</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>sub_code</name>
+        <rename>sub_code</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>seller_code</name>
+        <rename>seller_code</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>ua_code</name>
+        <rename>ua_code</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>ba_code</name>
+        <rename>ba_code</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>ca_code</name>
+        <rename>ca_code</rename>
+        <update>N</update>
+      </value>
+      <value>
+        <name>cust_code</name>
+        <rename>cust_code</rename>
+        <update>N</update>
+      </value>
+    </lookup>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>496</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Read wallet ops</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>i.meveo.info</connection>
+    <sql>SELECT &#xd;&#xa;   wo.operation_type as operation_type,wo.created as created,wo.updated as updated,&#xd;&#xa;   wo.code as code, wo.description as desciption, wo.amount_tax as amount_tax,&#xd;&#xa;   wo.amount_with_tax as amount_with_tax, wo.amount_without_tax as amount_without_tax,&#xd;&#xa;   wo.end_date as end_date, wo.offer_code as offer_code, wo.operation_date as operation_date,&#xd;&#xa;   wo.quantity as quantity,wo.start_date as start_date,wo.status as status,&#xd;&#xa;   wo.subscription_date as subscription_date,wo.tax_percent as tax_percent,&#xd;&#xa;   p.code as provider_code, sub.code as sub_code, CURRENT_DATE as mrr_date, &#xd;&#xa;   wo.amount_without_tax&#x2f;&#x28;&#x28;EXTRACT&#x28;epoch FROM &#x28;wo.end_date - wo.start_date&#x29;&#x29;&#x2f;86400&#x29;&#x3a;&#x3a;int&#x29; as mrr_value,&#xd;&#xa;   s.code as seller_code,ua.code as ua_code,ba.code as ba_code,ca.code as ca_code,cust.code as cust_code,&#xd;&#xa;   wo.invoicing_date as invoicing_date&#xd;&#xa;FROM billing_wallet_operation wo &#xd;&#xa;LEFT JOIN crm_provider p ON p.id&#x3d;wo.provider_id&#xd;&#xa;LEFT JOIN billing_charge_instance ci ON ci.id&#x3d;wo.charge_instance_id&#xd;&#xa;LEFT JOIN billing_subscription sub ON sub.id &#x3d; ci.subscription_id&#xd;&#xa;LEFT JOIN billing_wallet w ON w.id&#x3d;wo.wallet_id&#xd;&#xa;LEFT JOIN crm_seller s ON s.id&#x3d;wo.seller_id&#xd;&#xa;LEFT JOIN billing_user_account uaa ON uaa.id&#x3d; w.user_account_id&#xd;&#xa;LEFT JOIN account_entity ua ON ua.id&#x3d; uaa.id&#xd;&#xa;LEFT JOIN billing_billing_account baa ON baa.id&#x3d; uaa.billing_account_id&#xd;&#xa;LEFT JOIN account_entity ba ON ba.id&#x3d; baa.id&#xd;&#xa;LEFT JOIN ar_customer_account caa ON caa.id&#x3d; baa.customer_account_id&#xd;&#xa;LEFT JOIN account_entity ca ON ca.id&#x3d; caa.id&#xd;&#xa;LEFT JOIN crm_customer custa ON custa.id&#x3d; caa.customer_id&#xd;&#xa;LEFT JOIN account_entity cust ON cust.id&#x3d; custa.id&#xd;&#xa;WHERE wo.disabled&#x3d;FALSE&#xd;&#xa;AND NOT&#x28;wo.end_date IS NULL&#x29;&#xd;&#xa;AND &#x28;&#x28;EXTRACT&#x28;epoch FROM &#x28;wo.end_date - wo.start_date&#x29;&#x29;&#x2f;86400&#x29;&#x3a;&#x3a;int&#x29;&#x3e;0&#xd;&#xa;AND &#x28;wo.start_date &#x3c;&#x3d; CURRENT_DATE&#x29; AND &#x28;wo.end_date &#x3e; CURRENT_DATE&#x29; </sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>112</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step_error_handling>
+  </step_error_handling>
+   <slave-step-copy-partition-distribution>
+</slave-step-copy-partition-distribution>
+   <slave_transformation>N</slave_transformation>
+
+</transformation>

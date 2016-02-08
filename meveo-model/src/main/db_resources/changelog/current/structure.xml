@@ -1347,4 +1347,11 @@
         <addForeignKeyConstraint constraintName="FK_CFT_MCOLS_CFT" referencedTableName="CRM_CUSTOM_FIELD_TMPL" baseColumnNames="CFT_ID" baseTableName="CRM_CUSTOM_FIELD_TMPL_MCOLS"
             referencedColumnNames="ID" />
     </changeSet>
+	
+     <changeSet id="#barchart-20160206" author="smichea">		
+		<addColumn tableName="dwh_chart">
+			<column name="width" type="VARCHAR(10)"></column>
+		</addColumn>
+		<sql>UPDATE DWH_CHART SET WIDTH='500px';</sql>
+	</changeSet>
 </databaseChangeLog>

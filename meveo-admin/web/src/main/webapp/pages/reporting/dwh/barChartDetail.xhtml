@@ -47,16 +47,21 @@
 				field="role" valueLabelField="name" required="false" popup="true"
 				popupId="searchRole"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
-
+				
+			<hftl:formField label="#{messages['commons.width']}" field="width" />
 			<hftl:formField label="#{messages['chart.style']}" field="style" />
 			<hftl:formField label="#{messages['chart.styleClass']}"
 				field="styleClass" />
+			
 			<hftl:formField label="#{messages['chart.extender']}"
 				field="extender" />
 
 			<hftl:formField label="#{messages['barChart.stacked']}"
 				field="stacked" />
-
+	
+			<hftl:formField label="#{messages['barChart.barPadding']}" field="barPadding" />
+			<hftl:formField label="#{messages['barChart.barMargin']}" field="barMargin" />
+		
 			<hftl:formField label="#{messages['barChart.min']}" field="min" />
 			<hftl:formField label="#{messages['barChart.max']}" field="max" />
 			<hftl:formField label="#{messages['barChart.breakOnNull']}"
