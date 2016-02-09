@@ -32,6 +32,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.CustomFieldValue;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -332,6 +333,10 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         try {
             BusinessEntity convertedEntity = (BusinessEntity) ReflectionUtils.createObject(entityReferenceValue.getClassname());
             if (convertedEntity != null) {
+                if (convertedEntity instanceof CustomEntityInstance) {
+                    ((CustomEntityInstance) convertedEntity).setCetCode(entityReferenceValue.getClassnameCode());
+                }
+
                 convertedEntity.setCode(entityReferenceValue.getCode());
             } else {
                 log.error("Unknown entity class specified " + entityReferenceValue.getClassname() + "in a custom field value {} ", entityReferenceValue);

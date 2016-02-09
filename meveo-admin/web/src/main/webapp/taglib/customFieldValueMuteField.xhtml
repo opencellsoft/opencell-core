@@ -105,10 +105,10 @@
                 converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{backingBean.autocompleteCustomEntityForCFV}" queryDelay="1000" var="e"
                 itemLabel="#{e.code}" itemValue="#{e}">
                 <f:attribute name="classname" value="#{cft.entityClazz}" />
-                <p:column width="50">
+                <p:column width="50" headerText="#{messages['BusinessEntity.code']}">
                     <h:outputText value="#{e.code}" />
                 </p:column>
-                <p:column width="50">
+                <p:column width="50" headerText="#{messages['BusinessEntity.description']}">
                     <h:outputText value="#{e.description}" />
                 </p:column>
             </p:autoComplete>
