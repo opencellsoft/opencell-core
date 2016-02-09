@@ -32,7 +32,7 @@ public interface ProviderRs extends IBaseRs {
     /**
      * Create provider.
      * 
-     * @param postData
+     * @param postData Provider data
      * @return
      */
     @POST
@@ -42,7 +42,7 @@ public interface ProviderRs extends IBaseRs {
     /**
      * Search for provider with a given code.
      * 
-     * @param providerCode
+     * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
      * @return
      */
     @GET
@@ -50,9 +50,9 @@ public interface ProviderRs extends IBaseRs {
     GetProviderResponse find(@QueryParam("providerCode") String providerCode);
 
     /**
-     * Update provider.
+     * Update provider
      * 
-     * @param postData
+     * @param postData Provider data
      * @return
      */
     @PUT
@@ -62,43 +62,47 @@ public interface ProviderRs extends IBaseRs {
     /**
      * Returns list of trading countries, currencies and languages
      * 
+     * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
      * @return
      */
     @GET
     @Path("/getTradingConfiguration")
-    GetTradingConfigurationResponseDto findTradingConfiguration();
+    GetTradingConfigurationResponseDto findTradingConfiguration(@QueryParam("providerCode") String providerCode);
 
     /**
      * Returns list of invoicing configuration (calendars, taxes, invoice categories, invoice sub categories, billing cycles and termination reasons
      * 
+     * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
      * @return
      */
     @GET
     @Path("/getInvoicingConfiguration")
-    GetInvoicingConfigurationResponseDto findInvoicingConfiguration();
+    GetInvoicingConfigurationResponseDto findInvoicingConfiguration(@QueryParam("providerCode") String providerCode);
 
     /**
      * Returns list of customer brands, categories and titles
      * 
+     * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
      * @return
      */
     @GET
     @Path("/getCustomerConfiguration")
-    GetCustomerConfigurationResponseDto findCustomerConfiguration();
+    GetCustomerConfigurationResponseDto findCustomerConfiguration(@QueryParam("providerCode") String providerCode);
 
     /**
      * Returns list of payment method and credit categories
      * 
+     * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
      * @return
      */
     @GET
     @Path("/getCustomerAccountConfiguration")
-    GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration();
+    GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration(@QueryParam("providerCode") String providerCode);
 
     /**
      * Create or update a provider if it doesn't exists
      * 
-     * @param postData
+     * @param postData Provider data
      * @return
      */
     @POST
