@@ -9,10 +9,10 @@ import org.meveo.api.catalog.BusinessOfferModelApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
-import org.meveo.api.dto.response.catalog.GetBomEntityResponseDto;
+import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.catalog.BomEntityRs;
+import org.meveo.api.rest.catalog.BusinessOfferModelRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**
@@ -20,10 +20,10 @@ import org.meveo.api.rest.impl.BaseRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
+public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferModelRs {
 
 	@Inject
-	private BusinessOfferModelApi bomEntityApi;
+	private BusinessOfferModelApi bomApi;
 
 	@Override
 	
@@ -31,7 +31,7 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			bomEntityApi.create(postData, getCurrentUser());
+			bomApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -52,7 +52,7 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			bomEntityApi.update(postData, getCurrentUser());
+			bomApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -69,11 +69,11 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 
 	@Override
 	
-	public GetBomEntityResponseDto find(String bomEntityCode) {
-		GetBomEntityResponseDto result = new GetBomEntityResponseDto();
+	public GetBusinessOfferModelResponseDto find(String businessOfferModelCode) {
+		GetBusinessOfferModelResponseDto result = new GetBusinessOfferModelResponseDto();
 
 		try {
-			result.setBomEntity(bomEntityApi.find(bomEntityCode, getCurrentUser().getProvider()));
+			result.setBusinessOfferModel(bomApi.find(businessOfferModelCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -90,11 +90,11 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 
 	@Override
 	
-	public ActionStatus remove(String bomEntityCode) {
+	public ActionStatus remove(String businessOfferModelCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			bomEntityApi.remove(bomEntityCode, getCurrentUser().getProvider());
+			bomApi.remove(businessOfferModelCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -115,7 +115,7 @@ public class BomEntityRsImpl extends BaseRs implements BomEntityRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			bomEntityApi.createOrUpdate(postData, getCurrentUser());
+			bomApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

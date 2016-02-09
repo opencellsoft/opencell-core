@@ -10,25 +10,25 @@ import org.meveo.api.dto.response.BaseResponse;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "GetBomEntityResponse")
+@XmlRootElement(name = "GetBusinessOfferModelResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetBomEntityResponseDto extends BaseResponse {
+public class GetBusinessOfferModelResponseDto extends BaseResponse {
 
 	private static final long serialVersionUID = -6781250820569600144L;
 
-	private BusinessOfferModelDto bomEntity;
+	private BusinessOfferModelDto businessOfferModel;
 
-	public BusinessOfferModelDto getBomEntity() {
-		return bomEntity;
+	public BusinessOfferModelDto getBusinessOfferModel() {
+		return businessOfferModel;
 	}
 
-	public void setBomEntity(BusinessOfferModelDto bomEntity) {
-		this.bomEntity = bomEntity;
+	public void setBusinessOfferModel(BusinessOfferModelDto businessOfferModel) {
+		this.businessOfferModel = businessOfferModel;
 	}
 
 	@Override
 	public String toString() {
-		return "GetBomEntityResponseDto [bomEntity=" + bomEntity + "]";
+		return "GetBusinessOfferModelResponseDto [businessOfferModel=" + businessOfferModel + "]";
 	}
 
 }

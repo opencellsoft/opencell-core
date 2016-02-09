@@ -35,7 +35,7 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
-import org.meveo.api.dto.response.catalog.GetBomEntityResponseDto;
+import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
@@ -62,7 +62,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	private BusinessOfferApi businessOfferApi;
 
 	@Inject
-	private BusinessOfferModelApi bomEntityApi;
+	private BusinessOfferModelApi businessOfferModelApi;
 
 	@Inject
 	private TriggeredEdrApi triggeredEdrApi;
@@ -1014,11 +1014,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus createBomEntity(BusinessOfferModelDto postData) {
+	public ActionStatus createBusinessOfferModel(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			bomEntityApi.create(postData, getCurrentUser());
+			businessOfferModelApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1034,11 +1034,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus updateBomEntity(BusinessOfferModelDto postData) {
+	public ActionStatus updateBusinessOfferModel(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			bomEntityApi.update(postData, getCurrentUser());
+			businessOfferModelApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1054,11 +1054,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public GetBomEntityResponseDto findBomEntity(String bomEntityCode) {
-		GetBomEntityResponseDto result = new GetBomEntityResponseDto();
+	public GetBusinessOfferModelResponseDto findBusinessOfferModel(String businessOfferModelCode) {
+		GetBusinessOfferModelResponseDto result = new GetBusinessOfferModelResponseDto();
 
 		try {
-			result.setBomEntity(bomEntityApi.find(bomEntityCode, getCurrentUser().getProvider()));
+			result.setBusinessOfferModel(businessOfferModelApi.find(businessOfferModelCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1074,11 +1074,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus removeBomEntity(String bomEntityCode) {
+	public ActionStatus removeBusinessOfferModel(String businessOfferModelCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			bomEntityApi.remove(bomEntityCode, getCurrentUser().getProvider());
+			businessOfferModelApi.remove(businessOfferModelCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -1094,11 +1094,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 	}
 
 	@Override
-	public ActionStatus createOrUpdateBomEntity(BusinessOfferModelDto postData) {
+	public ActionStatus createOrUpdateBusinessOfferModel(BusinessOfferModelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			bomEntityApi.createOrUpdate(postData, getCurrentUser());
+			businessOfferModelApi.createOrUpdate(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -15,10 +15,12 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.catalog.impl.BusinessOfferService;
 import org.meveo.service.catalog.impl.OfferServiceTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -41,7 +43,10 @@ public class OfferTemplateApi extends BaseApi {
 
 	@Inject
 	private OfferServiceTemplateService offerServiceTemplateService;
-
+	
+	@Inject
+	private BusinessOfferService businessOfferService;
+	
 	public void create(OfferTemplateDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 			Provider provider = currentUser.getProvider();
@@ -49,8 +54,18 @@ public class OfferTemplateApi extends BaseApi {
 			if (offerTemplateService.findByCode(postData.getCode(), provider) != null) {
 				throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode());
 			}
+			
+			BusinessOfferModel businessOffer = null;
+			if (!StringUtils.isBlank(postData.getBomCode())) {
+				businessOffer = businessOfferService.findByCode(postData.getBomCode(),
+						currentUser.getProvider());
+				if (businessOffer == null) {
+					throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
+				}
+			}
 
 			OfferTemplate offerTemplate = new OfferTemplate();
+			offerTemplate.setBusinessOfferModel(businessOffer);
 			offerTemplate.setProvider(provider);
 			offerTemplate.setCode(postData.getCode());
 			offerTemplate.setDescription(postData.getDescription());
@@ -122,7 +137,18 @@ public class OfferTemplateApi extends BaseApi {
 			if (offerTemplate == null) {
 				throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
 			}
-
+			
+			BusinessOfferModel businessOffer = null;
+			if (!StringUtils.isBlank(postData.getBomCode())) {
+				businessOffer = businessOfferService.findByCode(postData.getBomCode(),
+						currentUser.getProvider());
+				if (businessOffer == null) {
+					throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
+				}
+				offerTemplate.setBusinessOfferModel(businessOffer);
+			}
+			
+			offerTemplate.setBusinessOfferModel(businessOffer);
 			offerTemplate.setDescription(postData.getDescription());
 			offerTemplate.setDisabled(postData.isDisabled());
 

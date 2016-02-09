@@ -16,7 +16,7 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
-import org.meveo.api.dto.response.catalog.GetBomEntityResponseDto;
+import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
@@ -196,19 +196,19 @@ public interface CatalogWs extends IBaseWs {
 	// bom
 
 	@WebMethod
-	ActionStatus createBomEntity(@WebParam(name = "bomEntity") BusinessOfferModelDto postData);
+	ActionStatus createBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
 
 	@WebMethod
-	ActionStatus updateBomEntity(@WebParam(name = "bomEntity") BusinessOfferModelDto postData);
+	ActionStatus updateBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
 
 	@WebMethod
-	GetBomEntityResponseDto findBomEntity(@WebParam(name = "bomEntityCode") String bomEntityCode);
+	GetBusinessOfferModelResponseDto findBusinessOfferModel(@WebParam(name = "businessOfferModelCode") String businessOfferModelCode);
 
 	@WebMethod
-	ActionStatus removeBomEntity(@WebParam(name = "bomEntityCode") String bomEntityCode);
+	ActionStatus removeBusinessOfferModel(@WebParam(name = "businessOfferModelCode") String businessOfferModelCode);
 
 	@WebMethod
-	ActionStatus createOrUpdateBomEntity(@WebParam(name = "bomEntity") BusinessOfferModelDto postData);
+	ActionStatus createOrUpdateBusinessOfferModel(@WebParam(name = "businessOfferModel") BusinessOfferModelDto postData);
 
 	// bom offer
 
