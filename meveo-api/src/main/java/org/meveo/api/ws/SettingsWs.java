@@ -40,6 +40,7 @@ import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
+import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
@@ -174,7 +175,10 @@ public interface SettingsWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus createOrUpdateTax(@WebParam(name = "tax") TaxDto postData);
-
+	
+	@WebMethod
+	public GetTaxesResponse listTaxes();
+	
 	// invoice category
 
 	@WebMethod
