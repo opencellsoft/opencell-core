@@ -12,10 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.CurrentProviderBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.EntityActionScriptService;
@@ -81,10 +83,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     public void setEntityClassName(String entityClassName) {
 
         if (entityClassName != null) {
-            int pos = entityClassName.indexOf("$$");
-            if (pos > 0) {
-                entityClassName = entityClassName.substring(0, pos);
-            }
+            entityClassName = ReflectionUtils.getCleanClassName(entityClassName);
         }
 
         this.entityClassName = entityClassName;

@@ -218,7 +218,7 @@ public class CustomFieldInstance extends AuditableEntity {
         if (obj == null) {
             return false;
 
-        } else if (!(obj instanceof CustomFieldTemplate)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        } else if (!(obj instanceof CustomFieldInstance)) { // Fails with proxed objects: getClass() != obj.getClass()){
             return false;
         }
 

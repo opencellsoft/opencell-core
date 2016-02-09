@@ -3,7 +3,6 @@ package org.meveo.api.rest.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.QueryParam;
 
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.ProviderApi;
@@ -24,169 +23,175 @@ import org.meveo.api.rest.ProviderRs;
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-
 public class ProviderRsImpl extends BaseRs implements ProviderRs {
 
-	@Inject
-	private ProviderApi providerApi;
+    @Inject
+    private ProviderApi providerApi;
 
-	@Override
-	public ActionStatus create(ProviderDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus create(ProviderDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			providerApi.create(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+        try {
+            providerApi.create(postData, getCurrentUser());
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-	@Override
-	public GetProviderResponse find(@QueryParam("providerCode") String providerCode) {
-		GetProviderResponse result = new GetProviderResponse();
+    @Override
+    public GetProviderResponse find(String providerCode) {
+        GetProviderResponse result = new GetProviderResponse();
 
-		try {
-			result.setProvider(providerApi.find(providerCode));
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+        try {
+            result.setProvider(providerApi.find(providerCode, getCurrentUser()));
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-	@Override
-	public ActionStatus update(ProviderDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-		try {
-			providerApi.update(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+    @Override
+    public ActionStatus update(ProviderDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        try {
+            providerApi.update(postData, getCurrentUser());
+            
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
 
-	@Override
-	public GetTradingConfigurationResponseDto findTradingConfiguration() {
-		GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-		try {
-			result = providerApi.getTradingConfiguration(getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+    @Override
+    public GetTradingConfigurationResponseDto findTradingConfiguration(String providerCode) {
+        GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        try {
+            result = providerApi.getTradingConfiguration(providerCode, getCurrentUser());
 
-	@Override
-	public GetInvoicingConfigurationResponseDto findInvoicingConfiguration() {
-		GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-		try {
-			result = providerApi.getInvoicingConfiguration(getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+    @Override
+    public GetInvoicingConfigurationResponseDto findInvoicingConfiguration(String providerCode) {
+        GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
-	@Override
-	public GetCustomerConfigurationResponseDto findCustomerConfiguration() {
-		GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
+        try {
+            result = providerApi.getInvoicingConfiguration(providerCode, getCurrentUser());
 
-		try {
-			result = providerApi.getCustomerConfigurationResponse(getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-	@Override
-	public GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration() {
-		GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
+    @Override
+    public GetCustomerConfigurationResponseDto findCustomerConfiguration(String providerCode) {
+        GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
-		try {
-			result = providerApi.getCustomerAccountConfigurationResponseDto(getCurrentUser().getProvider());
-		} catch (MeveoApiException e) {
-			result.getActionStatus().setErrorCode(e.getErrorCode());
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-			result.getActionStatus().setMessage(e.getMessage());
-		}
+        try {
+            result = providerApi.getCustomerConfiguration(providerCode, getCurrentUser());
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
 
-	@Override
-	public ActionStatus createOrUpdate(ProviderDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 
-		try {
-			providerApi.createOrUpdate(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
+    @Override
+    public GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration(String providerCode) {
+        GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
-		log.debug("RESPONSE={}", result);
-		return result;
-	}
+        try {
+            result = providerApi.getCustomerAccountConfiguration(providerCode, getCurrentUser());
+
+        } catch (MeveoApiException e) {
+            result.getActionStatus().setErrorCode(e.getErrorCode());
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+            result.getActionStatus().setMessage(e.getMessage());
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdate(ProviderDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            providerApi.createOrUpdate(postData, getCurrentUser());
+            
+        } catch (MeveoApiException e) {
+            result.setErrorCode(e.getErrorCode());
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        } catch (Exception e) {
+            result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+            result.setStatus(ActionStatusEnum.FAIL);
+            result.setMessage(e.getMessage());
+        }
+
+        log.debug("RESPONSE={}", result);
+        return result;
+    }
 }

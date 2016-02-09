@@ -27,51 +27,50 @@ import org.apache.commons.lang3.StringUtils;
 @MappedSuperclass
 public class BusinessEntity extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE", nullable = false, length = 60)
-	// TODO : Create sql script to ad index. @Index(name = "CODE_IDX")
-	@Size(max = 60, min = 1)
-	@NotNull
-	protected String code;
+    @Column(name = "CODE", nullable = false, length = 60)
+    // TODO : Create sql script to ad index. @Index(name = "CODE_IDX")
+    @Size(max = 60, min = 1)
+    @NotNull
+    protected String code;
 
-	@Column(name = "DESCRIPTION", nullable = true, length = 100)
-	@Size(max = 100)
-	protected String description;
+    @Column(name = "DESCRIPTION", nullable = true, length = 100)
+    @Size(max = 100)
+    protected String description;
 
-	@Transient
-	protected boolean appendGeneratedCode = false;
+    @Transient
+    protected boolean appendGeneratedCode = false;
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	/**
-	 * @return the appendGeneratedCode
-	 */
-	public boolean isAppendGeneratedCode() {
-		return appendGeneratedCode;
-	}
+    /**
+     * @return the appendGeneratedCode
+     */
+    public boolean isAppendGeneratedCode() {
+        return appendGeneratedCode;
+    }
 
-	/**
-	 * @param appendGeneratedCode
-	 *            the appendGeneratedCode to set
-	 */
-	public void setAppendGeneratedCode(boolean appendGeneratedCode) {
-		this.appendGeneratedCode = appendGeneratedCode;
-	}
+    /**
+     * @param appendGeneratedCode the appendGeneratedCode to set
+     */
+    public void setAppendGeneratedCode(boolean appendGeneratedCode) {
+        this.appendGeneratedCode = appendGeneratedCode;
+    }
 
     public String getDescriptionOrCode() {
         if (!StringUtils.isBlank(description)) {
@@ -80,14 +79,14 @@ public class BusinessEntity extends AuditableEntity {
             return code;
         }
     }
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		return result;
-	}
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((code == null) ? 0 : code.hashCode());
+        return result;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -105,7 +104,6 @@ public class BusinessEntity extends AuditableEntity {
         if (getId() != null && other.getId() != null && getId() == other.getId()) {
             // return true;
         }
-
         if (code == null) {
             if (other.getCode() != null) {
                 return false;

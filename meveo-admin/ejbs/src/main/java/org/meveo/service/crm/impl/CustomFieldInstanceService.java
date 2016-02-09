@@ -40,6 +40,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.CustomFieldValue;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
@@ -47,6 +48,8 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class CustomFieldInstanceService extends PersistenceService<CustomFieldInstance> {
+
+    public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
 
     @Inject
     private CustomFieldTemplateService cfTemplateService;
@@ -134,15 +137,43 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     // }
     // }
 
+    /**
+     * Find a list of entities of a given class and matching given code. In case classname points to CustomEntityTemplate, find CustomEntityInstances of a CustomEntityTemplate code
+     * 
+     * @param className Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - <CustomEntityTemplate code>"
+     * @param wildcode Filter by entity code
+     * @param provider Current provider
+     * @return A list of entities
+     */
     @SuppressWarnings("unchecked")
     public List<BusinessEntity> findBusinessEntityForCFVByCode(String className, String wildcode, Provider provider) {
-        Query query = getEntityManager().createQuery("select e from " + className + " e where lower(e.code) like :code and e.provider=:provider");
+        Query query = null;
+        if (className.startsWith(CustomEntityTemplate.class.getName())) {
+            String cetCode = className.substring(className.indexOf(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR) + ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR.length());
+            query = getEntityManager().createQuery("select e from CustomEntityInstance e where cetCode=:cetCode and lower(e.code) like :code and e.provider=:provider");
+            query.setParameter("cetCode", cetCode);
+
+        } else {
+            query = getEntityManager().createQuery("select e from " + className + " e where lower(e.code) like :code and e.provider=:provider");
+        }
+
         query.setParameter("code", "%" + wildcode.toLowerCase() + "%");
         query.setParameter("provider", provider);
         List<BusinessEntity> entities = query.getResultList();
         return entities;
     }
 
+    /**
+     * Return a value from either a custom field value or a settings/configuration parameter if CF value was not set yet by optionally setting custom field value.
+     * 
+     * @param code Custom field and/or settings/configuration parameter code
+     * @param defaultParamBeanValue A default value to set as custom field value in case settings/configuration parameter was not set
+     * @param entity Entity holding custom field value
+     * @param saveInCFIfNotExist Set CF value if it does not exist yet
+     * @param currentUser Current user
+     * @return A value, or a default value if none was found in neither custom field nor settings/configuration parameter
+     * @throws BusinessException
+     */
     public Object getOrCreateCFValueFromParamValue(String code, String defaultParamBeanValue, ICustomFieldEntity entity, boolean saveInCFIfNotExist, User currentUser)
             throws BusinessException {
 
