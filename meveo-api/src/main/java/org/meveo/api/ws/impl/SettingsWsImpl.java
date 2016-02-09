@@ -58,6 +58,7 @@ import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
+import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
@@ -869,7 +870,26 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-
+	
+	@Override
+	public GetTaxesResponse listTaxes() {
+		GetTaxesResponse result = new GetTaxesResponse();
+		
+		try{
+			result.setTaxesDto(taxApi.list(getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+		
+		return result;
+	}
+	
 	@Override
 	public ActionStatus createUser(UserDto postData) {
 		ActionStatus result = new ActionStatus();

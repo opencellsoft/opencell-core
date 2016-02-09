@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.response.GetTaxResponse;
+import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
@@ -69,4 +70,8 @@ public interface TaxRs extends IBaseRs {
 	@Path("/createOrUpdate")
 	@POST
 	public ActionStatus createOrUpdate(TaxDto postData);
+	
+	@Path("/list")
+	@GET
+	public GetTaxesResponse list();
 }
