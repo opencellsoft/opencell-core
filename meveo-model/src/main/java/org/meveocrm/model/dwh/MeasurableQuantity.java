@@ -42,9 +42,11 @@ public class MeasurableQuantity extends BusinessEntity {
 	@Column(name = "DIMENSION_4", length = 255)
 	private String dimension4;
 
-	@Column(name = "EDITABLE", length = 255)
+	@Column(name = "EDITABLE")
 	private boolean editable;
 
+	@Column(name = "ADDITIVE")
+	private boolean additive;
 	/**
 	 * expect to return a list of (Date measureDate, Long value) that will be
 	 * used to create measuredValue. be careful that super admin MUST validate
@@ -183,6 +185,14 @@ public class MeasurableQuantity extends BusinessEntity {
 		} else {
 			lastMeasureDate = getNextMeasureDate();
 		}
+	}
+
+	public boolean isAdditive() {
+		return additive;
+	}
+
+	public void setAdditive(boolean additive) {
+		this.additive = additive;
 	}
 	
 }

@@ -1360,4 +1360,10 @@
 		</addColumn>
 		<sql>UPDATE DWH_CHART SET HEIGHT='300px';</sql>
 	</changeSet>
+     <changeSet id="#barchart-20160209" author="smichea">		
+		<addColumn tableName="dwh_measurable_quant">
+			<column name="additive" type="BOOL"></column>
+		</addColumn>
+		<sql>UPDATE dwh_measurable_quant SET additive=TRUE;</sql>
+	</changeSet>
 </databaseChangeLog>
