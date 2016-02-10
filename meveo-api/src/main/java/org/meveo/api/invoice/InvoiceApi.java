@@ -476,7 +476,7 @@ public class InvoiceApi extends BaseApi {
 					}
 
 					customerInvoiceDtos.add(customerInvoiceDto);
-					customerInvoiceDtos.add(new InvoiceDto(invoice, billingAccount.getCode()));
+					//customerInvoiceDtos.add(new InvoiceDto(invoice, billingAccount.getCode()));
 				}
 			}
 
