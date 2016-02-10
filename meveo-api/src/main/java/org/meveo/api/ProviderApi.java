@@ -199,10 +199,10 @@ public class ProviderApi extends BaseApi {
         InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
         invoiceConfiguration.setCode(provider.getCode());
         invoiceConfiguration.setDescription(provider.getDescription());
-        invoiceConfiguration.setDisplayEdrs(false);
-        invoiceConfiguration.setDisplayOffers(true);
-        invoiceConfiguration.setDisplayServices(true);
-        invoiceConfiguration.setDisplaySubscriptions(true);
+        invoiceConfiguration.setDisplayEdrs(postData.getDisplayEdrs());
+        invoiceConfiguration.setDisplayOffers(postData.getDisplayOffers());
+        invoiceConfiguration.setDisplayServices(postData.getDisplayServices());
+        invoiceConfiguration.setDisplaySubscriptions(postData.getDisplaySubscriptions());
         invoiceConfiguration.setDisplayProvider(postData.getDisplayProvider());
         invoiceConfiguration.setDisplayDetail(postData.getDisplayDetail());
 
@@ -358,7 +358,7 @@ public class ProviderApi extends BaseApi {
             providerCode = currentUser.getProvider().getCode();
         }
 
-        Provider provider = providerService.findByCode(providerCode);
+        Provider provider = providerService.findByCodeWithFetch(providerCode, null);
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
@@ -401,7 +401,7 @@ public class ProviderApi extends BaseApi {
             providerCode = currentUser.getProvider().getCode();
         }
 
-        Provider provider = providerService.findByCode(providerCode);
+        Provider provider = providerService.findByCodeWithFetch(providerCode, null);
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
@@ -465,7 +465,7 @@ public class ProviderApi extends BaseApi {
             providerCode = currentUser.getProvider().getCode();
         }
 
-        Provider provider = providerService.findByCode(providerCode);
+        Provider provider = providerService.findByCodeWithFetch(providerCode, null);
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
@@ -505,7 +505,7 @@ public class ProviderApi extends BaseApi {
             providerCode = currentUser.getProvider().getCode();
         }
 
-        Provider provider = providerService.findByCode(providerCode);
+        Provider provider = providerService.findByCodeWithFetch(providerCode, null);
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, providerCode);
         }
@@ -532,7 +532,7 @@ public class ProviderApi extends BaseApi {
      * @throws MeveoApiException
      */
     public void createOrUpdate(ProviderDto postData, User currentUser) throws MeveoApiException {
-        Provider provider = providerService.findByCode(postData.getCode());
+        Provider provider = providerService.findByCodeWithFetch(postData.getCode(), null);
 
         if (provider == null) {
             create(postData, currentUser);

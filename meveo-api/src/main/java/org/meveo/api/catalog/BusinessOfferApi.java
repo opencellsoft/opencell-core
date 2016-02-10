@@ -361,6 +361,7 @@ public class BusinessOfferApi extends BaseApi {
 							}
 						}
 
+						serviceTemplateService.create(newServiceTemplate, currentUser, currentUser.getProvider());
 						newServiceTemplates.add(newServiceTemplate);
 					} catch (IllegalAccessException | InvocationTargetException e) {
 						throw new MeveoApiException(e.getMessage());
@@ -370,7 +371,6 @@ public class BusinessOfferApi extends BaseApi {
 
 			// add to offer
 			for (ServiceTemplate newServiceTemplate : newServiceTemplates) {
-				serviceTemplateService.create(newServiceTemplate, currentUser, currentUser.getProvider());
 				OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
 				offerServiceTemplate.setServiceTemplate(newServiceTemplate);
 				offerServiceTemplate.setOfferTemplate(newOfferTemplate);
