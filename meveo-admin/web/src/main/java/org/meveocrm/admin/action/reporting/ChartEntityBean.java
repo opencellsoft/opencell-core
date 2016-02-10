@@ -83,7 +83,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		if (!empty) {
 			empty=true;
 			Map<String, BigDecimal> aggregatedValues = new HashMap<String, BigDecimal>();
-			Map<String, Long> aggregatedCount = new HashMap<String, Long>();
+			Map<String, List<String>> aggregatedCount = new HashMap<String, List<String>>();
 			boolean additive = mq.isAdditive();
 			for (MeasuredValue measuredValue : mvs) {
 				String key = sdf.format(measuredValue.getDate());
@@ -95,18 +95,22 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 						&& (StringUtils.isBlank(dimension2) || dimension2.equals(measuredValue.getDimension2()))
 						&& (StringUtils.isBlank(dimension3) || dimension3.equals(measuredValue.getDimension3()))
 						&& (StringUtils.isBlank(dimension4) || dimension4.equals(measuredValue.getDimension4()))) {
-					// TODO we should only add if the measurable quantity is
-					// additive
 					if (aggregatedValues.containsKey(key) && aggregatedValues.get(key) != null) {
 						aggregatedValues.put(key, aggregatedValues.get(key).add(measuredValue.getValue()));
 						if(!additive){
-							aggregatedCount.put(key, aggregatedCount.get(key)+1L);
+							String aggregationkey=StringUtils.isBlank(dimension1)?"":dimension1;
+							if(!aggregatedCount.get(key).contains(aggregationkey)){
+								aggregatedCount.get(key).add(aggregationkey);
+							}
 						}
 						//log.debug("md key={}, aggVal>{}", key, aggregatedValues.get(key));
 					} else {
 						aggregatedValues.put(key, measuredValue.getValue());
 						if(!additive){
-							aggregatedCount.put(key, 1L);
+							String aggregationkey=StringUtils.isBlank(dimension1)?"":dimension1;
+							List<String> val = new ArrayList<>();
+							val.add(aggregationkey);
+							aggregatedCount.put(key, val);
 						}
 						//log.debug("md key={}, aggVal={}", key, aggregatedValues.get(key));
 					}
@@ -119,7 +123,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			Collections.sort(keyList);
 			Collections.reverseOrder();
 			for (String key : keyList) {
-				mvSeries.set(key, additive?aggregatedValues.get(key):(aggregatedValues.get(key).divide(new BigDecimal(aggregatedCount.get(key)))));
+				mvSeries.set(key, additive?aggregatedValues.get(key):(aggregatedValues.get(key).divide(new BigDecimal(aggregatedCount.get(key).size()))));
 			}
 		}
 		if(empty){

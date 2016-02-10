@@ -1366,4 +1366,16 @@
 		</addColumn>
 		<sql>UPDATE dwh_measurable_quant SET additive=TRUE;</sql>
 	</changeSet>
+     <changeSet id="#dwh-20160209" author="smichea">		
+		<addColumn tableName="DWH_MEASURED_VALUE">
+			<column name="CODE" type="VARCHAR(60)"></column>
+		</addColumn>
+		<sql>UPDATE DWH_MEASURED_VALUE SET CODE = (SELECT CODE FROM dwh_measurable_quant WHERE dwh_measurable_quant.id=DWH_MEASURED_VALUE.MEASURABLE_QUANTITY)</sql>
+		<addNotNullConstraint tableName="DWH_MEASURED_VALUE" columnName="CODE"/>
+		<dropColumn tableName="dwh_measurable_quant" columnName="ISVISIBLE"/>
+		<addColumn tableName="dwh_measurable_quant">
+			<column name="VISIBLE" type="BOOL"></column>
+		</addColumn>
+		<sql>UPDATE dwh_measurable_quant SET VISIBLE=TRUE;</sql>
+	</changeSet>
 </databaseChangeLog>

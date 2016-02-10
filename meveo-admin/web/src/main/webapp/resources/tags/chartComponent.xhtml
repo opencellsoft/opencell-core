@@ -20,7 +20,7 @@
 
 	<ui:fragment>
 
-		<h:form rendered="#{cc.attrs.model.chart.isVisible}" style="width:#{cc.attrs.model.chart.width};height:#{cc.attrs.model.chart.width};overflow:auto">
+		<h:form rendered="#{cc.attrs.model.chart.visible}" style="width:#{cc.attrs.model.chart.width};height:#{cc.attrs.model.chart.width}">
 			<p:outputPanel>
 			    <ui:fragment rendered="#{(cc.attrs.model.chart.class.simpleName eq 'BarChart')}">
 			        <hf:barChartComponent model="#{cc.attrs.model}"/>
@@ -31,48 +31,51 @@
 				<ui:fragment rendered="#{cc.attrs.model.chart.class.simpleName eq 'PieChart'}">
 			    	<hf:pieChartComponent model="#{cc.attrs.model}"/>
 				</ui:fragment> 
-			    <p:outputLabel value="#{messages['commons.date']}"></p:outputLabel>
-			    <p:calendar id="filterFrom" value="#{cc.attrs.model.minDate}"
-					pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
-					<p:ajax event="dateSelect" update="@form"
-						listener="#{chartBean.setModel(cc.attrs.index)}" />
-				</p:calendar>
-				<ui:fragment rendered="#{cc.attrs.model.dimension1List.size()>0}">
-			    	<p:outputLabel value="#{cc.attrs.model.chart.measurableQuantity.dimension1}"></p:outputLabel>
-					<p:selectOneMenu  value="#{cc.attrs.model.dimension1}" id="dimension1_list" >
-					  <f:selectItem itemLabel="" itemValue="" />
-					  <f:selectItems value="#{cc.attrs.model.dimension1List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
-                      <p:ajax event="valueChange" update="@form"
-						listener="#{chartBean.setModel(cc.attrs.index)}" />
-					</p:selectOneMenu>
-				</ui:fragment> 
-				<ui:fragment rendered="#{cc.attrs.model.dimension2List.size()>0}">
-			    	<p:outputLabel value="#{cc.attrs.model.chart.measurableQuantity.dimension2}"></p:outputLabel>
-					<p:selectOneMenu  value="#{cc.attrs.model.dimension2}" id="dimension2_list" >
-					  <f:selectItem itemLabel="" itemValue="" />
-					  <f:selectItems value="#{cc.attrs.model.dimension2List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
-                      <p:ajax event="valueChange" update="@form"
-						listener="#{chartBean.setModel(cc.attrs.index)}" />
-					</p:selectOneMenu>
-				</ui:fragment> 
-				<ui:fragment rendered="#{cc.attrs.model.dimension3List.size()>0}">
-			    	<p:outputLabel value="#{cc.attrs.model.chart.measurableQuantity.dimension3}"></p:outputLabel>
-					<p:selectOneMenu  value="#{cc.attrs.model.dimension3}" id="dimension3_list" >
-					  <f:selectItem itemLabel="" itemValue="" />
-					  <f:selectItems value="#{cc.attrs.model.dimension3List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
-                      <p:ajax event="valueChange" update="@form"
-						listener="#{chartBean.setModel(cc.attrs.index)}" />
-					</p:selectOneMenu>
-				</ui:fragment> 
-				<ui:fragment rendered="#{cc.attrs.model.dimension4List.size()>0}">
-			    	<p:outputLabel value="#{cc.attrs.model.chart.measurableQuantity.dimension4}"></p:outputLabel>
-					<p:selectOneMenu  value="#{cc.attrs.model.dimension4}" id="dimension4_list" >
-					  <f:selectItem itemLabel="" itemValue="" />
-					  <f:selectItems value="#{cc.attrs.model.dimension4List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
-                      <p:ajax event="valueChange" update="@form"
-						listener="#{chartBean.setModel(cc.attrs.index)}" />
-					</p:selectOneMenu>
-				</ui:fragment> 
+				    <ui:fragment>
+				    <p:outputLabel for="filterFrom" value="#{messages['commons.date']}"/>
+				    <p:calendar id="filterFrom" value="#{cc.attrs.model.minDate}"
+						pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
+						<p:ajax event="dateSelect" update="@form"
+							listener="#{chartBean.setModel(cc.attrs.index)}" />
+					</p:calendar>
+					</ui:fragment>
+					
+					<ui:fragment rendered="#{cc.attrs.model.dimension1List.size()>0}">
+				    	<p:outputLabel for="dimension1_list" value="#{cc.attrs.model.chart.measurableQuantity.dimension1}"></p:outputLabel>
+						<p:selectOneMenu  value="#{cc.attrs.model.dimension1}" id="dimension1_list" >
+						  <f:selectItem itemLabel="" itemValue="" />
+						  <f:selectItems value="#{cc.attrs.model.dimension1List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
+	                      <p:ajax event="valueChange" update="@form"
+							listener="#{chartBean.setModel(cc.attrs.index)}" />
+						</p:selectOneMenu>
+					</ui:fragment> 
+					<ui:fragment rendered="#{cc.attrs.model.dimension2List.size()>0}">
+				    	<p:outputLabel  for="dimension2_list" value="#{cc.attrs.model.chart.measurableQuantity.dimension2}"></p:outputLabel>
+						<p:selectOneMenu  value="#{cc.attrs.model.dimension2}" id="dimension2_list" >
+						  <f:selectItem itemLabel="" itemValue="" />
+						  <f:selectItems value="#{cc.attrs.model.dimension2List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
+	                      <p:ajax event="valueChange" update="@form"
+							listener="#{chartBean.setModel(cc.attrs.index)}" />
+						</p:selectOneMenu>
+					</ui:fragment> 
+					<ui:fragment rendered="#{cc.attrs.model.dimension3List.size()>0}">
+				    	<p:outputLabel  for="dimension3_list" value="#{cc.attrs.model.chart.measurableQuantity.dimension3}"></p:outputLabel>
+						<p:selectOneMenu  value="#{cc.attrs.model.dimension3}" id="dimension3_list" >
+						  <f:selectItem itemLabel="" itemValue="" />
+						  <f:selectItems value="#{cc.attrs.model.dimension3List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
+	                      <p:ajax event="valueChange" update="@form"
+							listener="#{chartBean.setModel(cc.attrs.index)}" />
+						</p:selectOneMenu>
+					</ui:fragment> 
+					<ui:fragment rendered="#{cc.attrs.model.dimension4List.size()>0}">
+				    	<p:outputLabel  for="dimension4_list" value="#{cc.attrs.model.chart.measurableQuantity.dimension4}"></p:outputLabel>
+						<p:selectOneMenu  value="#{cc.attrs.model.dimension4}" id="dimension4_list" >
+						  <f:selectItem itemLabel="" itemValue="" />
+						  <f:selectItems value="#{cc.attrs.model.dimension4List}" var="element" itemValue="#{element}" itemLabel="#{element}" />
+	                      <p:ajax event="valueChange" update="@form"
+							listener="#{chartBean.setModel(cc.attrs.index)}" />
+						</p:selectOneMenu>
+					</ui:fragment> 
 			</p:outputPanel>
 		</h:form>
 

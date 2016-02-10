@@ -55,8 +55,8 @@ public class Chart extends BusinessEntity {
 	@Column(name = "EXTENDER")
 	String extender;
 
-	@Column(name = "ISVISIBLE")
-	Boolean isVisible = false;
+	@Column(name = "VISIBLE")
+	Boolean visible = false;
 	
 	@Transient
 	private User user;
@@ -126,11 +126,11 @@ public class Chart extends BusinessEntity {
 	}
 
 	public boolean isVisible() {
-		return isVisible;
+		return visible;
 	}
 
 	public void setVisible(boolean isVisible) {
-		this.isVisible = isVisible;
+		this.visible = isVisible;
 	}
 
 }

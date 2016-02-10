@@ -13,11 +13,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 
 @Entity
 @Table(name = "DWH_MEASURED_VALUE")
@@ -30,7 +33,12 @@ public class MeasuredValue extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "MEASURABLE_QUANTITY", nullable = true, unique = false, updatable = true)
 	private MeasurableQuantity measurableQuantity;
-
+	
+	@Column(name = "CODE", nullable = false, length = 60)
+	@Size(max = 60, min = 1)
+	@NotNull
+	protected String code;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "MEASUREMENT_PERIOD")
 	private MeasurementPeriodEnum measurementPeriod;
@@ -62,6 +70,16 @@ public class MeasuredValue extends BaseEntity {
 
 	public void setMeasurableQuantity(MeasurableQuantity measurableQuantity) {
 		this.measurableQuantity = measurableQuantity;
+		this.code = this.measurableQuantity.getCode();
+	}
+	
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public MeasurementPeriodEnum getMeasurementPeriod() {
@@ -119,5 +137,21 @@ public class MeasuredValue extends BaseEntity {
 	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	        if (this == obj) {
+	            return true;
+	        }
+	        if (obj == null) {
+	            return false;
+	        } else if (!(obj instanceof MeasuredValue)) { // Fails with proxed objects: getClass() != obj.getClass()){
+	            return false;
+	        }
+
+	        MeasuredValue other = (MeasuredValue) obj;
+
+	        return getId() == other.getId();
+	    }
 
 }
