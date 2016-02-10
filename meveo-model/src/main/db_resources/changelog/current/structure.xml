@@ -1372,7 +1372,6 @@
 		</addColumn>
 		<sql>UPDATE DWH_MEASURED_VALUE SET CODE = (SELECT CODE FROM dwh_measurable_quant WHERE dwh_measurable_quant.id=DWH_MEASURED_VALUE.MEASURABLE_QUANTITY)</sql>
 		<addNotNullConstraint tableName="DWH_MEASURED_VALUE" columnName="CODE"/>
-		<dropColumn tableName="dwh_measurable_quant" columnName="ISVISIBLE"/>
 		<addColumn tableName="dwh_measurable_quant">
 			<column name="VISIBLE" type="BOOL"></column>
 		</addColumn>
