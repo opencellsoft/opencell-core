@@ -317,6 +317,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
 					invoiceAgregateSubcat.setProvider(billingAccount.getProvider());
 					invoiceAgregateSubcat.setInvoice(invoice);
+					invoiceAgregateSubcat.setDescription(invoiceSubCategory.getDescription());
 					invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
 					invoiceAgregateSubcat.setWallet(wallet);
 					invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
