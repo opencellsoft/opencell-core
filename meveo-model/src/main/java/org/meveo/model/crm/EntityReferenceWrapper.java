@@ -2,7 +2,9 @@ package org.meveo.model.crm;
 
 import java.io.Serializable;
 
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.customEntities.CustomEntityInstance;
 
 public class EntityReferenceWrapper implements Serializable {
 
@@ -16,21 +18,22 @@ public class EntityReferenceWrapper implements Serializable {
         if (entity == null) {
             return;
         }
-        classname = entity.getClass().getName();
-        int pos = classname.indexOf("_$$_");
-        if (pos > 0) {
-            classname = classname.substring(0, pos);
+        classname = ReflectionUtils.getCleanClassName(entity.getClass().getName());
+        if (entity instanceof CustomEntityInstance) {
+            classnameCode = ((CustomEntityInstance) entity).getCetCode();
         }
-
         code = entity.getCode();
     }
 
-    public EntityReferenceWrapper(String classname, String code) {
+    public EntityReferenceWrapper(String classname, String classnameCode, String code) {
         this.classname = classname;
+        this.classnameCode = classnameCode;
         this.code = code;
     }
 
     private String classname;
+
+    private String classnameCode;
 
     private String code;
 
@@ -40,6 +43,14 @@ public class EntityReferenceWrapper implements Serializable {
 
     public void setClassname(String classname) {
         this.classname = classname;
+    }
+
+    public String getClassnameCode() {
+        return classnameCode;
+    }
+
+    public void setClassnameCode(String classnameCode) {
+        this.classnameCode = classnameCode;
     }
 
     public String getCode() {
@@ -56,6 +67,6 @@ public class EntityReferenceWrapper implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("EntityReferenceWrapper [classname=%s, code=%s]", classname, code);
+        return String.format("EntityReferenceWrapper [classname=%s, classnameCode=%s, code=%s]", classname, classnameCode, code);
     }
 }

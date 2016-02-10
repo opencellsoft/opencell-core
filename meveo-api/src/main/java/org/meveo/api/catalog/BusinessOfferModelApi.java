@@ -26,14 +26,14 @@ public class BusinessOfferModelApi extends BaseApi {
 	private OfferTemplateService offerTemplateService;
 
 	@Inject
-	private BusinessOfferService bomEntityService;
+	private BusinessOfferService businessOfferService;
 
 	@Inject
 	private OfferScriptService scriptInstanceService;
 
 	public void create(BusinessOfferModelDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getOfferTemplateCode())) {
-			if (bomEntityService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+			if (businessOfferService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
 				throw new EntityAlreadyExistsException(BusinessOfferModel.class, postData.getCode());
 			}
 
@@ -46,14 +46,14 @@ public class BusinessOfferModelApi extends BaseApi {
 			OfferModelScript scriptInstance = scriptInstanceService.findByCode(postData.getScriptCode(),
 					currentUser.getProvider());
 
-			BusinessOfferModel bomEntity = new BusinessOfferModel();
-			bomEntity.setCode(postData.getCode());
-			bomEntity.setOfferTemplate(offerTemplate);
-			bomEntity.setScript(scriptInstance);
-			bomEntity.setDescription(StringUtils.isBlank(postData.getDescription()) ? postData.getCode() : postData
+			BusinessOfferModel businessOfferModel = new BusinessOfferModel();
+			businessOfferModel.setCode(postData.getCode());
+			businessOfferModel.setOfferTemplate(offerTemplate);
+			businessOfferModel.setScript(scriptInstance);
+			businessOfferModel.setDescription(StringUtils.isBlank(postData.getDescription()) ? postData.getCode() : postData
 					.getDescription());
 
-			bomEntityService.create(bomEntity, currentUser, currentUser.getProvider());
+			businessOfferService.create(businessOfferModel, currentUser, currentUser.getProvider());
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("bomCode");
@@ -68,8 +68,8 @@ public class BusinessOfferModelApi extends BaseApi {
 
 	public void update(BusinessOfferModelDto postData, User currentUser) throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getOfferTemplateCode())) {
-			BusinessOfferModel bomEntity = bomEntityService.findByCode(postData.getCode(), currentUser.getProvider());
-			if (bomEntity == null) {
+			BusinessOfferModel businessOfferModel = businessOfferService.findByCode(postData.getCode(), currentUser.getProvider());
+			if (businessOfferModel == null) {
 				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getCode());
 			}
 
@@ -82,12 +82,12 @@ public class BusinessOfferModelApi extends BaseApi {
 			OfferModelScript scriptInstance = scriptInstanceService.findByCode(postData.getScriptCode(),
 					currentUser.getProvider());
 
-			bomEntity.setDescription(StringUtils.isBlank(postData.getDescription()) ? postData.getCode() : postData
+			businessOfferModel.setDescription(StringUtils.isBlank(postData.getDescription()) ? postData.getCode() : postData
 					.getDescription());
-			bomEntity.setOfferTemplate(offerTemplate);
-			bomEntity.setScript(scriptInstance);
+			businessOfferModel.setOfferTemplate(offerTemplate);
+			businessOfferModel.setScript(scriptInstance);
 
-			bomEntityService.update(bomEntity, currentUser);
+			businessOfferService.update(businessOfferModel, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("bomCode");
@@ -100,44 +100,44 @@ public class BusinessOfferModelApi extends BaseApi {
 		}
 	}
 
-	public BusinessOfferModelDto find(String bomEntityCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(bomEntityCode)) {
-			BusinessOfferModel bomEntity = bomEntityService.findByCode(bomEntityCode, provider);
-			if (bomEntity != null) {
-				BusinessOfferModelDto bomEntityDto = new BusinessOfferModelDto();
-				bomEntityDto.setCode(bomEntity.getCode());
-				bomEntityDto.setDescription(bomEntity.getDescription());
-				if (bomEntity.getOfferTemplate() != null) {
-					bomEntityDto.setOfferTemplateCode(bomEntity.getOfferTemplate().getCode());
+	public BusinessOfferModelDto find(String businessOfferModelCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(businessOfferModelCode)) {
+			BusinessOfferModel businessOfferModel = businessOfferService.findByCode(businessOfferModelCode, provider);
+			if (businessOfferModel != null) {
+				BusinessOfferModelDto businessOfferModelDto = new BusinessOfferModelDto();
+				businessOfferModelDto.setCode(businessOfferModel.getCode());
+				businessOfferModelDto.setDescription(businessOfferModel.getDescription());
+				if (businessOfferModel.getOfferTemplate() != null) {
+					businessOfferModelDto.setOfferTemplateCode(businessOfferModel.getOfferTemplate().getCode());
 				}
-				if (bomEntity.getScript() != null) {
-					bomEntityDto.setScriptCode(bomEntity.getScript().getCode());
+				if (businessOfferModel.getScript() != null) {
+					businessOfferModelDto.setScriptCode(businessOfferModel.getScript().getCode());
 				}
 
-				return bomEntityDto;
+				return businessOfferModelDto;
 			}
 
-			throw new EntityDoesNotExistsException(BusinessOfferModel.class, bomEntityCode);
+			throw new EntityDoesNotExistsException(BusinessOfferModel.class, businessOfferModelCode);
 		} else {
-			if (StringUtils.isBlank(bomEntityCode)) {
-				missingParameters.add("bomEntityCode");
+			if (StringUtils.isBlank(businessOfferModelCode)) {
+				missingParameters.add("businessOfferModelCode");
 			}
 
 			throw new MeveoApiException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public void remove(String bomEntityCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(bomEntityCode)) {
-			BusinessOfferModel bomEntity = bomEntityService.findByCode(bomEntityCode, provider);
-			if (bomEntity == null) {
-				throw new EntityDoesNotExistsException(BusinessOfferModel.class, bomEntityCode);
+	public void remove(String businessOfferModelCode, Provider provider) throws MeveoApiException {
+		if (!StringUtils.isBlank(businessOfferModelCode)) {
+			BusinessOfferModel businessOfferModel = businessOfferService.findByCode(businessOfferModelCode, provider);
+			if (businessOfferModel == null) {
+				throw new EntityDoesNotExistsException(BusinessOfferModel.class, businessOfferModelCode);
 			}
 
-			bomEntityService.remove(bomEntity);
+			businessOfferService.remove(businessOfferModel);
 		} else {
-			if (StringUtils.isBlank(bomEntityCode)) {
-				missingParameters.add("bomEntityCode");
+			if (StringUtils.isBlank(businessOfferModelCode)) {
+				missingParameters.add("businessOfferModelCode");
 			}
 
 			throw new MeveoApiException(getMissingParametersExceptionMessage());
@@ -145,8 +145,8 @@ public class BusinessOfferModelApi extends BaseApi {
 	}
 
 	public void createOrUpdate(BusinessOfferModelDto postData, User currentUser) throws MeveoApiException {
-		BusinessOfferModel bomEntity = bomEntityService.findByCode(postData.getCode(), currentUser.getProvider());
-		if (bomEntity == null) {
+		BusinessOfferModel businessOfferModel = businessOfferService.findByCode(postData.getCode(), currentUser.getProvider());
+		if (businessOfferModel == null) {
 			// create
 			create(postData, currentUser);
 		} else {

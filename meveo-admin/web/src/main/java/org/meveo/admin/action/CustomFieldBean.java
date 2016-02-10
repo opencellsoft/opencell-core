@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -28,11 +26,13 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.CustomFieldMatrixColumn;
 import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.model.crm.CustomFieldValue;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -61,8 +61,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     private Map<String, Object> customFieldNewValue = new HashMap<String, Object>();
 
     private Map<String, Object> customFieldValues = new HashMap<String, Object>();
-
-    private Map<String, Set<String>> matrixColumns = new HashMap<String, Set<String>>();
 
     /**
      * Custom field templates grouped into tabs and field groups
@@ -144,11 +142,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                     cfisByTemplate.add(CustomFieldInstance.fromTemplate(cft, (ICustomFieldEntity) entity));
                 }
 
-                // Retrieve columns for Matrix data entry
-                if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
-                    populateMatrixColumns(cft.getCode(), cfisByTemplate);
-                }
-
                 // Deserialize values if applicable
                 for (CustomFieldInstance cfi : cfisByTemplate) {
                     deserializeForGUI(cft, cfi.getCfValue());
@@ -165,34 +158,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
             groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
         }
 
-    }
-
-    /**
-     * Retrieve matrix columns from custom field instances. Ignore MAP_KEY and MAP_VALUE entries.
-     * 
-     * @param code Custom field template code
-     * @param cfis Custom field instances
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void populateMatrixColumns(String code, List<CustomFieldInstance> cfis) {
-
-        Set<String> cftColumns = new LinkedHashSet<String>();
-        matrixColumns.put(code, cftColumns);
-
-        for (CustomFieldInstance cfi : cfis) {
-            if (cfi.getCfValue().getMapValue() == null) {
-                continue;
-            }
-            Object columnNames = cfi.getCfValue().getMapValue().get(CustomFieldValue.MAP_KEY);
-            if (columnNames instanceof String) {
-                String[] columNamesArray = ((String) columnNames).split(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR);
-                for (String column : columNamesArray) {
-                    cftColumns.add(column);
-                }
-            } else if (columnNames instanceof Collection) {
-                cftColumns.addAll((Collection) columnNames);
-            }
-        }
     }
 
     /**
@@ -368,6 +333,10 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
         try {
             BusinessEntity convertedEntity = (BusinessEntity) ReflectionUtils.createObject(entityReferenceValue.getClassname());
             if (convertedEntity != null) {
+                if (convertedEntity instanceof CustomEntityInstance) {
+                    ((CustomEntityInstance) convertedEntity).setCetCode(entityReferenceValue.getClassnameCode());
+                }
+
                 convertedEntity.setCode(entityReferenceValue.getCode());
             } else {
                 log.error("Unknown entity class specified " + entityReferenceValue.getClassname() + "in a custom field value {} ", entityReferenceValue);
@@ -429,8 +398,11 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 
             Map<String, Object> mapValue = new HashMap<String, Object>();
 
-            Set<String> columns = matrixColumns.get(cft.getCode());
-            mapValue.put(CustomFieldValue.MAP_KEY, columns);
+            List<String> columnKeys = new ArrayList<String>();
+            for (CustomFieldMatrixColumn column : cft.getMatrixColumnsSorted()) {
+                columnKeys.add(column.getCode());
+            }
+            mapValue.put(CustomFieldValue.MAP_KEY, columnKeys);
 
             for (Map<String, Object> mapItem : cfv.getMatrixValuesForGUI()) {
                 Object value = mapItem.get(CustomFieldValue.MAP_VALUE);
@@ -439,7 +411,7 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
                 }
 
                 StringBuilder valBuilder = new StringBuilder();
-                for (String column : columns) {
+                for (String column : columnKeys) {
                     valBuilder.append(valBuilder.length() == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
                     valBuilder.append(mapItem.get(column));
                 }
@@ -876,36 +848,6 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
      */
     public void clearCustomFieldNewValueDefaults(CustomFieldTemplate cft) {
         customFieldNewValue.remove(cft.getCode() + "_value");
-    }
-
-    /**
-     * Get columns for matrix data entry
-     * 
-     * @param matrixValues Matrix values
-     * @return A set of column names
-     */
-    public Set<String> getMatrixColumns(String cftCode) {
-        return matrixColumns.get(cftCode);
-    }
-
-    /**
-     * Add column to a matrix. Also sets null value for new column in every row of matrix
-     * 
-     * @param cft Custom field template
-     * @param matrixValues Matrix values
-     */
-    public void addMatrixColumn(CustomFieldTemplate cft, List<Map<String, Object>> matrixValues) {
-
-        String columnValue = (String) customFieldNewValue.get(cft.getCode() + "_key");
-
-        if (matrixColumns.get(cft.getCode()).add(columnValue)) {
-            customFieldNewValue.clear();
-
-        } else {
-            messages.error(new BundleKey("messages", "customFieldTemplate.columnExists"));
-            FacesContext.getCurrentInstance().validationFailed();
-            return;
-        }
     }
 
     /**

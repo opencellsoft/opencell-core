@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.Provider;
 
 /**
@@ -41,13 +42,7 @@ public class ValidationService {
 	public boolean validateUniqueField(String className, String fieldName, Object id, Object value,
 			Provider provider) {
 
-		// Proxy classes contain a name in "..._$$_javassist.. format" If a
-		// proxy class object claname was passed, string the ending
-		// "_$$_javassist.."to obtain real class name
-		int pos = className.indexOf("_$$_");
-		if (pos > 0) {
-			className = className.substring(0, pos);
-		}
+        className = ReflectionUtils.getCleanClassName(className);
 
         String queryString = null;
         if (id == null) {

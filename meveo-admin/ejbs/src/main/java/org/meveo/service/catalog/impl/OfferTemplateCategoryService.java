@@ -10,7 +10,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.PersistenceService;
 
 /**
  * @author Edward P. Legaspi

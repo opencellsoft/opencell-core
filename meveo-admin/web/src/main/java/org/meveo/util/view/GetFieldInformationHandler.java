@@ -255,7 +255,7 @@ public class GetFieldInformationHandler extends TagHandler {
                 field = c.getDeclaredField(fieldName);
             } catch (NoSuchFieldException e) {
 
-                log.debug("No field {} in {} might be in super {} ", c.getClass(), c.getSuperclass());
+                // log.debug("No field {} in {} might be in super {} ", fieldName, c, c.getSuperclass());
                 if (field == null && c.getSuperclass() != null) {
                     return getBeanField(c.getSuperclass(), fieldName);
                 }

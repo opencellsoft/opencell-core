@@ -29,7 +29,6 @@ public class ChartEntityModel <C extends Chart,M extends ChartModel>{
 	private List<String> dimension4List = new ArrayList<String>();
 
 	public ChartEntityModel() {
-		setRange(new Date());
 	}
 
 	public C getChart() {
@@ -38,6 +37,7 @@ public class ChartEntityModel <C extends Chart,M extends ChartModel>{
 
 	public void setChart(C chart) {
 		this.chart = chart;
+		setRange(new Date());
 	}
 
 	public M getModel() {
@@ -54,7 +54,18 @@ public class ChartEntityModel <C extends Chart,M extends ChartModel>{
 		cal.set(Calendar.DATE, 1);
 		minDate = cal.getTime();
 
-		cal.add(Calendar.MONTH, 1);
+		switch(chart.getMeasurableQuantity().getMeasurementPeriod()){
+		case DAILY:
+			cal.add(Calendar.MONTH, 1);
+			break;
+		case MONTHLY:
+		case WEEKLY:
+		case YEARLY:
+			cal.add(Calendar.YEAR, 1);
+			break;
+		default:
+			break;
+		}
 		cal.add(Calendar.DATE, -1);
 		maxDate = cal.getTime();
 	}

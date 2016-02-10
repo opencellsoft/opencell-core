@@ -25,7 +25,7 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 	private static final long serialVersionUID = 8222060379099238520L;
 
 	@Inject
-	private BusinessOfferService bomEntityService;
+	private BusinessOfferService businessOfferService;
 
 	private Map<String, String> offerCFVs = new HashMap<>();
 	private String serviceCodePrefix;
@@ -39,7 +39,7 @@ public class BusinessOfferBean extends BaseBean<BusinessOfferModel> {
 
 	@Override
 	protected IPersistenceService<BusinessOfferModel> getPersistenceService() {
-		return bomEntityService;
+		return businessOfferService;
 	}
 
 	@Override

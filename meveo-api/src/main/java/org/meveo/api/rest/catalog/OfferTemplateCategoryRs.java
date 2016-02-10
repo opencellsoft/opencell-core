@@ -38,7 +38,7 @@ public interface OfferTemplateCategoryRs extends IBaseRs {
 	@DELETE
 	ActionStatus delete(@QueryParam("offerTemplateCategoryCode") String offerTemplateCategoryCode);
 	
-	@Path("/")
+	@Path("/createOrUpdate")
 	@POST
 	ActionStatus createOrUpdate(OfferTemplateCategoryDto postData);
 	

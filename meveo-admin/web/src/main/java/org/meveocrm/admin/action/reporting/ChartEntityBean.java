@@ -69,10 +69,10 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 	public EM buildChargeEntityModel(Date fromDate, Date toDate, MeasurableQuantity mq, T chart, String dimension1,
 			String dimension2, String dimension3, String dimension4) {
 		EM result=null;
-		log.debug(
-				"buildChargeEntityModel {} from {} to {}, dimension1={}, dimension2={},"
-						+ " dimension3={}, dimension4={}",
-				mq.getCode(), fromDate, toDate, dimension1, dimension2, dimension3, dimension4);
+		//log.debug(
+		//		"buildChargeEntityModel {} from {} to {}, dimension1={}, dimension2={},"
+		//				+ " dimension3={}, dimension4={}",
+		//		mq.getCode(), fromDate, toDate, dimension1, dimension2, dimension3, dimension4);
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(null, fromDate, toDate, null, mq);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
@@ -83,24 +83,36 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		if (!empty) {
 			empty=true;
 			Map<String, BigDecimal> aggregatedValues = new HashMap<String, BigDecimal>();
+			Map<String, List<String>> aggregatedCount = new HashMap<String, List<String>>();
+			boolean additive = mq.isAdditive();
 			for (MeasuredValue measuredValue : mvs) {
 				String key = sdf.format(measuredValue.getDate());
-				log.debug("md key={}, aggVal={}, dim1={},dim2={},dim3={},dim4={},", key, aggregatedValues.get(key),
-						measuredValue.getDimension1(), measuredValue.getDimension2(), measuredValue.getDimension3(),
-						measuredValue.getDimension4());
+				//log.debug("md key={}, aggVal={}, dim1={},dim2={},dim3={},dim4={},", key, aggregatedValues.get(key),
+				//		measuredValue.getDimension1(), measuredValue.getDimension2(), measuredValue.getDimension3(),
+				//		measuredValue.getDimension4());
 				if (measuredValue.getValue() != null
 						&& (StringUtils.isBlank(dimension1) || dimension1.equals(measuredValue.getDimension1()))
 						&& (StringUtils.isBlank(dimension2) || dimension2.equals(measuredValue.getDimension2()))
 						&& (StringUtils.isBlank(dimension3) || dimension3.equals(measuredValue.getDimension3()))
 						&& (StringUtils.isBlank(dimension4) || dimension4.equals(measuredValue.getDimension4()))) {
-					// TODO we should only add if the measurable quantity is
-					// additive
 					if (aggregatedValues.containsKey(key) && aggregatedValues.get(key) != null) {
 						aggregatedValues.put(key, aggregatedValues.get(key).add(measuredValue.getValue()));
-						log.debug("md key={}, aggVal>{}", key, aggregatedValues.get(key));
+						if(!additive){
+							String aggregationkey=StringUtils.isBlank(dimension1)?"":dimension1;
+							if(!aggregatedCount.get(key).contains(aggregationkey)){
+								aggregatedCount.get(key).add(aggregationkey);
+							}
+						}
+						//log.debug("md key={}, aggVal>{}", key, aggregatedValues.get(key));
 					} else {
 						aggregatedValues.put(key, measuredValue.getValue());
-						log.debug("md key={}, aggVal={}", key, aggregatedValues.get(key));
+						if(!additive){
+							String aggregationkey=StringUtils.isBlank(dimension1)?"":dimension1;
+							List<String> val = new ArrayList<>();
+							val.add(aggregationkey);
+							aggregatedCount.put(key, val);
+						}
+						//log.debug("md key={}, aggVal={}", key, aggregatedValues.get(key));
 					}
 					if(empty){
 						empty=false;
@@ -111,7 +123,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			Collections.sort(keyList);
 			Collections.reverseOrder();
 			for (String key : keyList) {
-				mvSeries.set(key, aggregatedValues.get(key));
+				mvSeries.set(key, additive?aggregatedValues.get(key):(aggregatedValues.get(key).divide(new BigDecimal(aggregatedCount.get(key).size()))));
 			}
 		}
 		if(empty){
@@ -273,9 +285,10 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			xAxis.setLabel(lineChart.getXaxisLabel());
 		}
 
-		xAxis.setMin(lineChart.getMinX());
-		xAxis.setMax(lineChart.getMaxX());
-		xAxis.setMax(lineChart.getMaxX() != 0 ? lineChart.getMaxX() : null);
+		if(lineChart.getMinX()<lineChart.getMaxX()){
+			xAxis.setMin(lineChart.getMinX());
+			xAxis.setMax(lineChart.getMaxX());
+		}
 		if (lineChart.getXaxisAngle() != null) {
 			xAxis.setTickAngle(lineChart.getXaxisAngle());
 		}
@@ -284,8 +297,10 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		if (!StringUtils.isBlank(lineChart.getYaxisLabel())) {
 			yAxis.setLabel(lineChart.getYaxisLabel());
 		}
-		yAxis.setMin(lineChart.getMinY());
-		yAxis.setMax(lineChart.getMaxY() > 0 ? lineChart.getMaxY() : null);
+		if(lineChart.getMinY()<lineChart.getMaxY()){
+			yAxis.setMin(lineChart.getMinY());
+			yAxis.setMax(lineChart.getMaxY());
+		}
 		if (lineChart.getYaxisAngle() != null) {
 			yAxis.setTickAngle(lineChart.getYaxisAngle());
 		}

@@ -34,7 +34,7 @@ public class OfferTemplateDto implements Serializable {
 	
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 	
-	//FIXME add BOM
+	private String bomCode;
 
 	public OfferTemplateDto() {
 
@@ -44,6 +44,9 @@ public class OfferTemplateDto implements Serializable {
 		code = e.getCode();
 		description = e.getDescription();
 		disabled = e.isDisabled();
+		if (e.getBusinessOfferModel() != null) {
+			bomCode = e.getBusinessOfferModel().getCode();
+		}
 		
 
 		if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
@@ -82,7 +85,8 @@ public class OfferTemplateDto implements Serializable {
 	@Override
 	public String toString() {
 		return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled
-				+ ", serviceTemplates=" + serviceTemplates + ", customFields=" + customFields + "]";
+				+ ", serviceTemplates=" + serviceTemplates + ", customFields=" + customFields + ", bomCode=" + bomCode
+				+ "]";
 	}
 
 	public ServiceTemplatesDto getServiceTemplates() {
@@ -99,6 +103,14 @@ public class OfferTemplateDto implements Serializable {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	public String getBomCode() {
+		return bomCode;
+	}
+
+	public void setBomCode(String bomCode) {
+		this.bomCode = bomCode;
 	}
 
 }

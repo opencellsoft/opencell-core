@@ -15,13 +15,16 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.CatalogApi;
+import org.meveo.api.catalog.OfferTemplateCategoryApi;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.CatalogRs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.category.Category;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
@@ -41,11 +44,47 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Inject
 	private BusinessOfferApi businessOfferApi;
+	
+	@Inject
+	private OfferTemplateCategoryApi offerTemplateCategoryApi;
 
 	@Override
 	public List<Category> findCategories() {
 		List<Category> categories = new ArrayList<Category>();
-		categories.add(Category.createProto(uriInfo));
+		try {
+			List<OfferTemplateCategoryDto> offerTemplateCategoryDtos =  offerTemplateCategoryApi.list(uriInfo);
+			if (offerTemplateCategoryDtos != null && offerTemplateCategoryDtos.size() > 0) {
+				for (OfferTemplateCategoryDto otcd: offerTemplateCategoryDtos) {
+					Category category = new Category();
+					category.setId(String.valueOf(otcd.getId()));
+					category.setVersion(String.valueOf(otcd.getVersion()));
+					category.setHref(otcd.getHref());
+					category.setName(otcd.getName());
+					category.setDescription(otcd.getDescription());
+					category.setLastUpdate(otcd.getLastModified());
+					//TODO where to get life cycle status??
+					if (otcd.isActive()) {
+						category.setLifecycleStatus(LifecycleStatus.ACTIVE);
+					} else {
+						category.setLifecycleStatus(LifecycleStatus.RETIRED);
+					}
+					//TODO where to get set valid for??
+					if (otcd.getParentId() != null) {
+						category.setParentId(String.valueOf(otcd.getParentId()));
+						category.setIsRoot(false);
+					} else {
+						category.setIsRoot(true);
+					}
+					categories.add(category);
+				}
+			}
+		} catch (MeveoApiException e) {
+			log.error("MeveoApiException caught while retrieving categories: " + e.getMessage());
+		} catch (Exception e) {
+			log.error("Exception caught while retrieving categories: " + e.getMessage());
+		}
+		
+		
 		return categories;
 	}
 
@@ -55,7 +94,46 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 		if (!"1".equals(id)) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		return Response.ok().entity(Category.createProto(uriInfo)).build();
+		
+		Category category = null;
+		try {
+			OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findById(id, getCurrentUser(), uriInfo);
+			if (otcd == null) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+			
+			category = new Category();
+			category.setId(String.valueOf(otcd.getId()));
+			category.setVersion(String.valueOf(otcd.getVersion()));
+			category.setHref(otcd.getHref());
+			category.setName(otcd.getName());
+			category.setDescription(otcd.getDescription());
+			category.setLastUpdate(otcd.getLastModified());
+			//TODO where to get life cycle status??
+			if (otcd.isActive()) {
+				category.setLifecycleStatus(LifecycleStatus.ACTIVE);
+			} else {
+				category.setLifecycleStatus(LifecycleStatus.RETIRED);
+			}
+			//TODO where to get set valid for??
+			if (otcd.getParentId() != null) {
+				category.setParentId(String.valueOf(otcd.getParentId()));
+				category.setIsRoot(false);
+			} else {
+				category.setIsRoot(true);
+			}
+			
+			
+		} catch (MeveoApiException e) {
+			log.error("MeveoApiException caught while retrieving categories: " + e.getMessage());
+			return Response.status(Status.BAD_REQUEST).build();
+		} catch (Exception e) {
+			log.error("Exception caught while retrieving categories: " + e.getMessage());
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+		
+		
+		return Response.ok().entity(category).build();
 	}
 
 	public List<ProductOffering> findProductOfferings() {

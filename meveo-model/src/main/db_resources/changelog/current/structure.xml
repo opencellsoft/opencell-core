@@ -1330,12 +1330,51 @@
 		<modifyDataType columnName="INVOICE_ADJUSTMENT_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_SELLER" />
 		<modifyDataType columnName="INVOICE_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_PROVIDER" />	
 		<modifyDataType columnName="INVOICE_ADJUSTMENT_PREFIX" newDataType="VARCHAR(2000)" tableName="CRM_PROVIDER" />																																
-	</changeSet>	
+	</changeSet>
+    <changeSet id="#1360_20160206" author="AndriusKarpavicius">
+        <createTable tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS">
+            <column name="CFT_ID" type="BIGINT" />
+            <column name="POSITION" type="INT" />
+            <column name="CODE" type="VARCHAR(20)" />
+            <column name="LABEL" type="VARCHAR(50)" />
+            <column name="KEY_TYPE" type="INT" />
+        </createTable>
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS" columnName="POSITION" />
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS" columnName="CFT_ID" />
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS" columnName="CODE" />
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS" columnName="LABEL" />
+        <addNotNullConstraint tableName="CRM_CUSTOM_FIELD_TMPL_MCOLS" columnName="KEY_TYPE" />
+        <addForeignKeyConstraint constraintName="FK_CFT_MCOLS_CFT" referencedTableName="CRM_CUSTOM_FIELD_TMPL" baseColumnNames="CFT_ID" baseTableName="CRM_CUSTOM_FIELD_TMPL_MCOLS"
+            referencedColumnNames="ID" />
+    </changeSet>
 	
      <changeSet id="#barchart-20160206" author="smichea">		
 		<addColumn tableName="dwh_chart">
 			<column name="width" type="VARCHAR(10)"></column>
 		</addColumn>
 		<sql>UPDATE DWH_CHART SET WIDTH='500px';</sql>
+	</changeSet>
+     <changeSet id="#barchart-20160208" author="smichea">		
+		<addColumn tableName="dwh_chart">
+			<column name="height" type="VARCHAR(10)"></column>
+		</addColumn>
+		<sql>UPDATE DWH_CHART SET HEIGHT='300px';</sql>
+	</changeSet>
+     <changeSet id="#barchart-20160209" author="smichea">		
+		<addColumn tableName="dwh_measurable_quant">
+			<column name="additive" type="BOOL"></column>
+		</addColumn>
+		<sql>UPDATE dwh_measurable_quant SET additive=TRUE;</sql>
+	</changeSet>
+     <changeSet id="#dwh-20160209" author="smichea">		
+		<addColumn tableName="DWH_MEASURED_VALUE">
+			<column name="CODE" type="VARCHAR(60)"></column>
+		</addColumn>
+		<sql>UPDATE DWH_MEASURED_VALUE SET CODE = (SELECT CODE FROM dwh_measurable_quant WHERE dwh_measurable_quant.id=DWH_MEASURED_VALUE.MEASURABLE_QUANTITY)</sql>
+		<addNotNullConstraint tableName="DWH_MEASURED_VALUE" columnName="CODE"/>
+		<addColumn tableName="dwh_measurable_quant">
+			<column name="VISIBLE" type="BOOL"></column>
+		</addColumn>
+		<sql>UPDATE dwh_measurable_quant SET VISIBLE=TRUE;</sql>
 	</changeSet>
 </databaseChangeLog>

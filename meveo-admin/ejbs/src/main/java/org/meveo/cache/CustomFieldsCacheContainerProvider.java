@@ -125,6 +125,9 @@ public class CustomFieldsCacheContainerProvider {
                     ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
                 }
             }
+            if (cft.getListValues() != null) {
+                cft.setListValues(PersistenceUtils.initializeAndUnproxy(cft.getListValues()));
+            }
 
             customFieldTemplateService.detach(cft);
 
@@ -180,6 +183,11 @@ public class CustomFieldsCacheContainerProvider {
 
         for (CustomFieldInstance cfi : cfis) {
 
+            // CustomFieldTemplate cft = getCustomFieldTemplate(cfi.getCode(), cfi.getAppliesToEntity(), cfi.getProvider());
+            // if (!cft.isCacheValue()) {
+            // continue;
+            // }
+
             String cacheKey = getCacheKey(cfi);
 
             log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity uuid {}", cfi.getCode(), cacheKey);
@@ -206,6 +214,12 @@ public class CustomFieldsCacheContainerProvider {
 
         String cacheKey = getCacheKey(cfi);
         CustomFieldTemplate cft = getCustomFieldTemplate(cfi.getCode(), entity);
+
+        // // Nothing to do if field is not cacheable
+        // if (!cft.isCacheValue()) {
+        // return;
+        // }
+
         Object value = cfi.getValue();
 
         // Do not store null values if no default value is provided (otherwise the next get will instantiate CF value again)
@@ -548,6 +562,10 @@ public class CustomFieldsCacheContainerProvider {
                 ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
             }
         }
+        if (cft.getListValues() != null) {
+            cft.setListValues(PersistenceUtils.initializeAndUnproxy(cft.getListValues()));
+        }
+
         cftsByAppliesTo.get(cacheKeyByAppliesTo).put(cft.getCode(), cft);
 
         if (cft.isVersionable()) {

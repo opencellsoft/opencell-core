@@ -58,6 +58,7 @@ import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.GetTaxResponse;
+import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.PermissionResponseDto;
@@ -655,7 +656,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		GetProviderResponse result = new GetProviderResponse();
 
 		try {
-			result.setProvider(providerApi.find(providerCode));
+			result.setProvider(providerApi.find(providerCode, getCurrentUser()));
+			
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -869,7 +871,26 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 		log.debug("RESPONSE={}", result);
 		return result;
 	}
-
+	
+	@Override
+	public GetTaxesResponse listTaxes() {
+		GetTaxesResponse result = new GetTaxesResponse();
+		
+		try{
+			result.setTaxesDto(taxApi.list(getCurrentUser().getProvider()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+		
+		return result;
+	}
+	
 	@Override
 	public ActionStatus createUser(UserDto postData) {
 		ActionStatus result = new ActionStatus();
@@ -1129,11 +1150,12 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetTradingConfigurationResponseDto findTradingConfiguration() {
+	public GetTradingConfigurationResponseDto findTradingConfiguration(String providerCode) {
 		GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
 		try {
-			result = providerApi.getTradingConfiguration(getCurrentUser());
+			result = providerApi.getTradingConfiguration(providerCode, getCurrentUser());
+			
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1149,11 +1171,12 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetInvoicingConfigurationResponseDto findInvoicingConfiguration() {
+	public GetInvoicingConfigurationResponseDto findInvoicingConfiguration(String providerCode) {
 		GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
 		try {
-			result = providerApi.getInvoicingConfiguration(getCurrentUser());
+			result = providerApi.getInvoicingConfiguration(providerCode, getCurrentUser());
+			
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1169,11 +1192,12 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetCustomerConfigurationResponseDto findCustomerConfiguration() {
+	public GetCustomerConfigurationResponseDto findCustomerConfiguration(String providerCode) {
 		GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
 		try {
-			result = providerApi.getCustomerConfigurationResponse(getCurrentUser());
+			result = providerApi.getCustomerConfiguration(providerCode, getCurrentUser());
+			
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -1189,11 +1213,12 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 	}
 
 	@Override
-	public GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration() {
+	public GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration(String providerCode) {
 		GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
 		try {
-			result = providerApi.getCustomerAccountConfigurationResponseDto(getCurrentUser().getProvider());
+			result = providerApi.getCustomerAccountConfiguration(providerCode, getCurrentUser());
+			
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

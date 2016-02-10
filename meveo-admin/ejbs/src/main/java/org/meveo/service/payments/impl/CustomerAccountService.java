@@ -80,7 +80,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	public boolean isCustomerAccountWithIdExists(Long id) {
 		Query query = getEntityManager().createQuery("select count(*) from CustomerAccount a where a.id = :id");
 		query.setParameter("id", id);
-		return (Integer) query.getSingleResult() > 0;
+		Long count = (Long) query.getSingleResult();
+		if(count == null){
+			return false;
+		}
+		return count.longValue() > 0;
 	}
 
 	@SuppressWarnings("unchecked")

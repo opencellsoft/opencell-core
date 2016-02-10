@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.TaxDto;
+import org.meveo.api.dto.TaxesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -269,5 +270,21 @@ public class TaxApi extends BaseApi {
 		} else {
 			update(postData, currentUser);
 		}
+	}
+	
+	public TaxesDto list(Provider provider) throws MeveoApiException {
+		TaxesDto taxesDto = new TaxesDto();
+		
+		if (provider != null) {
+			List<Tax> taxes =  taxService.list(provider);
+			if (taxes != null && !taxes.isEmpty()) {
+				for (Tax t: taxes) {
+					TaxDto taxDto = new TaxDto(t);
+					taxesDto.getTax().add(taxDto);
+				}
+			}
+		}
+		
+		return taxesDto;
 	}
 }

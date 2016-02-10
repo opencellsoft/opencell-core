@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions"
-    template="/layout/template.xhtml">
+    xmlns:o="http://omnifaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -9,12 +9,13 @@
         </f:metadata>
     </ui:define>
 
-
     <ui:define name="navigation">
         <ui:include src="/layout/navigation.xhtml" />
     </ui:define>
 
     <ui:define name="body">
+
+        <o:importConstants type="org.meveo.model.crm.CustomFieldMapKeyEnum" />
 
         <h:panelGroup rendered="#{customEntityTemplateBean.customEntityTemplate}">
             <hftl:formPanel formId="cetForm"
@@ -27,7 +28,6 @@
         </h:panelGroup>
         <h:panelGroup rendered="#{! customEntityTemplateBean.customEntityTemplate}">
             <hftl:decorateFormPanel label="#{messages['customizedEntities.detail']} - #{customEntityTemplateBean.customizedEntity.entityName}">
-
             </hftl:decorateFormPanel>
         </h:panelGroup>
 
@@ -383,12 +383,12 @@
                         listenerUpdate=":cftForm:listValuesField :cftForm:defaultValueField :cftForm:entityClazzField validations" />
                     <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
                     <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
-                    <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" listenerUpdate=":cftForm:defaultValueField :cftForm:mapKeyTypeField"
-                        required="true" componentWidth="10" />
+                    <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType"
+                        listenerUpdate=":cftForm:defaultValueField :cftForm:mapKeyTypeField :cftForm:matrixColumns" required="true" componentWidth="10" />
 
                     <h:panelGroup id="mapKeyTypeField">
                         <hftl:formField label="#{messages['customFieldTemplate.mapKeyType']}" field="mapKeyType" required="true" componentWidth="10"
-                            rendered="#{customFieldTemplateBean.entity.storageType == 'MAP' or customFieldTemplateBean.entity.storageType == 'MATRIX'}" />
+                            rendered="#{customFieldTemplateBean.entity.storageType == 'MAP'}" />
                     </h:panelGroup>
                     <h:panelGroup id="defaultValueField">
                         <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
@@ -396,10 +396,73 @@
                             newLine="true" />
                     </h:panelGroup>
                     <h:panelGroup id="entityClazzField">
-                        <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="60" maxlength="255"
-                            autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" newLine="true"
+                        <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="90" maxlength="255"
+                            autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" newLine="true" componentWidth="50"
                             rendered="#{customFieldTemplateBean.entity.fieldType == 'ENTITY'}" />
                     </h:panelGroup>
+
+                    <h:panelGroup id="matrixColumns" styleClass="clearLeft">
+                        <p:fieldset legend="#{messages['customFieldTemplate.matrixColumn.columns']}" styleClass="clearLeft"
+                            rendered="#{customFieldTemplateBean.entity.storageType == 'MATRIX'}">
+                            <p:dataTable editable="true" editMode="cell" value="#{customFieldTemplateBean.entity.matrixColumns}" var="matrixColumn" style="width: 850px"
+                                sortBy="#{matrixColumn.position}">
+                                <!--                                 <p:ajax event="cellEdit" update=":cftForm:matrixColumns" partialSubmit="true" /> -->
+                                <p:column headerText="#{messages['customFieldTemplate.matrixColumn.position']}" width="50">
+                                    <h:outputText value="#{matrixColumn.position}" styleClass="field-value" />
+                                </p:column>
+                                <p:column headerText="#{messages['BusinessEntity.code']}" width="150">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{matrixColumn.code}" styleClass="field-value" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <h:inputText value="#{matrixColumn.code}" required="true" size="20" maxlength="20" />
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="#{messages['customFieldTemplate.matrixColumn.label']}" width="300">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{matrixColumn.label}" styleClass="field-value" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <h:inputText value="#{matrixColumn.label}" required="true" size="50" maxlength="50" />
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="#{messages['customFieldTemplate.matrixColumn.keyType']}" width="150">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{messages[matrixColumn.keyType.label]}" styleClass="field-value" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <h:selectOneMenu value="#{matrixColumn.keyType}" required="true">
+                                                <f:converter converterId="enumConverter" />
+                                                <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.crm.CustomFieldMapKeyEnum" />
+                                                <f:selectItem />
+                                                <f:selectItems value="#{CustomFieldMapKeyEnum.values()}" var="item" itemValue="#{item}" itemLabel="#{messages[item.label]}" />
+                                            </h:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <c:if test="#{customFieldTemplateBean.edit}">
+                                    <p:column width="50">
+                                        <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                                        <p:commandButton id="deletelink" action="#{customFieldTemplateBean.entity.removeMatrixColumn(matrixColumn)}" partialSubmit="true"
+                                            icon="ui-icon-trash" process="@this" update=":cftForm:matrixColumns">
+                                        </p:commandButton>
+                                    </p:column>
+                                </c:if>
+                                <c:if test="#{customFieldTemplateBean.edit}">
+                                    <f:facet name="footer" layout="block">
+                                        <p:commandButton value="#{messages['customFieldTemplate.addColumn']}" partialSubmit="true" process="@this" update=":cftForm:matrixColumns"
+                                            action="#{customFieldTemplateBean.entity.addMatrixColumn()}" />
+                                    </f:facet>
+                                </c:if>
+                            </p:dataTable>
+                        </p:fieldset>
+                    </h:panelGroup>
+
                     <p:fieldset id="validations" legend="#{messages['customFieldTemplate.validations']}" styleClass="clearLeft">
                         <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10" />
                         <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="10" />

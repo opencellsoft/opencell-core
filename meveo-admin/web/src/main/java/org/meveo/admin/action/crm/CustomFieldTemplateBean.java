@@ -10,10 +10,14 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomizedEntity;
+import org.meveo.service.custom.CustomizedEntityService;
 import org.omnifaces.cdi.ViewScoped;
 
 @Named
@@ -27,6 +31,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     @Inject
     private CalendarService calendarService;
+
+    @Inject
+    private CustomizedEntityService customizedEntityService;
 
     public CustomFieldTemplateBean() {
         super(CustomFieldTemplate.class);
@@ -74,23 +81,15 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     }
 
     public List<String> autocompleteClassNames(String query) {
-        String qLower = query.toLowerCase();
         List<String> clazzNames = new ArrayList<String>();
-        for (String clazz : clazzes) {
-            if (clazz.toLowerCase().contains(qLower)) {
-                clazzNames.add(clazz);
-            }
+
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, null, null, getCurrentProvider());
+
+        for (CustomizedEntity customizedEntity : entities) {
+            clazzNames.add(ReflectionUtils.getCleanClassName(customizedEntity.getEntityClass().getName())
+                    + (!customizedEntity.isStandardEntity() ? CustomFieldInstanceService.ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR + customizedEntity.getEntityName() : ""));
         }
+
         return clazzNames;
     }
-
-    // business and observable
-    public static final List<String> clazzes = Arrays.asList("org.meveo.model.billing.Tax", "org.meveo.model.admin.Seller", "org.meveo.model.catalog.OfferTemplate",
-        "org.meveo.model.billing.UserAccount", "org.meveo.model.catalog.PricePlanMatrix", "org.meveo.model.billing.BillingAccount", "org.meveo.model.payments.CustomerAccount",
-        "org.meveo.model.catalog.OneShotChargeTemplate", "org.meveo.model.catalog.ServiceTemplate", "org.meveo.model.catalog.WalletTemplate",
-        "org.meveo.model.billing.Subscription", "org.meveo.model.catalog.RecurringChargeTemplate",
-        // "org.meveo.model.billing.ServiceInstance",
-        "org.meveo.model.crm.Customer", "org.meveo.model.catalog.UsageChargeTemplate", "org.meveo.model.catalog.TriggeredEDRTemplate", "org.meveo.model.catalog.CounterTemplate",
-        "org.meveo.model.catalog.Calendar", "org.meveo.model.crm.ProviderContact", "org.meveo.model.catalog.DiscountPlan", "org.meveo.model.communication.email.EmailTemplate");
-
 }

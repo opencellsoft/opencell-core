@@ -1,8 +1,9 @@
-package org.meveo.admin.action.admin.custom;
+package org.meveo.service.custom;
 
 public class CustomizedEntity {
 
-	private Long id;
+    private Long id;
+
     private String entityName;
 
     @SuppressWarnings("rawtypes")
@@ -22,14 +23,14 @@ public class CustomizedEntity {
     }
 
     public Long getId() {
-		return id;
-	}
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getEntityName() {
+    public String getEntityName() {
         return entityName;
     }
 
@@ -48,6 +49,10 @@ public class CustomizedEntity {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean isStandardEntity() {
+        return customEntityId == null;
     }
 
     @Override
