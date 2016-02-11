@@ -24502,6 +24502,7 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.catalog.PricePlanDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateRecurringDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateRecurringsDto;
@@ -24524,6 +24525,7 @@ import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.catalog.RecurringChargeTemplateApi;
 import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.catalog.CounterTemplateApi;
+import org.meveo.api.catalog.PricePlanApi;
 
 public class PostpaidOfferScript extends Script {
 	  
@@ -24534,6 +24536,7 @@ public class PostpaidOfferScript extends Script {
   	RecurringChargeTemplateApi recurringChargeTemplateApi = (RecurringChargeTemplateApi) getServiceInterface("RecurringChargeTemplateApi");
   	UsageChargeTemplateApi usageChargeTemplateApi = (UsageChargeTemplateApi) getServiceInterface("UsageChargeTemplateApi");
   	CounterTemplateApi counterTemplateApi = (CounterTemplateApi) getServiceInterface("CounterTemplateApi");
+  	PricePlanApi pricePlanApi = (PricePlanApi)  getServiceInterface("PricePlanApi");
   	
 	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
 		log.debug("start postpaidOffer creation script... event = {}",context.get("event"));
@@ -24571,6 +24574,14 @@ public class PostpaidOfferScript extends Script {
 			rct.setSubscriptionProrata(proratedSubscription);
 			recurringChargeTemplateApi.create(rct,user);
 			
+			PricePlanDto rpp = new PricePlanDto();
+			rpp.setCode(offerCode+"_ABO_PP");
+			rpp.setAmountWithoutTax(BigDecimal.valueOf(recurringPrice));
+			rpp.setDescription("Abonnement a offre "+offerCode);
+			rpp.setPriority(10);
+			rpp.setEventCode(offerCode+"_ABO_REC");
+			pricePlanApi.create(rpp,user);
+			
 			ServiceTemplateDto aboServiceTemplateDto= new ServiceTemplateDto(offerCode+"_ABO_SV");
 			aboServiceTemplateDto.setDescription("Abonnement");
 			ServiceChargeTemplateRecurringsDto aboRecs = new ServiceChargeTemplateRecurringsDto();
@@ -24588,9 +24599,10 @@ public class PostpaidOfferScript extends Script {
 					String descr = (String)service.get("description");
 					Long counter = (Long) service.get("counter");
 					Double priceInCounter = (Double) service.get("priceInCounter");
+					Double priceOverCounter = (Double) service.get("priceOverCounter");
 					Boolean mandatory =(Boolean) service.get("mandatory");
 					String invoiceSubcat = (String)service.get("invoiceSubcategory");
-					ServiceTemplateDto serviceTemplateDto= new ServiceTemplateDto(code);
+					ServiceTemplateDto serviceTemplateDto= new ServiceTemplateDto(offerCode+"_"+code);
 					serviceTemplateDto.setDescription(descr);
 					//usages
 					ServiceChargeTemplateUsagesDto usgs = new ServiceChargeTemplateUsagesDto();
@@ -24618,17 +24630,35 @@ public class PostpaidOfferScript extends Script {
 						usageInDto.setCode(offerCode+"_"+code+"_IN");
 						usageInDto.setCounterTemplate(offerCode+"_"+code+"_CNT");
 						usgs.getServiceChargeTemplateUsage().add(usageInDto);
+						
+
+						PricePlanDto rppin = new PricePlanDto();
+						rppin.setCode(offerCode+"_"+code+"_IN_PP");
+						rppin.setAmountWithoutTax(BigDecimal.valueOf(priceInCounter));
+						rppin.setDescription("Prix "+offerCode+" dans le compteur");
+						rppin.setPriority(10);
+						rppin.setEventCode(offerCode+"_"+code+"_IN");
+						pricePlanApi.create(rppin,user);
 					}
-					//usage charge in counter
+					//usage charge out counter
 					UsageChargeTemplateDto usg = new UsageChargeTemplateDto();
 					usg.setAmountEditable(Boolean.FALSE);
 					usg.setDescription(descr);
-					usg.setCode(offerCode+"_"+code+"_OUT");
+					usg.setCode(offerCode+"_"+code+"_OVER");
 					usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
 					usageChargeTemplateApi.create(usg,user);
 					
+
+					PricePlanDto rppout = new PricePlanDto();
+					rppout.setCode(offerCode+"_"+code+"_OVER_PP");
+					rppout.setAmountWithoutTax(BigDecimal.valueOf(priceOverCounter));
+					rppout.setDescription("Prix "+offerCode+" hors compteur");
+					rppout.setPriority(10);
+					rppout.setEventCode(offerCode+"_"+code+"_OVER");
+					pricePlanApi.create(rppout,user);
+					
 					ServiceUsageChargeTemplateDto usageInDto = new ServiceUsageChargeTemplateDto();
-					usageInDto.setCode(offerCode+"_"+code+"_OUT");
+					usageInDto.setCode(offerCode+"_"+code+"_OVER");
 					usgs.getServiceChargeTemplateUsage().add(usageInDto);					
 					serviceTemplateDto.setServiceChargeTemplateUsages(usgs);
 					serviceTemplateApi.create(serviceTemplateDto,user);
@@ -24671,7 +24701,7 @@ public class PostpaidOfferScript extends Script {
       </ws:createOrUpdateNotification>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/><con:assertion type="Simple Contains" id="a676651c-dbaf-4759-872f-27079aee9188" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="5d46849a-db56-4b28-9dec-24fb0c01f2af" name="offerCreation"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="8f5beed1-92ff-41c8-a033-3a00ae84890f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create offer" searchProperties="true"><con:settings/><con:testStep type="httprequest" name="Create offer HTTP Request" id="2fed23b7-62d5-4e0f-8625-dea0f14d69b4"><con:settings/><con:config method="POST" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="Create offer HTTP Request" postQueryString="false" mediaType="application/json" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/postpaidOffer</con:endpoint><con:request>{
-"code":"OFFRE_PORTAIL3",
+"code":"OFFRE_PORTAIL4",
 "created":"2015-12-09T08:40",
 "name":"offre forfait 2",
 "description":"",
