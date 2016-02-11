@@ -193,14 +193,14 @@ public class DefaultObserver {
             	jobTriggerLauncher.launch((JobTrigger) notif, e);
             }
 
-        } catch (BusinessException e1) {
+        } catch (Exception e1) {
             log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
             try {
                 NotificationHistory notificationHistory = notificationHistoryService.create(notif, e, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
                 if (e instanceof InboundRequest) {
                     ((InboundRequest) e).add(notificationHistory);
                 }
-            } catch (BusinessException e2) {
+            } catch (Exception e2) {
             	log.error("Failed to firing notification",e);
             }
         }
