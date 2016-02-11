@@ -143,13 +143,8 @@ public class InboundServlet extends HttpServlet {
 				res.addHeader(headerName, inReq.getResponseHeaders().get(headerName));
 			}
 			if(inReq.getResponseBody()!=null){
-				try (ByteArrayOutputStream bout = new ByteArrayOutputStream(8192);
-					PrintWriter pw = new PrintWriter(new OutputStreamWriter(bout, res.getCharacterEncoding()))){	
-					pw.write(inReq.getResponseBody());
-					res.setContentLength(bout.size());
-					log.debug("writing {} bytes to response",bout.size());
-					bout.writeTo(res.getOutputStream());
-					
+				try (PrintWriter out = res.getWriter()){
+					out.print(inReq.getResponseBody());
 				} catch (IOException e) {
 					log.error("Failed to produce the response",e);
 					res.setStatus(500);
