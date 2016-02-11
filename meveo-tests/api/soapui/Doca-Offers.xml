@@ -24289,12 +24289,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          </invoiceCategory>
       </ws:createOrUpdateInvoiceCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="45d6aff7-fe0d-4a47-adc6-7121bbaaf502"/><con:assertion type="Simple Contains" id="4584a600-0b33-4b20-af2f-5b6e53df3133" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Invoice Sub category ABO_TVA_0" id="ffa51e28-a352-4416-a8e3-952fce6cf547"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceSubCategory</con:operation><con:request name="Create Invoice Sub category ABO_TVA_0" id="2ddab2ea-5f6c-47b1-93f9-816163ffca1c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="45d6aff7-fe0d-4a47-adc6-7121bbaaf502"/><con:assertion type="Simple Contains" id="4584a600-0b33-4b20-af2f-5b6e53df3133" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create Invoice Sub category ABO_TVA_00" id="ffa51e28-a352-4416-a8e3-952fce6cf547"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceSubCategory</con:operation><con:request name="Create Invoice Sub category ABO_TVA_00" id="2ddab2ea-5f6c-47b1-93f9-816163ffca1c"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
          <!--Optional:-->
-         <invoiceSubCategory code="ABO_TVA_0" description="Abonnement tva 0">
+         <invoiceSubCategory code="ABO_TVA_00" description="Abonnement tva 0">
             <invoiceCategory>ABONNEMENT</invoiceCategory>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
@@ -24306,13 +24306,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          </invoiceSubCategory>
       </ws:createOrUpdateInvoiceSubCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="70120fb4-1852-4846-98ff-6423a4861d68"/><con:assertion type="Simple Contains" id="36ef3a53-0d82-4eaf-a336-06ba52e02463" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="0d7e7dff-44c5-41e4-970a-6825e9a8fbc5" name="CreateInvoiceSubCategoryCountry  ABO_TVA_0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceSubCategoryCountry</con:operation><con:request name="CreateInvoiceSubCategoryCountry  ABO_TVA_0" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7b0a89aa-fa2c-4922-8450-e9d7b58b2b63"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="70120fb4-1852-4846-98ff-6423a4861d68"/><con:assertion type="Simple Contains" id="36ef3a53-0d82-4eaf-a336-06ba52e02463" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="0d7e7dff-44c5-41e4-970a-6825e9a8fbc5" name="CreateInvoiceSubCategoryCountry  ABO_TVA_00"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceSubCategoryCountry</con:operation><con:request name="CreateInvoiceSubCategoryCountry  ABO_TVA_00" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7b0a89aa-fa2c-4922-8450-e9d7b58b2b63"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
          <!--Optional:-->
          <invoiceSubCategoryCountry>
-            <invoiceSubCategory>ABO_TVA_0</invoiceSubCategory>
+            <invoiceSubCategory>ABO_TVA_00</invoiceSubCategory>
             <country>FR</country>
             <tax>TVA_0</tax>
             <!--Optional:-->
@@ -24400,7 +24400,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
          <!--Optional:-->
-         <invoiceSubCategory code="SERV_TVA_0" description="Services tva 0">
+         <invoiceSubCategory code="SERV_TVA_00" description="Services tva 0">
             <invoiceCategory>SERVICES</invoiceCategory>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
@@ -24412,13 +24412,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          </invoiceSubCategory>
       </ws:createOrUpdateInvoiceSubCategory>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="70120fb4-1852-4846-98ff-6423a4861d68"/><con:assertion type="Simple Contains" id="36ef3a53-0d82-4eaf-a336-06ba52e02463" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="a7bb172b-c4d1-47de-9e8b-8de1bfdecbef" name="CreateInvoiceSubCategoryCountry  SERV_TVA_0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceSubCategoryCountry</con:operation><con:request name="CreateInvoiceSubCategoryCountry  SERV_TVA_0" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7b0a89aa-fa2c-4922-8450-e9d7b58b2b63"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="70120fb4-1852-4846-98ff-6423a4861d68"/><con:assertion type="Simple Contains" id="36ef3a53-0d82-4eaf-a336-06ba52e02463" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" id="a7bb172b-c4d1-47de-9e8b-8de1bfdecbef" name="CreateInvoiceSubCategoryCountry  SERV_TVA_00"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>SettingsWsSoapBinding</con:interface><con:operation>createInvoiceSubCategoryCountry</con:operation><con:request name="CreateInvoiceSubCategoryCountry  SERV_TVA_00" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7b0a89aa-fa2c-4922-8450-e9d7b58b2b63"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/SettingsWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
          <!--Optional:-->
          <invoiceSubCategoryCountry>
-            <invoiceSubCategory>SERV_TVA_0</invoiceSubCategory>
+            <invoiceSubCategory>SERV_TVA_00</invoiceSubCategory>
             <country>FR</country>
             <tax>TVA_0</tax>
             <!--Optional:-->
@@ -24597,6 +24597,203 @@ public class PostpaidOfferScript extends Script {
 					JSONObject service = (JSONObject)o;
 					String code = (String)service.get("code");
 					String descr = (String)service.get("description");
+					Double counter = (Double) service.get("counter");
+					Double priceInCounter = (Double) service.get("priceInCounter");
+					Double priceOverCounter = (Double) service.get("priceOverCounter");
+					Boolean mandatory =(Boolean) service.get("mandatory");
+					String invoiceSubcat = (String)service.get("invoiceSubcategory");
+					ServiceTemplateDto serviceTemplateDto= new ServiceTemplateDto(offerCode+"_"+code);
+					serviceTemplateDto.setDescription(descr);
+					//usages
+					ServiceChargeTemplateUsagesDto usgs = new ServiceChargeTemplateUsagesDto();
+						
+					if(counter>0){
+						CounterTemplateDto counterTemplateDto=new CounterTemplateDto();
+						//counter
+						CounterTemplateDto cnt = new CounterTemplateDto();
+						cnt.setCode(offerCode+"_"+code+"_CNT");
+						cnt.setCounterLevel("UA");
+						cnt.setDescription("compteur "+code);
+						cnt.setCeiling(BigDecimal.valueOf(counter));
+						cnt.setCalendar("MONTHLY");
+						counterTemplateApi.create(cnt,user);
+						
+						//usage charge in counter
+						UsageChargeTemplateDto usg = new UsageChargeTemplateDto();
+						usg.setAmountEditable(Boolean.FALSE);
+						usg.setDescription(descr);
+						usg.setCode(offerCode+"_"+code+"_IN");
+						usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
+						usageChargeTemplateApi.create(usg,user);
+						
+						ServiceUsageChargeTemplateDto usageInDto = new ServiceUsageChargeTemplateDto();
+						usageInDto.setCode(offerCode+"_"+code+"_IN");
+						usageInDto.setCounterTemplate(offerCode+"_"+code+"_CNT");
+						usgs.getServiceChargeTemplateUsage().add(usageInDto);
+						
+
+						PricePlanDto rppin = new PricePlanDto();
+						rppin.setCode(offerCode+"_"+code+"_IN_PP");
+						rppin.setAmountWithoutTax(BigDecimal.valueOf(priceInCounter));
+						rppin.setDescription("Prix "+offerCode+" dans le compteur");
+						rppin.setPriority(10);
+						rppin.setEventCode(offerCode+"_"+code+"_IN");
+						pricePlanApi.create(rppin,user);
+					}
+					//usage charge out counter
+					UsageChargeTemplateDto usg = new UsageChargeTemplateDto();
+					usg.setAmountEditable(Boolean.FALSE);
+					usg.setDescription(descr);
+					usg.setCode(offerCode+"_"+code+"_OVER");
+					usg.setInvoiceSubCategory("SERV_"+invoiceSubcat);
+					usageChargeTemplateApi.create(usg,user);
+					
+
+					PricePlanDto rppout = new PricePlanDto();
+					rppout.setCode(offerCode+"_"+code+"_OVER_PP");
+					rppout.setAmountWithoutTax(BigDecimal.valueOf(priceOverCounter));
+					rppout.setDescription("Prix "+offerCode+" hors compteur");
+					rppout.setPriority(10);
+					rppout.setEventCode(offerCode+"_"+code+"_OVER");
+					pricePlanApi.create(rppout,user);
+					
+					ServiceUsageChargeTemplateDto usageInDto = new ServiceUsageChargeTemplateDto();
+					usageInDto.setCode(offerCode+"_"+code+"_OVER");
+					usgs.getServiceChargeTemplateUsage().add(usageInDto);					
+					serviceTemplateDto.setServiceChargeTemplateUsages(usgs);
+					serviceTemplateApi.create(serviceTemplateDto,user);
+					serviceTemplatesDto.getServiceTemplate().add(serviceTemplateDto);
+				}
+			}
+
+			offerDto.setServiceTemplates(serviceTemplatesDto);
+			offerTemplateApi.create(offerDto,user);
+		} catch(Exception e){
+			result = "{\"result\":\"KO\",\"err\":\""+e.getMessage()+"\"}";
+			e.printStackTrace();
+		}
+		req.setResponseBody(result);
+		req.getResponseHeaders().put("Content-type", "application/json");
+		log.debug("req.setResponseBody({}) in req={}",result,req);
+	}
+}
+]]]]>><![CDATA[
+            </script>\r
+         </createOrUpdateScriptInstanceRequest>\r
+      </ws:createOrUpdate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b9598fff-642d-49c2-aaa4-864b21e1b9c5"/><con:assertion type="Simple Contains" id="cbd0e2cd-c88c-4a2c-8508-27aefcf01089" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="create PrepaidOffer" id="24845e21-ba00-4d9a-9ab6-c31045eba24d"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ScriptInstanceWsSoapBinding</con:interface><con:operation>create</con:operation><con:request name="create PrepaidOffer" id="49cbd249-8900-41f0-811e-9bc456887293"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/ScriptInstanceWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdate>\r
+         <!--Optional:-->\r
+         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.PrepaidOfferScript" description="SCRIPT_INSTANCE${#TestSuite#ticket}">\r
+            <!--Optional:-->\r
+            <type>JAVA</type>\r
+            <script>
+            <![CDATA[
+package org.meveo.service.script;
+
+import java.math.BigDecimal;
+import java.util.Map;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.catalog.PricePlanDto;
+import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
+import org.meveo.api.dto.catalog.ServiceChargeTemplateRecurringDto;
+import org.meveo.api.dto.catalog.ServiceChargeTemplateRecurringsDto;
+import org.meveo.api.dto.catalog.ServiceChargeTemplateUsagesDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.catalog.ServiceTemplatesDto;
+import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
+import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.notification.InboundRequest;
+import org.meveo.service.notification.InboundRequestService;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.meveo.api.catalog.OfferTemplateApi;
+import org.meveo.api.catalog.ServiceTemplateApi;
+import org.meveo.api.catalog.RecurringChargeTemplateApi;
+import org.meveo.api.catalog.UsageChargeTemplateApi;
+import org.meveo.api.catalog.CounterTemplateApi;
+import org.meveo.api.catalog.PricePlanApi;
+
+public class PrepaidOfferScript extends Script {
+	  
+  	private static final Logger log = LoggerFactory.getLogger(PrepaidOfferScript.class);
+  	InboundRequestService inboundRequestService = (InboundRequestService) getServiceInterface("InboundRequestService"); 
+  	OfferTemplateApi offerTemplateApi = (OfferTemplateApi) getServiceInterface("OfferTemplateApi");
+  	ServiceTemplateApi serviceTemplateApi = (ServiceTemplateApi) getServiceInterface("ServiceTemplateApi");
+  	RecurringChargeTemplateApi recurringChargeTemplateApi = (RecurringChargeTemplateApi) getServiceInterface("RecurringChargeTemplateApi");
+  	UsageChargeTemplateApi usageChargeTemplateApi = (UsageChargeTemplateApi) getServiceInterface("UsageChargeTemplateApi");
+  	CounterTemplateApi counterTemplateApi = (CounterTemplateApi) getServiceInterface("CounterTemplateApi");
+  	PricePlanApi pricePlanApi = (PricePlanApi)  getServiceInterface("PricePlanApi");
+  	
+	public void execute(Map<String,Object> context, Provider provider, User user) throws BusinessException{
+		log.debug("start postpaidOffer creation script... event = {}",context.get("event"));
+		InboundRequest req = (InboundRequest)context.get("event");
+		inboundRequestService.create(req,user);
+		log.debug("req.body = {}",req.getBody());
+		String result = "{\"result\":\"OK\"}";
+		try{
+			JSONParser jsonParser =  new JSONParser();	
+			JSONObject jsonReq = (JSONObject) jsonParser.parse(req.getBody());
+			String offerCode = (String) jsonReq.get("code");
+			log.debug("offerCode={}",offerCode);
+			String name = (String) jsonReq.get("name");
+			String description = (String) jsonReq.get("description");
+			Double recurringPrice = (Double)jsonReq.get("recurringPrice");
+			Long commitment = (Long) jsonReq.get("commitment");
+			log.debug("commitment={}, type={}",commitment,commitment.getClass());
+			Boolean proratedSubscription = (Boolean) jsonReq.get("proratedSubscription");
+			String invoiceSubcategory = (String) jsonReq.get("invoiceSubcategory");
+			JSONArray services =  (JSONArray) jsonReq.get("services");
+			log.debug("create offer");
+			OfferTemplateDto offerDto = new OfferTemplateDto();
+			offerDto.setCode(offerCode);
+			offerDto.setDescription(name);
+			ServiceTemplatesDto serviceTemplatesDto = new ServiceTemplatesDto();
+			
+			//abonnement
+			RecurringChargeTemplateDto rct = new RecurringChargeTemplateDto();
+			rct.setAmountEditable(Boolean.FALSE);
+			rct.setApplyInAdvance(Boolean.TRUE);
+			rct.setCalendar("MONTHLY");
+			rct.setDescription("Abonnement");
+			rct.setCode(offerCode+"_ABO_REC");
+			rct.setInvoiceSubCategory("ABO_"+invoiceSubcategory);
+			rct.setSubscriptionProrata(proratedSubscription);
+			recurringChargeTemplateApi.create(rct,user);
+			
+			PricePlanDto rpp = new PricePlanDto();
+			rpp.setCode(offerCode+"_ABO_PP");
+			rpp.setAmountWithoutTax(BigDecimal.valueOf(recurringPrice));
+			rpp.setDescription("Abonnement a offre "+offerCode);
+			rpp.setPriority(10);
+			rpp.setEventCode(offerCode+"_ABO_REC");
+			pricePlanApi.create(rpp,user);
+			
+			ServiceTemplateDto aboServiceTemplateDto= new ServiceTemplateDto(offerCode+"_ABO_SV");
+			aboServiceTemplateDto.setDescription("Abonnement");
+			ServiceChargeTemplateRecurringsDto aboRecs = new ServiceChargeTemplateRecurringsDto();
+			ServiceChargeTemplateRecurringDto aboRec = new ServiceChargeTemplateRecurringDto();
+			aboRec.setCode(offerCode+"_ABO_REC");
+			aboRecs.getServiceChargeTemplateRecurring().add(aboRec);
+			aboServiceTemplateDto.setServiceChargeTemplateRecurrings(aboRecs);
+			serviceTemplateApi.create(aboServiceTemplateDto,user);
+			serviceTemplatesDto.getServiceTemplate().add(aboServiceTemplateDto);
+
+			if(services!=null){
+				for(Object o:services){
+					JSONObject service = (JSONObject)o;
+					String code = (String)service.get("code");
+					String descr = (String)service.get("description");
 					Long counter = (Long) service.get("counter");
 					Double priceInCounter = (Double) service.get("priceInCounter");
 					Double priceOverCounter = (Double) service.get("priceOverCounter");
@@ -24682,7 +24879,7 @@ public class PostpaidOfferScript extends Script {
          </createOrUpdateScriptInstanceRequest>\r
       </ws:createOrUpdate>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b9598fff-642d-49c2-aaa4-864b21e1b9c5"/><con:assertion type="Simple Contains" id="cbd0e2cd-c88c-4a2c-8508-27aefcf01089" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="d382a16c-6069-47c7-8b56-b2d3711272b7" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create notif" searchProperties="true"><con:settings/><con:testStep type="request" name="Create notification" id="d81f65ab-d82f-40fb-8c97-0f9157e528b0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>NotificationWsSoapBinding</con:interface><con:operation>createNotification</con:operation><con:request name="Create notification" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/NotificationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="b9598fff-642d-49c2-aaa4-864b21e1b9c5"/><con:assertion type="Simple Contains" id="cbd0e2cd-c88c-4a2c-8508-27aefcf01089" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="d382a16c-6069-47c7-8b56-b2d3711272b7" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create notif" searchProperties="true"><con:settings/><con:testStep type="request" name="Create postpaid notification" id="d81f65ab-d82f-40fb-8c97-0f9157e528b0"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>NotificationWsSoapBinding</con:interface><con:operation>createNotification</con:operation><con:request name="Create postpaid notification" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/NotificationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateNotification>
@@ -24700,10 +24897,41 @@ public class PostpaidOfferScript extends Script {
          </notification>
       </ws:createOrUpdateNotification>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/><con:assertion type="Simple Contains" id="a676651c-dbaf-4759-872f-27079aee9188" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="5d46849a-db56-4b28-9dec-24fb0c01f2af" name="offerCreation"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="8f5beed1-92ff-41c8-a033-3a00ae84890f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create offer" searchProperties="true"><con:settings/><con:testStep type="httprequest" name="Create offer HTTP Request" id="2fed23b7-62d5-4e0f-8625-dea0f14d69b4"><con:settings/><con:config method="POST" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="Create offer HTTP Request" postQueryString="false" mediaType="application/json" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/postpaidOffer</con:endpoint><con:request>{
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/><con:assertion type="Simple Contains" id="a676651c-dbaf-4759-872f-27079aee9188" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Create prepaidOffer notification" id="82f24916-161a-498b-b348-bcdd7287ace5"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>NotificationWsSoapBinding</con:interface><con:operation>createNotification</con:operation><con:request name="Create prepaidOffer notification" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#meveoEndpoint}/NotificationWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateNotification>
+         <notification code="PREPAID_OFFER_CREATE">
+            <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
+            <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
+            <elFilter>#{event.pathInfo.startsWith("${#Project#provider}/prepaidOffer")}</elFilter>
+            <scriptInstanceCode>org.meveo.service.script.PrepaidOfferScript</scriptInstanceCode>
+            <scriptParams>
+               <entry>
+                  <key>event</key>
+                  <value>#{event}</value>
+               </entry>
+            </scriptParams>
+         </notification>
+      </ws:createOrUpdateNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/><con:assertion type="Simple Contains" id="a676651c-dbaf-4759-872f-27079aee9188" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:username>meveo.admin</con:username><con:password>meveo.admin</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite id="5d46849a-db56-4b28-9dec-24fb0c01f2af" name="offerCreation"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="8f5beed1-92ff-41c8-a033-3a00ae84890f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create postpaid offer" searchProperties="true"><con:settings/><con:testStep type="httprequest" name="Create offer HTTP Request" id="2fed23b7-62d5-4e0f-8625-dea0f14d69b4"><con:settings/><con:config method="POST" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="Create offer HTTP Request" postQueryString="false" mediaType="application/json" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/postpaidOffer</con:endpoint><con:request>{
 "code":"OFFRE_PORTAIL4",
 "created":"2015-12-09T08:40",
 "name":"offre forfait 2",
+"description":"",
+"recurringPrice":10.0,
+"commitment":12,
+"proratedSubscription":true,
+"invoiceSubcategory":"TVA_20",
+"services":[
+{"code":"service1", "description":"Libelle 1","counter":100,"priceInCounter":0.0,"priceOverCounter":0.04,"mandatory":true,"invoiceSubcategory":"TVA_20"},
+{"code":"service2", "description":"Libelle 2","counter":10,"priceInCounter":0.0,"priceOverCounter":0.01,"mandatory":false,"invoiceSubcategory":"TVA_10"}
+]
+}</con:request><con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes"><con:configuration><codes>404,500</codes></con:configuration></con:assertion><con:credentials><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="e56354da-4b41-4f99-a3a0-bf535047822b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create prepaid offer" searchProperties="true"><con:settings/><con:testStep type="httprequest" name="Create offer HTTP Request" id="287224c5-7b54-4e70-8e2e-84c5023aed8c"><con:settings/><con:config method="POST" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="Create offer HTTP Request" postQueryString="false" mediaType="application/json" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://${#Project#meveoEndpoint}/inbound/${#Project#provider}/prepaidOffer</con:endpoint><con:request>{
+"code":"PREPAID_PORTAIL1",
+"created":"2015-12-09T08:40",
+"name":"offre prepaye 1",
 "description":"",
 "recurringPrice":10.0,
 "commitment":12,
