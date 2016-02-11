@@ -1,5 +1,6 @@
 package org.meveo.admin.action.notification;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,14 +99,18 @@ public class InboundServlet extends HttpServlet {
 		inReq.setScheme(req.getScheme());
 		inReq.setRemoteAddr(req.getRemoteAddr());
 		inReq.setRemotePort(req.getRemotePort());
-		byte[] charBuffer= new byte[8000];
-		String body = ""; 
+		StringBuilder buffer = new StringBuilder();
+	    BufferedReader reader;
 		try {
-			readInputStreamWithTimeout(req.getInputStream(),charBuffer,2000);
-			body = new String(charBuffer);
+			reader = req.getReader();
+		    String line;
+		    while ((line = reader.readLine()) != null) {
+		        buffer.append(line);
+		    }
 		} catch (IOException e2) {
-			log.error("Failed to read InputStream With Timeout",e2);
+			e2.printStackTrace();
 		}
+	    String body = buffer.toString();
 		inReq.setBody(body);
 		
 		inReq.setMethod(req.getMethod());
