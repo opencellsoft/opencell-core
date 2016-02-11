@@ -96,7 +96,7 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 		// check for unicity
 		if (oneShotChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
 				|| recurringChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null) {
-			messages.error(new BundleKey("messages", "commons.uniqueField.code"));
+			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
 			return null;
 		}
 

@@ -57,7 +57,6 @@ public class CustomEntityInstanceBean extends CustomFieldBean<CustomEntityInstan
         // If it is a new entity and does not have yet the CET code set yet, set it from request parameter and initialize custom fields
         if (initResult.getCetCode() == null && customEntityTemplateCode != null) {
             initResult.setCetCode(customEntityTemplateCode);
-            initCustomFields();
         }
         return initResult;
     }
@@ -69,8 +68,9 @@ public class CustomEntityInstanceBean extends CustomFieldBean<CustomEntityInstan
             return null;
         }
 
-        // check for unicity
-        if (customEntityInstanceService.findByCodeByCet(entity.getCetCode(), entity.getCode(), entity.getProvider()) != null) {
+        // Check for unicity of code
+        CustomEntityInstance ceiSameCode = customEntityInstanceService.findByCodeByCet(entity.getCetCode(), entity.getCode(), entity.getProvider());
+        if ((entity.isTransient() && ceiSameCode != null) || (!entity.isTransient() && entity.getId().longValue() != ceiSameCode.getId().longValue())) {
             messages.error(new BundleKey("messages", "commons.uniqueField.code"));
             return null;
         }

@@ -103,7 +103,7 @@ public class RecurringChargeTemplateBean extends
 				entity.getProvider()) != null
 				|| usageChargeTemplateService.findByCode(entity.getCode(),
 						entity.getProvider()) != null) {
-			messages.error(new BundleKey("messages", "commons.uniqueField.code"));
+			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
 			return null;
 		}
 
