@@ -129,7 +129,7 @@ public class InboundServlet extends HttpServlet {
 		//process the notifications
 		eventProducer.fire(inReq);
 
-		log.debug("triggered {} notification",inReq.getNotificationHistories().size());
+		log.debug("triggered {} notification, resp body= {}",inReq.getNotificationHistories().size(),inReq.getResponseBody());
 		if(inReq.getNotificationHistories().size()==0){
 			res.setStatus(404);
 		} else {
@@ -147,7 +147,9 @@ public class InboundServlet extends HttpServlet {
 					PrintWriter pw = new PrintWriter(new OutputStreamWriter(bout, res.getCharacterEncoding()))){	
 					pw.write(inReq.getResponseBody());
 					res.setContentLength(bout.size());
+					log.debug("writing {} bytes to response",bout.size());
 					bout.writeTo(res.getOutputStream());
+					
 				} catch (IOException e) {
 					log.error("Failed to produce the response",e);
 					res.setStatus(500);
