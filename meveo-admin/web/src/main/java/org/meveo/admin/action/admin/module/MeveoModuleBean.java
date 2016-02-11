@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -57,6 +58,7 @@ import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.CroppedImage;
 import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.TreeNode;
 
 /**
@@ -93,6 +95,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	private ScriptInstance script;
 	private JobInstance job;
 	private Notification notification;
+	private MeveoModule meveoModule;
 	
 	private TreeNode root;
 	private TreeNode cetnode;
@@ -101,6 +104,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	private TreeNode scriptnode;
 	private TreeNode jobnode;
 	private TreeNode notificationnode;
+	private TreeNode subModuleNode;
 
 	protected MeveoInstance meveoInstance;
 	
@@ -131,6 +135,8 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 		jobnode.setExpanded(true);
 		notificationnode=new DefaultTreeNode(new CustomizedModuleItem("meveoModule.notifications",true),root);
 		notificationnode.setExpanded(true);
+		subModuleNode = new DefaultTreeNode(new CustomizedModuleItem("meveoModule.subModules", true), root);
+		subModuleNode.setExpanded(true);
 	}
 	
 	public MeveoInstance getMeveoInstance() {
@@ -153,7 +159,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 				case CET:
 					CustomEntityTemplate cet = customEntityTemplateService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(cet!=null){
-						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(cet.getCode(),cet.getDescription(), ModuleItemTypeEnum.CET),cetnode);
+						new DefaultTreeNode(new CustomizedModuleItem(cet.getCode(),cet.getDescription(), ModuleItemTypeEnum.CET),cetnode);
 					}else{
 						item.setMeveoModule(null);
 						itr.remove();
@@ -162,7 +168,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 				case CFT:
 					CustomFieldTemplate cft=customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(),item.getAppliesTo(),getCurrentProvider());
 					if(cft!=null){
-						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(cft.getCode(),cft.getDescription(),cft.getAppliesTo(),ModuleItemTypeEnum.CFT),cftnode);
+						new DefaultTreeNode(new CustomizedModuleItem(cft.getCode(),cft.getDescription(),cft.getAppliesTo(),ModuleItemTypeEnum.CFT),cftnode);
 					}else{
 						item.setMeveoModule(null);
 						itr.remove();
@@ -171,7 +177,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 				case FILTER:
 					Filter filter = filterService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(filter!=null){
-						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(filter.getCode(),filter.getDescription(),ModuleItemTypeEnum.FILTER),filternode);
+						new DefaultTreeNode(new CustomizedModuleItem(filter.getCode(),filter.getDescription(),ModuleItemTypeEnum.FILTER),filternode);
 					}else{
 						item.setMeveoModule(null);
 						itr.remove();
@@ -180,7 +186,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 				case SCRIPT:
 					ScriptInstance script = scriptInstanceService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(script!=null){
-						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(script.getCode(),script.getDescription(),ModuleItemTypeEnum.SCRIPT),scriptnode);
+						new DefaultTreeNode(new CustomizedModuleItem(script.getCode(),script.getDescription(),ModuleItemTypeEnum.SCRIPT),scriptnode);
 					}else{
 						item.setMeveoModule(null);
 						itr.remove();
@@ -189,7 +195,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 				case JOBINSTANCE:
 					JobInstance job=jobInstanceService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(job!=null){
-						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(job.getCode(),job.getDescription(),ModuleItemTypeEnum.JOBINSTANCE),jobnode);
+						new DefaultTreeNode(new CustomizedModuleItem(job.getCode(),job.getDescription(),ModuleItemTypeEnum.JOBINSTANCE),jobnode);
 					}else{
 						item.setMeveoModule(null);
 						itr.remove();
@@ -198,8 +204,18 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 				case NOTIFICATION:
 					Notification notification=notificationService.findByCode(item.getItemCode(),getCurrentProvider());
 					if(notification!=null){
-						TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(notification.getCode(),notification.getDescription(),ModuleItemTypeEnum.NOTIFICATION),notificationnode);
+						new DefaultTreeNode(new CustomizedModuleItem(notification.getCode(),notification.getDescription(),ModuleItemTypeEnum.NOTIFICATION),notificationnode);
 					}else{
+						item.setMeveoModule(null);
+						itr.remove();
+					}
+					break;
+				case SUBMODULE:
+					MeveoModule meveoModule = meveoModuleService.findByCode(item.getItemCode(), getCurrentProvider());
+					if (meveoModule != null) {
+						new DefaultTreeNode(new CustomizedModuleItem(meveoModule.getCode(),
+								meveoModule.getDescription(), ModuleItemTypeEnum.SUBMODULE), subModuleNode);
+					} else {
 						item.setMeveoModule(null);
 						itr.remove();
 					}
@@ -229,7 +245,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			MeveoModuleItem item=new MeveoModuleItem(customEntity.getCode(),ModuleItemTypeEnum.CET);
 			if(!entity.getModuleItems().contains(item)){
 				entity.addModuleItem(item);
-				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(customEntity.getCode(),customEntity.getDescription(),ModuleItemTypeEnum.CET),cetnode);
+				new DefaultTreeNode(new CustomizedModuleItem(customEntity.getCode(),customEntity.getDescription(),ModuleItemTypeEnum.CET),cetnode);
 			}
 			
 		}
@@ -250,7 +266,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			MeveoModuleItem item=new MeveoModuleItem(customField.getCode(),customField.getAppliesTo(),ModuleItemTypeEnum.CFT);
 			if(!entity.getModuleItems().contains(item)){
 				entity.addModuleItem(item);
-				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(customField.getCode(),customField.getDescription(),customField.getAppliesTo(),ModuleItemTypeEnum.CFT),cftnode);
+				new DefaultTreeNode(new CustomizedModuleItem(customField.getCode(),customField.getDescription(),customField.getAppliesTo(),ModuleItemTypeEnum.CFT),cftnode);
 			}
 		}
 	}
@@ -262,7 +278,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			MeveoModuleItem item=new MeveoModuleItem(filter.getCode(),ModuleItemTypeEnum.FILTER);
 			if(!entity.getModuleItems().contains(item)){
 				entity.addModuleItem(item);
-				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(filter.getCode(),filter.getDescription(),ModuleItemTypeEnum.FILTER),filternode);
+				new DefaultTreeNode(new CustomizedModuleItem(filter.getCode(),filter.getDescription(),ModuleItemTypeEnum.FILTER),filternode);
 			}
 		}
 	}
@@ -274,7 +290,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			MeveoModuleItem item=new MeveoModuleItem(script.getCode(),ModuleItemTypeEnum.SCRIPT);
 			if(!entity.getModuleItems().contains(item)){
 				entity.addModuleItem(item);
-				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(script.getCode(),script.getDescription(),ModuleItemTypeEnum.SCRIPT),scriptnode);
+				new DefaultTreeNode(new CustomizedModuleItem(script.getCode(),script.getDescription(),ModuleItemTypeEnum.SCRIPT),scriptnode);
 			}
 		}
 	}
@@ -286,7 +302,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			MeveoModuleItem item=new MeveoModuleItem(job.getCode(),ModuleItemTypeEnum.JOBINSTANCE);
 			if(!entity.getModuleItems().contains(item)){
 				entity.addModuleItem(item);
-				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(job.getCode(),job.getDescription(),ModuleItemTypeEnum.JOBINSTANCE),jobnode);
+				new DefaultTreeNode(new CustomizedModuleItem(job.getCode(),job.getDescription(),ModuleItemTypeEnum.JOBINSTANCE),jobnode);
 			}
 		}
 	}
@@ -298,7 +314,7 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 			MeveoModuleItem item=new MeveoModuleItem(notification.getCode(),ModuleItemTypeEnum.NOTIFICATION);
 			if(!entity.getModuleItems().contains(item)){
 				entity.addModuleItem(item);
-				TreeNode node=new DefaultTreeNode(new CustomizedModuleItem(notification.getCode(),notification.getDescription(),ModuleItemTypeEnum.NOTIFICATION),notificationnode);
+				new DefaultTreeNode(new CustomizedModuleItem(notification.getCode(),notification.getDescription(),ModuleItemTypeEnum.NOTIFICATION),notificationnode);
 			}
 		}
 	}
@@ -381,6 +397,16 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 					if (item.getCode().equals(dest.getCode())) {
 						notificationnode.getChildren().remove(node);
 						removeItemFromEntity(item.getCode(),ModuleItemTypeEnum.NOTIFICATION);
+						break;
+					}
+				}
+				break;
+			case SUBMODULE:
+				for (TreeNode node : subModuleNode.getChildren()) {
+					CustomizedModuleItem dest = (CustomizedModuleItem) node.getData();
+					if (item.getCode().equals(dest.getCode())) {
+						subModuleNode.getChildren().remove(node);
+						removeItemFromEntity(item.getCode(), ModuleItemTypeEnum.SUBMODULE);
 						break;
 					}
 				}
@@ -525,4 +551,44 @@ public class MeveoModuleBean extends BaseBean<MeveoModule> {
 	public void setTmpPicture(String tmpPicture) {
 		this.tmpPicture = tmpPicture;
 	}
+
+	public MeveoModule getMeveoModule() {
+		return meveoModule;
+	}
+
+	public void setMeveoModule(MeveoModule meveoModule) {
+		if (meveoModule != null) {
+			MeveoModuleItem item = new MeveoModuleItem(meveoModule.getCode(), ModuleItemTypeEnum.SUBMODULE);
+			if (!entity.getModuleItems().contains(item)) {
+				entity.addModuleItem(item);
+				new DefaultTreeNode(new CustomizedModuleItem(meveoModule.getCode(),
+						meveoModule.getDescription(), ModuleItemTypeEnum.SUBMODULE), subModuleNode);
+			}
+		}
+	}
+
+	public LazyDataModel<MeveoModule> getSubModules() {
+		log.debug("getSubModules");
+
+		LazyDataModel<MeveoModule> result = null;
+		HashMap<String, Object> filters = new HashMap<String, Object>();
+
+		if (getEntity().isTransient()) {
+			result = getLazyDataModel(filters, true);
+		} else {
+			filters.put("ne id", entity.getId());
+			result = getLazyDataModel(filters, true);
+		}
+
+		return result;
+	}
+
+	public TreeNode getSubModuleNode() {
+		return subModuleNode;
+	}
+
+	public void setSubModuleNode(TreeNode subModuleNode) {
+		this.subModuleNode = subModuleNode;
+	}
+
 }

@@ -77,6 +77,18 @@
 			column2="description" selection="#{meveoModuleBean.notification}"
 			updateField="moduleFormId:moduleItems">
 		</hftl:entityPopup>
+		<hftl:entityPopup id="searchSubModules"
+			header="#{messages['meveoModule.popup.header']}"
+			backingBean="#{meveoModuleListBean}"
+			dataModel="#{meveoModuleBean.getSubModules()}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" selection="#{meveoModuleBean.meveoModule}"
+			updateField="moduleFormId:moduleItems">
+		</hftl:entityPopup>
+		
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -147,6 +159,9 @@
 						<p:commandButton value="#{messages['meveoModuleItem.addNotification']}"
 							partialSubmit="true" process="@this"
 							oncomplete="PF('dlg_searchNotification').show()" />
+						<p:commandButton value="#{messages['meveoModuleItem.addSubModule']}"
+							partialSubmit="true" process="@this"
+							oncomplete="PF('dlg_searchSubModules').show()" />
 					</f:facet>
 				</p:treeTable>
 			</hftl:decorateFormField>
