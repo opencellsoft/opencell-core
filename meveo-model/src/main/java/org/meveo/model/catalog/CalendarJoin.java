@@ -291,8 +291,11 @@ public class CalendarJoin extends Calendar {
     public boolean truncDateTime() {
         return joinCalendar1.truncDateTime() && joinCalendar2.truncDateTime();
     }
-    
-    public String getCalendarType() {
+
+    /**
+     * Splits a single JOIN calendar type into two: INTERSECT and UNION
+     */
+    public String getCalendarTypeWSubtypes() {
         return joinType.name();
     }
 }

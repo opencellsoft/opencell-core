@@ -100,7 +100,7 @@ public class CalendarDto extends BaseDto {
     public CalendarDto(Calendar e) {
         code = e.getCode();
         description = e.getDescription();
-        calendarType = CalendarTypeEnum.valueOf(e.getCalendarType());
+        calendarType = CalendarTypeEnum.valueOf(e.getCalendarTypeWSubtypes());
 
         if (e instanceof CalendarYearly) {
             CalendarYearly calendar = (CalendarYearly) e;

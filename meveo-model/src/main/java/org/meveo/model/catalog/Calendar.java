@@ -48,7 +48,7 @@ public abstract class Calendar extends BusinessEntity {
 
     @Transient
     private Date initDate;
-    
+
     /**
      * Get the period end date for a given date
      * 
@@ -94,6 +94,15 @@ public abstract class Calendar extends BusinessEntity {
     }
 
     public String getCalendarType() {
+        return calendarType;
+    }
+
+    /**
+     * Get calendar type by optionally detalizing into a more detailed subtype. Currently applies to JOIN type calendar with subtypes INTERSECT and UNION.
+     * 
+     * @return
+     */
+    public String getCalendarTypeWSubtypes() {
         return calendarType;
     }
 
