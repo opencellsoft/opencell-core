@@ -1,25 +1,33 @@
 package org.meveo.client;
 
+import java.net.URI;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ByteArrayEntity;
 
 public class ApiExecutor {
 
 	// TODO Use org.apache.http.entity.mime.MultipartEntity;
-	public HttpResponse executeApi(String api, String url, String userNale, String password, HttpMethodsEnum method, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, String body, AuthentificationModeEnum authMode) {
+	public HttpResponse executeApi(String api, String url, String userName, String password, HttpMethodsEnum method, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, String body, AuthentificationModeEnum authMode) {
 		try {
+			
+			URI uri = new URI(url  + api);			
+			uri = addParamsToUri( uri, params);
 
 			if (HttpMethodsEnum.POST == method) {
-				return executePost(api, url, userNale, password, cotentType, headers, body, authMode);
+				return executePost(uri, userName, password, cotentType, headers, body,params, authMode);
 			}
 
 			if (HttpMethodsEnum.GET == method) {
-				return executeGet(api, url, userNale, password, cotentType, headers, params, authMode);
+				return executeGet(uri, userName, password, cotentType, headers, params, authMode);
 			}
 
 		} catch (Exception e) {
@@ -30,37 +38,27 @@ public class ApiExecutor {
 		return null;
 	}
 
-	private HttpResponse executePost(String api, String url, String userName, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, String body, AuthentificationModeEnum authMode) {
+	private HttpResponse executePost(URI uri, String userName, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, String body,Map<String, String> params, AuthentificationModeEnum authMode) {
 		try {
-
-			// TODO set params on the url for get method
-			String theUrl = url  + api;
-			HttpPost theRequest = new HttpPost(theUrl);
-			System.out.println("executePost theUrl :"+theUrl);
-
+			
+			System.out.println("uri.toASCIIString:"+uri.toASCIIString());
+			HttpPost theRequest = new HttpPost(uri);
 			if (cotentType != null) {
 				theRequest.setHeader("Content-Type", cotentType.getValue());
 			}
-
 			if (AuthentificationModeEnum.BASIC == authMode) {
 				theRequest.setHeader("Authorization", getBasicAuthentication(userName,password));
 			}
-
 			if (headers != null) {
 				for (String key : headers.keySet()) {
 					theRequest.setHeader(key, headers.get(key));
 				}
 			}
-
 			if (body != null) {
 				HttpEntity entity = new ByteArrayEntity(body.getBytes("UTF-8"));
-
 				theRequest.setEntity(entity);
 			}
-
-
 			HttpResponse response = MeveoConnectionFactory.httpClient.execute(theRequest);
-			
 			System.out.println("executePost code :" + response.getStatusLine().getStatusCode());
 			return response;
 		} catch (Exception e) {
@@ -71,7 +69,7 @@ public class ApiExecutor {
 		return null;
 	}
 
-	private HttpResponse executeGet(String api, String url, String userNale, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, AuthentificationModeEnum authMode) {
+	private HttpResponse executeGet(URI uri, String userNale, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, AuthentificationModeEnum authMode) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -80,5 +78,23 @@ public class ApiExecutor {
 		byte[] authEncoded = Base64.encodeBase64(authentification.getBytes());
 		return "Basic " + (new String(authEncoded));
 	}
+
+	/**
+	 * 
+	 * @param uri
+	 * @param params
+	 * @return
+	 */
+	private URI addParamsToUri(URI uri,Map<String,String> params){
+		if( params != null ){			
+			UriBuilder uriBuilder = UriBuilder.fromUri(uri);	
+			for(Entry<String, String> entry : params.entrySet()){
+				uriBuilder = uriBuilder.queryParam(entry.getKey(), entry.getValue());
+			}
+			uri = uriBuilder.build().normalize();
+		}
+		return uri;
+	}
+}
 
 }
