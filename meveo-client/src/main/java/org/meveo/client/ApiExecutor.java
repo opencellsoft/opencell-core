@@ -11,15 +11,15 @@ import org.apache.http.entity.ByteArrayEntity;
 public class ApiExecutor {
 
 	// TODO Use org.apache.http.entity.mime.MultipartEntity;
-	public void executeApi(String api, String url, String userNale, String password, HttpMethodsEnum method, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, String body, AuthentificationModeEnum authMode) {
+	public HttpResponse executeApi(String api, String url, String userNale, String password, HttpMethodsEnum method, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, String body, AuthentificationModeEnum authMode) {
 		try {
 
 			if (HttpMethodsEnum.POST == method) {
-				executePost(api, url, userNale, password, cotentType, headers, body, authMode);
+				return executePost(api, url, userNale, password, cotentType, headers, body, authMode);
 			}
 
 			if (HttpMethodsEnum.GET == method) {
-				executeGet(api, url, userNale, password, cotentType, headers, params, authMode);
+				return executeGet(api, url, userNale, password, cotentType, headers, params, authMode);
 			}
 
 		} catch (Exception e) {
@@ -27,14 +27,16 @@ public class ApiExecutor {
 			e.printStackTrace();
 
 		}
+		return null;
 	}
 
-	private void executePost(String api, String url, String userName, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, String body, AuthentificationModeEnum authMode) {
+	private HttpResponse executePost(String api, String url, String userName, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, String body, AuthentificationModeEnum authMode) {
 		try {
 
 			// TODO set params on the url for get method
-			String theUrl = url + "/" + api;
+			String theUrl = url  + api;
 			HttpPost theRequest = new HttpPost(theUrl);
+			System.out.println("executePost theUrl :"+theUrl);
 
 			if (cotentType != null) {
 				theRequest.setHeader("Content-Type", cotentType.getValue());
@@ -50,24 +52,26 @@ public class ApiExecutor {
 				}
 			}
 
-			if (body == null) {
-				body = "";
+			if (body != null) {
+				HttpEntity entity = new ByteArrayEntity(body.getBytes("UTF-8"));
+
+				theRequest.setEntity(entity);
 			}
 
-			HttpEntity entity = new ByteArrayEntity(body.getBytes("UTF-8"));
 
-			theRequest.setEntity(entity);
 			HttpResponse response = MeveoConnectionFactory.httpClient.execute(theRequest);
 			
 			System.out.println("executePost code :" + response.getStatusLine().getStatusCode());
+			return response;
 		} catch (Exception e) {
 
 			e.printStackTrace();
 
 		}
+		return null;
 	}
 
-	private void executeGet(String api, String url, String userNale, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, AuthentificationModeEnum authMode) {
+	private HttpResponse executeGet(String api, String url, String userNale, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, AuthentificationModeEnum authMode) {
 		throw new UnsupportedOperationException();
 	}
 
