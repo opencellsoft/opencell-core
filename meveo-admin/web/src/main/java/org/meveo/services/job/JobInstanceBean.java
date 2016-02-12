@@ -40,6 +40,13 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     @Override
+    public JobInstance initEntity() {
+        super.initEntity();
+        createMissingCustomFieldTemplates();
+        return entity;
+    }
+
+    @Override
     protected IPersistenceService<JobInstance> getPersistenceService() {
         return jobInstanceService;
     }
@@ -98,11 +105,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * 
      * @return A map of custom field templates with template code as a key
      */
-    @Override
-    protected Map<String, CustomFieldTemplate> getApplicableCustomFieldTemplates() {
+    private void createMissingCustomFieldTemplates() {
 
         if (entity.getJobTemplate() == null) {
-            return null;
+            return;
         }
 
         // Get job definition and custom field templates defined in a job
@@ -116,9 +122,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         } else {
             jobTemplatesFromJob = jobCustomFields.values();
         }
-        Map<String, CustomFieldTemplate> jobTemplates = customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentProvider());
-
-        return jobTemplates;
+        customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentProvider());
     }
 
     /**
@@ -127,8 +131,8 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * @param jobInstance JobInstance entity
      * @return True if running
      */
-    public boolean isTimerRunning(JobInstance jobInstance) {     
-            return jobInstanceService.isJobRunning(jobInstance.getId());
+    public boolean isTimerRunning(JobInstance jobInstance) {
+        return jobInstanceService.isJobRunning(jobInstance.getId());
     }
 
 }

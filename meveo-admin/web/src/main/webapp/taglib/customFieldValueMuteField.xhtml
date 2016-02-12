@@ -18,7 +18,6 @@
         datePattern - date pattern for date entry/display
         required - if a value is required
         placeholder - placeholder text
-        backingBean - backing bean
  -->
 
 <ui:composition>
@@ -102,7 +101,7 @@
         </c:if>
         <c:if test="#{edit}">
             <p:autoComplete value="#{field}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" placeholder="#{placeholder}" label="#{label}"
-                converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{backingBean.autocompleteCustomEntityForCFV}" queryDelay="1000" var="e"
+                converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteCustomEntityForCFV}" queryDelay="1000" var="e"
                 itemLabel="#{e.code}" itemValue="#{e}">
                 <f:attribute name="classname" value="#{cft.entityClazz}" />
                 <p:column width="50" headerText="#{messages['BusinessEntity.code']}">

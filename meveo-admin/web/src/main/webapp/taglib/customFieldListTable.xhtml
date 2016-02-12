@@ -15,7 +15,7 @@
         field - field storing a value - CustomFieldValue type variable only
         datePattern - date pattern for date entry/display
         required - if a value is required
-        backingBean - backing bean
+        entity - entity, custom fields are related to
         messagesId - messages id tag to update for general errors
         popupWidgetVar - a name of a popup widget var if used inside a popup
         updateOnAddEdit - ids of controlls to update uppon data changes (value edit/create/delete)
@@ -27,6 +27,7 @@
     <c:if test="${empty(datePattern)}">
         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     </c:if>
+    <c:set var="fieldsValues" value="#{customFieldDataEntryBean.getFieldsValues(entity.uuid)}" />
     <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
 
@@ -51,12 +52,11 @@
                 <p:column headerText="#{messages['commons.value']}">
                     <p:cellEditor>
                         <f:facet name="output">
-                            <hftl:customFieldValueMuteField edit="false" id="cfValue_out" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}"
-                                backingBean="#{backingBean}" />
+                            <hftl:customFieldValueMuteField edit="false" id="cfValue_out" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" />
                         </f:facet>
                         <f:facet name="input">
                             <hftl:customFieldValueMuteField edit="true" id="cfValue_in" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}"
-                                required="true" backingBean="#{backingBean}" />
+                                required="true" />
                         </f:facet>
                     </p:cellEditor>
                 </p:column>
@@ -70,42 +70,42 @@
 
                         <c:if test="#{cft.storageType eq CustomFieldStorageTypeEnum.MAP}">
                             <c:if test="#{cft.mapKeyType eq CustomFieldMapKeyEnum.STRING}">
-                                <p:inputText id="newKey" value="#{backingBean.customFieldNewValue[cft.code.concat('_key')]}" required="true"
-                                    placeholder="#{messages['commons.key']}" label="#{messages['commons.key']}" size="30" maxlength="50" />
+                                <p:inputText id="newKey" value="#{fieldsValues.newValues[cft.code.concat('_key')]}" required="true" placeholder="#{messages['commons.key']}"
+                                    label="#{messages['commons.key']}" size="30" maxlength="50" />
                             </c:if>
 
                             <c:if test="#{cft.mapKeyType eq CustomFieldMapKeyEnum.RON}">
 
-                                <p:inputText id="newRonKeyFrom" value="#{backingBean.customFieldNewValue[cft.code.concat('_key_one_from')]}" converter="javax.faces.Double"
+                                <p:inputText id="newRonKeyFrom" value="#{fieldsValues.newValues[cft.code.concat('_key_one_from')]}" converter="javax.faces.Double"
                                     placeholder="#{messages['customFieldTemplate.mapKeyRonFrom']}" label="#{messages['customFieldTemplate.mapKeyRonFrom']}" size="9" maxlength="15" />
                                 <h:outputText value=" - " />
-                                <p:inputText id="newRonKeyTo" value="#{backingBean.customFieldNewValue[cft.code.concat('_key_one_to')]}" converter="javax.faces.Double"
+                                <p:inputText id="newRonKeyTo" value="#{fieldsValues.newValues[cft.code.concat('_key_one_to')]}" converter="javax.faces.Double"
                                     placeholder="#{messages['customFieldTemplate.mapKeyRonTo']}" label="#{messages['customFieldTemplate.mapKeyRonTo']}" size="9" maxlength="15" />
                             </c:if>
 
                             <h:outputText value=" &nbsp; " escape="false" />
                         </c:if>
 
-                        <hftl:customFieldValueMuteField id="newValue" edit="true" cft="#{cft}" field="#{backingBean.customFieldNewValue[cft.code.concat('_value')]}" required="true"
-                            label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" backingBean="#{backingBean}" />
+                        <hftl:customFieldValueMuteField id="newValue" edit="true" cft="#{cft}" field="#{fieldsValues.newValues[cft.code.concat('_value')]}" required="true"
+                            label="#{messages['commons.value']}" placeholder="#{messages['commons.value']}" />
                     </hf:namingContainer>
 
                     <c:if test="#{!empty(popupWidgetVar) and !disabled}">
                         <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
-                            action="#{backingBean.addValueToMap(field, cft)}" oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
+                            action="#{customFieldDataEntryBean.addValueToMap(entity.uuid, field, cft)}" oncomplete="if (args &amp;&amp; !args.validationFailed) updateMasterTable()">
                             <p:resetInput target="addNewFields" />
                         </p:commandButton>
                     </c:if>
 
                     <c:if test="#{empty(popupWidgetVar) and !disabled}">
                         <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update="customFields_map_omitFromSubmit"
-                            action="#{backingBean.addValueToMap(field, cft)}">
+                            action="#{customFieldDataEntryBean.addValueToMap(entity.uuid, field, cft)}">
                             <p:resetInput target="addNewFields" />
                         </p:commandButton>
                     </c:if>
 
                     <p:commandButton value="#{messages['commons.close']}" process="@this" rendered="#{!empty(popupWidgetVar)}" update="@this #{updateOnAddEdit}"
-                        oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{backingBean.populateCustomFieldNewValueDefaults(null)}">
+                        oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{fieldsValues.populateNewValueDefaults(null, cft)}">
                     </p:commandButton>
 
                 </f:facet>
@@ -136,23 +136,21 @@
                 <p:column headerText="#{messages['commons.value']}" width="20%">
                     <p:cellEditor>
                         <f:facet name="output">
-                            <hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}"
-                                backingBean="#{backingBean}" />
+                            <hftl:customFieldValueMuteField edit="false" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" />
                         </f:facet>
                         <f:facet name="input">
-                            <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" required="true"
-                                backingBean="#{backingBean}" />
+                            <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{mapValues['value']}" label="#{messages['commons.value']}" required="true" />
                         </f:facet>
                     </p:cellEditor>
                 </p:column>
                 <f:facet name="footer" layout="block">
 
                     <p:commandButton value="#{messages['customFieldTemplate.addRow']}" partialSubmit="true" process="@this" update="customFields_map_omitFromSubmit"
-                        action="#{backingBean.addMatrixRow(cft, field.matrixValuesForGUI)}">
+                        action="#{customFieldDataEntryBean.addMatrixRow(cft, field.matrixValuesForGUI)}">
                     </p:commandButton>
 
                     <p:commandButton value="#{messages['commons.close']}" process="@this" rendered="#{!empty(popupWidgetVar)}" update="@this #{updateOnAddEdit}"
-                        oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{backingBean.populateCustomFieldNewValueDefaults(null)}">
+                        oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{fieldsValues.populateNewValueDefaults(null, cft)}">
                     </p:commandButton>
 
                 </f:facet>

@@ -64,6 +64,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lapis.jsfexporter.csv.CSVExportOptions;
@@ -76,7 +77,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** Logger. */
-    protected org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Inject
     protected Messages messages;

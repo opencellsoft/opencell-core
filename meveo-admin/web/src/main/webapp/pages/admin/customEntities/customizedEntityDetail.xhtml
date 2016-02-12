@@ -392,13 +392,13 @@
                     </h:panelGroup>
                     <h:panelGroup id="defaultValueField">
                         <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" maxlength="50" componentWidth="20"
-                            rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE' and customFieldTemplateBean.entity.fieldType != 'ENTITY' and customFieldTemplateBean.entity.storageType == 'SINGLE'}"
+                            rendered="#{customFieldTemplateBean.entity.fieldType != 'DATE' and customFieldTemplateBean.entity.fieldType != 'ENTITY' and customFieldTemplateBean.entity.fieldType != 'CHILD_ENTITY' and customFieldTemplateBean.entity.storageType == 'SINGLE'}"
                             newLine="true" />
                     </h:panelGroup>
                     <h:panelGroup id="entityClazzField">
                         <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="90" maxlength="255"
                             autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" newLine="true" componentWidth="50"
-                            rendered="#{customFieldTemplateBean.entity.fieldType == 'ENTITY'}" />
+                            rendered="#{customFieldTemplateBean.entity.fieldType == 'ENTITY' or customFieldTemplateBean.entity.fieldType == 'CHILD_ENTITY'}" />
                     </h:panelGroup>
 
                     <h:panelGroup id="matrixColumns" styleClass="clearLeft">

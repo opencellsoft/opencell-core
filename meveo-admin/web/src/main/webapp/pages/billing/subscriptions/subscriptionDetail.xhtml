@@ -934,6 +934,7 @@
         </h:panelGroup>
 
         <p:dialog id="accessDialog" widgetVar="accessWidget" dynamic="true" width="900" modal="true" closeOnEscape="true" appendTo="@(body)">
+            <p:scrollPanel mode="native" style="max-height:600px">
             <hftl:formPanel formId="accessForm" backingBean="#{accessBean}" showFormButtons="false" label="#{messages['access.accessPanel']}">
 
                 <p:tabView id="accessTabView">
@@ -955,6 +956,7 @@
                     </p:commandButton>
                 </ui:define>
             </hftl:formPanel>
+            </p:scrollPanel>
         </p:dialog>
 
 		<p:dialog id="usageChgPopup"

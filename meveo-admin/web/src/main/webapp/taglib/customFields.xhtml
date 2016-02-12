@@ -37,26 +37,31 @@
     <c:if test="${empty(prefix)}">
         <c:set var="prefix" value="cf" />
     </c:if>
-    <c:set var="newEntity" value="#{backingBean.entity.transient}" />
+    <c:if test="${empty(entity)}">
+        <c:set var="entity" value="#{backingBean.entity}" />
+    </c:if>
+    <c:set var="newEntity" value="#{entity.transient}" />
+    <c:set var="fieldsValues" value="#{customFieldDataEntryBean.getFieldsValues(entity.uuid)}" />
 
 
     <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
     <o:importFunctions type="org.meveo.model.crm.CustomFieldValue" var="cfv" />
     <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
 
-    <f:event listener="#{backingBean.validateCustomFields}" type="postValidate" />
+    <f:event listener="#{customFieldDataEntryBean.validateCustomFields(entity)}" type="postValidate" />
 
     <c:set var="index" value="0" />
 
-    <c:forEach items="#{backingBean.groupedCustomFieldWithInit.children}" var="cfTab">
+    <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab">
 
         <p:tab title="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}">
 
             <c:forEach items="${cfTab.children}" var="cfFieldOrFg">
                 <c:if test="#{cfFieldOrFg.type == 'field'}">
                     <c:set var="cft" value="#{cfFieldOrFg.data}" />
-                    <c:if test="#{((not cft.disabled) or (cft.disabled and not backingBean.isAnyInstanceValueEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',backingBean.entity)}">
-                        <hf:customField backingBean="#{backingBean}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" prefix="#{prefix}" />
+                    <c:if
+                        test="#{((not cft.disabled) or (cft.disabled and not fieldsValues.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',entity)}">
+                        <hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" prefix="#{prefix}" />
                     </c:if>
                 </c:if>
                 <c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
@@ -64,8 +69,8 @@
                         <c:forEach items="${cfFieldOrFg.children}" var="cfField">
                             <c:set var="cft" value="#{cfField.data}" />
                             <c:if
-                                test="#{((not cft.disabled) or (cft.disabled and not backingBean.isAnyInstanceValueEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',backingBean.entity)}">
-                                <hf:customField backingBean="#{backingBean}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" prefix="#{prefix}" />
+                                test="#{((not cft.disabled) or (cft.disabled and not fieldsValues.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',entity)}">
+                                <hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" prefix="#{prefix}" />
                             </c:if>
                         </c:forEach>
                     </p:panel>
@@ -79,20 +84,20 @@
                     <p:panel>
                         <h:panelGroup id="#{prefix}periodFields" layout="block" styleClass="form-panel">
                             <hftl:decorateFormField fieldId="period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
-                                <h:outputText id="period_start_date" value="#{backingBean.customFieldSelectedPeriod.periodStartDate}">
+                                <h:outputText id="period_start_date" value="#{customFieldDataEntryBean.selectedValuePeriod[entity.uuid].periodStartDate}">
                                     <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
                                 </h:outputText>
                             </hftl:decorateFormField>
                             <hftl:decorateFormField fieldId="period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}">
-                                <h:outputText id="period_end_date" value="#{backingBean.customFieldSelectedPeriod.periodEndDate}">
+                                <h:outputText id="period_end_date" value="#{customFieldDataEntryBean.selectedValuePeriod[entity.uuid].periodEndDate}">
                                     <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
                                 </h:outputText>
                             </hftl:decorateFormField>
-                            <p:remoteCommand name="updateMasterTable" update="#{backingBean.customFieldSelectedPeriodId}" process="@this" partialSubmit="true"
+                            <p:remoteCommand name="updateMasterTable" update="#{customFieldDataEntryBean.selectedValuePeriodId[entity.uuid]}" process="@this" partialSubmit="true"
                                 partialSubmitFilter=":not([name*='addNewFields'])" />
-                            <hftl:customFieldListTable edit="#{edit}" cft="#{backingBean.customFieldSelectedTemplate}" backingBean="#{backingBean}"
-                                field="#{backingBean.customFieldSelectedPeriod.cfValue}" updateOnAddEdit="#{backingBean.customFieldSelectedPeriodId}" messagesId="#{messagesId}"
-                                popupWidgetVar="#{prefix}periodValuesDialogWidget" />
+                            <hftl:customFieldListTable edit="#{edit}" cft="#{customFieldDataEntryBean.selectedFieldTemplate[entity.uuid]}" entity="#{entity}"
+                                field="#{customFieldDataEntryBean.selectedValuePeriod[entity.uuid].cfValue}" updateOnAddEdit="#{customFieldDataEntryBean.selectedValuePeriodId[entity.uuid]}"
+                                messagesId="#{messagesId}" popupWidgetVar="#{prefix}periodValuesDialogWidget" />
 
                         </h:panelGroup>
                     </p:panel>

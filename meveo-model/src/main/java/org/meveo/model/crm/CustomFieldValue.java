@@ -18,8 +18,12 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.customEntities.CustomEntityInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,6 +34,7 @@ import com.google.gson.reflect.TypeToken;
  * <ul>
  * <li>string, date, double and long that are stored as separate fields</li>
  * <li>reference to an entity, that is serialized as Json to serializedValue field</li>
+ * <li>a child entity containing the actual data, that is serialized as Json to serializedValue field</li>
  * <li>a list or a map of above mentioned data types, serialized as Json to to serializedValue field</li>
  * </ul>
  * 
@@ -263,8 +268,13 @@ public class CustomFieldValue implements Serializable {
             stringValue = (String) value;
 
             break;
+
         case ENTITY:
             setEntityReferenceValue(new EntityReferenceWrapper((BusinessEntity) value));
+            break;
+
+        case CHILD_ENTITY:
+            break; // TODO
         }
     }
 
@@ -484,6 +494,8 @@ public class CustomFieldValue implements Serializable {
             case LIST:
             case TEXT_AREA:
                 return stringValue;
+            case CHILD_ENTITY:
+                return "FIXME"; // TODO
             }
         }
         return null;
@@ -541,7 +553,7 @@ public class CustomFieldValue implements Serializable {
 
         String sValue = null;
         if (entityReferenceValue != null && !entityReferenceValue.isEmpty()) {
-            sValue = "entity"+SERIALIZATION_SEPARATOR + gson.toJson(entityReferenceValue);
+            sValue = "entity" + SERIALIZATION_SEPARATOR + gson.toJson(entityReferenceValue);
 
         } else if (listValue != null && !listValue.isEmpty()) {
             Class itemClass = listValue.get(0).getClass();
@@ -588,7 +600,7 @@ public class CustomFieldValue implements Serializable {
 
         GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-dd-MM HH:mm:ss zzz");
         Gson gson = builder.create();
-        
+
         int firstSeparatorIndex = serializedValue.indexOf(SERIALIZATION_SEPARATOR);
 
         String type = serializedValue.substring(0, firstSeparatorIndex);
@@ -671,13 +683,216 @@ public class CustomFieldValue implements Serializable {
                 }.getType();
             }
 
-            
             int secondSeparatorIndex = serializedValue.indexOf(SERIALIZATION_SEPARATOR, firstSeparatorIndex + 1);
             String keys = serializedValue.substring(firstSeparatorIndex + 1, secondSeparatorIndex);
             String sValue = serializedValue.substring(secondSeparatorIndex + 1);
 
             mapValue = gson.fromJson(sValue, itemType);
             mapValue.put(MAP_KEY, keys);
+        }
+    }
+
+    /**
+     * Deserialize map, list and entity reference values to adapt them for GUI data entry. See CustomFieldValue.xxxGUI fields for transformation description
+     * 
+     * @param cft Custom field template
+     */
+    @SuppressWarnings("unchecked")
+    public void deserializeForGUI(CustomFieldTemplate cft) {
+
+        // Convert just Entity type field to a JPA object - just Single storage fields
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+            this.setEntityReferenceValueForGUI(deserializeEntityReferenceForGUI(this.getEntityReferenceValue()));
+
+            // Populate mapValuesForGUI field
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
+
+            List<Map<String, Object>> listOfMapValues = new ArrayList<Map<String, Object>>();
+            if (this.getListValue() != null) {
+                for (Object listItem : this.getListValue()) {
+                    Map<String, Object> listEntry = new HashMap<String, Object>();
+                    if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                        listEntry.put(CustomFieldValue.MAP_VALUE, deserializeEntityReferenceForGUI((EntityReferenceWrapper) listItem));
+                    } else {
+                        listEntry.put(CustomFieldValue.MAP_VALUE, listItem);
+                    }
+                    listOfMapValues.add(listEntry);
+                }
+            }
+            this.setMapValuesForGUI(listOfMapValues);
+
+            // Populate mapValuesForGUI field
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+
+            List<Map<String, Object>> listOfMapValues = new ArrayList<Map<String, Object>>();
+
+            if (this.getMapValue() != null) {
+                for (Entry<String, Object> mapInfo : this.getMapValue().entrySet()) {
+                    Map<String, Object> listEntry = new HashMap<String, Object>();
+                    listEntry.put(CustomFieldValue.MAP_KEY, mapInfo.getKey());
+                    if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                        listEntry.put(CustomFieldValue.MAP_VALUE, deserializeEntityReferenceForGUI((EntityReferenceWrapper) mapInfo.getValue()));
+                    } else {
+                        listEntry.put(CustomFieldValue.MAP_VALUE, mapInfo.getValue());
+                    }
+                    listOfMapValues.add(listEntry);
+                }
+            }
+            this.setMapValuesForGUI(listOfMapValues);
+
+            // Populate matrixValuesForGUI field
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+
+            List<Map<String, Object>> mapValues = new ArrayList<Map<String, Object>>();
+            this.setMatrixValuesForGUI(mapValues);
+
+            if (this.getMapValue() != null) {
+
+                Object columns = this.getMapValue().get(CustomFieldValue.MAP_KEY);
+                String[] columnArray = null;
+                if (columns instanceof String) {
+                    columnArray = ((String) columns).split(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR);
+                } else if (columns instanceof Collection) {
+                    columnArray = new String[((Collection<String>) columns).size()];
+                    int i = 0;
+                    for (String column : (Collection<String>) columns) {
+                        columnArray[i] = column;
+                        i++;
+                    }
+                }
+
+                for (Entry<String, Object> mapItem : this.getMapValue().entrySet()) {
+                    if (mapItem.getKey().equals(CustomFieldValue.MAP_KEY)) {
+                        continue;
+                    }
+
+                    Map<String, Object> mapValuesItem = new HashMap<String, Object>();
+                    if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                        mapValuesItem.put(CustomFieldValue.MAP_VALUE, deserializeEntityReferenceForGUI((EntityReferenceWrapper) mapItem.getValue()));
+                    } else {
+                        mapValuesItem.put(CustomFieldValue.MAP_VALUE, mapItem.getValue());
+                    }
+
+                    String[] keys = mapItem.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
+                    for (int i = 0; i < keys.length; i++) {
+                        mapValuesItem.put(columnArray[i], keys[i]);
+                    }
+                    mapValues.add(mapValuesItem);
+                }
+            }
+        }
+    }
+
+    /**
+     * Covert entity reference to a Business entity JPA object.
+     * 
+     * @param entityReferenceValue Entity reference value
+     * @return Business entity JPA object
+     */
+    private BusinessEntity deserializeEntityReferenceForGUI(EntityReferenceWrapper entityReferenceValue) {
+        if (entityReferenceValue == null) {
+            return null;
+        }
+        // NOTE: For PF autocomplete seems that fake BusinessEntity object with code value filled is sufficient - it does not have to be a full loaded JPA object
+
+        // BusinessEntity convertedEntity = customFieldInstanceService.convertToBusinessEntityFromCfV(entityReferenceValue, this.currentProvider);
+        // if (convertedEntity == null) {
+        // convertedEntity = (BusinessEntity) ReflectionUtils.createObject(entityReferenceValue.getClassname());
+        // if (convertedEntity != null) {
+        // convertedEntity.setCode("NOT FOUND: " + entityReferenceValue.getCode());
+        // }
+        // } else {
+
+        try {
+            BusinessEntity convertedEntity = (BusinessEntity) ReflectionUtils.createObject(entityReferenceValue.getClassname());
+            if (convertedEntity != null) {
+                if (convertedEntity instanceof CustomEntityInstance) {
+                    ((CustomEntityInstance) convertedEntity).setCetCode(entityReferenceValue.getClassnameCode());
+                }
+
+                convertedEntity.setCode(entityReferenceValue.getCode());
+            } else {
+                Logger log = LoggerFactory.getLogger(this.getClass());
+                log.error("Unknown entity class specified " + entityReferenceValue.getClassname() + "in a custom field value {} ", entityReferenceValue);
+            }
+            // }
+            return convertedEntity;
+
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(this.getClass());
+            log.error("Unknown entity class specified in a custom field value {} ", entityReferenceValue);
+            return null;
+        }
+    }
+
+    /**
+     * Serialize map, list and entity reference values that were adapted for GUI data entry. See CustomFieldValue.xxxGUI fields for transformation description
+     * 
+     * @param cft Custom field template
+     */
+    public void serializeForGUI(CustomFieldTemplate cft) {
+
+        // Convert JPA object to Entity reference - just Single storage fields
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+            if (this.getEntityReferenceValueForGUI() == null) {
+                this.setEntityReferenceValue(null);
+            } else {
+                this.setEntityReferenceValue(new EntityReferenceWrapper(this.getEntityReferenceValueForGUI()));
+            }
+
+            // Populate customFieldValue.listValue from mapValuesForGUI field
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
+
+            List<Object> listValue = new ArrayList<Object>();
+            for (Map<String, Object> listItem : this.getMapValuesForGUI()) {
+                if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                    listValue.add(new EntityReferenceWrapper((BusinessEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
+                } else {
+                    listValue.add(listItem.get(CustomFieldValue.MAP_VALUE));
+                }
+            }
+            this.setListValue(listValue);
+
+            // Populate customFieldValue.mapValue from mapValuesForGUI field
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+
+            Map<String, Object> mapValue = new HashMap<String, Object>();
+
+            for (Map<String, Object> listItem : this.getMapValuesForGUI()) {
+                if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                    mapValue.put((String) listItem.get(CustomFieldValue.MAP_KEY), new EntityReferenceWrapper((BusinessEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
+                } else {
+                    mapValue.put((String) listItem.get(CustomFieldValue.MAP_KEY), listItem.get(CustomFieldValue.MAP_VALUE));
+                }
+            }
+            this.setMapValue(mapValue);
+
+            // Populate customFieldValue.mapValue from matrixValuesForGUI field
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+
+            Map<String, Object> mapValue = new HashMap<String, Object>();
+
+            List<String> columnKeys = new ArrayList<String>();
+            for (CustomFieldMatrixColumn column : cft.getMatrixColumnsSorted()) {
+                columnKeys.add(column.getCode());
+            }
+            mapValue.put(CustomFieldValue.MAP_KEY, columnKeys);
+
+            for (Map<String, Object> mapItem : this.getMatrixValuesForGUI()) {
+                Object value = mapItem.get(CustomFieldValue.MAP_VALUE);
+                if (StringUtils.isBlank(value)) {
+                    continue;
+                }
+
+                StringBuilder valBuilder = new StringBuilder();
+                for (String column : columnKeys) {
+                    valBuilder.append(valBuilder.length() == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
+                    valBuilder.append(mapItem.get(column));
+                }
+                mapValue.put(valBuilder.toString(), value);
+            }
+
+            this.setMapValue(mapValue);
         }
     }
 

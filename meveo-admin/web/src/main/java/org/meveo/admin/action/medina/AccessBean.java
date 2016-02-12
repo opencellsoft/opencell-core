@@ -152,8 +152,6 @@ public class AccessBean extends CustomFieldBean<Access> {
 			entity.setStartDate(subscription.getSubscriptionDate());
 			entity.setSubscription(subscription);
 		}
-
-		initCustomFields();
 	}
 
 	@Override

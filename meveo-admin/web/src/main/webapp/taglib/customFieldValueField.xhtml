@@ -15,7 +15,7 @@
         edit - should value be displayed, or edit control be shown
         field - field storing a value - CustomFieldValue type variable only
         datePattern - date pattern for date entry/display
-        backingBean - backing bean
+        entity - entity, custom fields are related to
         disabled - is field non-editable
  -->
 
@@ -43,10 +43,10 @@
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA}">
         <h:outputText value="#{field.stringValue}" rendered="#{! edit or disabled}"></h:outputText>
-        <c:if test="#{empty backingBean.entity.id and !disabled}">
+        <c:if test="#{empty entity.id and !disabled}">
             <p:inputTextarea value="#{field.stringValue}" cols="#{cols}" rows="#{rows}" required="#{cft.valueRequired}" rendered="#{edit}" label="#{cft.description}" />
         </c:if>
-        <c:if test="#{!empty backingBean.entity.id and !disabled}">
+        <c:if test="#{!empty entity.id and !disabled}">
             <pe:codeMirror theme="eclipse" mode="application/xml" value="#{field.stringValue}" lineNumbers="true" required="#{cft.valueRequired}" rendered="true"
                 label="#{cft.description}" />
         </c:if>
@@ -91,7 +91,7 @@
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
         <h:outputText value="#{field.entityReferenceValueForGUI.code}" rendered="#{!edit or disabled}" />
         <p:autoComplete value="#{field.entityReferenceValueForGUI}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" label="#{cft.description}"
-            converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{backingBean.autocompleteCustomEntityForCFV}" var="e" itemLabel="#{e.code}"
+            converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteCustomEntityForCFV}" var="e" itemLabel="#{e.code}"
             itemValue="#{e}" rendered="#{edit and !disabled}">
             <f:attribute name="classname" value="#{cft.entityClazz}" />
             <p:column width="50" headerText="#{messages['BusinessEntity.code']}">

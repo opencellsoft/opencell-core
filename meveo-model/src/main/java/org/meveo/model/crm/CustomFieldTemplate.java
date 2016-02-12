@@ -403,6 +403,6 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Override
     public String toString() {
-        return String.format("CustomFieldTemplate [id=%s, appl)iesTo=%s, code=%s]", id, appliesTo, code);
+        return String.format("CustomFieldTemplate [id=%s, appliesTo=%s, code=%s]", id, appliesTo, code);
     }
 }
