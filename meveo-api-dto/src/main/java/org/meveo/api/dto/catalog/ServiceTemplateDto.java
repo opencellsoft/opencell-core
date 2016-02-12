@@ -42,6 +42,8 @@ public class ServiceTemplateDto implements Serializable {
 	private ServiceChargeTemplateUsagesDto serviceChargeTemplateUsages;
 	
 	private CustomFieldsDto customFields = new CustomFieldsDto();
+	
+	private boolean mandatory;
 
 	public ServiceTemplateDto() {
 	}
@@ -195,7 +197,7 @@ public class ServiceTemplateDto implements Serializable {
 				+ ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
 				+ ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations
 				+ ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields=" + customFields
-				+ "]";
+				+ ", mandatory=" + mandatory + "]";
 	}
 
 	public CustomFieldsDto getCustomFields() {
@@ -204,6 +206,14 @@ public class ServiceTemplateDto implements Serializable {
 
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
 	}
 
 }
