@@ -1,3 +1,4 @@
+
 package org.meveo.api.invoice;
 
 import java.io.File;
@@ -436,6 +437,7 @@ public class InvoiceApi extends BaseApi {
 							.getPaymentMethod().toString());
 					customerInvoiceDto.setType(invoice.getInvoiceTypeEnum().name());
 					customerInvoiceDto.setPDFpresent(invoice.getPdf() != null);
+					customerInvoiceDto.setPdf(invoice.getPdf());
 					SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
 
 					for (InvoiceAgregate invoiceAgregate : invoice
@@ -475,8 +477,8 @@ public class InvoiceApi extends BaseApi {
 						.add(subCategoryInvoiceAgregateDto);
 					}
 
-					customerInvoiceDtos.add(customerInvoiceDto);
-					//customerInvoiceDtos.add(new InvoiceDto(invoice, billingAccount.getCode()));
+					   //customerInvoiceDtos.add(customerInvoiceDto);
+					customerInvoiceDtos.add(new InvoiceDto(invoice, billingAccount.getCode()));
 				}
 			}
 

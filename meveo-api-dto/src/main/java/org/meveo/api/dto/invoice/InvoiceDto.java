@@ -50,6 +50,7 @@ public class InvoiceDto extends BaseDto {
 	private String paymentMathod;
 	private boolean PDFpresent;
 	private String type;
+	private byte[] pdf;
 	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
 	private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
 	
@@ -60,6 +61,7 @@ public class InvoiceDto extends BaseDto {
 		this.setBillingAccountCode(billingAccountCode);
 		this.setInvoiceDate(invoice.getInvoiceDate());
 		this.setDueDate(invoice.getDueDate());
+		this.pdf=invoice.getPdf();
 
 		this.setAmountWithoutTax(invoice
 				.getAmountWithoutTax());
@@ -259,6 +261,16 @@ public class InvoiceDto extends BaseDto {
 
 	public void setAccountOperations(List<AccountOperationDto> accountOperations) {
 		this.accountOperations = accountOperations;
+	}
+	
+	
+
+	public byte[] getPdf() {
+		return pdf;
+	}
+
+	public void setPdf(byte[] pdf) {
+		this.pdf = pdf;
 	}
 
 	@Override
