@@ -10,7 +10,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ByteArrayEntity;
 
 public class ApiExecutor {
@@ -73,6 +72,12 @@ public class ApiExecutor {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * 
+	 * @param login
+	 * @param password
+	 * @return
+	 */
 	private String getBasicAuthentication(String login, String password) {
 		String authentification = login + ":" + password;
 		byte[] authEncoded = Base64.encodeBase64(authentification.getBytes());
@@ -95,6 +100,4 @@ public class ApiExecutor {
 		}
 		return uri;
 	}
-}
-
 }
