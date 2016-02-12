@@ -95,6 +95,7 @@ public class OfferTemplateApi extends BaseApi {
 						}
 						if (!found) {
 							OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
+							offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
 							offerServiceTemplate.setOfferTemplate(offerTemplate);
 							offerServiceTemplate.setServiceTemplate(serviceTemplate);
 							offerServiceTemplate.setProvider(currentUser.getProvider());
@@ -164,6 +165,7 @@ public class OfferTemplateApi extends BaseApi {
 					}
 
 					OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
+					offerServiceTemplate.setMandatory(serviceTemplateDto.isMandatory());
 					offerServiceTemplate.setOfferTemplate(offerTemplate);
 					offerServiceTemplate.setServiceTemplate(serviceTemplate);
 					offerServiceTemplate.setProvider(currentUser.getProvider());
