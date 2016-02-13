@@ -686,6 +686,8 @@ public class InvoiceBean extends BaseBean<Invoice> {
 				invoiceService.recomputeAggregates(entity, getCurrentUser());
 			}
 		}
+		
+		super.saveOrUpdate(false);
 
 		invoiceService.updateInvoiceAdjustmentCurrentNb(entity, getCurrentUser());
 

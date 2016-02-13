@@ -107,9 +107,6 @@ public class InvoiceApi extends BaseApi {
 
 	@Inject
 	private PDFParametersConstruction pDFParametersConstruction;
-    
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
 	@Inject
 	@MeveoParamBean
@@ -376,6 +373,8 @@ public class InvoiceApi extends BaseApi {
 							getMissingParametersExceptionMessage());
 				}
 			}
+			
+			invoiceService.update(invoice, currentUser);
 			return invoice.getInvoiceNumber();
 		} else {
 			if (invoiceDTO.getSubCategoryInvoiceAgregates().size() <= 0) {
