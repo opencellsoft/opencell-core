@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.meveo.model.crm.CustomFieldMapKeyEnum;
-import org.meveo.model.crm.CustomFieldMatrixColumn;
-import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 
 public class CFValueTest {
 

@@ -1,4 +1,4 @@
-package org.meveo.model.crm;
+package org.meveo.model.crm.custom;
 
 public enum CustomFieldStorageTypeEnum {
     SINGLE("customFieldStorageTypeEnum.SINGLE"), LIST("customFieldStorageTypeEnum.LIST"), MAP("customFieldStorageTypeEnum.MAP"), MATRIX("customFieldStorageTypeEnum.MATRIX");

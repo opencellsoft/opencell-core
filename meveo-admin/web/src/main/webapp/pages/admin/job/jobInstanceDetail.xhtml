@@ -43,7 +43,7 @@
                         <p:selectOneMenu id="timerJobName" value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id == null}" required="true">
                             <f:selectItem itemLabel="#{messages['commons.select']}" />
                             <f:selectItems value="#{jobInstanceBean.jobNames}" />
-                            <p:ajax event="valueChange" listener="#{jobInstanceBean.initCustomFields}" update="@form"></p:ajax>
+                            <p:ajax event="valueChange" listener="#{jobInstanceBean.refreshCustomFieldsAndActions}" update="@form"/>
                         </p:selectOneMenu>
                         <h:outputText value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id!=null}" />
                     </hftl:decorateFormField>

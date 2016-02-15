@@ -13,6 +13,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -34,6 +35,9 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private CustomFieldDataEntryBean customFieldDataEntryBean;
 
     public JobInstanceBean() {
         super(JobInstance.class);
@@ -135,4 +139,12 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         return jobInstanceService.isJobRunning(jobInstance.getId());
     }
 
+    /**
+     * Explicitly refresh custom fields and action definitions. Should be used when job template change, as on it depends what fields and actions apply
+     */
+    public void refreshCustomFieldsAndActions() {
+
+        createMissingCustomFieldTemplates();
+        customFieldDataEntryBean.refreshFieldsAndActions(entity);
+    }
 }

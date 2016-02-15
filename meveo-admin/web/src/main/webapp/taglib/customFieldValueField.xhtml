@@ -30,8 +30,8 @@
     <c:if test="#{empty(rows)}">
         <c:set var="rows" value="#{paramBean.getProperty('meveo.textArea.rows','20')}" />
     </c:if>
-    <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
-    <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
 
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
         <h:outputText value="#{field.stringValue}" rendered="#{! edit or disabled}" />
@@ -91,7 +91,7 @@
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
         <h:outputText value="#{field.entityReferenceValueForGUI.code}" rendered="#{!edit or disabled}" />
         <p:autoComplete value="#{field.entityReferenceValueForGUI}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" label="#{cft.description}"
-            converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteCustomEntityForCFV}" var="e" itemLabel="#{e.code}"
+            converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteEntityForCFV}" var="e" itemLabel="#{e.code}"
             itemValue="#{e}" rendered="#{edit and !disabled}">
             <f:attribute name="classname" value="#{cft.entityClazz}" />
             <p:column width="50" headerText="#{messages['BusinessEntity.code']}">

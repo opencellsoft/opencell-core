@@ -6,9 +6,30 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.customEntities.CustomEntityInstance;
 
+/**
+ * Represents a custom field value type - reference to an Meveo entity identified by a classname and code. In case a class is a generic Custom Entity Template a classnameCode is
+ * required to identify a concrete custom entity template by its code
+ * 
+ * @author Andrius Karpavicius
+ **/
 public class EntityReferenceWrapper implements Serializable {
 
     private static final long serialVersionUID = -4756870628233941711L;
+
+    /**
+     * Classname of an entity
+     */
+    private String classname;
+
+    /**
+     * Custom entity template code - applicable and required when reference is to Custom Entity Template type
+     */
+    private String classnameCode;
+
+    /**
+     * Entity code
+     */
+    private String code;
 
     public EntityReferenceWrapper() {
     }
@@ -30,12 +51,6 @@ public class EntityReferenceWrapper implements Serializable {
         this.classnameCode = classnameCode;
         this.code = code;
     }
-
-    private String classname;
-
-    private String classnameCode;
-
-    private String code;
 
     public String getClassname() {
         return classname;

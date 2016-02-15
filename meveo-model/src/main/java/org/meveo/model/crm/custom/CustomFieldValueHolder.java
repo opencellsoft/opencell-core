@@ -1,4 +1,4 @@
-package org.meveo.admin.action.admin.custom;
+package org.meveo.model.crm.custom;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.slf4j.LoggerFactory;
 
-public class CustomFieldValues implements Serializable {
+public class CustomFieldValueHolder implements Serializable {
 
     private static final long serialVersionUID = 2516863650382630587L;
 
@@ -27,11 +27,13 @@ public class CustomFieldValues implements Serializable {
     private ICustomFieldEntity entity;
 
     /**
+     * Constructor
      * 
      * @param customFieldTemplates Custom field templates applicable for the entity
      * @param cfisAsMap Custom field instances mapped by a CFT code
+     * @param entity Entity containing custom field values
      */
-    public CustomFieldValues(Map<String, CustomFieldTemplate> customFieldTemplates, Map<String, List<CustomFieldInstance>> cfisAsMap, ICustomFieldEntity entity) {
+    public CustomFieldValueHolder(Map<String, CustomFieldTemplate> customFieldTemplates, Map<String, List<CustomFieldInstance>> cfisAsMap, ICustomFieldEntity entity) {
 
         this.entity = entity;
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
@@ -65,6 +67,16 @@ public class CustomFieldValues implements Serializable {
 
         populateNewValueDefaults(customFieldTemplates.values(), null);
 
+    }
+
+    /**
+     * Construct to convert ChildEntityValueWrapper to CustomFieldValueHolder
+     * 
+     * @param childEntity ChildEntityValueWrapper entity
+     */
+    public CustomFieldValueHolder(ChildEntityValueWrapper childEntity) {
+        this.entity = childEntity;
+        values = childEntity.getFieldValues();
     }
 
     /**
@@ -258,5 +270,30 @@ public class CustomFieldValues implements Serializable {
 
     public void clearNewValues() {
         newValues.clear();
+    }
+
+    public String getEntityUuid() {
+        return entity.getUuid();
+    }
+
+    public String getShortRepresentationOfValues() {
+        return "CustomFieldValueHolder short representation"; // TODO should we implement it??
+    }
+
+    /**
+     * Check if all fields are empty
+     * 
+     * @return True if all the fields are empty
+     */
+    public boolean isEmpty() {
+
+        for (List<CustomFieldInstance> cfis : values.values()) {
+            for (CustomFieldInstance cfi : cfis) {
+                if (!cfi.isValueEmptyForGui()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

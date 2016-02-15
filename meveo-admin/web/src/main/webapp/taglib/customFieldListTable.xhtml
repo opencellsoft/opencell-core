@@ -28,8 +28,8 @@
         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     </c:if>
     <c:set var="fieldsValues" value="#{customFieldDataEntryBean.getFieldsValues(entity.uuid)}" />
-    <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
-    <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
 
     <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="false">
         <p:messages id="cfMessages" globalOnly="false" redisplay="false" />

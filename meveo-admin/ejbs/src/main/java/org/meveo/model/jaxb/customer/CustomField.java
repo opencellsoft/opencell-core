@@ -15,8 +15,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "customField")

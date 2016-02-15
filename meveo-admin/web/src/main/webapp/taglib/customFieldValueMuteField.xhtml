@@ -25,8 +25,8 @@
     <c:if test="${empty(datePattern)}">
         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
     </c:if>
-    <o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
-    <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
         <c:if test="#{! edit}">
             <h:outputText value="#{field}" />
@@ -101,7 +101,7 @@
         </c:if>
         <c:if test="#{edit}">
             <p:autoComplete value="#{field}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" placeholder="#{placeholder}" label="#{label}"
-                converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteCustomEntityForCFV}" queryDelay="1000" var="e"
+                converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteEntityForCFV}" queryDelay="1000" var="e"
                 itemLabel="#{e.code}" itemValue="#{e}">
                 <f:attribute name="classname" value="#{cft.entityClazz}" />
                 <p:column width="50" headerText="#{messages['BusinessEntity.code']}">

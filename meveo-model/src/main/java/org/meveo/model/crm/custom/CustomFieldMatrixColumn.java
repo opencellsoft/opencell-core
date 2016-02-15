@@ -1,4 +1,4 @@
-package org.meveo.model.crm;
+package org.meveo.model.crm.custom;
 
 import java.io.Serializable;
 

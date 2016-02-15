@@ -26,12 +26,13 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
-import org.meveo.model.crm.CustomFieldMapKeyEnum;
-import org.meveo.model.crm.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.CustomFieldTypeEnum;
-import org.meveo.model.crm.CustomFieldValue;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.crm.custom.CustomFieldValueHolder;
 import org.meveo.model.scripts.EntityActionScript;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -52,12 +53,24 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     private static final long serialVersionUID = 2587695185934268809L;
 
+    /**
+     * Field used to show detail values of a single value period
+     */
     private Map<String, CustomFieldTemplate> selectedFieldTemplate = new HashMap<String, CustomFieldTemplate>();
 
+    /**
+     * Field used to show detail values of a single value period
+     */
     private Map<String, CustomFieldInstance> selectedValuePeriod = new HashMap<String, CustomFieldInstance>();
 
+    /**
+     * Field used to show detail values of a single value period
+     */
     private Map<String, String> selectedValuePeriodId = new HashMap<String, String>();
 
+    /**
+     * Was value period found with identical/overlapping dates
+     */
     private Map<String, Boolean> valuePeriodMatched = new HashMap<String, Boolean>();
 
     /**
@@ -73,7 +86,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Custom field values and new value GUI data entry values
      */
-    private Map<String, CustomFieldValues> fieldsValues = new HashMap<String, CustomFieldValues>();
+    private Map<String, CustomFieldValueHolder> fieldsValues = new HashMap<String, CustomFieldValueHolder>();
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
@@ -99,7 +112,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     protected Messages messages;
 
     /** Logger. */
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public Map<String, CustomFieldInstance> getSelectedValuePeriod() {
         return selectedValuePeriod;
@@ -126,8 +139,21 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Load available custom fields (templates) and their values
+     * Explicitly refresh fields and action definitions. Should be used on some field value change event when that field is used to determine what fields and actions apply. E.g.
+     * Job template.
      * 
+     * @param entity Entity to [re]load definitions and field values for
+     */
+    public void refreshFieldsAndActions(ICustomFieldEntity entity) {
+
+        initFields(entity);
+        initCustomActions(entity);
+    }
+
+    /**
+     * Get a grouped list of custom field definitions. If needed, load applicable custom fields (templates) and their values for a given entity
+     * 
+     * @param entity Entity to load definitions and field values for
      * @return Custom field information
      */
     public GroupedCustomField getGroupedFieldTemplates(ICustomFieldEntity entity) {
@@ -138,6 +164,12 @@ public class CustomFieldDataEntryBean implements Serializable {
         return groupedFieldTemplates.get(entity.getUuid());
     }
 
+    /**
+     * Get a list of actions applicable for an entity. If needed, load them.
+     * 
+     * @param entity Entity to load action definitions
+     * @return A list of actions
+     */
     public List<EntityActionScript> getCustomActions(ICustomFieldEntity entity) {
         if (!customActions.containsKey(entity.getUuid())) {
             initCustomActions(entity);
@@ -145,12 +177,20 @@ public class CustomFieldDataEntryBean implements Serializable {
         return customActions.get(entity.getUuid());
     }
 
-    public CustomFieldValues getFieldsValues(String entityUuid) {
+    /**
+     * Get a custom field value holder for a given entity
+     * 
+     * @param entityUuid Entity uuid identifier
+     * @return Custom field value holder
+     */
+    public CustomFieldValueHolder getFieldsValues(String entityUuid) {
         return fieldsValues.get(entityUuid);
     }
 
     /**
-     * Load available custom actions
+     * Load applicable custom actions for a given entity
+     * 
+     * @param entity Entity to load action definitions
      */
     private void initCustomActions(ICustomFieldEntity entity) {
 
@@ -161,7 +201,9 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Load available custom fields (templates) and their values
+     * Load available custom fields (templates) and their values for a given entity
+     * 
+     * @param entity Entity to load definitions and field values for
      */
     private void initFields(ICustomFieldEntity entity) {
 
@@ -176,16 +218,18 @@ public class CustomFieldDataEntryBean implements Serializable {
         if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
             cfisAsMap = customFieldInstanceService.getCustomFieldInstances((ICustomFieldEntity) entity);
         }
-        CustomFieldValues entityFieldsValues = new CustomFieldValues(customFieldTemplates, cfisAsMap, entity);
+        CustomFieldValueHolder entityFieldsValues = new CustomFieldValueHolder(customFieldTemplates, cfisAsMap, entity);
         fieldsValues.put(entity.getUuid(), entityFieldsValues);
-
     }
 
     /**
      * Add a new customField period with a previous validation that matching period does not exists
+     * 
+     * @param entityUuid Entity uuid identifier
+     * @param cft Custom field definition
      */
     public void addNewValuePeriod(String entityUuid, CustomFieldTemplate cft) {
-        CustomFieldValues entityFieldsValues = getFieldsValues(entityUuid);
+        CustomFieldValueHolder entityFieldsValues = getFieldsValues(entityUuid);
 
         Date periodStartDate = (Date) entityFieldsValues.getNewValue(cft.getCode() + "_periodStartDate");
         Date periodEndDate = (Date) entityFieldsValues.getNewValue(cft.getCode() + "_periodEndDate");
@@ -275,11 +319,13 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Add value to a map of values, setting a default value if applicable
      * 
-     * @param cft Custom field template corresponding to an instance
+     * @param entityUuid Entity uuid identifier
+     * @param cfv Map value holder
+     * @param cft Custom field definition
      */
     public void addValueToMap(String entityUuid, CustomFieldValue cfv, CustomFieldTemplate cft) {
 
-        CustomFieldValues entityFieldValues = getFieldsValues(entityUuid);
+        CustomFieldValueHolder entityFieldValues = getFieldsValues(entityUuid);
 
         String newKey = null;
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
@@ -331,7 +377,13 @@ public class CustomFieldDataEntryBean implements Serializable {
         entityFieldValues.clearNewValues();
     }
 
-    public List<BusinessEntity> autocompleteCustomEntityForCFV(String wildcode) {
+    /**
+     * Autocomplete method for listing entities for "Reference to entity" type custom field values
+     * 
+     * @param wildcode A partial entity code match
+     * @return A list of entities [partially] matching code
+     */
+    public List<BusinessEntity> autocompleteEntityForCFV(String wildcode) {
         String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
         return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode, this.currentProvider);
     }
@@ -339,7 +391,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Validate complex custom fields
      * 
-     * @param event
+     * @param entity Entity, to which custom fields are related to
      */
     public void validateCustomFields(ICustomFieldEntity entity) {
         boolean valid = true;
@@ -378,8 +430,9 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Get inherited custom field value
+     * Get inherited custom field value for a given entity
      * 
+     * @param Entity to get the inherited value for
      * @param code Custom field code
      * @return Custom field value
      */
@@ -388,7 +441,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Add row to a matrix. Also sets null value for every column of matrix in a new row
+     * Add row to a matrix.
      * 
      * @param cft Custom field template
      * @param matrixValues Matrix values
@@ -401,11 +454,10 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Execute custom action on an entity
      * 
+     * @param entity Entity to execute action on
      * @param action Action to execute
      * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
-     * @param currentUser Current user
-     * @param currentProvider Current provider
-     * @return A script execution result value
+     * @return A script execution result value from Script.RESULT_GUI_OUTCOME variable
      */
     public String executeCustomAction(ICustomFieldEntity entity, EntityActionScript action, String encodedParameters) {
 
@@ -436,14 +488,15 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Save custom fields
+     * Save custom fields for a given entity
      * 
+     * @param entity Entity, the fields relate to
      * @param isNewEntity Is it a new entity
      * @throws BusinessException
      */
     public void updateCustomFieldsInEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
 
-        CustomFieldValues entityFieldsValues = getFieldsValues(entity.getUuid());
+        CustomFieldValueHolder entityFieldsValues = getFieldsValues(entity.getUuid());
         for (CustomFieldTemplate cft : groupedFieldTemplates.get(entity.getUuid()).getFields()) {
             List<CustomFieldInstance> cfis = entityFieldsValues.getValues(cft);
 
@@ -480,6 +533,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Get a list of custom field templates applicable to an entity.
      * 
+     * @param entity Entity to retrieve custom field templates for
      * @return A map of custom field templates with template code as a key
      */
     private Map<String, CustomFieldTemplate> getApplicableCustomFieldTemplates(ICustomFieldEntity entity) {

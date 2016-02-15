@@ -15,7 +15,7 @@
 
     <ui:define name="body">
 
-        <o:importConstants type="org.meveo.model.crm.CustomFieldMapKeyEnum" />
+        <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
 
         <h:panelGroup rendered="#{customEntityTemplateBean.customEntityTemplate}">
             <hftl:formPanel formId="cetForm"
@@ -438,7 +438,7 @@
                                         <f:facet name="input">
                                             <h:selectOneMenu value="#{matrixColumn.keyType}" required="true">
                                                 <f:converter converterId="enumConverter" />
-                                                <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.crm.CustomFieldMapKeyEnum" />
+                                                <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
                                                 <f:selectItem />
                                                 <f:selectItems value="#{CustomFieldMapKeyEnum.values()}" var="item" itemValue="#{item}" itemLabel="#{messages[item.label]}" />
                                             </h:selectOneMenu>

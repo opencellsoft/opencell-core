@@ -1,4 +1,4 @@
-package org.meveo.model.crm;
+package org.meveo.model.crm.custom;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -21,6 +21,8 @@ import javax.persistence.Transient;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +40,12 @@ import com.google.gson.reflect.TypeToken;
  * <li>a list or a map of above mentioned data types, serialized as Json to to serializedValue field</li>
  * </ul>
  * 
- * A reference to an entity, list and map values should not be modified behind the scenes - an appropriate SET method has to be called to serialise the value. - This limitations
- * comes from MERGE loosing transient values and thus JPA callback @postUpdate can not be used (see CustomFieldInstance class).
+ * A reference to an entity, child entity, list and map values should not be modified behind the scenes - an appropriate SET method has to be called to serialise the value. - This
+ * limitations comes from MERGE loosing transient values and thus JPA callback @postUpdate can not be used (see CustomFieldInstance class).
  * 
- * Serialised value format is the following: <entity/list/map>_<list/map data type>|<value in JSON format>. E.g.
+ * Serialised value format is described in serializeValue() method for each data type.
  * 
- * entityReferenceValueForGUI, mapValuesForGUI fields are used in data entry from GUI ONLY.
+ * entityReferenceValueForGUI, mapValuesForGUI, matrixValuesForGUI fields are used in data entry from GUI ONLY.
  * 
  * @author Andrius Karpavicius
  * 
@@ -78,6 +80,12 @@ public class CustomFieldValue implements Serializable {
     private String serializedValue;
 
     /**
+     * Child entity value deserialized from serializedValue field
+     */
+    @Transient
+    private ChildEntityValueWrapper childEntityValue;
+
+    /**
      * Entity reference type value deserialized from serializedValue field
      */
     @Transient
@@ -106,16 +114,25 @@ public class CustomFieldValue implements Serializable {
     /**
      * Contains mapValue adapted for GUI data entry in the following way:
      * 
-     * List item corresponds to an entry in a mapValue with the following list's map values: MAP_VALUE=mapValue.entry.value mapValue.entry.key is parsed into separate key/value
+     * List item corresponds to an entry in a mapValue with the following list's map values: MAP_VALUE=mapValue.entry.value, mapValue.entry.key is parsed into separate key/value
      * pairs and inserted into map
      */
     @Transient
     private List<Map<String, Object>> matrixValuesForGUI = new ArrayList<Map<String, Object>>();
 
     /**
+     * Contains childEntityValue converted into a CustomFieldValueHolder object in the following way:
+     * 
+     * CustomFieldValueHolder.entity = childEntityValue, CustomFieldValueHolder.values = childEntityValue.fieldValues
+     */
+    @Transient
+    private CustomFieldValueHolder childEntityValueForGUI;
+
+    /**
      * Contains entityReferenceValue converted into a BusinessEntity object in the following way:
      * 
-     * A class of entityReferenceValue.className type is instantiated with code field set to entityReferenceValue.code value
+     * A class of entityReferenceValue.className type is instantiated with code field set to entityReferenceValue.code value and in case it is Custom Entity Instance class, a
+     * cetCode field is set to entityReferenceValue.classnameCode value
      */
     @Transient
     private BusinessEntity entityReferenceValueForGUI;
@@ -175,13 +192,29 @@ public class CustomFieldValue implements Serializable {
     /**
      * Set a reference to an entity value. Value is serialised immediately.
      * 
-     * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted.
+     * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted, or explicitly call serializeValue() afterwards.
      * 
      * @param entityReferenceValue Reference to an entity value
      */
     public void setEntityReferenceValue(EntityReferenceWrapper entityReferenceValue) {
         this.entityReferenceValue = entityReferenceValue;
         serializeValue();
+    }
+
+    /**
+     * Set child entity value. Value is serialised immediately.
+     * 
+     * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted, or explicitly call serializeValue() afterwards.
+     * 
+     * @param childEntityValue Child entity data
+     */
+    public void setChildEntityValue(ChildEntityValueWrapper childEntityValue) {
+        this.childEntityValue = childEntityValue;
+        serializeValue();
+    }
+
+    public ChildEntityValueWrapper getChildEntityValue() {
+        return childEntityValue;
     }
 
     // public String getSerializedValue() {
@@ -199,7 +232,7 @@ public class CustomFieldValue implements Serializable {
     /**
      * Set a list of values. Value is serialised immediately.
      * 
-     * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted.
+     * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted, or explicitly call serializeValue() afterwards.
      * 
      * @param listValue
      */
@@ -215,7 +248,7 @@ public class CustomFieldValue implements Serializable {
     /**
      * Set a map of values. Value is serialised immediately.
      * 
-     * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted.
+     * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted, or explicitly call serializeValue() afterwards.
      * 
      * @param mapValue A map of values
      */
@@ -230,6 +263,14 @@ public class CustomFieldValue implements Serializable {
 
     public BusinessEntity getEntityReferenceValueForGUI() {
         return entityReferenceValueForGUI;
+    }
+
+    public void setChildEntityValueForGUI(CustomFieldValueHolder childEntityValueForGUI) {
+        this.childEntityValueForGUI = childEntityValueForGUI;
+    }
+
+    public CustomFieldValueHolder getChildEntityValueForGUI() {
+        return childEntityValueForGUI;
     }
 
     /**
@@ -274,7 +315,7 @@ public class CustomFieldValue implements Serializable {
             break;
 
         case CHILD_ENTITY:
-            break; // TODO
+            setChildEntityValue((ChildEntityValueWrapper) value);
         }
     }
 
@@ -373,6 +414,9 @@ public class CustomFieldValue implements Serializable {
         } else if (value instanceof EntityReferenceWrapper) {
             return ((EntityReferenceWrapper) value).getCode();
 
+        } else if (value instanceof ChildEntityValueWrapper) {
+            return ((ChildEntityValueWrapper) value).getUuid();// TODO need to return some values
+
         } else if (value instanceof Date) {
             SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
             return sdf.format((Date) value);
@@ -405,6 +449,9 @@ public class CustomFieldValue implements Serializable {
                     value = sdf.format(value);
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY && value != null) {
                     value = ((BusinessEntity) value).getCode();
+
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && value != null) {
+                    value = ((CustomFieldValueHolder) value).getShortRepresentationOfValues();
                 }
 
                 if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
@@ -441,6 +488,9 @@ public class CustomFieldValue implements Serializable {
 
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY && value != null) {
                     value = ((BusinessEntity) value).getCode();
+
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && value != null) {
+                    value = ((CustomFieldValueHolder) value).getShortRepresentationOfValues();
                 }
 
                 StringBuilder valBuilder = new StringBuilder();
@@ -495,7 +545,9 @@ public class CustomFieldValue implements Serializable {
             case TEXT_AREA:
                 return stringValue;
             case CHILD_ENTITY:
-                return "FIXME"; // TODO
+                if (childEntityValueForGUI != null) {
+                    return childEntityValueForGUI.getShortRepresentationOfValues();
+                }
             }
         }
         return null;
@@ -506,9 +558,10 @@ public class CustomFieldValue implements Serializable {
      * 
      * @return True is value is empty
      */
-    protected boolean isValueEmptyForGui() {
+    public boolean isValueEmptyForGui() {
         boolean isEmpty = ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && entityReferenceValueForGUI == null
-                && (mapValuesForGUI == null || mapValuesForGUI.isEmpty()) && (matrixValuesForGUI == null || matrixValuesForGUI.isEmpty()));
+                && (mapValuesForGUI == null || mapValuesForGUI.isEmpty()) && (matrixValuesForGUI == null || matrixValuesForGUI.isEmpty()) && (childEntityValueForGUI == null || childEntityValueForGUI
+            .isEmpty()));
 
         if (isEmpty) {
             return true;
@@ -531,7 +584,7 @@ public class CustomFieldValue implements Serializable {
      * 
      * @return True is value is empty
      */
-    protected boolean isValueEmpty() {
+    public boolean isValueEmpty() {
         return ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && (serializedValue == null || serializedValue
             .isEmpty()));
     }
@@ -554,6 +607,9 @@ public class CustomFieldValue implements Serializable {
         String sValue = null;
         if (entityReferenceValue != null && !entityReferenceValue.isEmpty()) {
             sValue = "entity" + SERIALIZATION_SEPARATOR + gson.toJson(entityReferenceValue);
+
+        } else if (childEntityValue != null && !childEntityValue.isEmpty()) {
+            sValue = "childEntity" + SERIALIZATION_SEPARATOR + gson.toJson(childEntityValue);
 
         } else if (listValue != null && !listValue.isEmpty()) {
             Class itemClass = listValue.get(0).getClass();
@@ -614,6 +670,10 @@ public class CustomFieldValue implements Serializable {
             String sValue = serializedValue.substring(firstSeparatorIndex + 1);
             entityReferenceValue = gson.fromJson(sValue, EntityReferenceWrapper.class);
 
+        } else if ("childEntity".equals(type)) {
+            String sValue = serializedValue.substring(firstSeparatorIndex + 1);
+            childEntityValue = gson.fromJson(sValue, ChildEntityValueWrapper.class);
+
         } else if ("list".equals(type)) {
 
             // Type defaults to String
@@ -632,6 +692,9 @@ public class CustomFieldValue implements Serializable {
                 }.getType();
             } else if (EntityReferenceWrapper.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<List<EntityReferenceWrapper>>() {
+                }.getType();
+            } else if (ChildEntityValueWrapper.class.getSimpleName().equals(subType)) {
+                itemType = new TypeToken<List<ChildEntityValueWrapper>>() {
                 }.getType();
             }
 
@@ -657,6 +720,9 @@ public class CustomFieldValue implements Serializable {
             } else if (EntityReferenceWrapper.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<Map<String, EntityReferenceWrapper>>() {
                 }.getType();
+            } else if (ChildEntityValueWrapper.class.getSimpleName().equals(subType)) {
+                itemType = new TypeToken<List<ChildEntityValueWrapper>>() {
+                }.getType();
             }
 
             String sValue = serializedValue.substring(firstSeparatorIndex + 1);
@@ -681,6 +747,9 @@ public class CustomFieldValue implements Serializable {
             } else if (EntityReferenceWrapper.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<Map<String, EntityReferenceWrapper>>() {
                 }.getType();
+            } else if (ChildEntityValueWrapper.class.getSimpleName().equals(subType)) {
+                itemType = new TypeToken<List<ChildEntityValueWrapper>>() {
+                }.getType();
             }
 
             int secondSeparatorIndex = serializedValue.indexOf(SERIALIZATION_SEPARATOR, firstSeparatorIndex + 1);
@@ -704,6 +773,10 @@ public class CustomFieldValue implements Serializable {
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
             this.setEntityReferenceValueForGUI(deserializeEntityReferenceForGUI(this.getEntityReferenceValue()));
 
+            // Convert just ChildEntity type field to a CustomFieldValueHolder object - just Single storage fields
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+            this.setChildEntityValueForGUI(deserializeChildEntityForGUI(this.getChildEntityValue()));
+
             // Populate mapValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
 
@@ -713,6 +786,8 @@ public class CustomFieldValue implements Serializable {
                     Map<String, Object> listEntry = new HashMap<String, Object>();
                     if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                         listEntry.put(CustomFieldValue.MAP_VALUE, deserializeEntityReferenceForGUI((EntityReferenceWrapper) listItem));
+                    } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                        listEntry.put(CustomFieldValue.MAP_VALUE, deserializeChildEntityForGUI((ChildEntityValueWrapper) listItem));
                     } else {
                         listEntry.put(CustomFieldValue.MAP_VALUE, listItem);
                     }
@@ -732,6 +807,8 @@ public class CustomFieldValue implements Serializable {
                     listEntry.put(CustomFieldValue.MAP_KEY, mapInfo.getKey());
                     if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                         listEntry.put(CustomFieldValue.MAP_VALUE, deserializeEntityReferenceForGUI((EntityReferenceWrapper) mapInfo.getValue()));
+                    } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                        listEntry.put(CustomFieldValue.MAP_VALUE, deserializeChildEntityForGUI((ChildEntityValueWrapper) mapInfo.getValue()));
                     } else {
                         listEntry.put(CustomFieldValue.MAP_VALUE, mapInfo.getValue());
                     }
@@ -769,6 +846,8 @@ public class CustomFieldValue implements Serializable {
                     Map<String, Object> mapValuesItem = new HashMap<String, Object>();
                     if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                         mapValuesItem.put(CustomFieldValue.MAP_VALUE, deserializeEntityReferenceForGUI((EntityReferenceWrapper) mapItem.getValue()));
+                    } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                        mapValuesItem.put(CustomFieldValue.MAP_VALUE, deserializeChildEntityForGUI((ChildEntityValueWrapper) mapItem.getValue()));
                     } else {
                         mapValuesItem.put(CustomFieldValue.MAP_VALUE, mapItem.getValue());
                     }
@@ -781,6 +860,20 @@ public class CustomFieldValue implements Serializable {
                 }
             }
         }
+    }
+
+    /**
+     * Convert childEntity field type value to GUI suitable format:from ChildEntityValueWrapper to CustomFieldValueHolder
+     * 
+     * @param childEntity ChildEntityValueWrapper value to convert
+     * @return CustomFieldValueHolder instance
+     */
+    private CustomFieldValueHolder deserializeChildEntityForGUI(ChildEntityValueWrapper childEntity) {
+        if (childEntityValue == null) {
+            return null;
+        }
+
+        return new CustomFieldValueHolder(childEntity);
     }
 
     /**
@@ -840,6 +933,14 @@ public class CustomFieldValue implements Serializable {
                 this.setEntityReferenceValue(new EntityReferenceWrapper(this.getEntityReferenceValueForGUI()));
             }
 
+            // Convert CustomFieldValueHolder object to ChildEntityValueWrapper - just Single storage fields
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+            if (this.getChildEntityValueForGUI() == null) {
+                this.setChildEntityValue(null);
+            } else {
+                this.setChildEntityValue(new ChildEntityValueWrapper(this.getChildEntityValueForGUI()));
+            }
+
             // Populate customFieldValue.listValue from mapValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
 
@@ -847,6 +948,10 @@ public class CustomFieldValue implements Serializable {
             for (Map<String, Object> listItem : this.getMapValuesForGUI()) {
                 if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                     listValue.add(new EntityReferenceWrapper((BusinessEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
+
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                    listValue.add(new ChildEntityValueWrapper((CustomFieldValueHolder) listItem.get(CustomFieldValue.MAP_VALUE)));
+
                 } else {
                     listValue.add(listItem.get(CustomFieldValue.MAP_VALUE));
                 }
@@ -861,6 +966,10 @@ public class CustomFieldValue implements Serializable {
             for (Map<String, Object> listItem : this.getMapValuesForGUI()) {
                 if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                     mapValue.put((String) listItem.get(CustomFieldValue.MAP_KEY), new EntityReferenceWrapper((BusinessEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
+
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                    mapValue.put((String) listItem.get(CustomFieldValue.MAP_KEY), new ChildEntityValueWrapper((CustomFieldValueHolder) listItem.get(CustomFieldValue.MAP_VALUE)));
+
                 } else {
                     mapValue.put((String) listItem.get(CustomFieldValue.MAP_KEY), listItem.get(CustomFieldValue.MAP_VALUE));
                 }
@@ -882,6 +991,13 @@ public class CustomFieldValue implements Serializable {
                 Object value = mapItem.get(CustomFieldValue.MAP_VALUE);
                 if (StringUtils.isBlank(value)) {
                     continue;
+                }
+
+                if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                    value = new EntityReferenceWrapper((BusinessEntity) value);
+
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                    value = new ChildEntityValueWrapper((CustomFieldValueHolder) value);
                 }
 
                 StringBuilder valBuilder = new StringBuilder();
@@ -911,6 +1027,8 @@ public class CustomFieldValue implements Serializable {
             return longValue;
         } else if (entityReferenceValue != null) {
             return entityReferenceValue;
+        } else if (childEntityValue != null) {
+            return childEntityValue;
         }
         return null;
     }
@@ -945,6 +1063,12 @@ public class CustomFieldValue implements Serializable {
         } else if (value instanceof EntityReferenceWrapper) {
             setEntityReferenceValue((EntityReferenceWrapper) value);
 
+        } else if (value instanceof CustomFieldValueHolder) {
+            setChildEntityValue(new ChildEntityValueWrapper((CustomFieldValueHolder) value));
+
+        } else if (value instanceof ChildEntityValueWrapper) {
+            setChildEntityValue((ChildEntityValueWrapper) value);
+
         } else if (value instanceof Map) {
             setMapValue((Map) value);
 
@@ -958,10 +1082,10 @@ public class CustomFieldValue implements Serializable {
         final int maxLen = 10;
         return String
             .format(
-                "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, serializedValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, entityReferenceValueForGUI=%s]",
-                stringValue, dateValue, longValue, doubleValue, serializedValue, entityReferenceValue, listValue != null ? toString(listValue, maxLen) : null,
+                "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, serializedValue=%s, childEntityValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValueForGUI=%s, entityReferenceValueForGUI=%s]",
+                stringValue, dateValue, longValue, doubleValue, serializedValue, childEntityValue, entityReferenceValue, listValue != null ? toString(listValue, maxLen) : null,
                 mapValue != null ? toString(mapValue.entrySet(), maxLen) : null, mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null,
-                matrixValuesForGUI != null ? toString(matrixValuesForGUI, maxLen) : null, entityReferenceValueForGUI);
+                matrixValuesForGUI != null ? toString(matrixValuesForGUI, maxLen) : null, childEntityValueForGUI, entityReferenceValueForGUI);
     }
 
     private String toString(Collection<?> collection, int maxLen) {

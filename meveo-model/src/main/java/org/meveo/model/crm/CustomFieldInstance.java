@@ -22,6 +22,8 @@ import javax.validation.constraints.Size;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
 
 @Entity
 @ExportIdentifier({ "appliesToEntity", "code", "periodStartDate", "periodEndDate", "provider" })

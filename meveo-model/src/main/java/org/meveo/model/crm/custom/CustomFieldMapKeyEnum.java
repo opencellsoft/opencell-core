@@ -1,4 +1,4 @@
-package org.meveo.model.crm;
+package org.meveo.model.crm.custom;
 
 public enum CustomFieldMapKeyEnum {
     STRING("customFieldMapKeyTypeEnum.STRING"), RON("customFieldMapKeyTypeEnum.RON");

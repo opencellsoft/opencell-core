@@ -33,9 +33,9 @@
 
 <cc:implementation>
 
-    <o:importConstants type="org.meveo.model.crm.CustomFieldStorageTypeEnum" />
-    <o:importConstants type="org.meveo.model.crm.CustomFieldMapKeyEnum" />
-    <o:importFunctions type="org.meveo.model.crm.CustomFieldValue" var="cfv" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
+    <o:importFunctions type="org.meveo.model.crm.custom.CustomFieldValue" var="cfv" />
     <c:set var="dateTimePattern" value="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
     <!--     <c:if test="${empty(datePattern)}"> -->
     <!--         <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" /> -->
