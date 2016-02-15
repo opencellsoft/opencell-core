@@ -105,18 +105,18 @@ public abstract class BaseWs {
 		try {
 			user = userService.loginChecks(username, password);
 		} catch (org.meveo.admin.exception.LoginException e) {
-			throw new LoginException(e.getMessage());
+			throw new LoginException("Authentication failed!");
 		}
 
 		if (user == null) {
-			throw new LoginException("Authentication failed! User does not exists!");
+			throw new LoginException("Authentication failed!");
 		}
 
 		// check if has api permission
 		boolean isAllowed = user.hasPermission("user", "apiAccess");
 
 		if (!isAllowed) {
-			throw new LoginException(user.getUserName(), "Authentication failed! Insufficient privilege!");
+			throw new LoginException(user.getUserName(), "Authentication failed! Insufficient privilege to access API services!");
 		}
 
 		return user;
