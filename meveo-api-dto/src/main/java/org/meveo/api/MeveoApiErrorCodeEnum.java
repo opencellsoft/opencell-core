@@ -61,5 +61,10 @@ public enum MeveoApiErrorCodeEnum {
     /**
      * Were not able to authenticate with given user credentials, or user does not have a required permission
      */
-    AUTHENTICATION_AUTHORIZATION_EXCEPTION;
+    AUTHENTICATION_AUTHORIZATION_EXCEPTION,
+
+    /**
+     * Action was not allowed to be performed
+     */
+    ACTION_FORBIDDEN;
 }

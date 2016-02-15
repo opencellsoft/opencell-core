@@ -9,15 +9,17 @@ import javax.interceptor.Interceptors;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.CatalogApi;
 import org.meveo.api.catalog.OfferTemplateCategoryApi;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
@@ -26,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.category.Category;
+import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
 
@@ -33,180 +36,245 @@ import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
 @Interceptors({ LoggingInterceptor.class })
 public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
-	@Inject
-	private Logger log = LoggerFactory.getLogger(CatalogRsImpl.class);
+    @Inject
+    private Logger log = LoggerFactory.getLogger(CatalogRsImpl.class);
 
-	@Context
-	private UriInfo uriInfo;
+    @Context
+    private UriInfo uriInfo;
 
-	@Inject
-	private CatalogApi catalogApi;
+    @Inject
+    private CatalogApi catalogApi;
 
-	@Inject
-	private BusinessOfferApi businessOfferApi;
-	
-	@Inject
-	private OfferTemplateCategoryApi offerTemplateCategoryApi;
+    @Inject
+    private BusinessOfferApi businessOfferApi;
 
-	@Override
-	public List<Category> findCategories() {
-		List<Category> categories = new ArrayList<Category>();
-		try {
-			List<OfferTemplateCategoryDto> offerTemplateCategoryDtos =  offerTemplateCategoryApi.list(uriInfo);
-			if (offerTemplateCategoryDtos != null && offerTemplateCategoryDtos.size() > 0) {
-				for (OfferTemplateCategoryDto otcd: offerTemplateCategoryDtos) {
-					Category category = new Category();
-					category.setId(String.valueOf(otcd.getId()));
-					category.setVersion(String.valueOf(otcd.getVersion()));
-					category.setHref(otcd.getHref());
-					category.setName(otcd.getName());
-					category.setDescription(otcd.getDescription());
-					category.setLastUpdate(otcd.getLastModified());
-					//TODO where to get life cycle status??
-					if (otcd.isActive()) {
-						category.setLifecycleStatus(LifecycleStatus.ACTIVE);
-					} else {
-						category.setLifecycleStatus(LifecycleStatus.RETIRED);
-					}
-					//TODO where to get set valid for??
-					if (otcd.getParentId() != null) {
-						category.setParentId(String.valueOf(otcd.getParentId()));
-						category.setIsRoot(false);
-					} else {
-						category.setIsRoot(true);
-					}
-					categories.add(category);
-				}
-			}
-		} catch (MeveoApiException e) {
-			log.error("MeveoApiException caught while retrieving categories: " + e.getMessage());
-		} catch (Exception e) {
-			log.error("Exception caught while retrieving categories: " + e.getMessage());
-		}
-		
-		
-		return categories;
-	}
-
-	@Override
-	public Response findCategoryById(String id) {
-		log.debug("find catetegory by id {}", id);
-		if (!"1".equals(id)) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-		
-		Category category = null;
-		try {
-			OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findById(id, getCurrentUser(), uriInfo);
-			if (otcd == null) {
-				return Response.status(Status.NOT_FOUND).build();
-			}
-			
-			category = new Category();
-			category.setId(String.valueOf(otcd.getId()));
-			category.setVersion(String.valueOf(otcd.getVersion()));
-			category.setHref(otcd.getHref());
-			category.setName(otcd.getName());
-			category.setDescription(otcd.getDescription());
-			category.setLastUpdate(otcd.getLastModified());
-			//TODO where to get life cycle status??
-			if (otcd.isActive()) {
-				category.setLifecycleStatus(LifecycleStatus.ACTIVE);
-			} else {
-				category.setLifecycleStatus(LifecycleStatus.RETIRED);
-			}
-			//TODO where to get set valid for??
-			if (otcd.getParentId() != null) {
-				category.setParentId(String.valueOf(otcd.getParentId()));
-				category.setIsRoot(false);
-			} else {
-				category.setIsRoot(true);
-			}
-			
-			
-		} catch (MeveoApiException e) {
-			log.error("MeveoApiException caught while retrieving categories: " + e.getMessage());
-			return Response.status(Status.BAD_REQUEST).build();
-		} catch (Exception e) {
-			log.error("Exception caught while retrieving categories: " + e.getMessage());
-			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-		}
-		
-		
-		return Response.ok().entity(category).build();
-	}
-
-	public List<ProductOffering> findProductOfferings() {
-		log.debug("find productOfferings ... ");
-		List<ProductOffering> productOfferings;
-		try {
-			productOfferings = catalogApi
-					.findProductOfferings(uriInfo, Category.createProto(uriInfo), getCurrentUser());
-			return productOfferings;
-		} catch (MeveoApiException e) {
-			return null;
-		}
-	}
-
-	@Override
-	public Response findProductOfferingById(String id) {
-		log.debug("find productOffering by id {}", id);
-		ProductOffering productOffering = null;
-		try {
-			productOffering = catalogApi.findProductOffering(id, getCurrentUser(), uriInfo,
-					Category.createProto(uriInfo));
-		} catch (MeveoApiException e) {
-			return Response.status(Status.NOT_FOUND).entity(MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTION).build();
-		} catch (Exception e) {
-		}
-		if (productOffering == null) {
-			return Response.status(Status.NOT_FOUND).entity("not found").build();
-		}
-		return Response.ok().entity(productOffering).build();
-	}
+    @Inject
+    private OfferTemplateCategoryApi offerTemplateCategoryApi;
 
     @Override
-    public List<ProductSpecification> findProductSpecifications() {
-        log.debug("find productSpecifications ... ");
+    public Response findCategories(UriInfo info) {
+
+        Response.ResponseBuilder responseBuilder = null;
+
         try {
-            return catalogApi.findProductSpecifications(getCurrentUser(), uriInfo);
+
+            List<Category> categories = new ArrayList<Category>();
+
+            List<OfferTemplateCategoryDto> offerTemplateCategoryDtos = offerTemplateCategoryApi.list(uriInfo);
+            if (offerTemplateCategoryDtos != null && offerTemplateCategoryDtos.size() > 0) {
+                for (OfferTemplateCategoryDto otcd : offerTemplateCategoryDtos) {
+                    Category category = new Category();
+                    category.setId(String.valueOf(otcd.getId()));
+                    category.setVersion(String.valueOf(otcd.getVersion()));
+                    category.setHref(otcd.getHref());
+                    category.setName(otcd.getName());
+                    category.setDescription(otcd.getDescription());
+                    category.setLastUpdate(otcd.getLastModified());
+                    // TODO where to get life cycle status??
+                    if (otcd.isActive()) {
+                        category.setLifecycleStatus(LifecycleStatus.ACTIVE);
+                    } else {
+                        category.setLifecycleStatus(LifecycleStatus.RETIRED);
+                    }
+                    // TODO where to get set valid for??
+                    if (otcd.getParentId() != null) {
+                        category.setParentId(String.valueOf(otcd.getParentId()));
+                        category.setIsRoot(false);
+                    } else {
+                        category.setIsRoot(true);
+                    }
+                    categories.add(category);
+                }
+            }
+
+            responseBuilder = Response.ok().entity(categories);
+
         } catch (MeveoApiException e) {
-            return null;
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
         }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
     }
 
-	@Override
-	public Response findProductSpecificationById(String id) {
-		log.debug("find productSpecification by id {}", id);
-		ProductSpecification productSpecification = null;
-		try {
-			productSpecification = catalogApi.findProductSpecification(id, getCurrentUser(), uriInfo);
-		} catch (Exception e) {
-		}
-		if (productSpecification == null) {
-			return Response.status(Status.NOT_FOUND).entity("no found!").build();
-		}
-		return Response.ok().entity(productSpecification).build();
-	}
+    @Override
+    public Response getCategory(String id, UriInfo info) {
+        log.debug("find category by id {}", id);
 
-	@Override
-	public Response createOfferFromBOM(BomOfferDto postData) {
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
 
-		try {
-			businessOfferApi.createOfferFromBOM(postData, getCurrentUser());
-			responseBuilder = Response.ok();
-		} catch (ConstraintViolationException e) {
-			log.error(e.getMessage());
-			responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-		} catch (MeveoApiException e) {
-			log.error(e.getMessage());
-			responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
-		}
+        try {
+            OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findById(id, getCurrentUser(), uriInfo);
 
-		return responseBuilder.build();
-	}
+            Category category = new Category();
+            category.setId(String.valueOf(otcd.getId()));
+            category.setVersion(String.valueOf(otcd.getVersion()));
+            category.setHref(otcd.getHref());
+            category.setName(otcd.getName());
+            category.setDescription(otcd.getDescription());
+            category.setLastUpdate(otcd.getLastModified());
+            // TODO where to get life cycle status??
+            if (otcd.isActive()) {
+                category.setLifecycleStatus(LifecycleStatus.ACTIVE);
+            } else {
+                category.setLifecycleStatus(LifecycleStatus.RETIRED);
+            }
+            // TODO where to get set valid for??
+            if (otcd.getParentId() != null) {
+                category.setParentId(String.valueOf(otcd.getParentId()));
+                category.setIsRoot(false);
+            } else {
+                category.setIsRoot(true);
+            }
+
+            responseBuilder = Response.ok().entity(category);
+
+        } catch (EntityDoesNotExistsException e) {
+            responseBuilder = Response.status(Response.Status.NOT_FOUND);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    public Response findProductOfferings(UriInfo info) {
+        log.debug("find productOfferings ... ");
+
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            List<ProductOffering> productOfferings = catalogApi.findProductOfferings(uriInfo, Category.createProto(uriInfo), getCurrentUser());
+            responseBuilder = Response.ok().entity(productOfferings);
+
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response getProductOffering(String id, UriInfo info) {
+        log.debug("find productOffering by id {}", id);
+
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            ProductOffering productOffering = catalogApi.findProductOffering(id, getCurrentUser(), uriInfo, Category.createProto(uriInfo));
+            responseBuilder = Response.ok().entity(productOffering);
+
+        } catch (EntityDoesNotExistsException e) {
+            responseBuilder = Response.status(Response.Status.NOT_FOUND);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response findProductSpecifications(UriInfo info) {
+        log.debug("find productSpecifications ... ");
+
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            List<ProductSpecification> productSpecifications = catalogApi.findProductSpecifications(getCurrentUser(), uriInfo);
+            responseBuilder = Response.ok().entity(productSpecifications);
+
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response getProductSpecification(String id, UriInfo info) {
+        log.debug("find productSpecification by id {}", id);
+
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+            ProductSpecification productSpecification = catalogApi.findProductSpecification(id, getCurrentUser(), uriInfo);
+//            ProductSpecification productSpecification2 = catalogApi.findProductSpecification("TM_2_OFFER2", getCurrentUser(), uriInfo);
+            
+//            productSpecification.setBundledProductSpecification(new ArrayList<BundledProductReference>());
+//            BundledProductReference bpr = new BundledProductReference();
+//            productSpecification.getBundledProductSpecification().add(bpr);
+//            bpr.setReferencedId("TM_2_OFFER2");
+//            bpr.setEntity(productSpecification2);
+            
+            responseBuilder = Response.ok().entity(productSpecification);
+
+        } catch (EntityDoesNotExistsException e) {
+            responseBuilder = Response.status(Response.Status.NOT_FOUND);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response createOfferFromBOM(BomOfferDto postData) {
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            businessOfferApi.createOfferFromBOM(postData, getCurrentUser());
+            responseBuilder = Response.ok();
+
+        } catch (ConstraintViolationException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
 }
