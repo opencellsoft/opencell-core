@@ -8,6 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
@@ -19,6 +20,8 @@ import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
+import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
@@ -214,4 +217,24 @@ public interface CatalogWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus createOfferFromBOM(@WebParam(name = "bomOffer") BomOfferDto postData);
+	
+	//discount Plan
+	@WebMethod
+	ActionStatus createDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
+	
+	@WebMethod
+	ActionStatus updateDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
+	
+	@WebMethod
+	ActionStatus createOrUpdateDiscountPlan(@WebParam(name = "discountPlan") DiscountPlanDto postData);
+	
+	@WebMethod
+	GetDiscountPlanResponseDto findDiscountPlan(@WebParam(name = "discountPlanCocde") String discountPlanCode);
+	
+	@WebMethod
+	ActionStatus removeDiscountPlan(@WebParam(name = "discountPlanCocde") String discountPlanCode);
+	
+	@WebMethod
+	GetDiscountPlansResponseDto listDiscountPlan();
+	
 }

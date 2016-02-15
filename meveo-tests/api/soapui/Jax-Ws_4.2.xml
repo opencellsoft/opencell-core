@@ -19801,6 +19801,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeBusinessOfferModel">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeBusinessOfferModel">
@@ -19945,12 +19954,30 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateRecurringChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateRecurringChargeTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createOrUpdateRecurringChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createDiscountPlanResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -19978,6 +20005,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeCounterTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findDiscountPlanResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -20053,6 +20089,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateRecurringChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateRecurringChargeTemplate">
@@ -20098,6 +20143,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateOfferTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateOfferTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateOfferTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateUsageChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateUsageChargeTemplate">
@@ -20113,15 +20167,6 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="listPricePlanByEventCodeResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateOfferTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateOfferTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateOfferTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -20170,6 +20215,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="listDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removePricePlan">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removePricePlan">
@@ -20205,10 +20259,13 @@
       <xs:element name="CustomField" type="tns:customFieldDto"/>
       <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
       <xs:element name="CustomFields" type="tns:customFieldsDto"/>
+      <xs:element name="DiscountPlan" type="tns:discountPlanDto"/>
       <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
       <xs:element name="GetBusinessOfferModelResponse" type="tns:getBusinessOfferModelResponseDto"/>
       <xs:element name="GetChargeTemplateResponse" type="tns:getChargeTemplateResponseDto"/>
       <xs:element name="GetCounterTemplateResponse" type="tns:getCounterTemplateResponseDto"/>
+      <xs:element name="GetDiscountPlanResponse" type="tns:getDiscountPlanResponseDto"/>
+      <xs:element name="GetDiscountPlansResponse" type="tns:getDiscountPlansResponseDto"/>
       <xs:element name="GetOfferTemplateResponse" type="tns:getOfferTemplateResponseDto"/>
       <xs:element name="GetOneShotChargeTemplateResponse" type="tns:getOneShotChargeTemplateResponseDto"/>
       <xs:element name="GetPricePlanResponse" type="tns:getPricePlanResponseDto"/>
@@ -20233,6 +20290,8 @@
       <xs:element name="createBusinessOfferModelResponse" type="tns:createBusinessOfferModelResponse"/>
       <xs:element name="createCounterTemplate" type="tns:createCounterTemplate"/>
       <xs:element name="createCounterTemplateResponse" type="tns:createCounterTemplateResponse"/>
+      <xs:element name="createDiscountPlan" type="tns:createDiscountPlan"/>
+      <xs:element name="createDiscountPlanResponse" type="tns:createDiscountPlanResponse"/>
       <xs:element name="createOfferFromBOM" type="tns:createOfferFromBOM"/>
       <xs:element name="createOfferFromBOMResponse" type="tns:createOfferFromBOMResponse"/>
       <xs:element name="createOfferTemplate" type="tns:createOfferTemplate"/>
@@ -20243,6 +20302,8 @@
       <xs:element name="createOrUpdateBusinessOfferModelResponse" type="tns:createOrUpdateBusinessOfferModelResponse"/>
       <xs:element name="createOrUpdateCounterTemplate" type="tns:createOrUpdateCounterTemplate"/>
       <xs:element name="createOrUpdateCounterTemplateResponse" type="tns:createOrUpdateCounterTemplateResponse"/>
+      <xs:element name="createOrUpdateDiscountPlan" type="tns:createOrUpdateDiscountPlan"/>
+      <xs:element name="createOrUpdateDiscountPlanResponse" type="tns:createOrUpdateDiscountPlanResponse"/>
       <xs:element name="createOrUpdateOfferTemplate" type="tns:createOrUpdateOfferTemplate"/>
       <xs:element name="createOrUpdateOfferTemplateResponse" type="tns:createOrUpdateOfferTemplateResponse"/>
       <xs:element name="createOrUpdateOneShotChargeTemplate" type="tns:createOrUpdateOneShotChargeTemplate"/>
@@ -20273,6 +20334,8 @@
       <xs:element name="findChargeTemplateResponse" type="tns:findChargeTemplateResponse"/>
       <xs:element name="findCounterTemplate" type="tns:findCounterTemplate"/>
       <xs:element name="findCounterTemplateResponse" type="tns:findCounterTemplateResponse"/>
+      <xs:element name="findDiscountPlan" type="tns:findDiscountPlan"/>
+      <xs:element name="findDiscountPlanResponse" type="tns:findDiscountPlanResponse"/>
       <xs:element name="findOfferTemplate" type="tns:findOfferTemplate"/>
       <xs:element name="findOfferTemplateResponse" type="tns:findOfferTemplateResponse"/>
       <xs:element name="findOneShotChargeTemplate" type="tns:findOneShotChargeTemplate"/>
@@ -20289,6 +20352,8 @@
       <xs:element name="findUsageChargeTemplateResponse" type="tns:findUsageChargeTemplateResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="listDiscountPlan" type="tns:listDiscountPlan"/>
+      <xs:element name="listDiscountPlanResponse" type="tns:listDiscountPlanResponse"/>
       <xs:element name="listOneShotChargeTemplate" type="tns:listOneShotChargeTemplate"/>
       <xs:element name="listOneShotChargeTemplateResponse" type="tns:listOneShotChargeTemplateResponse"/>
       <xs:element name="listPricePlanByEventCode" type="tns:listPricePlanByEventCode"/>
@@ -20297,6 +20362,8 @@
       <xs:element name="removeBusinessOfferModelResponse" type="tns:removeBusinessOfferModelResponse"/>
       <xs:element name="removeCounterTemplate" type="tns:removeCounterTemplate"/>
       <xs:element name="removeCounterTemplateResponse" type="tns:removeCounterTemplateResponse"/>
+      <xs:element name="removeDiscountPlan" type="tns:removeDiscountPlan"/>
+      <xs:element name="removeDiscountPlanResponse" type="tns:removeDiscountPlanResponse"/>
       <xs:element name="removeOfferTemplate" type="tns:removeOfferTemplate"/>
       <xs:element name="removeOfferTemplateResponse" type="tns:removeOfferTemplateResponse"/>
       <xs:element name="removeOneShotChargeTemplate" type="tns:removeOneShotChargeTemplate"/>
@@ -20315,6 +20382,8 @@
       <xs:element name="updateBusinessOfferModelResponse" type="tns:updateBusinessOfferModelResponse"/>
       <xs:element name="updateCounterTemplate" type="tns:updateCounterTemplate"/>
       <xs:element name="updateCounterTemplateResponse" type="tns:updateCounterTemplateResponse"/>
+      <xs:element name="updateDiscountPlan" type="tns:updateDiscountPlan"/>
+      <xs:element name="updateDiscountPlanResponse" type="tns:updateDiscountPlanResponse"/>
       <xs:element name="updateOfferTemplate" type="tns:updateOfferTemplate"/>
       <xs:element name="updateOfferTemplateResponse" type="tns:updateOfferTemplateResponse"/>
       <xs:element name="updateOneShotChargeTemplate" type="tns:updateOneShotChargeTemplate"/>
@@ -20497,6 +20566,7 @@
       <xs:complexType name="entityReferenceDto">
         <xs:sequence/>
         <xs:attribute name="classname" type="xs:string" use="required"/>
+        <xs:attribute name="classnameCode" type="xs:string"/>
         <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="triggeredEdrTemplatesDto">
@@ -20550,6 +20620,7 @@
           <xs:element minOccurs="0" name="serviceChargeTemplateTerminations" type="tns:ServiceChargeTemplateTerminations"/>
           <xs:element minOccurs="0" name="serviceChargeTemplateUsages" type="tns:ServiceChargeTemplateUsages"/>
           <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+          <xs:element name="mandatory" type="xs:boolean"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
         <xs:attribute name="description" type="xs:string" use="required"/>
@@ -20616,6 +20687,22 @@
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createOfferTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="discountPlanDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateDiscountPlanResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
@@ -20881,6 +20968,26 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createOrUpdateServiceTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="serviceTemplate" type="tns:serviceTemplateDto"/>
@@ -20921,6 +21028,25 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlanCocde" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getDiscountPlanResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getDiscountPlanResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="discountPlanDto" type="tns:discountPlanDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="findBusinessOfferModel">
         <xs:sequence>
@@ -21057,6 +21183,16 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="removeDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlanCocde" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="updateRecurringChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
@@ -21125,6 +21261,16 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="updateOfferTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateOfferTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createOrUpdateUsageChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
@@ -21157,16 +21303,6 @@
       <xs:complexType name="PricePlans">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="pricePlanMatrix" nillable="true" type="tns:pricePlanDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateOfferTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateOfferTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createUsageChargeTemplate">
@@ -21216,6 +21352,28 @@
       <xs:complexType name="removeOfferTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listDiscountPlan">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="listDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getDiscountPlansResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getDiscountPlansResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="discountPlan" type="tns:DiscountPlans"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="DiscountPlans">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="discountPlan" nillable="true" type="tns:discountPlanDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findPricePlan">
@@ -21338,6 +21496,9 @@
   <wsdl:message name="createOfferTemplateResponse">
     <wsdl:part element="ns1:createOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateDiscountPlan">
+    <wsdl:part element="ns1:createOrUpdateDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeBusinessOfferModelResponse">
     <wsdl:part element="ns1:removeBusinessOfferModelResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -21349,6 +21510,9 @@
   </wsdl:message>
   <wsdl:message name="createPricePlan">
     <wsdl:part element="ns1:createPricePlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeDiscountPlan">
+    <wsdl:part element="ns1:removeDiscountPlan" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findRecurringChargeTemplate">
     <wsdl:part element="ns1:findRecurringChargeTemplate" name="parameters"></wsdl:part>
@@ -21419,6 +21583,9 @@
   <wsdl:message name="createOrUpdateUsageChargeTemplate">
     <wsdl:part element="ns1:createOrUpdateUsageChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateDiscountPlan">
+    <wsdl:part element="ns1:updateDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findOfferTemplate">
     <wsdl:part element="ns1:findOfferTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -21427,6 +21594,9 @@
   </wsdl:message>
   <wsdl:message name="updateBusinessOfferModelResponse">
     <wsdl:part element="ns1:updateBusinessOfferModelResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findDiscountPlanResponse">
+    <wsdl:part element="ns1:findDiscountPlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createServiceTemplate">
     <wsdl:part element="ns1:createServiceTemplate" name="parameters"></wsdl:part>
@@ -21467,11 +21637,14 @@
   <wsdl:message name="removeTriggeredEdrResponse">
     <wsdl:part element="ns1:removeTriggeredEdrResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeOfferTemplate">
+    <wsdl:part element="ns1:removeOfferTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="listOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:listOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeOfferTemplate">
-    <wsdl:part element="ns1:removeOfferTemplate" name="parameters"></wsdl:part>
+  <wsdl:message name="removeDiscountPlanResponse">
+    <wsdl:part element="ns1:removeDiscountPlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removePricePlanResponse">
     <wsdl:part element="ns1:removePricePlanResponse" name="parameters"></wsdl:part>
@@ -21479,11 +21652,11 @@
   <wsdl:message name="findOneShotChargeTemplate">
     <wsdl:part element="ns1:findOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updatePricePlan">
-    <wsdl:part element="ns1:updatePricePlan" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createBusinessOfferModel">
     <wsdl:part element="ns1:createBusinessOfferModel" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updatePricePlan">
+    <wsdl:part element="ns1:updatePricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createBusinessOfferModelResponse">
     <wsdl:part element="ns1:createBusinessOfferModelResponse" name="parameters"></wsdl:part>
@@ -21502,6 +21675,12 @@
   </wsdl:message>
   <wsdl:message name="createOrUpdateTriggeredEdr">
     <wsdl:part element="ns1:createOrUpdateTriggeredEdr" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateDiscountPlanResponse">
+    <wsdl:part element="ns1:updateDiscountPlanResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateDiscountPlanResponse">
+    <wsdl:part element="ns1:createOrUpdateDiscountPlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateUsageChargeTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
@@ -21530,6 +21709,9 @@
   <wsdl:message name="createOfferFromBOMResponse">
     <wsdl:part element="ns1:createOfferFromBOMResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="listDiscountPlanResponse">
+    <wsdl:part element="ns1:listDiscountPlanResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createOneShotChargeTemplate">
     <wsdl:part element="ns1:createOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -21551,6 +21733,9 @@
   <wsdl:message name="createOrUpdateServiceTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateServiceTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findDiscountPlan">
+    <wsdl:part element="ns1:findDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removePricePlan">
     <wsdl:part element="ns1:removePricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -21560,11 +21745,11 @@
   <wsdl:message name="updateCounterTemplate">
     <wsdl:part element="ns1:updateCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateOneShotChargeTemplateResponse">
-    <wsdl:part element="ns1:updateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findPricePlan">
     <wsdl:part element="ns1:findPricePlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateOneShotChargeTemplateResponse">
+    <wsdl:part element="ns1:updateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listPricePlanByEventCode">
     <wsdl:part element="ns1:listPricePlanByEventCode" name="parameters"></wsdl:part>
@@ -21575,11 +21760,20 @@
   <wsdl:message name="updateUsageChargeTemplate">
     <wsdl:part element="ns1:updateUsageChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createDiscountPlan">
+    <wsdl:part element="ns1:createDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findCounterTemplateResponse">
     <wsdl:part element="ns1:findCounterTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeServiceTemplate">
     <wsdl:part element="ns1:removeServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listDiscountPlan">
+    <wsdl:part element="ns1:listDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createDiscountPlanResponse">
+    <wsdl:part element="ns1:createDiscountPlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeOneShotChargeTemplate">
     <wsdl:part element="ns1:removeOneShotChargeTemplate" name="parameters"></wsdl:part>
@@ -21615,6 +21809,10 @@
     <wsdl:operation name="createOfferTemplate">
       <wsdl:input message="ns1:createOfferTemplate" name="createOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOfferTemplateResponse" name="createOfferTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateDiscountPlan">
+      <wsdl:input message="ns1:updateDiscountPlan" name="updateDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:updateDiscountPlanResponse" name="updateDiscountPlanResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updatePricePlan">
       <wsdl:input message="ns1:updatePricePlan" name="updatePricePlan"></wsdl:input>
@@ -21684,6 +21882,14 @@
       <wsdl:input message="ns1:createOrUpdateRecurringChargeTemplate" name="createOrUpdateRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateRecurringChargeTemplateResponse" name="createOrUpdateRecurringChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateDiscountPlan">
+      <wsdl:input message="ns1:createOrUpdateDiscountPlan" name="createOrUpdateDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateDiscountPlanResponse" name="createOrUpdateDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createDiscountPlan">
+      <wsdl:input message="ns1:createDiscountPlan" name="createDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:createDiscountPlanResponse" name="createDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateServiceTemplate">
       <wsdl:input message="ns1:createOrUpdateServiceTemplate" name="createOrUpdateServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateServiceTemplateResponse" name="createOrUpdateServiceTemplateResponse"></wsdl:output>
@@ -21695,6 +21901,10 @@
     <wsdl:operation name="createOfferFromBOM">
       <wsdl:input message="ns1:createOfferFromBOM" name="createOfferFromBOM"></wsdl:input>
       <wsdl:output message="ns1:createOfferFromBOMResponse" name="createOfferFromBOMResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findDiscountPlan">
+      <wsdl:input message="ns1:findDiscountPlan" name="findDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:findDiscountPlanResponse" name="findDiscountPlanResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findBusinessOfferModel">
       <wsdl:input message="ns1:findBusinessOfferModel" name="findBusinessOfferModel"></wsdl:input>
@@ -21728,6 +21938,10 @@
       <wsdl:input message="ns1:findTriggeredEdr" name="findTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:findTriggeredEdrResponse" name="findTriggeredEdrResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeDiscountPlan">
+      <wsdl:input message="ns1:removeDiscountPlan" name="removeDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:removeDiscountPlanResponse" name="removeDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateRecurringChargeTemplate">
       <wsdl:input message="ns1:updateRecurringChargeTemplate" name="updateRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateRecurringChargeTemplateResponse" name="updateRecurringChargeTemplateResponse"></wsdl:output>
@@ -21748,6 +21962,10 @@
       <wsdl:input message="ns1:findUsageChargeTemplate" name="findUsageChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:findUsageChargeTemplateResponse" name="findUsageChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateOfferTemplate">
+      <wsdl:input message="ns1:updateOfferTemplate" name="updateOfferTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateOfferTemplateResponse" name="updateOfferTemplateResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateUsageChargeTemplate">
       <wsdl:input message="ns1:createOrUpdateUsageChargeTemplate" name="createOrUpdateUsageChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateUsageChargeTemplateResponse" name="createOrUpdateUsageChargeTemplateResponse"></wsdl:output>
@@ -21755,10 +21973,6 @@
     <wsdl:operation name="listPricePlanByEventCode">
       <wsdl:input message="ns1:listPricePlanByEventCode" name="listPricePlanByEventCode"></wsdl:input>
       <wsdl:output message="ns1:listPricePlanByEventCodeResponse" name="listPricePlanByEventCodeResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateOfferTemplate">
-      <wsdl:input message="ns1:updateOfferTemplate" name="updateOfferTemplate"></wsdl:input>
-      <wsdl:output message="ns1:updateOfferTemplateResponse" name="updateOfferTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createUsageChargeTemplate">
       <wsdl:input message="ns1:createUsageChargeTemplate" name="createUsageChargeTemplate"></wsdl:input>
@@ -21775,6 +21989,10 @@
     <wsdl:operation name="removeOfferTemplate">
       <wsdl:input message="ns1:removeOfferTemplate" name="removeOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeOfferTemplateResponse" name="removeOfferTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listDiscountPlan">
+      <wsdl:input message="ns1:listDiscountPlan" name="listDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:listDiscountPlanResponse" name="listDiscountPlanResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findPricePlan">
       <wsdl:input message="ns1:findPricePlan" name="findPricePlan"></wsdl:input>
@@ -24094,7 +24312,67 @@
          </businessOfferModel>\r
       </ws:updateBusinessOfferModel>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateBusinessOfferModel"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="3db00ff1-8f28-4532-9da8-5efb5c1e6655" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndPoint}/NotificationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateBusinessOfferModel"/></con:call></con:operation><con:operation id="a1e56029-2282-4c1c-a85d-a2085cd2989b" isOneWay="false" action="" name="updateDiscountPlan" bindingOperationName="updateDiscountPlan" type="Request-Response" outputName="updateDiscountPlanResponse" inputName="updateDiscountPlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c00af7fd-40fe-4539-818d-277e0d21555c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateDiscountPlan>\r
+         <!--Optional:-->\r
+         <discountPlan>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+         </discountPlan>\r
+      </ws:updateDiscountPlan>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/updateDiscountPlan"/></con:call></con:operation><con:operation id="a0915aa4-859d-4460-a620-c51a5a1685ab" isOneWay="false" action="" name="createOrUpdateDiscountPlan" bindingOperationName="createOrUpdateDiscountPlan" type="Request-Response" outputName="createOrUpdateDiscountPlanResponse" inputName="createOrUpdateDiscountPlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="0adb76c3-c9de-4b98-9d36-8cca3378264a" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateDiscountPlan>\r
+         <!--Optional:-->\r
+         <discountPlan>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+         </discountPlan>\r
+      </ws:createOrUpdateDiscountPlan>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createOrUpdateDiscountPlan"/></con:call></con:operation><con:operation id="614fa6dd-4370-4d9b-ae09-9ee8781511c2" isOneWay="false" action="" name="createDiscountPlan" bindingOperationName="createDiscountPlan" type="Request-Response" outputName="createDiscountPlanResponse" inputName="createDiscountPlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e1c90066-774a-4dbc-aaba-dee98e8e1f53" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createDiscountPlan>\r
+         <!--Optional:-->\r
+         <discountPlan>\r
+            <!--Optional:-->\r
+            <code>?</code>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+         </discountPlan>\r
+      </ws:createDiscountPlan>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/createDiscountPlan"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="3f920314-863a-465d-a0ac-b353316a45a9" isOneWay="false" action="" name="findDiscountPlan" bindingOperationName="findDiscountPlan" type="Request-Response" outputName="findDiscountPlanResponse" inputName="findDiscountPlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b19b5d66-a8a1-4618-b289-b16f92ddb08a" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findDiscountPlan>\r
+         <!--Optional:-->\r
+         <discountPlanCocde>?</discountPlanCocde>\r
+      </ws:findDiscountPlan>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/findDiscountPlan"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="ab7efe0c-67b6-47e7-bc97-72961b43d6f2" isOneWay="false" action="" name="removeDiscountPlan" bindingOperationName="removeDiscountPlan" type="Request-Response" outputName="removeDiscountPlanResponse" inputName="removeDiscountPlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fec1ac5f-4e79-4472-84fa-7517fab62f62" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeDiscountPlan>\r
+         <!--Optional:-->\r
+         <discountPlanCocde>?</discountPlanCocde>\r
+      </ws:removeDiscountPlan>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/removeDiscountPlan"/></con:call></con:operation><con:operation id="d24fe42d-a36a-45db-87ae-c8d32cc132ba" isOneWay="false" action="" name="listDiscountPlan" bindingOperationName="listDiscountPlan" type="Request-Response" outputName="listDiscountPlanResponse" inputName="listDiscountPlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="32acc67d-593b-4e74-be94-83a9a87db691" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listDiscountPlan/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/CatalogWs/listDiscountPlan"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" id="3db00ff1-8f28-4532-9da8-5efb5c1e6655" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndPoint}/NotificationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/NotificationWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/NotificationWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="NotificationWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/NotificationWs?wsdl=NotificationWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="NotificationWsSoapBinding" type="ns1:NotificationWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -39607,4 +39885,121 @@ public class ${#TestSuite#ticket}BOMCreationScript extends Script {
          <numberOfRows>5</numberOfRows>\r
       </ws:list>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="cbf11748-898f-498b-9d6c-f9d2f4c808b4"/><con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>filter_use_case</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="cbf11748-898f-498b-9d6c-f9d2f4c808b4"/><con:assertion type="Simple Contains" id="97c2ff33-1470-4405-b19a-4aa0c70475a1" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>filter_use_case</con:value></con:property></con:properties></con:testSuite><con:testSuite id="512e451d-51d6-433c-b8f1-dc12f860962d" name="#1427_discountPlanApi"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="a0647371-45c4-4af6-967e-fa40fb8a223f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="create_find" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="75d864dd-1771-4406-b56f-126896961208"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createDiscountPlan</con:operation><con:request name="create" id="80036d1d-f9a3-485f-9171-67b82c944b8a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createDiscountPlan>
+         <!--Optional:-->
+         <discountPlan>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_dp_code1</code>
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_dp_desc1</description>
+         </discountPlan>
+      </ws:createDiscountPlan>
+
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5bfbf450-47e4-40d3-9db6-cb9d8c71d32e"/><con:assertion type="Simple Contains" id="9d0ad9da-f471-4f83-88ec-266afbac9255" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="9950d05f-82d5-4f32-9776-a8f21b9c79ce"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findDiscountPlan</con:operation><con:request name="find" id="1f6f3554-beb2-4de5-a7ac-2d820d59a12b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findDiscountPlan>
+      	<discountPlanCocde>${#TestSuite#ticket}_dp_code1</discountPlanCocde>
+      </ws:findDiscountPlan>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="58be53a1-f8f6-40fa-85c2-53a245f954b6"/><con:assertion type="Simple Contains" id="5de375ef-506a-4107-a3df-162a578e4aba" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="33029628-b671-4178-800a-f8a058a5ee9d" name="Code"><con:configuration><token>&lt;code>1427_dp_code1&lt;/code></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="daee6d0e-6b4c-422b-984a-eece6997cd8c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="update" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="24570a65-bd2f-44ce-b68a-2aaa1b4ca6f4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createDiscountPlan</con:operation><con:request name="create" id="654ed8a5-1982-4ed6-8fbe-e6d82fdce941"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createDiscountPlan>
+         <!--Optional:-->
+         <discountPlan>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_dp_code2</code>
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_dp_desc2</description>
+         </discountPlan>
+      </ws:createDiscountPlan>
+
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="086d1550-5186-4e80-8f26-89ac8d9af398"/><con:assertion type="Simple Contains" id="e63c6d05-5e79-4f0c-be37-e13a775de52c" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="1cf191ad-f0c7-4062-8e72-d886c21876a3"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findDiscountPlan</con:operation><con:request name="find" id="5944b94e-0960-448d-b0f7-7b72d15912f2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDiscountPlan>
+      	<discountPlanCocde>${#TestSuite#ticket}_dp_code2</discountPlanCocde>
+      </ws:findDiscountPlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="35c1471b-a959-43bc-8df9-2c0018fce3c8"/><con:assertion type="Simple Contains" id="81f1b332-3974-401d-bb58-4f65adfc5663" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="4d9934eb-f380-4a5e-852c-7c8d59e5f40d" name="Code"><con:configuration><token>&lt;code>1427_dp_code2&lt;/code></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="update" id="b324bbfc-6f1a-4c08-aa5c-c422241d3846"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>updateDiscountPlan</con:operation><con:request name="update" id="a6d75cdb-904d-424f-89f8-724019664426"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateDiscountPlan>
+      	<!--Optional:-->
+         <discountPlan>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_dp_code2</code>
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_dp_updated_desc2</description>
+         </discountPlan>
+      </ws:updateDiscountPlan>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="442981a9-b549-4987-8f8d-6dcc8ed59c78"/><con:assertion type="Simple Contains" id="e085da37-90a0-47fd-84e2-90661e2418cb" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_updated" id="a97d0bcd-059f-4ab3-8a5c-3195c026999a"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findDiscountPlan</con:operation><con:request name="find_updated" id="5944b94e-0960-448d-b0f7-7b72d15912f2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDiscountPlan>
+      	<discountPlanCocde>${#TestSuite#ticket}_dp_code2</discountPlanCocde>
+      </ws:findDiscountPlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="35c1471b-a959-43bc-8df9-2c0018fce3c8"/><con:assertion type="Simple Contains" id="81f1b332-3974-401d-bb58-4f65adfc5663" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="4d9934eb-f380-4a5e-852c-7c8d59e5f40d" name="Code"><con:configuration><token>&lt;code>1427_dp_code2&lt;/code></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="6f6f52d6-ff99-4a1a-b818-49d75fc9574d" name="desc"><con:configuration><token>&lt;description>1427_dp_updated_desc2&lt;/description></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="e451c1d5-b0dc-4e0f-8179-ef24d7f13162" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="remove" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="684f2343-6b54-45a0-9756-4fd5d59e80c4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createDiscountPlan</con:operation><con:request name="create" id="654ed8a5-1982-4ed6-8fbe-e6d82fdce941"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createDiscountPlan>
+         <!--Optional:-->
+         <discountPlan>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_dp_code3</code>
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_dp_desc3</description>
+         </discountPlan>
+      </ws:createDiscountPlan>
+
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="086d1550-5186-4e80-8f26-89ac8d9af398"/><con:assertion type="Simple Contains" id="e63c6d05-5e79-4f0c-be37-e13a775de52c" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find" id="6446211b-64af-4d06-a6db-7af16ac1a0e2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findDiscountPlan</con:operation><con:request name="find" id="5944b94e-0960-448d-b0f7-7b72d15912f2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDiscountPlan>
+      	<discountPlanCocde>${#TestSuite#ticket}_dp_code3</discountPlanCocde>
+      </ws:findDiscountPlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="35c1471b-a959-43bc-8df9-2c0018fce3c8"/><con:assertion type="Simple Contains" id="81f1b332-3974-401d-bb58-4f65adfc5663" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="4d9934eb-f380-4a5e-852c-7c8d59e5f40d" name="Code"><con:configuration><token>&lt;code>1427_dp_code3&lt;/code></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="remove" id="392902ee-b249-4422-8e53-2c09ae32ea46"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>updateDiscountPlan</con:operation><con:request name="remove" id="a6d75cdb-904d-424f-89f8-724019664426"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeDiscountPlan>
+      	<discountPlanCocde>${#TestSuite#ticket}_dp_code3</discountPlanCocde>
+      </ws:removeDiscountPlan>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="442981a9-b549-4987-8f8d-6dcc8ed59c78"/><con:assertion type="Simple Contains" id="e085da37-90a0-47fd-84e2-90661e2418cb" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="find_removed" id="298b7b9c-1def-439b-9643-94becbcee357"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findDiscountPlan</con:operation><con:request name="find_removed" id="5944b94e-0960-448d-b0f7-7b72d15912f2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findDiscountPlan>
+      	<discountPlanCocde>${#TestSuite#ticket}_dp_code3</discountPlanCocde>
+      </ws:findDiscountPlan>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="35c1471b-a959-43bc-8df9-2c0018fce3c8"/><con:assertion type="Simple Contains" id="81f1b332-3974-401d-bb58-4f65adfc5663" name="Contains"><con:configuration><token>FAIL</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="4d9934eb-f380-4a5e-852c-7c8d59e5f40d" name="Code"><con:configuration><token>&lt;errorCode>ENTITY_DOES_NOT_EXISTS_EXCEPTION&lt;/errorCode></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="34d70aa5-919d-4305-8cdb-574fa6123d05" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="list" searchProperties="true"><con:settings/><con:testStep type="request" name="create" id="20b23545-ba92-4a28-8a3e-e62b235dbf48"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createDiscountPlan</con:operation><con:request name="create" id="80036d1d-f9a3-485f-9171-67b82c944b8a"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createDiscountPlan>
+         <!--Optional:-->
+         <discountPlan>
+            <!--Optional:-->
+            <code>${#TestSuite#ticket}_dp_code4</code>
+            <!--Optional:-->
+            <description>${#TestSuite#ticket}_dp_desc4</description>
+         </discountPlan>
+      </ws:createDiscountPlan>
+
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="5bfbf450-47e4-40d3-9db6-cb9d8c71d32e"/><con:assertion type="Simple Contains" id="9d0ad9da-f471-4f83-88ec-266afbac9255" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="list" id="d0eef817-a63e-454b-9a2d-bc3a46380577"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>findDiscountPlan</con:operation><con:request name="list" id="1f6f3554-beb2-4de5-a7ac-2d820d59a12b"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listDiscountPlan>
+      </ws:listDiscountPlan>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="58be53a1-f8f6-40fa-85c2-53a245f954b6"/><con:assertion type="Simple Contains" id="5de375ef-506a-4107-a3df-162a578e4aba" name="Contains"><con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains" id="33029628-b671-4178-800a-f8a058a5ee9d" name="Code"><con:configuration><token>&lt;code>1427_dp_code4&lt;/code></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>1427</con:value></con:property></con:properties></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" outgoingWss="" wssTimeToLive="">http://192.168.10.14:8080/meveo/SettingsWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>meveoEndpoint</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
