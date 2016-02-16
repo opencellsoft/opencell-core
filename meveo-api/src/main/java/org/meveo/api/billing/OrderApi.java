@@ -39,322 +39,300 @@ import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 @Stateless
 public class OrderApi {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private SubscriptionService subscriptionService;
-	@Inject
-	private OfferTemplateService offerTemplateService;
-	@Inject
-	private UserAccountService userAccountService;
-	@Inject
-	private ServiceInstanceService serviceInstanceService;
-	@Inject
-	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
+    @Inject
+    private SubscriptionService subscriptionService;
+    @Inject
+    private OfferTemplateService offerTemplateService;
+    @Inject
+    private UserAccountService userAccountService;
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
+    @Inject
+    private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
 
-	public ProductOrder createProductOrder(ProductOrder productOrder, User currentUser)
-			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException,
-			EntityDoesNotExistsException, Exception {
-		// Validate order
-		
-		List<OrderItem> orders = productOrder.getOrderItem();
-		if (orders != null) {
-			Provider provider = currentUser.getProvider();
-			for (OrderItem orderItem : orders) {
-				if (!StringUtils.isBlank(orderItem.getId()) && orderItem.getBillingAccount() != null
-						&& orderItem.getBillingAccount().size() == 1
-						&& !StringUtils.isBlank(orderItem.getProductOffering())
-						&& !StringUtils.isBlank(orderItem.getProductOffering().getId())
-						&& !StringUtils.isBlank(productOrder.getOrderDate())
-						&& !StringUtils.isBlank(productOrder.getDescription())) {
-					String billingAccountId = orderItem.getBillingAccount().get(0).getId();
-					if (billingAccountId == null) {
-						throw new MeveoApiException("orderitem's billingAccount is null");
-					}
-					UserAccount userAccount = userAccountService.findByCode(billingAccountId, provider);
-					if (userAccount == null) {
-						throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
-					}
-					log.debug("find userAccount by {}", billingAccountId);
+    public ProductOrder createProductOrder(ProductOrder productOrder, User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+            BusinessException, EntityDoesNotExistsException, Exception {
+        // Validate order
 
-					OfferTemplate offerTemplate = offerTemplateService.findByCode(orderItem.getProductOffering()
-							.getId(), provider);
-					if (offerTemplate == null) {
-						throw new EntityDoesNotExistsException(OfferTemplate.class, orderItem.getProductOffering()
-								.getId());
-					}
-					log.debug("find offerTemplate by {}", orderItem.getProductOffering().getId());
-					Subscription subscription = subscriptionService.findByCode(orderItem.getId(), provider);
-					log.debug("find subscription {}", subscription);
+        return null;
 
-					if (subscription == null) {// sub is new
-						subscription = new Subscription();
-						subscription.setCode(orderItem.getId());
-						subscription.setDescription(orderItem.getAppointment());
-						subscription.setUserAccount(userAccount);
-						subscription.setOffer(offerTemplate);
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(productOrder.getOrderDate());
-						calendar.set(Calendar.HOUR_OF_DAY, 0);
-						calendar.set(Calendar.MINUTE, 0);
-						calendar.set(Calendar.SECOND, 0);
-						calendar.set(Calendar.MILLISECOND, 0);
+        //
+        //
+        // List<OrderItem> orders = productOrder.getOrderItem();
+        // if (orders != null) {
+        // Provider provider = currentUser.getProvider();
+        // for (OrderItem orderItem : orders) {
+        // if (!StringUtils.isBlank(orderItem.getId()) && orderItem.getBillingAccount() != null && orderItem.getBillingAccount().size() == 1
+        // && !StringUtils.isBlank(orderItem.getProductOffering()) && !StringUtils.isBlank(orderItem.getProductOffering().getId())
+        // && !StringUtils.isBlank(productOrder.getOrderDate()) && !StringUtils.isBlank(productOrder.getDescription())) {
+        // String billingAccountId = orderItem.getBillingAccount().get(0).getId();
+        // if (billingAccountId == null) {
+        // throw new MeveoApiException("orderitem's billingAccount is null");
+        // }
+        // UserAccount userAccount = userAccountService.findByCode(billingAccountId, provider);
+        // if (userAccount == null) {
+        // throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
+        // }
+        // log.debug("find userAccount by {}", billingAccountId);
+        //
+        // OfferTemplate offerTemplate = offerTemplateService.findByCode(orderItem.getProductOffering().getId(), provider);
+        // if (offerTemplate == null) {
+        // throw new EntityDoesNotExistsException(OfferTemplate.class, orderItem.getProductOffering().getId());
+        // }
+        // log.debug("find offerTemplate by {}", orderItem.getProductOffering().getId());
+        // Subscription subscription = subscriptionService.findByCode(orderItem.getId(), provider);
+        // log.debug("find subscription {}", subscription);
+        //
+        // if (subscription == null) {// sub is new
+        // subscription = new Subscription();
+        // subscription.setCode(orderItem.getId());
+        // subscription.setDescription(orderItem.getAppointment());
+        // subscription.setUserAccount(userAccount);
+        // subscription.setOffer(offerTemplate);
+        // Calendar calendar = Calendar.getInstance();
+        // calendar.setTime(productOrder.getOrderDate());
+        // calendar.set(Calendar.HOUR_OF_DAY, 0);
+        // calendar.set(Calendar.MINUTE, 0);
+        // calendar.set(Calendar.SECOND, 0);
+        // calendar.set(Calendar.MILLISECOND, 0);
+        //
+        // subscription.setSubscriptionDate(calendar.getTime());
+        //
+        // subscriptionService.create(subscription, currentUser, provider);
+        // // instantiate
+        // // activate
+        // instanciationAndActiveService(subscription, orderItem, currentUser);
+        // } else {
+        //
+        // if (!subscription.getUserAccount().getCode().equalsIgnoreCase(orderItem.getBillingAccount().get(0).getId())) {
+        // throw new MeveoApiException("Sub's userAccount doesn't match with orderitem's billingAccount");
+        // }
+        // if (!subscription.getOffer().getCode().equalsIgnoreCase(orderItem.getProductOffering().getId())) {
+        // throw new MeveoApiException("Sub's offer doesn't match with orderitem's productOffer");
+        // }
+        // List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
+        // if (serviceInstances != null) {
+        // for (ServiceInstance serviceInstance : serviceInstances) {
+        // if (!validateServiceInstance(serviceInstance, orderItem)) {
+        // terminateService(serviceInstance, productOrder.getOrderDate(), orderItem, currentUser);
+        // }
+        // }
+        // }
+        // instanciationAndActiveService(subscription, orderItem, currentUser);
+        // }
+        // }
+        // }
+        // }
+    }
 
-						subscription.setSubscriptionDate(calendar.getTime());
+    private List<ProductCharacteristic> getProductCharacteristic(OrderItem orderItem) {
+        List<ProductCharacteristic> productCharacteristic = null;
+        Product product = orderItem.getProduct();
+        if (!StringUtils.isBlank(product)) {
+            productCharacteristic = product.getProductCharacteristic();
+        }
+        return productCharacteristic;
+    }
 
-						subscriptionService.create(subscription, currentUser, provider);
-						// instantiate
-						// activate
-						instanciationAndActiveService(subscription, orderItem, currentUser);
-					} else {
+    private ProductCharacteristic findProductCharacteristic(ServiceInstance serviceInstance, OrderItem orderItem) {
+        ProductCharacteristic result = null;
+        List<ProductCharacteristic> productCharacteristic = getProductCharacteristic(orderItem);
+        if (productCharacteristic != null) {
+            for (ProductCharacteristic c : productCharacteristic) {
+                if (serviceInstance.getCode().equalsIgnoreCase(c.getValue())) {
+                    result = c;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
 
-						if (!subscription.getUserAccount().getCode()
-								.equalsIgnoreCase(orderItem.getBillingAccount().get(0).getId())) {
-							throw new MeveoApiException(
-									"Sub's userAccount doesn't match with orderitem's billingAccount");
-						}
-						if (!subscription.getOffer().getCode().equalsIgnoreCase(orderItem.getProductOffering().getId())) {
-							throw new MeveoApiException("Sub's offer doesn't match with orderitem's productOffer");
-						}
-						List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
-						if (serviceInstances != null) {
-							for (ServiceInstance serviceInstance : serviceInstances) {
-								if (!validateServiceInstance(serviceInstance, orderItem)) {
-									terminateService(serviceInstance, productOrder.getOrderDate(), orderItem,
-											currentUser);
-								}
-							}
-						}
-						instanciationAndActiveService(subscription, orderItem, currentUser);
-					}
-				}
-			}
-		}
-		
-		return null;
-	}
+    private boolean validateServiceInstance(ServiceInstance serviceInstance, OrderItem orderItem) {
+        ProductCharacteristic productCharacteristic = findProductCharacteristic(serviceInstance, orderItem);
+        return productCharacteristic != null && "service".equalsIgnoreCase(productCharacteristic.getName());
+    }
 
-	private List<ProductCharacteristic> getProductCharacteristic(OrderItem orderItem) {
-		List<ProductCharacteristic> productCharacteristic = null;
-		Product product = orderItem.getProduct();
-		if (!StringUtils.isBlank(product)) {
-			productCharacteristic = product.getProductCharacteristic();
-		}
-		return productCharacteristic;
-	}
+    private String getTerminationReason(OrderItem orderItem) {
+        String result = null;
+        Product product = orderItem.getProduct();
+        if (product != null) {
+            List<ProductCharacteristic> productCharacteristic = orderItem.getProduct().getProductCharacteristic();
+            if (productCharacteristic != null) {
+                for (ProductCharacteristic c : productCharacteristic) {
+                    if (!StringUtils.isBlank(c.getName()) && c.getName().equalsIgnoreCase("terminationReason")) {
+                        result = c.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
-	private ProductCharacteristic findProductCharacteristic(ServiceInstance serviceInstance, OrderItem orderItem) {
-		ProductCharacteristic result = null;
-		List<ProductCharacteristic> productCharacteristic = getProductCharacteristic(orderItem);
-		if (productCharacteristic != null) {
-			for (ProductCharacteristic c : productCharacteristic) {
-				if (serviceInstance.getCode().equalsIgnoreCase(c.getValue())) {
-					result = c;
-					break;
-				}
-			}
-		}
-		return result;
-	}
+    private void terminateService(ServiceInstance selectedServiceInstance, Date terminationDate, OrderItem orderItem, User currentUser) throws IncorrectSusbcriptionException,
+            IncorrectServiceInstanceException, BusinessException, Exception {
 
-	private boolean validateServiceInstance(ServiceInstance serviceInstance, OrderItem orderItem) {
-		ProductCharacteristic productCharacteristic = findProductCharacteristic(serviceInstance, orderItem);
-		return productCharacteristic != null && "service".equalsIgnoreCase(productCharacteristic.getName());
-	}
+        if (selectedServiceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+            String terminationReason = getTerminationReason(orderItem);
+            if (StringUtils.isBlank(terminationReason)) {
+                throw new MeveoApiException("terminationReasion is null");
+            }
+            if (StringUtils.isBlank(terminationDate)) {
+                throw new MeveoApiException("terminationDate is null");
+            }
+            SubscriptionTerminationReason subscriptionTerminationReason = subscriptionTerminationReasonService.findByCodeReason(terminationReason, currentUser.getProvider());
+            if (subscriptionTerminationReason == null) {
+                throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, terminationReason);
+            }
+            serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, subscriptionTerminationReason, currentUser);
+        }
+    }
 
-	private String getTerminationReason(OrderItem orderItem) {
-		String result = null;
-		Product product = orderItem.getProduct();
-		if (product != null) {
-			List<ProductCharacteristic> productCharacteristic = orderItem.getProduct().getProductCharacteristic();
-			if (productCharacteristic != null) {
-				for (ProductCharacteristic c : productCharacteristic) {
-					if (!StringUtils.isBlank(c.getName()) && c.getName().equalsIgnoreCase("terminationReason")) {
-						result = c.getValue();
-						break;
-					}
-				}
-			}
-		}
-		return result;
-	}
+    private void activateService(ServiceInstance selectedServiceInstance, User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+            BusinessException {
+        if (selectedServiceInstance.getStatus() != InstanceStatusEnum.ACTIVE && selectedServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
+            serviceInstanceService.serviceActivation(selectedServiceInstance, null, null, currentUser);
+        }
+    }
 
-	private void terminateService(ServiceInstance selectedServiceInstance, Date terminationDate, OrderItem orderItem,
-			User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
-			BusinessException, Exception {
+    private void instanciationAndActiveService(Subscription subscription, OrderItem orderItem, User currentUser) throws IncorrectSusbcriptionException,
+            IncorrectServiceInstanceException, BusinessException {
+        if (orderItem.getProduct() != null && orderItem.getProduct().getProductCharacteristic() != null) {
+            List<ProductCharacteristic> productCharacteristic = orderItem.getProduct().getProductCharacteristic();
+            for (ProductCharacteristic c : productCharacteristic) {
+                if ("service".equalsIgnoreCase(c.getName()) && !StringUtils.isBlank(c.getValue())) {
+                    ServiceInstance serviceInstance = serviceInstanceService.findActivatedByCodeAndSubscription(c.getValue(), subscription);
+                    if (serviceInstance == null) {
+                        ServiceTemplate serviceTemplate = findServiceTemplateByCode(subscription.getOffer(), c.getValue());
+                        if (serviceTemplate != null) {
+                            serviceInstance = new ServiceInstance();
+                            serviceInstance.setProvider(serviceTemplate.getProvider());
+                            serviceInstance.setCode(serviceTemplate.getCode());
+                            serviceInstance.setDescription(serviceTemplate.getDescription());
+                            serviceInstance.setServiceTemplate(serviceTemplate);
+                            serviceInstance.setSubscription(subscription);
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime(new Date());
+                            calendar.set(Calendar.HOUR_OF_DAY, 0);
+                            calendar.set(Calendar.MINUTE, 0);
+                            calendar.set(Calendar.SECOND, 0);
+                            calendar.set(Calendar.MILLISECOND, 0);
 
-		if (selectedServiceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-			String terminationReason = getTerminationReason(orderItem);
-			if (StringUtils.isBlank(terminationReason)) {
-				throw new MeveoApiException("terminationReasion is null");
-			}
-			if (StringUtils.isBlank(terminationDate)) {
-				throw new MeveoApiException("terminationDate is null");
-			}
-			SubscriptionTerminationReason subscriptionTerminationReason = subscriptionTerminationReasonService
-					.findByCodeReason(terminationReason, currentUser.getProvider());
-			if (subscriptionTerminationReason == null) {
-				throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, terminationReason);
-			}
-			serviceInstanceService.terminateService(selectedServiceInstance, terminationDate,
-					subscriptionTerminationReason, currentUser);
-		}
-	}
+                            serviceInstance.setSubscriptionDate(calendar.getTime());
+                            serviceInstance.setQuantity(new BigDecimal(1));
+                            serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
+                        }
+                    }
+                    if (serviceInstance != null)
+                        activateService(serviceInstance, currentUser);
+                }
+            }
+        }
+    }
 
-	private void activateService(ServiceInstance selectedServiceInstance, User currentUser)
-			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-		if (selectedServiceInstance.getStatus() != InstanceStatusEnum.ACTIVE
-				&& selectedServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
-			serviceInstanceService.serviceActivation(selectedServiceInstance, null, null, currentUser);
-		}
-	}
+    private ServiceTemplate findServiceTemplateByCode(OfferTemplate offerTemplate, String serviceCode) {
+        List<OfferServiceTemplate> serviceTemplates = offerTemplate.getOfferServiceTemplates();
+        if (serviceTemplates != null) {
+            for (OfferServiceTemplate serviceTemplate : serviceTemplates) {
+                if (serviceTemplate.getServiceTemplate().getCode().equalsIgnoreCase(serviceCode)) {
+                    return serviceTemplate.getServiceTemplate();
+                }
+            }
+        }
+        return null;
+    }
 
-	private void instanciationAndActiveService(Subscription subscription, OrderItem orderItem, User currentUser)
-			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-		if (orderItem.getProduct() != null && orderItem.getProduct().getProductCharacteristic() != null) {
-			List<ProductCharacteristic> productCharacteristic = orderItem.getProduct().getProductCharacteristic();
-			for (ProductCharacteristic c : productCharacteristic) {
-				if ("service".equalsIgnoreCase(c.getName()) && !StringUtils.isBlank(c.getValue())) {
-					ServiceInstance serviceInstance = serviceInstanceService.findActivatedByCodeAndSubscription(
-							c.getValue(), subscription);
-					if (serviceInstance == null) {
-						ServiceTemplate serviceTemplate = findServiceTemplateByCode(subscription.getOffer(),
-								c.getValue());
-						if (serviceTemplate != null) {
-							serviceInstance = new ServiceInstance();
-							serviceInstance.setProvider(serviceTemplate.getProvider());
-							serviceInstance.setCode(serviceTemplate.getCode());
-							serviceInstance.setDescription(serviceTemplate.getDescription());
-							serviceInstance.setServiceTemplate(serviceTemplate);
-							serviceInstance.setSubscription(subscription);
-							Calendar calendar = Calendar.getInstance();
-							calendar.setTime(new Date());
-							calendar.set(Calendar.HOUR_OF_DAY, 0);
-							calendar.set(Calendar.MINUTE, 0);
-							calendar.set(Calendar.SECOND, 0);
-							calendar.set(Calendar.MILLISECOND, 0);
+    public ProductOrder getProductOrder(String orderId, User currentUser) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-							serviceInstance.setSubscriptionDate(calendar.getTime());
-							serviceInstance.setQuantity(new BigDecimal(1));
-							serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
-						}
-					}
-					if (serviceInstance != null)
-						activateService(serviceInstance, currentUser);
-				}
-			}
-		}
-	}
+    public List<ProductOrder> findProductOrders(Map<String, List<String>> filterCriteria, User currentUser) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	private ServiceTemplate findServiceTemplateByCode(OfferTemplate offerTemplate, String serviceCode) {
-		List<OfferServiceTemplate> serviceTemplates = offerTemplate.getOfferServiceTemplates();
-		if (serviceTemplates != null) {
-			for (OfferServiceTemplate serviceTemplate : serviceTemplates) {
-				if (serviceTemplate.getServiceTemplate().getCode().equalsIgnoreCase(serviceCode)) {
-					return serviceTemplate.getServiceTemplate();
-				}
-			}
-		}
-		return null;
-	}
+    public ProductOrder updatePartiallyProductOrder(ProductOrder productOrder, User currentUser) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public ProductOrder getProductOrder(String orderId, User currentUser) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public void deleteProductOrder(String orderId, User currentUser) {
+        // TODO Auto-generated method stub
 
-	public List<ProductOrder> findProductOrders(Map<String, List<String>> filterCriteria, User currentUser) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    }
 
-	public ProductOrder updatePartiallyProductOrder(ProductOrder productOrder, User currentUser) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public ProductOrder createProductOrderOld(ProductOrder productOrder, User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+            BusinessException, EntityDoesNotExistsException, Exception {
+        List<OrderItem> orders = productOrder.getOrderItem();
+        if (orders != null) {
+            Provider provider = currentUser.getProvider();
+            for (OrderItem orderItem : orders) {
+                if (!StringUtils.isBlank(orderItem.getId()) && orderItem.getBillingAccount() != null && orderItem.getBillingAccount().size() == 1
+                        && !StringUtils.isBlank(orderItem.getProductOffering()) && !StringUtils.isBlank(orderItem.getProductOffering().getId())
+                        && !StringUtils.isBlank(productOrder.getOrderDate()) && !StringUtils.isBlank(productOrder.getDescription())) {
+                    String billingAccountId = orderItem.getBillingAccount().get(0).getId();
+                    if (billingAccountId == null) {
+                        throw new MeveoApiException("orderitem's billingAccount is null");
+                    }
+                    UserAccount userAccount = userAccountService.findByCode(billingAccountId, provider);
+                    if (userAccount == null) {
+                        throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
+                    }
+                    log.debug("find userAccount by {}", billingAccountId);
 
-	public void deleteProductOrder(String orderId, User currentUser) {
-		// TODO Auto-generated method stub
+                    OfferTemplate offerTemplate = offerTemplateService.findByCode(orderItem.getProductOffering().getId(), provider);
+                    if (offerTemplate == null) {
+                        throw new EntityDoesNotExistsException(OfferTemplate.class, orderItem.getProductOffering().getId());
+                    }
+                    log.debug("find offerTemplate by {}", orderItem.getProductOffering().getId());
+                    Subscription subscription = subscriptionService.findByCode(orderItem.getId(), provider);
+                    log.debug("find subscription {}", subscription);
 
-	}
+                    if (subscription == null) {// sub is new
+                        subscription = new Subscription();
+                        subscription.setCode(orderItem.getId());
+                        subscription.setDescription(orderItem.getAppointment());
+                        subscription.setUserAccount(userAccount);
+                        subscription.setOffer(offerTemplate);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(productOrder.getOrderDate());
+                        calendar.set(Calendar.HOUR_OF_DAY, 0);
+                        calendar.set(Calendar.MINUTE, 0);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MILLISECOND, 0);
 
-	public ProductOrder createProductOrderOld(ProductOrder productOrder, User currentUser)
-			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException,
-			EntityDoesNotExistsException, Exception {
-		List<OrderItem> orders = productOrder.getOrderItem();
-		if (orders != null) {
-			Provider provider = currentUser.getProvider();
-			for (OrderItem orderItem : orders) {
-				if (!StringUtils.isBlank(orderItem.getId()) && orderItem.getBillingAccount() != null
-						&& orderItem.getBillingAccount().size() == 1
-						&& !StringUtils.isBlank(orderItem.getProductOffering())
-						&& !StringUtils.isBlank(orderItem.getProductOffering().getId())
-						&& !StringUtils.isBlank(productOrder.getOrderDate())
-						&& !StringUtils.isBlank(productOrder.getDescription())) {
-					String billingAccountId = orderItem.getBillingAccount().get(0).getId();
-					if (billingAccountId == null) {
-						throw new MeveoApiException("orderitem's billingAccount is null");
-					}
-					UserAccount userAccount = userAccountService.findByCode(billingAccountId, provider);
-					if (userAccount == null) {
-						throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
-					}
-					log.debug("find userAccount by {}", billingAccountId);
+                        subscription.setSubscriptionDate(calendar.getTime());
 
-					OfferTemplate offerTemplate = offerTemplateService.findByCode(orderItem.getProductOffering()
-							.getId(), provider);
-					if (offerTemplate == null) {
-						throw new EntityDoesNotExistsException(OfferTemplate.class, orderItem.getProductOffering()
-								.getId());
-					}
-					log.debug("find offerTemplate by {}", orderItem.getProductOffering().getId());
-					Subscription subscription = subscriptionService.findByCode(orderItem.getId(), provider);
-					log.debug("find subscription {}", subscription);
+                        subscriptionService.create(subscription, currentUser, provider);
+                        // instantiate
+                        // activate
+                        instanciationAndActiveService(subscription, orderItem, currentUser);
+                    } else {
 
-					if (subscription == null) {// sub is new
-						subscription = new Subscription();
-						subscription.setCode(orderItem.getId());
-						subscription.setDescription(orderItem.getAppointment());
-						subscription.setUserAccount(userAccount);
-						subscription.setOffer(offerTemplate);
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(productOrder.getOrderDate());
-						calendar.set(Calendar.HOUR_OF_DAY, 0);
-						calendar.set(Calendar.MINUTE, 0);
-						calendar.set(Calendar.SECOND, 0);
-						calendar.set(Calendar.MILLISECOND, 0);
-
-						subscription.setSubscriptionDate(calendar.getTime());
-
-						subscriptionService.create(subscription, currentUser, provider);
-						// instantiate
-						// activate
-						instanciationAndActiveService(subscription, orderItem, currentUser);
-					} else {
-
-						if (!subscription.getUserAccount().getCode()
-								.equalsIgnoreCase(orderItem.getBillingAccount().get(0).getId())) {
-							throw new MeveoApiException(
-									"Sub's userAccount doesn't match with orderitem's billingAccount");
-						}
-						if (!subscription.getOffer().getCode().equalsIgnoreCase(orderItem.getProductOffering().getId())) {
-							throw new MeveoApiException("Sub's offer doesn't match with orderitem's productOffer");
-						}
-						List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
-						if (serviceInstances != null) {
-							for (ServiceInstance serviceInstance : serviceInstances) {
-								if (!validateServiceInstance(serviceInstance, orderItem)) {
-									terminateService(serviceInstance, productOrder.getOrderDate(), orderItem,
-											currentUser);
-								}
-							}
-						}
-						instanciationAndActiveService(subscription, orderItem, currentUser);
-					}
-				}
-			}
-		}
-		return productOrder;
-	}
+                        if (!subscription.getUserAccount().getCode().equalsIgnoreCase(orderItem.getBillingAccount().get(0).getId())) {
+                            throw new MeveoApiException("Sub's userAccount doesn't match with orderitem's billingAccount");
+                        }
+                        if (!subscription.getOffer().getCode().equalsIgnoreCase(orderItem.getProductOffering().getId())) {
+                            throw new MeveoApiException("Sub's offer doesn't match with orderitem's productOffer");
+                        }
+                        List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
+                        if (serviceInstances != null) {
+                            for (ServiceInstance serviceInstance : serviceInstances) {
+                                if (!validateServiceInstance(serviceInstance, orderItem)) {
+                                    terminateService(serviceInstance, productOrder.getOrderDate(), orderItem, currentUser);
+                                }
+                            }
+                        }
+                        instanciationAndActiveService(subscription, orderItem, currentUser);
+                    }
+                }
+            }
+        }
+        return productOrder;
+    }
 }
