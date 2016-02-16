@@ -266,72 +266,73 @@ public class OrderApi {
 
     }
 
-    // public void create(ProductOrder productOrder, User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException,
-    // EntityDoesNotExistsException, Exception {
-    // List<OrderItem> orders = productOrder.getOrderItem();
-    // if (orders != null) {
-    // Provider provider = currentUser.getProvider();
-    // for (OrderItem orderItem : orders) {
-    // if (!StringUtils.isBlank(orderItem.getId()) && orderItem.getBillingAccount() != null && orderItem.getBillingAccount().size() == 1
-    // && !StringUtils.isBlank(orderItem.getProductOffering()) && !StringUtils.isBlank(orderItem.getProductOffering().getId())
-    // && !StringUtils.isBlank(productOrder.getOrderDate()) && !StringUtils.isBlank(productOrder.getDescription())) {
-    // String billingAccountId = orderItem.getBillingAccount().get(0).getId();
-    // if (billingAccountId == null) {
-    // throw new MeveoApiException("orderitem's billingAccount is null");
-    // }
-    // UserAccount userAccount = userAccountService.findByCode(billingAccountId, provider);
-    // if (userAccount == null) {
-    // throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
-    // }
-    // log.debug("find userAccount by {}", billingAccountId);
-    //
-    // OfferTemplate offerTemplate = offerTemplateService.findByCode(orderItem.getProductOffering().getId(), provider);
-    // if (offerTemplate == null) {
-    // throw new EntityDoesNotExistsException(OfferTemplate.class, orderItem.getProductOffering().getId());
-    // }
-    // log.debug("find offerTemplate by {}", orderItem.getProductOffering().getId());
-    // Subscription subscription = subscriptionService.findByCode(orderItem.getId(), provider);
-    // log.debug("find subscription {}", subscription);
-    //
-    // if (subscription == null) {// sub is new
-    // subscription = new Subscription();
-    // subscription.setCode(orderItem.getId());
-    // subscription.setDescription(orderItem.getAppointment());
-    // subscription.setUserAccount(userAccount);
-    // subscription.setOffer(offerTemplate);
-    // Calendar calendar = Calendar.getInstance();
-    // calendar.setTime(productOrder.getOrderDate());
-    // calendar.set(Calendar.HOUR_OF_DAY, 0);
-    // calendar.set(Calendar.MINUTE, 0);
-    // calendar.set(Calendar.SECOND, 0);
-    // calendar.set(Calendar.MILLISECOND, 0);
-    //
-    // subscription.setSubscriptionDate(calendar.getTime());
-    //
-    // subscriptionService.create(subscription, currentUser, provider);
-    // // instantiate
-    // // activate
-    // instanciationAndActiveService(subscription, orderItem, currentUser);
-    // } else {
-    //
-    // if (!subscription.getUserAccount().getCode().equalsIgnoreCase(orderItem.getBillingAccount().get(0).getId())) {
-    // throw new MeveoApiException("Sub's userAccount doesn't match with orderitem's billingAccount");
-    // }
-    // if (!subscription.getOffer().getCode().equalsIgnoreCase(orderItem.getProductOffering().getId())) {
-    // throw new MeveoApiException("Sub's offer doesn't match with orderitem's productOffer");
-    // }
-    // List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
-    // if (serviceInstances != null) {
-    // for (ServiceInstance serviceInstance : serviceInstances) {
-    // if (!validateServiceInstance(serviceInstance, orderItem)) {
-    // terminateService(serviceInstance, productOrder.getOrderDate(), orderItem, currentUser);
-    // }
-    // }
-    // }
-    // instanciationAndActiveService(subscription, orderItem, currentUser);
-    // }
-    // }
-    // }
-    // }
-    // }
+    public ProductOrder createProductOrderOld(ProductOrder productOrder, User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+            BusinessException, EntityDoesNotExistsException, Exception {
+        List<OrderItem> orders = productOrder.getOrderItem();
+        if (orders != null) {
+            Provider provider = currentUser.getProvider();
+            for (OrderItem orderItem : orders) {
+                if (!StringUtils.isBlank(orderItem.getId()) && orderItem.getBillingAccount() != null && orderItem.getBillingAccount().size() == 1
+                        && !StringUtils.isBlank(orderItem.getProductOffering()) && !StringUtils.isBlank(orderItem.getProductOffering().getId())
+                        && !StringUtils.isBlank(productOrder.getOrderDate()) && !StringUtils.isBlank(productOrder.getDescription())) {
+                    String billingAccountId = orderItem.getBillingAccount().get(0).getId();
+                    if (billingAccountId == null) {
+                        throw new MeveoApiException("orderitem's billingAccount is null");
+                    }
+                    UserAccount userAccount = userAccountService.findByCode(billingAccountId, provider);
+                    if (userAccount == null) {
+                        throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
+                    }
+                    log.debug("find userAccount by {}", billingAccountId);
+
+                    OfferTemplate offerTemplate = offerTemplateService.findByCode(orderItem.getProductOffering().getId(), provider);
+                    if (offerTemplate == null) {
+                        throw new EntityDoesNotExistsException(OfferTemplate.class, orderItem.getProductOffering().getId());
+                    }
+                    log.debug("find offerTemplate by {}", orderItem.getProductOffering().getId());
+                    Subscription subscription = subscriptionService.findByCode(orderItem.getId(), provider);
+                    log.debug("find subscription {}", subscription);
+
+                    if (subscription == null) {// sub is new
+                        subscription = new Subscription();
+                        subscription.setCode(orderItem.getId());
+                        subscription.setDescription(orderItem.getAppointment());
+                        subscription.setUserAccount(userAccount);
+                        subscription.setOffer(offerTemplate);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(productOrder.getOrderDate());
+                        calendar.set(Calendar.HOUR_OF_DAY, 0);
+                        calendar.set(Calendar.MINUTE, 0);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MILLISECOND, 0);
+
+                        subscription.setSubscriptionDate(calendar.getTime());
+
+                        subscriptionService.create(subscription, currentUser, provider);
+                        // instantiate
+                        // activate
+                        instanciationAndActiveService(subscription, orderItem, currentUser);
+                    } else {
+
+                        if (!subscription.getUserAccount().getCode().equalsIgnoreCase(orderItem.getBillingAccount().get(0).getId())) {
+                            throw new MeveoApiException("Sub's userAccount doesn't match with orderitem's billingAccount");
+                        }
+                        if (!subscription.getOffer().getCode().equalsIgnoreCase(orderItem.getProductOffering().getId())) {
+                            throw new MeveoApiException("Sub's offer doesn't match with orderitem's productOffer");
+                        }
+                        List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
+                        if (serviceInstances != null) {
+                            for (ServiceInstance serviceInstance : serviceInstances) {
+                                if (!validateServiceInstance(serviceInstance, orderItem)) {
+                                    terminateService(serviceInstance, productOrder.getOrderDate(), orderItem, currentUser);
+                                }
+                            }
+                        }
+                        instanciationAndActiveService(subscription, orderItem, currentUser);
+                    }
+                }
+            }
+        }
+        return productOrder;
+    }
 }
