@@ -80,8 +80,8 @@
         </p:panel>
 
         <p:blockUI block="#{ajaxUpdateIds}" trigger="buttonSearch">
-            LOADING<br />
-            <p:graphicImage library="img" name="ajaxloadingbar.gif" />
+            #{messages['commons.loading']}<br />
+            <p:graphicImage value="/img/ajaxloadingbar.gif" />
         </p:blockUI>
     </h:form>
 
