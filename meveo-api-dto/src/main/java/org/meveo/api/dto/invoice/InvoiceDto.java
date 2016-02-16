@@ -47,7 +47,7 @@ public class InvoiceDto extends BaseDto {
 	private BigDecimal amountWithoutTax;
 	private BigDecimal amountTax;
 	private BigDecimal amountWithTax;
-	private String paymentMathod;
+	private String paymentMethod;
 	private boolean PDFpresent;
 	private String type;
 	private byte[] pdf;
@@ -70,7 +70,7 @@ public class InvoiceDto extends BaseDto {
 				.getAmountWithTax());
 		this.setInvoiceNumber(invoice
 				.getInvoiceNumber());
-		this.setPaymentMathod(invoice
+		this.setPaymentMethod(invoice
 				.getPaymentMethod().toString());
 		this.setType(invoice.getInvoiceTypeEnum().name());
 		this.setPDFpresent(invoice.getPdf() != null);
@@ -237,12 +237,12 @@ public class InvoiceDto extends BaseDto {
 		PDFpresent = pDFpresent;
 	}
 
-	public String getPaymentMathod() {
-		return paymentMathod;
+	public String getPaymentMethod() {
+		return paymentMethod;
 	}
 
-	public void setPaymentMathod(String paymentMathod) {
-		this.paymentMathod = paymentMathod;
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
 	}
 
 	public String getType() {
@@ -280,7 +280,7 @@ public class InvoiceDto extends BaseDto {
 				+ ", invoiceDate=" + invoiceDate + ", discount=" + discount
 				+ ", amountWithoutTax=" + amountWithoutTax + ", amountTax="
 				+ amountTax + ", amountWithTax=" + amountWithTax
-				+ ", paymentMathod=" + paymentMathod + ", PDFpresent="
+				+ ", paymentMethod=" + paymentMethod + ", PDFpresent="
 				+ PDFpresent + ", type=" + type
 				+ ", subCategoryInvoiceAgregates="
 				+ subCategoryInvoiceAgregates + "accountOperations "+accountOperations+"]";
