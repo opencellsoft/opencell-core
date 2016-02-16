@@ -2,6 +2,7 @@ package org.meveo.api.dto.module;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,6 +57,7 @@ public class ModuleDto extends BaseDataModelDto {
 	private List<JobTriggerDto> jobTriggerDtos;
 	private List<WebhookNotificationDto> webhookNotifDtos;
 	private List<CounterTemplateDto> counterDtos;
+	private List<ModuleDto> subModules;
 	
 	public ModuleDto(){}
 	public ModuleDto(MeveoModule meveoModule){
@@ -74,6 +76,7 @@ public class ModuleDto extends BaseDataModelDto {
 		this.emailNotifDtos=new ArrayList<EmailNotificationDto>();
 		this.jobTriggerDtos=new ArrayList<JobTriggerDto>();
 		this.webhookNotifDtos=new ArrayList<WebhookNotificationDto>();
+		this.subModules = new ArrayList<ModuleDto>();
 	}
 	public String getCode() {
 		return code;
@@ -183,16 +186,13 @@ public class ModuleDto extends BaseDataModelDto {
 	}
 	@Override
 	public String toString() {
-		return "ModuleDto [code=" + code + ", license=" + license
-				+ ", description=" + description + ", logoPicture=" + logoPicture
-				+ ", cetDtos=" + cetDtos
-				+ ", cftDtos=" + cftDtos + ", filterDtos=" + filterDtos
-				+ ", jobDtos=" + jobDtos + ", scriptDtos=" + scriptDtos
-				+ ", notificationDtos=" + notificationDtos
-				+ ", timerEntityDtos=" + timerEntityDtos + ", emailNotifDtos="
-				+ emailNotifDtos + ", jobTriggerDtos=" + jobTriggerDtos
-				+ ", webhookNotifDtos=" + webhookNotifDtos + ", counterDtos="
-				+ counterDtos + "]";
+		return "ModuleDto [code=" + code + ", license=" + license + ", description=" + description + ", logoPicture="
+				+ logoPicture + ", logoPictureFile=" + Arrays.toString(logoPictureFile) + ", cetDtos=" + cetDtos
+				+ ", cftDtos=" + cftDtos + ", filterDtos=" + filterDtos + ", jobDtos=" + jobDtos + ", jobNextDtos="
+				+ jobNextDtos + ", scriptDtos=" + scriptDtos + ", notificationDtos=" + notificationDtos
+				+ ", timerEntityDtos=" + timerEntityDtos + ", emailNotifDtos=" + emailNotifDtos + ", jobTriggerDtos="
+				+ jobTriggerDtos + ", webhookNotifDtos=" + webhookNotifDtos + ", counterDtos=" + counterDtos
+				+ ", subModules=" + subModules + "]";
 	}
 	@Override
 	public Serializable getId() {
@@ -205,5 +205,11 @@ public class ModuleDto extends BaseDataModelDto {
 	@Override
 	public boolean isTransient() {
 		return true;
+	}
+	public List<ModuleDto> getSubModules() {
+		return subModules;
+	}
+	public void setSubModules(List<ModuleDto> subModules) {
+		this.subModules = subModules;
 	}
 }

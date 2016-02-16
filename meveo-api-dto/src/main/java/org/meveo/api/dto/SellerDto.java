@@ -32,7 +32,7 @@ public class SellerDto extends BaseDto {
 	/**
 	 * Description
 	 */
-	@XmlAttribute(required = true)
+	@XmlAttribute()
 	private String description;
 
 	private String invoicePrefix;

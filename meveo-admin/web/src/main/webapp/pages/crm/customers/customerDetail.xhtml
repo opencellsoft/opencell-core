@@ -60,7 +60,7 @@
 									
 									<hftl:formField label="#{messages['businessEntity.description']}"
 											field="description" useConverter="false" id="description"
-											maxlength="50" required="true" newLine="true"/>
+											maxlength="50" newLine="true"/>
 										<hftl:formField label="#{messages['customer.externalRef1']}"
 											field="externalRef1" validateUnique="false" />
 										<hftl:formField label="#{messages['customer.externalRef2']}"
@@ -80,17 +80,17 @@
 	
 									<hftl:formField
 										label="#{messages['customer.customerCategory']}"
-										field="customerCategory" valueLabelField="description"
+										field="customerCategory" valueLabelField="descriptionOrCode"
 										required="true"
 										listBean="#{customerCategoryBean}" styleClass="clearLeft" />
 									<hftl:formField
 										label="#{messages['customer.customerBrand']}"
-										field="customerBrand" valueLabelField="description" 
+										field="customerBrand" valueLabelField="descriptionOrCode" 
 										required="true"
 										listBean="#{customerBrandBean}" />
 									<hftl:formField id="parentSelectId"
 										label="#{messages['seller.parent']}" field="seller"
-										valueLabelField="description" required="true" listBean="#{sellerBean}"/> 
+										valueLabelField="descriptionOrCode" required="true" listBean="#{sellerBean}"/> 
 <!--                                         popup="true" popupId="sellerParentPopup" /> -->
 								
 							</p:tab>

@@ -30,7 +30,7 @@ public class ChargeTemplateDto extends BaseDto implements Serializable {
 	@XmlAttribute(required = true)
 	private String code;
 
-	@XmlAttribute(required = true)
+	@XmlAttribute()
 	private String description;
 
 	@XmlElement(required = true)

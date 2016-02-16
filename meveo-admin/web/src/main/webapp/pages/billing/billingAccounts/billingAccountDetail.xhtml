@@ -126,7 +126,7 @@
 													<hftl:formField
 														label="#{messages['businessEntity.description']}"
 														id="description" field="description" useConverter="false"
-														size="70" maxlength="100" required="true" />
+														size="70" maxlength="100" />
 												
 													<hftl:formField id="cycleSelectId"
 														label="#{messages['billingAccount.billingCycle']}"
@@ -520,7 +520,7 @@
 						label="#{messages['serviceInstance.terminationDate']}"
 						field="terminationDate" required="true" edit="true"  componentWidth="25"/>
 					<hftl:formField label="Motifs " field="terminationReason"
-						valueLabelField="description" required="true"  edit="true"
+						valueLabelField="descriptionOrCode" required="true"  edit="true"
 						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
 					<!-- update=":#{p:component('formBillingAccountPanel')}" -->
 					<p:panel styleClass="action-buttons">

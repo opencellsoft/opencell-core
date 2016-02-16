@@ -22,6 +22,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -88,6 +89,14 @@ public class SubscriptionTerminationReason extends BaseEntity {
 		this.applyTerminationCharges = applyTerminationCharges;
 	}
 
+    public String getDescriptionOrCode() {
+        if (!StringUtils.isBlank(description)) {
+            return description;
+        } else {
+            return code;
+        }
+    }
+    
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -13,6 +13,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -27,7 +28,7 @@ public class Role extends BaseEntity {
     @Column(name = "ROLE_NAME", nullable = false)
     private String name;
 
-    @Column(name = "ROLE_DESCRIPTION", nullable = false)
+    @Column(name = "ROLE_DESCRIPTION", nullable = true)
     private String description;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -92,6 +93,14 @@ public class Role extends BaseEntity {
             }
         }
         return false;
+    }
+    
+    public String getDescriptionOrName() {
+        if (!StringUtils.isBlank(description)) {
+            return description;
+        } else {
+            return name;
+        }
     }
 
     @Override

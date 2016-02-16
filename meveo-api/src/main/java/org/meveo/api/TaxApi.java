@@ -100,10 +100,6 @@ public class TaxApi extends BaseApi {
 				missingParameters.add("code");
 			}
 
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
-
 			if (StringUtils.isBlank(postData.getPercent())) {
 				missingParameters.add("percent");
 			}
@@ -185,10 +181,6 @@ public class TaxApi extends BaseApi {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 
 			if (StringUtils.isBlank(postData.getPercent())) {

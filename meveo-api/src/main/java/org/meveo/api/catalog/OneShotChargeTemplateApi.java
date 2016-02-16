@@ -173,9 +173,6 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 			if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
 				missingParameters.add("invoiceSubCategory");
 			}
@@ -280,9 +277,6 @@ public class OneShotChargeTemplateApi extends BaseApi {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 			if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
 				missingParameters.add("invoiceSubCategory");

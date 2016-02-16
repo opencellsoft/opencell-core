@@ -21,7 +21,7 @@ public class InvoiceCategoryDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String code;
 
-	@XmlAttribute(required = true)
+	@XmlAttribute()
 	private String description;
 
 	private List<LanguageDescriptionDto> languageDescriptions;

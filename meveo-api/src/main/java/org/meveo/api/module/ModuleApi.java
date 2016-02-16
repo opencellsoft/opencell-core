@@ -215,10 +215,13 @@ public class ModuleApi extends BaseApi {
                     Notification notification = genericNotificationService.findByCode(item.getItemCode(), provider);
                     if (notification != null) {
                         if (notification instanceof ScriptNotification) {
-                            NotificationDto notificationDto = notificationApi.find(item.getItemCode(), provider);
-                            moduleDto.getNotificationDtos().add(notificationDto);
-                            ScriptInstanceDto scriptInstanceDto = scriptInstanceApi.findScriptInstance(notificationDto.getScriptInstanceCode(), currentUser);
-                            moduleDto.getScriptDtos().add(scriptInstanceDto);
+                        	NotificationDto notificationDto = notificationApi.find(item.getItemCode(), provider);
+							moduleDto.getNotificationDtos().add(notificationDto);
+							if (!StringUtils.isBlank(notificationDto.getScriptInstanceCode())) {
+								ScriptInstanceDto scriptInstanceDto = scriptInstanceApi.findScriptInstance(
+										notificationDto.getScriptInstanceCode(), currentUser);
+								moduleDto.getScriptDtos().add(scriptInstanceDto);
+							}
                         } else if (notification instanceof EmailNotification) {
                             EmailNotificationDto emailNotifiDto = emailNotificationApi.find(item.getItemCode(), provider);
                             moduleDto.getEmailNotifDtos().add(emailNotifiDto);
@@ -235,6 +238,10 @@ public class ModuleApi extends BaseApi {
                             moduleDto.getCounterDtos().add(counterDto);
                         }
                     }
+                    break;
+                case SUBMODULE:
+                    ModuleDto subModuleDto = get(item.getItemCode(), currentUser);
+                    moduleDto.getSubModules().add(subModuleDto);
                     break;
                 default:
                 }
@@ -336,6 +343,13 @@ public class ModuleApi extends BaseApi {
             for (WebhookNotificationDto dto : moduleDto.getWebhookNotifDtos()) {
                 webhookNotificationApi.createOrUpdate(dto, currentUser);
                 item = new MeveoModuleItem(dto.getCode(), ModuleItemTypeEnum.NOTIFICATION);
+                meveoModule.addModuleItem(item);
+            }
+        }
+        if (moduleDto.getSubModules() != null) {
+            for (ModuleDto dto : moduleDto.getSubModules()) {
+            	create(dto, currentUser);
+                item = new MeveoModuleItem(dto.getCode(), ModuleItemTypeEnum.SUBMODULE);
                 meveoModule.addModuleItem(item);
             }
         }

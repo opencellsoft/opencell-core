@@ -26,7 +26,7 @@ public abstract class AccountDto implements Serializable {
 	@XmlAttribute(required = true)
 	private String code;
 
-	@XmlAttribute(required = true)
+	@XmlAttribute()
 	private String description;
 
 	private String externalRef1;

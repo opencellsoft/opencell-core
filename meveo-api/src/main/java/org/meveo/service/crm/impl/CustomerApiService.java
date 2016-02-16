@@ -130,9 +130,6 @@ public class CustomerApiService extends AccountApiService {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 			if (StringUtils.isBlank(postData.getCustomerCategory())) {
 				missingParameters.add("customerCategory");
 			}
@@ -262,9 +259,6 @@ public class CustomerApiService extends AccountApiService {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 			if (StringUtils.isBlank(postData.getCustomerCategory())) {
 				missingParameters.add("customerCategory");
 			}
@@ -389,9 +383,6 @@ public class CustomerApiService extends AccountApiService {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
@@ -419,9 +410,6 @@ public class CustomerApiService extends AccountApiService {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 
 			throw new MissingParameterException(
@@ -451,9 +439,6 @@ public class CustomerApiService extends AccountApiService {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
@@ -480,9 +465,6 @@ public class CustomerApiService extends AccountApiService {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 
 			throw new MissingParameterException(

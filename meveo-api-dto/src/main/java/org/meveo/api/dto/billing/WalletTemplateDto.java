@@ -24,7 +24,7 @@ public class WalletTemplateDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String code;
 
-	@XmlAttribute(required = true)
+	@XmlAttribute()
 	private String description;
 
 	private String walletType;

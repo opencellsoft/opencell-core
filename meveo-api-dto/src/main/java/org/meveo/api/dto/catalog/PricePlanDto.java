@@ -27,7 +27,7 @@ public class PricePlanDto implements Serializable {
     @XmlElement(required = true)
     private String eventCode;
 
-    @XmlAttribute(required = true)
+    @XmlAttribute()
     private String description;
 
     private String seller;

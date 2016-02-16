@@ -55,9 +55,6 @@ public class OccTemplateApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 			if (StringUtils.isBlank(postData.getAccountCode())) {
 				missingParameters.add("accountCode");
 			}
@@ -98,9 +95,6 @@ public class OccTemplateApi extends BaseApi {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 			if (StringUtils.isBlank(postData.getAccountCode())) {
 				missingParameters.add("accountCode");

@@ -53,10 +53,6 @@ public class DiscountPlanApi extends BaseApi{
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
-			
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
 		
@@ -83,9 +79,6 @@ public class DiscountPlanApi extends BaseApi{
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 			
 			throw new MissingParameterException(getMissingParametersExceptionMessage());

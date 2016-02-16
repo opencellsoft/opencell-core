@@ -111,9 +111,6 @@ public class InvoiceSubCategoryApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 			if (StringUtils.isBlank(postData.getInvoiceCategory())) {
 				missingParameters.add("invoiceCategory");
 			}
@@ -191,9 +188,6 @@ public class InvoiceSubCategoryApi extends BaseApi {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 			if (StringUtils.isBlank(postData.getInvoiceCategory())) {
 				missingParameters.add("invoiceCategory");

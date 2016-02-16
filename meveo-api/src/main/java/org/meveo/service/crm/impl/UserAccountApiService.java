@@ -84,9 +84,6 @@ public class UserAccountApiService extends AccountApiService {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 			if (StringUtils.isBlank(postData.getBillingAccount())) {
 				missingParameters.add("billingAccount");
 			}
@@ -147,9 +144,6 @@ public class UserAccountApiService extends AccountApiService {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 			if (StringUtils.isBlank(postData.getBillingAccount())) {
 				missingParameters.add("billingAccount");

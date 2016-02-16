@@ -192,9 +192,6 @@ public class BillingAccountApiService extends AccountApiService {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 			if (StringUtils.isBlank(postData.getCustomerAccount())) {
 				missingParameters.add("customerAccount");
 			}
@@ -419,9 +416,6 @@ public class BillingAccountApiService extends AccountApiService {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 			if (StringUtils.isBlank(postData.getCustomerAccount())) {
 				missingParameters.add("customerAccount");
