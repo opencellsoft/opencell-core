@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -432,7 +433,7 @@ public class InvoiceApi extends BaseApi {
 							.getAmountWithTax());
 					customerInvoiceDto.setInvoiceNumber(invoice
 							.getInvoiceNumber());
-					customerInvoiceDto.setPaymentMathod(invoice
+					customerInvoiceDto.setPaymentMethod(invoice
 							.getPaymentMethod().toString());
 					customerInvoiceDto.setType(invoice.getInvoiceTypeEnum().name());
 					customerInvoiceDto.setPDFpresent(invoice.getPdf() != null);
@@ -576,7 +577,7 @@ public class InvoiceApi extends BaseApi {
 
 		BillingAccount billingAccount = billingAccountService.findByCode(
 				generateInvoiceRequestDto.getBillingAccountCode(),
-				currentUser.getProvider());
+				currentUser.getProvider(), Arrays.asList("billingRun"));
 		if (billingAccount == null) {
 			throw new EntityDoesNotExistsException(BillingAccount.class,
 					generateInvoiceRequestDto.getBillingAccountCode());

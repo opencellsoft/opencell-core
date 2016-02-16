@@ -10,9 +10,9 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">
-		<hftl:formPanel showFormButtons="#{false}" edit="#{false}"
+		<hftl:formPanel showFormButtons="#{false}" edit="#{false}" formId="formOccInvoice"
 			label="#{messages['accountOperation_I.form']}" 
-			backingBean="#{recordedInvoiceBean}" id="formPanelOccInvoice">
+			backingBean="#{recordedInvoiceBean}" >
 				<hftl:formField
 					label="#{messages['accountOperation.transactionDate']}"
 					field="transactionDate" disabled="true" />
@@ -36,25 +36,21 @@
 					field="taxAmount" disabled="true"/> 
                
                <ui:param name="buttons" value="true"/>
-               <ui:define name="buttons">
-			   <p:tooltip for="litigation" value="#{messages['action.update']}"
-					showEffect="slide" hideEffect="slide" />
-			   <p:commandButton action="#{recordedInvoiceBean.addLitigation()}" id="litigation"
+               <ui:define name="buttons"> 		   
+			   <p:commandButton action="#{recordedInvoiceBean.addLitigation()}" id="addLitigation"
 					value="#{messages['accountOperation_I.buttonAddLitigation']}"
-					rendered="#{recordedInvoice.matchingStatus.toString() == 'O'}" update=":formPanelOccInvoice:formId">
+					rendered="#{recordedInvoice.matchingStatus.toString() == 'O'}" update="@all">
                         <p:confirm header="#{messages['message.confirmation']}"
 						message="#{messages['message.confirm.litigation']}"
 						icon="ui-icon-alert"/>
-					</p:commandButton>	
-			   <p:tooltip for="cancelLitigation" value="#{messages['action.update']}"
-					showEffect="slide" hideEffect="slide" />					
-				<p:commandButton action="#{recordedInvoiceBean.cancelLitigation()}" id="cancelLitigation"
+					</p:commandButton> 					
+				<p:commandButton action="#{recordedInvoiceBean.cancelLitigation()}"
 					value="#{messages['accountOperation_I.buttonCancelLitigation']}"
-					rendered="#{recordedInvoice.matchingStatus.toString() == 'I'}" update=":formPanelOccInvoice:formId">
+					rendered="#{recordedInvoice.matchingStatus.toString() == 'I'}" update="@all">
 					<p:confirm header="#{messages['message.confirmation']}"
 						message="#{messages['message.confirm.cancelLitigation']}"
 						icon="ui-icon-alert"/>
-				</p:commandButton>
+				</p:commandButton> 
                 <p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
                     <f:param name="customerAccountId" value="#{recordedInvoice.getCustomerAccount().getId()}" />
                     <f:param name="edit" value="false" />
