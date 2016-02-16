@@ -94,10 +94,6 @@ public class InvoiceCategoryApi extends BaseApi {
 				missingParameters.add("code");
 			}
 
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
-
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
@@ -169,10 +165,6 @@ public class InvoiceCategoryApi extends BaseApi {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 
 			throw new MissingParameterException(

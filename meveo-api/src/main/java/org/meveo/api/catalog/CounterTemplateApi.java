@@ -80,9 +80,6 @@ public class CounterTemplateApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			} 
 			if (StringUtils.isBlank(postData.getCalendar())) {
 				missingParameters.add("calendar");
 			}
@@ -138,9 +135,6 @@ public class CounterTemplateApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			} 
 			if (StringUtils.isBlank(postData.getCalendar())) {
 				missingParameters.add("calendar");
 			}

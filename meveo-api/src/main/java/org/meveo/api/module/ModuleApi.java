@@ -88,9 +88,6 @@ public class ModuleApi extends BaseApi {
             if (StringUtils.isBlank(moduleDto.getCode())) {
                 missingParameters.add("code");
             }
-            if (StringUtils.isBlank(moduleDto.getDescription())) {
-                missingParameters.add("description");
-            }
             if (StringUtils.isBlank(moduleDto.getLicense())) {
                 missingParameters.add("license");
             }

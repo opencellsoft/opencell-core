@@ -30,7 +30,7 @@
             <p:tabView id="tabView" activeIndex="#{customEntityInstanceBean.activeTab}">
                 <p:tab title="#{messages['customer.tab.information']}">
                     <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" />
-                    <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" required="true" useConverter="false" id="description" maxlength="50" />
+                    <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" maxlength="50" />
                     <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
                 </p:tab>
 

@@ -31,7 +31,7 @@ public class CustomEntityTemplateDto extends BaseDto {
     @XmlAttribute(required = true)
     private String name;
 
-    @XmlAttribute(required = false)
+    @XmlAttribute()
     private String description;
 
     @XmlElementWrapper(name = "fields")

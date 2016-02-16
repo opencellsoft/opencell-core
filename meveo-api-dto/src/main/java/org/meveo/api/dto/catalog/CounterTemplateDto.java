@@ -22,7 +22,7 @@ public class CounterTemplateDto implements Serializable {
 	@XmlAttribute(required = true)
 	private String code;
 
-	@XmlAttribute(required = true)
+	@XmlAttribute()
 	private String description;
     
 	@XmlAttribute(required = true)

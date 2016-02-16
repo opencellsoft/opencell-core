@@ -123,9 +123,6 @@ public class SellerApiService extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
@@ -213,9 +210,6 @@ public class SellerApiService extends BaseApi {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());

@@ -22,7 +22,7 @@ public class InvoiceSubCategoryDto extends BaseDto {
 	@XmlAttribute(required = true)
 	private String code;
 
-	@XmlAttribute(required = true)
+	@XmlAttribute()
 	private String description;
 
 	@XmlElement(required = true)

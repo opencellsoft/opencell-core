@@ -41,7 +41,6 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
-import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -49,9 +48,6 @@ import org.meveo.service.script.ScriptInstanceService;
 @Stateless
 public class ServiceTemplateApi extends BaseApi {
 	
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
-
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
 
@@ -295,9 +291,6 @@ public class ServiceTemplateApi extends BaseApi {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());
 		}
@@ -358,9 +351,6 @@ public class ServiceTemplateApi extends BaseApi {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 
 			throw new MissingParameterException(getMissingParametersExceptionMessage());

@@ -150,8 +150,7 @@
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"
 											field="description" id="description"
-											useConverter="false" size="70" maxlength="100"
-											required="true" />
+											useConverter="false" size="70" maxlength="100" />
 										<hftl:formField label="#{messages['accountEntity.externalRef1']}"
 											field="externalRef1" validateUnique="false" newLine="true"/>
 										<hftl:formField label="#{messages['accountEntity.externalRef2']}"
@@ -449,7 +448,7 @@
 						label="#{messages['serviceInstance.terminationDate']}"
 						field="terminationDate" required="true" edit="true" componentWidth="25"/>
 					<hftl:formField label="Motifs " field="terminationReason"
-						valueLabelField="description" required="true"  edit="true"
+						valueLabelField="descriptionOrCode" required="true"  edit="true"
 						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
 					
                     <ui:param name="buttons" value="true"/>

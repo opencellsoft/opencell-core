@@ -158,9 +158,6 @@ public class CustomerAccountApiService extends AccountApiService {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 			if (StringUtils.isBlank(postData.getCustomer())) {
 				missingParameters.add("customer");
 			}
@@ -305,9 +302,6 @@ public class CustomerAccountApiService extends AccountApiService {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 			if (StringUtils.isBlank(postData.getCustomer())) {
 				missingParameters.add("customer");
@@ -466,9 +460,6 @@ public class CustomerAccountApiService extends AccountApiService {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
 			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
-			}
 
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
@@ -502,9 +493,6 @@ public class CustomerAccountApiService extends AccountApiService {
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getDescription())) {
-				missingParameters.add("description");
 			}
 
 			throw new MissingParameterException(

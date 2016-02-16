@@ -33,7 +33,7 @@
 							field="code" required="true" validateUnique="true"
 							disabled="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
 						<hftl:formField label="#{messages['BusinessEntity.description']}"
-							field="description" required="true" useConverter="false"
+							field="description" useConverter="false"
 							size="50" maxlength="50"
 							disabled="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
 

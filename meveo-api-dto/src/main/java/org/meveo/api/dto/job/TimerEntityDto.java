@@ -17,7 +17,7 @@ public class TimerEntityDto extends BaseDto {
     @XmlAttribute(required = true)
     private String code;
 
-    @XmlAttribute(required = false)
+    @XmlAttribute()
     private String description;
 
     @XmlAttribute(required = true)

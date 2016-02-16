@@ -80,7 +80,7 @@
 				field="offerTemplate" valueLabelField="code" listElements="#{offerTemplateBean.listActive}"/>
 <!--                 popup="true" popupId="offerPopup" clearButton="true" /> -->
 			<hftl:searchField id="seller" label="#{messages['seller.title']}"
-				field="seller" valueLabelField="description" popup="true"
+				field="seller" valueLabelField="descriptionOrCode" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
 			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
 				<hftl:searchField id="tradingCountry"
@@ -164,7 +164,7 @@
 						<h:outputText value="#{entity.description}" />
 					</f:facet>
 					<f:facet name="input">
-						<p:inputText value="#{entity.description}" required="true"
+						<p:inputText value="#{entity.description}" 
 							maxlength="100" size="20" />
 					</f:facet>
 				</p:cellEditor>

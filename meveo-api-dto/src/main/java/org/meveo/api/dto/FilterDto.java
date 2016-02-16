@@ -21,7 +21,7 @@ public class FilterDto extends BaseDto {
 	private static final long serialVersionUID = 1L;
 	@XmlAttribute(required=true)
 	private String code;
-	@XmlAttribute(required=false)
+	@XmlAttribute()
 	private String description;
 	private Boolean shared;
 	private String inputXml;

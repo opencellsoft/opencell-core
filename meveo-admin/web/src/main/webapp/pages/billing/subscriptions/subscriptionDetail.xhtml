@@ -128,7 +128,7 @@
 							label="#{messages['serviceInstance.terminationDate']}"
 							field="terminationDate" required="true" edit="true" />
 						<hftl:formField label="Motifs "
-							field="subscriptionTerminationReason" valueLabelField="description"
+							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
 							required="true"  edit="true"
 							listElements="#{subscriptionTerminationReasonService.listReasons()}" />
 
@@ -317,7 +317,7 @@
 											maxlength="35" />
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"
-											field="description" size="80" maxlength="100" required="true" />
+											field="description" size="80" maxlength="100" />
 										<hftl:formField
 											label="#{messages['billingAccount.subscriptionDate']}"
 											field="subscriptionDate" required="true" />
@@ -989,7 +989,7 @@
 							label="#{messages['oneShotChargeInstance.criteria3']}"
 							field="criteria3" edit="false" isMessage="false" />-->
 						<hftl:formField label="#{messages['counterTemplate.title']}"
-							field="counter" valueLabelField="description" edit="false" />
+							field="counter" valueLabelField="descriptionOrCode" edit="false" />
                        
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">    

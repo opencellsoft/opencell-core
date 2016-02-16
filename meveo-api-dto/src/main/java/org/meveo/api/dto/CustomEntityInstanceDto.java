@@ -24,7 +24,7 @@ public class CustomEntityInstanceDto implements Serializable {
     @XmlAttribute(required = true)
     private String code;
 
-    @XmlAttribute(required = false)
+    @XmlAttribute()
     private String description;
 
     @XmlAttribute(required = true)
