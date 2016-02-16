@@ -43,7 +43,7 @@ public interface DiscountPlanRs extends IBaseRs {
 	@POST
 	ActionStatus createOrUpdate(DiscountPlanDto postData);
 	
-	@Path("/")
+	@Path("/list")
 	@GET
 	GetDiscountPlansResponseDto list();
 }
