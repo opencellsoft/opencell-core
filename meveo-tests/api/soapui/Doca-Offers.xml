@@ -24597,10 +24597,9 @@ public class PostpaidOfferScript extends Script {
 					JSONObject service = (JSONObject)o;
 					String code = (String)service.get("code");
 					String descr = (String)service.get("description");
-					Double counter = (Double) service.get("counter");
-					Double priceInCounter = (Double) service.get("priceInCounter");
-					Double priceOverCounter = (Double) service.get("priceOverCounter");
-					Boolean mandatory =(Boolean) service.get("mandatory");
+					Double counter = service.get("counter") == null ? null : Double.valueOf( service.get("counter").toString());
+					Double priceInCounter = service.get("priceInCounter") == null ? null : Double.valueOf( service.get("priceInCounter").toString());
+					Double priceOverCounter = service.get("priceOverCounter") == null ? null : Double.valueOf(  service.get("priceOverCounter").toString());					Boolean mandatory =(Boolean) service.get("mandatory");
 					String invoiceSubcat = (String)service.get("invoiceSubcategory");
 					ServiceTemplateDto serviceTemplateDto= new ServiceTemplateDto(offerCode+"_"+code);
 					serviceTemplateDto.setDescription(descr);
