@@ -33,7 +33,6 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
@@ -125,7 +124,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
 			chargeTemplate.setAmountEditable(postData.getAmountEditable());
-			chargeTemplate.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.getValue(postData.getOneShotChargeTemplateType()));
+			chargeTemplate.setOneShotChargeTemplateType(postData.getOneShotChargeTemplateType());
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
 			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
@@ -238,7 +237,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
 			chargeTemplate.setAmountEditable(postData.getAmountEditable());
-			chargeTemplate.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.getValue(postData.getOneShotChargeTemplateType()));
+			chargeTemplate.setOneShotChargeTemplateType(postData.getOneShotChargeTemplateType());
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
 			chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());

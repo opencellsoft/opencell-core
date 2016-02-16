@@ -25388,7 +25388,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
                <!--Optional:-->
                <description>One off charge subscription</description>
             </languageDescriptions>
-            <oneShotChargeTemplateType>1</oneShotChargeTemplateType>
+            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
             <!--Optional:-->
             <immediateInvoicing>true</immediateInvoicing>
          </oneShotChargeTemplate>
@@ -26833,7 +26833,7 @@ public class Mediation_]]]]>><![CDATA[${#TestSuite#ticket}<![CDATA[_Flow extends
                <!--Optional:-->
                <description>One off charge recharge</description>
             </languageDescriptions>
-            <oneShotChargeTemplateType>1</oneShotChargeTemplateType>
+            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
             <!--Optional:-->
             <immediateInvoicing>true</immediateInvoicing>
          </oneShotChargeTemplate>

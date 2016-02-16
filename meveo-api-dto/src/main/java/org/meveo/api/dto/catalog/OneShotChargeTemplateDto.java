@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.crm.CustomFieldInstance;
 
 /**
@@ -21,7 +22,7 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
 	private static final long serialVersionUID = 4465303539660526917L;
 
 	@XmlElement(required = true)
-	private Integer oneShotChargeTemplateType;
+	private OneShotChargeTemplateTypeEnum oneShotChargeTemplateType;
 
 	private Boolean immediateInvoicing = true;
 
@@ -31,7 +32,7 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
 
 	public OneShotChargeTemplateDto(OneShotChargeTemplate e, Map<String, List<CustomFieldInstance>> customFieldInstances) {
 		super(e, customFieldInstances);
-		oneShotChargeTemplateType = e.getOneShotChargeTemplateType().getId();
+		oneShotChargeTemplateType = e.getOneShotChargeTemplateType();
 		immediateInvoicing = e.getImmediateInvoicing();
 	}
 
@@ -53,12 +54,11 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
 				+ ", hashCode()=" + hashCode() + "]";
 	}
 
-	public Integer getOneShotChargeTemplateType() {
+	public OneShotChargeTemplateTypeEnum getOneShotChargeTemplateType() {
 		return oneShotChargeTemplateType;
 	}
 
-	public void setOneShotChargeTemplateType(Integer oneShotChargeTemplateType) {
+	public void setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum oneShotChargeTemplateType) {
 		this.oneShotChargeTemplateType = oneShotChargeTemplateType;
 	}
-
 }

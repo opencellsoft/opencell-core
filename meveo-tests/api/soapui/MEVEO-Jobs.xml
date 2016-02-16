@@ -573,6 +573,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateBusinessOfferModel">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateBusinessOfferModel">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateBusinessOfferModelResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeRecurringChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeRecurringChargeTemplate">
@@ -588,6 +597,24 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createOfferTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeBusinessOfferModel">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeBusinessOfferModel">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeBusinessOfferModelResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -618,6 +645,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createBusinessOfferModel">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createBusinessOfferModel">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createBusinessOfferModelResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateTriggeredEdr">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateTriggeredEdr">
@@ -636,21 +672,21 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findServiceTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findServiceTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findServiceTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createServiceTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createServiceTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createServiceTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findServiceTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findServiceTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findServiceTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -717,6 +753,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateRecurringChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateRecurringChargeTemplate">
@@ -726,12 +771,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findOneShotChargeTemplate">
+    <wsdl:operation name="createDiscountPlan">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findOneShotChargeTemplate">
+      <wsdl:input name="createDiscountPlan">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="findOneShotChargeTemplateResponse">
+      <wsdl:output name="createDiscountPlanResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -744,21 +789,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateCounterTemplate">
+    <wsdl:operation name="createOfferFromBOM">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateCounterTemplate">
+      <wsdl:input name="createOfferFromBOM">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="updateCounterTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateOneShotChargeTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateOneShotChargeTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateOneShotChargeTemplateResponse">
+      <wsdl:output name="createOfferFromBOMResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -771,12 +807,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findUsageChargeTemplate">
+    <wsdl:operation name="findDiscountPlan">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findUsageChargeTemplate">
+      <wsdl:input name="findDiscountPlan">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="findUsageChargeTemplateResponse">
+      <wsdl:output name="findDiscountPlanResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -789,12 +825,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createOrUpdateUsageChargeTemplate">
+    <wsdl:operation name="listOneShotChargeTemplate">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateUsageChargeTemplate">
+      <wsdl:input name="listOneShotChargeTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="createOrUpdateUsageChargeTemplateResponse">
+      <wsdl:output name="listOneShotChargeTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -807,48 +843,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="listOneShotChargeTemplate">
+    <wsdl:operation name="findBusinessOfferModel">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="listOneShotChargeTemplate">
+      <wsdl:input name="findBusinessOfferModel">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="listOneShotChargeTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="listPricePlanByEventCode">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="listPricePlanByEventCode">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="listPricePlanByEventCodeResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateOfferTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateOfferTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateOfferTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createUsageChargeTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createUsageChargeTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createUsageChargeTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateOneShotChargeTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="createOrUpdateOneShotChargeTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createOrUpdateOneShotChargeTemplateResponse">
+      <wsdl:output name="findBusinessOfferModelResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -879,15 +879,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findChargeTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="findChargeTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="findChargeTemplateResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findTriggeredEdr">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findTriggeredEdr">
@@ -897,12 +888,12 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="removeOfferTemplate">
+    <wsdl:operation name="removeDiscountPlan">
       <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="removeOfferTemplate">
+      <wsdl:input name="removeDiscountPlan">
         <soap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="removeOfferTemplateResponse">
+      <wsdl:output name="removeDiscountPlanResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -915,12 +906,120 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findOneShotChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findOneShotChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findOneShotChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCounterTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateCounterTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateCounterTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateOneShotChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateOneShotChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateOneShotChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findUsageChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findUsageChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findUsageChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateOfferTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateOfferTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateOfferTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateUsageChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateUsageChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateUsageChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listPricePlanByEventCode">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listPricePlanByEventCode">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listPricePlanByEventCodeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createUsageChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createUsageChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createUsageChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOneShotChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateOneShotChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateOneShotChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findChargeTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findChargeTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeOfferTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeOfferTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeOfferTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findPricePlan">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="findPricePlan">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="findPricePlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listDiscountPlanResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -933,6 +1032,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateBusinessOfferModel">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateBusinessOfferModel">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateBusinessOfferModelResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="CatalogWs">
     <wsdl:port binding="tns:CatalogWsSoapBinding" name="CatalogWsImplPort">
@@ -942,11 +1050,21 @@
 </wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://localhost:8080/meveo/CatalogWs?wsdl=CatalogWs.wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="CatalogWs" targetNamespace="http://ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:types>
     <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.api.meveo.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.api.meveo.org/">
-      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="ActionStatus" type="tns:ActionStatus"/>
+      <xs:element name="BomOffer" type="tns:bomOfferDto"/>
+      <xs:element name="BusinessOfferModel" type="tns:businessOfferModelDto"/>
       <xs:element name="ChargeTemplate" type="tns:chargeTemplateDto"/>
       <xs:element name="CounterTemplate" type="tns:counterTemplateDto"/>
+      <xs:element name="CustomField" type="tns:customFieldDto"/>
+      <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
+      <xs:element name="CustomFields" type="tns:customFieldsDto"/>
+      <xs:element name="DiscountPlan" type="tns:discountPlanDto"/>
+      <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
+      <xs:element name="GetBusinessOfferModelResponse" type="tns:getBusinessOfferModelResponseDto"/>
       <xs:element name="GetChargeTemplateResponse" type="tns:getChargeTemplateResponseDto"/>
       <xs:element name="GetCounterTemplateResponse" type="tns:getCounterTemplateResponseDto"/>
+      <xs:element name="GetDiscountPlanResponse" type="tns:getDiscountPlanResponseDto"/>
+      <xs:element name="GetDiscountPlansResponse" type="tns:getDiscountPlansResponseDto"/>
       <xs:element name="GetOfferTemplateResponse" type="tns:getOfferTemplateResponseDto"/>
       <xs:element name="GetOneShotChargeTemplateResponse" type="tns:getOneShotChargeTemplateResponseDto"/>
       <xs:element name="GetPricePlanResponse" type="tns:getPricePlanResponseDto"/>
@@ -967,14 +1085,24 @@
       <xs:element name="TriggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
       <xs:element name="TriggeredEdrTemplates" type="tns:triggeredEdrTemplatesDto"/>
       <xs:element name="UsageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+      <xs:element name="createBusinessOfferModel" type="tns:createBusinessOfferModel"/>
+      <xs:element name="createBusinessOfferModelResponse" type="tns:createBusinessOfferModelResponse"/>
       <xs:element name="createCounterTemplate" type="tns:createCounterTemplate"/>
       <xs:element name="createCounterTemplateResponse" type="tns:createCounterTemplateResponse"/>
+      <xs:element name="createDiscountPlan" type="tns:createDiscountPlan"/>
+      <xs:element name="createDiscountPlanResponse" type="tns:createDiscountPlanResponse"/>
+      <xs:element name="createOfferFromBOM" type="tns:createOfferFromBOM"/>
+      <xs:element name="createOfferFromBOMResponse" type="tns:createOfferFromBOMResponse"/>
       <xs:element name="createOfferTemplate" type="tns:createOfferTemplate"/>
       <xs:element name="createOfferTemplateResponse" type="tns:createOfferTemplateResponse"/>
       <xs:element name="createOneShotChargeTemplate" type="tns:createOneShotChargeTemplate"/>
       <xs:element name="createOneShotChargeTemplateResponse" type="tns:createOneShotChargeTemplateResponse"/>
+      <xs:element name="createOrUpdateBusinessOfferModel" type="tns:createOrUpdateBusinessOfferModel"/>
+      <xs:element name="createOrUpdateBusinessOfferModelResponse" type="tns:createOrUpdateBusinessOfferModelResponse"/>
       <xs:element name="createOrUpdateCounterTemplate" type="tns:createOrUpdateCounterTemplate"/>
       <xs:element name="createOrUpdateCounterTemplateResponse" type="tns:createOrUpdateCounterTemplateResponse"/>
+      <xs:element name="createOrUpdateDiscountPlan" type="tns:createOrUpdateDiscountPlan"/>
+      <xs:element name="createOrUpdateDiscountPlanResponse" type="tns:createOrUpdateDiscountPlanResponse"/>
       <xs:element name="createOrUpdateOfferTemplate" type="tns:createOrUpdateOfferTemplate"/>
       <xs:element name="createOrUpdateOfferTemplateResponse" type="tns:createOrUpdateOfferTemplateResponse"/>
       <xs:element name="createOrUpdateOneShotChargeTemplate" type="tns:createOrUpdateOneShotChargeTemplate"/>
@@ -999,10 +1127,14 @@
       <xs:element name="createTriggeredEdrResponse" type="tns:createTriggeredEdrResponse"/>
       <xs:element name="createUsageChargeTemplate" type="tns:createUsageChargeTemplate"/>
       <xs:element name="createUsageChargeTemplateResponse" type="tns:createUsageChargeTemplateResponse"/>
+      <xs:element name="findBusinessOfferModel" type="tns:findBusinessOfferModel"/>
+      <xs:element name="findBusinessOfferModelResponse" type="tns:findBusinessOfferModelResponse"/>
       <xs:element name="findChargeTemplate" type="tns:findChargeTemplate"/>
       <xs:element name="findChargeTemplateResponse" type="tns:findChargeTemplateResponse"/>
       <xs:element name="findCounterTemplate" type="tns:findCounterTemplate"/>
       <xs:element name="findCounterTemplateResponse" type="tns:findCounterTemplateResponse"/>
+      <xs:element name="findDiscountPlan" type="tns:findDiscountPlan"/>
+      <xs:element name="findDiscountPlanResponse" type="tns:findDiscountPlanResponse"/>
       <xs:element name="findOfferTemplate" type="tns:findOfferTemplate"/>
       <xs:element name="findOfferTemplateResponse" type="tns:findOfferTemplateResponse"/>
       <xs:element name="findOneShotChargeTemplate" type="tns:findOneShotChargeTemplate"/>
@@ -1019,12 +1151,18 @@
       <xs:element name="findUsageChargeTemplateResponse" type="tns:findUsageChargeTemplateResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="listDiscountPlan" type="tns:listDiscountPlan"/>
+      <xs:element name="listDiscountPlanResponse" type="tns:listDiscountPlanResponse"/>
       <xs:element name="listOneShotChargeTemplate" type="tns:listOneShotChargeTemplate"/>
       <xs:element name="listOneShotChargeTemplateResponse" type="tns:listOneShotChargeTemplateResponse"/>
       <xs:element name="listPricePlanByEventCode" type="tns:listPricePlanByEventCode"/>
       <xs:element name="listPricePlanByEventCodeResponse" type="tns:listPricePlanByEventCodeResponse"/>
+      <xs:element name="removeBusinessOfferModel" type="tns:removeBusinessOfferModel"/>
+      <xs:element name="removeBusinessOfferModelResponse" type="tns:removeBusinessOfferModelResponse"/>
       <xs:element name="removeCounterTemplate" type="tns:removeCounterTemplate"/>
       <xs:element name="removeCounterTemplateResponse" type="tns:removeCounterTemplateResponse"/>
+      <xs:element name="removeDiscountPlan" type="tns:removeDiscountPlan"/>
+      <xs:element name="removeDiscountPlanResponse" type="tns:removeDiscountPlanResponse"/>
       <xs:element name="removeOfferTemplate" type="tns:removeOfferTemplate"/>
       <xs:element name="removeOfferTemplateResponse" type="tns:removeOfferTemplateResponse"/>
       <xs:element name="removeOneShotChargeTemplate" type="tns:removeOneShotChargeTemplate"/>
@@ -1039,8 +1177,12 @@
       <xs:element name="removeTriggeredEdrResponse" type="tns:removeTriggeredEdrResponse"/>
       <xs:element name="removeUsageChargeTemplate" type="tns:removeUsageChargeTemplate"/>
       <xs:element name="removeUsageChargeTemplateResponse" type="tns:removeUsageChargeTemplateResponse"/>
+      <xs:element name="updateBusinessOfferModel" type="tns:updateBusinessOfferModel"/>
+      <xs:element name="updateBusinessOfferModelResponse" type="tns:updateBusinessOfferModelResponse"/>
       <xs:element name="updateCounterTemplate" type="tns:updateCounterTemplate"/>
       <xs:element name="updateCounterTemplateResponse" type="tns:updateCounterTemplateResponse"/>
+      <xs:element name="updateDiscountPlan" type="tns:updateDiscountPlan"/>
+      <xs:element name="updateDiscountPlanResponse" type="tns:updateDiscountPlanResponse"/>
       <xs:element name="updateOfferTemplate" type="tns:updateOfferTemplate"/>
       <xs:element name="updateOfferTemplateResponse" type="tns:updateOfferTemplateResponse"/>
       <xs:element name="updateOneShotChargeTemplate" type="tns:updateOneShotChargeTemplate"/>
@@ -1062,13 +1204,13 @@
       </xs:complexType>
       <xs:complexType name="removeTriggeredEdrResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="actionStatus">
+      <xs:complexType name="ActionStatus">
         <xs:sequence>
           <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
@@ -1079,7 +1221,7 @@
       </xs:complexType>
       <xs:complexType name="removeUsageChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeOneShotChargeTemplate">
@@ -1089,7 +1231,7 @@
       </xs:complexType>
       <xs:complexType name="removeOneShotChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeRecurringChargeTemplate">
@@ -1099,7 +1241,32 @@
       </xs:complexType>
       <xs:complexType name="removeRecurringChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateBusinessOfferModel">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="businessOfferModel" type="tns:businessOfferModelDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="businessOfferModelDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="offerTemplateCode" type="xs:string"/>
+              <xs:element minOccurs="0" name="scriptCode" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseDto">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateBusinessOfferModelResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOneShotChargeTemplate">
@@ -1111,32 +1278,95 @@
         <xs:complexContent>
           <xs:extension base="tns:chargeTemplateDto">
             <xs:sequence>
-              <xs:element name="oneShotChargeTemplateType" type="xs:int"/>
+              <xs:element name="oneShotChargeTemplateType" type="tns:oneShotChargeTemplateTypeEnum"/>
               <xs:element minOccurs="0" name="immediateInvoicing" type="xs:boolean"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="chargeTemplateDto">
-        <xs:sequence>
-          <xs:element name="invoiceSubCategory" type="xs:string"/>
-          <xs:element name="disabled" type="xs:boolean"/>
-          <xs:element minOccurs="0" name="amountEditable" type="xs:boolean"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
-          <xs:element minOccurs="0" name="inputUnitDescription" type="xs:string"/>
-          <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
-          <xs:element minOccurs="0" name="unitMultiplicator" type="xs:decimal"/>
-          <xs:element name="unitNbDecimal" type="xs:int"/>
-          <xs:element minOccurs="0" name="triggeredEdrs" type="tns:triggeredEdrTemplatesDto"/>
-        </xs:sequence>
-        <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element name="invoiceSubCategory" type="xs:string"/>
+              <xs:element name="disabled" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="amountEditable" type="xs:boolean"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="languageDescriptions" nillable="true" type="tns:languageDescriptionDto"/>
+              <xs:element minOccurs="0" name="inputUnitDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="ratingUnitDescription" type="xs:string"/>
+              <xs:element minOccurs="0" name="unitMultiplicator" type="xs:decimal"/>
+              <xs:element name="unitNbDecimal" type="xs:int"/>
+              <xs:element minOccurs="0" name="roundingModeDtoEnum" type="tns:roundingModeDtoEnum"/>
+              <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+              <xs:element minOccurs="0" name="triggeredEdrs" type="tns:triggeredEdrTemplatesDto"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
+          </xs:extension>
+        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="languageDescriptionDto">
         <xs:sequence>
           <xs:element minOccurs="0" name="languageCode" type="xs:string"/>
           <xs:element minOccurs="0" name="description" type="xs:string"/>
         </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customFieldsDto">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="customField" nillable="true" type="tns:customFieldDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="customFieldDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="stringValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="dateValue" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="longValue" type="xs:long"/>
+          <xs:element minOccurs="0" name="doubleValue" type="xs:double"/>
+          <xs:element minOccurs="0" name="listValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="mapValue">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string"/>
+                      <xs:element minOccurs="0" name="value" type="tns:customFieldValueDto"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" name="entityReferenceValue" type="tns:entityReferenceDto"/>
+        </xs:sequence>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="valueDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodStartDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodEndDate" type="xs:dateTime"/>
+        <xs:attribute name="valuePeriodPriority" type="xs:int"/>
+      </xs:complexType>
+      <xs:complexType name="customFieldValueDto">
+        <xs:sequence>
+          <xs:choice minOccurs="0">
+            <xs:element name="dateValue" type="xs:dateTime"/>
+            <xs:element name="doubleValue" type="xs:double"/>
+            <xs:element name="longValue" type="xs:long"/>
+            <xs:element name="stringValue" type="xs:string"/>
+            <xs:element name="entityReferenceValue" type="tns:entityReferenceDto"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="entityReferenceDto">
+        <xs:sequence/>
+        <xs:attribute name="classname" type="xs:string" use="required"/>
+        <xs:attribute name="classnameCode" type="xs:string"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="triggeredEdrTemplatesDto">
         <xs:sequence>
@@ -1158,7 +1388,7 @@
       </xs:complexType>
       <xs:complexType name="createOneShotChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOfferTemplate">
@@ -1170,9 +1400,11 @@
         <xs:sequence>
           <xs:element name="disabled" type="xs:boolean"/>
           <xs:element minOccurs="0" name="serviceTemplates" type="tns:serviceTemplatesDto"/>
+          <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+          <xs:element minOccurs="0" name="bomCode" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="serviceTemplatesDto">
         <xs:sequence>
@@ -1186,9 +1418,11 @@
           <xs:element minOccurs="0" name="serviceChargeTemplateSubscriptions" type="tns:ServiceChargeTemplateSubscriptions"/>
           <xs:element minOccurs="0" name="serviceChargeTemplateTerminations" type="tns:ServiceChargeTemplateTerminations"/>
           <xs:element minOccurs="0" name="serviceChargeTemplateUsages" type="tns:ServiceChargeTemplateUsages"/>
+          <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
+          <xs:element name="mandatory" type="xs:boolean"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="ServiceChargeTemplateRecurrings">
         <xs:sequence>
@@ -1253,7 +1487,23 @@
       </xs:complexType>
       <xs:complexType name="createOfferTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="discountPlanDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updatePricePlan">
@@ -1288,11 +1538,21 @@
           <xs:element minOccurs="0" name="validityCalendarCode" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="updatePricePlanResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeBusinessOfferModel">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="businessOfferModelCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeBusinessOfferModelResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdatePricePlan">
@@ -1302,7 +1562,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdatePricePlanResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateTriggeredEdr">
@@ -1312,7 +1572,17 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateTriggeredEdrResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBusinessOfferModel">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="businessOfferModel" type="tns:businessOfferModelDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBusinessOfferModelResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateTriggeredEdr">
@@ -1322,7 +1592,7 @@
       </xs:complexType>
       <xs:complexType name="updateTriggeredEdrResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findServiceTemplate">
@@ -1346,7 +1616,7 @@
       </xs:complexType>
       <xs:complexType abstract="true" name="baseResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createServiceTemplate">
@@ -1356,7 +1626,7 @@
       </xs:complexType>
       <xs:complexType name="createServiceTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCounterTemplate">
@@ -1374,12 +1644,12 @@
           <xs:element minOccurs="0" name="ceilingExpressionEl" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
         <xs:attribute name="calendar" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCounterTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeServiceTemplate">
@@ -1389,7 +1659,7 @@
       </xs:complexType>
       <xs:complexType name="removeServiceTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createTriggeredEdr">
@@ -1399,7 +1669,7 @@
       </xs:complexType>
       <xs:complexType name="createTriggeredEdrResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findRecurringChargeTemplate">
@@ -1442,7 +1712,7 @@
       </xs:complexType>
       <xs:complexType name="createRecurringChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateOfferTemplate">
@@ -1452,7 +1722,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateOfferTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateUsageChargeTemplate">
@@ -1476,7 +1746,7 @@
       </xs:complexType>
       <xs:complexType name="updateUsageChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="index">
@@ -1484,27 +1754,8 @@
       </xs:complexType>
       <xs:complexType name="indexResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findOneShotChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="oneShotChargeTemplateCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findOneShotChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getOneShotChargeTemplateResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getOneShotChargeTemplateResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createOrUpdateRecurringChargeTemplate">
         <xs:sequence>
@@ -1513,7 +1764,27 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateRecurringChargeTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateServiceTemplate">
@@ -1523,27 +1794,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateServiceTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateOneShotChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateOneShotChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateCounterTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateCounterTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCounterTemplate">
@@ -1553,61 +1804,86 @@
       </xs:complexType>
       <xs:complexType name="removeCounterTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="findUsageChargeTemplate">
+      <xs:complexType name="createOfferFromBOM">
         <xs:sequence>
-          <xs:element minOccurs="0" name="usageChargeTemplateCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="bomOffer" type="tns:bomOfferDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="findUsageChargeTemplateResponse">
+      <xs:complexType name="bomOfferDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseDto">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="offerCustomFields" type="tns:customFieldsDto"/>
+              <xs:element minOccurs="0" name="prefix" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="bomCode" type="xs:string" use="required"/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="createOfferFromBOMResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getUsageChargeTemplateResponseDto"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="getUsageChargeTemplateResponseDto">
+      <xs:complexType name="findDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlanCocde" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getDiscountPlanResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getDiscountPlanResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+              <xs:element minOccurs="0" name="discountPlanDto" type="tns:discountPlanDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="updateOfferTemplate">
+      <xs:complexType name="findBusinessOfferModel">
         <xs:sequence>
-          <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
+          <xs:element minOccurs="0" name="businessOfferModelCode" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="updateOfferTemplateResponse">
+      <xs:complexType name="findBusinessOfferModelResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:getBusinessOfferModelResponseDto"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="listPricePlanByEventCode">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="eventCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="listPricePlanByEventCodeResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:pricePlanMatrixesResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="pricePlanMatrixesResponseDto">
+      <xs:complexType name="getBusinessOfferModelResponseDto">
         <xs:complexContent>
           <xs:extension base="tns:baseResponse">
             <xs:sequence>
-              <xs:element minOccurs="0" name="pricePlanMatrixes" type="tns:PricePlans"/>
+              <xs:element minOccurs="0" name="businessOfferModel" type="tns:businessOfferModelDto"/>
             </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="PricePlans">
+      <xs:complexType name="findOfferTemplate">
         <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="pricePlanMatrix" nillable="true" type="tns:pricePlanDto"/>
+          <xs:element minOccurs="0" name="offerTemplateCode" type="xs:string"/>
         </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findOfferTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getOfferTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getOfferTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="listOneShotChargeTemplate">
         <xs:sequence>
@@ -1638,35 +1914,6 @@
           <xs:element minOccurs="0" name="taxDescription" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="findOfferTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="offerTemplateCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findOfferTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getOfferTemplateResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getOfferTemplateResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateUsageChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateUsageChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="createCounterTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
@@ -1674,27 +1921,7 @@
       </xs:complexType>
       <xs:complexType name="createCounterTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createUsageChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createUsageChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateOneShotChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createOrUpdateOneShotChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createPricePlan">
@@ -1704,7 +1931,7 @@
       </xs:complexType>
       <xs:complexType name="createPricePlanResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findCounterTemplate">
@@ -1733,7 +1960,168 @@
       </xs:complexType>
       <xs:complexType name="updateServiceTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findTriggeredEdr">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="triggeredEdrCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findTriggeredEdrResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getTriggeredEdrResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getTriggeredEdrResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="triggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="removeDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlanCocde" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateRecurringChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateRecurringChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findOneShotChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="oneShotChargeTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findOneShotChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getOneShotChargeTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getOneShotChargeTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updateOneShotChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateOneShotChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCounterTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="counterTemplate" type="tns:counterTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateCounterTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findUsageChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="usageChargeTemplateCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findUsageChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getUsageChargeTemplateResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getUsageChargeTemplateResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="updateOfferTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateOfferTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateUsageChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateUsageChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listPricePlanByEventCode">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="eventCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listPricePlanByEventCodeResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:pricePlanMatrixesResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="pricePlanMatrixesResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="pricePlanMatrixes" type="tns:PricePlans"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="PricePlans">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="pricePlanMatrix" nillable="true" type="tns:pricePlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createUsageChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createUsageChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOneShotChargeTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="oneShotChargeTemplate" type="tns:oneShotChargeTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateOneShotChargeTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findChargeTemplate">
@@ -1755,35 +2143,6 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      <xs:complexType name="findTriggeredEdr">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="triggeredEdrCode" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="findTriggeredEdrResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:getTriggeredEdrResponseDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getTriggeredEdrResponseDto">
-        <xs:complexContent>
-          <xs:extension base="tns:baseResponse">
-            <xs:sequence>
-              <xs:element minOccurs="0" name="triggeredEdrTemplate" type="tns:triggeredEdrTemplateDto"/>
-            </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-      <xs:complexType name="updateRecurringChargeTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateRecurringChargeTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
-        </xs:sequence>
-      </xs:complexType>
       <xs:complexType name="removeOfferTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="offerTemplateCode" type="xs:string"/>
@@ -1791,7 +2150,29 @@
       </xs:complexType>
       <xs:complexType name="removeOfferTemplateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listDiscountPlan">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="listDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getDiscountPlansResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getDiscountPlansResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="discountPlan" type="tns:DiscountPlans"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="DiscountPlans">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="discountPlan" nillable="true" type="tns:discountPlanDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findPricePlan">
@@ -1813,6 +2194,16 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="updateBusinessOfferModel">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="businessOfferModel" type="tns:businessOfferModelDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateBusinessOfferModelResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="removePricePlan">
         <xs:sequence>
           <xs:element minOccurs="0" name="pricePlanCode" type="xs:string"/>
@@ -1820,7 +2211,7 @@
       </xs:complexType>
       <xs:complexType name="removePricePlanResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:simpleType name="actionStatusEnum">
@@ -1829,22 +2220,46 @@
           <xs:enumeration value="FAIL"/>
         </xs:restriction>
       </xs:simpleType>
+      <xs:simpleType name="meveoApiErrorCodeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ENTITY_DOES_NOT_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="ENTITY_ALREADY_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="DELETE_REFERENCED_ENTITY_EXCEPTION"/>
+          <xs:enumeration value="MISSING_PARAMETER"/>
+          <xs:enumeration value="INVALID_PARAMETER"/>
+          <xs:enumeration value="INVALID_ENUM_VALUE"/>
+          <xs:enumeration value="DUPLICATE_ACCESS"/>
+          <xs:enumeration value="INSUFFICIENT_BALANCE"/>
+          <xs:enumeration value="GENERIC_API_EXCEPTION"/>
+          <xs:enumeration value="BUSINESS_API_EXCEPTION"/>
+          <xs:enumeration value="AUTHENTICATION_AUTHORIZATION_EXCEPTION"/>
+          <xs:enumeration value="ACTION_FORBIDDEN"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="oneShotChargeTemplateTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUBSCRIPTION"/>
+          <xs:enumeration value="TERMINATION"/>
+          <xs:enumeration value="OTHER"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="roundingModeDtoEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="NEAREST"/>
+          <xs:enumeration value="DOWN"/>
+          <xs:enumeration value="UP"/>
+        </xs:restriction>
+      </xs:simpleType>
     </xs:schema>
   </wsdl:types>
-  <wsdl:message name="findTriggeredEdr">
-    <wsdl:part element="ns1:findTriggeredEdr" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeServiceTemplateResponse">
-    <wsdl:part element="ns1:removeServiceTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createServiceTemplateResponse">
     <wsdl:part element="ns1:createServiceTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateRecurringChargeTemplate">
-    <wsdl:part element="ns1:updateRecurringChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:findRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateRecurringChargeTemplate">
+    <wsdl:part element="ns1:updateRecurringChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findUsageChargeTemplate">
     <wsdl:part element="ns1:findUsageChargeTemplate" name="parameters"></wsdl:part>
@@ -1855,26 +2270,23 @@
   <wsdl:message name="createOrUpdatePricePlan">
     <wsdl:part element="ns1:createOrUpdatePricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findTriggeredEdrResponse">
-    <wsdl:part element="ns1:findTriggeredEdrResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:removeRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findTriggeredEdrResponse">
+    <wsdl:part element="ns1:findTriggeredEdrResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findPricePlanResponse">
     <wsdl:part element="ns1:findPricePlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateTriggeredEdr">
-    <wsdl:part element="ns1:createOrUpdateTriggeredEdr" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateUsageChargeTemplateResponse">
-    <wsdl:part element="ns1:createOrUpdateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findOfferTemplateResponse">
-    <wsdl:part element="ns1:findOfferTemplateResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createOfferFromBOM">
+    <wsdl:part element="ns1:createOfferFromBOM" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOfferTemplate">
     <wsdl:part element="ns1:createOfferTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findOfferTemplateResponse">
+    <wsdl:part element="ns1:findOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateTriggeredEdrResponse">
     <wsdl:part element="ns1:updateTriggeredEdrResponse" name="parameters"></wsdl:part>
@@ -1885,26 +2297,20 @@
   <wsdl:message name="findServiceTemplate">
     <wsdl:part element="ns1:findServiceTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateCounterTemplateResponse">
-    <wsdl:part element="ns1:updateCounterTemplateResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createRecurringChargeTemplate">
+    <wsdl:part element="ns1:createRecurringChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOfferTemplateResponse">
     <wsdl:part element="ns1:createOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createRecurringChargeTemplate">
-    <wsdl:part element="ns1:createRecurringChargeTemplate" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateDiscountPlan">
+    <wsdl:part element="ns1:createOrUpdateDiscountPlan" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateCounterTemplateResponse">
-    <wsdl:part element="ns1:createOrUpdateCounterTemplateResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="removeBusinessOfferModelResponse">
+    <wsdl:part element="ns1:removeBusinessOfferModelResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateOfferTemplate">
-    <wsdl:part element="ns1:createOrUpdateOfferTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateRecurringChargeTemplateResponse">
-    <wsdl:part element="ns1:updateRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="findUsageChargeTemplateResponse">
-    <wsdl:part element="ns1:findUsageChargeTemplateResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateBusinessOfferModelResponse">
+    <wsdl:part element="ns1:createOrUpdateBusinessOfferModelResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:createOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
@@ -1912,8 +2318,8 @@
   <wsdl:message name="createPricePlan">
     <wsdl:part element="ns1:createPricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateOneShotChargeTemplateResponse">
-    <wsdl:part element="ns1:createOrUpdateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="removeDiscountPlan">
+    <wsdl:part element="ns1:removeDiscountPlan" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findRecurringChargeTemplate">
     <wsdl:part element="ns1:findRecurringChargeTemplate" name="parameters"></wsdl:part>
@@ -1921,11 +2327,11 @@
   <wsdl:message name="createOrUpdateOneShotChargeTemplate">
     <wsdl:part element="ns1:createOrUpdateOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="listPricePlanByEventCodeResponse">
-    <wsdl:part element="ns1:listPricePlanByEventCodeResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:removeOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listPricePlanByEventCodeResponse">
+    <wsdl:part element="ns1:listPricePlanByEventCodeResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createTriggeredEdr">
     <wsdl:part element="ns1:createTriggeredEdr" name="parameters"></wsdl:part>
@@ -1939,29 +2345,17 @@
   <wsdl:message name="createPricePlanResponse">
     <wsdl:part element="ns1:createPricePlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeRecurringChargeTemplate">
-    <wsdl:part element="ns1:removeRecurringChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:createRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeUsageChargeTemplate">
-    <wsdl:part element="ns1:removeUsageChargeTemplate" name="parameters"></wsdl:part>
+  <wsdl:message name="removeRecurringChargeTemplate">
+    <wsdl:part element="ns1:removeRecurringChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listOneShotChargeTemplate">
     <wsdl:part element="ns1:listOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOneShotChargeTemplate">
-    <wsdl:part element="ns1:createOneShotChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateOfferTemplateResponse">
-    <wsdl:part element="ns1:updateOfferTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateServiceTemplate">
     <wsdl:part element="ns1:createOrUpdateServiceTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeCounterTemplate">
-    <wsdl:part element="ns1:removeCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findServiceTemplateResponse">
     <wsdl:part element="ns1:findServiceTemplateResponse" name="parameters"></wsdl:part>
@@ -1975,53 +2369,29 @@
   <wsdl:message name="createUsageChargeTemplateResponse">
     <wsdl:part element="ns1:createUsageChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findChargeTemplateResponse">
-    <wsdl:part element="ns1:findChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeOfferTemplateResponse">
-    <wsdl:part element="ns1:removeOfferTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateServiceTemplate">
-    <wsdl:part element="ns1:updateServiceTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createOrUpdateServiceTemplateResponse">
-    <wsdl:part element="ns1:createOrUpdateServiceTemplateResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="findBusinessOfferModel">
+    <wsdl:part element="ns1:findBusinessOfferModel" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateRecurringChargeTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removePricePlan">
-    <wsdl:part element="ns1:removePricePlan" name="parameters"></wsdl:part>
+  <wsdl:message name="createOrUpdateBusinessOfferModel">
+    <wsdl:part element="ns1:createOrUpdateBusinessOfferModel" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createCounterTemplate">
     <wsdl:part element="ns1:createCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createUsageChargeTemplate">
-    <wsdl:part element="ns1:createUsageChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateTriggeredEdr">
     <wsdl:part element="ns1:updateTriggeredEdr" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateCounterTemplate">
-    <wsdl:part element="ns1:updateCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateOfferTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findPricePlan">
-    <wsdl:part element="ns1:findPricePlan" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateOneShotChargeTemplateResponse">
-    <wsdl:part element="ns1:updateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="listPricePlanByEventCode">
-    <wsdl:part element="ns1:listPricePlanByEventCode" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createOrUpdateUsageChargeTemplate">
     <wsdl:part element="ns1:createOrUpdateUsageChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="createOrUpdateTriggeredEdrResponse">
-    <wsdl:part element="ns1:createOrUpdateTriggeredEdrResponse" name="parameters"></wsdl:part>
+  <wsdl:message name="updateDiscountPlan">
+    <wsdl:part element="ns1:updateDiscountPlan" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findOfferTemplate">
     <wsdl:part element="ns1:findOfferTemplate" name="parameters"></wsdl:part>
@@ -2029,8 +2399,11 @@
   <wsdl:message name="updateOneShotChargeTemplate">
     <wsdl:part element="ns1:updateOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateUsageChargeTemplate">
-    <wsdl:part element="ns1:updateUsageChargeTemplate" name="parameters"></wsdl:part>
+  <wsdl:message name="updateBusinessOfferModelResponse">
+    <wsdl:part element="ns1:updateBusinessOfferModelResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findDiscountPlanResponse">
+    <wsdl:part element="ns1:findDiscountPlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createServiceTemplate">
     <wsdl:part element="ns1:createServiceTemplate" name="parameters"></wsdl:part>
@@ -2047,29 +2420,23 @@
   <wsdl:message name="removeUsageChargeTemplateResponse">
     <wsdl:part element="ns1:removeUsageChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="findCounterTemplateResponse">
-    <wsdl:part element="ns1:findCounterTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="removeCounterTemplateResponse">
     <wsdl:part element="ns1:removeCounterTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="indexResponse">
     <wsdl:part element="ns1:indexResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeServiceTemplate">
-    <wsdl:part element="ns1:removeServiceTemplate" name="parameters"></wsdl:part>
+  <wsdl:message name="index">
+    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="updateOfferTemplate">
     <wsdl:part element="ns1:updateOfferTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="index">
-    <wsdl:part element="ns1:index" name="parameters"></wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="removeOneShotChargeTemplate">
-    <wsdl:part element="ns1:removeOneShotChargeTemplate" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="updateServiceTemplateResponse">
     <wsdl:part element="ns1:updateServiceTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeBusinessOfferModel">
+    <wsdl:part element="ns1:removeBusinessOfferModel" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateCounterTemplate">
     <wsdl:part element="ns1:createOrUpdateCounterTemplate" name="parameters"></wsdl:part>
@@ -2083,14 +2450,140 @@
   <wsdl:message name="listOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:listOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeDiscountPlanResponse">
+    <wsdl:part element="ns1:removeDiscountPlanResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removePricePlanResponse">
     <wsdl:part element="ns1:removePricePlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findOneShotChargeTemplate">
     <wsdl:part element="ns1:findOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createBusinessOfferModel">
+    <wsdl:part element="ns1:createBusinessOfferModel" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="updatePricePlan">
     <wsdl:part element="ns1:updatePricePlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBusinessOfferModelResponse">
+    <wsdl:part element="ns1:createBusinessOfferModelResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeServiceTemplateResponse">
+    <wsdl:part element="ns1:removeServiceTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findTriggeredEdr">
+    <wsdl:part element="ns1:findTriggeredEdr" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBusinessOfferModel">
+    <wsdl:part element="ns1:updateBusinessOfferModel" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findBusinessOfferModelResponse">
+    <wsdl:part element="ns1:findBusinessOfferModelResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateTriggeredEdr">
+    <wsdl:part element="ns1:createOrUpdateTriggeredEdr" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateDiscountPlanResponse">
+    <wsdl:part element="ns1:updateDiscountPlanResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateDiscountPlanResponse">
+    <wsdl:part element="ns1:createOrUpdateDiscountPlanResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateUsageChargeTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCounterTemplateResponse">
+    <wsdl:part element="ns1:updateCounterTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateCounterTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateCounterTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateOfferTemplate">
+    <wsdl:part element="ns1:createOrUpdateOfferTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateRecurringChargeTemplateResponse">
+    <wsdl:part element="ns1:updateRecurringChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findUsageChargeTemplateResponse">
+    <wsdl:part element="ns1:findUsageChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateOneShotChargeTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeUsageChargeTemplate">
+    <wsdl:part element="ns1:removeUsageChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOfferFromBOMResponse">
+    <wsdl:part element="ns1:createOfferFromBOMResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listDiscountPlanResponse">
+    <wsdl:part element="ns1:listDiscountPlanResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOneShotChargeTemplate">
+    <wsdl:part element="ns1:createOneShotChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateOfferTemplateResponse">
+    <wsdl:part element="ns1:updateOfferTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeCounterTemplate">
+    <wsdl:part element="ns1:removeCounterTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findChargeTemplateResponse">
+    <wsdl:part element="ns1:findChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeOfferTemplateResponse">
+    <wsdl:part element="ns1:removeOfferTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateServiceTemplate">
+    <wsdl:part element="ns1:updateServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateServiceTemplateResponse">
+    <wsdl:part element="ns1:createOrUpdateServiceTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findDiscountPlan">
+    <wsdl:part element="ns1:findDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removePricePlan">
+    <wsdl:part element="ns1:removePricePlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createUsageChargeTemplate">
+    <wsdl:part element="ns1:createUsageChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateCounterTemplate">
+    <wsdl:part element="ns1:updateCounterTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findPricePlan">
+    <wsdl:part element="ns1:findPricePlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateOneShotChargeTemplateResponse">
+    <wsdl:part element="ns1:updateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listPricePlanByEventCode">
+    <wsdl:part element="ns1:listPricePlanByEventCode" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateTriggeredEdrResponse">
+    <wsdl:part element="ns1:createOrUpdateTriggeredEdrResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateUsageChargeTemplate">
+    <wsdl:part element="ns1:updateUsageChargeTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createDiscountPlan">
+    <wsdl:part element="ns1:createDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findCounterTemplateResponse">
+    <wsdl:part element="ns1:findCounterTemplateResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeServiceTemplate">
+    <wsdl:part element="ns1:removeServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listDiscountPlan">
+    <wsdl:part element="ns1:listDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createDiscountPlanResponse">
+    <wsdl:part element="ns1:createDiscountPlanResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeOneShotChargeTemplate">
+    <wsdl:part element="ns1:removeOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createTriggeredEdrResponse">
     <wsdl:part element="ns1:createTriggeredEdrResponse" name="parameters"></wsdl:part>
@@ -2112,6 +2605,10 @@
       <wsdl:input message="ns1:removeRecurringChargeTemplate" name="removeRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeRecurringChargeTemplateResponse" name="removeRecurringChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateBusinessOfferModel">
+      <wsdl:input message="ns1:createOrUpdateBusinessOfferModel" name="createOrUpdateBusinessOfferModel"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateBusinessOfferModelResponse" name="createOrUpdateBusinessOfferModelResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOneShotChargeTemplate">
       <wsdl:input message="ns1:createOneShotChargeTemplate" name="createOneShotChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOneShotChargeTemplateResponse" name="createOneShotChargeTemplateResponse"></wsdl:output>
@@ -2120,9 +2617,17 @@
       <wsdl:input message="ns1:createOfferTemplate" name="createOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOfferTemplateResponse" name="createOfferTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateDiscountPlan">
+      <wsdl:input message="ns1:updateDiscountPlan" name="updateDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:updateDiscountPlanResponse" name="updateDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updatePricePlan">
       <wsdl:input message="ns1:updatePricePlan" name="updatePricePlan"></wsdl:input>
       <wsdl:output message="ns1:updatePricePlanResponse" name="updatePricePlanResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeBusinessOfferModel">
+      <wsdl:input message="ns1:removeBusinessOfferModel" name="removeBusinessOfferModel"></wsdl:input>
+      <wsdl:output message="ns1:removeBusinessOfferModelResponse" name="removeBusinessOfferModelResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOrUpdatePricePlan">
       <wsdl:input message="ns1:createOrUpdatePricePlan" name="createOrUpdatePricePlan"></wsdl:input>
@@ -2131,6 +2636,10 @@
     <wsdl:operation name="createOrUpdateTriggeredEdr">
       <wsdl:input message="ns1:createOrUpdateTriggeredEdr" name="createOrUpdateTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateTriggeredEdrResponse" name="createOrUpdateTriggeredEdrResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBusinessOfferModel">
+      <wsdl:input message="ns1:createBusinessOfferModel" name="createBusinessOfferModel"></wsdl:input>
+      <wsdl:output message="ns1:createBusinessOfferModelResponse" name="createBusinessOfferModelResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateTriggeredEdr">
       <wsdl:input message="ns1:updateTriggeredEdr" name="updateTriggeredEdr"></wsdl:input>
@@ -2176,65 +2685,49 @@
       <wsdl:input message="ns1:index" name="index"></wsdl:input>
       <wsdl:output message="ns1:indexResponse" name="indexResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findOneShotChargeTemplate">
-      <wsdl:input message="ns1:findOneShotChargeTemplate" name="findOneShotChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:findOneShotChargeTemplateResponse" name="findOneShotChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="createOrUpdateRecurringChargeTemplate">
       <wsdl:input message="ns1:createOrUpdateRecurringChargeTemplate" name="createOrUpdateRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateRecurringChargeTemplateResponse" name="createOrUpdateRecurringChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateDiscountPlan">
+      <wsdl:input message="ns1:createOrUpdateDiscountPlan" name="createOrUpdateDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateDiscountPlanResponse" name="createOrUpdateDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createDiscountPlan">
+      <wsdl:input message="ns1:createDiscountPlan" name="createDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:createDiscountPlanResponse" name="createDiscountPlanResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createOrUpdateServiceTemplate">
       <wsdl:input message="ns1:createOrUpdateServiceTemplate" name="createOrUpdateServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateServiceTemplateResponse" name="createOrUpdateServiceTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateOneShotChargeTemplate">
-      <wsdl:input message="ns1:updateOneShotChargeTemplate" name="updateOneShotChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:updateOneShotChargeTemplateResponse" name="updateOneShotChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateCounterTemplate">
-      <wsdl:input message="ns1:updateCounterTemplate" name="updateCounterTemplate"></wsdl:input>
-      <wsdl:output message="ns1:updateCounterTemplateResponse" name="updateCounterTemplateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="removeCounterTemplate">
       <wsdl:input message="ns1:removeCounterTemplate" name="removeCounterTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeCounterTemplateResponse" name="removeCounterTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findUsageChargeTemplate">
-      <wsdl:input message="ns1:findUsageChargeTemplate" name="findUsageChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:findUsageChargeTemplateResponse" name="findUsageChargeTemplateResponse"></wsdl:output>
+    <wsdl:operation name="createOfferFromBOM">
+      <wsdl:input message="ns1:createOfferFromBOM" name="createOfferFromBOM"></wsdl:input>
+      <wsdl:output message="ns1:createOfferFromBOMResponse" name="createOfferFromBOMResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateOfferTemplate">
-      <wsdl:input message="ns1:updateOfferTemplate" name="updateOfferTemplate"></wsdl:input>
-      <wsdl:output message="ns1:updateOfferTemplateResponse" name="updateOfferTemplateResponse"></wsdl:output>
+    <wsdl:operation name="findDiscountPlan">
+      <wsdl:input message="ns1:findDiscountPlan" name="findDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:findDiscountPlanResponse" name="findDiscountPlanResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="listPricePlanByEventCode">
-      <wsdl:input message="ns1:listPricePlanByEventCode" name="listPricePlanByEventCode"></wsdl:input>
-      <wsdl:output message="ns1:listPricePlanByEventCodeResponse" name="listPricePlanByEventCodeResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="listOneShotChargeTemplate">
-      <wsdl:input message="ns1:listOneShotChargeTemplate" name="listOneShotChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:listOneShotChargeTemplateResponse" name="listOneShotChargeTemplateResponse"></wsdl:output>
+    <wsdl:operation name="findBusinessOfferModel">
+      <wsdl:input message="ns1:findBusinessOfferModel" name="findBusinessOfferModel"></wsdl:input>
+      <wsdl:output message="ns1:findBusinessOfferModelResponse" name="findBusinessOfferModelResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findOfferTemplate">
       <wsdl:input message="ns1:findOfferTemplate" name="findOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:findOfferTemplateResponse" name="findOfferTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="createOrUpdateUsageChargeTemplate">
-      <wsdl:input message="ns1:createOrUpdateUsageChargeTemplate" name="createOrUpdateUsageChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateUsageChargeTemplateResponse" name="createOrUpdateUsageChargeTemplateResponse"></wsdl:output>
+    <wsdl:operation name="listOneShotChargeTemplate">
+      <wsdl:input message="ns1:listOneShotChargeTemplate" name="listOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:listOneShotChargeTemplateResponse" name="listOneShotChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createCounterTemplate">
       <wsdl:input message="ns1:createCounterTemplate" name="createCounterTemplate"></wsdl:input>
       <wsdl:output message="ns1:createCounterTemplateResponse" name="createCounterTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createUsageChargeTemplate">
-      <wsdl:input message="ns1:createUsageChargeTemplate" name="createUsageChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createUsageChargeTemplateResponse" name="createUsageChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="createOrUpdateOneShotChargeTemplate">
-      <wsdl:input message="ns1:createOrUpdateOneShotChargeTemplate" name="createOrUpdateOneShotChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:createOrUpdateOneShotChargeTemplateResponse" name="createOrUpdateOneShotChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createPricePlan">
       <wsdl:input message="ns1:createPricePlan" name="createPricePlan"></wsdl:input>
@@ -2248,32 +2741,80 @@
       <wsdl:input message="ns1:updateServiceTemplate" name="updateServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateServiceTemplateResponse" name="updateServiceTemplateResponse"></wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="findChargeTemplate">
-      <wsdl:input message="ns1:findChargeTemplate" name="findChargeTemplate"></wsdl:input>
-      <wsdl:output message="ns1:findChargeTemplateResponse" name="findChargeTemplateResponse"></wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="findTriggeredEdr">
       <wsdl:input message="ns1:findTriggeredEdr" name="findTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:findTriggeredEdrResponse" name="findTriggeredEdrResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeDiscountPlan">
+      <wsdl:input message="ns1:removeDiscountPlan" name="removeDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:removeDiscountPlanResponse" name="removeDiscountPlanResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updateRecurringChargeTemplate">
       <wsdl:input message="ns1:updateRecurringChargeTemplate" name="updateRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateRecurringChargeTemplateResponse" name="updateRecurringChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="findOneShotChargeTemplate">
+      <wsdl:input message="ns1:findOneShotChargeTemplate" name="findOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findOneShotChargeTemplateResponse" name="findOneShotChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateOneShotChargeTemplate">
+      <wsdl:input message="ns1:updateOneShotChargeTemplate" name="updateOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateOneShotChargeTemplateResponse" name="updateOneShotChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCounterTemplate">
+      <wsdl:input message="ns1:updateCounterTemplate" name="updateCounterTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateCounterTemplateResponse" name="updateCounterTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findUsageChargeTemplate">
+      <wsdl:input message="ns1:findUsageChargeTemplate" name="findUsageChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findUsageChargeTemplateResponse" name="findUsageChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateOfferTemplate">
+      <wsdl:input message="ns1:updateOfferTemplate" name="updateOfferTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateOfferTemplateResponse" name="updateOfferTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateUsageChargeTemplate">
+      <wsdl:input message="ns1:createOrUpdateUsageChargeTemplate" name="createOrUpdateUsageChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateUsageChargeTemplateResponse" name="createOrUpdateUsageChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listPricePlanByEventCode">
+      <wsdl:input message="ns1:listPricePlanByEventCode" name="listPricePlanByEventCode"></wsdl:input>
+      <wsdl:output message="ns1:listPricePlanByEventCodeResponse" name="listPricePlanByEventCodeResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createUsageChargeTemplate">
+      <wsdl:input message="ns1:createUsageChargeTemplate" name="createUsageChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createUsageChargeTemplateResponse" name="createUsageChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createOrUpdateOneShotChargeTemplate">
+      <wsdl:input message="ns1:createOrUpdateOneShotChargeTemplate" name="createOrUpdateOneShotChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateOneShotChargeTemplateResponse" name="createOrUpdateOneShotChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findChargeTemplate">
+      <wsdl:input message="ns1:findChargeTemplate" name="findChargeTemplate"></wsdl:input>
+      <wsdl:output message="ns1:findChargeTemplateResponse" name="findChargeTemplateResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeOfferTemplate">
       <wsdl:input message="ns1:removeOfferTemplate" name="removeOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeOfferTemplateResponse" name="removeOfferTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="listDiscountPlan">
+      <wsdl:input message="ns1:listDiscountPlan" name="listDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:listDiscountPlanResponse" name="listDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findPricePlan">
       <wsdl:input message="ns1:findPricePlan" name="findPricePlan"></wsdl:input>
       <wsdl:output message="ns1:findPricePlanResponse" name="findPricePlanResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBusinessOfferModel">
+      <wsdl:input message="ns1:updateBusinessOfferModel" name="updateBusinessOfferModel"></wsdl:input>
+      <wsdl:output message="ns1:updateBusinessOfferModelResponse" name="updateBusinessOfferModelResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="removePricePlan">
       <wsdl:input message="ns1:removePricePlan" name="removePricePlan"></wsdl:input>
       <wsdl:output message="ns1:removePricePlanResponse" name="removePricePlanResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="e8ff6ce2-6754-46d2-bff1-3757c0f2808a"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createOfferTemplate" bindingOperationName="createOfferTemplate" type="Request-Response" outputName="createOfferTemplateResponse" inputName="createOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="10736599-19bc-4729-ac00-2a166080743c"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createOneShotChargeTemplate" bindingOperationName="createOneShotChargeTemplate" type="Request-Response" outputName="createOneShotChargeTemplateResponse" inputName="createOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="c50c06d0-2ebe-4271-b7a5-b2233ab71280"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createPricePlan" bindingOperationName="createPricePlan" type="Request-Response" outputName="createPricePlanResponse" inputName="createPricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="42748860-c5ce-4b6b-91fb-8e33cf47d206"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createRecurringChargeTemplate" bindingOperationName="createRecurringChargeTemplate" type="Request-Response" outputName="createRecurringChargeTemplateResponse" inputName="createRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="9e236420-e97b-4363-a6a3-6b64010d2ec5"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createServiceTemplate" bindingOperationName="createServiceTemplate" type="Request-Response" outputName="createServiceTemplateResponse" inputName="createServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="2ee0467b-dc1b-4160-898a-d34cf60f05e0"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createUsageChargeTemplate" bindingOperationName="createUsageChargeTemplate" type="Request-Response" outputName="createUsageChargeTemplateResponse" inputName="createUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="31868896-13b5-4051-855c-04d0df1e542b"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findCounterTemplate" bindingOperationName="findCounterTemplate" type="Request-Response" outputName="findCounterTemplateResponse" inputName="findCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="b42e3ff9-67d2-40aa-a90d-5c11ba728a52"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findOfferTemplate" bindingOperationName="findOfferTemplate" type="Request-Response" outputName="findOfferTemplateResponse" inputName="findOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="beb2d366-958b-41be-a783-050658d2d30c"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findOneShotChargeTemplate" bindingOperationName="findOneShotChargeTemplate" type="Request-Response" outputName="findOneShotChargeTemplateResponse" inputName="findOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="ed7f81e5-22ba-4cf0-af1d-5966257c825b"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findPricePlan" bindingOperationName="findPricePlan" type="Request-Response" outputName="findPricePlanResponse" inputName="findPricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="5f8316ab-5c7f-4762-a6b4-bbb77d88a3ba"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findRecurringChargeTemplate" bindingOperationName="findRecurringChargeTemplate" type="Request-Response" outputName="findRecurringChargeTemplateResponse" inputName="findRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="1e975db7-5ea3-4c5c-97a7-f66c630c18f6"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findServiceTemplate" bindingOperationName="findServiceTemplate" type="Request-Response" outputName="findServiceTemplateResponse" inputName="findServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="b6f26b49-40dd-4436-8593-7c61b955c25b"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findUsageChargeTemplate" bindingOperationName="findUsageChargeTemplate" type="Request-Response" outputName="findUsageChargeTemplateResponse" inputName="findUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="29742472-491a-4398-8416-990c27e4486e"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="0d4d3d2e-e3e0-46eb-9efa-48ea6170688a"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="listOneShotChargeTemplate" bindingOperationName="listOneShotChargeTemplate" type="Request-Response" outputName="listOneShotChargeTemplateResponse" inputName="listOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="330c24e0-68a5-4411-a659-d321c1e3b6d6"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeCounterTemplate" bindingOperationName="removeCounterTemplate" type="Request-Response" outputName="removeCounterTemplateResponse" inputName="removeCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="cbc1f50c-c4c5-4a3c-8c97-e9f4d8d1b6c3"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeOfferTemplate" bindingOperationName="removeOfferTemplate" type="Request-Response" outputName="removeOfferTemplateResponse" inputName="removeOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="a2a7369e-c0fb-476d-be2b-82f029a820cf"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeOneShotChargeTemplate" bindingOperationName="removeOneShotChargeTemplate" type="Request-Response" outputName="removeOneShotChargeTemplateResponse" inputName="removeOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="5cd967eb-be82-4f11-a9e6-f78cce9924ad"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removePricePlan" bindingOperationName="removePricePlan" type="Request-Response" outputName="removePricePlanResponse" inputName="removePricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="4ff78f28-edaa-4c9d-8b11-2133fa73730e"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeRecurringChargeTemplate" bindingOperationName="removeRecurringChargeTemplate" type="Request-Response" outputName="removeRecurringChargeTemplateResponse" inputName="removeRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="c5e00d4b-3f13-4078-84c0-bc4719c99828"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeServiceTemplate" bindingOperationName="removeServiceTemplate" type="Request-Response" outputName="removeServiceTemplateResponse" inputName="removeServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="f9ced9bd-174f-4e2b-b26a-e768278d9e47"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeUsageChargeTemplate" bindingOperationName="removeUsageChargeTemplate" type="Request-Response" outputName="removeUsageChargeTemplateResponse" inputName="removeUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="f28ee2f8-6942-49dc-ad41-a6d6d84e3e96"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateCounterTemplate" bindingOperationName="updateCounterTemplate" type="Request-Response" outputName="updateCounterTemplateResponse" inputName="updateCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="d3fceb01-426b-47b8-8660-8520d4f48232"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateOfferTemplate" bindingOperationName="updateOfferTemplate" type="Request-Response" outputName="updateOfferTemplateResponse" inputName="updateOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="c61b96d5-8df9-4b08-9b5e-f4f12b8b9465"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateOneShotChargeTemplate" bindingOperationName="updateOneShotChargeTemplate" type="Request-Response" outputName="updateOneShotChargeTemplateResponse" inputName="updateOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="e599e6d7-3af9-4a23-af9f-3e34ccd5621e"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updatePricePlan" bindingOperationName="updatePricePlan" type="Request-Response" outputName="updatePricePlanResponse" inputName="updatePricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="6f1a77b3-72ff-4d04-ba2c-4a14b3015522"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateRecurringChargeTemplate" bindingOperationName="updateRecurringChargeTemplate" type="Request-Response" outputName="updateRecurringChargeTemplateResponse" inputName="updateRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="9a588a93-1d7a-44b7-97e3-6d0461a900f1"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateServiceTemplate" bindingOperationName="updateServiceTemplate" type="Request-Response" outputName="updateServiceTemplateResponse" inputName="updateServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="268ec651-b38d-4251-913b-a4f61a2dc558"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateUsageChargeTemplate" bindingOperationName="updateUsageChargeTemplate" type="Request-Response" outputName="updateUsageChargeTemplateResponse" inputName="updateUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="4fe209fc-557c-443e-b4f8-6594e22c9143"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findChargeTemplate" bindingOperationName="findChargeTemplate" type="Request-Response" outputName="findChargeTemplateResponse" inputName="findChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="a7fe2c04-60c9-41d7-9fad-d002cbfa3f9a"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeTriggeredEdr" bindingOperationName="removeTriggeredEdr" type="Request-Response" outputName="removeTriggeredEdrResponse" inputName="removeTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="78467e9f-54ee-4fb5-aeeb-b0700d098076"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateTriggeredEdr" bindingOperationName="updateTriggeredEdr" type="Request-Response" outputName="updateTriggeredEdrResponse" inputName="updateTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="749d1d05-458e-4646-be9c-8fc3be087d64"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createTriggeredEdr" bindingOperationName="createTriggeredEdr" type="Request-Response" outputName="createTriggeredEdrResponse" inputName="createTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="b4d4e65f-ea82-42f5-bb7c-a66ae83a0257"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findTriggeredEdr" bindingOperationName="findTriggeredEdr" type="Request-Response" outputName="findTriggeredEdrResponse" inputName="findTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="06cb3226-7038-4a9f-a6bd-f3d084586c8f"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="listPricePlanByEventCode" bindingOperationName="listPricePlanByEventCode" type="Request-Response" outputName="listPricePlanByEventCodeResponse" inputName="listPricePlanByEventCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="643cff21-d2bf-4514-b401-47556f5f3f66"><con:settings/></con:operation><con:operation id="0061d98d-1368-4850-8cd4-2ea1561c1d09" isOneWay="false" action="" name="createOrUpdateOfferTemplate" bindingOperationName="createOrUpdateOfferTemplate" type="Request-Response" outputName="createOrUpdateOfferTemplateResponse" inputName="createOrUpdateOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="72945804-bb0f-4b8e-bcc1-31716b0583ec" isOneWay="false" action="" name="createOrUpdateUsageChargeTemplate" bindingOperationName="createOrUpdateUsageChargeTemplate" type="Request-Response" outputName="createOrUpdateUsageChargeTemplateResponse" inputName="createOrUpdateUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1a8a8a20-15ad-4738-9b03-e2805dcb6387" isOneWay="false" action="" name="createOrUpdateTriggeredEdr" bindingOperationName="createOrUpdateTriggeredEdr" type="Request-Response" outputName="createOrUpdateTriggeredEdrResponse" inputName="createOrUpdateTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3b8c55ad-a3fc-40e5-8a66-69adbe7147fe" isOneWay="false" action="" name="createOrUpdateServiceTemplate" bindingOperationName="createOrUpdateServiceTemplate" type="Request-Response" outputName="createOrUpdateServiceTemplateResponse" inputName="createOrUpdateServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="56a505b6-c9c2-4b63-8a9b-68770db74c3f" isOneWay="false" action="" name="createOrUpdateRecurringChargeTemplate" bindingOperationName="createOrUpdateRecurringChargeTemplate" type="Request-Response" outputName="createOrUpdateRecurringChargeTemplateResponse" inputName="createOrUpdateRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="52a05e74-2d84-4c97-8ac2-dfe6022cedb6" isOneWay="false" action="" name="createOrUpdatePricePlan" bindingOperationName="createOrUpdatePricePlan" type="Request-Response" outputName="createOrUpdatePricePlanResponse" inputName="createOrUpdatePricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="88bf2745-e8fd-49d8-bb2b-4b00b8c73040" isOneWay="false" action="" name="createOrUpdateOneShotChargeTemplate" bindingOperationName="createOrUpdateOneShotChargeTemplate" type="Request-Response" outputName="createOrUpdateOneShotChargeTemplateResponse" inputName="createOrUpdateOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="fd923467-cb52-490b-bdfb-ecf218ed7d05" isOneWay="false" action="" name="createOrUpdateCounterTemplate" bindingOperationName="createOrUpdateCounterTemplate" type="Request-Response" outputName="createOrUpdateCounterTemplateResponse" inputName="createOrUpdateCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" id="0f11f132-23d8-4ce9-9436-bf5844bdcb72" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="e8ff6ce2-6754-46d2-bff1-3757c0f2808a"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createOfferTemplate" bindingOperationName="createOfferTemplate" type="Request-Response" outputName="createOfferTemplateResponse" inputName="createOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="10736599-19bc-4729-ac00-2a166080743c"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createOneShotChargeTemplate" bindingOperationName="createOneShotChargeTemplate" type="Request-Response" outputName="createOneShotChargeTemplateResponse" inputName="createOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="c50c06d0-2ebe-4271-b7a5-b2233ab71280"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createPricePlan" bindingOperationName="createPricePlan" type="Request-Response" outputName="createPricePlanResponse" inputName="createPricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="42748860-c5ce-4b6b-91fb-8e33cf47d206"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createRecurringChargeTemplate" bindingOperationName="createRecurringChargeTemplate" type="Request-Response" outputName="createRecurringChargeTemplateResponse" inputName="createRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="9e236420-e97b-4363-a6a3-6b64010d2ec5"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createServiceTemplate" bindingOperationName="createServiceTemplate" type="Request-Response" outputName="createServiceTemplateResponse" inputName="createServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="2ee0467b-dc1b-4160-898a-d34cf60f05e0"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createUsageChargeTemplate" bindingOperationName="createUsageChargeTemplate" type="Request-Response" outputName="createUsageChargeTemplateResponse" inputName="createUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="31868896-13b5-4051-855c-04d0df1e542b"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findCounterTemplate" bindingOperationName="findCounterTemplate" type="Request-Response" outputName="findCounterTemplateResponse" inputName="findCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="b42e3ff9-67d2-40aa-a90d-5c11ba728a52"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findOfferTemplate" bindingOperationName="findOfferTemplate" type="Request-Response" outputName="findOfferTemplateResponse" inputName="findOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="beb2d366-958b-41be-a783-050658d2d30c"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findOneShotChargeTemplate" bindingOperationName="findOneShotChargeTemplate" type="Request-Response" outputName="findOneShotChargeTemplateResponse" inputName="findOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="ed7f81e5-22ba-4cf0-af1d-5966257c825b"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findPricePlan" bindingOperationName="findPricePlan" type="Request-Response" outputName="findPricePlanResponse" inputName="findPricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="5f8316ab-5c7f-4762-a6b4-bbb77d88a3ba"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findRecurringChargeTemplate" bindingOperationName="findRecurringChargeTemplate" type="Request-Response" outputName="findRecurringChargeTemplateResponse" inputName="findRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="1e975db7-5ea3-4c5c-97a7-f66c630c18f6"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findServiceTemplate" bindingOperationName="findServiceTemplate" type="Request-Response" outputName="findServiceTemplateResponse" inputName="findServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="b6f26b49-40dd-4436-8593-7c61b955c25b"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findUsageChargeTemplate" bindingOperationName="findUsageChargeTemplate" type="Request-Response" outputName="findUsageChargeTemplateResponse" inputName="findUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="29742472-491a-4398-8416-990c27e4486e"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="0d4d3d2e-e3e0-46eb-9efa-48ea6170688a"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="listOneShotChargeTemplate" bindingOperationName="listOneShotChargeTemplate" type="Request-Response" outputName="listOneShotChargeTemplateResponse" inputName="listOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="330c24e0-68a5-4411-a659-d321c1e3b6d6"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeCounterTemplate" bindingOperationName="removeCounterTemplate" type="Request-Response" outputName="removeCounterTemplateResponse" inputName="removeCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="cbc1f50c-c4c5-4a3c-8c97-e9f4d8d1b6c3"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeOfferTemplate" bindingOperationName="removeOfferTemplate" type="Request-Response" outputName="removeOfferTemplateResponse" inputName="removeOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="a2a7369e-c0fb-476d-be2b-82f029a820cf"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeOneShotChargeTemplate" bindingOperationName="removeOneShotChargeTemplate" type="Request-Response" outputName="removeOneShotChargeTemplateResponse" inputName="removeOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="5cd967eb-be82-4f11-a9e6-f78cce9924ad"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removePricePlan" bindingOperationName="removePricePlan" type="Request-Response" outputName="removePricePlanResponse" inputName="removePricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="4ff78f28-edaa-4c9d-8b11-2133fa73730e"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeRecurringChargeTemplate" bindingOperationName="removeRecurringChargeTemplate" type="Request-Response" outputName="removeRecurringChargeTemplateResponse" inputName="removeRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="c5e00d4b-3f13-4078-84c0-bc4719c99828"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeServiceTemplate" bindingOperationName="removeServiceTemplate" type="Request-Response" outputName="removeServiceTemplateResponse" inputName="removeServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="f9ced9bd-174f-4e2b-b26a-e768278d9e47"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeUsageChargeTemplate" bindingOperationName="removeUsageChargeTemplate" type="Request-Response" outputName="removeUsageChargeTemplateResponse" inputName="removeUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="f28ee2f8-6942-49dc-ad41-a6d6d84e3e96"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateCounterTemplate" bindingOperationName="updateCounterTemplate" type="Request-Response" outputName="updateCounterTemplateResponse" inputName="updateCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="d3fceb01-426b-47b8-8660-8520d4f48232"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateOfferTemplate" bindingOperationName="updateOfferTemplate" type="Request-Response" outputName="updateOfferTemplateResponse" inputName="updateOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="c61b96d5-8df9-4b08-9b5e-f4f12b8b9465"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateOneShotChargeTemplate" bindingOperationName="updateOneShotChargeTemplate" type="Request-Response" outputName="updateOneShotChargeTemplateResponse" inputName="updateOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="e599e6d7-3af9-4a23-af9f-3e34ccd5621e"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updatePricePlan" bindingOperationName="updatePricePlan" type="Request-Response" outputName="updatePricePlanResponse" inputName="updatePricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="6f1a77b3-72ff-4d04-ba2c-4a14b3015522"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateRecurringChargeTemplate" bindingOperationName="updateRecurringChargeTemplate" type="Request-Response" outputName="updateRecurringChargeTemplateResponse" inputName="updateRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="9a588a93-1d7a-44b7-97e3-6d0461a900f1"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateServiceTemplate" bindingOperationName="updateServiceTemplate" type="Request-Response" outputName="updateServiceTemplateResponse" inputName="updateServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="268ec651-b38d-4251-913b-a4f61a2dc558"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateUsageChargeTemplate" bindingOperationName="updateUsageChargeTemplate" type="Request-Response" outputName="updateUsageChargeTemplateResponse" inputName="updateUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="4fe209fc-557c-443e-b4f8-6594e22c9143"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findChargeTemplate" bindingOperationName="findChargeTemplate" type="Request-Response" outputName="findChargeTemplateResponse" inputName="findChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="a7fe2c04-60c9-41d7-9fad-d002cbfa3f9a"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="removeTriggeredEdr" bindingOperationName="removeTriggeredEdr" type="Request-Response" outputName="removeTriggeredEdrResponse" inputName="removeTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="78467e9f-54ee-4fb5-aeeb-b0700d098076"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="updateTriggeredEdr" bindingOperationName="updateTriggeredEdr" type="Request-Response" outputName="updateTriggeredEdrResponse" inputName="updateTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="749d1d05-458e-4646-be9c-8fc3be087d64"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="createTriggeredEdr" bindingOperationName="createTriggeredEdr" type="Request-Response" outputName="createTriggeredEdrResponse" inputName="createTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="b4d4e65f-ea82-42f5-bb7c-a66ae83a0257"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="findTriggeredEdr" bindingOperationName="findTriggeredEdr" type="Request-Response" outputName="findTriggeredEdrResponse" inputName="findTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="06cb3226-7038-4a9f-a6bd-f3d084586c8f"><con:settings/></con:operation><con:operation isOneWay="false" action="" name="listPricePlanByEventCode" bindingOperationName="listPricePlanByEventCode" type="Request-Response" outputName="listPricePlanByEventCodeResponse" inputName="listPricePlanByEventCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="643cff21-d2bf-4514-b401-47556f5f3f66"><con:settings/></con:operation><con:operation id="0061d98d-1368-4850-8cd4-2ea1561c1d09" isOneWay="false" action="" name="createOrUpdateOfferTemplate" bindingOperationName="createOrUpdateOfferTemplate" type="Request-Response" outputName="createOrUpdateOfferTemplateResponse" inputName="createOrUpdateOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="72945804-bb0f-4b8e-bcc1-31716b0583ec" isOneWay="false" action="" name="createOrUpdateUsageChargeTemplate" bindingOperationName="createOrUpdateUsageChargeTemplate" type="Request-Response" outputName="createOrUpdateUsageChargeTemplateResponse" inputName="createOrUpdateUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1a8a8a20-15ad-4738-9b03-e2805dcb6387" isOneWay="false" action="" name="createOrUpdateTriggeredEdr" bindingOperationName="createOrUpdateTriggeredEdr" type="Request-Response" outputName="createOrUpdateTriggeredEdrResponse" inputName="createOrUpdateTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3b8c55ad-a3fc-40e5-8a66-69adbe7147fe" isOneWay="false" action="" name="createOrUpdateServiceTemplate" bindingOperationName="createOrUpdateServiceTemplate" type="Request-Response" outputName="createOrUpdateServiceTemplateResponse" inputName="createOrUpdateServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="56a505b6-c9c2-4b63-8a9b-68770db74c3f" isOneWay="false" action="" name="createOrUpdateRecurringChargeTemplate" bindingOperationName="createOrUpdateRecurringChargeTemplate" type="Request-Response" outputName="createOrUpdateRecurringChargeTemplateResponse" inputName="createOrUpdateRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="52a05e74-2d84-4c97-8ac2-dfe6022cedb6" isOneWay="false" action="" name="createOrUpdatePricePlan" bindingOperationName="createOrUpdatePricePlan" type="Request-Response" outputName="createOrUpdatePricePlanResponse" inputName="createOrUpdatePricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="88bf2745-e8fd-49d8-bb2b-4b00b8c73040" isOneWay="false" action="" name="createOrUpdateOneShotChargeTemplate" bindingOperationName="createOrUpdateOneShotChargeTemplate" type="Request-Response" outputName="createOrUpdateOneShotChargeTemplateResponse" inputName="createOrUpdateOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="fd923467-cb52-490b-bdfb-ecf218ed7d05" isOneWay="false" action="" name="createOrUpdateCounterTemplate" bindingOperationName="createOrUpdateCounterTemplate" type="Request-Response" outputName="createOrUpdateCounterTemplateResponse" inputName="createOrUpdateCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="07b987ab-4694-4d83-8272-7c693dd8c43b" isOneWay="false" action="" name="createOrUpdateBusinessOfferModel" bindingOperationName="createOrUpdateBusinessOfferModel" type="Request-Response" outputName="createOrUpdateBusinessOfferModelResponse" inputName="createOrUpdateBusinessOfferModel" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="65590d9c-b8e1-4519-8d91-54ff491e4e5d" isOneWay="false" action="" name="updateDiscountPlan" bindingOperationName="updateDiscountPlan" type="Request-Response" outputName="updateDiscountPlanResponse" inputName="updateDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="a766c7a3-6097-4a57-bc24-a285060e6592" isOneWay="false" action="" name="removeBusinessOfferModel" bindingOperationName="removeBusinessOfferModel" type="Request-Response" outputName="removeBusinessOfferModelResponse" inputName="removeBusinessOfferModel" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="43f2b867-22fa-4e0d-996a-c250381cdcfc" isOneWay="false" action="" name="createBusinessOfferModel" bindingOperationName="createBusinessOfferModel" type="Request-Response" outputName="createBusinessOfferModelResponse" inputName="createBusinessOfferModel" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="bf91d998-541f-47a7-b5c2-fe60b0f7cb1d" isOneWay="false" action="" name="createOrUpdateDiscountPlan" bindingOperationName="createOrUpdateDiscountPlan" type="Request-Response" outputName="createOrUpdateDiscountPlanResponse" inputName="createOrUpdateDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="b0489d61-e2e8-4b64-9d8e-5535634a701e" isOneWay="false" action="" name="createDiscountPlan" bindingOperationName="createDiscountPlan" type="Request-Response" outputName="createDiscountPlanResponse" inputName="createDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="567b0ebc-0d39-4703-bf1b-afd0a4456d09" isOneWay="false" action="" name="createOfferFromBOM" bindingOperationName="createOfferFromBOM" type="Request-Response" outputName="createOfferFromBOMResponse" inputName="createOfferFromBOM" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="27b086bc-ac9a-4791-b0db-e7150fccc02e" isOneWay="false" action="" name="findDiscountPlan" bindingOperationName="findDiscountPlan" type="Request-Response" outputName="findDiscountPlanResponse" inputName="findDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="a2fd00f9-f683-4f8c-b0b9-515a49bae978" isOneWay="false" action="" name="findBusinessOfferModel" bindingOperationName="findBusinessOfferModel" type="Request-Response" outputName="findBusinessOfferModelResponse" inputName="findBusinessOfferModel" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="b2b9a12a-c064-4ae6-89ca-d9fd85c22236" isOneWay="false" action="" name="removeDiscountPlan" bindingOperationName="removeDiscountPlan" type="Request-Response" outputName="removeDiscountPlanResponse" inputName="removeDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="51fd2051-e1e7-4e52-a1e0-8ec8d5b61283" isOneWay="false" action="" name="listDiscountPlan" bindingOperationName="listDiscountPlan" type="Request-Response" outputName="listDiscountPlanResponse" inputName="listDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="d2c74267-0101-43b9-aaa3-75837f1e4ab4" isOneWay="false" action="" name="updateBusinessOfferModel" bindingOperationName="updateBusinessOfferModel" type="Request-Response" outputName="updateBusinessOfferModelResponse" inputName="updateBusinessOfferModel" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://${#Project#meveoEndpoint}/AccountWs?wsdl" id="0f11f132-23d8-4ce9-9436-bf5844bdcb72" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8080/meveo/AccountWs?wsdl"><con:part><con:url>http://localhost:8080/meveo/AccountWs?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AccountWs" targetNamespace="http://impl.ws.api.meveo.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://impl.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://ws.api.meveo.org/">
   <wsdl:import location="http://localhost:8080/meveo/AccountWs?wsdl=AccountWs.wsdl" namespace="http://ws.api.meveo.org/"></wsdl:import>
   <wsdl:binding name="AccountWsSoapBinding" type="ns1:AccountWs">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -5171,7 +5712,7 @@
             <!--Optional:-->
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
-            <oneShotChargeTemplateType>1</oneShotChargeTemplateType>
+            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
             <!--Optional:-->
             <immediateInvoicing>false</immediateInvoicing>
          </oneShotChargeTemplate>
@@ -5199,7 +5740,7 @@
             <!--Optional:-->
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
-            <oneShotChargeTemplateType>1</oneShotChargeTemplateType>
+            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
             <!--Optional:-->
             <immediateInvoicing>false</immediateInvoicing>
          </oneShotChargeTemplate>

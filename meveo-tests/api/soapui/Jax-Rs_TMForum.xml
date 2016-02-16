@@ -66,6 +66,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removeBusinessOfferModel">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removeBusinessOfferModel">
@@ -210,12 +219,30 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createOrUpdateDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createOrUpdateDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateRecurringChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateRecurringChargeTemplate">
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="createOrUpdateRecurringChargeTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="createDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createDiscountPlanResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -243,6 +270,15 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="removeCounterTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findDiscountPlanResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -318,6 +354,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateRecurringChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="updateRecurringChargeTemplate">
@@ -363,6 +408,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateOfferTemplate">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateOfferTemplate">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateOfferTemplateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateUsageChargeTemplate">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="createOrUpdateUsageChargeTemplate">
@@ -378,15 +432,6 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="listPricePlanByEventCodeResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateOfferTemplate">
-      <soap:operation soapAction="" style="document"/>
-      <wsdl:input name="updateOfferTemplate">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateOfferTemplateResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
@@ -435,6 +480,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="listDiscountPlan">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="listDiscountPlan">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listDiscountPlanResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="removePricePlan">
       <soap:operation soapAction="" style="document"/>
       <wsdl:input name="removePricePlan">
@@ -470,10 +524,13 @@
       <xs:element name="CustomField" type="tns:customFieldDto"/>
       <xs:element name="CustomFieldValue" type="tns:customFieldValueDto"/>
       <xs:element name="CustomFields" type="tns:customFieldsDto"/>
+      <xs:element name="DiscountPlan" type="tns:discountPlanDto"/>
       <xs:element name="EntityReference" type="tns:entityReferenceDto"/>
       <xs:element name="GetBusinessOfferModelResponse" type="tns:getBusinessOfferModelResponseDto"/>
       <xs:element name="GetChargeTemplateResponse" type="tns:getChargeTemplateResponseDto"/>
       <xs:element name="GetCounterTemplateResponse" type="tns:getCounterTemplateResponseDto"/>
+      <xs:element name="GetDiscountPlanResponse" type="tns:getDiscountPlanResponseDto"/>
+      <xs:element name="GetDiscountPlansResponse" type="tns:getDiscountPlansResponseDto"/>
       <xs:element name="GetOfferTemplateResponse" type="tns:getOfferTemplateResponseDto"/>
       <xs:element name="GetOneShotChargeTemplateResponse" type="tns:getOneShotChargeTemplateResponseDto"/>
       <xs:element name="GetPricePlanResponse" type="tns:getPricePlanResponseDto"/>
@@ -498,6 +555,8 @@
       <xs:element name="createBusinessOfferModelResponse" type="tns:createBusinessOfferModelResponse"/>
       <xs:element name="createCounterTemplate" type="tns:createCounterTemplate"/>
       <xs:element name="createCounterTemplateResponse" type="tns:createCounterTemplateResponse"/>
+      <xs:element name="createDiscountPlan" type="tns:createDiscountPlan"/>
+      <xs:element name="createDiscountPlanResponse" type="tns:createDiscountPlanResponse"/>
       <xs:element name="createOfferFromBOM" type="tns:createOfferFromBOM"/>
       <xs:element name="createOfferFromBOMResponse" type="tns:createOfferFromBOMResponse"/>
       <xs:element name="createOfferTemplate" type="tns:createOfferTemplate"/>
@@ -508,6 +567,8 @@
       <xs:element name="createOrUpdateBusinessOfferModelResponse" type="tns:createOrUpdateBusinessOfferModelResponse"/>
       <xs:element name="createOrUpdateCounterTemplate" type="tns:createOrUpdateCounterTemplate"/>
       <xs:element name="createOrUpdateCounterTemplateResponse" type="tns:createOrUpdateCounterTemplateResponse"/>
+      <xs:element name="createOrUpdateDiscountPlan" type="tns:createOrUpdateDiscountPlan"/>
+      <xs:element name="createOrUpdateDiscountPlanResponse" type="tns:createOrUpdateDiscountPlanResponse"/>
       <xs:element name="createOrUpdateOfferTemplate" type="tns:createOrUpdateOfferTemplate"/>
       <xs:element name="createOrUpdateOfferTemplateResponse" type="tns:createOrUpdateOfferTemplateResponse"/>
       <xs:element name="createOrUpdateOneShotChargeTemplate" type="tns:createOrUpdateOneShotChargeTemplate"/>
@@ -538,6 +599,8 @@
       <xs:element name="findChargeTemplateResponse" type="tns:findChargeTemplateResponse"/>
       <xs:element name="findCounterTemplate" type="tns:findCounterTemplate"/>
       <xs:element name="findCounterTemplateResponse" type="tns:findCounterTemplateResponse"/>
+      <xs:element name="findDiscountPlan" type="tns:findDiscountPlan"/>
+      <xs:element name="findDiscountPlanResponse" type="tns:findDiscountPlanResponse"/>
       <xs:element name="findOfferTemplate" type="tns:findOfferTemplate"/>
       <xs:element name="findOfferTemplateResponse" type="tns:findOfferTemplateResponse"/>
       <xs:element name="findOneShotChargeTemplate" type="tns:findOneShotChargeTemplate"/>
@@ -554,6 +617,8 @@
       <xs:element name="findUsageChargeTemplateResponse" type="tns:findUsageChargeTemplateResponse"/>
       <xs:element name="index" type="tns:index"/>
       <xs:element name="indexResponse" type="tns:indexResponse"/>
+      <xs:element name="listDiscountPlan" type="tns:listDiscountPlan"/>
+      <xs:element name="listDiscountPlanResponse" type="tns:listDiscountPlanResponse"/>
       <xs:element name="listOneShotChargeTemplate" type="tns:listOneShotChargeTemplate"/>
       <xs:element name="listOneShotChargeTemplateResponse" type="tns:listOneShotChargeTemplateResponse"/>
       <xs:element name="listPricePlanByEventCode" type="tns:listPricePlanByEventCode"/>
@@ -562,6 +627,8 @@
       <xs:element name="removeBusinessOfferModelResponse" type="tns:removeBusinessOfferModelResponse"/>
       <xs:element name="removeCounterTemplate" type="tns:removeCounterTemplate"/>
       <xs:element name="removeCounterTemplateResponse" type="tns:removeCounterTemplateResponse"/>
+      <xs:element name="removeDiscountPlan" type="tns:removeDiscountPlan"/>
+      <xs:element name="removeDiscountPlanResponse" type="tns:removeDiscountPlanResponse"/>
       <xs:element name="removeOfferTemplate" type="tns:removeOfferTemplate"/>
       <xs:element name="removeOfferTemplateResponse" type="tns:removeOfferTemplateResponse"/>
       <xs:element name="removeOneShotChargeTemplate" type="tns:removeOneShotChargeTemplate"/>
@@ -580,6 +647,8 @@
       <xs:element name="updateBusinessOfferModelResponse" type="tns:updateBusinessOfferModelResponse"/>
       <xs:element name="updateCounterTemplate" type="tns:updateCounterTemplate"/>
       <xs:element name="updateCounterTemplateResponse" type="tns:updateCounterTemplateResponse"/>
+      <xs:element name="updateDiscountPlan" type="tns:updateDiscountPlan"/>
+      <xs:element name="updateDiscountPlanResponse" type="tns:updateDiscountPlanResponse"/>
       <xs:element name="updateOfferTemplate" type="tns:updateOfferTemplate"/>
       <xs:element name="updateOfferTemplateResponse" type="tns:updateOfferTemplateResponse"/>
       <xs:element name="updateOneShotChargeTemplate" type="tns:updateOneShotChargeTemplate"/>
@@ -675,7 +744,7 @@
         <xs:complexContent>
           <xs:extension base="tns:chargeTemplateDto">
             <xs:sequence>
-              <xs:element name="oneShotChargeTemplateType" type="xs:int"/>
+              <xs:element name="oneShotChargeTemplateType" type="tns:oneShotChargeTemplateTypeEnum"/>
               <xs:element minOccurs="0" name="immediateInvoicing" type="xs:boolean"/>
             </xs:sequence>
           </xs:extension>
@@ -698,7 +767,7 @@
               <xs:element minOccurs="0" name="triggeredEdrs" type="tns:triggeredEdrTemplatesDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -801,7 +870,7 @@
           <xs:element minOccurs="0" name="bomCode" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="serviceTemplatesDto">
         <xs:sequence>
@@ -819,7 +888,7 @@
           <xs:element name="mandatory" type="xs:boolean"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="ServiceChargeTemplateRecurrings">
         <xs:sequence>
@@ -887,6 +956,22 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="updateDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="discountPlanDto">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="code" type="xs:string"/>
+          <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="updatePricePlan">
         <xs:sequence>
           <xs:element minOccurs="0" name="pricePlan" type="tns:pricePlanDto"/>
@@ -919,7 +1004,7 @@
           <xs:element minOccurs="0" name="validityCalendarCode" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="updatePricePlanResponse">
         <xs:sequence>
@@ -1025,7 +1110,7 @@
           <xs:element minOccurs="0" name="ceilingExpressionEl" type="xs:string"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
         <xs:attribute name="calendar" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCounterTemplateResponse">
@@ -1148,6 +1233,26 @@
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
+      <xs:complexType name="createOrUpdateDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createOrUpdateDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlan" type="tns:discountPlanDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createOrUpdateServiceTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="serviceTemplate" type="tns:serviceTemplateDto"/>
@@ -1188,6 +1293,25 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlanCocde" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="findDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getDiscountPlanResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getDiscountPlanResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="discountPlanDto" type="tns:discountPlanDto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="findBusinessOfferModel">
         <xs:sequence>
@@ -1324,6 +1448,16 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="removeDiscountPlan">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="discountPlanCocde" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="updateRecurringChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="recurringChargeTemplate" type="tns:recurringChargeTemplateDto"/>
@@ -1392,6 +1526,16 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
+      <xs:complexType name="updateOfferTemplate">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="updateOfferTemplateResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="createOrUpdateUsageChargeTemplate">
         <xs:sequence>
           <xs:element minOccurs="0" name="usageChargeTemplate" type="tns:usageChargeTemplateDto"/>
@@ -1424,16 +1568,6 @@
       <xs:complexType name="PricePlans">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="pricePlanMatrix" nillable="true" type="tns:pricePlanDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateOfferTemplate">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="offerTemplate" type="tns:offerTemplateDto"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="updateOfferTemplateResponse">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createUsageChargeTemplate">
@@ -1483,6 +1617,28 @@
       <xs:complexType name="removeOfferTemplateResponse">
         <xs:sequence>
           <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="listDiscountPlan">
+        <xs:sequence/>
+      </xs:complexType>
+      <xs:complexType name="listDiscountPlanResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="tns:getDiscountPlansResponseDto"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getDiscountPlansResponseDto">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="discountPlan" type="tns:DiscountPlans"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="DiscountPlans">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="discountPlan" nillable="true" type="tns:discountPlanDto"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findPricePlan">
@@ -1546,6 +1702,13 @@
           <xs:enumeration value="ACTION_FORBIDDEN"/>
         </xs:restriction>
       </xs:simpleType>
+      <xs:simpleType name="oneShotChargeTemplateTypeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUBSCRIPTION"/>
+          <xs:enumeration value="TERMINATION"/>
+          <xs:enumeration value="OTHER"/>
+        </xs:restriction>
+      </xs:simpleType>
       <xs:simpleType name="roundingModeDtoEnum">
         <xs:restriction base="xs:string">
           <xs:enumeration value="NEAREST"/>
@@ -1606,6 +1769,9 @@
   <wsdl:message name="createOfferTemplateResponse">
     <wsdl:part element="ns1:createOfferTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createOrUpdateDiscountPlan">
+    <wsdl:part element="ns1:createOrUpdateDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removeBusinessOfferModelResponse">
     <wsdl:part element="ns1:removeBusinessOfferModelResponse" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1617,6 +1783,9 @@
   </wsdl:message>
   <wsdl:message name="createPricePlan">
     <wsdl:part element="ns1:createPricePlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeDiscountPlan">
+    <wsdl:part element="ns1:removeDiscountPlan" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="findRecurringChargeTemplate">
     <wsdl:part element="ns1:findRecurringChargeTemplate" name="parameters"></wsdl:part>
@@ -1687,6 +1856,9 @@
   <wsdl:message name="createOrUpdateUsageChargeTemplate">
     <wsdl:part element="ns1:createOrUpdateUsageChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="updateDiscountPlan">
+    <wsdl:part element="ns1:updateDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findOfferTemplate">
     <wsdl:part element="ns1:findOfferTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1695,6 +1867,9 @@
   </wsdl:message>
   <wsdl:message name="updateBusinessOfferModelResponse">
     <wsdl:part element="ns1:updateBusinessOfferModelResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findDiscountPlanResponse">
+    <wsdl:part element="ns1:findDiscountPlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createServiceTemplate">
     <wsdl:part element="ns1:createServiceTemplate" name="parameters"></wsdl:part>
@@ -1735,11 +1910,14 @@
   <wsdl:message name="removeTriggeredEdrResponse">
     <wsdl:part element="ns1:removeTriggeredEdrResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="removeOfferTemplate">
+    <wsdl:part element="ns1:removeOfferTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="listOneShotChargeTemplateResponse">
     <wsdl:part element="ns1:listOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="removeOfferTemplate">
-    <wsdl:part element="ns1:removeOfferTemplate" name="parameters"></wsdl:part>
+  <wsdl:message name="removeDiscountPlanResponse">
+    <wsdl:part element="ns1:removeDiscountPlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removePricePlanResponse">
     <wsdl:part element="ns1:removePricePlanResponse" name="parameters"></wsdl:part>
@@ -1747,11 +1925,11 @@
   <wsdl:message name="findOneShotChargeTemplate">
     <wsdl:part element="ns1:findOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updatePricePlan">
-    <wsdl:part element="ns1:updatePricePlan" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="createBusinessOfferModel">
     <wsdl:part element="ns1:createBusinessOfferModel" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updatePricePlan">
+    <wsdl:part element="ns1:updatePricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createBusinessOfferModelResponse">
     <wsdl:part element="ns1:createBusinessOfferModelResponse" name="parameters"></wsdl:part>
@@ -1770,6 +1948,12 @@
   </wsdl:message>
   <wsdl:message name="createOrUpdateTriggeredEdr">
     <wsdl:part element="ns1:createOrUpdateTriggeredEdr" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateDiscountPlanResponse">
+    <wsdl:part element="ns1:updateDiscountPlanResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createOrUpdateDiscountPlanResponse">
+    <wsdl:part element="ns1:createOrUpdateDiscountPlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="createOrUpdateUsageChargeTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateUsageChargeTemplateResponse" name="parameters"></wsdl:part>
@@ -1798,6 +1982,9 @@
   <wsdl:message name="createOfferFromBOMResponse">
     <wsdl:part element="ns1:createOfferFromBOMResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="listDiscountPlanResponse">
+    <wsdl:part element="ns1:listDiscountPlanResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="createOneShotChargeTemplate">
     <wsdl:part element="ns1:createOneShotChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1819,6 +2006,9 @@
   <wsdl:message name="createOrUpdateServiceTemplateResponse">
     <wsdl:part element="ns1:createOrUpdateServiceTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="findDiscountPlan">
+    <wsdl:part element="ns1:findDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="removePricePlan">
     <wsdl:part element="ns1:removePricePlan" name="parameters"></wsdl:part>
   </wsdl:message>
@@ -1828,11 +2018,11 @@
   <wsdl:message name="updateCounterTemplate">
     <wsdl:part element="ns1:updateCounterTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateOneShotChargeTemplateResponse">
-    <wsdl:part element="ns1:updateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
-  </wsdl:message>
   <wsdl:message name="findPricePlan">
     <wsdl:part element="ns1:findPricePlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateOneShotChargeTemplateResponse">
+    <wsdl:part element="ns1:updateOneShotChargeTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="listPricePlanByEventCode">
     <wsdl:part element="ns1:listPricePlanByEventCode" name="parameters"></wsdl:part>
@@ -1843,11 +2033,20 @@
   <wsdl:message name="updateUsageChargeTemplate">
     <wsdl:part element="ns1:updateUsageChargeTemplate" name="parameters"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="createDiscountPlan">
+    <wsdl:part element="ns1:createDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
   <wsdl:message name="findCounterTemplateResponse">
     <wsdl:part element="ns1:findCounterTemplateResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeServiceTemplate">
     <wsdl:part element="ns1:removeServiceTemplate" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listDiscountPlan">
+    <wsdl:part element="ns1:listDiscountPlan" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createDiscountPlanResponse">
+    <wsdl:part element="ns1:createDiscountPlanResponse" name="parameters"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="removeOneShotChargeTemplate">
     <wsdl:part element="ns1:removeOneShotChargeTemplate" name="parameters"></wsdl:part>
@@ -1883,6 +2082,10 @@
     <wsdl:operation name="createOfferTemplate">
       <wsdl:input message="ns1:createOfferTemplate" name="createOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOfferTemplateResponse" name="createOfferTemplateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateDiscountPlan">
+      <wsdl:input message="ns1:updateDiscountPlan" name="updateDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:updateDiscountPlanResponse" name="updateDiscountPlanResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="updatePricePlan">
       <wsdl:input message="ns1:updatePricePlan" name="updatePricePlan"></wsdl:input>
@@ -1952,6 +2155,14 @@
       <wsdl:input message="ns1:createOrUpdateRecurringChargeTemplate" name="createOrUpdateRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateRecurringChargeTemplateResponse" name="createOrUpdateRecurringChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="createOrUpdateDiscountPlan">
+      <wsdl:input message="ns1:createOrUpdateDiscountPlan" name="createOrUpdateDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:createOrUpdateDiscountPlanResponse" name="createOrUpdateDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createDiscountPlan">
+      <wsdl:input message="ns1:createDiscountPlan" name="createDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:createDiscountPlanResponse" name="createDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateServiceTemplate">
       <wsdl:input message="ns1:createOrUpdateServiceTemplate" name="createOrUpdateServiceTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateServiceTemplateResponse" name="createOrUpdateServiceTemplateResponse"></wsdl:output>
@@ -1963,6 +2174,10 @@
     <wsdl:operation name="createOfferFromBOM">
       <wsdl:input message="ns1:createOfferFromBOM" name="createOfferFromBOM"></wsdl:input>
       <wsdl:output message="ns1:createOfferFromBOMResponse" name="createOfferFromBOMResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findDiscountPlan">
+      <wsdl:input message="ns1:findDiscountPlan" name="findDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:findDiscountPlanResponse" name="findDiscountPlanResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="findBusinessOfferModel">
       <wsdl:input message="ns1:findBusinessOfferModel" name="findBusinessOfferModel"></wsdl:input>
@@ -1996,6 +2211,10 @@
       <wsdl:input message="ns1:findTriggeredEdr" name="findTriggeredEdr"></wsdl:input>
       <wsdl:output message="ns1:findTriggeredEdrResponse" name="findTriggeredEdrResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="removeDiscountPlan">
+      <wsdl:input message="ns1:removeDiscountPlan" name="removeDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:removeDiscountPlanResponse" name="removeDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="updateRecurringChargeTemplate">
       <wsdl:input message="ns1:updateRecurringChargeTemplate" name="updateRecurringChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:updateRecurringChargeTemplateResponse" name="updateRecurringChargeTemplateResponse"></wsdl:output>
@@ -2016,6 +2235,10 @@
       <wsdl:input message="ns1:findUsageChargeTemplate" name="findUsageChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:findUsageChargeTemplateResponse" name="findUsageChargeTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="updateOfferTemplate">
+      <wsdl:input message="ns1:updateOfferTemplate" name="updateOfferTemplate"></wsdl:input>
+      <wsdl:output message="ns1:updateOfferTemplateResponse" name="updateOfferTemplateResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="createOrUpdateUsageChargeTemplate">
       <wsdl:input message="ns1:createOrUpdateUsageChargeTemplate" name="createOrUpdateUsageChargeTemplate"></wsdl:input>
       <wsdl:output message="ns1:createOrUpdateUsageChargeTemplateResponse" name="createOrUpdateUsageChargeTemplateResponse"></wsdl:output>
@@ -2023,10 +2246,6 @@
     <wsdl:operation name="listPricePlanByEventCode">
       <wsdl:input message="ns1:listPricePlanByEventCode" name="listPricePlanByEventCode"></wsdl:input>
       <wsdl:output message="ns1:listPricePlanByEventCodeResponse" name="listPricePlanByEventCodeResponse"></wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="updateOfferTemplate">
-      <wsdl:input message="ns1:updateOfferTemplate" name="updateOfferTemplate"></wsdl:input>
-      <wsdl:output message="ns1:updateOfferTemplateResponse" name="updateOfferTemplateResponse"></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="createUsageChargeTemplate">
       <wsdl:input message="ns1:createUsageChargeTemplate" name="createUsageChargeTemplate"></wsdl:input>
@@ -2044,6 +2263,10 @@
       <wsdl:input message="ns1:removeOfferTemplate" name="removeOfferTemplate"></wsdl:input>
       <wsdl:output message="ns1:removeOfferTemplateResponse" name="removeOfferTemplateResponse"></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="listDiscountPlan">
+      <wsdl:input message="ns1:listDiscountPlan" name="listDiscountPlan"></wsdl:input>
+      <wsdl:output message="ns1:listDiscountPlanResponse" name="listDiscountPlanResponse"></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="findPricePlan">
       <wsdl:input message="ns1:findPricePlan" name="findPricePlan"></wsdl:input>
       <wsdl:output message="ns1:findPricePlanResponse" name="findPricePlanResponse"></wsdl:output>
@@ -2057,7 +2280,7 @@
       <wsdl:output message="ns1:removePricePlanResponse" name="removePricePlanResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpoints><con:operation id="9ba233dc-83dc-4922-bccb-c4730c741e6a" isOneWay="false" action="" name="createBusinessOfferModel" bindingOperationName="createBusinessOfferModel" type="Request-Response" outputName="createBusinessOfferModelResponse" inputName="createBusinessOfferModel" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="2ab2495c-52ee-4791-8456-1b5ff33bbed3" isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="858fc971-252c-4f2e-be37-a6af636d4dc2" isOneWay="false" action="" name="createOfferFromBOM" bindingOperationName="createOfferFromBOM" type="Request-Response" outputName="createOfferFromBOMResponse" inputName="createOfferFromBOM" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="907d4aef-eb38-488c-b329-ed0aea4aba6c" isOneWay="false" action="" name="createOfferTemplate" bindingOperationName="createOfferTemplate" type="Request-Response" outputName="createOfferTemplateResponse" inputName="createOfferTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="a7295c16-6df2-4779-9fb2-5304b530b000" isOneWay="false" action="" name="createOneShotChargeTemplate" bindingOperationName="createOneShotChargeTemplate" type="Request-Response" outputName="createOneShotChargeTemplateResponse" inputName="createOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="a33e232b-9ce0-48ef-8672-e93183277313" isOneWay="false" action="" name="createOrUpdateBusinessOfferModel" bindingOperationName="createOrUpdateBusinessOfferModel" type="Request-Response" outputName="createOrUpdateBusinessOfferModelResponse" inputName="createOrUpdateBusinessOfferModel" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="fbe32f6e-18c5-4daa-b052-ce76b6429c6c" isOneWay="false" action="" name="createOrUpdateCounterTemplate" bindingOperationName="createOrUpdateCounterTemplate" type="Request-Response" outputName="createOrUpdateCounterTemplateResponse" inputName="createOrUpdateCounterTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="e594a5c3-f81e-45a5-af22-4e1746ae1626" isOneWay="false" action="" name="createOrUpdateOfferTemplate" bindingOperationName="createOrUpdateOfferTemplate" type="Request-Response" outputName="createOrUpdateOfferTemplateResponse" inputName="createOrUpdateOfferTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="e9c25891-650e-40f2-8c4a-c41a5a44c02b" isOneWay="false" action="" name="createOrUpdateOneShotChargeTemplate" bindingOperationName="createOrUpdateOneShotChargeTemplate" type="Request-Response" outputName="createOrUpdateOneShotChargeTemplateResponse" inputName="createOrUpdateOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="e3e8a59b-2571-4922-bb07-55f837920fc3" isOneWay="false" action="" name="createOrUpdatePricePlan" bindingOperationName="createOrUpdatePricePlan" type="Request-Response" outputName="createOrUpdatePricePlanResponse" inputName="createOrUpdatePricePlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="1e79c06c-44e0-4b59-aa82-c2e0ef7e85a5" isOneWay="false" action="" name="createOrUpdateRecurringChargeTemplate" bindingOperationName="createOrUpdateRecurringChargeTemplate" type="Request-Response" outputName="createOrUpdateRecurringChargeTemplateResponse" inputName="createOrUpdateRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="76a2b030-63e9-4f69-8bd4-5a1e57ad2f23" isOneWay="false" action="" name="createOrUpdateServiceTemplate" bindingOperationName="createOrUpdateServiceTemplate" type="Request-Response" outputName="createOrUpdateServiceTemplateResponse" inputName="createOrUpdateServiceTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="18309e85-0108-425b-9e04-1969f482a917" isOneWay="false" action="" name="createOrUpdateTriggeredEdr" bindingOperationName="createOrUpdateTriggeredEdr" type="Request-Response" outputName="createOrUpdateTriggeredEdrResponse" inputName="createOrUpdateTriggeredEdr" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="da69f838-f678-41a7-98b1-7070a10e2530" isOneWay="false" action="" name="createOrUpdateUsageChargeTemplate" bindingOperationName="createOrUpdateUsageChargeTemplate" type="Request-Response" outputName="createOrUpdateUsageChargeTemplateResponse" inputName="createOrUpdateUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="5eaf99f1-ca87-4246-adf2-66cbd463b9e9" isOneWay="false" action="" name="createPricePlan" bindingOperationName="createPricePlan" type="Request-Response" outputName="createPricePlanResponse" inputName="createPricePlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="8c50a16b-e5fb-4e5a-8a9c-87835f0ee167" isOneWay="false" action="" name="createRecurringChargeTemplate" bindingOperationName="createRecurringChargeTemplate" type="Request-Response" outputName="createRecurringChargeTemplateResponse" inputName="createRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="792eec0c-d058-4f16-80f2-0996ee2e0bec" isOneWay="false" action="" name="createServiceTemplate" bindingOperationName="createServiceTemplate" type="Request-Response" outputName="createServiceTemplateResponse" inputName="createServiceTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="dab368da-101f-49f6-a13e-93d527338e35" isOneWay="false" action="" name="createTriggeredEdr" bindingOperationName="createTriggeredEdr" type="Request-Response" outputName="createTriggeredEdrResponse" inputName="createTriggeredEdr" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="51c14c3d-f8a8-4a38-942b-74cd5e68d99b" isOneWay="false" action="" name="createUsageChargeTemplate" bindingOperationName="createUsageChargeTemplate" type="Request-Response" outputName="createUsageChargeTemplateResponse" inputName="createUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="511b290f-47b6-4453-a4cd-d02e20519083" isOneWay="false" action="" name="findBusinessOfferModel" bindingOperationName="findBusinessOfferModel" type="Request-Response" outputName="findBusinessOfferModelResponse" inputName="findBusinessOfferModel" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="f3105b11-0410-4113-8b60-fcc8d10efc33" isOneWay="false" action="" name="findChargeTemplate" bindingOperationName="findChargeTemplate" type="Request-Response" outputName="findChargeTemplateResponse" inputName="findChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="67da460e-7ee5-4f72-925d-3ec46af2e5f0" isOneWay="false" action="" name="findCounterTemplate" bindingOperationName="findCounterTemplate" type="Request-Response" outputName="findCounterTemplateResponse" inputName="findCounterTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="f0d48ab6-b1be-4f10-bdce-069e28cfea6b" isOneWay="false" action="" name="findOfferTemplate" bindingOperationName="findOfferTemplate" type="Request-Response" outputName="findOfferTemplateResponse" inputName="findOfferTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="aec06814-f050-4872-ae25-4cab6e0ebdd1" isOneWay="false" action="" name="findOneShotChargeTemplate" bindingOperationName="findOneShotChargeTemplate" type="Request-Response" outputName="findOneShotChargeTemplateResponse" inputName="findOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="914c5c85-d363-4c0a-9bb2-996e2638a5c4" isOneWay="false" action="" name="findPricePlan" bindingOperationName="findPricePlan" type="Request-Response" outputName="findPricePlanResponse" inputName="findPricePlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="60362b2a-4773-4f11-a9f8-e8c3aab0eb1e" isOneWay="false" action="" name="findRecurringChargeTemplate" bindingOperationName="findRecurringChargeTemplate" type="Request-Response" outputName="findRecurringChargeTemplateResponse" inputName="findRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="6ef7b3a7-01a4-4a43-b717-75a641b33dec" isOneWay="false" action="" name="findServiceTemplate" bindingOperationName="findServiceTemplate" type="Request-Response" outputName="findServiceTemplateResponse" inputName="findServiceTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="cd100971-25b9-432d-be65-017982a8b195" isOneWay="false" action="" name="findTriggeredEdr" bindingOperationName="findTriggeredEdr" type="Request-Response" outputName="findTriggeredEdrResponse" inputName="findTriggeredEdr" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="3777074c-b0b7-487f-b4bd-6d462a9e4bcb" isOneWay="false" action="" name="findUsageChargeTemplate" bindingOperationName="findUsageChargeTemplate" type="Request-Response" outputName="findUsageChargeTemplateResponse" inputName="findUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="f93d6259-1189-41b4-9238-373722507074" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="2551ea16-3d94-4ac5-a129-fb6bc18f8d9c" isOneWay="false" action="" name="listOneShotChargeTemplate" bindingOperationName="listOneShotChargeTemplate" type="Request-Response" outputName="listOneShotChargeTemplateResponse" inputName="listOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="b214c23a-8909-40ea-8499-5379f89405e7" isOneWay="false" action="" name="listPricePlanByEventCode" bindingOperationName="listPricePlanByEventCode" type="Request-Response" outputName="listPricePlanByEventCodeResponse" inputName="listPricePlanByEventCode" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="4bb751c7-355c-4af9-ac2f-9805e28be6b6" isOneWay="false" action="" name="removeBusinessOfferModel" bindingOperationName="removeBusinessOfferModel" type="Request-Response" outputName="removeBusinessOfferModelResponse" inputName="removeBusinessOfferModel" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="ff837129-4b81-4618-8038-b732dbc7e30c" isOneWay="false" action="" name="removeCounterTemplate" bindingOperationName="removeCounterTemplate" type="Request-Response" outputName="removeCounterTemplateResponse" inputName="removeCounterTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="d4f3cf21-d67e-4982-b906-e2b62418f827" isOneWay="false" action="" name="removeOfferTemplate" bindingOperationName="removeOfferTemplate" type="Request-Response" outputName="removeOfferTemplateResponse" inputName="removeOfferTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="5073b33a-87dd-4159-84db-c340f04a33e4" isOneWay="false" action="" name="removeOneShotChargeTemplate" bindingOperationName="removeOneShotChargeTemplate" type="Request-Response" outputName="removeOneShotChargeTemplateResponse" inputName="removeOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="5b4e4cc3-ef2e-4c81-b0a1-27d6f082a6a9" isOneWay="false" action="" name="removePricePlan" bindingOperationName="removePricePlan" type="Request-Response" outputName="removePricePlanResponse" inputName="removePricePlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="4415bcaf-a164-439d-b0a0-adaf510368f2" isOneWay="false" action="" name="removeRecurringChargeTemplate" bindingOperationName="removeRecurringChargeTemplate" type="Request-Response" outputName="removeRecurringChargeTemplateResponse" inputName="removeRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="5c7af4d6-f7e1-479a-83a0-4fbc1bb6c3c5" isOneWay="false" action="" name="removeServiceTemplate" bindingOperationName="removeServiceTemplate" type="Request-Response" outputName="removeServiceTemplateResponse" inputName="removeServiceTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="c89fe5e7-a4a6-4d33-acf9-cc49d0136dcd" isOneWay="false" action="" name="removeTriggeredEdr" bindingOperationName="removeTriggeredEdr" type="Request-Response" outputName="removeTriggeredEdrResponse" inputName="removeTriggeredEdr" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="959de3e4-434a-4515-8f6a-e4fbbe1ea631" isOneWay="false" action="" name="removeUsageChargeTemplate" bindingOperationName="removeUsageChargeTemplate" type="Request-Response" outputName="removeUsageChargeTemplateResponse" inputName="removeUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="e40eddae-64ff-47f8-a8ed-19c759f36ae8" isOneWay="false" action="" name="updateBusinessOfferModel" bindingOperationName="updateBusinessOfferModel" type="Request-Response" outputName="updateBusinessOfferModelResponse" inputName="updateBusinessOfferModel" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="612bf015-5c15-480a-b608-70b75785b099" isOneWay="false" action="" name="updateCounterTemplate" bindingOperationName="updateCounterTemplate" type="Request-Response" outputName="updateCounterTemplateResponse" inputName="updateCounterTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="373ae0c9-d0a0-4ac2-9621-fed763de4416" isOneWay="false" action="" name="updateOfferTemplate" bindingOperationName="updateOfferTemplate" type="Request-Response" outputName="updateOfferTemplateResponse" inputName="updateOfferTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="a3497bcf-a614-4330-98f4-2313c06dd62a" isOneWay="false" action="" name="updateOneShotChargeTemplate" bindingOperationName="updateOneShotChargeTemplate" type="Request-Response" outputName="updateOneShotChargeTemplateResponse" inputName="updateOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="f3e6c36b-9393-4b7b-a611-11c0cfa8c0ae" isOneWay="false" action="" name="updatePricePlan" bindingOperationName="updatePricePlan" type="Request-Response" outputName="updatePricePlanResponse" inputName="updatePricePlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="83f8fdda-b68f-4510-bb33-1bb6c447f319" isOneWay="false" action="" name="updateRecurringChargeTemplate" bindingOperationName="updateRecurringChargeTemplate" type="Request-Response" outputName="updateRecurringChargeTemplateResponse" inputName="updateRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="da5669ba-632c-4ca0-afa0-c4adc760ab2a" isOneWay="false" action="" name="updateServiceTemplate" bindingOperationName="updateServiceTemplate" type="Request-Response" outputName="updateServiceTemplateResponse" inputName="updateServiceTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="4e75275c-dddf-464c-bdd7-a5bfae3ca65e" isOneWay="false" action="" name="updateTriggeredEdr" bindingOperationName="updateTriggeredEdr" type="Request-Response" outputName="updateTriggeredEdrResponse" inputName="updateTriggeredEdr" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="ccf0b449-6713-41d7-9024-efe4bdb06686" isOneWay="false" action="" name="updateUsageChargeTemplate" bindingOperationName="updateUsageChargeTemplate" type="Request-Response" outputName="updateUsageChargeTemplateResponse" inputName="updateUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation></con:interface><con:interface xsi:type="con:RestService" id="b93ebf67-a568-4bed-9036-80561b1b1cce" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="C:\andrius\projektai\seb\meveo\meveo-api\target\docs\application.wadl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="file:/C:/andrius/projektai/seb/meveo/meveo-api/target/docs/application.wadl"><con:part><con:url>file:/C:/andrius/projektai/seb/meveo/meveo-api/target/docs/application.wadl</con:url><con:content><![CDATA[<application xmlns="http://wadl.dev.java.net/2009/02">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint></con:endpoints><con:operation id="9ba233dc-83dc-4922-bccb-c4730c741e6a" isOneWay="false" action="" name="createBusinessOfferModel" bindingOperationName="createBusinessOfferModel" type="Request-Response" outputName="createBusinessOfferModelResponse" inputName="createBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="2ab2495c-52ee-4791-8456-1b5ff33bbed3" isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="858fc971-252c-4f2e-be37-a6af636d4dc2" isOneWay="false" action="" name="createOfferFromBOM" bindingOperationName="createOfferFromBOM" type="Request-Response" outputName="createOfferFromBOMResponse" inputName="createOfferFromBOM" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="907d4aef-eb38-488c-b329-ed0aea4aba6c" isOneWay="false" action="" name="createOfferTemplate" bindingOperationName="createOfferTemplate" type="Request-Response" outputName="createOfferTemplateResponse" inputName="createOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a7295c16-6df2-4779-9fb2-5304b530b000" isOneWay="false" action="" name="createOneShotChargeTemplate" bindingOperationName="createOneShotChargeTemplate" type="Request-Response" outputName="createOneShotChargeTemplateResponse" inputName="createOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a33e232b-9ce0-48ef-8672-e93183277313" isOneWay="false" action="" name="createOrUpdateBusinessOfferModel" bindingOperationName="createOrUpdateBusinessOfferModel" type="Request-Response" outputName="createOrUpdateBusinessOfferModelResponse" inputName="createOrUpdateBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="fbe32f6e-18c5-4daa-b052-ce76b6429c6c" isOneWay="false" action="" name="createOrUpdateCounterTemplate" bindingOperationName="createOrUpdateCounterTemplate" type="Request-Response" outputName="createOrUpdateCounterTemplateResponse" inputName="createOrUpdateCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="e594a5c3-f81e-45a5-af22-4e1746ae1626" isOneWay="false" action="" name="createOrUpdateOfferTemplate" bindingOperationName="createOrUpdateOfferTemplate" type="Request-Response" outputName="createOrUpdateOfferTemplateResponse" inputName="createOrUpdateOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="e9c25891-650e-40f2-8c4a-c41a5a44c02b" isOneWay="false" action="" name="createOrUpdateOneShotChargeTemplate" bindingOperationName="createOrUpdateOneShotChargeTemplate" type="Request-Response" outputName="createOrUpdateOneShotChargeTemplateResponse" inputName="createOrUpdateOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="e3e8a59b-2571-4922-bb07-55f837920fc3" isOneWay="false" action="" name="createOrUpdatePricePlan" bindingOperationName="createOrUpdatePricePlan" type="Request-Response" outputName="createOrUpdatePricePlanResponse" inputName="createOrUpdatePricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1e79c06c-44e0-4b59-aa82-c2e0ef7e85a5" isOneWay="false" action="" name="createOrUpdateRecurringChargeTemplate" bindingOperationName="createOrUpdateRecurringChargeTemplate" type="Request-Response" outputName="createOrUpdateRecurringChargeTemplateResponse" inputName="createOrUpdateRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="76a2b030-63e9-4f69-8bd4-5a1e57ad2f23" isOneWay="false" action="" name="createOrUpdateServiceTemplate" bindingOperationName="createOrUpdateServiceTemplate" type="Request-Response" outputName="createOrUpdateServiceTemplateResponse" inputName="createOrUpdateServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="18309e85-0108-425b-9e04-1969f482a917" isOneWay="false" action="" name="createOrUpdateTriggeredEdr" bindingOperationName="createOrUpdateTriggeredEdr" type="Request-Response" outputName="createOrUpdateTriggeredEdrResponse" inputName="createOrUpdateTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="da69f838-f678-41a7-98b1-7070a10e2530" isOneWay="false" action="" name="createOrUpdateUsageChargeTemplate" bindingOperationName="createOrUpdateUsageChargeTemplate" type="Request-Response" outputName="createOrUpdateUsageChargeTemplateResponse" inputName="createOrUpdateUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="5eaf99f1-ca87-4246-adf2-66cbd463b9e9" isOneWay="false" action="" name="createPricePlan" bindingOperationName="createPricePlan" type="Request-Response" outputName="createPricePlanResponse" inputName="createPricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="8c50a16b-e5fb-4e5a-8a9c-87835f0ee167" isOneWay="false" action="" name="createRecurringChargeTemplate" bindingOperationName="createRecurringChargeTemplate" type="Request-Response" outputName="createRecurringChargeTemplateResponse" inputName="createRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="792eec0c-d058-4f16-80f2-0996ee2e0bec" isOneWay="false" action="" name="createServiceTemplate" bindingOperationName="createServiceTemplate" type="Request-Response" outputName="createServiceTemplateResponse" inputName="createServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="dab368da-101f-49f6-a13e-93d527338e35" isOneWay="false" action="" name="createTriggeredEdr" bindingOperationName="createTriggeredEdr" type="Request-Response" outputName="createTriggeredEdrResponse" inputName="createTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="51c14c3d-f8a8-4a38-942b-74cd5e68d99b" isOneWay="false" action="" name="createUsageChargeTemplate" bindingOperationName="createUsageChargeTemplate" type="Request-Response" outputName="createUsageChargeTemplateResponse" inputName="createUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="511b290f-47b6-4453-a4cd-d02e20519083" isOneWay="false" action="" name="findBusinessOfferModel" bindingOperationName="findBusinessOfferModel" type="Request-Response" outputName="findBusinessOfferModelResponse" inputName="findBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="f3105b11-0410-4113-8b60-fcc8d10efc33" isOneWay="false" action="" name="findChargeTemplate" bindingOperationName="findChargeTemplate" type="Request-Response" outputName="findChargeTemplateResponse" inputName="findChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="67da460e-7ee5-4f72-925d-3ec46af2e5f0" isOneWay="false" action="" name="findCounterTemplate" bindingOperationName="findCounterTemplate" type="Request-Response" outputName="findCounterTemplateResponse" inputName="findCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="f0d48ab6-b1be-4f10-bdce-069e28cfea6b" isOneWay="false" action="" name="findOfferTemplate" bindingOperationName="findOfferTemplate" type="Request-Response" outputName="findOfferTemplateResponse" inputName="findOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="aec06814-f050-4872-ae25-4cab6e0ebdd1" isOneWay="false" action="" name="findOneShotChargeTemplate" bindingOperationName="findOneShotChargeTemplate" type="Request-Response" outputName="findOneShotChargeTemplateResponse" inputName="findOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="914c5c85-d363-4c0a-9bb2-996e2638a5c4" isOneWay="false" action="" name="findPricePlan" bindingOperationName="findPricePlan" type="Request-Response" outputName="findPricePlanResponse" inputName="findPricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="60362b2a-4773-4f11-a9f8-e8c3aab0eb1e" isOneWay="false" action="" name="findRecurringChargeTemplate" bindingOperationName="findRecurringChargeTemplate" type="Request-Response" outputName="findRecurringChargeTemplateResponse" inputName="findRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="6ef7b3a7-01a4-4a43-b717-75a641b33dec" isOneWay="false" action="" name="findServiceTemplate" bindingOperationName="findServiceTemplate" type="Request-Response" outputName="findServiceTemplateResponse" inputName="findServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="cd100971-25b9-432d-be65-017982a8b195" isOneWay="false" action="" name="findTriggeredEdr" bindingOperationName="findTriggeredEdr" type="Request-Response" outputName="findTriggeredEdrResponse" inputName="findTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3777074c-b0b7-487f-b4bd-6d462a9e4bcb" isOneWay="false" action="" name="findUsageChargeTemplate" bindingOperationName="findUsageChargeTemplate" type="Request-Response" outputName="findUsageChargeTemplateResponse" inputName="findUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="f93d6259-1189-41b4-9238-373722507074" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="2551ea16-3d94-4ac5-a129-fb6bc18f8d9c" isOneWay="false" action="" name="listOneShotChargeTemplate" bindingOperationName="listOneShotChargeTemplate" type="Request-Response" outputName="listOneShotChargeTemplateResponse" inputName="listOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b214c23a-8909-40ea-8499-5379f89405e7" isOneWay="false" action="" name="listPricePlanByEventCode" bindingOperationName="listPricePlanByEventCode" type="Request-Response" outputName="listPricePlanByEventCodeResponse" inputName="listPricePlanByEventCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="4bb751c7-355c-4af9-ac2f-9805e28be6b6" isOneWay="false" action="" name="removeBusinessOfferModel" bindingOperationName="removeBusinessOfferModel" type="Request-Response" outputName="removeBusinessOfferModelResponse" inputName="removeBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="ff837129-4b81-4618-8038-b732dbc7e30c" isOneWay="false" action="" name="removeCounterTemplate" bindingOperationName="removeCounterTemplate" type="Request-Response" outputName="removeCounterTemplateResponse" inputName="removeCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="d4f3cf21-d67e-4982-b906-e2b62418f827" isOneWay="false" action="" name="removeOfferTemplate" bindingOperationName="removeOfferTemplate" type="Request-Response" outputName="removeOfferTemplateResponse" inputName="removeOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="5073b33a-87dd-4159-84db-c340f04a33e4" isOneWay="false" action="" name="removeOneShotChargeTemplate" bindingOperationName="removeOneShotChargeTemplate" type="Request-Response" outputName="removeOneShotChargeTemplateResponse" inputName="removeOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="5b4e4cc3-ef2e-4c81-b0a1-27d6f082a6a9" isOneWay="false" action="" name="removePricePlan" bindingOperationName="removePricePlan" type="Request-Response" outputName="removePricePlanResponse" inputName="removePricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="4415bcaf-a164-439d-b0a0-adaf510368f2" isOneWay="false" action="" name="removeRecurringChargeTemplate" bindingOperationName="removeRecurringChargeTemplate" type="Request-Response" outputName="removeRecurringChargeTemplateResponse" inputName="removeRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="5c7af4d6-f7e1-479a-83a0-4fbc1bb6c3c5" isOneWay="false" action="" name="removeServiceTemplate" bindingOperationName="removeServiceTemplate" type="Request-Response" outputName="removeServiceTemplateResponse" inputName="removeServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c89fe5e7-a4a6-4d33-acf9-cc49d0136dcd" isOneWay="false" action="" name="removeTriggeredEdr" bindingOperationName="removeTriggeredEdr" type="Request-Response" outputName="removeTriggeredEdrResponse" inputName="removeTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="959de3e4-434a-4515-8f6a-e4fbbe1ea631" isOneWay="false" action="" name="removeUsageChargeTemplate" bindingOperationName="removeUsageChargeTemplate" type="Request-Response" outputName="removeUsageChargeTemplateResponse" inputName="removeUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="e40eddae-64ff-47f8-a8ed-19c759f36ae8" isOneWay="false" action="" name="updateBusinessOfferModel" bindingOperationName="updateBusinessOfferModel" type="Request-Response" outputName="updateBusinessOfferModelResponse" inputName="updateBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="612bf015-5c15-480a-b608-70b75785b099" isOneWay="false" action="" name="updateCounterTemplate" bindingOperationName="updateCounterTemplate" type="Request-Response" outputName="updateCounterTemplateResponse" inputName="updateCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="373ae0c9-d0a0-4ac2-9621-fed763de4416" isOneWay="false" action="" name="updateOfferTemplate" bindingOperationName="updateOfferTemplate" type="Request-Response" outputName="updateOfferTemplateResponse" inputName="updateOfferTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a3497bcf-a614-4330-98f4-2313c06dd62a" isOneWay="false" action="" name="updateOneShotChargeTemplate" bindingOperationName="updateOneShotChargeTemplate" type="Request-Response" outputName="updateOneShotChargeTemplateResponse" inputName="updateOneShotChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="f3e6c36b-9393-4b7b-a611-11c0cfa8c0ae" isOneWay="false" action="" name="updatePricePlan" bindingOperationName="updatePricePlan" type="Request-Response" outputName="updatePricePlanResponse" inputName="updatePricePlan" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="83f8fdda-b68f-4510-bb33-1bb6c447f319" isOneWay="false" action="" name="updateRecurringChargeTemplate" bindingOperationName="updateRecurringChargeTemplate" type="Request-Response" outputName="updateRecurringChargeTemplateResponse" inputName="updateRecurringChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="da5669ba-632c-4ca0-afa0-c4adc760ab2a" isOneWay="false" action="" name="updateServiceTemplate" bindingOperationName="updateServiceTemplate" type="Request-Response" outputName="updateServiceTemplateResponse" inputName="updateServiceTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="4e75275c-dddf-464c-bdd7-a5bfae3ca65e" isOneWay="false" action="" name="updateTriggeredEdr" bindingOperationName="updateTriggeredEdr" type="Request-Response" outputName="updateTriggeredEdrResponse" inputName="updateTriggeredEdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="ccf0b449-6713-41d7-9024-efe4bdb06686" isOneWay="false" action="" name="updateUsageChargeTemplate" bindingOperationName="updateUsageChargeTemplate" type="Request-Response" outputName="updateUsageChargeTemplateResponse" inputName="updateUsageChargeTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a26872cd-a554-4f8a-895e-5563c4642e1b" isOneWay="false" action="" name="updateDiscountPlan" bindingOperationName="updateDiscountPlan" type="Request-Response" outputName="updateDiscountPlanResponse" inputName="updateDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="733e579c-3e53-41f1-b149-ee0f206092f7" isOneWay="false" action="" name="createOrUpdateDiscountPlan" bindingOperationName="createOrUpdateDiscountPlan" type="Request-Response" outputName="createOrUpdateDiscountPlanResponse" inputName="createOrUpdateDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="a94c7143-b4df-48e4-ae9f-0d582a877882" isOneWay="false" action="" name="createDiscountPlan" bindingOperationName="createDiscountPlan" type="Request-Response" outputName="createDiscountPlanResponse" inputName="createDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="35435ca3-a64b-4186-a272-3c73e80b43d2" isOneWay="false" action="" name="findDiscountPlan" bindingOperationName="findDiscountPlan" type="Request-Response" outputName="findDiscountPlanResponse" inputName="findDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="87269496-8497-45ed-be2e-d4b9702a6257" isOneWay="false" action="" name="removeDiscountPlan" bindingOperationName="removeDiscountPlan" type="Request-Response" outputName="removeDiscountPlanResponse" inputName="removeDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="b92774ba-cb80-4ddf-ae69-4613c3e0ee0f" isOneWay="false" action="" name="listDiscountPlan" bindingOperationName="listDiscountPlan" type="Request-Response" outputName="listDiscountPlanResponse" inputName="listDiscountPlan" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation></con:interface><con:interface xsi:type="con:RestService" id="b93ebf67-a568-4bed-9036-80561b1b1cce" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="C:\andrius\projektai\seb\meveo\meveo-api\target\docs\application.wadl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="file:/C:/andrius/projektai/seb/meveo/meveo-api/target/docs/application.wadl"><con:part><con:url>file:/C:/andrius/projektai/seb/meveo/meveo-api/target/docs/application.wadl</con:url><con:content><![CDATA[<application xmlns="http://wadl.dev.java.net/2009/02">
   <doc jersey:generatedBy="Jersey: 1.18.3 12/01/2014 08:23 AM" xmlns:jersey="http://jersey.java.net/"/>
   <doc title="MEVEO JAX-WS API Documentation" xml:lang="en">MEVEO REST API Documentation</doc>
   <grammars>
@@ -10075,7 +10298,7 @@
       <xs:element name="AccountOperation" type="tns:accountOperationDto"/>
       <xs:element name="AccountOperationsDto" type="tns:accountOperationsDto"/>
       <xs:element name="AccountOperationsResponse" type="tns:accountOperationsResponseDto"/>
-      <xs:element name="ActionStatus" type="tns:actionStatus"/>
+      <xs:element name="ActionStatus" type="tns:ActionStatus"/>
       <xs:element name="Address" type="tns:addressDto"/>
       <xs:element name="BankCoordinates" type="tns:bankCoordinatesDto"/>
       <xs:element name="BillingAccount" type="tns:BillingAccount"/>
@@ -10257,13 +10480,13 @@
       </xs:complexType>
       <xs:complexType name="removeBillingAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
-      <xs:complexType name="actionStatus">
+      <xs:complexType name="ActionStatus">
         <xs:sequence>
           <xs:element name="status" type="tns:actionStatusEnum"/>
-          <xs:element minOccurs="0" name="errorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="errorCode" type="tns:meveoApiErrorCodeEnum"/>
           <xs:element name="message" type="xs:string"/>
         </xs:sequence>
       </xs:complexType>
@@ -10281,7 +10504,7 @@
       </xs:complexType>
       <xs:complexType name="createTitleResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCRMAccountHierarchy">
@@ -10431,6 +10654,7 @@
       <xs:complexType name="entityReferenceDto">
         <xs:sequence/>
         <xs:attribute name="classname" type="xs:string" use="required"/>
+        <xs:attribute name="classnameCode" type="xs:string"/>
         <xs:attribute name="code" type="xs:string" use="required"/>
       </xs:complexType>
       <xs:complexType name="customFieldsDto">
@@ -10440,7 +10664,7 @@
       </xs:complexType>
       <xs:complexType name="updateCRMAccountHierarchyResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createCRMAccountHierarchy">
@@ -10450,7 +10674,7 @@
       </xs:complexType>
       <xs:complexType name="createCRMAccountHierarchyResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateAccess">
@@ -10473,7 +10697,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateAccessResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateBillingAccount">
@@ -10514,7 +10738,7 @@
           <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
         </xs:sequence>
         <xs:attribute name="code" type="xs:string" use="required"/>
-        <xs:attribute name="description" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string"/>
       </xs:complexType>
       <xs:complexType name="invoiceDto">
         <xs:complexContent>
@@ -10528,9 +10752,10 @@
               <xs:element minOccurs="0" name="amountWithoutTax" type="xs:decimal"/>
               <xs:element minOccurs="0" name="amountTax" type="xs:decimal"/>
               <xs:element minOccurs="0" name="amountWithTax" type="xs:decimal"/>
-              <xs:element minOccurs="0" name="paymentMathod" type="xs:string"/>
+              <xs:element minOccurs="0" name="paymentMethod" type="xs:string"/>
               <xs:element name="PDFpresent" type="xs:boolean"/>
               <xs:element minOccurs="0" name="type" type="xs:string"/>
+              <xs:element minOccurs="0" name="pdf" type="xs:base64Binary"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="subCategoryInvoiceAgregates" nillable="true" type="tns:subCategoryInvoiceAgregateDto"/>
               <xs:element maxOccurs="unbounded" minOccurs="0" name="accountOperations" nillable="true" type="tns:accountOperationDto"/>
             </xs:sequence>
@@ -10707,6 +10932,7 @@
               <xs:element name="offerTemplate" type="xs:string"/>
               <xs:element name="subscriptionDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="endAgreementDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="status" type="xs:string"/>
               <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
               <xs:element minOccurs="0" name="accesses" type="tns:Accesses"/>
@@ -10714,7 +10940,7 @@
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -10737,15 +10963,16 @@
               <xs:element minOccurs="0" name="terminationDate" type="xs:dateTime"/>
               <xs:element minOccurs="0" name="quantity" type="xs:decimal"/>
               <xs:element minOccurs="0" name="terminationReason" type="xs:string"/>
+              <xs:element minOccurs="0" name="endAgreementDate" type="xs:dateTime"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="createOrUpdateBillingAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateAccountHierarchy">
@@ -10779,7 +11006,7 @@
       </xs:complexType>
       <xs:complexType name="updateAccountHierarchyResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCreditCategory">
@@ -10789,7 +11016,7 @@
       </xs:complexType>
       <xs:complexType name="removeCreditCategoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findUserAccount">
@@ -10813,7 +11040,7 @@
       </xs:complexType>
       <xs:complexType abstract="true" name="baseResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="actionStatus" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="actionStatus" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateBillingAccount">
@@ -10823,7 +11050,7 @@
       </xs:complexType>
       <xs:complexType name="updateBillingAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findCustomerAccount">
@@ -10886,7 +11113,7 @@
       </xs:complexType>
       <xs:complexType name="unMatchingOperationsResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="cancelLitigation">
@@ -10902,7 +11129,7 @@
       </xs:complexType>
       <xs:complexType name="cancelLitigationResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createCreditCategory">
@@ -10918,7 +11145,7 @@
       </xs:complexType>
       <xs:complexType name="createCreditCategoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findAccountHierarchy2">
@@ -10999,7 +11226,7 @@
       </xs:complexType>
       <xs:complexType name="updateTitleResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCustomer">
@@ -11009,7 +11236,7 @@
       </xs:complexType>
       <xs:complexType name="removeCustomerResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="matchOperations">
@@ -11030,7 +11257,7 @@
       </xs:complexType>
       <xs:complexType name="matchOperationsResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCustomerBrand">
@@ -11046,7 +11273,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateCustomerBrandResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateAccess">
@@ -11056,7 +11283,7 @@
       </xs:complexType>
       <xs:complexType name="updateAccessResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="listTitle">
@@ -11088,7 +11315,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateCustomerAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCustomerCategory">
@@ -11105,7 +11332,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateCustomerCategoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateAccountHierarchy">
@@ -11115,7 +11342,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateAccountHierarchyResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createCustomer">
@@ -11125,7 +11352,7 @@
       </xs:complexType>
       <xs:complexType name="createCustomerResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCreditCategory">
@@ -11135,7 +11362,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateCreditCategoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createCustomerBrand">
@@ -11145,7 +11372,7 @@
       </xs:complexType>
       <xs:complexType name="createCustomerBrandResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeUserAccount">
@@ -11155,7 +11382,7 @@
       </xs:complexType>
       <xs:complexType name="removeUserAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findAccountHierarchy">
@@ -11222,7 +11449,7 @@
       </xs:complexType>
       <xs:complexType name="createUserAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="findBillingAccount">
@@ -11251,7 +11478,7 @@
       </xs:complexType>
       <xs:complexType name="removeCustomerAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createAccess">
@@ -11261,7 +11488,7 @@
       </xs:complexType>
       <xs:complexType name="createAccessResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="index">
@@ -11269,7 +11496,7 @@
       </xs:complexType>
       <xs:complexType name="indexResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createCustomerAccount">
@@ -11279,7 +11506,7 @@
       </xs:complexType>
       <xs:complexType name="createCustomerAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="listAccess">
@@ -11308,7 +11535,7 @@
       </xs:complexType>
       <xs:complexType name="createCustomerCategoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCustomerCategory">
@@ -11318,7 +11545,7 @@
       </xs:complexType>
       <xs:complexType name="updateCustomerCategoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateUserAccount">
@@ -11328,7 +11555,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateUserAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateTitle">
@@ -11338,7 +11565,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateTitleResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createAccountHierarchy">
@@ -11348,7 +11575,7 @@
       </xs:complexType>
       <xs:complexType name="createAccountHierarchyResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCustomerBrand">
@@ -11358,7 +11585,7 @@
       </xs:complexType>
       <xs:complexType name="removeCustomerBrandResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCRMAccountHierarchy">
@@ -11368,7 +11595,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateCRMAccountHierarchyResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createBillingAccount">
@@ -11378,7 +11605,7 @@
       </xs:complexType>
       <xs:complexType name="createBillingAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createAccountOperation">
@@ -11388,7 +11615,7 @@
       </xs:complexType>
       <xs:complexType name="createAccountOperationResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeTitle">
@@ -11398,7 +11625,7 @@
       </xs:complexType>
       <xs:complexType name="removeTitleResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="listByCustomerAccount">
@@ -11446,7 +11673,7 @@
       </xs:complexType>
       <xs:complexType name="updateCustomerBrandResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCustomer">
@@ -11456,7 +11683,7 @@
       </xs:complexType>
       <xs:complexType name="updateCustomerResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="createOrUpdateCustomer">
@@ -11466,7 +11693,7 @@
       </xs:complexType>
       <xs:complexType name="createOrUpdateCustomerResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateUserAccount">
@@ -11476,7 +11703,7 @@
       </xs:complexType>
       <xs:complexType name="updateUserAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="customerHierarchyUpdate">
@@ -11517,13 +11744,13 @@
               <xs:element minOccurs="0" name="customFields" type="tns:customFieldsDto"/>
             </xs:sequence>
             <xs:attribute name="code" type="xs:string" use="required"/>
-            <xs:attribute name="description" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string"/>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
       <xs:complexType name="customerHierarchyUpdateResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="addLitigation">
@@ -11533,7 +11760,7 @@
       </xs:complexType>
       <xs:complexType name="addLitigationResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCreditCategory">
@@ -11543,7 +11770,7 @@
       </xs:complexType>
       <xs:complexType name="updateCreditCategoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="listByCustomer">
@@ -11573,7 +11800,7 @@
       </xs:complexType>
       <xs:complexType name="removeAccessResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="updateCustomerAccount">
@@ -11583,7 +11810,7 @@
       </xs:complexType>
       <xs:complexType name="updateCustomerAccountResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="dunningInclusionExclusion">
@@ -11603,7 +11830,7 @@
       </xs:complexType>
       <xs:complexType name="dunningInclusionExclusionResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="removeCustomerCategory">
@@ -11613,7 +11840,7 @@
       </xs:complexType>
       <xs:complexType name="removeCustomerCategoryResponse">
         <xs:sequence>
-          <xs:element minOccurs="0" name="return" type="tns:actionStatus"/>
+          <xs:element minOccurs="0" name="return" type="tns:ActionStatus"/>
         </xs:sequence>
       </xs:complexType>
       <xs:complexType name="listByBillingAccount">
@@ -11658,6 +11885,22 @@
         <xs:restriction base="xs:string">
           <xs:enumeration value="SUCCESS"/>
           <xs:enumeration value="FAIL"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="meveoApiErrorCodeEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ENTITY_DOES_NOT_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="ENTITY_ALREADY_EXISTS_EXCEPTION"/>
+          <xs:enumeration value="DELETE_REFERENCED_ENTITY_EXCEPTION"/>
+          <xs:enumeration value="MISSING_PARAMETER"/>
+          <xs:enumeration value="INVALID_PARAMETER"/>
+          <xs:enumeration value="INVALID_ENUM_VALUE"/>
+          <xs:enumeration value="DUPLICATE_ACCESS"/>
+          <xs:enumeration value="INSUFFICIENT_BALANCE"/>
+          <xs:enumeration value="GENERIC_API_EXCEPTION"/>
+          <xs:enumeration value="BUSINESS_API_EXCEPTION"/>
+          <xs:enumeration value="AUTHENTICATION_AUTHORIZATION_EXCEPTION"/>
+          <xs:enumeration value="ACTION_FORBIDDEN"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:schema>
@@ -12314,7 +12557,7 @@
       <wsdl:output message="ns1:findCustomerResponse" name="findCustomerResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint></con:endpoints><con:operation id="4a0fc5f7-43d0-4617-8c84-40c762d59f2d" isOneWay="false" action="" name="addLitigation" bindingOperationName="addLitigation" type="Request-Response" outputName="addLitigationResponse" inputName="addLitigation" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="bf32f00f-4607-4b09-8e82-a84eb50733e0" isOneWay="false" action="" name="cancelLitigation" bindingOperationName="cancelLitigation" type="Request-Response" outputName="cancelLitigationResponse" inputName="cancelLitigation" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="47634e15-1146-4aaa-86ff-20b4035e41b2" isOneWay="false" action="" name="createAccess" bindingOperationName="createAccess" type="Request-Response" outputName="createAccessResponse" inputName="createAccess" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="7a543d3a-3216-4ec8-882c-4373d04a7c4c" isOneWay="false" action="" name="createAccountHierarchy" bindingOperationName="createAccountHierarchy" type="Request-Response" outputName="createAccountHierarchyResponse" inputName="createAccountHierarchy" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="3e664a12-c96a-41f5-80d7-f9e283e58c53" isOneWay="false" action="" name="createAccountOperation" bindingOperationName="createAccountOperation" type="Request-Response" outputName="createAccountOperationResponse" inputName="createAccountOperation" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="6f884f73-94cb-47d3-9d2a-a198b88e7f00" isOneWay="false" action="" name="createBillingAccount" bindingOperationName="createBillingAccount" type="Request-Response" outputName="createBillingAccountResponse" inputName="createBillingAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="fe57f01e-789a-4f94-89dd-67b58a80baab" isOneWay="false" action="" name="createCreditCategory" bindingOperationName="createCreditCategory" type="Request-Response" outputName="createCreditCategoryResponse" inputName="createCreditCategory" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="6c75494b-d1de-4b91-9790-b16f0d0fae8c" isOneWay="false" action="" name="createCRMAccountHierarchy" bindingOperationName="createCRMAccountHierarchy" type="Request-Response" outputName="createCRMAccountHierarchyResponse" inputName="createCRMAccountHierarchy" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="0777c016-f90d-4c55-8529-e6deb5a62cd2" isOneWay="false" action="" name="createCustomer" bindingOperationName="createCustomer" type="Request-Response" outputName="createCustomerResponse" inputName="createCustomer" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="839e7da2-424e-4028-9200-5f480c57f532" isOneWay="false" action="" name="createCustomerAccount" bindingOperationName="createCustomerAccount" type="Request-Response" outputName="createCustomerAccountResponse" inputName="createCustomerAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="73978a18-901d-463f-a3e3-99ab7aff2a4c" isOneWay="false" action="" name="createCustomerBrand" bindingOperationName="createCustomerBrand" type="Request-Response" outputName="createCustomerBrandResponse" inputName="createCustomerBrand" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="0c7696b4-16bc-4394-af84-ab5b7f5ca9d6" isOneWay="false" action="" name="createCustomerCategory" bindingOperationName="createCustomerCategory" type="Request-Response" outputName="createCustomerCategoryResponse" inputName="createCustomerCategory" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="946dc711-ad87-4a9a-ac4a-9ff9905b3cf9" isOneWay="false" action="" name="createOrUpdateAccess" bindingOperationName="createOrUpdateAccess" type="Request-Response" outputName="createOrUpdateAccessResponse" inputName="createOrUpdateAccess" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="1007fdaf-bf7b-403a-904b-766209ccc785" isOneWay="false" action="" name="createOrUpdateAccountHierarchy" bindingOperationName="createOrUpdateAccountHierarchy" type="Request-Response" outputName="createOrUpdateAccountHierarchyResponse" inputName="createOrUpdateAccountHierarchy" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="0300d23a-f2fb-4b64-a471-e6894d107295" isOneWay="false" action="" name="createOrUpdateBillingAccount" bindingOperationName="createOrUpdateBillingAccount" type="Request-Response" outputName="createOrUpdateBillingAccountResponse" inputName="createOrUpdateBillingAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="baa61381-139c-482f-b396-0165d9db5233" isOneWay="false" action="" name="createOrUpdateCreditCategory" bindingOperationName="createOrUpdateCreditCategory" type="Request-Response" outputName="createOrUpdateCreditCategoryResponse" inputName="createOrUpdateCreditCategory" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="977c19d5-071b-400f-92f2-03a4d785579b" isOneWay="false" action="" name="createOrUpdateCRMAccountHierarchy" bindingOperationName="createOrUpdateCRMAccountHierarchy" type="Request-Response" outputName="createOrUpdateCRMAccountHierarchyResponse" inputName="createOrUpdateCRMAccountHierarchy" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="a92b7dae-16eb-4caa-85c5-c64bbd499019" isOneWay="false" action="" name="createOrUpdateCustomer" bindingOperationName="createOrUpdateCustomer" type="Request-Response" outputName="createOrUpdateCustomerResponse" inputName="createOrUpdateCustomer" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="1f29aa1d-ddeb-47ad-a04a-2d02b61ee1bb" isOneWay="false" action="" name="createOrUpdateCustomerAccount" bindingOperationName="createOrUpdateCustomerAccount" type="Request-Response" outputName="createOrUpdateCustomerAccountResponse" inputName="createOrUpdateCustomerAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="2693ead6-9f1f-4f4b-b46d-469fc0071db1" isOneWay="false" action="" name="createOrUpdateCustomerBrand" bindingOperationName="createOrUpdateCustomerBrand" type="Request-Response" outputName="createOrUpdateCustomerBrandResponse" inputName="createOrUpdateCustomerBrand" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="05314b2f-755b-4fd5-b41d-ce11cff0c0b8" isOneWay="false" action="" name="createOrUpdateCustomerCategory" bindingOperationName="createOrUpdateCustomerCategory" type="Request-Response" outputName="createOrUpdateCustomerCategoryResponse" inputName="createOrUpdateCustomerCategory" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="7a770850-6c7a-4574-98cc-05e2afaf37a1" isOneWay="false" action="" name="createOrUpdateTitle" bindingOperationName="createOrUpdateTitle" type="Request-Response" outputName="createOrUpdateTitleResponse" inputName="createOrUpdateTitle" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="15224648-8aa6-4ef1-9d18-e386cfd3bd1f" isOneWay="false" action="" name="createOrUpdateUserAccount" bindingOperationName="createOrUpdateUserAccount" type="Request-Response" outputName="createOrUpdateUserAccountResponse" inputName="createOrUpdateUserAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="6d91d4f5-65c9-41af-91c7-99795457309a" isOneWay="false" action="" name="createTitle" bindingOperationName="createTitle" type="Request-Response" outputName="createTitleResponse" inputName="createTitle" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="b97a0891-b072-4308-9733-bf3ee0dbfd87" isOneWay="false" action="" name="createUserAccount" bindingOperationName="createUserAccount" type="Request-Response" outputName="createUserAccountResponse" inputName="createUserAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="5e6d4180-bf96-4c7d-8a66-e293cf48a7df" isOneWay="false" action="" name="customerHierarchyUpdate" bindingOperationName="customerHierarchyUpdate" type="Request-Response" outputName="customerHierarchyUpdateResponse" inputName="customerHierarchyUpdate" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="ce745d7e-abb1-485e-8e80-8a054c55b004" isOneWay="false" action="" name="dunningInclusionExclusion" bindingOperationName="dunningInclusionExclusion" type="Request-Response" outputName="dunningInclusionExclusionResponse" inputName="dunningInclusionExclusion" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="261ac443-da20-4d5e-8810-891c9bf8f5ee" isOneWay="false" action="" name="findAccess" bindingOperationName="findAccess" type="Request-Response" outputName="findAccessResponse" inputName="findAccess" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="3dc62b07-41c5-4fb6-992f-76e08c3c4736" isOneWay="false" action="" name="findAccountHierarchy" bindingOperationName="findAccountHierarchy" type="Request-Response" outputName="findAccountHierarchyResponse" inputName="findAccountHierarchy" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="7fc410ca-376f-422d-a62b-08b2795ec3b2" isOneWay="false" action="" name="findAccountHierarchy2" bindingOperationName="findAccountHierarchy2" type="Request-Response" outputName="findAccountHierarchy2Response" inputName="findAccountHierarchy2" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="689c9b9c-445d-464d-b873-39e9ccfd124f" isOneWay="false" action="" name="findBillingAccount" bindingOperationName="findBillingAccount" type="Request-Response" outputName="findBillingAccountResponse" inputName="findBillingAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="262c8966-0442-458b-a751-c910e4200c73" isOneWay="false" action="" name="findCustomer" bindingOperationName="findCustomer" type="Request-Response" outputName="findCustomerResponse" inputName="findCustomer" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="66148d04-3dd9-4c87-b9e5-2c16410655e0" isOneWay="false" action="" name="findCustomerAccount" bindingOperationName="findCustomerAccount" type="Request-Response" outputName="findCustomerAccountResponse" inputName="findCustomerAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="3719864e-a035-4e2e-964a-30ef17ccf07a" isOneWay="false" action="" name="findTitle" bindingOperationName="findTitle" type="Request-Response" outputName="findTitleResponse" inputName="findTitle" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="a418fa50-2555-4bf1-85be-b45cacc6ce82" isOneWay="false" action="" name="findUserAccount" bindingOperationName="findUserAccount" type="Request-Response" outputName="findUserAccountResponse" inputName="findUserAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="55cd19d5-6a2b-480b-a66a-12f14c2f714e" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="9ccd5c81-ed9d-44ef-adc4-05510be0c7ef" isOneWay="false" action="" name="listAccess" bindingOperationName="listAccess" type="Request-Response" outputName="listAccessResponse" inputName="listAccess" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="bdc20b7a-f1e2-4718-b288-6476e9db49aa" isOneWay="false" action="" name="listAccountOperations" bindingOperationName="listAccountOperations" type="Request-Response" outputName="listAccountOperationsResponse" inputName="listAccountOperations" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="82dbb6dd-c2b3-4980-8d23-cd76c5276901" isOneWay="false" action="" name="listByBillingAccount" bindingOperationName="listByBillingAccount" type="Request-Response" outputName="listByBillingAccountResponse" inputName="listByBillingAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="cb8837cb-bfd6-4f29-9678-445d478d6d1c" isOneWay="false" action="" name="listByCustomer" bindingOperationName="listByCustomer" type="Request-Response" outputName="listByCustomerResponse" inputName="listByCustomer" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="29e2a49c-245c-41f9-96cc-8974f5cefc42" isOneWay="false" action="" name="listByCustomerAccount" bindingOperationName="listByCustomerAccount" type="Request-Response" outputName="listByCustomerAccountResponse" inputName="listByCustomerAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="053de9d3-1786-488b-bf00-0b89bec1bfcc" isOneWay="false" action="" name="listCustomerWithFilter" bindingOperationName="listCustomerWithFilter" type="Request-Response" outputName="listCustomerWithFilterResponse" inputName="listCustomerWithFilter" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="88587569-d141-4d7b-96ad-01ae6dcab3bb" isOneWay="false" action="" name="listTitle" bindingOperationName="listTitle" type="Request-Response" outputName="listTitleResponse" inputName="listTitle" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="c1636ec0-9904-42bd-8810-5697ad491e11" isOneWay="false" action="" name="matchOperations" bindingOperationName="matchOperations" type="Request-Response" outputName="matchOperationsResponse" inputName="matchOperations" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="523636d9-2c70-402e-b616-0de0c2b1db3b" isOneWay="false" action="" name="removeAccess" bindingOperationName="removeAccess" type="Request-Response" outputName="removeAccessResponse" inputName="removeAccess" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="5e888de4-c138-4c9b-b1e1-0d267f514915" isOneWay="false" action="" name="removeBillingAccount" bindingOperationName="removeBillingAccount" type="Request-Response" outputName="removeBillingAccountResponse" inputName="removeBillingAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="1b1941e3-3426-4d3e-bf6f-915b13ddf919" isOneWay="false" action="" name="removeCreditCategory" bindingOperationName="removeCreditCategory" type="Request-Response" outputName="removeCreditCategoryResponse" inputName="removeCreditCategory" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="7067e4e1-2e37-4897-8a7f-fb0bdfd1cec0" isOneWay="false" action="" name="removeCustomer" bindingOperationName="removeCustomer" type="Request-Response" outputName="removeCustomerResponse" inputName="removeCustomer" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="f34213c5-14fd-4f72-a456-92908bb98c3c" isOneWay="false" action="" name="removeCustomerAccount" bindingOperationName="removeCustomerAccount" type="Request-Response" outputName="removeCustomerAccountResponse" inputName="removeCustomerAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="d0219bb7-468f-458b-ac80-778c66a55cde" isOneWay="false" action="" name="removeCustomerBrand" bindingOperationName="removeCustomerBrand" type="Request-Response" outputName="removeCustomerBrandResponse" inputName="removeCustomerBrand" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="653708cc-afd8-41c2-81a0-4b1cf486d3cb" isOneWay="false" action="" name="removeCustomerCategory" bindingOperationName="removeCustomerCategory" type="Request-Response" outputName="removeCustomerCategoryResponse" inputName="removeCustomerCategory" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="270cde7f-7ea4-48a0-ac8e-431fcfcf1246" isOneWay="false" action="" name="removeTitle" bindingOperationName="removeTitle" type="Request-Response" outputName="removeTitleResponse" inputName="removeTitle" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="f63f6243-fff3-42ff-b7f2-aa48989460f3" isOneWay="false" action="" name="removeUserAccount" bindingOperationName="removeUserAccount" type="Request-Response" outputName="removeUserAccountResponse" inputName="removeUserAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="9ca19695-266c-49f5-8ef4-1da479ba722a" isOneWay="false" action="" name="unMatchingOperations" bindingOperationName="unMatchingOperations" type="Request-Response" outputName="unMatchingOperationsResponse" inputName="unMatchingOperations" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="c4fe4826-8d07-429b-9124-af02a4b95855" isOneWay="false" action="" name="updateAccess" bindingOperationName="updateAccess" type="Request-Response" outputName="updateAccessResponse" inputName="updateAccess" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="8370641b-5bed-4f44-963a-a3db43532dbf" isOneWay="false" action="" name="updateAccountHierarchy" bindingOperationName="updateAccountHierarchy" type="Request-Response" outputName="updateAccountHierarchyResponse" inputName="updateAccountHierarchy" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="965207a4-8b67-453f-857a-ca6c65ceeca5" isOneWay="false" action="" name="updateBillingAccount" bindingOperationName="updateBillingAccount" type="Request-Response" outputName="updateBillingAccountResponse" inputName="updateBillingAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="63f804df-5edd-4a26-9ec2-0f3439678730" isOneWay="false" action="" name="updateCreditCategory" bindingOperationName="updateCreditCategory" type="Request-Response" outputName="updateCreditCategoryResponse" inputName="updateCreditCategory" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="4631a05a-1fc6-4a19-bad4-6186085e647e" isOneWay="false" action="" name="updateCRMAccountHierarchy" bindingOperationName="updateCRMAccountHierarchy" type="Request-Response" outputName="updateCRMAccountHierarchyResponse" inputName="updateCRMAccountHierarchy" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="f7db31fd-b417-4297-88cc-6d203d8f6554" isOneWay="false" action="" name="updateCustomer" bindingOperationName="updateCustomer" type="Request-Response" outputName="updateCustomerResponse" inputName="updateCustomer" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="3c903421-a367-409f-9cdb-ec93c2aa81b9" isOneWay="false" action="" name="updateCustomerAccount" bindingOperationName="updateCustomerAccount" type="Request-Response" outputName="updateCustomerAccountResponse" inputName="updateCustomerAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="cfc76cad-22b3-46d0-b8c5-35cd0f6f0d6e" isOneWay="false" action="" name="updateCustomerBrand" bindingOperationName="updateCustomerBrand" type="Request-Response" outputName="updateCustomerBrandResponse" inputName="updateCustomerBrand" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="3c88efb5-693e-4250-b727-69cb89ff0462" isOneWay="false" action="" name="updateCustomerCategory" bindingOperationName="updateCustomerCategory" type="Request-Response" outputName="updateCustomerCategoryResponse" inputName="updateCustomerCategory" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="4bc2d5a1-2057-4f57-9442-f8e1658496ec" isOneWay="false" action="" name="updateTitle" bindingOperationName="updateTitle" type="Request-Response" outputName="updateTitleResponse" inputName="updateTitle" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation><con:operation id="c9e8c06a-4eda-4b5e-be13-50d13a68e4ca" isOneWay="false" action="" name="updateUserAccount" bindingOperationName="updateUserAccount" type="Request-Response" outputName="updateUserAccountResponse" inputName="updateUserAccount" receivesAttachments="false" sendsAttachments="false"><con:settings/></con:operation></con:interface><con:testSuite id="ded1cd92-1ca9-4aae-bb62-6c8c6abeae22" name="Product Catalog"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data Setup - Product catalog creation" searchProperties="true" id="e049522e-e736-4f8e-8cfa-8417c12532c6"><con:settings/><con:testStep type="request" name="Create Recurring charge template" id="b168aae9-0236-4280-9df2-a7f7f62c5cd4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOrUpdateRecurringChargeTemplate</con:operation><con:request name="Create Recurring charge template" id="cb4c0ebb-25c8-498b-859c-dea4d206d2df"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint></con:endpoints><con:operation id="4a0fc5f7-43d0-4617-8c84-40c762d59f2d" isOneWay="false" action="" name="addLitigation" bindingOperationName="addLitigation" type="Request-Response" outputName="addLitigationResponse" inputName="addLitigation" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="bf32f00f-4607-4b09-8e82-a84eb50733e0" isOneWay="false" action="" name="cancelLitigation" bindingOperationName="cancelLitigation" type="Request-Response" outputName="cancelLitigationResponse" inputName="cancelLitigation" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="47634e15-1146-4aaa-86ff-20b4035e41b2" isOneWay="false" action="" name="createAccess" bindingOperationName="createAccess" type="Request-Response" outputName="createAccessResponse" inputName="createAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="7a543d3a-3216-4ec8-882c-4373d04a7c4c" isOneWay="false" action="" name="createAccountHierarchy" bindingOperationName="createAccountHierarchy" type="Request-Response" outputName="createAccountHierarchyResponse" inputName="createAccountHierarchy" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3e664a12-c96a-41f5-80d7-f9e283e58c53" isOneWay="false" action="" name="createAccountOperation" bindingOperationName="createAccountOperation" type="Request-Response" outputName="createAccountOperationResponse" inputName="createAccountOperation" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="6f884f73-94cb-47d3-9d2a-a198b88e7f00" isOneWay="false" action="" name="createBillingAccount" bindingOperationName="createBillingAccount" type="Request-Response" outputName="createBillingAccountResponse" inputName="createBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="fe57f01e-789a-4f94-89dd-67b58a80baab" isOneWay="false" action="" name="createCreditCategory" bindingOperationName="createCreditCategory" type="Request-Response" outputName="createCreditCategoryResponse" inputName="createCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="6c75494b-d1de-4b91-9790-b16f0d0fae8c" isOneWay="false" action="" name="createCRMAccountHierarchy" bindingOperationName="createCRMAccountHierarchy" type="Request-Response" outputName="createCRMAccountHierarchyResponse" inputName="createCRMAccountHierarchy" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="0777c016-f90d-4c55-8529-e6deb5a62cd2" isOneWay="false" action="" name="createCustomer" bindingOperationName="createCustomer" type="Request-Response" outputName="createCustomerResponse" inputName="createCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="839e7da2-424e-4028-9200-5f480c57f532" isOneWay="false" action="" name="createCustomerAccount" bindingOperationName="createCustomerAccount" type="Request-Response" outputName="createCustomerAccountResponse" inputName="createCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="73978a18-901d-463f-a3e3-99ab7aff2a4c" isOneWay="false" action="" name="createCustomerBrand" bindingOperationName="createCustomerBrand" type="Request-Response" outputName="createCustomerBrandResponse" inputName="createCustomerBrand" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="0c7696b4-16bc-4394-af84-ab5b7f5ca9d6" isOneWay="false" action="" name="createCustomerCategory" bindingOperationName="createCustomerCategory" type="Request-Response" outputName="createCustomerCategoryResponse" inputName="createCustomerCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="946dc711-ad87-4a9a-ac4a-9ff9905b3cf9" isOneWay="false" action="" name="createOrUpdateAccess" bindingOperationName="createOrUpdateAccess" type="Request-Response" outputName="createOrUpdateAccessResponse" inputName="createOrUpdateAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1007fdaf-bf7b-403a-904b-766209ccc785" isOneWay="false" action="" name="createOrUpdateAccountHierarchy" bindingOperationName="createOrUpdateAccountHierarchy" type="Request-Response" outputName="createOrUpdateAccountHierarchyResponse" inputName="createOrUpdateAccountHierarchy" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="0300d23a-f2fb-4b64-a471-e6894d107295" isOneWay="false" action="" name="createOrUpdateBillingAccount" bindingOperationName="createOrUpdateBillingAccount" type="Request-Response" outputName="createOrUpdateBillingAccountResponse" inputName="createOrUpdateBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="baa61381-139c-482f-b396-0165d9db5233" isOneWay="false" action="" name="createOrUpdateCreditCategory" bindingOperationName="createOrUpdateCreditCategory" type="Request-Response" outputName="createOrUpdateCreditCategoryResponse" inputName="createOrUpdateCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="977c19d5-071b-400f-92f2-03a4d785579b" isOneWay="false" action="" name="createOrUpdateCRMAccountHierarchy" bindingOperationName="createOrUpdateCRMAccountHierarchy" type="Request-Response" outputName="createOrUpdateCRMAccountHierarchyResponse" inputName="createOrUpdateCRMAccountHierarchy" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a92b7dae-16eb-4caa-85c5-c64bbd499019" isOneWay="false" action="" name="createOrUpdateCustomer" bindingOperationName="createOrUpdateCustomer" type="Request-Response" outputName="createOrUpdateCustomerResponse" inputName="createOrUpdateCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1f29aa1d-ddeb-47ad-a04a-2d02b61ee1bb" isOneWay="false" action="" name="createOrUpdateCustomerAccount" bindingOperationName="createOrUpdateCustomerAccount" type="Request-Response" outputName="createOrUpdateCustomerAccountResponse" inputName="createOrUpdateCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="2693ead6-9f1f-4f4b-b46d-469fc0071db1" isOneWay="false" action="" name="createOrUpdateCustomerBrand" bindingOperationName="createOrUpdateCustomerBrand" type="Request-Response" outputName="createOrUpdateCustomerBrandResponse" inputName="createOrUpdateCustomerBrand" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="05314b2f-755b-4fd5-b41d-ce11cff0c0b8" isOneWay="false" action="" name="createOrUpdateCustomerCategory" bindingOperationName="createOrUpdateCustomerCategory" type="Request-Response" outputName="createOrUpdateCustomerCategoryResponse" inputName="createOrUpdateCustomerCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="7a770850-6c7a-4574-98cc-05e2afaf37a1" isOneWay="false" action="" name="createOrUpdateTitle" bindingOperationName="createOrUpdateTitle" type="Request-Response" outputName="createOrUpdateTitleResponse" inputName="createOrUpdateTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="15224648-8aa6-4ef1-9d18-e386cfd3bd1f" isOneWay="false" action="" name="createOrUpdateUserAccount" bindingOperationName="createOrUpdateUserAccount" type="Request-Response" outputName="createOrUpdateUserAccountResponse" inputName="createOrUpdateUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="6d91d4f5-65c9-41af-91c7-99795457309a" isOneWay="false" action="" name="createTitle" bindingOperationName="createTitle" type="Request-Response" outputName="createTitleResponse" inputName="createTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="b97a0891-b072-4308-9733-bf3ee0dbfd87" isOneWay="false" action="" name="createUserAccount" bindingOperationName="createUserAccount" type="Request-Response" outputName="createUserAccountResponse" inputName="createUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="5e6d4180-bf96-4c7d-8a66-e293cf48a7df" isOneWay="false" action="" name="customerHierarchyUpdate" bindingOperationName="customerHierarchyUpdate" type="Request-Response" outputName="customerHierarchyUpdateResponse" inputName="customerHierarchyUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="ce745d7e-abb1-485e-8e80-8a054c55b004" isOneWay="false" action="" name="dunningInclusionExclusion" bindingOperationName="dunningInclusionExclusion" type="Request-Response" outputName="dunningInclusionExclusionResponse" inputName="dunningInclusionExclusion" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="261ac443-da20-4d5e-8810-891c9bf8f5ee" isOneWay="false" action="" name="findAccess" bindingOperationName="findAccess" type="Request-Response" outputName="findAccessResponse" inputName="findAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3dc62b07-41c5-4fb6-992f-76e08c3c4736" isOneWay="false" action="" name="findAccountHierarchy" bindingOperationName="findAccountHierarchy" type="Request-Response" outputName="findAccountHierarchyResponse" inputName="findAccountHierarchy" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="7fc410ca-376f-422d-a62b-08b2795ec3b2" isOneWay="false" action="" name="findAccountHierarchy2" bindingOperationName="findAccountHierarchy2" type="Request-Response" outputName="findAccountHierarchy2Response" inputName="findAccountHierarchy2" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="689c9b9c-445d-464d-b873-39e9ccfd124f" isOneWay="false" action="" name="findBillingAccount" bindingOperationName="findBillingAccount" type="Request-Response" outputName="findBillingAccountResponse" inputName="findBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="262c8966-0442-458b-a751-c910e4200c73" isOneWay="false" action="" name="findCustomer" bindingOperationName="findCustomer" type="Request-Response" outputName="findCustomerResponse" inputName="findCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="66148d04-3dd9-4c87-b9e5-2c16410655e0" isOneWay="false" action="" name="findCustomerAccount" bindingOperationName="findCustomerAccount" type="Request-Response" outputName="findCustomerAccountResponse" inputName="findCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3719864e-a035-4e2e-964a-30ef17ccf07a" isOneWay="false" action="" name="findTitle" bindingOperationName="findTitle" type="Request-Response" outputName="findTitleResponse" inputName="findTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="a418fa50-2555-4bf1-85be-b45cacc6ce82" isOneWay="false" action="" name="findUserAccount" bindingOperationName="findUserAccount" type="Request-Response" outputName="findUserAccountResponse" inputName="findUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="55cd19d5-6a2b-480b-a66a-12f14c2f714e" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="9ccd5c81-ed9d-44ef-adc4-05510be0c7ef" isOneWay="false" action="" name="listAccess" bindingOperationName="listAccess" type="Request-Response" outputName="listAccessResponse" inputName="listAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="bdc20b7a-f1e2-4718-b288-6476e9db49aa" isOneWay="false" action="" name="listAccountOperations" bindingOperationName="listAccountOperations" type="Request-Response" outputName="listAccountOperationsResponse" inputName="listAccountOperations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="82dbb6dd-c2b3-4980-8d23-cd76c5276901" isOneWay="false" action="" name="listByBillingAccount" bindingOperationName="listByBillingAccount" type="Request-Response" outputName="listByBillingAccountResponse" inputName="listByBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="cb8837cb-bfd6-4f29-9678-445d478d6d1c" isOneWay="false" action="" name="listByCustomer" bindingOperationName="listByCustomer" type="Request-Response" outputName="listByCustomerResponse" inputName="listByCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="29e2a49c-245c-41f9-96cc-8974f5cefc42" isOneWay="false" action="" name="listByCustomerAccount" bindingOperationName="listByCustomerAccount" type="Request-Response" outputName="listByCustomerAccountResponse" inputName="listByCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="053de9d3-1786-488b-bf00-0b89bec1bfcc" isOneWay="false" action="" name="listCustomerWithFilter" bindingOperationName="listCustomerWithFilter" type="Request-Response" outputName="listCustomerWithFilterResponse" inputName="listCustomerWithFilter" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="88587569-d141-4d7b-96ad-01ae6dcab3bb" isOneWay="false" action="" name="listTitle" bindingOperationName="listTitle" type="Request-Response" outputName="listTitleResponse" inputName="listTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c1636ec0-9904-42bd-8810-5697ad491e11" isOneWay="false" action="" name="matchOperations" bindingOperationName="matchOperations" type="Request-Response" outputName="matchOperationsResponse" inputName="matchOperations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="523636d9-2c70-402e-b616-0de0c2b1db3b" isOneWay="false" action="" name="removeAccess" bindingOperationName="removeAccess" type="Request-Response" outputName="removeAccessResponse" inputName="removeAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="5e888de4-c138-4c9b-b1e1-0d267f514915" isOneWay="false" action="" name="removeBillingAccount" bindingOperationName="removeBillingAccount" type="Request-Response" outputName="removeBillingAccountResponse" inputName="removeBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="1b1941e3-3426-4d3e-bf6f-915b13ddf919" isOneWay="false" action="" name="removeCreditCategory" bindingOperationName="removeCreditCategory" type="Request-Response" outputName="removeCreditCategoryResponse" inputName="removeCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="7067e4e1-2e37-4897-8a7f-fb0bdfd1cec0" isOneWay="false" action="" name="removeCustomer" bindingOperationName="removeCustomer" type="Request-Response" outputName="removeCustomerResponse" inputName="removeCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="f34213c5-14fd-4f72-a456-92908bb98c3c" isOneWay="false" action="" name="removeCustomerAccount" bindingOperationName="removeCustomerAccount" type="Request-Response" outputName="removeCustomerAccountResponse" inputName="removeCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="d0219bb7-468f-458b-ac80-778c66a55cde" isOneWay="false" action="" name="removeCustomerBrand" bindingOperationName="removeCustomerBrand" type="Request-Response" outputName="removeCustomerBrandResponse" inputName="removeCustomerBrand" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="653708cc-afd8-41c2-81a0-4b1cf486d3cb" isOneWay="false" action="" name="removeCustomerCategory" bindingOperationName="removeCustomerCategory" type="Request-Response" outputName="removeCustomerCategoryResponse" inputName="removeCustomerCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="270cde7f-7ea4-48a0-ac8e-431fcfcf1246" isOneWay="false" action="" name="removeTitle" bindingOperationName="removeTitle" type="Request-Response" outputName="removeTitleResponse" inputName="removeTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="f63f6243-fff3-42ff-b7f2-aa48989460f3" isOneWay="false" action="" name="removeUserAccount" bindingOperationName="removeUserAccount" type="Request-Response" outputName="removeUserAccountResponse" inputName="removeUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="9ca19695-266c-49f5-8ef4-1da479ba722a" isOneWay="false" action="" name="unMatchingOperations" bindingOperationName="unMatchingOperations" type="Request-Response" outputName="unMatchingOperationsResponse" inputName="unMatchingOperations" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c4fe4826-8d07-429b-9124-af02a4b95855" isOneWay="false" action="" name="updateAccess" bindingOperationName="updateAccess" type="Request-Response" outputName="updateAccessResponse" inputName="updateAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="8370641b-5bed-4f44-963a-a3db43532dbf" isOneWay="false" action="" name="updateAccountHierarchy" bindingOperationName="updateAccountHierarchy" type="Request-Response" outputName="updateAccountHierarchyResponse" inputName="updateAccountHierarchy" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="965207a4-8b67-453f-857a-ca6c65ceeca5" isOneWay="false" action="" name="updateBillingAccount" bindingOperationName="updateBillingAccount" type="Request-Response" outputName="updateBillingAccountResponse" inputName="updateBillingAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="63f804df-5edd-4a26-9ec2-0f3439678730" isOneWay="false" action="" name="updateCreditCategory" bindingOperationName="updateCreditCategory" type="Request-Response" outputName="updateCreditCategoryResponse" inputName="updateCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="4631a05a-1fc6-4a19-bad4-6186085e647e" isOneWay="false" action="" name="updateCRMAccountHierarchy" bindingOperationName="updateCRMAccountHierarchy" type="Request-Response" outputName="updateCRMAccountHierarchyResponse" inputName="updateCRMAccountHierarchy" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="f7db31fd-b417-4297-88cc-6d203d8f6554" isOneWay="false" action="" name="updateCustomer" bindingOperationName="updateCustomer" type="Request-Response" outputName="updateCustomerResponse" inputName="updateCustomer" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3c903421-a367-409f-9cdb-ec93c2aa81b9" isOneWay="false" action="" name="updateCustomerAccount" bindingOperationName="updateCustomerAccount" type="Request-Response" outputName="updateCustomerAccountResponse" inputName="updateCustomerAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="cfc76cad-22b3-46d0-b8c5-35cd0f6f0d6e" isOneWay="false" action="" name="updateCustomerBrand" bindingOperationName="updateCustomerBrand" type="Request-Response" outputName="updateCustomerBrandResponse" inputName="updateCustomerBrand" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3c88efb5-693e-4250-b727-69cb89ff0462" isOneWay="false" action="" name="updateCustomerCategory" bindingOperationName="updateCustomerCategory" type="Request-Response" outputName="updateCustomerCategoryResponse" inputName="updateCustomerCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="4bc2d5a1-2057-4f57-9442-f8e1658496ec" isOneWay="false" action="" name="updateTitle" bindingOperationName="updateTitle" type="Request-Response" outputName="updateTitleResponse" inputName="updateTitle" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c9e8c06a-4eda-4b5e-be13-50d13a68e4ca" isOneWay="false" action="" name="updateUserAccount" bindingOperationName="updateUserAccount" type="Request-Response" outputName="updateUserAccountResponse" inputName="updateUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation></con:interface><con:testSuite id="ded1cd92-1ca9-4aae-bb62-6c8c6abeae22" name="Product Catalog"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data Setup - Product catalog creation" searchProperties="true" id="e049522e-e736-4f8e-8cfa-8417c12532c6"><con:settings/><con:testStep type="request" name="Create Recurring charge template" id="b168aae9-0236-4280-9df2-a7f7f62c5cd4"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>CatalogWsSoapBinding</con:interface><con:operation>createOrUpdateRecurringChargeTemplate</con:operation><con:request name="Create Recurring charge template" id="cb4c0ebb-25c8-498b-859c-dea4d206d2df"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateRecurringChargeTemplate>
@@ -12354,7 +12597,7 @@
             <ratingUnitDescription>1</ratingUnitDescription>
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
-            <oneShotChargeTemplateType>1</oneShotChargeTemplateType>
+            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
             <immediateInvoicing>false</immediateInvoicing>
          </oneShotChargeTemplate>
       </ws:createOrUpdateOneShotChargeTemplate>
@@ -12376,7 +12619,7 @@
             <ratingUnitDescription>1</ratingUnitDescription>
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
-            <oneShotChargeTemplateType>1</oneShotChargeTemplateType>
+            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
             <immediateInvoicing>false</immediateInvoicing>
          </oneShotChargeTemplate>
       </ws:createOrUpdateOneShotChargeTemplate>
