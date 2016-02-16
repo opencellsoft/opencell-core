@@ -30,12 +30,13 @@
 			searchField1Label="#{messages['businessEntity.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['meveoModuleItem.appliesTo']}"
-			searchField2="appliesTo"
-			selection="#{meveoModuleBean.customField}"
-			column1Label="#{messages['businessEntity.code']}"
-			column1="code" column2Label="#{messages['businessEntity.description']}"
-			column2="description" column3Label="#{messages['meveoModuleItem.appliesTo']}"
-			column3="appliesTo" updateField="moduleFormId:moduleItems" column3Converter="customField">
+			searchField2="appliesTo" selection="#{meveoModuleBean.customField}"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			column3Label="#{messages['meveoModuleItem.appliesTo']}"
+			column3="appliesTo" updateField="moduleFormId:moduleItems"
+			column3Converter="customField">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchFilter"
 			header="#{messages['filter.popup.header']}"
@@ -88,7 +89,28 @@
 			column2="description" selection="#{meveoModuleBean.meveoModule}"
 			updateField="moduleFormId:moduleItems">
 		</hftl:entityPopup>
-		
+		<hftl:entityPopup id="searchMeasurableQuantities"
+			header="#{messages['measurableQuantity.popup.header']}"
+			backingBean="#{measurableQuantityListBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			selection="#{meveoModuleBean.measurableQuantity}"
+			updateField="moduleFormId:moduleItems">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="searchCharts"
+			header="#{messages['chart.popup.header']}"
+			backingBean="#{chartListBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" selection="#{meveoModuleBean.chart}"
+			updateField="moduleFormId:moduleItems">
+		</hftl:entityPopup>
+
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -99,41 +121,50 @@
 			</h:form>
 		</p:panel>
 		<hftl:formPanel formId="moduleFormId" ajaxSubmit="true" buttons="true"
-			label="#{messages['meveoModule.title']}" showEnableDisableButton="true"
-			backingBean="#{meveoModuleBean}">
+			label="#{messages['meveoModule.title']}"
+			showEnableDisableButton="true" backingBean="#{meveoModuleBean}">
 			<hftl:formField label="#{messages['businessEntity.code']}"
-				field="code" maxlength="35" required="true" validateUnique="true"/>
+				field="code" maxlength="35" required="true" validateUnique="true" />
 			<hftl:formField label="#{messages['businessEntity.description']}"
 				field="description" id="description" maxlength="100" />
-			<hftl:formField label="#{messages['meveoModule.license']}" required="true"
-				field="license" id="license" isMessage="true" newLine="true"/>
-			<hftl:decorateFormField label="#{messages['meveoModule.logo']}" rendered="#{!meveoModuleBean.entity.transient}">
+			<hftl:formField label="#{messages['meveoModule.license']}"
+				required="true" field="license" id="license" isMessage="true"
+				newLine="true" />
+			<hftl:decorateFormField label="#{messages['meveoModule.logo']}"
+				rendered="#{!meveoModuleBean.entity.transient}">
 				<h:panelGrid columns="2" id="logo">
-					<c:set var="pictureDestUrlList" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/module/${meveoModuleBean.entity.logoPicture}"/>
-					<p:graphicImage url="${pictureDestUrlList}" rendered="#{not empty meveoModuleBean.entity.logoPicture}" cache="false">
+					<c:set var="pictureDestUrlList"
+						value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/module/${meveoModuleBean.entity.logoPicture}" />
+					<p:graphicImage url="${pictureDestUrlList}"
+						rendered="#{not empty meveoModuleBean.entity.logoPicture}"
+						cache="false">
 						<f:attribute name="height" value="30"></f:attribute>
 						<f:attribute name="width" value="30"></f:attribute>
-					</p:graphicImage>  
-					<p:commandButton value="#{messages['commons.upload']}" partialSubmit="true" process="@this" oncomplete="PF('uploadPictureDialog').show()" rendered="#{!meveoModuleBean.entity.transient}"></p:commandButton>
+					</p:graphicImage>
+					<p:commandButton value="#{messages['commons.upload']}"
+						partialSubmit="true" process="@this"
+						oncomplete="PF('uploadPictureDialog').show()"
+						rendered="#{!meveoModuleBean.entity.transient}"></p:commandButton>
 				</h:panelGrid>
 			</hftl:decorateFormField>
 			<hftl:formField label="#{messages['enableEntity.disabled']}"
 				doNotShowOnNew="true" allowEdit="false" field="disabled"
 				isMessage="true" />
-			<hftl:decorateFormField
-				label="#{messages['meveoModule.items']}" 
+			<hftl:decorateFormField label="#{messages['meveoModule.items']}"
 				componentWidth="100" displayOneLine="false" newLine="true">
 				<p:treeTable id="moduleItems" lazy="false"
 					value="#{meveoModuleBean.root}" var="e" reflow="false"
 					resizableColumns="true" rowIndexVar="rowIndex">
 					<p:column headerText="#{messages['businessEntity.code']}">
-						<h:outputText value="#{e.root?messages[e.code]:e.code}" styleClass="field-value" />
+						<h:outputText value="#{e.root?messages[e.code]:e.code}"
+							styleClass="field-value" />
 					</p:column>
 					<p:column headerText="#{messages['businessEntity.description']}">
 						<h:outputText value="#{e.description}" styleClass="field-value" />
 					</p:column>
 					<p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
-						<h:outputText value="#{e.appliesTo}" styleClass="field-value" converter="customFieldConverter"/>
+						<h:outputText value="#{e.appliesTo}" styleClass="field-value"
+							converter="customFieldConverter" />
 					</p:column>
 					<p:column headerText="#{messages['commons.actions']}">
 						<p:commandButton icon="ui-icon-minus" partialSubmit="true"
@@ -156,21 +187,33 @@
 						<p:commandButton value="#{messages['meveoModuleItem.addScript']}"
 							partialSubmit="true" process="@this"
 							oncomplete="PF('dlg_searchScript').show()" />
-						<p:commandButton value="#{messages['meveoModuleItem.addNotification']}"
+						<p:commandButton
+							value="#{messages['meveoModuleItem.addNotification']}"
 							partialSubmit="true" process="@this"
 							oncomplete="PF('dlg_searchNotification').show()" />
-						<p:commandButton value="#{messages['meveoModuleItem.addSubModule']}"
+						<p:commandButton
+							value="#{messages['meveoModuleItem.addSubModule']}"
 							partialSubmit="true" process="@this"
 							oncomplete="PF('dlg_searchSubModules').show()" />
+						<p:commandButton
+							value="#{messages['meveoModuleItem.addMeasurableQuantity']}"
+							partialSubmit="true" process="@this"
+							oncomplete="PF('dlg_searchMeasurableQuantities').show()" />
+						<p:commandButton value="#{messages['meveoModuleItem.addChart']}"
+							partialSubmit="true" process="@this"
+							oncomplete="PF('dlg_searchCharts').show()" />
 					</f:facet>
 				</p:treeTable>
 			</hftl:decorateFormField>
-            <ui:param name="buttons" value="true" />
+			<ui:param name="buttons" value="true" />
 			<ui:define name="buttons">
-				<p:commandButton id="exportModuleButton" update=":#{p:component('meveoModuleDialog')}"
-					value="#{messages['meveoModule.exportModule']}" rendered="#{not meveoModuleBean.entity.transient}"
+				<p:commandButton id="exportModuleButton"
+					update=":#{p:component('meveoModuleDialog')}"
+					value="#{messages['meveoModule.exportModule']}"
+					rendered="#{not meveoModuleBean.entity.transient}"
 					oncomplete="PF('meveoModuleDialog').show()">
-					<f:setPropertyActionListener value="#{null}" target="#{meveoModuleBean.meveoInstance}"/>
+					<f:setPropertyActionListener value="#{null}"
+						target="#{meveoModuleBean.meveoInstance}" />
 				</p:commandButton>
 			</ui:define>
 		</hftl:formPanel>
@@ -188,43 +231,60 @@
 							<f:selectItems value="#{meveoInstanceListBean.listAll()}"
 								var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
 							<s:objectConverter />
-							<p:ajax event="valueChange" update="@form"/>
+							<p:ajax event="valueChange" update="@form" />
 						</p:selectOneMenu>
 					</hftl:decorateFormField>
 				</ui:define>
 				<ui:define name="buttons">
-					<p:commandButton id="confirmOk" value="#{messages['commons.yes']}" partialSubmit="true"
+					<p:commandButton id="confirmOk" value="#{messages['commons.yes']}"
+						partialSubmit="true"
 						oncomplete="if (args &amp;&amp; !args.validationFailed) PF('meveoModuleDialog').hide()"
 						process="@this" actionListener="#{meveoModuleBean.exportModule}"
 						update=":module:messages :#{p:component('moduleFormId')}">
 					</p:commandButton>
 					<p:commandButton id="confirmKo" value="#{messages['commons.no']}"
-						onclick="PF('meveoModuleDialog').hide()"
-						type="button" />
+						onclick="PF('meveoModuleDialog').hide()" type="button" />
 				</ui:define>
 			</hftl:decorateFormPanel>
 		</p:dialog>
 		<p:dialog id="uploadPictureDialog" styleClass="confirm-dialog"
 			header="#{messages['meveoModule.uploadPicture.header']}"
-			widgetVar="uploadPictureDialog" width="700" modal="true" >
+			widgetVar="uploadPictureDialog" width="700" modal="true">
 			<h:form id="uploadPictureForm" enctype="multipart/form-data">
-				 <p:messages autoUpdate="true" />
-				 <div class="clearLeft">
-                    <p:fileUpload fileUploadListener="#{meveoModuleBean.handleFileUpload}" update="uploadPictureForm" multiple="false" mode="advanced"
-                        dragDropSupport="true" process="@this" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" auto="true"/>
-                </div>
-                <h:panelGrid columns="2" id="picture" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100">
-					<c:set var="pictureSourceUrl" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/module/tmp/${meveoModuleBean.tmpPicture}"/>
-					<c:set var="pictureDestUrl2" value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/module/${meveoModuleBean.entity.logoPicture}"/>
+				<p:messages autoUpdate="true" />
+				<div class="clearLeft">
+					<p:fileUpload
+						fileUploadListener="#{meveoModuleBean.handleFileUpload}"
+						update="uploadPictureForm" multiple="false" mode="advanced"
+						dragDropSupport="true" process="@this"
+						allowTypes="/(\.|\/)(gif|jpe?g|png)$/" auto="true" />
+				</div>
+				<h:panelGrid columns="2" id="picture"
+					columnClasses="panelGrid-column50,panelGrid-column50"
+					styleClass="panelGrid-column100">
+					<c:set var="pictureSourceUrl"
+						value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/module/tmp/${meveoModuleBean.tmpPicture}" />
+					<c:set var="pictureDestUrl2"
+						value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${meveoModuleBean.entity.provider.code}/module/${meveoModuleBean.entity.logoPicture}" />
 					<p:scrollPanel mode="native" style="width:400px;height:300px">
-						<p:imageCropper id="pic" value="#{meveoModuleBean.croppedImage}" image="${pictureSourceUrl}" minSize="30,30" maxSize="100,100" initialCoords="0,0,30,30" rendered="#{not empty meveoModuleBean.tmpPicture}"/>
+						<p:imageCropper id="pic" value="#{meveoModuleBean.croppedImage}"
+							image="${pictureSourceUrl}" minSize="30,30" maxSize="100,100"
+							initialCoords="0,0,30,30"
+							rendered="#{not empty meveoModuleBean.tmpPicture}" />
 					</p:scrollPanel>
-        			<p:graphicImage url="${pictureDestUrl2}" cache="false" rendered="#{not empty meveoModuleBean.entity.logoPicture}"/>
-    			</h:panelGrid>
-                 <div class="clearLeft">
-                 	<p:commandButton id="cropButton" value="#{messages['meveoModule.crop']}" action="#{meveoModuleBean.cropLogo}"  update="uploadPictureForm moduleFormId:logo" icon="ui-icon-scissors"/>
-                 	<p:commandButton id="closeButton" value="#{messages['commons.close']}" onclick="PF('uploadPictureDialog').hide()" type="button"/>
-                 </div>
+					<p:graphicImage url="${pictureDestUrl2}" cache="false"
+						rendered="#{not empty meveoModuleBean.entity.logoPicture}" />
+				</h:panelGrid>
+				<div class="clearLeft">
+					<p:commandButton id="cropButton"
+						value="#{messages['meveoModule.crop']}"
+						action="#{meveoModuleBean.cropLogo}"
+						update="uploadPictureForm moduleFormId:logo"
+						icon="ui-icon-scissors" />
+					<p:commandButton id="closeButton"
+						value="#{messages['commons.close']}"
+						onclick="PF('uploadPictureDialog').hide()" type="button" />
+				</div>
 			</h:form>
 		</p:dialog>
 	</ui:define>

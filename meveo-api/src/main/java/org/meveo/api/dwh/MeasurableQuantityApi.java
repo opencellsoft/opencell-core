@@ -56,5 +56,13 @@ public class MeasurableQuantityApi extends BaseApi {
 		}
 	}
 
+	public MeasurableQuantityDto find(String itemCode, User currentUser) {
+		MeasurableQuantityDto result = new MeasurableQuantityDto();
+
+		// TODO Manu: populate dto
+
+		return result;
+	}
+
 	// TODO Manu - create remaining rud + list operations
 }

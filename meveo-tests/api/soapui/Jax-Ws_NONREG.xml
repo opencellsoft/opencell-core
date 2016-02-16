@@ -24500,97 +24500,8 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
          <!--Optional:-->
          <module code="${#TestSuite#ticket}_module" description="${#TestSuite#ticket}_module" license="GPL">
             <!--Optional:-->
-            <cftDtos code="${#TestSuite#ticket}_CFT_code${#TestSuite#index}" description="${#TestSuite#ticket}_CFT_description${#TestSuite#index}">
-               <valueRequired />
-               <versionable />
-               <triggerEndPeriodEvent />
-               <listValues />
-               <fieldType>STRING</fieldType>
-               <storageType>SINGLE</storageType>
-               <appliesTo>CUST</appliesTo>
-            </cftDtos>
-            <!--Zero or more repetitions:-->
-            <filterDtos code="${#TestSuite#ticket}_filter" description="${#TestSuite#ticket}_filter">
-               <!--Optional:-->
-               <shared>?</shared>
-               <!--Optional:-->
-               <inputXml><![CDATA[<filter>
-  <primarySelector>
-    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
-    <alias>c</alias>
-    <displayFields>
-      <field>code</field>
-      <field>status</field>
-    </displayFields>
-    <exportFields/>
-    <ignoreIfNotFoundForeignKeys/>
-  </primarySelector>
-  <secondarySelectors/>
-  <filterCondition class="andCompositeFilterCondition">
-    <filterConditionType>COMPOSITE_AND</filterConditionType>
-    <filterConditions>
-      <primitiveFilterCondition>
-        <filterConditionType>PRIMITIVE</filterConditionType>
-        <fieldName>status</fieldName>
-        <operator>=</operator>
-        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>
-      </primitiveFilterCondition>
-    </filterConditions>
-  </filterCondition>
-  <orderCondition>
-    <fieldNames>
-      <field>subscriptionDate</field>
-    </fieldNames>
-    <ascending>false</ascending>
-  </orderCondition>
-</filter>]]]]>><![CDATA[</inputXml>
-            </filterDtos>
-            <!--Zero or more repetitions:-->
-            <jobDtos jobTemplate="BillingRunJob" code="${#TestSuite#ticket}_BR1" description="BillingRunJob">
-               <jobCategory>INVOICING</jobCategory>
-               <customFields>
-                  <customField code="BillingRunJob_billingCycle" description="billingCycle">
-                     <stringValue>CYC_INV_MT_1</stringValue>
-                  </customField>
-                  <customField code="BillingRunJob_invoiceDate" description="invoiceDate">
-                     <dateValue>${#TestSuite#invoice_date}</dateValue>
-                  </customField>
-                  <customField code="BillingRunJob_lastTransactionDate" description="lastTransactionDate">
-                     <dateValue>${#TestSuite#last_tx_date}</dateValue>
-                  </customField>
-               </customFields>
-            </jobDtos>
-            <!--Zero or more repetitions:-->
-            <scriptDtos code="org.meveo.service.script.${#TestSuite#ticket}_script" description="${#TestSuite#ticket}_script">
-               <script><![CDATA[package org.meveo.service.script;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.admin.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-
-public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script {
-	
-	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}_script.class);
-		
-	@Override
-    public void execute(Map<String, Object> context, Provider provider, User user) throws BusinessException {
-		log.debug("Hello MEVEO Module");
-	}
-
-}]]]]>><![CDATA[</script>
-            </scriptDtos>
-            <!--Zero or more repetitions:-->
-            <notificationDtos code="${#Project#ticket}_notification">
-               <classNameFilter>org.meveo.model.catalog.OfferTemplate</classNameFilter>
-               <eventTypeFilter>CREATED</eventTypeFilter>
-            </notificationDtos>
-            <subModules code="${#TestSuite#ticket}_submodule" description="${#TestSuite#ticket}_submodule" license="GPL">
-               <!--Optional:-->
-               <cftDtos code="${#TestSuite#ticket}_CFT_code${#TestSuite#index}" description="${#TestSuite#ticket}_CFT_description${#TestSuite#index}">
+            <cfts>
+               <customFieldTemplate code="${#TestSuite#ticket}_CFT_code${#TestSuite#index}" description="${#TestSuite#ticket}_CFT_description${#TestSuite#index}">
                   <valueRequired />
                   <versionable />
                   <triggerEndPeriodEvent />
@@ -24598,9 +24509,11 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
                   <fieldType>STRING</fieldType>
                   <storageType>SINGLE</storageType>
                   <appliesTo>CUST</appliesTo>
-               </cftDtos>
-               <!--Zero or more repetitions:-->
-               <filterDtos code="${#TestSuite#ticket}_filter" description="${#TestSuite#ticket}_filter">
+               </customFieldTemplate>
+            </cfts>
+            <!--Zero or more repetitions:-->
+            <filters>
+               <filter code="${#TestSuite#ticket}_filter" description="${#TestSuite#ticket}_filter">
                   <!--Optional:-->
                   <shared>?</shared>
                   <!--Optional:-->
@@ -24634,9 +24547,11 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
     <ascending>false</ascending>
   </orderCondition>
 </filter>]]]]>><![CDATA[</inputXml>
-               </filterDtos>
-               <!--Zero or more repetitions:-->
-               <jobDtos jobTemplate="BillingRunJob" code="${#TestSuite#ticket}_BR1" description="BillingRunJob">
+               </filter>
+            </filters>
+            <!--Zero or more repetitions:-->
+            <jobs>
+               <jobInstance jobTemplate="BillingRunJob" code="${#TestSuite#ticket}_BR1" description="BillingRunJob">
                   <jobCategory>INVOICING</jobCategory>
                   <customFields>
                      <customField code="BillingRunJob_billingCycle" description="billingCycle">
@@ -24649,9 +24564,11 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
                         <dateValue>${#TestSuite#last_tx_date}</dateValue>
                      </customField>
                   </customFields>
-               </jobDtos>
-               <!--Zero or more repetitions:-->
-               <scriptDtos code="org.meveo.service.script.${#TestSuite#ticket}_script" description="${#TestSuite#ticket}_script">
+               </jobInstance>
+            </jobs>
+            <!--Zero or more repetitions:-->
+            <scripts>
+               <script code="org.meveo.service.script.${#TestSuite#ticket}_script" description="${#TestSuite#ticket}_script">
                   <script><![CDATA[package org.meveo.service.script;
 
 import org.meveo.admin.exception.BusinessException;
@@ -24672,17 +24589,123 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
 	}
 
 }]]]]>><![CDATA[</script>
-               </scriptDtos>
-               <!--Zero or more repetitions:-->
-               <notificationDtos code="${#Project#ticket}_notification">
+               </script>
+            </scripts>
+            <!--Zero or more repetitions:-->
+            <notifications>
+               <notification code="${#TestSuite#ticket}_notification">
                   <classNameFilter>org.meveo.model.catalog.OfferTemplate</classNameFilter>
                   <eventTypeFilter>CREATED</eventTypeFilter>
-               </notificationDtos>
+               </notification>
+            </notifications>
+            <subModules>
+               <subModule code="${#TestSuite#ticket}_submodule" description="${#TestSuite#ticket}_submodule" license="GPL">
+                  <!--Optional:-->
+                  <cfts>
+                     <customFieldTemplate code="${#TestSuite#ticket}_CFT_code${#TestSuite#index}" description="${#TestSuite#ticket}_CFT_description${#TestSuite#index}">
+                        <valueRequired />
+                        <versionable />
+                        <triggerEndPeriodEvent />
+                        <listValues />
+                        <fieldType>STRING</fieldType>
+                        <storageType>SINGLE</storageType>
+                        <appliesTo>CUST</appliesTo>
+                     </customFieldTemplate>
+                  </cfts>
+                  <!--Zero or more repetitions:-->
+                  <filters>
+                     <filter code="${#TestSuite#ticket}_filter" description="${#TestSuite#ticket}_filter">
+                        <!--Optional:-->
+                        <shared>?</shared>
+                        <!--Optional:-->
+                        <inputXml><![CDATA[<filter>
+  <primarySelector>
+    <targetEntity>org.meveo.model.billing.Subscription</targetEntity>
+    <alias>c</alias>
+    <displayFields>
+      <field>code</field>
+      <field>status</field>
+    </displayFields>
+    <exportFields/>
+    <ignoreIfNotFoundForeignKeys/>
+  </primarySelector>
+  <secondarySelectors/>
+  <filterCondition class="andCompositeFilterCondition">
+    <filterConditionType>COMPOSITE_AND</filterConditionType>
+    <filterConditions>
+      <primitiveFilterCondition>
+        <filterConditionType>PRIMITIVE</filterConditionType>
+        <fieldName>status</fieldName>
+        <operator>=</operator>
+        <operand>enum:org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE</operand>
+      </primitiveFilterCondition>
+    </filterConditions>
+  </filterCondition>
+  <orderCondition>
+    <fieldNames>
+      <field>subscriptionDate</field>
+    </fieldNames>
+    <ascending>false</ascending>
+  </orderCondition>
+</filter>]]]]>><![CDATA[</inputXml>
+                     </filter>
+                  </filters>
+                  <!--Zero or more repetitions:-->
+                  <jobs>
+                     <jobInstance jobTemplate="BillingRunJob" code="${#TestSuite#ticket}_BR1" description="BillingRunJob">
+                        <jobCategory>INVOICING</jobCategory>
+                        <customFields>
+                           <customField code="BillingRunJob_billingCycle" description="billingCycle">
+                              <stringValue>CYC_INV_MT_1</stringValue>
+                           </customField>
+                           <customField code="BillingRunJob_invoiceDate" description="invoiceDate">
+                              <dateValue>${#TestSuite#invoice_date}</dateValue>
+                           </customField>
+                           <customField code="BillingRunJob_lastTransactionDate" description="lastTransactionDate">
+                              <dateValue>${#TestSuite#last_tx_date}</dateValue>
+                           </customField>
+                        </customFields>
+                     </jobInstance>
+                  </jobs>
+                  <!--Zero or more repetitions:-->
+                  <scripts>
+                     <script code="org.meveo.service.script.${#TestSuite#ticket}_script" description="${#TestSuite#ticket}_script">
+                        <script><![CDATA[package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.admin.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
+public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script {
+	
+	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#ticket}_script.class);
+		
+	@Override
+    public void execute(Map<String, Object> context, Provider provider, User user) throws BusinessException {
+		log.debug("Hello MEVEO Module");
+	}
+
+}]]]]>><![CDATA[</script>
+                     </script>
+                  </scripts>
+                  <!--Zero or more repetitions:-->
+                  <notifications>
+                     <notification code="${#TestSuite#ticket}_notification">
+                        <classNameFilter>org.meveo.model.catalog.OfferTemplate</classNameFilter>
+                        <eventTypeFilter>CREATED</eventTypeFilter>
+                     </notification>
+                  </notifications>
+               </subModule>
             </subModules>
          </module>
       </ws:createOrUpdate>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="65819703-e5bc-48b6-8b33-c3bb09e028bc"/><con:assertion type="Simple Contains" id="9572118c-a281-4c3f-addb-a6b00cf0f58d" name="Contains"><con:configuration><token/><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="e70e127b-e5ea-43d6-8d93-6235b49ff3ce" name="Script Assertion"><con:configuration/></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update" id="a397dadf-6304-4040-b58a-8c2f84941fb8" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update" id="3506c20e-cc8c-4ac9-b0f6-6ad6ad94f6aa"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+</soapenv:Envelope>
+]]></con:request><con:assertion type="SOAP Response" id="65819703-e5bc-48b6-8b33-c3bb09e028bc"/><con:assertion type="Simple Contains" id="9572118c-a281-4c3f-addb-a6b00cf0f58d" name="Contains"><con:configuration><token/><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="e70e127b-e5ea-43d6-8d93-6235b49ff3ce" name="Script Assertion"><con:configuration/></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update" id="a397dadf-6304-4040-b58a-8c2f84941fb8" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ModuleWsSoapBinding</con:interface><con:operation>update</con:operation><con:request name="Update" id="3506c20e-cc8c-4ac9-b0f6-6ad6ad94f6aa"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#meveoUrl}/ModuleWs</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header />
    <soapenv:Body>
@@ -24924,4 +24947,4 @@ public class ${#TestSuite#ticket}_script extends org.meveo.service.script.Script
       </ws:removeEntityTemplate>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response" id="e8ac783d-aa45-4924-bcb1-d79c57949d1e"/><con:assertion type="XPath Match" id="00bad731-bfff-42fb-8a83-a5cadeb0b748" name="Match content of [status]"><con:configuration><path>declare namespace ns2='http://ws.api.meveo.org/';
-//ns2:removeEntityTemplateResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>ModuleWs</con:value></con:property><con:property><con:name>index</con:name><con:value>87</con:value></con:property><con:property><con:name>invoice_date</con:name><con:value>2016-02-15</con:value></con:property><con:property><con:name>last_tx_date</con:name><con:value>2016-02-15</con:value></con:property></con:properties><con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString())</con:setupScript><con:reportParameters/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#meveoUrl}/SettingsWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin" domain="" wssTimeToLive="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/AccountWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="" password="meveo.admin" domain="" wssTimeToLive="" wssType="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:afterLoadScript/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+//ns2:removeEntityTemplateResponse[1]/return[1]/status[1]/text()</path><content>SUCCESS</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/><con:reportParameters/></con:testCase><con:properties><con:property><con:name>ticket</con:name><con:value>ModuleWs3</con:value></con:property><con:property><con:name>index</con:name><con:value>88</con:value></con:property><con:property><con:name>invoice_date</con:name><con:value>2016-02-15</con:value></con:property><con:property><con:name>last_tx_date</con:name><con:value>2016-02-15</con:value></con:property></con:properties><con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString())</con:setupScript><con:reportParameters/></con:testSuite><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#meveoUrl}/SettingsWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin" domain="" wssTimeToLive="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/AccountWs</con:endpoint><con:endpoint mode="COMPLEMENT" username="" password="meveo.admin" domain="" wssTimeToLive="" wssType="" outgoingWss="" incomingWss="">${#Project#meveoUrl}/CatalogWs</con:endpoint></con:endpointStrategy><con:properties><con:property><con:name>username</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>password</con:name><con:value>meveo.admin</con:value></con:property><con:property><con:name>meveoUrl</con:name><con:value>http://localhost:8080/meveo</con:value></con:property><con:property><con:name>authorization</con:name><con:value>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</con:value></con:property></con:properties><con:afterLoadScript/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

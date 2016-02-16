@@ -30,6 +30,11 @@ public class ChartDto extends BaseDto {
 	private String extender;
 	private Boolean visible = false;
 
+	/**
+	 * Type can be any of: PIE, LINE, BAR
+	 */
+	private String chartType;
+
 	public String getMeasurableQuantityCode() {
 		return measurableQuantityCode;
 	}
@@ -107,6 +112,14 @@ public class ChartDto extends BaseDto {
 		return "ChartDto [code=" + code + ", description=" + description + ", measurableQuantityCode="
 				+ measurableQuantityCode + ", width=" + width + ", height=" + height + ", style=" + style
 				+ ", styleClass=" + styleClass + ", extender=" + extender + ", visible=" + visible + "]";
+	}
+
+	public String getChartType() {
+		return chartType;
+	}
+
+	public void setChartType(String chartType) {
+		this.chartType = chartType;
 	}
 
 }

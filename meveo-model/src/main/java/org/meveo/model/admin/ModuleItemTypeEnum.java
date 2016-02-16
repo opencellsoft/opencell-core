@@ -3,7 +3,8 @@ package org.meveo.model.admin;
 public enum ModuleItemTypeEnum {
 	CET(1, "meveoModuleItemType.CET"), CFT(2, "meveoModuleItemType.CFT"), FILTER(3, "meveoModuleItemType.fliter"), SCRIPT(
 			4, "meveoModuleItemType.script"), JOBINSTANCE(5, "meveoModuleItemType.jobInstance"), NOTIFICATION(6,
-			"meveoModuleItemType.notification"), SUBMODULE(7, "meveoModuleItemType.subModule");
+			"meveoModuleItemType.notification"), SUBMODULE(7, "meveoModuleItemType.subModule"), MEASURABLEQUANTITIES(8,
+			"meveoModuleItemType.measurableQuantities"), CHART(9, "meveoModuleItemType.chart");
 
 	private Integer id;
 	private String label;
