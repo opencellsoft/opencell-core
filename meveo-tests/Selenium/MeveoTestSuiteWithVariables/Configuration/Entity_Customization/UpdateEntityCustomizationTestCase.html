@@ -22,18 +22,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>id=searchPanel:buttonNew</td>
-	<td></td>
+	<td>assertText</td>
+	<td>//a[contains(text(),'01_ec')]</td>
+	<td>01_ec</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>id=searchPanel:buttonNew</td>
+	<td>//a[contains(text(),'01_ec')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${buttonNew}</td>
+	<td>//a[contains(text(),'01_ec')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -42,14 +42,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>${Code}</td>
-	<td></td>
+	<td>assertText</td>
+	<td>css=span.ui-panel-title</td>
+	<td>Entity customization - 01_ec</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>${Code}</td>
-	<td>01_ec</td>
+	<td>verifyText</td>
+	<td>css=span.ui-panel-title</td>
+	<td>Entity customization - 01_ec</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
