@@ -17,49 +17,14 @@
 package org.meveo.service.crm.impl;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.crm.CustomerBrand;
-import org.meveo.model.crm.Provider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 /**
- * Service Template service implementation.
+ * Customer brand service implementation.
  */
 @Stateless
-public class CustomerBrandService extends PersistenceService<CustomerBrand> {
-	public CustomerBrand findByCode(String code) {
-
-		try {
-			return (CustomerBrand) getEntityManager()
-					.createQuery(
-							"from "
-									+ CustomerBrand.class.getSimpleName()
-									+ " where code=:code and provider=:provider")
-					.setParameter("code", code)
-					.setParameter("provider", getCurrentProvider())
-					.getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-
-	public CustomerBrand findByCode(String code, Provider provider) {
-		return findByCode(getEntityManager(), code, provider);
-	}
-
-	public CustomerBrand findByCode(EntityManager em, String code,
-			Provider provider) {
-		QueryBuilder qb = new QueryBuilder(CustomerBrand.class, "b");
-
-		try {
-			qb.addCriterion("code", "=", code, true);
-			qb.addCriterionEntity("provider", provider);
-			return (CustomerBrand) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+public class CustomerBrandService extends BusinessService<CustomerBrand> {
+	
 }

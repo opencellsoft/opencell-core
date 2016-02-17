@@ -63,7 +63,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 	 * Currency - Trading Language - Customer Brand - Customer Category - Seller
 	 * - Customer - Customer Account - Billing Account - User Account
 	 * 
-	 * Required Parameters :customerId, customerBrandCode,customerCategoryCode,
+	 * Required Parameters :customerId, customerCategoryCode,
 	 * sellerCode
 	 * ,currencyCode,countryCode,lastName,languageCode,billingCycleCode
 	 */

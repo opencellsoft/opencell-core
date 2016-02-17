@@ -32,530 +32,438 @@ import org.meveo.service.admin.impl.SellerService;
 @Stateless
 public class CustomerApiService extends AccountApiService {
 
-	@Inject
-	private CustomerService customerService;
+    @Inject
+    private CustomerService customerService;
 
-	@Inject
-	private CustomerCategoryService customerCategoryService;
+    @Inject
+    private CustomerCategoryService customerCategoryService;
 
-	@Inject
-	private CustomerBrandService customerBrandService;
-    
+    @Inject
+    private CustomerBrandService customerBrandService;
+
     @EJB
     private AccountHierarchyApiService accountHierarchyApiService;
 
-	@Inject
-	private SellerService sellerService;
-	
-	public void create(CustomerDto postData, User currentUser)
-			throws MeveoApiException, DuplicateDefaultAccountException {
-		create(postData, currentUser, true);
-	}
+    @Inject
+    private SellerService sellerService;
 
-	public void create(CustomerDto postData, User currentUser,
-			boolean checkCustomFields) throws MeveoApiException,
-			DuplicateDefaultAccountException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getCustomerCategory())
-				&& !StringUtils.isBlank(postData.getSeller())
-				&& postData.getName() != null
-				&& !StringUtils.isBlank(postData.getName().getLastName())) {
-			// check if customer already exists
-			if (customerService.findByCode(postData.getCode(),
-					currentUser.getProvider()) != null) {
-				throw new EntityAlreadyExistsException(Customer.class,
-						postData.getCode());
-			}
+    public void create(CustomerDto postData, User currentUser) throws MeveoApiException, DuplicateDefaultAccountException {
+        create(postData, currentUser, true);
+    }
 
-			CustomerCategory customerCategory = customerCategoryService
-					.findByCode(postData.getCustomerCategory(),
-							currentUser.getProvider());
-			if (customerCategory == null) {
-				throw new EntityDoesNotExistsException(CustomerCategory.class,
-						postData.getCustomerCategory());
-			}
+    public void create(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
 
-			CustomerBrand customerBrand = customerBrandService.findByCode(
-					postData.getCustomerBrand(), currentUser.getProvider());
-			if (customerBrand == null) {
-				throw new EntityDoesNotExistsException(CustomerBrand.class,
-						postData.getCustomerBrand());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getCustomerCategory())) {
+            missingParameters.add("customerCategory");
+        }
+        if (StringUtils.isBlank(postData.getSeller())) {
+            missingParameters.add("seller");
+        }
+        if (postData.getName() == null) {
+            missingParameters.add("name.lastName");
+        }
+        if (StringUtils.isBlank(postData.getName().getLastName())) {
+            missingParameters.add("name.lastName");
+        }
 
-			Seller seller = sellerService.findByCode(postData.getSeller(),
-					currentUser.getProvider());
-			if (seller == null) {
-				throw new EntityDoesNotExistsException(Seller.class,
-						postData.getSeller());
-			}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+        // check if customer already exists
+        if (customerService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+            throw new EntityAlreadyExistsException(Customer.class, postData.getCode());
+        }
 
-			Customer customer = new Customer();
-			populate(postData, customer, currentUser);
+        CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), currentUser.getProvider());
+        if (customerCategory == null) {
+            throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
+        }
 
-			customer.setCustomerCategory(customerCategory);
-			customer.setCustomerBrand(customerBrand);
-			customer.setSeller(seller);
-			customer.setMandateDate(postData.getMandateDate());
-			customer.setMandateIdentification(postData
-					.getMandateIdentification());
-			customer.setExternalRef1(postData.getExternalRef1());
-			customer.setExternalRef2(postData.getExternalRef2());
-
-			if (postData.getContactInformation() != null) {
-				customer.getContactInformation().setEmail(
-						postData.getContactInformation().getEmail());
-				customer.getContactInformation().setPhone(
-						postData.getContactInformation().getPhone());
-				customer.getContactInformation().setMobile(
-						postData.getContactInformation().getMobile());
-				customer.getContactInformation().setFax(
-						postData.getContactInformation().getFax());
-			}
-
-			customerService.create(customer, currentUser,
-					currentUser.getProvider());
-			
-	         
-            // Validate and populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), customer, true, currentUser, checkCustomFields);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        CustomerBrand customerBrand = null;
+        if (!StringUtils.isBlank(postData.getCustomerBrand())) {
+            customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(), currentUser.getProvider());
+            if (customerBrand == null) {
+                throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
             }
-            
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getCustomerCategory())) {
-				missingParameters.add("customerCategory");
-			}
-			if (StringUtils.isBlank(postData.getSeller())) {
-				missingParameters.add("seller");
-			}
-			if (postData.getName() == null) {
-				missingParameters.add("name.lastName");
-			}
-			if (StringUtils.isBlank(postData.getName().getLastName())) {
-				missingParameters.add("name.lastName");
-			}
+        }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        Seller seller = sellerService.findByCode(postData.getSeller(), currentUser.getProvider());
+        if (seller == null) {
+            throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+        }
 
-	public void update(CustomerDto postData, User currentUser)
-			throws MeveoApiException, DuplicateDefaultAccountException {
-		update(postData, currentUser, true);
-	}
+        Customer customer = new Customer();
+        populate(postData, customer, currentUser);
 
-	public void update(CustomerDto postData, User currentUser,
-			boolean checkCustomFields) throws MeveoApiException,
-			DuplicateDefaultAccountException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& postData.getName() != null
-				&& !StringUtils.isBlank(postData.getName().getLastName())) {
-			// check if customer exists
-			Customer customer = customerService.findByCode(postData.getCode(),
-					currentUser.getProvider());
+        customer.setCustomerCategory(customerCategory);
+        customer.setCustomerBrand(customerBrand);
+        customer.setSeller(seller);
+        customer.setMandateDate(postData.getMandateDate());
+        customer.setMandateIdentification(postData.getMandateIdentification());
+        customer.setExternalRef1(postData.getExternalRef1());
+        customer.setExternalRef2(postData.getExternalRef2());
 
-			if (customer == null) {
-				throw new EntityDoesNotExistsException(Customer.class,
-						postData.getCode());
-			}
+        if (postData.getContactInformation() != null) {
+            customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+            customer.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+            customer.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+            customer.getContactInformation().setFax(postData.getContactInformation().getFax());
+        }
 
-			if (!StringUtils.isBlank(postData.getCustomerCategory())) {
-				CustomerCategory customerCategory = customerCategoryService
-						.findByCode(postData.getCustomerCategory(),
-								currentUser.getProvider());
-				if (customerCategory == null) {
-					throw new EntityDoesNotExistsException(
-							CustomerCategory.class,
-							postData.getCustomerCategory());
-				}
-				customer.setCustomerCategory(customerCategory);
-			}
+        customerService.create(customer, currentUser, currentUser.getProvider());
 
-			if (!StringUtils.isBlank(postData.getCustomerBrand())) {
-				CustomerBrand customerBrand = customerBrandService.findByCode(
-						postData.getCustomerBrand(), currentUser.getProvider());
-				if (customerBrand == null) {
-					throw new EntityDoesNotExistsException(CustomerBrand.class,
-							postData.getCustomerBrand());
-				}
-				customer.setCustomerBrand(customerBrand);
-			}
+        // Validate and populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), customer, true, currentUser, checkCustomFields);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
+    }
 
-			if (!StringUtils.isBlank(postData.getSeller())) {
-				Seller seller = sellerService.findByCode(postData.getSeller(),
-						currentUser.getProvider());
-				if (seller == null) {
-					throw new EntityDoesNotExistsException(Seller.class,
-							postData.getSeller());
-				}
-				customer.setSeller(seller);
-			}
-			
-			updateAccount(customer, postData, currentUser, checkCustomFields);
+    public void update(CustomerDto postData, User currentUser) throws MeveoApiException, DuplicateDefaultAccountException {
+        update(postData, currentUser, true);
+    }
 
-			if (!StringUtils.isBlank(postData.getMandateDate())) {
-				customer.setMandateDate(postData.getMandateDate());
-			}
-			if (!StringUtils.isBlank(postData.getMandateIdentification())) {
-				customer.setMandateIdentification(postData
-						.getMandateIdentification());
-			}
-			
-			if (!StringUtils.isBlank(postData.getExternalRef1())) {
-				customer.setExternalRef1(postData.getExternalRef1());
-			}
-			if (!StringUtils.isBlank(postData.getExternalRef2())) {
-				customer.setExternalRef2(postData.getExternalRef2());
-			}
+    public void update(CustomerDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
 
-			if (postData.getContactInformation() != null) {
-				if (!StringUtils.isBlank(postData.getContactInformation()
-						.getEmail())) {
-					customer.getContactInformation().setEmail(
-							postData.getContactInformation().getEmail());
-				}
-				if (!StringUtils.isBlank(postData.getContactInformation()
-						.getPhone())) {
-					customer.getContactInformation().setPhone(
-							postData.getContactInformation().getPhone());
-				}
-				if (!StringUtils.isBlank(postData.getContactInformation()
-						.getMobile())) {
-					customer.getContactInformation().setMobile(
-							postData.getContactInformation().getMobile());
-				}
-				if (!StringUtils.isBlank(postData.getContactInformation()
-						.getFax())) {
-					customer.getContactInformation().setFax(
-							postData.getContactInformation().getFax());
-				}
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getCustomerCategory())) {
+            missingParameters.add("customerCategory");
+        }
+        if (StringUtils.isBlank(postData.getSeller())) {
+            missingParameters.add("seller");
+        }
+        if (postData.getName() == null) {
+            missingParameters.add("name.lastName");
+        }
+        if (StringUtils.isBlank(postData.getName().getLastName())) {
+            missingParameters.add("name.lastName");
+        }
 
-			customerService.updateAudit(customer, currentUser);
-			
-	         
-            // Validate and populate customFields
-           try {
-               populateCustomFields(postData.getCustomFields(), customer, false, currentUser, checkCustomFields);
-           } catch (IllegalArgumentException | IllegalAccessException e) {
-               log.error("Failed to associate custom field instance to an entity", e);
-               throw new MeveoApiException("Failed to associate custom field instance to an entity");
-           }
-           
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getCustomerCategory())) {
-				missingParameters.add("customerCategory");
-			}
-			if (StringUtils.isBlank(postData.getSeller())) {
-				missingParameters.add("seller");
-			}
-			if (postData.getName() == null) {
-				missingParameters.add("name.lastName");
-			}
-			if (StringUtils.isBlank(postData.getName().getLastName())) {
-				missingParameters.add("name.lastName");
-			}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        // check if customer exists
+        Customer customer = customerService.findByCode(postData.getCode(), currentUser.getProvider());
 
-	public CustomerDto find(String customerCode, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(customerCode)) {
-			Customer customer = customerService.findByCode(customerCode,
-					provider);
-			if (customer == null) {
-				throw new EntityDoesNotExistsException(Customer.class,
-						customerCode);
-			}
+        if (customer == null) {
+            throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
+        }
 
-			return accountHierarchyApiService.customerToDto(customer);
-			
-		} else {
-			missingParameters.add("customerCode");
+        if (!StringUtils.isBlank(postData.getCustomerCategory())) {
+            CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), currentUser.getProvider());
+            if (customerCategory == null) {
+                throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
+            }
+            customer.setCustomerCategory(customerCategory);
+        }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        if (!StringUtils.isBlank(postData.getCustomerBrand())) {
+            CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(), currentUser.getProvider());
+            if (customerBrand == null) {
+                throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
+            }
+            customer.setCustomerBrand(customerBrand);
+        }
 
-	public void remove(String customerCode, Provider provider) throws MeveoApiException {
-		if (StringUtils.isBlank(customerCode)) {
-			missingParameters.add("customerCode");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-		Customer customer = customerService.findByCode(customerCode, provider);
-		if (customer == null) {
-			throw new EntityDoesNotExistsException(Customer.class, customerCode);
-		}
-        try{
-        	customerService.remove(customer);
-        	customerService.commit();
-		} catch (Exception e) {
-			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
-				throw new DeleteReferencedEntityException(Customer.class, customerCode);
-			}
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
-		}
-	}
+        if (!StringUtils.isBlank(postData.getSeller())) {
+            Seller seller = sellerService.findByCode(postData.getSeller(), currentUser.getProvider());
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+            }
+            customer.setSeller(seller);
+        }
 
-	public CustomersDto filterCustomer(CustomerDto postData, Provider provider)
-			throws MeveoApiException {
-		CustomerCategory customerCategory = null;
-		if (!StringUtils.isBlank(postData.getCustomerCategory())) {
-			customerCategory = customerCategoryService.findByCode(
-					postData.getCustomerCategory(), provider);
-			if (customerCategory == null) {
-				throw new EntityDoesNotExistsException(CustomerCategory.class,
-						postData.getCustomerCategory());
-			}
-		}
+        updateAccount(customer, postData, currentUser, checkCustomFields);
 
-		Seller seller = null;
-		if (!StringUtils.isBlank(postData.getSeller())) {
-			seller = sellerService.findByCode(postData.getSeller(), provider);
-			if (seller == null) {
-				throw new EntityDoesNotExistsException(Seller.class,
-						postData.getSeller());
-			}
-		}
+        if (!StringUtils.isBlank(postData.getMandateDate())) {
+            customer.setMandateDate(postData.getMandateDate());
+        }
+        if (!StringUtils.isBlank(postData.getMandateIdentification())) {
+            customer.setMandateIdentification(postData.getMandateIdentification());
+        }
 
-		CustomerBrand customerBrand = null;
-		if (!StringUtils.isBlank(postData.getCustomerBrand())) {
-			customerBrand = customerBrandService.findByCode(
-					postData.getCustomerBrand(), provider);
-			if (customerBrand == null) {
-				throw new EntityDoesNotExistsException(CustomerBrand.class,
-						postData.getCustomerBrand());
-			}
-		}
+        if (!StringUtils.isBlank(postData.getExternalRef1())) {
+            customer.setExternalRef1(postData.getExternalRef1());
+        }
+        if (!StringUtils.isBlank(postData.getExternalRef2())) {
+            customer.setExternalRef2(postData.getExternalRef2());
+        }
 
-		CustomersDto result = new CustomersDto();
-		List<Customer> customers = customerService.filter(postData.getCode(),
-				customerCategory, seller, customerBrand, provider);
-		if (customers != null) {
-			for (Customer c : customers) {
-				result.getCustomer().add(accountHierarchyApiService.customerToDto(c));
-			}
-		}
+        if (postData.getContactInformation() != null) {
+            if (!StringUtils.isBlank(postData.getContactInformation().getEmail())) {
+                customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
+            }
+            if (!StringUtils.isBlank(postData.getContactInformation().getPhone())) {
+                customer.getContactInformation().setPhone(postData.getContactInformation().getPhone());
+            }
+            if (!StringUtils.isBlank(postData.getContactInformation().getMobile())) {
+                customer.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+            }
+            if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
+                customer.getContactInformation().setFax(postData.getContactInformation().getFax());
+            }
+        }
 
-		return result;
-	}
+        customerService.updateAudit(customer, currentUser);
 
-	public void createBrand(CustomerBrandDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())) {
-			if (customerBrandService.findByCode(postData.getCode(),
-					currentUser.getProvider()) != null) {
-				throw new EntityAlreadyExistsException(CustomerBrand.class,
-						postData.getCode());
-			}
+        // Validate and populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), customer, false, currentUser, checkCustomFields);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new MeveoApiException("Failed to associate custom field instance to an entity");
+        }
+    }
 
-			CustomerBrand customerBrand = new CustomerBrand();
-			customerBrand.setCode(postData.getCode());
-			customerBrand.setDescription(postData.getDescription());
+    public CustomerDto find(String customerCode, Provider provider) throws MeveoApiException {
+        if (!StringUtils.isBlank(customerCode)) {
+            Customer customer = customerService.findByCode(customerCode, provider);
+            if (customer == null) {
+                throw new EntityDoesNotExistsException(Customer.class, customerCode);
+            }
 
-			customerBrandService.create(customerBrand, currentUser,
-					currentUser.getProvider());
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+            return accountHierarchyApiService.customerToDto(customer);
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        } else {
+            missingParameters.add("customerCode");
 
-	public void updateBrand(CustomerBrandDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
 
-			CustomerBrand customerBrand = customerBrandService.findByCode(
-					postData.getCode(), currentUser.getProvider());
+    public void remove(String customerCode, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(customerCode)) {
+            missingParameters.add("customerCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+        Customer customer = customerService.findByCode(customerCode, provider);
+        if (customer == null) {
+            throw new EntityDoesNotExistsException(Customer.class, customerCode);
+        }
+        try {
+            customerService.remove(customer);
+            customerService.commit();
+        } catch (Exception e) {
+            if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+                throw new DeleteReferencedEntityException(Customer.class, customerCode);
+            }
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+        }
+    }
 
-			if (customerBrand == null) {
-				throw new EntityDoesNotExistsException(CustomerBrand.class,
-						postData.getCode());
-			}
+    public CustomersDto filterCustomer(CustomerDto postData, Provider provider) throws MeveoApiException {
+        CustomerCategory customerCategory = null;
+        if (!StringUtils.isBlank(postData.getCustomerCategory())) {
+            customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), provider);
+            if (customerCategory == null) {
+                throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
+            }
+        }
 
-			// TODO Please check if this is to be commented out
-			// customerBrand.setCode(postData.getCode());
-			customerBrand.setDescription(postData.getDescription());
+        Seller seller = null;
+        if (!StringUtils.isBlank(postData.getSeller())) {
+            seller = sellerService.findByCode(postData.getSeller(), provider);
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+            }
+        }
 
-			customerBrandService.update(customerBrand, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+        CustomerBrand customerBrand = null;
+        if (!StringUtils.isBlank(postData.getCustomerBrand())) {
+            customerBrand = customerBrandService.findByCode(postData.getCustomerBrand(), provider);
+            if (customerBrand == null) {
+                throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
+            }
+        }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        CustomersDto result = new CustomersDto();
+        List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand, provider);
+        if (customers != null) {
+            for (Customer c : customers) {
+                result.getCustomer().add(accountHierarchyApiService.customerToDto(c));
+            }
+        }
 
-	public void createCategory(CustomerCategoryDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())) {
-			if (customerCategoryService.findByCode(postData.getCode(),
-					currentUser.getProvider()) != null) {
-				throw new EntityAlreadyExistsException(CustomerCategory.class,
-						postData.getCode());
-			}
+        return result;
+    }
 
-			CustomerCategory customerCategory = new CustomerCategory();
-			customerCategory.setCode(postData.getCode());
-			customerCategory.setDescription(postData.getDescription());
-			customerCategory.setExoneratedFromTaxes(postData
-					.isExoneratedFromTaxes());
+    public void createBrand(CustomerBrandDto postData, User currentUser) throws MeveoApiException {
+        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+            if (customerBrandService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+                throw new EntityAlreadyExistsException(CustomerBrand.class, postData.getCode());
+            }
 
-			customerCategoryService.create(customerCategory, currentUser,
-					currentUser.getProvider());
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+            CustomerBrand customerBrand = new CustomerBrand();
+            customerBrand.setCode(postData.getCode());
+            customerBrand.setDescription(postData.getDescription());
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+            customerBrandService.create(customerBrand, currentUser, currentUser.getProvider());
+        } else {
+            if (StringUtils.isBlank(postData.getCode())) {
+                missingParameters.add("code");
+            }
 
-	public void updateCategory(CustomerCategoryDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
 
-			CustomerCategory customerCategory = customerCategoryService
-					.findByCode(postData.getCode(), currentUser.getProvider());
-			if (customerCategory == null) {
-				throw new EntityDoesNotExistsException(CustomerCategory.class,
-						postData.getCode());
-			}
+    public void updateBrand(CustomerBrandDto postData, User currentUser) throws MeveoApiException {
+        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 
-			customerCategory.setDescription(postData.getDescription());
-			customerCategory.setExoneratedFromTaxes(postData
-					.isExoneratedFromTaxes());
+            CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCode(), currentUser.getProvider());
 
-			customerCategoryService.update(customerCategory, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+            if (customerBrand == null) {
+                throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCode());
+            }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+            // TODO Please check if this is to be commented out
+            // customerBrand.setCode(postData.getCode());
+            customerBrand.setDescription(postData.getDescription());
 
-	public void createOrUpdateCategory(CustomerCategoryDto postData,
-			User currentUser) throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())) {
-			if (customerCategoryService.findByCode(postData.getCode(),
-					currentUser.getProvider()) == null) {
-				createCategory(postData, currentUser);
-			} else {
-				updateCategory(postData, currentUser);
-			}
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+            customerBrandService.update(customerBrand, currentUser);
+        } else {
+            if (StringUtils.isBlank(postData.getCode())) {
+                missingParameters.add("code");
+            }
 
-	public void removeBrand(String code, Provider provider) throws MeveoApiException {
-		if (StringUtils.isBlank(code)) {
-			missingParameters.add("brandCode");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-		CustomerBrand customerBrand = customerBrandService.findByCode(code, provider);
-		if (customerBrand == null) {
-			throw new EntityDoesNotExistsException(CustomerBrand.class, code);
-		}
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
 
-		try {
-			customerBrandService.remove(customerBrand);
-			customerBrandService.commit();
-		} catch (Exception e) {
-			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
-				throw new DeleteReferencedEntityException(CustomerBrand.class, code);
-			}
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
-		}
-	}
+    public void createCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
+        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+            if (customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+                throw new EntityAlreadyExistsException(CustomerCategory.class, postData.getCode());
+            }
 
-	public void removeCategory(String code, Provider provider) throws MeveoApiException {
-		if (StringUtils.isBlank(code)) {
-			missingParameters.add("categoryCode");
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-		CustomerCategory customerCategory = customerCategoryService.findByCode(code, provider);
-		if (customerCategory == null) {
-			throw new EntityDoesNotExistsException(CustomerCategory.class, code);
-		}
-		try {
-			customerCategoryService.remove(customerCategory);
-			customerCategoryService.commit();
-		} catch (Exception e) {
-			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
-				throw new DeleteReferencedEntityException(CustomerCategory.class, code);
-			}
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
-		}
-	}
+            CustomerCategory customerCategory = new CustomerCategory();
+            customerCategory.setCode(postData.getCode());
+            customerCategory.setDescription(postData.getDescription());
+            customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
 
-	public void createOrUpdate(CustomerDto postData, User currentUser)
-			throws MeveoApiException, DuplicateDefaultAccountException {
-		if (customerService.findByCode(postData.getCode(),
-				currentUser.getProvider()) == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+            customerCategoryService.create(customerCategory, currentUser, currentUser.getProvider());
+        } else {
+            if (StringUtils.isBlank(postData.getCode())) {
+                missingParameters.add("code");
+            }
 
-	/**
-	 * Create or update customer brand based on code.
-	 * 
-	 * @param postData
-	 * @param currentUser
-	 * @throws MeveoApiException
-	 */
-	public void createOrUpdateBrand(CustomerBrandDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())) {
-			if (customerBrandService.findByCode(postData.getCode(),
-					currentUser.getProvider()) == null) {
-				createBrand(postData, currentUser);
-			} else {
-				updateBrand(postData, currentUser);
-			}
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
-	
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
+
+    public void updateCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
+        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+
+            CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
+            if (customerCategory == null) {
+                throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCode());
+            }
+
+            customerCategory.setDescription(postData.getDescription());
+            customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+
+            customerCategoryService.update(customerCategory, currentUser);
+        } else {
+            if (StringUtils.isBlank(postData.getCode())) {
+                missingParameters.add("code");
+            }
+
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
+
+    public void createOrUpdateCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
+        if (!StringUtils.isBlank(postData.getCode())) {
+            if (customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+                createCategory(postData, currentUser);
+            } else {
+                updateCategory(postData, currentUser);
+            }
+        } else {
+            if (StringUtils.isBlank(postData.getCode())) {
+                missingParameters.add("code");
+            }
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
+
+    public void removeBrand(String code, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("brandCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+        CustomerBrand customerBrand = customerBrandService.findByCode(code, provider);
+        if (customerBrand == null) {
+            throw new EntityDoesNotExistsException(CustomerBrand.class, code);
+        }
+
+        try {
+            customerBrandService.remove(customerBrand);
+            customerBrandService.commit();
+        } catch (Exception e) {
+            if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+                throw new DeleteReferencedEntityException(CustomerBrand.class, code);
+            }
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+        }
+    }
+
+    public void removeCategory(String code, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("categoryCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+        CustomerCategory customerCategory = customerCategoryService.findByCode(code, provider);
+        if (customerCategory == null) {
+            throw new EntityDoesNotExistsException(CustomerCategory.class, code);
+        }
+        try {
+            customerCategoryService.remove(customerCategory);
+            customerCategoryService.commit();
+        } catch (Exception e) {
+            if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+                throw new DeleteReferencedEntityException(CustomerCategory.class, code);
+            }
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+        }
+    }
+
+    public void createOrUpdate(CustomerDto postData, User currentUser) throws MeveoApiException, DuplicateDefaultAccountException {
+        if (customerService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
+
+    /**
+     * Create or update customer brand based on code.
+     * 
+     * @param postData
+     * @param currentUser
+     * @throws MeveoApiException
+     */
+    public void createOrUpdateBrand(CustomerBrandDto postData, User currentUser) throws MeveoApiException {
+        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
+            if (customerBrandService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+                createBrand(postData, currentUser);
+            } else {
+                updateBrand(postData, currentUser);
+            }
+        } else {
+            if (StringUtils.isBlank(postData.getCode())) {
+                missingParameters.add("code");
+            }
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+    }
+
 }

@@ -17,48 +17,14 @@
 package org.meveo.service.crm.impl;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.crm.CustomerCategory;
-import org.meveo.model.crm.Provider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 /**
- * Service Template service implementation.
+ * Customer category service implementation.
  */
 @Stateless
-public class CustomerCategoryService extends
-		PersistenceService<CustomerCategory> {
+public class CustomerCategoryService extends BusinessService<CustomerCategory> {
 
-	public CustomerCategory findByCode(String code) {
-		try {
-			return (CustomerCategory) getEntityManager()
-					.createQuery(
-							"from " + CustomerCategory.class.getSimpleName()
-									+ " where code=:code")
-					.setParameter("code", code).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-
-	public CustomerCategory findByCode(String code,
-			Provider provider) {
-		return findByCode(getEntityManager(), code, provider);
-	}
-
-	public CustomerCategory findByCode(EntityManager em, String code,
-			Provider provider) {
-		QueryBuilder qb = new QueryBuilder(CustomerCategory.class, "c");
-		qb.addCriterion("code", "=", code, true);
-		qb.addCriterionEntity("provider", provider);
-
-		try {
-			return (CustomerCategory) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
 }
