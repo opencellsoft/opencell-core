@@ -56,9 +56,7 @@ public class CustomerApiService extends AccountApiService {
 			boolean checkCustomFields) throws MeveoApiException,
 			DuplicateDefaultAccountException {
 		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())
 				&& !StringUtils.isBlank(postData.getCustomerCategory())
-				&& !StringUtils.isBlank(postData.getCustomerBrand())
 				&& !StringUtils.isBlank(postData.getSeller())
 				&& postData.getName() != null
 				&& !StringUtils.isBlank(postData.getName().getLastName())) {
@@ -133,9 +131,6 @@ public class CustomerApiService extends AccountApiService {
 			if (StringUtils.isBlank(postData.getCustomerCategory())) {
 				missingParameters.add("customerCategory");
 			}
-			if (StringUtils.isBlank(postData.getCustomerBrand())) {
-				missingParameters.add("customerBrand");
-			}
 			if (StringUtils.isBlank(postData.getSeller())) {
 				missingParameters.add("seller");
 			}
@@ -160,7 +155,6 @@ public class CustomerApiService extends AccountApiService {
 			boolean checkCustomFields) throws MeveoApiException,
 			DuplicateDefaultAccountException {
 		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())
 				&& postData.getName() != null
 				&& !StringUtils.isBlank(postData.getName().getLastName())) {
 			// check if customer exists
@@ -261,9 +255,6 @@ public class CustomerApiService extends AccountApiService {
 			}
 			if (StringUtils.isBlank(postData.getCustomerCategory())) {
 				missingParameters.add("customerCategory");
-			}
-			if (StringUtils.isBlank(postData.getCustomerBrand())) {
-				missingParameters.add("customerBrand");
 			}
 			if (StringUtils.isBlank(postData.getSeller())) {
 				missingParameters.add("seller");

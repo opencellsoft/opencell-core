@@ -21,7 +21,7 @@ public class CustomerDto extends AccountDto {
 	@XmlElement(required = true)
 	private String customerCategory;
 
-	@XmlElement(required = true)
+	@XmlElement()
 	private String customerBrand;
 
 	@XmlElement(required = true)
