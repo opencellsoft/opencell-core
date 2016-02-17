@@ -29,254 +29,209 @@ import org.meveo.service.catalog.impl.TaxService;
 @Stateless
 public class TaxApi extends BaseApi {
 
-	@Inject
-	private TaxService taxService;
+    @Inject
+    private TaxService taxService;
 
-	@Inject
-	private CatMessagesService catMessagesService;
+    @Inject
+    private CatMessagesService catMessagesService;
 
-	public ActionStatus create(TaxDto postData, User currentUser)
-			throws MeveoApiException {
-		ActionStatus result = new ActionStatus();
+    public ActionStatus create(TaxDto postData, User currentUser) throws MeveoApiException {
 
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getPercent())) {
-			Provider provider = currentUser.getProvider();
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
 
-			// check if tax exists
-			if (taxService.findByCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(Tax.class,
-						postData.getCode());
-			}
+        if (StringUtils.isBlank(postData.getPercent())) {
+            missingParameters.add("percent");
+        }
 
-			Tax tax = new Tax();
-			tax.setCode(postData.getCode());
-			tax.setDescription(postData.getDescription());
-			tax.setPercent(postData.getPercent());
-			tax.setAccountingCode(postData.getAccountingCode());
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			if (provider.getTradingLanguages() != null) {
-				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						boolean match = false;
+        ActionStatus result = new ActionStatus();
 
-						for (TradingLanguage tl : provider
-								.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(
-									ld.getLanguageCode())) {
-								match = true;
-								break;
-							}
-						}
+        Provider provider = currentUser.getProvider();
 
-						if (!match) {
-							throw new MeveoApiException(
-									MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION,
-									"Language "
-											+ ld.getLanguageCode()
-											+ " is not supported by the provider.");
-						}
-					}
-				}
-			}
+        // check if tax exists
+        if (taxService.findByCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(Tax.class, postData.getCode());
+        }
 
-			taxService.create(tax, currentUser, provider);
+        Tax tax = new Tax();
+        tax.setCode(postData.getCode());
+        tax.setDescription(postData.getDescription());
+        tax.setPercent(postData.getPercent());
+        tax.setAccountingCode(postData.getAccountingCode());
 
-			// create cat messages
-			if (postData.getLanguageDescriptions() != null) {
-				for (LanguageDescriptionDto ld : postData
-						.getLanguageDescriptions()) {
-					CatMessages catMsg = new CatMessages(
-							Tax.class.getSimpleName() + "_" + tax.getId(),
-							ld.getLanguageCode(), ld.getDescription());
+        if (provider.getTradingLanguages() != null) {
+            if (postData.getLanguageDescriptions() != null) {
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    boolean match = false;
 
-					catMessagesService.create(catMsg, currentUser, provider);
-				}
-			}
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
+                            match = true;
+                            break;
+                        }
+                    }
 
-			if (StringUtils.isBlank(postData.getPercent())) {
-				missingParameters.add("percent");
-			}
+                    if (!match) {
+                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+                    }
+                }
+            }
+        }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
+        taxService.create(tax, currentUser, provider);
 
-		return result;
-	}
+        // create cat messages
+        if (postData.getLanguageDescriptions() != null) {
+            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                CatMessages catMsg = new CatMessages(Tax.class.getSimpleName() + "_" + tax.getId(), ld.getLanguageCode(), ld.getDescription());
 
-	public ActionStatus update(TaxDto postData, User currentUser)
-			throws MeveoApiException {
-		ActionStatus result = new ActionStatus();
+                catMessagesService.create(catMsg, currentUser, provider);
+            }
+        }
 
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getPercent())) {
-			Provider provider = currentUser.getProvider();
+        return result;
+    }
 
-			// check if tax exists
-			Tax tax = taxService.findByCode(postData.getCode(), provider);
-			if (tax == null) {
-				throw new EntityDoesNotExistsException(Tax.class,
-						postData.getCode());
-			}
+    public ActionStatus update(TaxDto postData, User currentUser) throws MeveoApiException {
 
-			tax.setDescription(postData.getDescription());
-			tax.setPercent(postData.getPercent());
-			tax.setAccountingCode(postData.getAccountingCode());
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
 
-			if (provider.getTradingLanguages() != null) {
-				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						boolean match = false;
+        if (StringUtils.isBlank(postData.getPercent())) {
+            missingParameters.add("percent");
+        }
 
-						for (TradingLanguage tl : provider
-								.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(
-									ld.getLanguageCode())) {
-								match = true;
-								break;
-							}
-						}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-						if (!match) {
-							throw new MeveoApiException(
-									MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION,
-									"Language "
-											+ ld.getLanguageCode()
-											+ " is not supported by the provider.");
-						}
-					}
+        ActionStatus result = new ActionStatus();
 
-					// create cat messages
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						CatMessages catMsg = catMessagesService.getCatMessages(
-								Tax.class.getSimpleName() + "_" + tax.getId(),
-								ld.getLanguageCode());
+        Provider provider = currentUser.getProvider();
 
-						if (catMsg != null) {
-							catMsg.setDescription(ld.getDescription());
-							catMessagesService.update(catMsg, currentUser);
-						} else {
-							CatMessages catMessages = new CatMessages(
-									Tax.class.getSimpleName() + "_"
-											+ tax.getId(),
-									ld.getLanguageCode(), ld.getDescription());
-							catMessagesService.create(catMessages, currentUser,
-									provider);
-						}
-					}
-				}
-			}
+        // check if tax exists
+        Tax tax = taxService.findByCode(postData.getCode(), provider);
+        if (tax == null) {
+            throw new EntityDoesNotExistsException(Tax.class, postData.getCode());
+        }
 
-			taxService.update(tax, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+        tax.setDescription(postData.getDescription());
+        tax.setPercent(postData.getPercent());
+        tax.setAccountingCode(postData.getAccountingCode());
 
-			if (StringUtils.isBlank(postData.getPercent())) {
-				missingParameters.add("percent");
-			}
+        if (provider.getTradingLanguages() != null) {
+            if (postData.getLanguageDescriptions() != null) {
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    boolean match = false;
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
+                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
+                            match = true;
+                            break;
+                        }
+                    }
 
-		return result;
-	}
+                    if (!match) {
+                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+                    }
+                }
 
-	public TaxDto find(String taxCode, Provider provider)
-			throws MeveoApiException {
-		TaxDto result = new TaxDto();
+                // create cat messages
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    CatMessages catMsg = catMessagesService.getCatMessages(Tax.class.getSimpleName() + "_" + tax.getId(), ld.getLanguageCode());
 
-		if (!StringUtils.isBlank(taxCode)) {
-			Tax tax = taxService.findByCode(taxCode, provider);
-			if (tax == null) {
-				throw new EntityDoesNotExistsException(Tax.class, taxCode);
-			}
+                    if (catMsg != null) {
+                        catMsg.setDescription(ld.getDescription());
+                        catMessagesService.update(catMsg, currentUser);
+                    } else {
+                        CatMessages catMessages = new CatMessages(Tax.class.getSimpleName() + "_" + tax.getId(), ld.getLanguageCode(), ld.getDescription());
+                        catMessagesService.create(catMessages, currentUser, provider);
+                    }
+                }
+            }
+        }
 
-			result = new TaxDto(tax);
+        taxService.update(tax, currentUser);
 
-			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(Tax.class.getSimpleName() + "_"
-							+ tax.getId())) {
-				languageDescriptions.add(new LanguageDescriptionDto(msg
-						.getLanguageCode(), msg.getDescription()));
-			}
+        return result;
+    }
 
-			result.setLanguageDescriptions(languageDescriptions);
-		} else {
-			if (StringUtils.isBlank(taxCode)) {
-				missingParameters.add("code");
-			}
+    public TaxDto find(String taxCode, Provider provider) throws MeveoApiException {
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
+        if (StringUtils.isBlank(taxCode)) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-		return result;
-	}
+        TaxDto result = new TaxDto();
 
-	public ActionStatus remove(String taxCode, Provider provider)
-			throws MeveoApiException {
-		ActionStatus result = new ActionStatus();
+        Tax tax = taxService.findByCode(taxCode, provider);
+        if (tax == null) {
+            throw new EntityDoesNotExistsException(Tax.class, taxCode);
+        }
 
-		if (!StringUtils.isBlank(taxCode)) {
-			Tax tax = taxService.findByCode(taxCode, provider);
-			if (tax == null) {
-				throw new EntityDoesNotExistsException(Tax.class, taxCode);
-			}
+        result = new TaxDto(tax);
 
-			// remove cat messages
-			catMessagesService.batchRemove(Tax.class.getSimpleName(),
-					tax.getId(),provider);
+        List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+        for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName() + "_" + tax.getId())) {
+            languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
+        }
 
-			taxService.remove(tax);
-		} else {
-			if (StringUtils.isBlank(taxCode)) {
-				missingParameters.add("code");
-			}
+        result.setLanguageDescriptions(languageDescriptions);
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
+        return result;
+    }
 
-		return result;
-	}
+    public ActionStatus remove(String taxCode, Provider provider) throws MeveoApiException {
 
-	public void createOrUpdate(TaxDto postData, User currentUser) throws MeveoApiException {
-		Tax tax = taxService.findByCode(postData.getCode(), currentUser.getProvider());
-		
-		if (tax == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
-	
-	public TaxesDto list(Provider provider) throws MeveoApiException {
-		TaxesDto taxesDto = new TaxesDto();
-		
-		if (provider != null) {
-			List<Tax> taxes =  taxService.list(provider);
-			if (taxes != null && !taxes.isEmpty()) {
-				for (Tax t: taxes) {
-					TaxDto taxDto = new TaxDto(t);
-					taxesDto.getTax().add(taxDto);
-				}
-			}
-		}
-		
-		return taxesDto;
-	}
+        if (StringUtils.isBlank(taxCode)) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        ActionStatus result = new ActionStatus();
+
+        Tax tax = taxService.findByCode(taxCode, provider);
+        if (tax == null) {
+            throw new EntityDoesNotExistsException(Tax.class, taxCode);
+        }
+
+        // remove cat messages
+        catMessagesService.batchRemove(Tax.class.getSimpleName(), tax.getId(), provider);
+
+        taxService.remove(tax);
+        return result;
+    }
+
+    public void createOrUpdate(TaxDto postData, User currentUser) throws MeveoApiException {
+        Tax tax = taxService.findByCode(postData.getCode(), currentUser.getProvider());
+
+        if (tax == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
+
+    public TaxesDto list(Provider provider) throws MeveoApiException {
+        TaxesDto taxesDto = new TaxesDto();
+
+        if (provider != null) {
+            List<Tax> taxes = taxService.list(provider);
+            if (taxes != null && !taxes.isEmpty()) {
+                for (Tax t : taxes) {
+                    TaxDto taxDto = new TaxDto(t);
+                    taxesDto.getTax().add(taxDto);
+                }
+            }
+        }
+
+        return taxesDto;
+    }
 }

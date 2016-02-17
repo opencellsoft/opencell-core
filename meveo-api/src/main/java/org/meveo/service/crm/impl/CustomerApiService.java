@@ -296,102 +296,90 @@ public class CustomerApiService extends AccountApiService {
     }
 
     public void createBrand(CustomerBrandDto postData, User currentUser) throws MeveoApiException {
-        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
-            if (customerBrandService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
-                throw new EntityAlreadyExistsException(CustomerBrand.class, postData.getCode());
-            }
 
-            CustomerBrand customerBrand = new CustomerBrand();
-            customerBrand.setCode(postData.getCode());
-            customerBrand.setDescription(postData.getDescription());
-
-            customerBrandService.create(customerBrand, currentUser, currentUser.getProvider());
-        } else {
-            if (StringUtils.isBlank(postData.getCode())) {
-                missingParameters.add("code");
-            }
-
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
+
+        if (customerBrandService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+            throw new EntityAlreadyExistsException(CustomerBrand.class, postData.getCode());
+        }
+
+        CustomerBrand customerBrand = new CustomerBrand();
+        customerBrand.setCode(postData.getCode());
+        customerBrand.setDescription(postData.getDescription());
+
+        customerBrandService.create(customerBrand, currentUser, currentUser.getProvider());
     }
 
     public void updateBrand(CustomerBrandDto postData, User currentUser) throws MeveoApiException {
-        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 
-            CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCode(), currentUser.getProvider());
-
-            if (customerBrand == null) {
-                throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCode());
-            }
-
-            // TODO Please check if this is to be commented out
-            // customerBrand.setCode(postData.getCode());
-            customerBrand.setDescription(postData.getDescription());
-
-            customerBrandService.update(customerBrand, currentUser);
-        } else {
-            if (StringUtils.isBlank(postData.getCode())) {
-                missingParameters.add("code");
-            }
-
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
+
+        CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCode(), currentUser.getProvider());
+
+        if (customerBrand == null) {
+            throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCode());
+        }
+
+        // TODO Please check if this is to be commented out
+        // customerBrand.setCode(postData.getCode());
+        customerBrand.setDescription(postData.getDescription());
+
+        customerBrandService.update(customerBrand, currentUser);
     }
 
     public void createCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
-        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
-            if (customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
-                throw new EntityAlreadyExistsException(CustomerCategory.class, postData.getCode());
-            }
-
-            CustomerCategory customerCategory = new CustomerCategory();
-            customerCategory.setCode(postData.getCode());
-            customerCategory.setDescription(postData.getDescription());
-            customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
-
-            customerCategoryService.create(customerCategory, currentUser, currentUser.getProvider());
-        } else {
-            if (StringUtils.isBlank(postData.getCode())) {
-                missingParameters.add("code");
-            }
-
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
+
+        if (customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+            throw new EntityAlreadyExistsException(CustomerCategory.class, postData.getCode());
+        }
+
+        CustomerCategory customerCategory = new CustomerCategory();
+        customerCategory.setCode(postData.getCode());
+        customerCategory.setDescription(postData.getDescription());
+        customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+
+        customerCategoryService.create(customerCategory, currentUser, currentUser.getProvider());
     }
 
     public void updateCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
-        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
 
-            CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
-            if (customerCategory == null) {
-                throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCode());
-            }
-
-            customerCategory.setDescription(postData.getDescription());
-            customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
-
-            customerCategoryService.update(customerCategory, currentUser);
-        } else {
-            if (StringUtils.isBlank(postData.getCode())) {
-                missingParameters.add("code");
-            }
-
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
+
+        CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
+        if (customerCategory == null) {
+            throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCode());
+        }
+
+        customerCategory.setDescription(postData.getDescription());
+        customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+
+        customerCategoryService.update(customerCategory, currentUser);
     }
 
     public void createOrUpdateCategory(CustomerCategoryDto postData, User currentUser) throws MeveoApiException {
-        if (!StringUtils.isBlank(postData.getCode())) {
-            if (customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-                createCategory(postData, currentUser);
-            } else {
-                updateCategory(postData, currentUser);
-            }
-        } else {
-            if (StringUtils.isBlank(postData.getCode())) {
-                missingParameters.add("code");
-            }
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
             throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        if (customerCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            createCategory(postData, currentUser);
+        } else {
+            updateCategory(postData, currentUser);
         }
     }
 
@@ -452,18 +440,16 @@ public class CustomerApiService extends AccountApiService {
      * @throws MeveoApiException
      */
     public void createOrUpdateBrand(CustomerBrandDto postData, User currentUser) throws MeveoApiException {
-        if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())) {
-            if (customerBrandService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-                createBrand(postData, currentUser);
-            } else {
-                updateBrand(postData, currentUser);
-            }
-        } else {
-            if (StringUtils.isBlank(postData.getCode())) {
-                missingParameters.add("code");
-            }
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
             throw new MissingParameterException(getMissingParametersExceptionMessage());
         }
-    }
 
+        if (customerBrandService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+            createBrand(postData, currentUser);
+        } else {
+            updateBrand(postData, currentUser);
+        }
+    }
 }

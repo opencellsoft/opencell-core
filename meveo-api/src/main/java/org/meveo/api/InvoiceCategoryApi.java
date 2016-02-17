@@ -27,222 +27,169 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 @Stateless
 public class InvoiceCategoryApi extends BaseApi {
 
-	@Inject
-	private InvoiceCategoryService invoiceCategoryService;
+    @Inject
+    private InvoiceCategoryService invoiceCategoryService;
 
-	@Inject
-	private CatMessagesService catMessagesService;
+    @Inject
+    private CatMessagesService catMessagesService;
 
-	public void create(InvoiceCategoryDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())) {
-			Provider provider = currentUser.getProvider();
+    public void create(InvoiceCategoryDto postData, User currentUser) throws MeveoApiException {
 
-			if (invoiceCategoryService.findByCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(InvoiceCategory.class,
-						postData.getCode());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			InvoiceCategory invoiceCategory = new InvoiceCategory();
-			invoiceCategory.setCode(postData.getCode());
-			invoiceCategory.setDescription(postData.getDescription());
+        Provider provider = currentUser.getProvider();
 
-			if (provider.getTradingLanguages() != null) {
-				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						boolean match = false;
+        if (invoiceCategoryService.findByCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(InvoiceCategory.class, postData.getCode());
+        }
 
-						for (TradingLanguage tl : provider
-								.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(
-									ld.getLanguageCode())) {
-								match = true;
-								break;
-							}
-						}
+        InvoiceCategory invoiceCategory = new InvoiceCategory();
+        invoiceCategory.setCode(postData.getCode());
+        invoiceCategory.setDescription(postData.getDescription());
 
-						if (!match) {
-							throw new MeveoApiException(
-									MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION,
-									"Language "
-											+ ld.getLanguageCode()
-											+ " is not supported by the provider.");
-						}
-					}
-				}
-			}
+        if (provider.getTradingLanguages() != null) {
+            if (postData.getLanguageDescriptions() != null) {
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    boolean match = false;
 
-			invoiceCategoryService.create(invoiceCategory, currentUser,
-					provider);
+                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
+                            match = true;
+                            break;
+                        }
+                    }
 
-			// create cat messages
-			if (postData.getLanguageDescriptions() != null) {
-				for (LanguageDescriptionDto ld : postData
-						.getLanguageDescriptions()) {
-					CatMessages catMsg = new CatMessages(
-							InvoiceCategory.class.getSimpleName() + "_"
-									+ invoiceCategory.getId(),
-							ld.getLanguageCode(), ld.getDescription());
+                    if (!match) {
+                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+                    }
+                }
+            }
+        }
 
-					catMessagesService.create(catMsg, currentUser, provider);
-				}
-			}
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+        invoiceCategoryService.create(invoiceCategory, currentUser, provider);
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        // create cat messages
+        if (postData.getLanguageDescriptions() != null) {
+            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                CatMessages catMsg = new CatMessages(InvoiceCategory.class.getSimpleName() + "_" + invoiceCategory.getId(), ld.getLanguageCode(), ld.getDescription());
 
-	public void update(InvoiceCategoryDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode())
-				&& !StringUtils.isBlank(postData.getDescription())) {
-			Provider provider = currentUser.getProvider();
+                catMessagesService.create(catMsg, currentUser, provider);
+            }
+        }
+    }
 
-			InvoiceCategory invoiceCategory = invoiceCategoryService
-					.findByCode(postData.getCode(), provider);
-			if (invoiceCategory == null) {
-				throw new EntityDoesNotExistsException(InvoiceCategory.class,
-						postData.getCode());
-			}
+    public void update(InvoiceCategoryDto postData, User currentUser) throws MeveoApiException {
 
-			invoiceCategory.setDescription(postData.getDescription());
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			if (provider.getTradingLanguages() != null) {
-				if (postData.getLanguageDescriptions() != null) {
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						boolean match = false;
+        Provider provider = currentUser.getProvider();
 
-						for (TradingLanguage tl : provider
-								.getTradingLanguages()) {
-							if (tl.getLanguageCode().equals(
-									ld.getLanguageCode())) {
-								match = true;
-								break;
-							}
-						}
+        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode(), provider);
+        if (invoiceCategory == null) {
+            throw new EntityDoesNotExistsException(InvoiceCategory.class, postData.getCode());
+        }
 
-						if (!match) {
-							throw new MeveoApiException(
-									MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION,
-									"Language "
-											+ ld.getLanguageCode()
-											+ " is not supported by the provider.");
-						}
-					}
+        invoiceCategory.setDescription(postData.getDescription());
 
-					// create cat messages
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						CatMessages catMsg = catMessagesService.getCatMessages(
-								InvoiceCategory.class.getSimpleName() + "_"
-										+ invoiceCategory.getId(),
-								ld.getLanguageCode());
+        if (provider.getTradingLanguages() != null) {
+            if (postData.getLanguageDescriptions() != null) {
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    boolean match = false;
 
-						if (catMsg != null) {
-							catMsg.setDescription(ld.getDescription());
-							catMessagesService.update(catMsg, currentUser);
-						} else {
-							CatMessages catMessages = new CatMessages(
-									InvoiceCategory.class.getSimpleName() + "_"
-											+ invoiceCategory.getId(),
-									ld.getLanguageCode(), ld.getDescription());
-							catMessagesService.create(catMessages, currentUser,
-									provider);
-						}
-					}
-				}
-			}
+                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
+                            match = true;
+                            break;
+                        }
+                    }
 
-			invoiceCategoryService.update(invoiceCategory, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+                    if (!match) {
+                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
+                    }
+                }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+                // create cat messages
+                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                    CatMessages catMsg = catMessagesService.getCatMessages(InvoiceCategory.class.getSimpleName() + "_" + invoiceCategory.getId(), ld.getLanguageCode());
 
-	public InvoiceCategoryDto find(String code, Provider provider)
-			throws MeveoApiException {
-		InvoiceCategoryDto result = new InvoiceCategoryDto();
+                    if (catMsg != null) {
+                        catMsg.setDescription(ld.getDescription());
+                        catMessagesService.update(catMsg, currentUser);
+                    } else {
+                        CatMessages catMessages = new CatMessages(InvoiceCategory.class.getSimpleName() + "_" + invoiceCategory.getId(), ld.getLanguageCode(), ld.getDescription());
+                        catMessagesService.create(catMessages, currentUser, provider);
+                    }
+                }
+            }
+        }
 
-		if (!StringUtils.isBlank(code)) {
-			InvoiceCategory invoiceCategory = invoiceCategoryService
-					.findByCode(code, provider);
-			if (invoiceCategory == null) {
-				throw new EntityDoesNotExistsException(InvoiceCategory.class,
-						code);
-			}
+        invoiceCategoryService.update(invoiceCategory, currentUser);
+    }
 
-			result = new InvoiceCategoryDto(invoiceCategory);
+    public InvoiceCategoryDto find(String code, Provider provider) throws MeveoApiException {
 
-			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(InvoiceCategory.class.getSimpleName()
-							+ "_" + invoiceCategory.getId())) {
-				languageDescriptions.add(new LanguageDescriptionDto(msg
-						.getLanguageCode(), msg.getDescription()));
-			}
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("invoiceCategoryCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			result.setLanguageDescriptions(languageDescriptions);
-		} else {
-			missingParameters.add("invoiceCategoryCode");
+        InvoiceCategoryDto result = new InvoiceCategoryDto();
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
+        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(code, provider);
+        if (invoiceCategory == null) {
+            throw new EntityDoesNotExistsException(InvoiceCategory.class, code);
+        }
 
-		return result;
-	}
+        result = new InvoiceCategoryDto(invoiceCategory);
 
-	public void remove(String code, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			InvoiceCategory invoiceCategory = invoiceCategoryService
-					.findByCode(code, provider);
-			if (invoiceCategory == null) {
-				throw new EntityDoesNotExistsException(InvoiceCategory.class,
-						code);
-			}
+        List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+        for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceCategory.class.getSimpleName() + "_" + invoiceCategory.getId())) {
+            languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
+        }
 
-			// remove cat messages
-			catMessagesService.batchRemove(
-					InvoiceCategory.class.getSimpleName(),
-					invoiceCategory.getId(),provider);
+        result.setLanguageDescriptions(languageDescriptions);
 
-			invoiceCategoryService.remove(invoiceCategory);
-		} else {
-			missingParameters.add("invoiceCategoryCode");
+        return result;
+    }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
-	
-	/**
-	 * Creates or updates invoice category based on the code. 
-	 * If passed invoice category is not yet existing, it will be created else will be updated.
-	 * @param postData
-	 * @param currentUser
-	 * @throws MeveoApiException
-	 */
-	public void createOrUpdate(InvoiceCategoryDto postData, User currentUser)
-			throws MeveoApiException {
-		InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
-		
-		if (invoiceCategory == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+    public void remove(String code, Provider provider) throws MeveoApiException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("invoiceCategoryCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(code, provider);
+        if (invoiceCategory == null) {
+            throw new EntityDoesNotExistsException(InvoiceCategory.class, code);
+        }
+
+        // remove cat messages
+        catMessagesService.batchRemove(InvoiceCategory.class.getSimpleName(), invoiceCategory.getId(), provider);
+
+        invoiceCategoryService.remove(invoiceCategory);
+    }
+
+    /**
+     * Creates or updates invoice category based on the code. If passed invoice category is not yet existing, it will be created else will be updated.
+     * 
+     * @param postData
+     * @param currentUser
+     * @throws MeveoApiException
+     */
+    public void createOrUpdate(InvoiceCategoryDto postData, User currentUser) throws MeveoApiException {
+        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
+
+        if (invoiceCategory == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

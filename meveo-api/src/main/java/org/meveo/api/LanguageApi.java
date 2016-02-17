@@ -25,154 +25,129 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 @Stateless
 public class LanguageApi extends BaseApi {
 
-	@Inject
-	private LanguageService languageService;
+    @Inject
+    private LanguageService languageService;
 
-	@Inject
-	private TradingLanguageService tradingLanguageService;
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
-	public void create(LanguageDto postData, User currentUser)
-			throws MissingParameterException, EntityAlreadyExistsException,
-			EntityDoesNotExistsException {
-		if (!StringUtils.isBlank(postData.getCode())) {
-			Provider provider = currentUser.getProvider();
+    public void create(LanguageDto postData, User currentUser) throws MissingParameterException, EntityAlreadyExistsException, EntityDoesNotExistsException {
 
-			if (tradingLanguageService.findByTradingLanguageCode(
-					postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(TradingLanguage.class,
-						postData.getCode());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			Language language = languageService.findByCode(postData.getCode());
+        Provider provider = currentUser.getProvider();
 
-			Auditable auditable = new Auditable();
-			auditable.setCreated(new Date());
-			auditable.setCreator(currentUser);
+        if (tradingLanguageService.findByTradingLanguageCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(TradingLanguage.class, postData.getCode());
+        }
 
-			if (language == null) {
-				// create
-				language = new Language();
-				language.setLanguageCode(postData.getCode());
-				language.setDescriptionEn(postData.getDescription());
-				language.setAuditable(auditable);
-				languageService.create(language, currentUser);
-			}
+        Language language = languageService.findByCode(postData.getCode());
 
-			TradingLanguage tradingLanguage = new TradingLanguage();
-			tradingLanguage.setAuditable(auditable);
-			tradingLanguage.setLanguage(language);
-			tradingLanguage.setLanguageCode(postData.getCode());
-			tradingLanguage.setPrDescription(postData.getDescription());
-			tradingLanguage.setProvider(provider);
-			tradingLanguage.setActive(true);
-			tradingLanguageService.create(tradingLanguage, currentUser, provider);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+        Auditable auditable = new Auditable();
+        auditable.setCreated(new Date());
+        auditable.setCreator(currentUser);
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        if (language == null) {
+            // create
+            language = new Language();
+            language.setLanguageCode(postData.getCode());
+            language.setDescriptionEn(postData.getDescription());
+            language.setAuditable(auditable);
+            languageService.create(language, currentUser);
+        }
 
-	public void remove(String code, Provider provider)
-			throws MissingParameterException, EntityDoesNotExistsException {
-		if (!StringUtils.isBlank(code)) {
-			TradingLanguage tradingLanguage = tradingLanguageService
-					.findByTradingLanguageCode(code, provider);
-			if (tradingLanguage == null) {
-				throw new EntityDoesNotExistsException(TradingLanguage.class,
-						code);
-			} else {
-				tradingLanguageService.remove(tradingLanguage);
-			}
-		} else {
-			if (StringUtils.isBlank(code)) {
-				missingParameters.add("code");
-			}
+        TradingLanguage tradingLanguage = new TradingLanguage();
+        tradingLanguage.setAuditable(auditable);
+        tradingLanguage.setLanguage(language);
+        tradingLanguage.setLanguageCode(postData.getCode());
+        tradingLanguage.setPrDescription(postData.getDescription());
+        tradingLanguage.setProvider(provider);
+        tradingLanguage.setActive(true);
+        tradingLanguageService.create(tradingLanguage, currentUser, provider);
+    }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+    public void remove(String code, Provider provider) throws MissingParameterException, EntityDoesNotExistsException {
 
-	public void update(LanguageDto postData, User currentUser)
-			throws MissingParameterException, EntityDoesNotExistsException,
-			EntityAlreadyExistsException {
-		if (!StringUtils.isBlank(postData.getCode())) {
-			Provider provider = currentUser.getProvider();
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			TradingLanguage tradingLanguage = tradingLanguageService
-					.findByTradingLanguageCode(postData.getCode(), provider);
-			if (tradingLanguage == null) {
-				throw new EntityDoesNotExistsException(TradingLanguage.class,
-						postData.getCode());
-			}
+        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(code, provider);
+        if (tradingLanguage == null) {
+            throw new EntityDoesNotExistsException(TradingLanguage.class, code);
+        } else {
+            tradingLanguageService.remove(tradingLanguage);
+        }
+    }
 
-			Language language = languageService.findByCode(postData.getCode());
+    public void update(LanguageDto postData, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException {
 
-			if (language != null) {
-				Auditable auditable = new Auditable();
-				auditable.setUpdated(new Date());
-				auditable.setUpdater(currentUser);
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-				language.setDescriptionEn(postData.getDescription());
-				language.setAuditable(auditable);
+        Provider provider = currentUser.getProvider();
 
-				tradingLanguage.setAuditable(auditable);
-				tradingLanguage.setLanguage(language);
-				tradingLanguage.setLanguageCode(postData.getCode());
-				tradingLanguage.setPrDescription(postData.getDescription());
-			} else {
-				throw new EntityDoesNotExistsException(Language.class,
-						postData.getCode());
-			}
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
+        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getCode(), provider);
+        if (tradingLanguage == null) {
+            throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getCode());
+        }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        Language language = languageService.findByCode(postData.getCode());
 
-	public LanguageDto find(String code, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			TradingLanguage tradingLanguage = tradingLanguageService
-					.findByTradingLanguageCode(code, provider);
+        if (language != null) {
+            Auditable auditable = new Auditable();
+            auditable.setUpdated(new Date());
+            auditable.setUpdater(currentUser);
 
-			if (tradingLanguage != null) {
-				return new LanguageDto(tradingLanguage);
-			}
+            language.setDescriptionEn(postData.getDescription());
+            language.setAuditable(auditable);
 
-			throw new EntityDoesNotExistsException(TradingLanguage.class, code);
-		} else {
-			if (StringUtils.isBlank(code)) {
-				missingParameters.add("code");
-			}
+            tradingLanguage.setAuditable(auditable);
+            tradingLanguage.setLanguage(language);
+            tradingLanguage.setLanguageCode(postData.getCode());
+            tradingLanguage.setPrDescription(postData.getDescription());
+        } else {
+            throw new EntityDoesNotExistsException(Language.class, postData.getCode());
+        }
+    }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
-	
-	/**
-	 * Create or update Language based on the trading language code.
-	 * @param postData
-	 * @param currentUser
-	 * @throws MeveoApiException
-	 */
-	public void createOrUpdate(LanguageDto postData, User currentUser) throws MeveoApiException {
-		Provider provider = currentUser.getProvider();
-		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getCode(), provider);
-		
-		if (tradingLanguage == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+    public LanguageDto find(String code, Provider provider) throws MeveoApiException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(code, provider);
+
+        if (tradingLanguage != null) {
+            return new LanguageDto(tradingLanguage);
+        }
+
+        throw new EntityDoesNotExistsException(TradingLanguage.class, code);
+    }
+
+    /**
+     * Create or update Language based on the trading language code.
+     * 
+     * @param postData
+     * @param currentUser
+     * @throws MeveoApiException
+     */
+    public void createOrUpdate(LanguageDto postData, User currentUser) throws MeveoApiException {
+        Provider provider = currentUser.getProvider();
+        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getCode(), provider);
+
+        if (tradingLanguage == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

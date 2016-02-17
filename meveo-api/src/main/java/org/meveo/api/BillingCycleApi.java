@@ -22,153 +22,148 @@ import org.meveo.service.catalog.impl.CalendarService;
 @Stateless
 public class BillingCycleApi extends BaseApi {
 
-	@Inject
-	private BillingCycleService billingCycleService;
+    @Inject
+    private BillingCycleService billingCycleService;
 
-	@Inject
-	private CalendarService calendarService;
+    @Inject
+    private CalendarService calendarService;
 
-	public void create(BillingCycleDto postData, User currentUser) throws MeveoApiException {
-		if (postData.getInvoiceDateDelay() != null && !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCalendar()) && postData.getInvoiceDateDelay() != null && postData.getDueDateDelay() != null) {
-			Provider provider = currentUser.getProvider();
+    public void create(BillingCycleDto postData, User currentUser) throws MeveoApiException {
 
-			if (billingCycleService.findByBillingCycleCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(BillingCycle.class, postData.getCode());
-			}
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getCalendar())) {
+            missingParameters.add("calendar");
+        }
+        if (postData.getInvoiceDateDelay() == null) {
+            missingParameters.add("invoiceDateDelay");
+        }
+        if (postData.getDueDateDelay() == null) {
+            missingParameters.add("dueDateDelay");
+        }
+        if (postData.getInvoiceDateDelay() == null) {
+            missingParameters.add("invoiceDateDelay");
+        }
 
-			Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
-			}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			BillingCycle billingCycle = new BillingCycle();
-			billingCycle.setCode(postData.getCode());
-			billingCycle.setDescription(postData.getDescription());
-			billingCycle.setBillingTemplateName(postData.getBillingTemplateName());
-			billingCycle.setInvoiceDateDelay(postData.getInvoiceDateDelay());
-			billingCycle.setDueDateDelay(postData.getDueDateDelay());
-			billingCycle.setCalendar(calendar);
-			billingCycle.setTransactionDateDelay(postData.getTransactionDateDelay());
-			billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
-			billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
+        Provider provider = currentUser.getProvider();
 
-			billingCycleService.create(billingCycle, currentUser, currentUser.getProvider());
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getCalendar())) {
-				missingParameters.add("calendar");
-			}
-			if (postData.getInvoiceDateDelay() == null) {
-				missingParameters.add("invoiceDateDelay");
-			}
-			if (postData.getDueDateDelay() == null) {
-				missingParameters.add("dueDateDelay");
-			}
-			if (postData.getInvoiceDateDelay() == null) {
-				missingParameters.add("invoiceDateDelay");
-			}
+        if (billingCycleService.findByBillingCycleCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(BillingCycle.class, postData.getCode());
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+        Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
+        if (calendar == null) {
+            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
+        }
 
-	public void update(BillingCycleDto postData, User currentUser) throws MeveoApiException {
-		if (postData.getInvoiceDateDelay() != null && !StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getCalendar()) && postData.getInvoiceDateDelay() != null && postData.getDueDateDelay() != null) {
-			Provider provider = currentUser.getProvider();
+        BillingCycle billingCycle = new BillingCycle();
+        billingCycle.setCode(postData.getCode());
+        billingCycle.setDescription(postData.getDescription());
+        billingCycle.setBillingTemplateName(postData.getBillingTemplateName());
+        billingCycle.setInvoiceDateDelay(postData.getInvoiceDateDelay());
+        billingCycle.setDueDateDelay(postData.getDueDateDelay());
+        billingCycle.setCalendar(calendar);
+        billingCycle.setTransactionDateDelay(postData.getTransactionDateDelay());
+        billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
+        billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
 
-			BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getCode(), provider);
+        billingCycleService.create(billingCycle, currentUser, currentUser.getProvider());
 
-			if (billingCycle == null) {
-				throw new EntityDoesNotExistsException(BillingCycle.class, postData.getCode());
-			}
+    }
 
-			Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
-			}
+    public void update(BillingCycleDto postData, User currentUser) throws MeveoApiException {
 
-			billingCycle.setDescription(postData.getDescription());
-			billingCycle.setBillingTemplateName(postData.getBillingTemplateName());
-			billingCycle.setInvoiceDateDelay(postData.getInvoiceDateDelay());
-			billingCycle.setDueDateDelay(postData.getDueDateDelay());
-			billingCycle.setCalendar(calendar);
-			billingCycle.setTransactionDateDelay(postData.getTransactionDateDelay());
-			billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
-			billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getCalendar())) {
+            missingParameters.add("calendar");
+        }
+        if (postData.getInvoiceDateDelay() == null) {
+            missingParameters.add("invoiceDateDelay");
+        }
+        if (postData.getDueDateDelay() == null) {
+            missingParameters.add("dueDateDelay");
+        }
+        if (postData.getInvoiceDateDelay() == null) {
+            missingParameters.add("invoiceDateDelay");
+        }
 
-			billingCycleService.update(billingCycle, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getCalendar())) {
-				missingParameters.add("calendar");
-			}
-			if (postData.getInvoiceDateDelay() == null) {
-				missingParameters.add("invoiceDateDelay");
-			}
-			if (postData.getDueDateDelay() == null) {
-				missingParameters.add("dueDateDelay");
-			}
-			if (postData.getInvoiceDateDelay() == null) {
-				missingParameters.add("invoiceDateDelay");
-			}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
+        Provider provider = currentUser.getProvider();
 
-	public BillingCycleDto find(String billingCycleCode, Provider provider) throws MeveoApiException {
-		BillingCycleDto result = new BillingCycleDto();
+        BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getCode(), provider);
 
-		if (!StringUtils.isBlank(billingCycleCode)) {
-			BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, provider);
-			if (billingCycle == null) {
-				throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
-			}
+        if (billingCycle == null) {
+            throw new EntityDoesNotExistsException(BillingCycle.class, postData.getCode());
+        }
 
-			result = new BillingCycleDto(billingCycle);
-		} else {
-			if (StringUtils.isBlank(billingCycleCode)) {
-				missingParameters.add("billingCycleCode");
-			}
+        Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
+        if (calendar == null) {
+            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
+        billingCycle.setDescription(postData.getDescription());
+        billingCycle.setBillingTemplateName(postData.getBillingTemplateName());
+        billingCycle.setInvoiceDateDelay(postData.getInvoiceDateDelay());
+        billingCycle.setDueDateDelay(postData.getDueDateDelay());
+        billingCycle.setCalendar(calendar);
+        billingCycle.setTransactionDateDelay(postData.getTransactionDateDelay());
+        billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
+        billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
 
-		return result;
-	}
+        billingCycleService.update(billingCycle, currentUser);
+    }
 
-	public void remove(String billingCycleCode, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(billingCycleCode)) {
-			BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, provider);
-			if (billingCycle == null) {
-				throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
-			}
+    public BillingCycleDto find(String billingCycleCode, Provider provider) throws MeveoApiException {
 
-			billingCycleService.remove(billingCycle);
-		} else {
-			if (StringUtils.isBlank(billingCycleCode)) {
-				missingParameters.add("billingCycleCode");
-			}
+        if (StringUtils.isBlank(billingCycleCode)) {
+            missingParameters.add("billingCycleCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			throw new MissingParameterException(getMissingParametersExceptionMessage());
-		}
-	}
-	
-	public void createOrUpdate(BillingCycleDto postData, User currentUser) throws MeveoApiException {
-		BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getCode(), 
-				currentUser.getProvider());
-		if (billingCycle == null) {
-			//create
-			create(postData, currentUser);
-		} else {
-			//update
-			update(postData, currentUser);
-		}
-	}
+        BillingCycleDto result = new BillingCycleDto();
+
+        BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, provider);
+        if (billingCycle == null) {
+            throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
+        }
+
+        result = new BillingCycleDto(billingCycle);
+
+        return result;
+    }
+
+    public void remove(String billingCycleCode, Provider provider) throws MeveoApiException {
+        if (StringUtils.isBlank(billingCycleCode)) {
+            missingParameters.add("billingCycleCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, provider);
+        if (billingCycle == null) {
+            throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
+        }
+
+        billingCycleService.remove(billingCycle);
+    }
+
+    public void createOrUpdate(BillingCycleDto postData, User currentUser) throws MeveoApiException {
+        BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getCode(), currentUser.getProvider());
+        if (billingCycle == null) {
+            // create
+            create(postData, currentUser);
+        } else {
+            // update
+            update(postData, currentUser);
+        }
+    }
 }

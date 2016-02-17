@@ -15,151 +15,136 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.slf4j.Logger;
- 
+
 @Stateless
 public class OccTemplateApi extends BaseApi {
-	
-	@Inject
-	private Logger log;
 
-	@Inject
-	private OCCTemplateService occTemplateService;
+    @Inject
+    private Logger log;
 
-	public void create(OccTemplateDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getAccountCode())
-				&& !StringUtils.isBlank(postData.getOccCategory())) {
-			Provider provider = currentUser.getProvider();
+    @Inject
+    private OCCTemplateService occTemplateService;
 
-			if (occTemplateService.findByCode(postData.getCode(), provider) != null) {
-				throw new EntityAlreadyExistsException(OCCTemplate.class,
-						postData.getCode());
-			} 
+    public void create(OccTemplateDto postData, User currentUser) throws MeveoApiException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getAccountCode())) {
+            missingParameters.add("accountCode");
+        }
+        if (StringUtils.isBlank(postData.getOccCategory())) {
+            missingParameters.add("occCategory");
+        }
 
-			OCCTemplate occTemplate = new OCCTemplate();
-			occTemplate.setProvider(provider);
-			occTemplate.setCode(postData.getCode());
-			occTemplate.setDescription(postData.getDescription());
-			occTemplate.setAccountCode(postData.getAccountCode());
-			occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
-			try {
-				occTemplate.setOccCategory(OperationCategoryEnum.valueOf(postData.getOccCategory()));
-			} catch (IllegalArgumentException e) {
-				log.error("InvalidEnum for type with name={}", postData.getOccCategory());
-				throw new MeveoApiException(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE, "Enum for OperationCategoryEnum with name=" + postData.getOccCategory() + " does not exists.");
-			} 
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-			occTemplateService.create(occTemplate, currentUser,
-					provider);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getAccountCode())) {
-				missingParameters.add("accountCode");
-			}
-			if (StringUtils.isBlank(postData.getOccCategory())) {
-				missingParameters.add("occCategory");
-			}  
-			
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        Provider provider = currentUser.getProvider();
 
-	public void update(OccTemplateDto postData, User currentUser)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getDescription()) && !StringUtils.isBlank(postData.getAccountCode())
-				&& !StringUtils.isBlank(postData.getOccCategory())) {
-			Provider provider = currentUser.getProvider();
+        if (occTemplateService.findByCode(postData.getCode(), provider) != null) {
+            throw new EntityAlreadyExistsException(OCCTemplate.class, postData.getCode());
+        }
 
-			OCCTemplate occTemplate = occTemplateService
-					.findByCode(postData.getCode(), provider);
-			if (occTemplate == null) {
-				throw new EntityDoesNotExistsException(OCCTemplate.class,
-						postData.getCode());
-			} 
-		
-			
-			occTemplate.setDescription(postData.getDescription());
-			occTemplate.setAccountCode(postData.getAccountCode());
-			occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
-			try {
-				occTemplate.setOccCategory(OperationCategoryEnum.valueOf(postData.getOccCategory()));
-			} catch (IllegalArgumentException e) {
-				log.error("InvalidEnum for type with name={}", postData.getOccCategory());
-				throw new MeveoApiException(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE, "Enum for OperationCategoryEnum with name=" + postData.getOccCategory() + " does not exists.");
-			}
+        OCCTemplate occTemplate = new OCCTemplate();
+        occTemplate.setProvider(provider);
+        occTemplate.setCode(postData.getCode());
+        occTemplate.setDescription(postData.getDescription());
+        occTemplate.setAccountCode(postData.getAccountCode());
+        occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
+        try {
+            occTemplate.setOccCategory(OperationCategoryEnum.valueOf(postData.getOccCategory()));
+        } catch (IllegalArgumentException e) {
+            log.error("InvalidEnum for type with name={}", postData.getOccCategory());
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE, "Enum for OperationCategoryEnum with name=" + postData.getOccCategory() + " does not exists.");
+        }
 
-			occTemplateService.update(occTemplate, currentUser);
-		} else {
-			if (StringUtils.isBlank(postData.getCode())) {
-				missingParameters.add("code");
-			}
-			if (StringUtils.isBlank(postData.getAccountCode())) {
-				missingParameters.add("accountCode");
-			}
-			if (StringUtils.isBlank(postData.getOccCategory())) {
-				missingParameters.add("occCategory");
-			}  
-			
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        occTemplateService.create(occTemplate, currentUser, provider);
+    }
 
-	public OccTemplateDto find(String code, Provider provider)
-			throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			OCCTemplate occTemplate = occTemplateService
-					.findByCode(code, provider);
-			if (occTemplate == null) {
-				throw new EntityDoesNotExistsException(OCCTemplate.class,
-						code);
-			}
+    public void update(OccTemplateDto postData, User currentUser) throws MeveoApiException {
 
-			return new OccTemplateDto(occTemplate);
-		} else {
-			missingParameters.add("occTemplateCode");
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getAccountCode())) {
+            missingParameters.add("accountCode");
+        }
+        if (StringUtils.isBlank(postData.getOccCategory())) {
+            missingParameters.add("occCategory");
+        }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
+        if (!missingParameters.isEmpty()) {
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
 
-	public void remove(String code, Provider provider) throws MeveoApiException {
-		if (!StringUtils.isBlank(code)) {
-			OCCTemplate occTemplate = occTemplateService
-					.findByCode(code, provider);
-			if (occTemplate == null) {
-				throw new EntityDoesNotExistsException(OCCTemplate.class,
-						code);
-			}
+        Provider provider = currentUser.getProvider();
 
-			occTemplateService.remove(occTemplate);
-		} else {
-			missingParameters.add("occTemplateCode");
+        OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode(), provider);
+        if (occTemplate == null) {
+            throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getCode());
+        }
 
-			throw new MissingParameterException(
-					getMissingParametersExceptionMessage());
-		}
-	}
-	
-	/**
-	 * create or update occ template based on occ template code
-	 * @param postData
-	 * @param currentUser
-	 * @throws MeveoApiException
-	 */
-	public void createOrUpdate(OccTemplateDto postData, User currentUser) throws MeveoApiException {
-		
-		OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
-		
-		if (occTemplate == null) {
-			create(postData, currentUser);
-		} else {
-			update(postData, currentUser);
-		}
-	}
+        occTemplate.setDescription(postData.getDescription());
+        occTemplate.setAccountCode(postData.getAccountCode());
+        occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
+        try {
+            occTemplate.setOccCategory(OperationCategoryEnum.valueOf(postData.getOccCategory()));
+        } catch (IllegalArgumentException e) {
+            log.error("InvalidEnum for type with name={}", postData.getOccCategory());
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.INVALID_ENUM_VALUE, "Enum for OperationCategoryEnum with name=" + postData.getOccCategory() + " does not exists.");
+        }
 
+        occTemplateService.update(occTemplate, currentUser);
+
+    }
+
+    public OccTemplateDto find(String code, Provider provider) throws MeveoApiException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("occTemplateCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        OCCTemplate occTemplate = occTemplateService.findByCode(code, provider);
+        if (occTemplate == null) {
+            throw new EntityDoesNotExistsException(OCCTemplate.class, code);
+        }
+
+        return new OccTemplateDto(occTemplate);
+
+    }
+
+    public void remove(String code, Provider provider) throws MeveoApiException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("occTemplateCode");
+            throw new MissingParameterException(getMissingParametersExceptionMessage());
+        }
+
+        OCCTemplate occTemplate = occTemplateService.findByCode(code, provider);
+        if (occTemplate == null) {
+            throw new EntityDoesNotExistsException(OCCTemplate.class, code);
+        }
+
+        occTemplateService.remove(occTemplate);
+    }
+
+    /**
+     * create or update occ template based on occ template code
+     * 
+     * @param postData
+     * @param currentUser
+     * @throws MeveoApiException
+     */
+    public void createOrUpdate(OccTemplateDto postData, User currentUser) throws MeveoApiException {
+
+        OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
+
+        if (occTemplate == null) {
+            create(postData, currentUser);
+        } else {
+            update(postData, currentUser);
+        }
+    }
 }

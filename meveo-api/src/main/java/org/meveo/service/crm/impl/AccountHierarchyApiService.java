@@ -890,10 +890,6 @@ public class AccountHierarchyApiService extends BaseApi {
 
                     Customer customer = customerService.findByCode(customerDto.getCode(), provider);
                     if (customer == null) {
-                        if (StringUtils.isBlank(customerDto.getDescription())) {
-                            missingParameters.add("customer.description");
-                            throw new MissingParameterException(getMissingParametersExceptionMessage());
-                        }
 
                         customer = new Customer();
                         customer.setCode(customerDto.getCode());
@@ -987,10 +983,6 @@ public class AccountHierarchyApiService extends BaseApi {
 
                             CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountDto.getCode(), provider);
                             if (customerAccount == null) {
-                                if (StringUtils.isBlank(customerAccountDto.getDescription())) {
-                                    missingParameters.add("customerAccountDto.description");
-                                    throw new MissingParameterException(getMissingParametersExceptionMessage());
-                                }
 
                                 customerAccount = new CustomerAccount();
                                 customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
@@ -1145,10 +1137,6 @@ public class AccountHierarchyApiService extends BaseApi {
 
                                     BillingAccount billingAccount = billingAccountService.findByCode(billingAccountDto.getCode(), provider);
                                     if (billingAccount == null) {
-                                        if (StringUtils.isBlank(billingAccountDto.getDescription())) {
-                                            missingParameters.add("billingAccountDto.description");
-                                            throw new MissingParameterException(getMissingParametersExceptionMessage());
-                                        }
 
                                         billingAccount = new BillingAccount();
                                         billingAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -1290,10 +1278,6 @@ public class AccountHierarchyApiService extends BaseApi {
 
                                             UserAccount userAccount = userAccountService.findByCode(userAccountDto.getCode(), provider);
                                             if (userAccount == null) {
-                                                if (StringUtils.isBlank(userAccountDto.getDescription())) {
-                                                    missingParameters.add("userAccountDto.description");
-                                                    throw new MissingParameterException(getMissingParametersExceptionMessage());
-                                                }
 
                                                 userAccount = new UserAccount();
                                                 userAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -1370,10 +1354,6 @@ public class AccountHierarchyApiService extends BaseApi {
 
                                                     Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode(), provider);
                                                     if (subscription == null) {
-                                                        if (StringUtils.isBlank(subscriptionDto.getDescription())) {
-                                                            missingParameters.add("subscriptionDto.description");
-                                                            throw new MissingParameterException(getMissingParametersExceptionMessage());
-                                                        }
 
                                                         subscription = new Subscription();
                                                         subscription.setCode(subscriptionDto.getCode());
