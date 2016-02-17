@@ -83,10 +83,7 @@ public class CustomerAccountApiService extends AccountApiService {
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
         }
-        if (StringUtils.isBlank(postData.getName())) {
-            missingParameters.add("name");
-        }
-        if (StringUtils.isBlank(postData.getName().getLastName())) {
+        if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
         }
 
@@ -170,10 +167,7 @@ public class CustomerAccountApiService extends AccountApiService {
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
         }
-        if (StringUtils.isBlank(postData.getName())) {
-            missingParameters.add("name");
-        }
-        if (StringUtils.isBlank(postData.getName().getLastName())) {
+        if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
         }
 

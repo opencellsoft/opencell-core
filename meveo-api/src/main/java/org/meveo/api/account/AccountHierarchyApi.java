@@ -16,12 +16,12 @@ import org.meveo.service.crm.impl.AccountHierarchyApiService;
 
 /**
  *
- * Creates the customer heirarchy including : - Trading Country - Trading
+ * Creates the customer hierarchy including : - Trading Country - Trading
  * Currency - Trading Language - Customer Brand - Customer Category - Seller -
  * Customer - Customer Account - Billing Account - User Account
  * 
  * Required Parameters :customerId, customerCategoryCode,
- * sellerCode ,currencyCode,countryCode,lastName,languageCode,billingCycleCode
+ * sellerCode ,currencyCode,countryCode,lastname if title provided, languageCode,billingCycleCode
  *
  */
 
