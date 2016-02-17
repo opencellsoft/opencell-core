@@ -143,8 +143,10 @@ public class CatalogApi extends BaseApi {
 							price.setDutyFreeAmount(price.getDutyFreeAmount().add(
 									pricePlans.get(0).getAmountWithoutTax()));
 							if (!currentUser.getProvider().isEntreprise()) {
+								if(price.getTaxIncludedAmount()!=null){
 								price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(
 										pricePlans.get(0).getAmountWithTax()!=null ? pricePlans.get(0).getAmountWithTax() : null));
+								}
 							}
 						}
 					}
